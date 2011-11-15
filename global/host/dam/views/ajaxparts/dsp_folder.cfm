@@ -1,0 +1,114 @@
+<!---
+*
+* Copyright (C) 2005-2008 Razuna
+*
+* This file is part of Razuna - Enterprise Digital Asset Management.
+*
+* Razuna is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Razuna is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero Public License for more details.
+*
+* You should have received a copy of the GNU Affero Public License
+* along with Razuna. If not, see <http://www.gnu.org/licenses/>.
+*
+* You may restribute this Program with a special exception to the terms
+* and conditions of version 3.0 of the AGPL as described in Razuna's
+* FLOSS exception. You should have received a copy of the FLOSS exception
+* along with Razuna. If not, see <http://www.razuna.com/licenses/>.
+*
+--->
+<cfoutput>
+	<div id="tabsfolder_tab">
+		<ul>
+			<!--- If we are a collection show the list of collections else the content of folder --->
+			<cfif attributes.iscol EQ "F">
+				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all');">#defaultsObj.trans("folder_content")#</a></li>
+			<cfloop query="qry_fileTotalAllTypes">
+				<cfif qry_fileTotalAllTypes.cnt GT 0>
+					<cfif ext EQ "img">
+						<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img');">#defaultsObj.trans("folder_images")#</a></li>
+					</cfif>
+					<cfif ext EQ "vid">
+						<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid');">#defaultsObj.trans("folder_videos")#</a></li>
+					</cfif>
+					<cfif ext EQ "aud">
+						<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud');">#defaultsObj.trans("folder_audios")#</a></li>
+					</cfif>
+					<cfif ext EQ "doc">
+						<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc');">#defaultsObj.trans("folder_word")#</a></li>
+					</cfif>
+					<cfif ext EQ "xls">
+						<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls');">#defaultsObj.trans("folder_excel")#</a></li>
+					</cfif>
+					<cfif ext EQ "pdf">
+						<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf');">#defaultsObj.trans("folder_pdf")#</a></li>
+					</cfif>
+					<cfif ext EQ "other">
+						<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other');">#defaultsObj.trans("folder_others")#</a></li>
+					</cfif>
+				</cfif>
+			</cfloop>
+			<cfelse>
+				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content');">#defaultsObj.trans("header_collections")#</a></li>
+			</cfif>
+			<!--- If user or admin has folderaccess x --->
+			<cfif session.folderaccess EQ "x">
+				<li><a href="##properties" onclick="loadcontent('properties','#myself##xfa.fproperties#&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');">#defaultsObj.trans("folder_properties")#</a></li>
+				<cfif attributes.iscol EQ "F">
+					<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');">#defaultsObj.trans("header_widget")#</a></li>
+				</cfif>
+			</cfif>
+		</ul>
+		
+		<div id="content">#defaultsObj.loadinggif("#dynpath#")#</div>
+		<cfif attributes.iscol EQ "F">
+			<cfloop query="qry_fileTotalAllTypes">
+				<cfif qry_fileTotalAllTypes.cnt GT 0>
+					<cfif ext EQ "img">
+						<div id="img">#defaultsObj.loadinggif("#dynpath#")#</div>
+					</cfif>
+					<cfif ext EQ "vid">
+						<div id="vid">#defaultsObj.loadinggif("#dynpath#")#</div>
+					</cfif>
+					<cfif ext EQ "aud">
+						<div id="aud">#defaultsObj.loadinggif("#dynpath#")#</div>
+					</cfif>
+					<cfif ext EQ "doc">
+						<div id="doc">#defaultsObj.loadinggif("#dynpath#")#</div>
+					</cfif>
+					<cfif ext EQ "xls">
+						<div id="xls">#defaultsObj.loadinggif("#dynpath#")#</div>
+					</cfif>
+					<cfif ext EQ "pdf">
+						<div id="pdf">#defaultsObj.loadinggif("#dynpath#")#</div>
+					</cfif>
+					<cfif ext EQ "other">
+						<div id="other">#defaultsObj.loadinggif("#dynpath#")#</div>
+					</cfif>
+				</cfif>
+			</cfloop>
+		</cfif>
+		<!--- If user or admin has folderaccess x --->
+		<cfif session.folderaccess EQ "x">
+			<div id="properties">#defaultsObj.loadinggif("#dynpath#")#</div>
+			<cfif attributes.iscol EQ "F">
+				<div id="widgets">#defaultsObj.loadinggif("#dynpath#")#</div>
+			</cfif>
+		</cfif>
+	</div>
+
+<script type="text/javascript">
+	jqtabs("tabsfolder_tab");
+	<cfif attributes.iscol EQ "F">
+		loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#');
+	<cfelse>
+		loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content');
+	</cfif>
+</script>
+</cfoutput>

@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<project name="Fusebox 5.x" default="release">
+
+	<description>
+		This is the build file for Fusebox 5.x.
+		
+		It can build a release and it can deploy
+		the skeleton applications.
+	</description>
+	
+	<property name="build" value="551" />
+	<property name="build_dir" value=".."/>
+
+	<target name="release" depends="release_corefiles,release_extensions,release_skeletons,release_scaffolder" />
+	
+	<target name="release_corefiles">
+		<zip destfile="${build_dir}/fusebox${build}.corefiles.zip">
+			<zipfileset dir="../corefiles" excludes=".svn" prefix="fusebox5" />
+			<zipfileset dir="../docs" includes="*.pdf" prefix="fusebox5/docs" />
+			<zipfileset dir=".." includes="LICENSE.txt" prefix="fusebox5" />
+		</zip>
+	</target>
+	
+	<target name="release_extensions">
+		<zip destfile="${build_dir}/fusebox${build}.extensions.zip">
+			<zipfileset dir="../extensions" excludes=".svn" prefix="extensions" />
+			<zipfileset dir=".." includes="LICENSE.txt" prefix="extensions" />
+		</zip>
+	</target>
+	
+	<target name="release_skeletons">
+		<zip destfile="${build_dir}/fusebox${build}.skeleton.zip">
+			<zipfileset dir="../skeleton" excludes=".svn" prefix="skeleton" />
+			<zipfileset dir=".." includes="LICENSE.txt" prefix="skeleton" />
+		</zip>
+	</target>
+	
+	<target name="release_scaffolder">
+		<zip destfile="${build_dir}/fusebox${build}.scaffolder.zip">
+			<zipfileset dir="../scaffolder" excludes=".svn" prefix="scaffolder" />
+			<zipfileset dir=".." includes="LICENSE.txt" prefix="scaffolder" />
+		</zip>
+	</target>
+	
+</project>

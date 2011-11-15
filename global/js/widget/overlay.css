@@ -1,0 +1,63 @@
+/* the overlayed element */
+.apple_overlay {
+	/* initially overlay is hidden */
+	display:none;
+	/* growing background image */
+	background-image:url(overlay_img/white.png);
+	/* 
+		width after the growing animation finishes
+		height is automatically calculated
+	*/
+/* 	width: auto;		 */
+	/* some padding to layout nested elements nicely  */
+	padding:35px;
+}
+.videos {
+	width: 500px;
+}
+/* default close button positioned on upper right corner */
+.apple_overlay .close {
+	background-image:url(overlay_img/close.png);
+	position:absolute; right:5px; top:5px;
+	cursor:pointer;
+	height:35px;
+	width:35px;
+}
+.apple_overlay img {
+	max-height: none;
+	max-width: none;
+}
+.overlay {
+	background:url(overlay_img/white.png) no-repeat;
+	padding:40px;	
+	width:576px;  
+	display:none;
+}
+ 
+.close {
+	background:url(overlay_img/close.png) no-repeat;
+	position:absolute;
+	top:2px;
+	display:block;
+	right:5px; 
+	width:35px;
+	height:35px;
+	cursor:pointer;
+}
+a.player { 		
+	display:block;
+	height:450px;			
+}
+/* use a semi-transparent image for the overlay */
+##overlay {
+	background:url(overlay_img/white.png) no-repeat;
+	padding:40px;	
+	width:576px;  
+	display:none;
+}	
+/* container for external content. uses vertical scrollbar, if needed */
+div.contentWrap {
+	width: auto;
+	height: auto;
+/* 		overflow-y: auto; */
+}

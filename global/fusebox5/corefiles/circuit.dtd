@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2006-2007 TeraTech, Inc. http://teratech.com/
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<!--
+Used within the circuit.xml page to contain the elements that define a circuit.
+The <circuit></circuit> element can contain zero or more fuseactions as well as 
+the <prefuseaction></prefuseaction and <postfuseaction></postfuseaction> elements.
+-->
+<!ELEMENT circuit (fuseaction*,
+					((prefuseaction?, fuseaction*, postfuseaction?) |
+						(postfuseaction?, fuseaction*, prefuseaction?)),
+					fuseaction*)>
+<!ATTLIST circuit
+	access (internal | public | private) "internal"
+	permissions CDATA #IMPLIED
+>
+
+<!--
+Provides a mechanism to execute a fuseaction at the beginning of every call to any
+fuseaction in the circuit. Typically used to perform any processing that is required
+to happen before each fuseaction in the circuit is triggered. 
+
+Note: Items within a <prefuseaction></prefuseaction> container will execute with 
+each call to a fuseaction within its circuit.
+
+callsuper If this is set to true then the <prefuseaction /> in the parent circuit 
+(if any) will be triggered. The parent for a circuit is defined in the <circuit />
+definition in the fusebox.xml file. 
+-->
+<!ELEMENT prefuseaction (set | xfa | do | include | relocate | loop | if | instantiate | invoke)*>
+<!ATTLIST prefuseaction
+	callsuper (true | false | yes | no) "false"
+>
+<!--
+Provides a mechanism to execute a fuseaction at the end of every call to any
+fuseaction in the circuit. Typically used to perform any processing that is
+required to happen after each fuseaction in the circuit is triggered. 
+
+Note: Items within a <postfuseaction></postfuseaction> container will execute
+at the end of each call to a fuseaction within its circuit. 
+
+callsuper If this is set to true then the <postfuseaction /> in the parent
+circuit (if any) will be triggered. The parent for a circuit is defined in 
+the <circuit /> definition in the fusebox.xml file. 
+-->
+<!ELEMENT postfuseaction (set | xfa | do | include | relocate | loop | if | instantiate | invoke)*>
+<!ATTLIST postfuseaction
+	callsuper (true | false | yes | no) "false"
+>
+
+<!--
+Every fuseaction is defined within a circuit.xml file within the
+<circuits></circuits> container. A fuseaction defines at an architectural
+level all of the functionality needed to execute. As an example, a fuseaction
+of book.read might encompass ideas such as retrieve the book, find a chair,
+open the book, etc. While the actual implementation of each of these items is
+not explicitly defined in this fuseaction, these are the major functionalities
+that are required to happen when executing these fuseactions. 
+
+name Required. The name of the fuseaction. 
+access Optional. Defines the default access method for this specific fuseaction.
+	Can take one of three values: 
+
+	internal - fuseaction can only be accessed by other fuseactions; 
+	private - fuseaction can only be accessed by other fuseactions in the 
+			same circuit; 
+	public - fuseaction can be accessed by any other fuseaction or directly 
+			by URL or other non-fusebox invocation method 
+ 
+
+Note: This value overrides the access attribute in the circuit definition. 
+If it is not defined, the fuseaction inherits the access attribute defined 
+for its circuit.
+ 
+permissions Optional. Defines the default access method for each fuseaction 
+	in the circuit. Can take a single text value or a comma-delimited list 
+	of permissions.
+
+ 
+
+Note: Permissions can be used to implement security via a plugin. 
+ 
+
+-->
+<!ELEMENT fuseaction (set | xfa | do | include | relocate | loop | if | instantiate | invoke)*>
+<!ATTLIST fuseaction
+	name CDATA #REQUIRED
+	permissions CDATA #IMPLIED
+	access (internal | public | private) #IMPLIED
+>
+<!--
+Creates a variable, "name" having a "value.
+
+ATTRIBUTES
+ name Required if overwrite is present. Name of the variable.
+value Required. The actual value that the variable should be set to. 
+evaluate Optional. defaults to false. If set to true, allows for dynamic 
+	evaluation of a variable. See second example. 
+overwrite Optional, defaults to true. If set to false, evaluate will test 
+	if this variable exists and if it does not exist, creates the variable 
+	with the value provided. 
+-->
+<!ELEMENT set EMPTY>
+<!ATTLIST set
+	name CDATA #IMPLIED
+	value CDATA #REQUIRED
+	evaluate (true | false | yes | no) "false"
+	overwrite (true | false | yes | no) "true"
+>
+<!-- 
+Duplicates the functionality of the <set /> element, but automatically 
+puts the variable in the "xfa." scope for explicitly setting eXit FuseActions. 
+
+Note: This should only (and always) be used to specify Fusebox XFAs. 
+Do not specify the xfa scope when using this tag, the variable will 
+automatically be created with it.
+
+
+ATTRIBUTES
+ name Required. Name of the variable. It will automatically be put in the 
+	Fusebox XFA structure (e.g. XFA.someExitFuseaction). XFA Scopes 
+	are defined in the local scope. 
+value Required. The actual fuseaction that the xfa should be set to. 
+	(includes both circuit and fuseaction name.) 
+
+Note: If the fuseaction being called in the xfa is in the same circuit, 
+the circuit name can be omitted and just the fuseaction specified.
+ 
+evaluate Optional. defaults to false. If set to true, allows for dynamic 
+	evaluation of a variable. See second example. 
+overwrite Optional, defaults to true. If set to false, evaluate will test 
+	for a variable xfa.#name# and if it does not exist, creates 
+	the xfa with the value provided. 
+-->
+<!ELEMENT xfa (parameter*)>
+<!ATTLIST xfa
+	name CDATA #REQUIRED
+	value CDATA #REQUIRED
+	evaluate (true | false | yes | no) "false"
+	overwrite (true | false | yes | no) "true"
+>
+<!--
+Executes a fuseaction and optionally assigns the output of the fuseaction 
+to a variable specified in the contentvariable attribute. 
+
+Note: Using <do /> commands can help with the replacement of recursive 
+fusebox calls. <do /> commands operate in the same memory space as the 
+currently executing fuseaction. <do /> commands can contain fuseactions 
+that also execute <do /> commands as well.
+
+
+ATTRIBUTES
+ action Required. Defines the fuseaction to add to the Fuseaction queue. 
+	Can be either a fully-qualified fuseaction (e.g. someCircuit.someFuseaction) 
+	or another fuseaction in the same circuit (e.g. someOther). 
+ contentvariable Optional. If a contentvariable name is specified, all the 
+	output of the fuseaction in the action attribute will be saved to this 
+	variable name. 
+ append Optional, defaults to false. Determines whether output from the 
+	fuseaction will be appended to (true) or overwrite (false) the 
+	contentvariable specified in the contentvariable attribute.  
+-->
+<!ELEMENT do (parameter*)>
+<!ATTLIST do
+	action CDATA #REQUIRED
+	contentvariable CDATA #IMPLIED
+	append (true | false | yes | no) "false"
+	overwrite (true | false | yes | no) "true"
+>
+<!ELEMENT parameter EMPTY>
+<!ATTLIST parameter
+	name CDATA #REQUIRED
+	value CDATA #IMPLIED
+>
+<!--
+Includes a template as part of the current fuseaction. 
+
+Notes: If a filename with no extension is specified (e.g. dsp_myPage), 
+the fusebox scriptFileDelimiter will be automatically appended to the name.
+
+A circuits fuses should all exist in that circuit's directory. Although 
+a circuit's fuseactions can exist in other directories, this is a poor 
+programming practice since now the applications execution is now coupled 
+directly to the underlying directory structure.
+
+
+ATTRIBUTES
+ template Required. The name of a file located in the circuit directory. 
+ required Optional, defaults to true. If this attribute is set to true, 
+	then an exception is thrown if the file does not exist. If the 
+	value is set to false, the missing file will silently be ignored. 
+ circuit Optional, defaults to current circuit. If this attribute is present,
+	Fusebox will look in the specified circuit's directory for the
+	included file.
+ overwrite Optional, defaults to true. If contentvariable is specified
+	and this attribute is "false", the template is only included if 
+	the specified contentvariable is not already defined.
+ append Optional, defaults to false. If this attributes is set to true,
+	and contentvariable is specified, the output of the included
+	template will be appended to the current value of the contentvariable.
+ prepend Optional, defaults to false. If this attributes is set to true,
+	and contentvariable is specified, the output of the included
+	template will be prepended to the current value of the contentvariable.
+ contentvariable Optional. If present, specifies the name of a variable
+	into which the output of the included template will be stored.
+	Affected by the values of the append/prepend attributes if present.
+-->
+<!ELEMENT include (parameter*)>
+<!ATTLIST include
+	template CDATA #REQUIRED
+	required (true | false | yes | no) "true"
+	circuit CDATA #IMPLIED
+	overwrite (true | false | yes | no) "true"
+	append (true | false | yes | no) "false"
+	prepend (true | false | yes | no) "false"
+	contentvariable CDATA #IMPLIED
+>
+<!--
+Used to instantiate an object defined in the <classes> tag
+
+ATTRIBUTES
+ arguments Optional, defaults to empty. This attribute may be
+	used to specify the arguments that should be passed to
+	the object's constructor, if one was specified. Alternately,
+	arguments may be specified using nested <argument> tags.
+ class Optional. Specifies the class name (declared in the
+	<classes> declaration of fusebox.xml).
+ webservice Optional. Specifies a URL for the WSDL file (Web
+	Service Description Language) that defines the web service
+	to be used.
+ object Required. The variable into which the instantiated class
+	or web service should be stored.
+ overwrite Optional, defaults to true. If this attribute is
+	"false", the instantiation only happens if the specified
+	object variable is not already defined.
+
+Note: one of "class" or "webservice" must be specified.
+-->
+<!ELEMENT instantiate (argument*)>
+<!ATTLIST instantiate
+	arguments CDATA #IMPLIED
+	class CDATA #IMPLIED
+	webservice CDATA #IMPLIED
+	object CDATA #IMPLIED
+	overwrite (true | false | yes | no) "true"
+>
+<!ELEMENT argument EMPTY>
+<!ATTLIST argument
+	name CDATA #IMPLIED
+	value CDATA #REQUIRED
+>
+	<!--
+Used to invoke an object defined in the <classes> tag
+
+ATTRIBUTES
+ object Optional. Specifies the object to be used for the method
+	invocation.
+ class Optional. Specifies a class to instantiate, to create the
+	object to be used for the method invocation.
+ webservice Optional. Specifies a URL for the WSDL file (Web
+	Service Description Language) that defines a web service
+	to be used, to create the object to be used for the method
+	invocation.
+ method Optional. Specifies the method name to be used. Arguments
+	are specified using nested <argument> verbs.
+ methodcall Optional. Specifies the method name and arguments to
+	be used for the method invocation, e.g., "setData('theData')".
+ overwrite Optional, defaults to true. Only meaningful if 
+	returnvariable is also specified. If this attribute is "false",
+	the invocation only happens if the specified returnvariable 
+	is not already defined.
+ returnvariable Optional. Specifies the variable into which the
+	value returned by the method invocation is stored.
+
+Note: one of "object" or "class" or "webservice" must be specified.
+Note: one of "method" or "methodcall" must be specified.
+-->
+<!ELEMENT invoke (argument*)>
+<!ATTLIST invoke
+	object CDATA #IMPLIED
+	class CDATA #IMPLIED
+	webservice CDATA #IMPLIED
+	method CDATA #IMPLIED
+	methodcall CDATA #IMPLIED
+	overwrite (true | false | yes | no) "true"
+	returnvariable CDATA #IMPLIED
+>
+<!--
+Indicates a page redirect to another URL. Similar to <CFLOCATION> in CFML. 
+Can be used for both client-side and server-side redirections and the 
+CFID/CFTOKEN information can be appended to the URL automatically. 
+
+ATTRIBUTES
+ url Required. Any URL. Web page target for redirection. 
+addtoken Optional. true|false. 
+
+Defaults to false.
+
+If true, the CFID/CFTOKEN values are appended to the URL parameter.
+ 
+type Optional. client|server. Indicates whether the page redirection 
+	should be server-side or client-side.
+
+server - CFMX only: uses page-forward for true server side only relocation.
+client - Available on CF5 and CFMX - uses the <cflocation> tag for 
+	relocation that hits the client browser before redirection takes place. 
+
+Note: Client Side Relocation DOES NOT use JavaScript 
+-->
+<!ELEMENT relocate EMPTY>
+<!ATTLIST relocate
+	url CDATA #IMPLIED
+	xfa CDATA #IMPLIED
+	type (client | server | javascript | moved) "client"
+	addtoken (true | false | yes | no) "false"
+>
+<!--
+Used to iterate through a series of fuses in the fuseaction based on the
+same five basic loop types as ColdFusion:
+	condition - loop until the condition becomes false
+	query - loop over the records in the query
+	from/to/index/step - loop over the specified range of values
+	collection/item - loop over the keys in the specified structure
+	list/index - loop over the elements of the list
+
+Note: For the condition form of loop, you must provide a way for the 
+condition to reach a value of  "false" or the loop will be endless.
+
+
+ATTRIBUTES
+ see loop types above.
+-->
+<!ELEMENT loop (set | xfa | do | include | relocate | loop | if | instantiate | invoke)*>
+<!ATTLIST loop
+	condition CDATA #IMPLIED
+	from CDATA #IMPLIED
+	to CDATA #IMPLIED
+	index CDATA #IMPLIED
+	step CDATA #IMPLIED
+	item CDATA #IMPLIED
+	collection CDATA #IMPLIED
+	query CDATA #IMPLIED
+	list CDATA #IMPLIED
+>
+<!-- 
+Used to implement simple decisions inside of a fuseaction. Can include the 
+capability to execute actions based only on whether the condition is true or 
+false. There can only be one iteration of <true></true> and one iteration of 
+<false></false> within every <if></if> block. 
+
+ATTRIBUTES
+ condition Required. Any logical expression that can evaluate to either true or false. 
+-->
+<!ELEMENT if ((true, false?) | (false, true?))>
+<!ATTLIST if
+	condition CDATA #REQUIRED
+>
+<!-- The <true/> tag is an optional subelement of the <if/> element. It contains 
+	the logic to execute if the condition in the <if/> tag evaluates to "true". -->
+<!ELEMENT true (set | xfa | do | include | relocate | loop | if | instantiate | invoke)*>
+<!-- The <false/> tag is an optional subelement of the <if/> element. It contains 
+	the logic to execute if the condition in the <if/> tag evaluates to "false". -->
+<!ELEMENT false (set | xfa | do | include | relocate | loop | if | instantiate | invoke)*>

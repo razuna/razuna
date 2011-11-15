@@ -1,0 +1,23 @@
+/* Lists */
+a.flowplayer, a.flowplayer img {
+	display:block;				
+	width:280px;
+	height:170px;
+	border:0px;		
+}
+
+/* Big one */
+a.flowplayerbig, a.flowplayerbig img {
+	display:block;				
+	width:422px;
+	height:180px;
+	border:0px;		
+}
+
+/* Detail page */
+a.flowplayerdetail, a.flowplayerdetail img {
+	display:block;				
+	width:420px;
+	height:230px;
+	border:0px;		
+}

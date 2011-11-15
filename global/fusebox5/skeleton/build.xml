@@ -1,0 +1,23 @@
+<project name="Test Fusebox 5.5 Skeleton" default="deploy">
+	
+	<!-- modify this to point to your installed web root or wherever you want to create new applications: -->
+	<property name="target" value="/Library/WebServer/Documents"/>
+	<!-- modify this to be the name of the new application you want to build: -->
+	<property name="appname" value="skeleton"/>
+	
+	<property name="source" value="."/>
+	<property name="extensions" value="../extensions/"/>
+
+	<target name="deploy">
+		<copy todir="${target}/${appname}/">
+			<fileset dir="${source}" />
+		</copy>
+	</target>
+
+	<target name="deploywithextensions" depends="deploy">
+		<copy todir="${target}/${appname}/">
+			<fileset dir="${extensions}" />
+		</copy>
+	</target>
+
+</project>

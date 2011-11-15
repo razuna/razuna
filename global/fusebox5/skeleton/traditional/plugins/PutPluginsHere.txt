@@ -1,0 +1,5 @@
+If you use any plugins, be sure to put them in a sub-directory off the root 
+of your apps called "plugins". Fusebox will look for them here.  If you use 
+many plugins, then you can consider putting them in sub-directories below 
+the "plugins" dir, being careful to specify the path to them in your 
+application's fusebox.xml relative to the "plugins" dir.

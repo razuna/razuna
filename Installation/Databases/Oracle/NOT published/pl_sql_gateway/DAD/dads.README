@@ -1,0 +1,1324 @@
+###############################################################################
+#                  mod_plsql DAD Configuration File README                    #
+###############################################################################
+
+This file contains documentation of all the Database Access Descriptor (DAD)
+level parameters that can be specified in the mod_plsql configuration file
+$ORACLE_HOME/Apache/modplsql/conf/dads.conf 
+
+A DAD is a set of values that specify how mod_plsql connects to a database
+server to fulfill an HTTP request. Besides the connect details, a DAD contains
+important configuration parameters for various operations in the database
+and for mod_plsql in general. Any web-enabled PL/SQL application which makes
+use of the PL/SQL Web ToolKit needs to create a DAD to invoke the application.
+
+Some typical PL/SQL applications which would require DAD's are
+- Any PL/SQL Application written using the PL/SQL Web ToolKit
+- Oracle Application Server Portal
+- Oracle Application Server Single Sign-On
+
+Creating a DAD
+--------------
+
+If OHS/mod_plsql is part of the Oracle Application Server product, it is
+recommended that you use Oracle Enterprise Manager to create a DAD. Otherwise,
+perform the following steps to create a DAD
+
+1. Edit the DAD configuration file ORACLE_HOME/Apache/modplsql/conf/dads.conf.
+
+2. Add a DAD where the DAD has the following format:
+
+  - The Oracle HTTP Server <Location> directive which defines a virtual path
+    used to access the PL/SQL Web Application. This directive begins enclosing
+    a group of directives that apply to the named Location.
+
+    For example, the directive <Location /myapp> defines a virtual path called
+    "/myapp" that will be used to invoke a PL/SQL Web Application through a
+    URL like http://host:port/myapp/.
+
+    Note: Older versions of mod_plsql were always mounted on a virtual path
+    with a prefix of '/pls'. This restriction is removed in newer versions but
+    might still be a restriction imposed by some older PL/SQL applications.
+
+  - The Oracle HTTP Server "SetHandler" directive which directs Oracle HTTP
+    Server to enable mod_plsql to handle the request for the virtual path
+    defined by the named Location
+
+           SetHandler pls_handler
+
+  - Additional Oracle HTTP Server directives that are allowed in the context of
+    a <Location> directive. Typically, the following directives are used:
+
+           Order deny,allow
+           Allow from all
+           AllowOverride None
+
+  - One or more mod_plsql specific directives. For example:
+
+           PlsqlDatabaseUsername        scott
+           PlsqlDatabasePassword        tiger
+           PlsqlDatabaseConnectString   orcl
+           PlsqlAuthenticationMode      Basic
+
+  - An Oracle HTTP Server </Location> directive which closes the group of 
+    directives for the named Location, and defines a single DAD.
+
+3. Save the edits.
+
+4. Obfuscate the DAD password by running the "dadTool.pl" script located in
+   ORACLE_HOME/Apache/modplsql/conf. For instructions on performing the
+   obfuscation, please refer to ORACLE_HOME/Apache/modplsql/conf/dadTool.README
+
+   If OHS/mod_plsql is part of the Oracle Application Server product, then issue
+         $OH/dcm/bin/dcmctl updateConfig -ct ohs
+
+5. Restart the Oracle HTTP Server for the configuration to take effect.
+
+You can create additional DADs by defining other uniquely named Locations in
+dads.conf.
+
+Here is an example of a typical PLSQL application DAD
+
+<Location /plsqlapp>
+  SetHandler pls_handler
+  Order deny,allow
+  Allow from all
+  AllowOverride None
+  PlsqlDatabaseUsername         scott 
+  PlsqlDatabasePassword         tiger
+  PlsqlDatabaseConnectString    orcl
+  PlsqlAuthenticationMode       Basic
+  PlsqlDefaultPage              scott.home
+  PlsqlDocumentTablename        scott.wwdoc_document
+  PlsqlDocumentPath             docs
+  PlsqlDocumentProcedure        scott.wwdoc_process.process_download
+</Location>
+
+The following sections contain details about each mod_plsql configuration 
+parameter, followed by some more sample DAD's used by other PL/SQL
+Web applications.
+
+------------------------- PlsqlDatabaseUserName ------------------------------
+
+Specifies the username to use to logon to the database 
+
+Syntax: PlsqlDatabaseUsername [string]
+
+Default: [none]
+
+Example:
+   PlsqlDatabaseUsername scott
+
+Note:
+  This is a mandatory parameter except for a DAD which is setting
+  PlsqlAuthenticationMode to "Basic" and wants to use dynamic authentication.
+
+Tips:
+
+  This is a mandatory parameter, except for a DAD that sets
+  PlsqlAuthenticationMode to Basic and uses dynamic Authentication.
+
+  For DADs using SingleSignOn authentication, this parameter is the name of the
+  schema owner.
+
+  For DAD's running protected sites in WebDB 2.x, this parameter should be
+  omitted
+
+  In older versions, this configuration parameter was called "username"
+
+------------------------------------------------------------------------------
+
+------------------------- PlsqlDatabasePassword ------------------------------
+
+Specifies the password to use to logon to the database
+
+Syntax: PlsqlDatabasePassword [string]
+
+Default: [none]
+
+Example:
+   PlsqlDatabasePassword tiger
+
+Note:
+  This is a mandatory parameter except for a DAD which sets 
+  PlsqlAuthenticationMode to "Basic" and wants to use dynamic authentication.
+
+  After making manual configuration changes to DAD passwords, it is recommended
+  that the DAD passwords are obfuscated by running the "dadTool.pl" script
+  located in ORACLE_HOME/Apache/modplsql/conf. For more details on this, please
+  refer to ORACLE_HOME/Apache/modplsql/conf/dadTool.README
+
+Tips:
+
+  For DAD's using "SingleSignOn" mode of authentication, this parameter is
+  the schema owner password
+
+  For DAD's running protected sites in WebDB 2.x, this parameter should be
+  omitted
+
+  In older versions, this configuration parameter was called "password"
+
+------------------------------------------------------------------------------
+
+----------------------- PlsqlDatabaseConnectString ---------------------------
+
+Specifies the connect information to an Oracle database.
+
+Syntax: PlsqlDatabaseConnectString [string] 
+                 [ServiceNameFormat/SIDFormat/TNSFormat/NetServiceNameFormat] 
+
+  where [string] can be in one of the following based on the second argument
+
+     ServiceNameFormat : HOST:PORT:SERVICE_NAME format where
+                         HOST is the hostname running the database,
+                         PORT is the port number the TNS listener is listening,
+                         SERVICE_NAME is the database service name
+     SIDFormat : HOST:PORT:SID format where
+                 HOST is the hostname running the database,
+                 PORT is the port number the TNS listener is listening,
+                 SID is the database sid
+     TNSFormat : A valid TNS alias which resolves using Net8 utilities like 
+                 tnsping and SQL*Plus
+     NetServiceNameFormat : A valid net service name that resolves to a
+                 connect descriptor.  A connect descriptor is a specially
+                 formatted description of the destination for a network
+                 connection. A connect descriptor contains destination service
+                 and network route information.
+
+  If the format argument is not specified, then mod_plsql assumes that 'string'
+  is either in the HOST:PORT:SID format, or resolvable by Net8. The
+  differentiation between the two is made by the presence of colon in the
+  specified string.
+
+  It is recommended that newer DAD's do not use the SIDFormat syntax. This
+  exists only for backward compatibility reasons. Please use the new two
+  argument format for newly created DADs. 
+ 
+Default: [none]
+
+Example:
+  PlsqlDatabaseConnectString myhost.com:1521:myhost.iasdb.inst ServiceNameFormat
+     or
+  PlsqlDatabaseConnectString myhost.com:1521:iasdb SIDFormat
+     or
+  PlsqlDatabaseConnectString mytns_entry TNSFormat
+     or
+  PlsqlDatabaseConnectString cn=oracle,cn=iasdb NetServiceNameFormat
+     or
+  PlsqlDatabaseConnectString (DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(Host=myhost.com)(Port= 1521))(CONNECT_DATA=(SID=iasdb))) TNSFormat
+     or
+  PlsqlDatabaseConnectString myhost_tns
+     or
+  PlsqlDatabaseConnectString myhost.com:1521:iasdb
+
+Tips:
+
+  If the database is running in the same Oracle Home, or the environment
+  variable "TWO_TASK" is set (called "LOCAL" on NT), this parameter need not
+  be specified.
+
+  If the database is running in a separate Oracle Home, then this parameter
+  is mandatory
+
+  If you have problems connecting to the database
+  - Check the username, password information in the DAD
+  - Make sure that you can run "tnsping [string]" and run something like
+    "sqlplus DADUsername/DADPassword@[string]"
+  - Make sure environment variable TNS_ADMIN is configured properly
+  - Check if the HOST:PORT:SERVICE_NAME format makes the connection go through
+  - Make sure that the TNS listener and database are up and running
+  - Make sure you can "ping" the HOST from this machine
+
+  From a mod_plsql perspective, TNSFormat and NetServiceNameFormat are
+  synonymous and denote connect descriptors that are resolved by Net.
+  The "TNSFormat" is provided as a convenience so that end-users use
+  this to signify that the name resolution will happen through the
+  local tnsnames.ora. For situations where the resolution is through
+  an LDAP lookup as configured in sqlnet.ora, it is recommended that
+  the format specifier of "NetServiceNameFormat" be used.
+
+  If your database supports High Availability (e.g. RAC database), it is
+  highly recommended that you use the NetServiceNameFormat such that the
+  resolution for the net service name is through LDAP. This will allow
+  you to add or remove RAC nodes accessible via mod_plsql by just changing
+  OID with the new/deleted node information. In such situations, hard-coding
+  database listener host:port information in dads.conf or in the local
+  tnsnames.ora is not a good idea.
+
+  In older versions, this configuration parameter was called "connect_string"
+
+------------------------------------------------------------------------------
+
+----------------------- PlsqlAuthenticationMode ------------------------------
+
+Specifies the authentication mode to use for allow access through this DAD
+
+Syntax: PlsqlAuthenticationMode [Basic/SingleSignOn/GlobalOwa/CustomOwa/
+                                 PerPackageOwa]
+
+Default: Basic
+
+Example:
+  PlsqlAuthenticationMode Basic
+
+Tips:
+
+  Most customer applications use Basic Authentication.
+
+  Custom Authentication modes (GlobalOwa, CustomOwa, PerPackageOwa) are used
+  by very few PL/SQL applications. 
+
+  The SingleSignOn mode is supported only Oracle Application Server releases
+  only and is used by Oracle Application Server Portal and Oracle Application
+  Server Single Sign-On.
+
+  If the DAD is not using the Basic authentication, then you must include a
+  valid username/password in the DAD configuration. 
+
+  For the Basic mode, if you wish to perform dynamic authentication, the DAD
+  username/password parameters must be omitted.
+
+  For WebDB 2.x applications, this parameter must be set to "Basic"
+
+  In older versions, this configuration parameter was derived from a combination
+  of "enablesso" and "custom_auth"
+  - "enablesso = Yes" translates to "PlsqlAuthenticationMode SingleSignOn"
+  - "custom_auth = Global" translates to "PlsqlAuthenticationMode GlobalOwa"
+  - "custom_auth = Custom" translates to "PlsqlAuthenticationMode CustomOwa"
+  - "custom_auth = PerPackage" translates to
+             "PlsqlAuthenticationMode PerPackageOwa"
+  - All other combinations translate to "Basic" authentication
+
+------------------------------------------------------------------------------
+
+----------------------- PlsqlSessionCookieName -------------------------------
+
+Specifies the cookie name for the Oracle Portal session. This parameter is
+supported only for Oracle Application Server releases, and is used by Oracle
+Application Server Portal and Oracle Application Server Single Sign-On
+
+Syntax: PlsqlSessionCookieName [string]
+
+Default: DADName
+
+Example:
+   PlsqlSessionCookieName portal
+
+Tips:
+
+  For DAD's not using "SingleSignOn" authentication, this parameter can be
+  omitted
+
+  In most other cases, the session cookie name should be omitted and this
+  automatically defaults to the DAD Name
+
+  A session cookie name must be specified only for Oracle Portal instances
+  that need to participate in a distributed Oracle Portal environment. For
+  those Oracle Portal nodes you want to seamlessly participate as a federated
+  cluster, please ensure that the session cookie name for all of the
+  participating nodes is the same
+
+  Independent Oracle Portal nodes need to use distinct session cookie names
+
+  In older versions, this configuration parameter was called "sncookiename"
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlSessionStateManagement -------------------------
+
+Specifies how package and session state should be cleaned up at the end of
+each mod_plsql request.
+
+Setting this to "StatelessWithResetPackageState" causes mod_plsql to call
+"dbms_session.reset_package_state" at the end of each mod_plsql request. 
+
+Setting this to "StatelessWithPreservePackageState" causes mod_plsql to call
+"htp.init" at the end of each mod_plsql request. This cleans up the state of
+session variables in the PL/SQL Web ToolKit. The PL/SQL application is
+responsible for cleaning up its own session state. Failure to do so will
+cause erratic behavior where one request will start seeing/manipulating
+state modified in previous requests
+
+Setting this to "StatelessWithFastResetPackageState" causes mod_plsql to call
+"dbms_session.modify_package_state(dbms_session.reinitialize)" at the end of
+each mod_plsql request. This API is a lot faster than the mode of
+"StatelessWithResetPackageState" and avoids some latch contention issues, 
+but exists only in database versions 8.1.7.2 and above. This mode uses up
+slightly more memory than the default mode. Please check the status of
+bug#2096244 before using this mode
+
+Syntax: PlsqlSessionStateManagement [StatelessWithResetPackageState/
+                                     StatelessWithFastResetPackageState/
+                                     StatelessWithPreservePackageState]
+
+Default: StatelessWithResetPackageState
+
+Example:
+   PlsqlSessionStateManagement StatelessWithResetPackageState
+
+Tips:
+
+  In older versions, this configuration parameter was called "stateful"
+  - An older value of "stateful=no" or "stateful=STATELESS_RESET" corresponds
+    to "PlsqlSessionStateManagement StatelessWithResetPackageState"
+  - An older value of "stateful=STATELESS_FAST_RESET" corresponds
+    to "PlsqlSessionStateManagement StatelessWithFastResetPackageState"
+  - An older value of "stateful=STATELESS_PRESERVE" corresponds
+    to "PlsqlSessionStateManagement StatelessWithPreservePackageState"
+
+  mod_plsql does not support stateful mode of operation. PL/SQL applications
+  which wish to simulate stateful behavior can do so by saving state in
+  cookies and/or in the database
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlMaxRequestsPerSession --------------------------
+
+Specifies the maximum number of requests a pooled database connection should
+service before closing it down and reopening it
+
+Syntax: PlsqlMaxRequestsPerSession [number]
+
+Default: 1000
+
+Example:
+   PlsqlMaxRequestsPerSession 1000
+
+Tips:
+
+  This parameter helps mitigate memory and resource problems that may occur
+  due to prolonged session reuse by a PL/SQL application 
+
+  This parameter should normally not be tweaked 
+
+  Setting this to a low number will result in performance issues. If you
+  have an infrequently used DAD and performance is not a concern, you can
+  choose to set this to a low number.
+
+  If you set this really low (e.g. 1) and the DAD is accessed frequently,
+  you might start hitting bug#1575624
+
+  In older versions, the parallel to this parameter is "reuse". Instead of
+  taking a value of "Yes/No", the new parameter allows for more fine-grained
+  control for the connection pool reuse in mod_plsql
+
+------------------------------------------------------------------------------
+
+----------------------- PlsqlConnectionValidation ----------------------------
+
+Specifies the mechanism mod_plsql should use to detect dead connections in
+its connection pool
+
+For performance reasons, mod_plsql pools database connections. If a database
+instance goes down, and mod_plsql was maintaining a pool of connections to
+the instance, then each pooled database connection results in an error
+when it is next used to service a request. This can be a concern in HA
+configurations like RAC where even if one node goes down, other nodes
+servicing the database might have been able to service the request
+successfully. mod_plsql provides for a mechanism whereby it can self-correct
+after it detects a failure that could be caused by a database node going down.
+This mechanism to self-correct is controlled by the parameter 
+"PlsqlConnectionvalidation".
+
+- When set to "Automatic", mod_plsql will test all pooled database connections
+  which were created prior to the detection of a failure that could mean a
+  instance failure.
+
+- When set to "ThrowAwayOnFailure", mod_plsql will throw away all pooled
+  database connections which were created prior to the detection of a
+  failure that could mean a instance failure.
+
+- When set to "AlwaysValidate", mod_plsql will always test all pooled
+  database connections prior to issuing a request. Since this option has 
+  an associated performance overhead for each request, this should be 
+  used with caution. 
+
+- When set to "NeverValidate", mod_plsql will never ping any pooled
+  database connection. This option allows for older behaviour in mod_plsql
+
+Syntax: PlsqlConnectionValidation [Automatic/ThrowAwayOnFailure/
+                                 NeverValidate/AlwaysValidate]
+
+Default: Automatic
+
+Example:
+  PlsqlConnectionValidation ThrowAwayOnFailure
+
+Notes:
+  When mod_plsql encounters one of the following errors, it assumes that
+  the database might have gone down
+  - 00443, 00000, "background process did not start"
+  - 00444, 00000, "background process failed while starting"
+  - 00445, 00000, "background process did not start after x seconds"
+  - 00447, 00000, "fatal error in background process"
+  - 00448, 00000, "normal completion of background process"
+  - 00449, 00000, "background process unexpectedly terminated with error"
+  - 00470, 00000, "LGWR process terminated with error"
+  - 00471, 00000, "DBWR process terminated with error"
+  - 00472, 00000, "PMON  process terminated with error"
+  - 00473, 00000, "ARCH process terminated with error"
+  - 00474, 00000, "SMON process terminated with error"
+  - 00475, 00000, "TRWR process terminated with error"
+  - 00476, 00000, "RECO process terminated with error"
+  - 00480, 00000, "LCK* process terminated with error"
+  - 00481, 00000, "LMON process terminated with error"
+  - 00482, 00000, "LMD* process terminated with error"
+  - 00484, 00000, "LMS* process terminated with error"
+  - 00485, 00000, "DIAG process termianted with error"
+  - 01014, 00000, "ORACLE shutdown in progress"
+  - 01033, 00000, "ORACLE initialization or shutdown in progress"
+  - 01034, 00000, "ORACLE not available"
+  - 01041, 00000, "internal error. hostdef extension doesn't exist"
+  - 01077, 00000, "background process initialization failure"
+  - 01089, 00000, "immediate shutdown in progress - no operations permitted"
+  - 01090, 00000, "shutdown in progress - connection is not permitted"
+  - 01091, 00000, "failure during startup force"
+  - 01092, 00000, "ORACLE instance terminated. Disconnection forced"
+  - 03106, 00000, "fatal two-task communication protocol error"
+  - 03113, 00000, "end-of-file on communication channel"
+  - 03114, 00000, "not connected to ORACLE"
+  - 12570, 00000, "TNS: packet writer failure"
+  - 12571, 00000, "TNS: packet writer failure"
+
+------------------------------------------------------------------------------
+
+-------------------------- PlsqlConnectionTimeout ----------------------------
+
+Specifies the timeout in milliseconds for testing a connection pooled in
+mod_plsql
+
+When PlsqlConnectionValidation is set to "Automatic" or "AlwaysValidate"
+mod_plsql will attempt to test pooled database connections. This parameter
+specifies the maximume time mod_plsql should wait for the test request
+to complete before it assumes that the connection is not usable.
+
+Syntax: PlsqlConnectionTimeout 5000
+
+Default: 10000
+
+Example:
+  PlsqlConnectionTimeout 5000
+
+------------------------------------------------------------------------------
+----------------------------- PlsqlDefaultPage -------------------------------
+
+Specifies the default procedure to call if none is specified in the URL
+
+Syntax: PlsqlDefaultPage [string]
+
+Default: [none]
+
+Example:
+   PlsqlDefaultPage myschema.mypackage.home
+
+Tips:
+  In older versions, this parameter was called "default_page"
+
+  You can also use OHS rewrite rules to achieve the same effect as you see
+  with the setting of this parameter.
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlDocumentTablename ------------------------------
+Specifies the table in the database to which all documents will be uploaded
+
+Syntax: PlsqlDocumentTablename [string]
+
+Default: [none]
+
+Example:
+   PlsqlDocumentTablename myschema.document_table
+   PlsqlDocumentTablename portal.wwdoc_document (for Portal)
+   PlsqlDocumentTablename webdb.wwv_document (for WebDB)
+
+Tips:
+
+  If your application does not do document uploads/downloads, this
+  parameter may be omitted
+
+  Please refer to the mod_plsql documentation for more details about the
+  upload/download process and the structure of the restrictions on the
+  document table format
+
+  In older versions, this parameter was called "document_table"
+
+------------------------------------------------------------------------------
+
+---------------------------- PlsqlDocumentPath -------------------------------
+
+Specifies a virtual path in the URL which initiates document download from
+the document table. For example, if this is set to 'docs', then the following
+URLs will start document downloading process for URL's of the format :
+    /pls/dad/docs/
+
+Syntax: PlsqlDocumentPath [string]
+
+Default: docs
+
+Example:
+   PlsqlDocumentPath docs
+
+Tips:
+
+  If your application does not do document uploads/downloads, this
+  parameter may be omitted
+
+  Please refer to the mod_plsql documentation for more details about the
+  upload/download process and the structure of the restrictions on the
+  document table format
+
+  In older versions, this parameter was called "document_path"
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlDocumentProcedure ------------------------------
+
+Specifies the procedure to call when a document download is initiated. This
+procedure is called to process the download
+
+Syntax: PlsqlDocumentProcedure [string]
+
+Default: [none]
+
+Example:
+   PlsqlDocumentProcedure portal.wwdoc_process.process_download
+
+Tips:
+
+  If your application does not do document uploads/downloads, this
+  parameter may be omitted
+
+  Please refer to the mod_plsql documentation for more details about the
+  upload/download process and the structure of the restrictions on the
+  document table format
+
+  In older versions, this parameter was called "document_proc"
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlUploadAsLongRaw --------------------------------
+
+Specifies the extensions to be uploaded as LONGRAW datatype as opposed to 
+using the default BLOB datatype. The default can be over-ridden by specifying
+multiline directives of file extensions for field. A value of '*' in this
+field will cause all documents to be uploaded as LONGRAW. 
+
+Syntax: PlsqlUploadAsLongRaw [string multiline]
+
+Default: [none]
+
+Example:
+   PlsqlUploadAsLongRaw jpg
+   PlsqlUploadAsLongRaw gif
+  Or,
+   PlsqlUploadAsLongRaw *       (for WebDB)
+
+Tips:
+
+  If your application does not do document uploads/downloads, this
+  parameter may be omitted
+
+  Please refer to the mod_plsql documentation for more details about the
+  upload/download process and the structure of the restrictions on the
+  document table format
+
+  In older versions, this parameter was called "upload_as_long_raw"
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlPathAlias -----------------------------------
+Specifies a virtual path alias to map to a procedure call. This is application
+specific. e.g. Oracle Portal sets this to "url" which means that all URL's of
+type "/pls/myapp/url/*" are handled as special URL's and handed off to a 
+specific procedure as configured by PlsqlPathAliasProcedure (see below)
+
+Syntax: PlsqlPathAlias [string]
+
+Default: [none]
+
+Example:
+   PlsqlPathAlias url
+
+Tips:
+
+  If your application does not use Path Aliasing,this parameter may be omitted
+
+  Please refer to the mod_plsql documentation for more details about the
+  Path Aliasing functionality
+
+  In older versions, this parameter was called "pathalias"
+
+------------------------------------------------------------------------------
+
+----------------------- PlsqlPathAliasProcedure ------------------------------
+Specifies the procedure to call when the virtual path in the URL matches the
+path alias as configured by "PlsqlPathAlias"
+
+Syntax: PlsqlPathAliasProcedure [string]
+
+Default: [none]
+
+Example:
+   PlsqlPathAliasProcedure portal.wwpth_api_alias.process_download
+
+Tips:
+
+  If your application does not use Path Aliasing,this parameter may be omitted
+
+  Please refer to the mod_plsql documentation for more details about the
+  Path Aliasing functionality
+
+  In older versions, this parameter was called "pathaliasproc"
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlRequestValidationFunction ----------------------
+
+Specifies an application-defined PL/SQL function which gives you the 
+opportunity to allow/disallow further processing of the requested procedure.
+This is useful in implementing tight security for your PL/SQL application 
+by blocking out package/procedure calls which should not be allowed to 
+execute from this DAD.
+
+The function defined by this parameter must have the following prototype:
+
+boolean function_name (procedure_name IN varchar2)
+
+Upon invocation, the argument 'procedure_name' will contain the name of the
+procedure that the request is trying to execute.
+
+For example, if all the PL/SQL application procedures callable from a 
+browser are inside the package "mypkg", then a simple implementation of this 
+function can be as follows: 
+
+   boolean my_validation_check (procedure_name varchar2)
+   is
+   begin
+     if (upper(procedure_name) like upper('myschema.mypkg%')) then
+       return TRUE;
+     else
+       return FALSE;
+     end if;
+   end;
+
+
+Syntax: PlsqlRequestValidationFunction [string]
+
+Default: [none]
+
+Example:
+    PlsqlRequestValidationFunction myschema.mypkg.my_validation_check
+
+Tips:
+
+  By default, mod_plsql already disallows direct URL access to certain
+  schemas/packages. For more information on this, please refer to the
+  configuration parameter PlsqlExclusionList.
+
+  It is highly recommended that you provide an implementation for this
+  function such that it only allows requests that belong to your application,
+  and are callable from a browser. 
+  
+  Since this function will be called for every request, be sure to make 
+  this function as performant as possible. Suggested recommendations are :
+  - Name your PL/SQL packages in a fashion such that the implementation of
+    this function can be similar to the example mentioned above.
+  - If your implementation performs a table lookup to determine what 
+    packages/procedures should be allowed, performance can be improved
+    if you pin the cursor in the shared pool.
+
+
+------------------------------------------------------------------------------
+
+-------------------------- PlsqlExclusionList --------------------------------
+
+Specifies a pattern for procedures/packages/schema names which are forbidden
+to be directly executed from a browser. This is a multiline directive in
+which each pattern is on one line. The pattern is case-insensitive and can
+accept a wildcard of '*'. The default patterns disallowed from direct URL 
+access are "sys.*, dbms_*", utl_*, owa_*, owa.*, htp.*, htf.*"
+
+Setting this directive to "#NONE#" will disable all protection. This is not
+recommended for a live site and should not be done (this is sometimes used
+for debugging purposes)
+
+If this parameter is overridden, the defaults still apply, which means
+that you do not have to explicitly add the default list to the list of
+excluded patterns. 
+
+Syntax: PlsqlExclusionList [string/"#NONE#" multiline] 
+
+Default: sys.*
+         dbms_*
+         utl_*
+         owa_*
+         owa.*
+         htp.*
+         htf.*
+
+Example:
+    PlsqlExclusionList myschema.private1.*
+    PlsqlExclusionList myschema.private.*
+       will disallow access to URL's which contain one of sys.*, dbms_*",
+       utl_*, owa_*, owa.*, htp.*, htf.*, myschema.private.*, 
+       myschema.private1.* 
+
+    PlsqlExclusionList "#NONE#"
+       will disable all protection. Again, this is not recommended for live
+       sites as this could be a security concern.
+
+Tips:
+
+  Besides the patterns specified with this parameter, mod_plsql also disallows
+  any procedure name which contains special characters like
+  tabs, newlines, carriage-returns, single-quotes, the reverse-slash, 
+  the form feed, the open parenthesis, close parenthesis, and spaces. This
+  cannot be overridden.
+
+  In older versions, this parameter was called "exclusion_list"
+
+------------------------------------------------------------------------------
+
+----------------------- PlsqlCGIEnvironmentList ------------------------------
+
+Specifies overriding and/or adding new CGI environment variables to the
+default set of environment variables passed down to a PL/SQL procedure.
+This is a multiline directive of name/value pairs to be added, overridden
+or removed. You can only specify one environment variable per directive.
+
+You can add CGI environment variables from the OHS environment by just
+specifying the variable name.
+
+To remove a CGI environment variable, just set it equal to nothing. 
+
+To add your own name/value pair, use "MY_VARNAME=MY_VALUE".
+
+Syntax: PlsqlCGIEnvironmentList [string multiline]
+
+Default: [none]
+
+Example:
+    PlsqlCGIEnvironmentList DOCUMENT_ROOT          (add from OHS env)
+    PlsqlCGIEnvironmentList REQUEST_PROTOCOL=HTTPS (override with a new value)
+    PlsqlCGIEnvironmentList REQUEST_IANA_CHARSET=  (remove REQUEST_IANA_CHARSET)
+    PlsqlCGIEnvironmentList MY_VARNAME=MY_VALUE    (add your own)
+
+Tips:
+
+  Environment variables added here are available in the PL/SQL application
+  via the function owa_util.get_cgi_env
+
+  In older versions, this parameter was called "cgi_env_list"
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlCompatibilityMode ---------------------------
+
+Specifies the compatibility mode for running mod_plsql. This parameter is 
+supported only for Oracle Application Server releases, and is used when you
+are using mod_plsql with an older version of Oracle Application Server Portal. 
+In such situations, if you are running mod_plsql against a pre-9.0.2 version 
+of mod_plsql, you need to set this value to 1
+
+Syntax: PlsqlCompatibilityMode [BitFlag]
+
+Default: 0
+
+Example:
+    PlsqlCompatibilityMode 1
+
+Notes:
+  This parameter enables an old bug in mod_plsql where mod_plsql used to 
+  incorrectly convert "+" signs to space characters for document downloads
+  Enabling the first bit in this flag will disallow you from downloading
+  documents which have a "+" sign in the document name.
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlNLSLanguage ---------------------------------
+
+Specifies the NLS_LANG for this DAD. 
+
+This setting overrides the NLS_LANG environment variable for a database
+session, and defines some important NLS properties of the HTTP response,
+including the response character set.
+
+If the PlsqlNLSLanguage parameter is different from the backend database
+NLS_LANG value, then mod_plsql will issue an ALTER SESSION statement every
+time a new database connection is created for the DAD. The actual statement
+issued is
+  alter session set nls_language=<LANG> nls_territory=<TERR>
+
+The character set portion of this setting is used by the networking layers
+below Oracle OCI to convert client string data to/from the database character
+set. This setting defines three things
+
+   o The character set of the content coming back from the database
+
+   o The character set mod_plsql will use to override the binding of 
+     arguments passed via OCI
+
+   o The IANA character set used in the "Content-Type" header of an HTTP
+     response coming from a PL/SQL procedure
+
+Syntax: PlsqlNLSLanguage [string]
+
+Default: [none]
+
+Example:
+    PlsqlNLSLanguage American_America.UTF8
+
+Tips:
+
+  You can determine the setting needed for PlsqlNLSLanguage by doing
+  1. Connecting to the target database using SQL*Plus
+  2. Running the query :
+     select value, parameter
+            from nls_database_parameters
+            where parameter in
+             ('NLS_LANGUAGE', 'NLS_TERRITORY', 'NLS_CHARACTERSET');
+
+   Most applications have PlsqlTransferMode set to "Char" which means that
+   the character set in PlsqlNLSLanguage needs to match the character set of 
+   the backend database. In one special case, where the database and
+   mod_plsql are both using fixed-size character sets, and the character
+   set width matches, the character set can be different. In either case,
+   the response character set will always be the DAD character set.
+
+   For Portal, this setting should match the NLS_LANG of the back-end database.
+
+   If PlsqlTransferMode is set to "Raw", then this parameter can be ignored
+
+   In older versions, this parameter was called "nls_lang"
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlFetchBufferSize -----------------------------
+
+Specifies the number of rows of content to fetch from the database for each
+trip (using either owa_util.get_page or owa_util.get_page_raw).
+
+By default, mod_plsql will attempt fetching 200 response lines of output where
+each line is of 255 bytes. In situations where the response bytes are
+single-byte, the response buffer is populated to the maximum and can pack
+255*200=51000 bytes per round trip. But, for responses containing multi-byte
+data, the byte packing of each row could be less than ideal resulting in 
+lesser bytes getting transferred per round trip. If your application generates
+large pages frequently and the response does not fit in one round-trip, 
+consider setting this parameter higher. However, the memory usage for 
+mod_plsql will increase.
+
+Syntax: PlsqlFetchBufferSize [number]
+
+Default: 200
+
+Example:
+    PlsqlFetchBufferSize 256
+
+Tips:
+
+  This parameter is tweaked only if your application generates large pages
+  frequently
+
+  The minimum value for this parameter is 28, but this parameter is hardly
+  ever tweaked down
+
+  This parameter needs to be tweaked only in the following circumstances
+   - The average response page is big and you wish to reduce the number of
+     round-trips made by mod_plsql to the database to fetch the response
+   - The character set in use is multi-byte, and you want to compensate for
+     the problem of get_page or get_page_raw fetching lesser number of
+     bytes-per-row (calculations in the PL/SQL Web ToolKit are character-based
+     and in case of multi-byte characters, OWA packages assume a worst-case
+     character byte size and do not attempt to pack each row to its maximum)
+
+  In older versions, this parameter was called "response_array_size"
+
+  In iASv9.0.2.0 and below, the default for this parameter was 128
+
+------------------------------------------------------------------------------
+
+----------------------------- PlsqlErrorStyle --------------------------------
+
+Specifies the Error Reporting Mode for errors generated in mod_plsql. This
+parameter accepts the following values
+
+- ApacheStyle (default) : In this mode, mod_plsql indicates to OHS what
+  HTTP error was encountered. OHS then generates the error page. This can
+  be used with OHS's ErrorDocument directive to produce customized error
+  messages. 
+
+- ModplsqlStyle : mod_plsql generates the error pages, usually a short message
+  indicating the PL/SQL error that was encountered and PL/SQL exception 
+  stack if any
+  e.g. "scott.foo PROCEDURE NOT FOUND"
+
+ - DebugStyle : This mode enhances the error message with more details than
+   "ModplsqlStyle". mod_plsql provides more details about the URL, parameters
+   and also produces server configuration information. This mode is for
+   debugging purposes only. Do not use in a production system since
+   displaying internal server variables could be a security risk. 
+
+Syntax: PlsqlErrorStyle [ApacheStyle/ModplsqlStyle/DebugStyle]
+
+Default: ApacheStyle
+
+Example:
+    PlsqlErrorStyle ModplsqlStyle
+
+Tips:
+   In older versions, this parameter was called "error_style"
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlTransferMode --------------------------------
+
+Specifies the transfer mode for data from the database back to mod_plsql.
+Most applications use the default value of "Char"
+
+Syntax: PlsqlTransferMode [Char/Raw]
+
+Default: Char
+
+Example:
+     PlsqlTransferMode Char
+
+Tips:
+
+ The only time this parameter will be tweaked is when you want to enable
+ sending back responses in different character sets from the same DAD. In
+ such a case, the "Char" mode is useless since it will always convert the
+ response data from the database character set to the mod_plsql character set
+
+In older versions, "Raw" transfer mode was not supported
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlBeforeProcedure -----------------------------
+
+Specifies the procedure to be invoked before calling the requested procedure. 
+This allows you to put a hook point before the requested procedure is called.
+This is useful in doing SQL*Traces/SQL Profiles while debugging a problem
+with the requested procedure. This also comes handy when you want to ensure
+that a specific call be made before running every procedure. 
+
+Syntax: PlsqlBeforeProcedure [string]
+
+Default: [none]
+
+Example:
+    PlsqlBeforeProcedure portal.mypkg.mybeforeproc
+
+Tips:
+
+  In general, this parameter should be omitted
+
+  You could use this to start SQL Trace/SQL Profiling
+
+  In older versions, this parameter was called "before_proc"
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlAfterProcedure ------------------------------
+
+Specifies the procedure to be invoked after calling the requested procedure.
+This allows you to put a hook point after the requested procedure is called.
+This is useful in doing SQL*Traces/SQL Profiles while debugging a problem
+with the requested procedure. This also comes handy when you want to ensure
+that a specific call be made after running every procedure. 
+
+Syntax: PlsqlAfterProcedure [string]
+
+Default: [none]
+
+Example:
+    PlsqlAfterProcedure portal.mypkg.myafterproc
+
+Tips:
+
+  In general, this parameter should be omitted
+
+  You could use this to stop SQL Trace/SQL Profiling
+
+  In older versions, this parameter was called "after_proc"
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlBindBucketLengths ---------------------------
+
+Specifies the rounding size to use while binding the number of elements in
+a collection bind. 
+
+While executing PL/SQL statements, the Oracle database maintains a cache of
+PL/SQL statements in the shared SQL area, and attempts to reuse the cached
+statement if the same statement is executed again. Oracle's matching criteria
+required that the statement texts be identical, and also requires that the
+bind variable data types match. Unfortunately, the type match for strings is
+sensitive to the exact byte size specified, and for collection bindings
+is also sensitive to the number of elements in the collection. Since
+mod_plsql binds statements dynamically, the odds of hitting the shared cache
+are low and it may fill up with near-duplicates and lead to contention for
+the latch on the shared area. This parameter reduces the effect by bucketing
+bind lengths to the nearest level. 
+
+All numbers specified should be in ascending order. After the last specified
+size, subsequent bucket sizes will be assumed to be twice the last one.
+
+Syntax: PlsqlBindBucketLengths [number multiline]
+
+Default: 4,20,100,400
+
+Example:
+    PlsqlBindBucketLengths  4
+    PlsqlBindBucketLengths  25
+    PlsqlBindBucketLengths  125
+
+Tips:
+
+  The defaults should suffice for most PL/SQL applications.
+
+  This parameter is relevant only of you are using procedures with array
+  parameters, and passing varying number of parameters to the procedure.
+
+  To see if this parameter needs tweaking, check the number of versions
+  of a SQL statement in the SQL area
+
+  Consider using Flexible Parameter Passing to reduce the problem
+
+  In older versions, this parameter was called "bind_bucket_lengths"
+
+------------------------------------------------------------------------------
+
+--------------------------- PlsqlBindBucketWidths ----------------------------
+
+Specifies the rounding size to use while binding the width of elements in
+a collection bind. 
+
+While executing PL/SQL statements, the Oracle database maintains a cache of
+PL/SQL statements in the shared SQL area, and attempts to reuse the cached
+statement if the same statement is executed again. Oracle's matching criteria
+required that the statement texts be identical, and also requires that the
+bind variable data types match. Unfortunately, the type match for strings is
+sensitive to the exact byte size specified, and for collection bindings
+is also sensitive to the number of elements in the collection. Since
+mod_plsql binds statements dynamically, the odds of hitting the shared cache
+are low and it may fill up with near-duplicates and lead to contention for
+the latch on the shared area. This parameter reduces the effect by bucketing
+bind widths to the nearest level. 
+
+All numbers specified should be in ascending order. After the last specified
+size, subsequent bucket sizes will be assumed to be twice the last one.
+
+The last bucket width must be equal to or less than 4000. This is due to the
+restriction imposed by OCI where array bind widths cannot be greater than 4000
+
+Syntax: PlsqlBindBucketWidths [number multiline]
+
+Default: 32,128,1450,2048,4000 
+
+Example:
+    PlsqlBindBucketWidths  40
+    PlsqlBindBucketWidths  400
+    PlsqlBindBucketWidths  2000
+
+Tips:
+
+  The defaults should suffice for most PL/SQL applications.
+
+  This parameter is relevant only of you are using procedures with array
+  parameters, and passing varying sizes of parameters to the procedure.
+
+  To see if this parameter needs tweaking, check the number of versions
+  of a sql statement in the sql area
+
+  Consider using Flexible Parameter Passing to reduce the problem
+
+  In older versions, this parameter was called "bind_bucket_widths"
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlAlwaysDescribeProcedure ------------------------
+
+Specifies whether mod_plsql should describe a procedure before trying to
+execute it. If this is set to On, then mod_plsql will always describe a
+procedure before invoking it. Otherwise, mod_plsql will only describe a
+procedure when its internal heuristics have interpreted a parameter type
+incorrectly
+
+Syntax: PlsqlAlwaysDescribeProcedure [On/Off]
+
+Default: Off
+
+Example:
+    PlsqlAlwaysDescribeProcedure Off
+
+Tips:
+
+  For all but debugging purposes, this parameter should remain Off. 
+
+  In older versions, this parameter was called "always_desc"
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlInfoLogging ------------------------------------
+
+Specifies what mode to use for extra performance logging.
+The modes are :
+
+ InfoDebug - This logs more information to the OHS's error_log. This is
+             used in conjunction with OHS's "info" logging level. If the
+             OHS's logging level is not at least set to this high, this
+             setting will be ignored.  In this mode, mod_plsql will log
+             the following things in error_log
+             * Portal Session Cookie
+             * A trace cookie from mod_plsql which is created per-browser
+               session
+             * Shadow process ID (only for Portal DAD's)
+
+Syntax: PlsqlInfoLogging InfoDebug
+
+Default: No extra logging
+
+Example:
+    PlsqlInfoLogging InfoDebug
+
+Tips:
+
+  This logging setting is useful for debugging problems in your PL/SQL
+  application. This is especially useful when debugging Portal performance
+  issues.
+
+------------------------------------------------------------------------------
+
+------------------------ PlsqlInputFilterEnable ------------------------------
+
+Enables the input filtering processing to block out possible cross site
+scripting strings in the input parameters. 
+
+Syntax: PlsqlInputFilterEnable [Off/On]
+
+Default: Off
+
+Example:
+    PlsqlInputFilterEnable Off
+
+Tips:
+
+  This is an internal setting and is reserved for specific Oracle components.
+
+  This should not be enabled without knowing what it does. When enabled, 
+  there is a performance impact as this processing is done on every input 
+  parameters to the procedure.
+
+------------------------------------------------------------------------------
+
+This closes off the definition of a DAD.
+</Location>
+
+
+------------------------------------------------------------------------------
+Sample DADs
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+A DAD using HTTP Basic Authentication
+------------------------------------------------------------------------------
+<Location /pls/myapp>
+  SetHandler pls_handler
+  Order deny,allow
+  Allow from all
+  AllowOverride None
+  PlsqlDatabaseConnectString    orcl
+  PlsqlAuthenticationMode       Basic
+  PlsqlDefaultPage              scott.home
+</Location>
+
+------------------------------------------------------------------------------
+A typical Portal 9.0.2 DAD
+------------------------------------------------------------------------------
+
+<Location /pls/portal>
+  SetHandler pls_handler
+  Order deny,allow
+  Allow from all
+  AllowOverride None
+  PlsqlDatabaseUsername         portal
+  PlsqlDatabasePassword         portal
+  PlsqlDatabaseConnectString    host:port:sid
+  PlsqlAuthenticationMode       SingleSignOn
+  PlsqlDefaultPage              portal.home
+  PlsqlDocumentTablename        portal.wwdoc_document
+  PlsqlDocumentPath             docs
+  PlsqlDocumentProcedure        portal.wwdoc_process.process_download
+  PlsqlPathAlias                url
+  PlsqlPathAliasProcedure       portal.wwpth_api_alias.process_download
+  PlsqlSessionCookieName        portal
+</Location>
+ 
+ 
+------------------------------------------------------------------------------
+A typical Login Server instance DAD
+------------------------------------------------------------------------------
+
+<Location /pls/orasso>
+  SetHandler pls_handler
+  Order deny,allow
+  Allow from all
+  AllowOverride None
+  PlsqlDatabaseUsername         orasso
+  PlsqlDatabasePassword         orasso
+  PlsqlDatabaseConnectString    host:port:sid
+  PlsqlAuthenticationMode       SingleSignOn
+  PlsqlDefaultPage              orasso.home
+  PlsqlDocumentTablename        orasso.wwdoc_document
+  PlsqlDocumentPath             docs
+  PlsqlDocumentProcedure        orasso.wwdoc_process.process_download
+  PlsqlPathAlias                url
+  PlsqlPathAliasProcedure       orasso.wwpth_api_alias.process_download
+  PlsqlSessionCookieName        orasso
+</Location>
+
+
+------------------------------------------------------------------------------
+A typical Portal 3.0.x DAD
+------------------------------------------------------------------------------
+
+<Location /pls/portal30>
+  SetHandler pls_handler
+  Order deny,allow
+  Allow from all
+  AllowOverride None
+  PlsqlDatabaseUsername         portal30
+  PlsqlDatabasePassword         portal30
+  PlsqlDatabaseConnectString    host:port:sid
+  PlsqlAuthenticationMode       SingleSignOn
+  PlsqlDefaultPage              portal30.home
+  PlsqlDocumentTablename        portal30.wwdoc_document
+  PlsqlDocumentPath             docs
+  PlsqlDocumentProcedure        portal30.wwdoc_process.process_download
+  PlsqlPathAlias                url
+  PlsqlPathAliasProcedure       portal30.wwpth_api_alias.process_download
+  PlsqlSessionCookieName        portal30
+  PlsqlCompatibilityMode        1
+</Location>
+
+------------------------------------------------------------------------------
+A typical WebDB 2.x DAD
+------------------------------------------------------------------------------
+<Location /pls/webdb>
+  SetHandler pls_handler
+  Order deny,allow
+  Allow from all
+  AllowOverride None
+  PlsqlDatabaseUsername         webdb 
+  PlsqlDatabasePassword         webdb
+  PlsqlDatabaseConnectString    host:port:sid
+  PlsqlDefaultPage              webdb.home
+  PlsqlDocumentTablename        webdb.wwv_document
+  PlsqlDocumentPath             docs
+  PlsqlUploadAsLongRaw          *
+  PlsqlDocumentProcedure        webdb.wwv_document.process_download
+</Location>
+
+End.
+

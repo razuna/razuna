@@ -1,0 +1,1770 @@
+<?xml version="1.0" encoding="utf-8"?>
+<translations>
+	<transid name="thisid">
+		<transtext>4</transtext>
+	</transid>
+	<transid name="username">
+		<transtext>Gebruikersnaam</transtext>
+	</transid>
+	<transid name="password">
+		<transtext>Wachtwoord</transtext>
+	</transid>
+	<transid name="changelang">
+		<transtext>Wijzig taal</transtext>
+	</transid>
+	<transid name="button_login">
+		<transtext>In loggen</transtext>
+	</transid>
+	<transid name="login_error">
+		<transtext>Het spijt ons, maar de gegevens zijn niet correct. Probeer het opnieuw</transtext>
+	</transid>
+	<transid name="logoff">
+		<transtext>Uit loggen</transtext>
+	</transid>
+	<transid name="settings">
+		<transtext>Instellingen</transtext>
+	</transid>
+	<transid name="headerlogin">
+		<transtext>Login op jouw Digital Asset Management</transtext>
+	</transid>
+	<transid name="error_nousername">
+		<transtext>Geef je gebruikersnaam in!</transtext>
+	</transid>
+	<transid name="error_nopassword">
+		<transtext>Geef je wachtwoord in!</transtext>
+	</transid>
+	<transid name="forgot_password">
+		<transtext>Ik ben mijn wachtwoord vergeten</transtext>
+	</transid>
+	<transid name="welcome_to_ecp">
+		<transtext>Welkom bij Razuna Digital Asset Management</transtext>
+	</transid>
+	<transid name="welcome_text">
+		<transtext><![CDATA[Razuna is de oplossing voor het beheren van je digital assets. Aan de linker kant kan je jouw folders terug vinden, klaar om assets te bewerken en delen met andere.<br><br>De laatste informatie over Razuna kan je terug vinden op de hoofdpagina van onze website via de URL <a href="http://www.razuna.com" target="_target">http://www.razuna.com</a>. Ga zeker ook eens kijken op onze blog <a href="http://blog.razuna.com" target="_target">http://blog.razuna.com</a>.]]></transtext>
+	</transid>
+	<transid name="support_desc">
+		<transtext><![CDATA[Rechtstreekse ondersteuning van Razuna is enkel beschikbaar voor betalende gebruikers. Ondersteuning voor de Community Edition is enkel beschikbaar via het Forum, Online Help en de ingebouwde Bug Tracking / Knowledge Base System.]]></transtext>
+	</transid>
+	<transid name="online_help_link">
+		<transtext>Wiki</transtext>
+	</transid>
+	<transid name="direct_support">
+		<transtext>Onmiddelijke ondersteuning</transtext>
+	</transid>
+	<transid name="contact_support">
+		<transtext>Vraag ondersteuning</transtext>
+	</transid>
+	<transid name="header_search">
+		<transtext>Zoek</transtext>
+	</transid>
+	<transid name="type_of_file">
+		<transtext>Zoek in</transtext>
+	</transid>
+	<transid name="search_for_allassets">
+		<transtext>Alle Assets</transtext>
+	</transid>
+	<transid name="search_for_images">
+		<transtext>Enkel beelden</transtext>
+	</transid>
+	<transid name="search_for_documents">
+		<transtext>Enkel documenten</transtext>
+	</transid>
+	<transid name="search_for_videos">
+		<transtext>Enkel videos</transtext>
+	</transid>
+	<transid name="button_find">
+		<transtext>Zoek</transtext>
+	</transid>
+	<transid name="link_adv_search">
+		<transtext>Uitgebreid zoeken</transtext>
+	</transid>
+	<transid name="header_explorer">
+		<transtext>Verkenner</transtext>
+	</transid>
+	<transid name="header_favorites">
+		<transtext>Favorieten</transtext>
+	</transid>
+	<transid name="header_basket">
+		<transtext>Mandje</transtext>
+	</transid>
+	<transid name="header_administration">
+		<transtext>Beheer</transtext>
+	</transid>
+	<transid name="first_level">
+		<transtext>Hoofdniveau</transtext>
+	</transid>
+	<transid name="folder_new">
+		<transtext>Folder toevoegen</transtext>
+	</transid>
+	<transid name="folder_name">
+		<transtext>Folder naam</transtext>
+	</transid>
+	<transid name="description">
+		<transtext>Omschrijving</transtext>
+	</transid>
+	<transid name="access_for">
+		<transtext>Toegang voor</transtext>
+	</transid>
+	<transid name="per_read">
+		<transtext>Enkel lezen</transtext>
+	</transid>
+	<transid name="per_read_write">
+		<transtext><![CDATA[Lezen / Schrijven]]></transtext>
+	</transid>
+	<transid name="per_all">
+		<transtext>Geen beperkingen</transtext>
+	</transid>
+	<transid name="everybody">
+		<transtext>Iedereen</transtext>
+	</transid>
+	<transid name="button_save">
+		<transtext>Opslaan</transtext>
+	</transid>
+	<transid name="button_add">
+		<transtext>Toevoegen</transtext>
+	</transid>
+	<transid name="no_subfolders">
+		<transtext>Er zijn geen subfolders beschikbaar. Kijk aan de rechterkant voor de inhoud van deze folder of maak een nieuwe folder aan via het icoon bovenaan.</transtext>
+	</transid>
+	<transid name="group_inherit">
+		<transtext>Rechten overnemen naar subfolder</transtext>
+	</transid>
+	<transid name="button_update">
+		<transtext>Vernieuwen</transtext>
+	</transid>
+	<transid name="remove_folder">
+		<transtext>Verwijder Folder</transtext>
+	</transid>
+	<transid name="remove_folder_desc">
+		<transtext><![CDATA[Bent u zeker dat u deze folder uit het systeem wilt verwijderen?<br><br>Opgepast: ALLE subfolders en de inhoud in deze folders zullen ook verwijders worden! Deze bewerking kan niet ongedaan gemaakt worden!]]></transtext>
+	</transid>
+	<transid name="remove_folder_confirm">
+		<transtext>De folder is succesvol verwijderd</transtext>
+	</transid>
+	<transid name="remove_folder_confirm_desc">
+		<transtext>We hebben de folder succesvol kunnen verwijderen!</transtext>
+	</transid>
+	<transid name="success">
+		<transtext>De aantekenening is succesvol bijgewerkt</transtext>
+	</transid>
+	<transid name="move_folder">
+		<transtext>Verplaats folder</transtext>
+	</transid>
+	<transid name="folder_content">
+		<transtext>Inhoud van deze folder</transtext>
+	</transid>
+	<transid name="folder_count_total">
+		<transtext>Totaal aantal bestanden</transtext>
+	</transid>
+	<transid name="header_doc">
+		<transtext>Word</transtext>
+	</transid>
+	<transid name="header_img">
+		<transtext>Beelden</transtext>
+	</transid>
+	<transid name="header_other">
+		<transtext>Andere formaten</transtext>
+	</transid>
+	<transid name="header_pdf">
+		<transtext>PDF</transtext>
+	</transid>
+	<transid name="header_vid">
+		<transtext>Videos</transtext>
+	</transid>
+	<transid name="header_xls">
+		<transtext>Excel</transtext>
+	</transid>
+	<transid name="add_file">
+		<transtext><![CDATA[Voeg bestand(en) toe]]></transtext>
+	</transid>
+	<transid name="file_name">
+		<transtext>Bestandsnaam</transtext>
+	</transid>
+	<transid name="date_created">
+		<transtext>Datum toegevoegd</transtext>
+	</transid>
+	<transid name="date_changed">
+		<transtext>Laatst aangepast</transtext>
+	</transid>
+	<transid name="folder_content">
+		<transtext>Folder inhoud</transtext>
+	</transid>
+	<transid name="folder_images">
+		<transtext>Beelden</transtext>
+	</transid>
+	<transid name="folder_videos">
+		<transtext>Videos</transtext>
+	</transid>
+	<transid name="folder_word">
+		<transtext>Word</transtext>
+	</transid>
+	<transid name="folder_excel">
+		<transtext>Excel</transtext>
+	</transid>
+	<transid name="folder_pdf">
+		<transtext>PDF</transtext>
+	</transid>
+	<transid name="folder_others">
+		<transtext>Andere formaten</transtext>
+	</transid>
+	<transid name="folder_properties">
+		<transtext>Folder eigenschappen</transtext>
+	</transid>
+	<transid name="folder_search">
+		<transtext>Zoek in folder</transtext>
+	</transid>
+	<transid name="put_in_basket">
+		<transtext>Plaats in mandje</transtext>
+	</transid>
+	<transid name="file_detail">
+		<transtext>Details</transtext>
+	</transid>
+	<transid name="server_platform">
+		<transtext>Server Besturings Systeem</transtext>
+	</transid>
+	<transid name="server_platform_version">
+		<transtext>Besturings Systeem Versie</transtext>
+	</transid>
+	<transid name="coldfusion_version">
+		<transtext>CFML Versie</transtext>
+	</transid>
+	<transid name="coldfusion_product">
+		<transtext>CFML Motor</transtext>
+	</transid>
+	<transid name="server_url">
+		<transtext>URL van deze server</transtext>
+	</transid>
+	<transid name="database_in_use">
+		<transtext>Database in gebruik</transtext>
+	</transid>
+	<transid name="header_add_asset">
+		<transtext>Voeg asset toe</transtext>
+	</transid>
+	<transid name="header_add_asset_many">
+		<transtext>Voeg meerdere assets toe</transtext>
+	</transid>
+	<transid name="header_add_asset_server">
+		<transtext>Voeg toe van server</transtext>
+	</transid>
+	<transid name="header_add_asset_email">
+		<transtext>Voeg toe van Emaill</transtext>
+	</transid>
+	<transid name="header_add_asset_ftp">
+		<transtext>Voeg toe met FTP</transtext>
+	</transid>
+	<transid name="choose_asset">
+		<transtext>Kies Asset</transtext>
+	</transid>
+	<transid name="upload">
+		<transtext>Toevoegen</transtext>
+	</transid>
+	<transid name="upload_zip_desc">
+		<transtext>Je kan hier ook een Zip-bestand toevoegen!</transtext>
+	</transid>
+	<transid name="link_keyword_explorer">
+		<transtext>Keyword-Verkenner</transtext>
+	</transid>
+	<transid name="header_zip">
+		<transtext>Zip-Bestand bewerking</transtext>
+	</transid>
+	<transid name="header_zip_desc">
+		<transtext>Zip-Bestand uitpakken en folderstructuur behouden</transtext>
+	</transid>
+	<transid name="header_thumbnail_size">
+		<transtext>Geef pictogram formaat in</transtext>
+	</transid>
+	<transid name="header_thumbnail_size_desc">
+		<transtext>Razuna maakt een pictogram van de toegevoegd beelden. Geef hieronder het formaat in pixels in</transtext>
+	</transid>
+	<transid name="width">
+		<transtext>Breete</transtext>
+	</transid>
+	<transid name="heigth">
+		<transtext>Hoogte</transtext>
+	</transid>
+	<transid name="header_video_preview_size">
+		<transtext>Geef Video Preview formaat in</transtext>
+	</transid>
+	<transid name="header_video_preview_size_desc">
+		<transtext>Razuna zal automatisch een preview video en een stilstaand beeld maken van het originele video bestand. Geef hieronder het formaat in of laat de standaard settings staan</transtext>
+	</transid>
+	<transid name="error_upload">
+		<transtext>Ik heb niets om toe te voegen of ik kan het bestand niet lezen!</transtext>
+	</transid>
+	<transid name="keywords">
+		<transtext>Keywords</transtext>
+	</transid>
+	<transid name="upload_not_submitted">
+		<transtext>Gelieve eerst je asset toe te voegen voor je verder gaat</transtext>
+	</transid>
+	<transid name="upload_wait_message">
+		<transtext>Gelieve even te wachten het het toevoegen niet te onderbreken. Toevoegen kan enige tijd duren bij grotere bestanden!</transtext>
+	</transid>
+	<transid name="header_serverfolders">
+		<transtext>Folders op de Server</transtext>
+	</transid>
+	<transid name="back">
+		<transtext>Terug</transtext>
+	</transid>
+	<transid name="content_of_folder">
+		<transtext>Inhoud van Folder</transtext>
+	</transid>
+	<transid name="header_serverfolders_desc">
+		<transtext>Door op het folder incoon te klikken ga je ��n lever dieper. Folder iconen zonder groene pijl hebben GEEN subfolders. Als je op de foldernaam klikt krijg je de inhoud te zien.</transtext>
+	</transid>
+	<transid name="upload_success">
+		<transtext><![CDATA[De bestanden zijn succesvol in het systeem toegevoegd!]]></transtext>
+	</transid>
+	<transid name="email_mail_server">
+		<transtext>eMail Server</transtext>
+	</transid>
+	<transid name="email_address">
+		<transtext>eMail Adres</transtext>
+	</transid>
+	<transid name="email_subject">
+		<transtext>Onderwerp</transtext>
+	</transid>
+	<transid name="email_desc">
+		<transtext>Met dit formulier kan je de bijlage ontvangen van het ingegeven eMail adres. Voor veiligheidsredenen zullen enkel de berichten worden ontvangen met het zelfde onderwerp dat je hieronder hebt ingegeven.</transtext>
+	</transid>
+	<transid name="button_show_emails">
+		<transtext>Bekijk eMails</transtext>
+	</transid>
+	<transid name="email_error">
+		<transtext>Er is een probleem opgetreden tijdens eht verbinden met de mail server. Probeer het opnieuw!</transtext>
+	</transid>
+	<transid name="button_add_email_attachment">
+		<transtext><![CDATA[Voeg bijlage(n) toe of selecteer bericht(en)]]></transtext>
+	</transid>
+	<transid name="delete_email">
+		<transtext><![CDATA[Bent u zeker dat u dit email bericht wilt verwijderen?<br><br>Eens het bericht is verwijderd kan dit niet ongedaan gemaakt worden!]]></transtext>
+	</transid>
+	<transid name="remove">
+		<transtext>Verwijder Record</transtext>
+	</transid>
+	<transid name="ftp_desc">
+		<transtext><![CDATA[Gelieve je FTP gegevens in te voeren zodat bestanden kunnen ontvangen worden en opgeslagen in het systeem.]]></transtext>
+	</transid>
+	<transid name="ftp_server">
+		<transtext>FTP Server</transtext>
+	</transid>
+	<transid name="ftp_passive">
+		<transtext>FTP Passive Mode</transtext>
+	</transid>
+	<transid name="yes">
+		<transtext>Ja</transtext>
+	</transid>
+	<transid name="no">
+		<transtext>Nee</transtext>
+	</transid>
+	<transid name="button_show_ftp">
+		<transtext>Login op FTP Site</transtext>
+	</transid>
+	<transid name="delete_record_desc">
+		<transtext><![CDATA[<strong>Bent u zeker dat u dit record wilt verwijderen?</strong><br><br>Eens het record is verwijderd kan dit niet ongedaan gemaakt worden!!]]></transtext>
+	</transid>
+	<transid name="detail_view">
+		<transtext>Detail overzicht</transtext>
+	</transid>
+	<transid name="file_size">
+		<transtext>Bestands grote</transtext>
+	</transid>
+	<transid name="created_by">
+		<transtext>Gemaakt door</transtext>
+	</transid>
+	<transid name="located_in">
+		<transtext>Staat in</transtext>
+	</transid>
+	<transid name="asset_information">
+		<transtext>Informatie</transtext>
+	</transid>
+	<transid name="asset_desc">
+		<transtext><![CDATA[Descriptie & Keywords]]></transtext>
+	</transid>
+	<transid name="possible_distribution">
+		<transtext>Kies ��n van de volgende distributie opties...</transtext>
+	</transid>
+	<transid name="download_to_desktop">
+		<transtext>Download naar desktop</transtext>
+	</transid>
+	<transid name="send_with_email">
+		<transtext>Verzend per eMail</transtext>
+	</transid>
+	<transid name="send_with_ftp">
+		<transtext>Upload naar FTP Server</transtext>
+	</transid>
+	<transid name="or_do">
+		<transtext>...of ��n van deze acties</transtext>
+	</transid>
+	<transid name="add_to_collection">
+		<transtext>Voeg toe aan bestaande collectie</transtext>
+	</transid>
+	<transid name="move_file">
+		<transtext>Verplaats bestand</transtext>
+	</transid>
+	<transid name="delete_asset">
+		<transtext>Verwijder Asset</transtext>
+	</transid>
+	<transid name="files_in_basket">
+		<transtext>Bestanden in uw mandje</transtext>
+	</transid>
+	<transid name="button_edit_basket">
+		<transtext>wijzig mandje</transtext>
+	</transid>
+	<transid name="my_favorites">
+		<transtext>Mijn Favorieten</transtext>
+	</transid>
+	<transid name="from">
+		<transtext>Van</transtext>
+	</transid>
+	<transid name="to">
+		<transtext>Naar</transtext>
+	</transid>
+	<transid name="send_email">
+		<transtext>Verzend eMail</transtext>
+	</transid>
+	<transid name="attachment">
+		<transtext>Bijlage</transtext>
+	</transid>
+	<transid name="send_as_zip">
+		<transtext><![CDATA[Verzend de asset(s) als bijlage in een ZIP Bestand]]></transtext>
+	</transid>
+	<transid name="embed_url_in_message">
+		<transtext><![CDATA[Voeg URL naar het bestand toe in het bericht]]></transtext>
+	</transid>
+	<transid name="message">
+		<transtext>Bericht</transtext>
+	</transid>
+	<transid name="message_sent">
+		<transtext>Uw bericht is goed verzonden</transtext>
+	</transid>
+	<transid name="ftp_upload_here">
+		<transtext>Voeg bestand aan deze directory toe</transtext>
+	</transid>
+	<transid name="ftp_message_sent">
+		<transtext>Uw bestand is goed naar de FTP server verzonden</transtext>
+	</transid>
+	<transid name="action_with_selection">
+		<transtext>Actie met selectie</transtext>
+	</transid>
+	<transid name="move">
+		<transtext>Verplaats</transtext>
+	</transid>
+	<transid name="delete">
+		<transtext>Verwijder</transtext>
+	</transid>
+	<transid name="delete_record_desc_many">
+		<transtext><![CDATA[Bent u zeker dat u dit record wilt verwijderen?<br><br>Eens het record is verwijderd kan dit niet ongedaan gemaakt worden!]]></transtext>
+	</transid>
+	<transid name="convert">
+		<transtext>Converteer bestand</transtext>
+	</transid>
+	<transid name="click_for_preview">
+		<transtext>Klik op het beeld om de preview te bekijken</transtext>
+	</transid>
+	<transid name="size">
+		<transtext>Grote</transtext>
+	</transid>
+	<transid name="format">
+		<transtext>Formaat</transtext>
+	</transid>
+	<transid name="preview">
+		<transtext>Preview</transtext>
+	</transid>
+	<transid name="converted_videos">
+		<transtext>Geconverteerde Versie</transtext>
+	</transid>
+	<transid name="videos_conversion_desc">
+		<transtext><![CDATA[Hier kan u originele video assets omzetten naar een ander formaat. Voor iedere geconverteerde video zal automatisch een beeld worden gemaakt.<br><br>Note: De video zal in de achtergrond worden geconverteerd zogauw je de conversie opstart. Hoe lang dit zal duren, hangt af van de grote van je video. Herlaat dit venster na enkele minuten.]]></transtext>
+	</transid>
+	<transid name="video_original">
+		<transtext>Originele Video Asset</transtext>
+	</transid>
+	<transid name="data_size">
+		<transtext>Data grote</transtext>
+	</transid>
+	<transid name="video_convert_to">
+		<transtext>Maak volgende nieuwe versie</transtext>
+	</transid>
+	<transid name="videos_conversion_mac">
+		<transtext><![CDATA[Blijkbaar hebt u razuna op een MacOS X machine geinstalleerd. Hoewel we grote fan zijn van het Mac platform (en er op ontwikkelen en ondersteunen) kunnen we jammer genoeg geen video conversie functie aanbieden onder MacOS X. Als u toch een video converteerd, zal de nieuwe video geen geluid hebben! (Het probleem is dat onder MacOS X de meeste audio codecs niet beschikbaar zijn)]]></transtext>
+	</transid>
+	<transid name="images_conversion_desc">
+		<transtext><![CDATA[Converteer u originele beeld naar de opgegeven beeld formaten. Voor ieder formaat zal een appart icoon worden gegenereerd.]]></transtext>
+	</transid>
+	<transid name="images_original">
+		<transtext>Origineel beeld Asset</transtext>
+	</transid>
+	<transid name="comma_seperated">
+		<transtext>Om woorden van elkaar te scheiden gebruikt u een comma</transtext>
+	</transid>
+	<transid name="results_files">
+		<transtext>Bestanden gevonden</transtext>
+	</transid>
+	<transid name="results_images">
+		<transtext>Beelden gevonden</transtext>
+	</transid>
+	<transid name="results_videos">
+		<transtext>Videos gevonden</transtext>
+	</transid>
+	<transid name="show_remaining">
+		<transtext>Laar overig gevonden resultaten zien</transtext>
+	</transid>
+	<transid name="folder">
+		<transtext>Folder</transtext>
+	</transid>
+	<transid name="search_for">
+		<transtext>Zoek naar</transtext>
+	</transid>
+	<transid name="search_for_type">
+		<transtext>Document type</transtext>
+	</transid>
+	<transid name="day">
+		<transtext>Dag</transtext>
+	</transid>
+	<transid name="month">
+		<transtext>Maand</transtext>
+	</transid>
+	<transid name="year">
+		<transtext>Jaar</transtext>
+	</transid>
+	<transid name="today">
+		<transtext>Vandaag</transtext>
+	</transid>
+	<transid name="choose_language">
+		<transtext>Kies taal</transtext>
+	</transid>
+	<transid name="all_languages">
+		<transtext>Alle talen</transtext>
+	</transid>
+	<transid name="all_documents">
+		<transtext>Alle documenten</transtext>
+	</transid>
+	<transid name="back_to_folder">
+		<transtext>Terug naar Folder</transtext>
+	</transid>
+	<transid name="download">
+		<transtext>Download</transtext>
+	</transid>
+	<transid name="delete_basket">
+		<transtext>Verwijder mandje</transtext>
+	</transid>
+	<transid name="send_basket_email">
+		<transtext>eMail mandje</transtext>
+	</transid>
+	<transid name="send_basket_ftp">
+		<transtext>FTP mandje</transtext>
+	</transid>
+	<transid name="save_basket">
+		<transtext><![CDATA[Opslaan & Publiseer mandje]]></transtext>
+	</transid>
+	<transid name="remove_basket_desc">
+		<transtext><![CDATA[Bent u zeker dat u het mandje wil leeg maken?]]></transtext>
+	</transid>
+	<transid name="empty_basket">
+		<transtext>Er zitten momenteel geen assets in jouw mandje</transtext>
+	</transid>
+	<transid name="basket_email_send_desc">
+		<transtext>Dit zal gebruikt worden met de geselecteerde assets in jou mandje. Als je de selectie wilt veranderen moet je dit venster sluiten, de nieuwe assets selecteren en dit venster opnieuw openen.</transtext>
+	</transid>
+	<transid name="basket_save_as_zip">
+		<transtext>Bewaar de inhoud van het mandje als ZIP bestand</transtext>
+	</transid>
+	<transid name="basket_save_as_zip_desc">
+		<transtext>Bewaar de inhoud van het mandje als ZIP bestand en bewaar het in een folder die jij kiest. Hierna kan je jou klant de URL doorgeven om het ZIP bestand te downloaden. De Zip file zal ook in het CMS beschikbaar zijn. Beelden en videos zullen bewaard worden in het fromaat en de grote die je hebt opgegeven in het mandjes overzicht.</transtext>
+	</transid>
+	<transid name="basket_save_as_zip_button">
+		<transtext>Bewaar als ZIP</transtext>
+	</transid>
+	<transid name="basket_save_as_collection">
+		<transtext>Bewaar de inhoud van het mandje als Collectie</transtext>
+	</transid>
+	<transid name="basket_save_as_collection_desc">
+		<transtext>Een collectie is een bewaard mandje met alle bestanden erin. Je kan een opmaak voor je Collectie kiezen en publiseren op de aangegeven URL. Een Collectie is ook beschikbaar in het Razuna CMS als een Flex Module.</transtext>
+	</transid>
+	<transid name="basket_save_as_collection_button">
+		<transtext>Bewaar als Collectie</transtext>
+	</transid>
+	<transid name="basket_save_as_ext_collection">
+		<transtext>Bewaar het mandje in een bestaande Collectie</transtext>
+	</transid>
+	<transid name="basket_save_as_ext_collection_desc">
+		<transtext>Voeg een bestand toe in het mandje van een bestaande Collectie.</transtext>
+	</transid>
+	<transid name="basket_save_as_ext_collection_button">
+		<transtext>Kies Collectie</transtext>
+	</transid>
+	<transid name="save_in_this_folder">
+		<transtext>Bewaar naar deze folder</transtext>
+	</transid>
+	<transid name="name_of_zip">
+		<transtext>Naam van je Zip-Bestand</transtext>
+	</transid>
+	<transid name="save_zip_done">
+		<transtext>Het Zip-bestand is succesvol bewaard.</transtext>
+	</transid>
+	<transid name="move_in_this_folder">
+		<transtext>Ga naar deze folder</transtext>
+	</transid>
+	<transid name="batch_selected_header">
+		<transtext>Batching van de geselecteerde bestanden</transtext>
+	</transid>
+	<transid name="batch">
+		<transtext>Batch</transtext>
+	</transid>
+	<transid name="batch_done">
+		<transtext>Alle geselecteerde bestanden zijn aangepast met jouw waarden!</transtext>
+	</transid>
+	<transid name="header_collections">
+		<transtext>Collecties</transtext>
+	</transid>
+	<transid name="header_collection_name">
+		<transtext>Collectie naam</transtext>
+	</transid>
+	<transid name="save_collection_done">
+		<transtext>Jouw Collectie is succesvol aangemaakt.</transtext>
+	</transid>
+	<transid name="button_update">
+		<transtext>Update</transtext>
+	</transid>
+	<transid name="collection_assets">
+		<transtext>Assets in jou Collectie</transtext>
+	</transid>
+	<transid name="collection_remove_desc">
+		<transtext>Ben u zeker dat u deze assets van de Collectie wilt verwijderen?</transtext>
+	</transid>
+	<transid name="collection_remove_button">
+		<transtext><![CDATA[Ja, verwijder asset]]></transtext>
+	</transid>
+	<transid name="choose_collection_done">
+		<transtext><![CDATA[De asset(s) zijn toegevoegd aan de gekozen Collectie. Je kan dit venster nu sluiten of de asset(s) aan een andere Collectie toevoegen.]]></transtext>
+	</transid>
+	<transid name="update_collection_done">
+		<transtext><![CDATA[Jou Collectie is aangepast.]]></transtext>
+	</transid>
+	<transid name="scheduled_uploads">
+		<transtext>Geplande Uploads</transtext>
+	</transid>
+	<transid name="users">
+		<transtext>Gebruikers</transtext>
+	</transid>
+	<transid name="groups">
+		<transtext>Groepen</transtext>
+	</transid>
+	<transid name="categories">
+		<transtext>Categorieen</transtext>
+	</transid>
+	<transid name="log">
+		<transtext>Log</transtext>
+	</transid>
+	<transid name="user_list">
+		<transtext>Gebruikers</transtext>
+	</transid>
+	<transid name="user_company">
+		<transtext>Bedrijf</transtext>
+	</transid>
+	<transid name="remove_selected">
+		<transtext>Verwijder geselecteerde Records</transtext>
+	</transid>
+	<transid name="user_search">
+		<transtext>Zoeken</transtext>
+	</transid>
+	<transid name="quicksearch">
+		<transtext>Snel zoeken</transtext>
+	</transid>
+	<transid name="one_field_fill">
+		<transtext>Gelieve minstens ��n waarde in het veld in te vullen!</transtext>
+	</transid>
+	<transid name="please_wait">
+		<transtext>Gelieve even te wachten</transtext>
+	</transid>
+	<transid name="searchresults_header">
+		<transtext>Zoek resultaten</transtext>
+	</transid>
+	<transid name="clear_search">
+		<transtext>Wis zoeken</transtext>
+	</transid>
+	<transid name="user_add">
+		<transtext>Gebruiker toevoegen</transtext>
+	</transid>
+	<transid name="user_edit">
+		<transtext>Bewerk gebruiker</transtext>
+	</transid>
+	<transid name="email">
+		<transtext>eMail</transtext>
+	</transid>
+	<transid name="user_active">
+		<transtext>Gebruiker kan inloggen</transtext>
+	</transid>
+	<transid name="password_confirm">
+		<transtext>Confirmeer Password</transtext>
+	</transid>
+	<transid name="error_password">
+		<transtext>Jou password kom niet overeen. Gelieve opnieuw te proberen.</transtext>
+	</transid>
+	<transid name="theuser">
+		<transtext>Gebruiker</transtext>
+	</transid>
+	<transid name="user_first_name">
+		<transtext>Voornaam</transtext>
+	</transid>
+	<transid name="user_last_name">
+		<transtext>Achternaam</transtext>
+	</transid>
+	<transid name="salutation">
+		<transtext>Aanhef</transtext>
+	</transid>
+	<transid name="user_street">
+		<transtext>Straat</transtext>
+	</transid>
+	<transid name="user_street_nr">
+		<transtext>Straat Nr.</transtext>
+	</transid>
+	<transid name="user_city">
+		<transtext>Stad</transtext>
+	</transid>
+	<transid name="user_zip">
+		<transtext>Postcode</transtext>
+	</transid>
+	<transid name="user_country">
+		<transtext>Land</transtext>
+	</transid>
+	<transid name="user_tel">
+		<transtext>Telefoon</transtext>
+	</transid>
+	<transid name="user_fax">
+		<transtext>Fax</transtext>
+	</transid>
+	<transid name="user_mobile">
+		<transtext>Mobiel/Cell</transtext>
+	</transid>
+	<transid name="user_name">
+		<transtext>Gebruikersnaam</transtext>
+	</transid>
+	<transid name="intranet_area">
+		<transtext>Media Asset Management gedeelte</transtext>
+	</transid>
+	<transid name="user_intranet_area">
+		<transtext>Gebruiker heeft toegang tot de Media Asset Management Site</transtext>
+	</transid>
+	<transid name="allowedinadmin">
+		<transtext>Gebruiker is ook Administrator</transtext>
+	</transid>
+	<transid name="adminarea">
+		<transtext>Administratie gedeelte</transtext>
+	</transid>
+	<transid name="group_description_SystemAdmin">
+		<transtext>Systeem groep</transtext>
+	</transid>
+	<transid name="group_description_Administrator">
+		<transtext>Systeem groep</transtext>
+	</transid>
+	<transid name="hosts">
+		<transtext><![CDATA[Klanten/Domeinen/Hosts]]></transtext>
+	</transid>
+	<transid name="groupnumber_header_new">
+		<transtext>Groep toevoegen</transtext>
+	</transid>
+	<transid name="group_list">
+		<transtext>Groepen lijst</transtext>
+	</transid>
+	<transid name="groups_edit">
+		<transtext>Groep aanpassen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_new">
+		<transtext>Nieuwe geplande Upload</transtext>
+	</transid>
+	<transid name="scheduled_uploads_edit">
+		<transtext>Wijzig geplande Upload</transtext>
+	</transid>
+	<transid name="scheduled_uploads_log">
+		<transtext>Log gegevens</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_run_cap">
+		<transtext>Start geplande taak</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_run_desc">
+		<transtext>Door deze knop in te drukken, zal de geplande taak onmiddelijk worden uitgevoerd. Dit kan een tijd duren, gelieven te wachten...</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_pause_cap">
+		<transtext>Pauzeer geplande taak</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_pause_desc">
+		<transtext>Door deze knop in te drukken, zal de geplande taak onmiddelijk gepauzeerd worden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_resume_cap">
+		<transtext>Herstart geplande taak</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_resume_desc">
+		<transtext>Door deze knop in te drukken, zal de geplande taak onmiddelijk herstart worden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_edit_cap">
+		<transtext>Pas geplande taak aan</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_edit_desc">
+		<transtext>Door deze knop in te drukken, kan de geplande taak aangepast worden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_delete_cap">
+		<transtext>Verwijder geplande taak</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_delete_desc">
+		<transtext>Door deze knop in te drukken, zal de geplande taak onmiddelijk verwijderd worden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_mail_cap">
+		<transtext>Test Mail Connectie</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_mail_desc">
+		<transtext>Door op dit icoon te klikken, zal de Mail connectie getest worden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_ftp_cap">
+		<transtext>Test FTP Connectie</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_ftp_desc">
+		<transtext>Door op dit icoon te klikken, zal de FTP connectie getest worden en kan de gewenste FTP folder gekozen worden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_folder_cap">
+		<transtext>Kies Folder Locatie</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_folder_desc">
+		<transtext>Door op dit icoon te klikken, kan de gewenste DAM folder gekozen worden waarin de geplande uploads geplaatst worden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_log_search_cap">
+		<transtext>Vind log resultaten</transtext>
+	</transid>
+	<transid name="scheduled_uploads_log_search_desc">
+		<transtext>Verminder het aan tal weergegeven log resultaten, door zoek criteria in te geven of toe te voegen.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_info_text1">
+		<transtext>Als je een taak plant om maandelijks te lopen tussen de data 28-31, zal de planner het volgende doen:</transtext>
+	</transid>
+	<transid name="scheduled_uploads_info_text2">
+		<transtext>Als je een taak plant om op de laatste dag van de maand te lopen, zal de taak ook telkens op de laatste dag van de maand lopen. Bijvoorbeeld, als je een maandelijkse taak invoerd die start op 31 Januari, zal deze taak lopen op 31 Januari, 28 of 29 Februari, 31 Maart, 30 April, en zo verder...</transtext>
+	</transid>
+	<transid name="scheduled_uploads_info_text3">
+		<transtext>Als je een taak plant om op de 29ste of 30ste van de maand te lopen, zal de taak lopen op de iedere maand die 30 of 31 dagen heeft, en de laatste dag van Februari. Bijvoorbeeld, als je een maandelijkse taak invoerd die start op 30 Januari, zal deze taak lopen op 30 Januari, 28 of 29 Februari, 30 Maart, 30 April, en zo verder.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_info_text4">
+		<transtext>Als je een taak plant die ��nmaal moet lopen, en de starttijd is reeds verlopen, en de taak heeft nog niet gelopen, dan zal de taak onmiddelijk worden uitgevoerd. Als je een terugkeerende taak plant met een starttijd die reeds is verstreken, dan zal het systeem het dichtst bijzijnde moment in de toekomst dat in de planning staat als start punt nemen.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_actions">
+		<transtext>Acties</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_name">
+		<transtext>Taak naam</transtext>
+	</transid>
+	<transid name="scheduled_uploads_method">
+		<transtext>Methode</transtext>
+	</transid>
+	<transid name="scheduled_uploads_server">
+		<transtext>Server</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail">
+		<transtext>Mail</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp">
+		<transtext>FTP</transtext>
+	</transid>
+	<transid name="scheduled_uploads_server_folder">
+		<transtext>Server Folder</transtext>
+	</transid>
+	<transid name="scheduled_uploads_server_recurse">
+		<transtext>Voeg Sub-Folders toe?</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail_server">
+		<transtext>POP Server</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail_user">
+		<transtext>Gebruikersnaam</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail_pass">
+		<transtext>Paswoord</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail_subject">
+		<transtext>Onderwerp</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_server">
+		<transtext>Server</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_user">
+		<transtext>Gebruikersnaam</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_pass">
+		<transtext>Paswoord</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_folder">
+		<transtext>Folder</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_passive">
+		<transtext>Passive Mode</transtext>
+	</transid>
+	<transid name="scheduled_uploads_duration">
+		<transtext>Tijd</transtext>
+	</transid>
+	<transid name="scheduled_uploads_start_date">
+		<transtext>Start Datum</transtext>
+	</transid>
+	<transid name="scheduled_uploads_end_date">
+		<transtext>Eind Datum (optioneel)</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency">
+		<transtext>Frequencie</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_onetime">
+		<transtext>��nmalig</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_recurring">
+		<transtext>Terug keerend</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_daily_every">
+		<transtext>Dagelijks alle</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_at">
+		<transtext>op</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_daily">
+		<transtext>Dagelijks</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_weekly">
+		<transtext>Weeklijks</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_monthly">
+		<transtext>Maandelijks</transtext>
+	</transid>
+	<transid name="scheduled_uploads_start_time">
+		<transtext>Start Tijd</transtext>
+	</transid>
+	<transid name="scheduled_uploads_end_time">
+		<transtext>Eind Tijd</transtext>
+	</transid>
+	<transid name="scheduled_uploads_zip_archive">
+		<transtext>ZIP Bestand</transtext>
+	</transid>
+	<transid name="scheduled_uploads_extract_zip">
+		<transtext>Uitpakken als het een ZIP bestand is</transtext>
+	</transid>
+	<transid name="scheduler_add">
+		<transtext>Voeg upload plannings event toe</transtext>
+	</transid>
+	<transid name="scheduler_update">
+		<transtext>Pas upload plannings event aan</transtext>
+	</transid>
+	<transid name="scheduler_folder_back_cap">
+		<transtext>Laatste Folder</transtext>
+	</transid>
+	<transid name="scheduler_folder_back_desc">
+		<transtext>Navigeer ��n Folder omhoog.</transtext>
+	</transid>
+	<transid name="scheduler_close_cap">
+		<transtext>Sluit venster</transtext>
+	</transid>
+	<transid name="scheduler_close_desc">
+		<transtext>Druk op dit icoon en dit venster zal onmiddelijk sluiten.</transtext>
+	</transid>
+	<transid name="scheduler_folder_select_cap">
+		<transtext>Selecteer deze Folder</transtext>
+	</transid>
+	<transid name="scheduler_folder_select_desc">
+		<transtext>Druk op dit icoon om Press this icon to select the appropriate folder in your Scheduled Uploads Form.</transtext>
+	</transid>
+	<transid name="scheduler_ftp_intro1">
+		<transtext>Gelieve de gewenste folder te selecteren van waar de geplande upload files moeten komen, door de juiste icoon te selecteren rechts van de foldernaam.</transtext>
+	</transid>
+	<transid name="scheduler_ftp_intro2">
+		<transtext>Je kan de folder structuur verkennen door op de foldernaam te klikken.</transtext>
+	</transid>
+	<transid name="scheduler_folder_intro1">
+		<transtext>Gelieve de gewenste folder te selecteren waar de geplande upload files naartoe moeten, door de juiste icoon te selecteren rechts van de foldernaam.</transtext>
+	</transid>
+	<transid name="scheduler_folder_intro2">
+		<transtext>Je kan de folder structuur verkennen door op de foldernaam te klikken.</transtext>
+	</transid>
+	<transid name="scheduler_mail_intro1">
+		<transtext>Dit is enkel informatie over de connectie van de gewenste Email account.</transtext>
+	</transid>
+	<transid name="scheduler_mail_intro2">
+		<transtext>De lijst met Emails (indien er zichtbaar zijn) is enkel voor informatieve reden.</transtext>
+	</transid>
+	<transid name="success_deleted">
+		<transtext>Jou record is met succes verwijderd!</transtext>
+	</transid>
+	<transid name="success_paused">
+		<transtext>De geplande taak is met succes gepauzeerd!</transtext>
+	</transid>
+	<transid name="success_resumed">
+		<transtext>De geplande taak is met succes terug gestart!</transtext>
+	</transid>
+	<transid name="success_run">
+		<transtext>De geplande taak heeft met succes gelopen!</transtext>
+	</transid>
+	<transid name="sched_error">
+		<transtext>Er is een fout opgetreden tijdens de transactie! Je kan de foutmelding terug vinden in de logfile.</transtext>
+	</transid>
+	<transid name="sched_actions">
+		<transtext>Acties</transtext>
+	</transid>
+	<transid name="calendar_day_names">
+		<transtext>Zo,Ma,Di,Wo,Do,Vr,Za</transtext>
+	</transid>
+	<transid name="calendar_month_names">
+		<transtext>Januari,Februari,Maart,April,Mei,Juni,Juli,Augustus,September,Oktober,November,December</transtext>
+	</transid>
+	<transid name="sched_msg_task_name">
+		<transtext>Gelieve een naam op te geven voor de geplande taak.</transtext>
+	</transid>
+	<transid name="sched_msg_choose_folder">
+		<transtext>Gelieve een folder te selecteren waar de upload taak de data moet bewaren.</transtext>
+	</transid>
+	<transid name="sched_msg_server">
+		<transtext>Gelieve een server folder te selecteren!</transtext>
+	</transid>
+	<transid name="sched_msg_ftp">
+		<transtext>Gelieve de nodige velden in te vullen FTP Server, Gebruiker en Pasword!</transtext>
+	</transid>
+	<transid name="sched_msg_mail">
+		<transtext>Gelieve de nodige velden in te vullen POP Server, Gebruiker en Pasword!</transtext>
+	</transid>
+	<transid name="hours">
+		<transtext>Uren</transtext>
+	</transid>
+	<transid name="minutes">
+		<transtext>Minuten</transtext>
+	</transid>
+	<transid name="seconds">
+		<transtext>Seconden</transtext>
+	</transid>
+	<transid name="sched_no_emails_found">
+		<transtext>Geen Emails gevonden!</transtext>
+	</transid>
+	<transid name="sched_dam_folder">
+		<transtext>DAM Folder</transtext>
+	</transid>
+	<transid name="sched_server_recursive">
+		<transtext>Recursief</transtext>
+	</transid>
+	<transid name="sched_server_deletemove">
+		<transtext>Verwijder of verplaats naar een tijdelijke folder succesvol uploaded bestanden?</transtext>
+	</transid>
+	<transid name="sched_server_files">
+		<transtext>Bestanden</transtext>
+	</transid>
+	<transid name="sched_server_delete">
+		<transtext>Verwijder</transtext>
+	</transid>
+	<transid name="sched_server_move">
+		<transtext>Verplaats</transtext>
+	</transid>
+	<transid name="choose_location">
+		<transtext>Kies locatie</transtext>
+	</transid>
+	<transid name="store_in_this_folder">
+		<transtext>Bewaar alle assets van deze geplande taak in deze folder</transtext>
+	</transid>
+	<transid name="scheduler_ftp_desc">
+		<transtext>Connecteer met FTP-Server en selecteer folder</transtext>
+	</transid>
+	<transid name="date">
+		<transtext>Datum</transtext>
+	</transid>
+	<transid name="time">
+		<transtext>Tijd</transtext>
+	</transid>
+	<transid name="action">
+		<transtext>Actie</transtext>
+	</transid>
+	<transid name="delete_log">
+		<transtext>Verwijder Log gegevens</transtext>
+	</transid>
+	<transid name="log_search_header">
+		<transtext><![CDATA[Logs]]></transtext>
+	</transid>
+	<transid name="log_users_header">
+		<transtext><![CDATA[Gebruikers Acties]]></transtext>
+	</transid>
+	<transid name="show_only">
+		<transtext>Laat enkel zien</transtext>
+	</transid>
+	<transid name="please_select">
+		<transtext>Gelieve een selectie te maken</transtext>
+	</transid>
+	<transid name="reset">
+		<transtext>Reset Selectie</transtext>
+	</transid>
+	<transid name="next">
+		<transtext>Volgende</transtext>
+	</transid>
+	<transid name="select_log">
+		<transtext>Selecteer de Log die je wil zien</transtext>
+	</transid>
+	<transid name="log_type_of_file">
+		<transtext>Type van bestand</transtext>
+	</transid>
+	<transid name="log_header_assets">
+		<transtext>Assets</transtext>
+	</transid>
+	<transid name="log_header_searches">
+		<transtext>Zoek opdrachten</transtext>
+	</transid>
+	<transid name="log_header_folders">
+		<transtext>Folders</transtext>
+	</transid>
+	<transid name="log_header_searches_sum">
+		<transtext><![CDATA[Zoek opdrachten (Samengevat)]]></transtext>
+	</transid>
+	<transid name="assets_found">
+		<transtext>Assets gevonden</transtext>
+	</transid>
+	<transid name="assets_type">
+		<transtext>Type van Asset</transtext>
+	</transid>
+	<transid name="searched_for">
+		<transtext>Gezocht naar ...</transtext>
+	</transid>
+	<transid name="header_">
+		<transtext></transtext>
+	</transid>
+	<transid name="passwordsent">
+		<transtext>Het paswoord zal worden verstuurd naar het opgegeven email adres.</transtext>
+	</transid>
+	<transid name="youremail">
+		<transtext>Jou eMail Adres</transtext>
+	</transid>
+	<transid name="buttonsendpassword">
+		<transtext>Stuur me mijn Paswoord</transtext>
+	</transid>
+	<transid name="errorretrievingpassword">
+		<transtext><![CDATA[Jammer genoeg konden we jouw email adres niet in de database vinden. Misschien hebt u een anders email adres gebruikt tijdens de registratie?]]></transtext>
+	</transid>
+	<transid name="errornoemailaddress">
+		<transtext>Gelieve een juist email adres in te voeren</transtext>
+	</transid>
+	<transid name="headerretrievepassword">
+		<transtext>Stuur me mijn Paswoord</transtext>
+	</transid>
+	<transid name="cancel">
+		<transtext>Annuleren</transtext>
+	</transid>
+	<transid name="button_add_selected">
+		<transtext>Voeg geselecteerde assets toe</transtext>
+	</transid>
+	<transid name="custom_fields_header">
+		<transtext>Custom velden</transtext>
+	</transid>
+	<transid name="custom_fields_desc">
+		<transtext><![CDATA[Hier kan je je eigen data velden defini�ren. Deze velden zullen dan verschijnen bij de assets details. De toegevoegde gegevens zullen mee in de index worden opgenomen en kunnen gebruikt worden bij zoekopdrachten.]]></transtext>
+	</transid>
+	<transid name="custom_fields">
+		<transtext>Bestaande Custom Velden</transtext>
+	</transid>
+	<transid name="custom_fields_new">
+		<transtext>Voeg een custom veld toe</transtext>
+	</transid>
+	<transid name="enabled">
+		<transtext>Ingeschakeld</transtext>
+	</transid>
+	<transid name="custom_field_type">
+		<transtext>Veld type</transtext>
+	</transid>
+	<transid name="custom_field_for">
+		<transtext>Enkel voor...</transtext>
+	</transid>
+	<transid name="only_images">
+		<transtext>Enkel voor beelden</transtext>
+	</transid>
+	<transid name="only_videos">
+		<transtext>Enkel voor Videos</transtext>
+	</transid>
+	<transid name="only_documents">
+		<transtext>Enkel voor Documenten</transtext>
+	</transid>
+	<transid name="edit">
+		<transtext>Pas aan</transtext>
+	</transid>
+	<transid name="custom_fields_asset">
+		<transtext>Extra informatie</transtext>
+	</transid>
+	<transid name="show_only_for">
+		<transtext>Laat zien in</transtext>
+	</transid>
+	<transid name="convert_button">
+		<transtext>Converteer nu</transtext>
+	</transid>
+	<transid name="convert_feedback">
+		<transtext><![CDATA[Momenteel worden de originele assets geconverteerd naar jou nieuwe formaat(en).]]></transtext>
+	</transid>
+	<transid name="share_header">
+		<transtext>Delen</transtext>
+	</transid>
+	<transid name="share_desc">
+		<transtext><![CDATA[Wanneer je delen aanzet zullen deze assets beschikbaar zijn onder een "normale URL", Maw. iedereen die de URL kent heeft toegang tot deze assets.<br><br>Opmerking: Je Moet deze asset delen als je hem wil gebruiken in het CMS of andere systemen! Als je delen aan zet zullen alle afgeleide assets van deze asset ook gedeelt worden.]]></transtext>
+	</transid>
+	<transid name="only_me">
+		<transtext>Enkel mezelf</transtext>
+	</transid>
+	<transid name="tooltip_collection_desc">
+		<transtext>Vind hier jou collectie. Collecties worden aangemaakt wanneer je het mandje bewaard en kunnen gedeelt worden met andere.</transtext>
+	</transid>
+	<transid name="tooltip_folder_desc">
+		<transtext>In het volgende dialoog venster kan je een nieuwe folder aanmaken op het huidige niveau.</transtext>
+	</transid>
+	<transid name="tooltip_refresh">
+		<transtext>Herlaad huidige pagina</transtext>
+	</transid>
+	<transid name="tooltip_refresh_desc">
+		<transtext>Door het cach geheugen van je browser is het mogelijk dat juist toegevoegde assets niet zichtbaar zijn. Je kan deze pagina opnieuw laden door op hier te klikken.</transtext>
+	</transid>
+	<transid name="tooltip_select">
+		<transtext>Selecteer onderstaande assets</transtext>
+	</transid>
+	<transid name="tooltip_select_desc">
+		<transtext>Klik hier om alle assets op deze pagina te selecteren.</transtext>
+	</transid>
+	<transid name="upload_success_email">
+		<transtext><![CDATA[De asset wordt verwerkt. Je zal op de hoogte gebracht worden via email. Onder tussen kan je gewoon verder werken.]]></transtext>
+	</transid>
+	<transid name="load_in_cooliris">
+		<transtext>Bekijk in Cooliris</transtext>
+	</transid>
+	<transid name="tooltip_cooliris">
+		<transtext>Bekijk je bibliotheek in Cooliris</transtext>
+	</transid>
+	<transid name="tooltip_cooliris_desc">
+		<transtext>Je kan de volledige bibliotheek met de speciale effecten van Cooliris hier bekijken.</transtext>
+	</transid>
+	<transid name="pdf_image_desc">
+		<transtext>Geen PDF lezer geinstalleerd? Geen probleem klik hier om de PDF als beeld te bekijken</transtext>
+	</transid>
+	<transid name="pages">
+		<transtext>Paginas</transtext>
+	</transid>
+	<transid name="tooltip_subfolders">
+		<transtext>Voeg assets van subfolders toe</transtext>
+	</transid>
+	<transid name="tooltip_subfolders_desc">
+		<transtext>Je kan assets van sub-folders toevoegen door op dit icoon te klikken. Alle assets zullen dan getoont worden in deze folder view. Klik hier opnieuw om enkel de assets van deze folder te tonen.</transtext>
+	</transid>
+	<transid name="pdf_window_title">
+		<transtext>PDF Instellingen</transtext>
+	</transid>
+	<transid name="pdf_window_desc">
+		<transtext><![CDATA[Hieronder kan je instellen hoe je de asset(s)wilt printen. JE kan het papier formaat instellen, hoeveel assets er op ��n pagina moeten en nog veel meer. Wanneer je klaar bent, klik je op "maak PDF nu".]]></transtext>
+	</transid>
+	<transid name="pdf_pagetype">
+		<transtext>Pagina Formaat</transtext>
+	</transid>
+	<transid name="pdf_pages">
+		<transtext>Paginas</transtext>
+	</transid>
+	<transid name="current">
+		<transtext>Huidige</transtext>
+	</transid>
+	<transid name="all">
+		<transtext>Alles</transtext>
+	</transid>
+	<transid name="view">
+		<transtext>Bekijken</transtext>
+	</transid>
+	<transid name="thumbnails">
+		<transtext>Thumbnails</transtext>
+	</transid>
+	<transid name="list">
+		<transtext>Lijst</transtext>
+	</transid>
+	<transid name="tooltip_print">
+		<transtext>Maak een PDF</transtext>
+	</transid>
+	<transid name="tooltip_print_desc">
+		<transtext>Klik hier om een PDF van je assets te maken. Een wizard zal je begeleiden om de PDF voor jou te maken.</transtext>
+	</transid>
+	<transid name="pdf_format">
+		<transtext>Formaat</transtext>
+	</transid>
+	<transid name="pdf_assetspage">
+		<transtext>assets per pagina</transtext>
+	</transid>
+	<transid name="pdf_header">
+		<transtext>Custom Koptekst</transtext>
+	</transid>
+	<transid name="pdf_header_desc">
+		<transtext>Geef hier je eigen koptekst in. Standaard wordt er niets in de koptekst weegegeven.</transtext>
+	</transid>
+	<transid name="pdf_footer">
+		<transtext>Custom Voettekst</transtext>
+	</transid>
+	<transid name="pdf_footer_desc">
+		<transtext>Je kan extra voettekst details hier ingeven. De pagina nummers zullen altijd worden weergegeven ("Pagina 1 van 4").</transtext>
+	</transid>
+	<transid name="pdf_create_button">
+		<transtext>Maak PDF nu</transtext>
+	</transid>
+	<transid name="comments">
+		<transtext>Opmerking</transtext>
+	</transid>
+	<transid name="comments_title">
+		<transtext>Plaats Opmerking</transtext>
+	</transid>
+	<transid name="comments_submit">
+		<transtext>Post Opmerking</transtext>
+	</transid>
+	<transid name="share_header_login">
+		<transtext>Login op jou gedeelde map</transtext>
+	</transid>
+	<transid name="share_error_group">
+		<transtext>Je login is correct, maar jou groep heeft geen rechten voor deze gedeelde map!</transtext>
+	</transid>
+	<transid name="share_folder">
+		<transtext>Deel Folder</transtext>
+	</transid>
+	<transid name="share_folder_desc">
+		<transtext><![CDATA[Wanneer je een folder deelt zullen alle assets zichtbaar zijn via de URL hieronder opgegeven emt dezelfde rechten als hierboven aangegeven.<br><br><b>Opmerking</b>: Er is een groot verschil met de "Iedereen" groep hierboven. Als je de groep "Iedereen" rechten geeft dan is de folder voor iedereen beschikbaar <b>zonder<b> dat ze hiervoor moeten inloggen.]]></transtext>
+	</transid>
+	<transid name="share_collection">
+		<transtext>Deel Collectie</transtext>
+	</transid>
+	<transid name="share_collection_desc">
+		<transtext><![CDATA[Wanneer je een collectie deelt zullen alle assets zichtbaar zijn via de URL hieronder opgegeven emt dezelfde rechten als hierboven aangegeven.<br><br><b>Opmerking</b>: Er is een groot verschil met de "Iedereen" groep hierboven. Als je de groep "Iedereen" rechten geeft dan is de collectie voor iedereen beschikbaar <b>zonder<b> dat ze hiervoor moeten inloggen.]]></transtext>
+	</transid>
+	<transid name="collection">
+		<transtext>Collectie</transtext>
+	</transid>
+	<transid name="share_error_nothing">
+		<transtext>Er is hier niets om te delen! bent u zeker dat u de juiste URL hebt?</transtext>
+	</transid>
+	<transid name="share_content">
+		<transtext>Gedeelde Gegevens</transtext>
+	</transid>
+	<transid name="share_content_count">
+		<transtext>assets hier</transtext>
+	</transid>
+	<transid name="show_comments">
+		<transtext>Bekijk alle opmerkingen</transtext>
+	</transid>
+	<transid name="hide_comments">
+		<transtext>Verstop Opmerkingen</transtext>
+	</transid>
+	<transid name="wrote_on">
+		<transtext>schreef op</transtext>
+	</transid>
+	<transid name="comments_latest">
+		<transtext>Laatste Opmerkingen</transtext>
+	</transid>
+	<transid name="versions_header">
+		<transtext>Versies</transtext>
+	</transid>
+	<transid name="versions_upload">
+		<transtext>Upload nieuwe versie</transtext>
+	</transid>
+	<transid name="versions_upload_desc">
+		<transtext>Je kan de huidige originele asset vervangen met een nieuwe versie door onderaan een bestand te kiezen en te uploaden. De huidige asset zal opgeslagen worden als een versie en vervangen worden door de nieuwe asset.</transtext>
+	</transid>
+	<transid name="versions_upload_button">
+		<transtext>Voeg asset toe en vervang</transtext>
+	</transid>
+	<transid name="versions_create_progress">
+		<transtext><![CDATA[Wij verwerken je versie upload. De lijst onderaan zal zichzelf vernieuwen, eens de bewerking klaar is.]]></transtext>
+	</transid>
+	<transid name="versions_playback_progress">
+		<transtext><![CDATA[Wij draaien je versie upload terug. De lijst onderaan zal zichzelf vernieuwen, eens de bewerking klaar is.]]></transtext>
+	</transid>
+	<transid name="show">
+		<transtext>Laten zien</transtext>
+	</transid>
+	<transid name="playback">
+		<transtext>Afspelen</transtext>
+	</transid>
+	<transid name="version_header">
+		<transtext>Versie</transtext>
+	</transid>
+	<transid name="versions_cache">
+		<transtext><![CDATA[Wanneer je een versie toevoegd of terug plaatst is het mogelijk dat je de cache van je browser moet leeg maken om de gegevens juist te tonen!]]></transtext>
+	</transid>
+	<transid name="collection_create">
+		<transtext>Maak Collectie</transtext>
+	</transid>
+	<transid name="remember_login">
+		<transtext>Onhoud mijn login gegeven op deze computer</transtext>
+	</transid>
+	<transid name="reload">
+		<transtext>Vernieuwen</transtext>
+	</transid>
+	<transid name="language_update">
+		<transtext>Update Languages</transtext>
+	</transid>
+	<transid name="language_update_desc">
+		<transtext><![CDATA[Here you can enable/disable languages. If you enable a language you can chose the Razuna interface in the language choosen plus you will get multiple input fields. From time to time we update the languages. If you don't see a language in the list below you can update the list with the link above.]]></transtext>
+	</transid>
+	<transid name="logo_header">
+		<transtext>Your Company Logo</transtext>
+	</transid>
+	<transid name="logo_desc">
+		<transtext><![CDATA[You can show your own logo instead of the default Razuna one. Upload your logo below. Note: you have to name your image file "logo.jpg" or else it will fail! (Best is to have a 200x29 pixel image)]]></transtext>
+	</transid>
+	<transid name="tooltip_refresh_tree">
+		<transtext>Reload the folder tree (usually not needed but if you are missing something this might help)</transtext>
+	</transid>
+	<transid name="folder_audios">
+		<transtext>Audios</transtext>
+	</transid>
+	<transid name="header_aud">
+		<transtext>Audios</transtext>
+	</transid>
+	<transid name="results_audios">
+		<transtext>Audios found</transtext>
+	</transid>
+	<transid name="search_for_audios">
+		<transtext>Audios only</transtext>
+	</transid>
+	<transid name="audios_conversion_desc">
+		<transtext><![CDATA[Here you are able to convert your original audio asset to another format. We will convert your original audio file to WAV (Audio Raw Format) first, in order to gain the best quiality for the destinated format.<br><br>Note: The audio will be converted in the background once you started the conversion. How long it will take, depends on the size of your audio file.]]></transtext>
+	</transid>
+	<transid name="audio_original">
+		<transtext>Original Audio Asset</transtext>
+	</transid>
+	<transid name="only_audios">
+		<transtext>Only for Audios</transtext>
+	</transid>
+	<transid name="admin_maintenance">
+		<transtext>Maintenance</transtext>
+	</transid>
+	<transid name="admin_maintenance_desc">
+		<transtext><![CDATA[If you feel that your search index is out of sync with your uploaded assets then you are able to rebuild your search index. <br><br>Note: This will erase the current search index and rebuild from new. Also, during rebuilding noone is able to find any assets! Depending on the size of your asset library this can take a considerable time.]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_do">
+		<transtext>Rebuild search index now</transtext>
+	</transid>
+	<transid name="save_changes">
+		<transtext>Save Changes</transtext>
+	</transid>
+	<transid name="link_tab_header">
+		<transtext>Link to content</transtext>
+	</transid>
+	<transid name="link_desc">
+		<transtext><![CDATA[If you don't want to import your asset into Razuna and simply want to link to it, then add the absolute path to the asset below or enter the URL to the asset (can be on Facebook, YouTube or just about any URL that is publicely available). <br><br>Local content (on your local network) can be indexed and also converted as usual, but will not be moved to the internal Razuna structure.]]></transtext>
+	</transid>
+	<transid name="link_path_url">
+		<transtext><![CDATA[Enter URL, the embeeded code or the absolute path below]]></transtext>
+	</transid>
+	<transid name="link_asset_store">
+		<transtext>Where is your asset stored?</transtext>
+	</transid>
+	<transid name="link_download">
+		<transtext><![CDATA[Do you want to store the asset locally?]]></transtext>
+	</transid>
+	<transid name="link_download_desc">
+		<transtext><![CDATA[We download the file for you and then it is treated just like any other local asset.]]></transtext>
+	</transid>
+	<transid name="link_url_desc">
+		<transtext><![CDATA[This asset is located on a external source. Thus not all features are available for this asset.]]></transtext>
+	</transid>
+	<transid name="link_to_original">
+		<transtext>Link to original asset</transtext>
+	</transid>
+	<transid name="link_is_url">
+		<transtext>Asset stored externally</transtext>
+	</transid>
+	<transid name="basket_actions">
+		<transtext>Actions for your basket</transtext>
+	</transid>
+	<transid name="link_url_basket">
+		<transtext><![CDATA[Assets that are located on a external source (URL) will link to the original asset.]]></transtext>
+	</transid>
+	<transid name="link_added">
+		<transtext>The link has been successfully established</transtext>
+	</transid>
+	<transid name="link_videos_desc">
+		<transtext><![CDATA[Videos that are located on a external source can not be played in the browser.]]></transtext>
+	</transid>
+	<transid name="link_images_desc">
+		<transtext><![CDATA[Images that are located on a external source can not be shown in the browser.]]></transtext>
+	</transid>
+	<transid name="link_folder_header">
+		<transtext>Link to Folder</transtext>
+	</transid>
+	<transid name="link_folder_desc">
+		<transtext><![CDATA[Link to any folder on your Razuna server and Razuna will create a link to your existing folder. Razuna will add all folders, subfolders and assets and make them available within Razuna to you and your team.<br><br>Note: Razuna will NOT import your original folders and assets, but simply make them available within Razuna by creating a link to them. Do NOT remove the folders and assets on your file system!]]></transtext>
+	</transid>
+	<transid name="link_folder_path_header">
+		<transtext>Enter the ABSOLUTE path to your folder</transtext>
+	</transid>
+	<transid name="sched_task_intro">
+		<transtext><![CDATA[Scheduled Tasks allow you run certain tasks, like importing assets from different sources automatically into Razuna. You can run the tasks once, have them occur at the certain time or more.]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_searchsync">
+		<transtext>Rebuild search index</transtext>
+	</transid>
+	<transid name="admin_maintenance_general">
+		<transtext><![CDATA[Get your search engine back in sync or export/import your data.]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_backuprestore">
+		<transtext><![CDATA[Backup & Restore]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_backup_desc">
+		<transtext><![CDATA[Backup Razuna Data]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_backup_desc2">
+		<transtext><![CDATA[You have the option to export your data in a XML or SQL file.]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_backup_tosystem">
+		<transtext><![CDATA[Store backup on server (recommended)]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_desc">
+		<transtext><![CDATA[Restore Razuna Data]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_desc2">
+		<transtext><![CDATA[Please note the following:
+	<ul>
+	    <li style="padding:0px;"> This will wipe out all Razuna content in the database for this host - please make a backup of your database first.
+	    <li style="padding:0px;"> It might be neccessary to rebuild your search index after a restore.
+	    <li style="padding:0px;"> The restore process can take a few minutes, please be patient.
+	</ul>
+	]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_upload">
+		<transtext><![CDATA[Upload a zipped backup file]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_file">
+		<transtext><![CDATA[Restore from file system]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_rebuild">
+		<transtext><![CDATA[Rebuild Index]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_file_desc">
+		<transtext><![CDATA[Backups must be copied into the /backup directory. The name of the backup file consists of the date and time of the backup (year-month-day_hour-minute-second.raz.zip)]]></transtext>
+	</transid>
+	<transid name="refine_search">
+		<transtext>Refine Search</transtext>
+	</transid>
+	<transid name="toggle_selection">
+		<transtext>Toggle Selection</transtext>
+	</transid>
+	<transid name="search_within">
+		<transtext>Search within search results</transtext>
+	</transid>
+	<transid name="new_search">
+		<transtext>New Search</transtext>
+	</transid>
+	<transid name="search_term">
+		<transtext>Search Term</transtext>
+	</transid>
+	<transid name="share_allow_download_desc">
+		<transtext><![CDATA[By default the thumbnail and all formats will be made available to download. The original asset is never being offered as a download option, except if you set the option here. Individually you can allow/forbid the download of each asset format in the detail view of the asset itself.]]></transtext>
+	</transid>
+	<transid name="share_allow_download_original">
+		<transtext><![CDATA[Allow download of original asset]]></transtext>
+	</transid>
+	<transid name="share_allow_commenting">
+		<transtext><![CDATA[Allow commenting]]></transtext>
+	</transid>
+	<transid name="share_allow_upload_desc">
+		<transtext><![CDATA[If you want to offer your users the option to upload assets within your sharedfolder/collection then enable uploading here. NOTE: All assest uploaded within a collection will be added to the "UploadBin" folder!]]></transtext>
+	</transid>
+	<transid name="share_allow_upload">
+		<transtext><![CDATA[Activate uploading]]></transtext>
+	</transid>
+	<transid name="share_allow_order_desc">
+		<transtext><![CDATA[Contrary to downloading the assets you can enable the ordering of assets. This means that users will not be able to download the assets, but have to order them with you first.]]></transtext>
+	</transid>
+	<transid name="share_allow_order">
+		<transtext><![CDATA[Enable ordering system]]></transtext>
+	</transid>
+	<transid name="share_allow_order_email_desc">
+		<transtext><![CDATA[Select which user will be responsible for the orders. This user will see an additiona "Order" Tab where he can process orders.]]></transtext>
+	</transid>
+	<transid name="share_allow_order_email">
+		<transtext><![CDATA[Select User]]></transtext>
+	</transid>
+	<transid name="tab_sharing_options">
+		<transtext><![CDATA[Sharing options]]></transtext>
+	</transid>
+	<transid name="sharing_options_desc">
+		<transtext><![CDATA[The settings for sharing this folder are:]]></transtext>
+	</transid>
+	<transid name="sharing_options_desc_2">
+		<transtext><![CDATA[If you would like to override these settings then change the sharing options below. Doing so will override the general settings for this shared folder.]]></transtext>
+	</transid>
+	<transid name="share_folder_boolean">
+		<transtext><![CDATA[Share this folder]]></transtext>
+	</transid>
+	<transid name="share_folder_download_reset">
+		<transtext><![CDATA[Reset setting of individual assets]]></transtext>
+	</transid>
+	<transid name="basket_order">
+		<transtext><![CDATA[You will need to order the assets in this basket, before you can use them. Please select from the list below the required format and then click on the Order Link.]]></transtext>
+	</transid>
+	<transid name="view_rss">
+		<transtext>Subscribe to this folder</transtext>
+	</transid>
+	<transid name="view_rss_desc">
+		<transtext><![CDATA[Subscribe to this folder with RSS.]]></transtext>
+	</transid>
+	<transid name="view_xls">
+		<transtext>View in Excel</transtext>
+	</transid>
+	<transid name="view_xls_desc">
+		<transtext><![CDATA[View the content of this folder in Excel.]]></transtext>
+	</transid>
+	<transid name="view_doc">
+		<transtext>View in Word</transtext>
+	</transid>
+	<transid name="view_doc_desc">
+		<transtext><![CDATA[View the content of this folder in Word with preview images.]]></transtext>
+	</transid>
+	<transid name="request_access">
+		<transtext>Request Access</transtext>
+	</transid>
+	<transid name="header_preview_image">
+		<transtext>Preview Image</transtext>
+	</transid>
+	<transid name="header_preview_image_desc">
+		<transtext><![CDATA[Here you can change the preview image of this asset. Simply upload your preferred preview image with the upload function below. NOTE: This will replace the current preview image!]]></transtext>
+	</transid>
+	<transid name="header_preview_image_button">
+		<transtext>Activate the new preview image</transtext>
+	</transid>
+	<transid name="header_preview_image_status">
+		<transtext><![CDATA[Your preview image is being activated. Depending on the volume and size this can take some time. Also make sure to refresh the page or clear your browser cache in order to see the new preview image!!]]></transtext>
+	</transid>
+	<transid name="header_preview_image_title">
+		<transtext>Upload another Preview Image</transtext>
+	</transid>
+	<transid name="header_preview_image_title_recreate">
+		<transtext>Recreate Preview Image</transtext>
+	</transid>
+	<transid name="header_preview_image_recreate_desc">
+		<transtext><![CDATA[By clicking the below button you can recreate the thumbnail from the existing image or video. NOTE: This will replace the current preview image!]]></transtext>
+	</transid>
+	<transid name="header_preview_image_recreate_button">
+		<transtext>Recreate Preview Image Now!</transtext>
+	</transid>
+	<transid name="header_preview_image_recreate_status">
+		<transtext><![CDATA[Your preview image is being recreated. Depending on the volume and size this can take some time. Also make sure to refresh the page or clear your browser cache in order to see the new preview image!!]]></transtext>
+	</transid>
+	<transid name="batch_recreate_preview">
+		<transtext>Recreate Preview Images</transtext>
+	</transid>
+	<transid name="admin_upload_templates">
+		<transtext>Upload Templates</transtext>
+	</transid>
+	<transid name="admin_upload_templates_intro">
+		<transtext><![CDATA[Upload Templates allow you to define certain actions during uploading of any asset. With Upload Templates you can also convert assets to different formats while adding them to the system.]]></transtext>
+	</transid>
+	<transid name="admin_upload_templates_new">
+		<transtext>Add a Upload Template</transtext>
+	</transid>
+	<transid name="admin_upload_templates_active">
+		<transtext>Upload Template is active</transtext>
+	</transid>
+	<transid name="admin_upload_templates_name">
+		<transtext>Template Name</transtext>
+	</transid>
+	<transid name="admin_upload_templates_desc">
+		<transtext><![CDATA[Choose the format you want your assets to be converted to while your users will add them to the system. <br /><br />NOTE: Using a incorrect size value might leave your assets unrenderable/playable! If you want to convert to the same size of the original asset then simply leave the widthxheight field empty. You should also only enter either the width or the height to scale the asset properly.<br /><br /><strong>CAUTION: Selecting a lot of formats will slow down the process speed and put a strain on the server!!!</strong>]]></transtext>
+	</transid>
+	<transid name="header_widget">
+		<transtext><![CDATA[Widgets]]></transtext>
+	</transid>
+	<transid name="widget_desc">
+		<transtext><![CDATA[Widgets allow you to embed the assets in this folder/collection into any other web application, say a blog, CMS or alike.<br /><br />You can create as many widgets you like, each with their own settings.]]></transtext>
+	</transid>
+	<transid name="widget_existing">
+		<transtext><![CDATA[Existing Widgets]]></transtext>
+	</transid>
+	<transid name="widget_new">
+		<transtext><![CDATA[Add Widget]]></transtext>
+	</transid>
+	<transid name="widget">
+		<transtext><![CDATA[Widget]]></transtext>
+	</transid>
+	<transid name="widget_settings">
+		<transtext><![CDATA[Widget Settings]]></transtext>
+	</transid>
+	<transid name="widget_name">
+		<transtext><![CDATA[Name of Widget]]></transtext>
+	</transid>
+	<transid name="widget_access_header">
+		<transtext><![CDATA[Who can access this widget?]]></transtext>
+	</transid>
+	<transid name="widget_access_public">
+		<transtext><![CDATA[<strong>Public</strong><br />Everyone can access this widget. This is best used on a public website or within an Intranet where user have freely access or have been authenticated otherwise.]]></transtext>
+	</transid>
+	<transid name="widget_access_permissions">
+		<transtext><![CDATA[<strong>Folder/Collection Permissions apply</strong><br />The same access permissions apply as set by the folder/collection permissions. This is best used, if you want to give access to this widget to your defined groups.]]></transtext>
+	</transid>
+	<transid name="widget_access_password">
+		<transtext><![CDATA[<strong>Password protected</strong><br />Please enter the password for this widget in the text field below. Before your users can see any content of this widget they will have to enter the password.]]></transtext>
+	</transid>
+	<transid name="widget_style">
+		<transtext><![CDATA[Choose how assets will be displayed in this widget]]></transtext>
+	</transid>
+	<transid name="widget_style_slideshow">
+		<transtext><![CDATA[<strong>Slideshow</strong><br />This will create a slideshow of all assets with the <strong>selected</strong> format. It will show one asset after the other. Perfect for showing a particular image and then have your users scroll trough them.<br />Note: For obvious reasons the slideshow should only be used with images in your collection! Also, all other functions will be disabled.]]></transtext>
+	</transid>
+	<transid name="widget_style_default">
+		<transtext><![CDATA[<strong>Thumbnails View</strong><br />This is the same view that you know from the folder view. When they click to enlarge the asset then the <strong>selected</strong> format is being shown.]]></transtext>
+	</transid>
+	<transid name="widgets_not_found">
+		<transtext><![CDATA[You have not created any widget yet!]]></transtext>
+	</transid>
+	<transid name="widget_update">
+		<transtext><![CDATA[Update Widget]]></transtext>
+	</transid>
+	<transid name="widget_password">
+		<transtext><![CDATA[This widget is protected with a password. If you have been given the password, then please enter it in the field below and click on Login to view the shared assets.]]></transtext>
+	</transid>
+	<transid name="adiver_header">
+		<transtext>Additional Versions</transtext>
+	</transid>
+	<transid name="adiver_header_desc">
+		<transtext><![CDATA[You can link to existing assets or upload additional versions of this asset on this page. Records here will be shown here and also on the overview tab for this asset.]]></transtext>
+	</transid>
+	<transid name="adiver_link_header">
+		<transtext>Link to your existing asset</transtext>
+	</transid>
+	<transid name="adiver_link_header_desc">
+		<transtext><![CDATA[If you already have this asset posted on YouTube, Flickr, etc. then simply copy and paste the URL below. You can add as many links you want.]]></transtext>
+	</transid>
+	<transid name="title">
+		<transtext>Title</transtext>
+	</transid>
+	<transid name="adiver_link_error">
+		<transtext><![CDATA[You did not give your link a title or forgot to paste the URL!]]></transtext>
+	</transid>
+	<transid name="adiver_asset_header">
+		<transtext>Upload additional versions</transtext>
+	</transid>
+	<transid name="adiver_asset_header_desc">
+		<transtext><![CDATA[If you have additional versions of this asset and would like to *group* them under one asset, then you can also upload your versions here. They will be listed as additional versions. You can add as many assets as you want.]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_db_cleaner">
+		<transtext><![CDATA[Database & Asset Cleaner]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_db_cleaner_desc">
+		<transtext><![CDATA[With the Database & Asset Cleaner we will run a script that tells you which records in the database have an asset on the system or if they are "lost" records (meaning they are zombie records with no assets assigned). You can run the cleaner utility at any time.]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_db_cleaner_link">
+		<transtext><![CDATA[Open Database & Asset Cleaner Utility]]></transtext>
+	</transid>
+	<transid name="comment">
+		<transtext>Comment</transtext>
+	</transid>
+	<transid name="labels">
+		<transtext>Labels</transtext>
+	</transid>
+	<transid name="label">
+		<transtext>Label</transtext>
+	</transid>
+	<transid name="admin_labels_desc">
+		<transtext><![CDATA[Labels allow you to tag your assets, so you can find them easily in the Label Explorer. Within the Administration you can add, modify or remove labels. Furthmore, you can set to allow adding and removing of labels for your users (yeah, we knew you will love this feature!)]]></transtext>
+	</transid>
+	<transid name="admin_labels_allow">
+		<transtext><![CDATA[<strong>Allow users to add labels automatically</strong><br/>(if allowed users can simply enter a label in the label field and it will be added to the labels for all users)]]></transtext>
+	</transid>
+	<transid name="labels_add">
+		<transtext>Add Label</transtext>
+	</transid>
+	<transid name="labels_content">
+		<transtext>Assets</transtext>
+	</transid>
+	<transid name="reload_list">
+		<transtext>Reload list</transtext>
+	</transid>
+</translations>

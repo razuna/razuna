@@ -1,0 +1,1 @@
+<div style="border:1px solid black;background-color:yellow;padding:10px;font-weight:bold;">This feature is only available in the Pro-Edition. You can upgrade for only $1.80/GB/month within your account settings.</div>

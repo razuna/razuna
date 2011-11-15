@@ -1,0 +1,2883 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<translations>
+	<transid name="thisid">
+		<transtext>2</transtext>
+	</transid>
+	<transid name="username">
+		<transtext>Benutzername</transtext>
+	</transid>
+	<transid name="password">
+		<transtext>Passwort</transtext>
+	</transid>
+	<transid name="changelang">
+		<transtext>Sprache wechseln</transtext>
+	</transid>
+	<transid name="english">
+		<transtext>Englisch</transtext>
+	</transid>
+	<transid name="german">
+		<transtext>Deutsch</transtext>
+	</transid>
+	<transid name="spanish">
+		<transtext>Spanisch</transtext>
+	</transid>
+	<transid name="button_login">
+		<transtext>Anmelden</transtext>
+	</transid>
+	<transid name="login_error">
+		<transtext>Wir konnten Sie leider nicht am System anmelden. Bitte versuchen Sie es nochmals.</transtext>
+	</transid>
+	<transid name="logoff">
+		<transtext>Abmelden</transtext>
+	</transid>
+	<transid name="qa">
+		<transtext>Fragen / Antworten</transtext>
+	</transid>
+	<transid name="settings">
+		<transtext>Einstellungen</transtext>
+	</transid>
+	<transid name="projects">
+		<transtext>Projekte</transtext>
+	</transid>
+	<transid name="users">
+		<transtext>Benutzer / Gruppen</transtext>
+	</transid>
+	<transid name="reports">
+		<transtext>Auswertungen</transtext>
+	</transid>
+	<transid name="hosts">
+		<transtext><![CDATA[Kunden/Domainen/Host]]></transtext>
+	</transid>
+	<transid name="hosts_new">
+		<transtext>Neue Domain erfassen</transtext>
+	</transid>
+	<transid name="hosts_list">
+		<transtext>Existierende Domains</transtext>
+	</transid>
+	<transid name="hosts_name">
+		<transtext>Name von diesem Host</transtext>
+	</transid>
+	<transid name="hosts_path">
+		<transtext>Name des Ordners auf Ihrem WebServer</transtext>
+	</transid>
+	<transid name="how_many_users">
+		<transtext>Anzahl erlaubter Concurrent Users</transtext>
+	</transid>
+	<transid name="exp_how_many_users">
+		<transtext>Leer lassen für unlimitierte Benutzer</transtext>
+	</transid>
+	<transid name="save">
+		<transtext>Speichern</transtext>
+	</transid>
+	<transid name="error_hosts_name">
+		<transtext>Bitte geben Sie einen Hostnamen an</transtext>
+	</transid>
+	<transid name="error_hosts_path">
+		<transtext>Bitte geben Sie den Pfad zum Host an</transtext>
+	</transid>
+	<transid name="error_form">
+		<transtext>Bitte füllen Sie alle benötigten Felder aus!</transtext>
+	</transid>
+	<transid name="delete">
+		<transtext>Wollen Sie diesen Datensatz wirklich löschen? Diese Aktion ist unwiederruflich!</transtext>
+	</transid>
+	<transid name="hosts_edit">
+		<transtext>Host bearbeiten</transtext>
+	</transid>
+	<transid name="proj_add">
+		<transtext>Projekt erfassen</transtext>
+	</transid>
+	<transid name="proj_edit">
+		<transtext>Projekt bearbeiten</transtext>
+	</transid>
+	<transid name="proj_name">
+		<transtext>Projektname</transtext>
+	</transid>
+	<transid name="desc">
+		<transtext>Beschreibung</transtext>
+	</transid>
+	<transid name="proj_list">
+		<transtext>Existierende Projekte</transtext>
+	</transid>
+	<transid name="settings_global">
+		<transtext>Globale Einstellungen</transtext>
+	</transid>
+	<transid name="translations_global">
+		<transtext>Globale Übersetzungen</transtext>
+	</transid>
+	<transid name="templates">
+		<transtext>Vorlagen</transtext>
+	</transid>
+	<transid name="lm_show_lightboxes">
+		<transtext>Lightboxes verwalten</transtext>
+	</transid>
+	<transid name="lm_create_lightbox">
+		<transtext>Eine neue Lightbox erfassen</transtext>
+	</transid>
+	<transid name="user_list">
+		<transtext>Benutzer</transtext>
+	</transid>
+	<transid name="user_add">
+		<transtext>Benutzer erfassen</transtext>
+	</transid>
+	<transid name="user_search">
+		<transtext>Suchen</transtext>
+	</transid>
+	<transid name="db_prefix">
+		<transtext>Datenbank Prefix</transtext>
+	</transid>
+	<transid name="email">
+		<transtext>eMail</transtext>
+	</transid>
+	<transid name="user_name">
+		<transtext>Benutzername</transtext>
+	</transid>
+	<transid name="user_first_name">
+		<transtext>Vorname</transtext>
+	</transid>
+	<transid name="user_last_name">
+		<transtext>Nachname</transtext>
+	</transid>
+	<transid name="password">
+		<transtext>Passwort</transtext>
+	</transid>
+	<transid name="password_confirm">
+		<transtext>Passwort bestätigen</transtext>
+	</transid>
+	<transid name="error_password">
+		<transtext>Das Passwort stimmt nicht überein. Bitte versuchen Sie es nochmals.</transtext>
+	</transid>
+	<transid name="groups">
+		<transtext>Gruppen</transtext>
+	</transid>
+	<transid name="user_exists">
+		<transtext>Es besteht bereit ein Eintrag mit diesem Benutzernamen und/oder dieser eMail-Adresse!</transtext>
+	</transid>
+	<transid name="user_edit">
+		<transtext>Benutzer bearbeiten</transtext>
+	</transid>
+	<transid name="user_list_admin">
+		<transtext>System Administratoren</transtext>
+	</transid>
+	<transid name="error_choose_project">
+		<transtext>Bitte wählen Sie ein Projekt aus!</transtext>
+	</transid>
+	<transid name="how_many_lang">
+		<transtext>Wie viele Sprachen aktivieren</transtext>
+	</transid>
+	<transid name="language">
+		<transtext>Sprache</transtext>
+	</transid>
+	<transid name="qa_enterquestion">
+		<transtext>Bitte geben Sie Ihre Frage ein.</transtext>
+	</transid>
+	<transid name="qa_active">
+		<transtext>Frage ist online</transtext>
+	</transid>
+	<transid name="choose_project">
+		<transtext>Projekt wählen</transtext>
+	</transid>
+	<transid name="qa_kindofanswer">
+		<transtext>Antwort Art wählen</transtext>
+	</transid>
+	<transid name="qa_kindofanswer_single">
+		<transtext>Nur eine Antwort</transtext>
+	</transid>
+	<transid name="qa_kindofanswer_multiple">
+		<transtext>Mehrere Antworten möglich</transtext>
+	</transid>
+	<transid name="qa_kindofanswer_rating">
+		<transtext>Antwort mit einer Skalierungs-Liste</transtext>
+	</transid>
+	<transid name="qa_questionin">
+		<transtext>Frage in</transtext>
+	</transid>
+	<transid name="qa_descin">
+		<transtext>Beschreibung in</transtext>
+	</transid>
+	<transid name="continue">
+		<transtext>Weiter --></transtext>
+	</transid>
+	<transid name="qa_add_answers">
+		<transtext>Antworten erfassen</transtext>
+	</transid>
+	<transid name="qa_new_answers">
+		<transtext>Erfassen Sie die möglichen Antworten hier.</transtext>
+	</transid>
+	<transid name="qa_add_answer">
+		<transtext>Antwort erfassen in</transtext>
+	</transid>
+	<transid name="qa_error_onequestion">
+		<transtext>Bitte erfassen Sie mindestens das erste Frage Feld!</transtext>
+	</transid>
+	<transid name="qa_error_oneanswer">
+		<transtext>Bitte erfassen Sie midenstens das erste Antwort Feld!</transtext>
+	</transid>
+	<transid name="success">
+		<transtext>Ihre Angaben wurden erfolgreich gespeichert!</transtext>
+	</transid>
+	<transid name="qa_answer_active">
+		<transtext>Antwort ist online</transtext>
+	</transid>
+	<transid name="qa_answers_done">
+		<transtext>Erfasste Antworten</transtext>
+	</transid>
+	<transid name="qa_answer_goto">
+		<transtext>Weiter bei Frage:</transtext>
+	</transid>
+	<transid name="qa_answer_goto_desc">
+		<transtext>Es folgt automatisch die nächste Frage, wenn Sie jedoch nach einer bestimmten Antwwort Fragen überspringen wollen, dann geben Sie hier die Zielfrage an.</transtext>
+	</transid>
+	<transid name="qa_finished">
+		<transtext>Fertig mit der Eingabe</transtext>
+	</transid>
+	<transid name="qa_existing_questions">
+		<transtext>Erfasste Fragen</transtext>
+	</transid>
+	<transid name="qa_questions_inproject">
+		<transtext>Alle erfassten Fragen in Projekt:</transtext>
+	</transid>
+	<transid name="qa_edit">
+		<transtext>Frage bearbeiten</transtext>
+	</transid>
+	<transid name="qa_current_project">
+		<transtext>Sie befinden sich im Project:</transtext>
+	</transid>
+	<transid name="preview_survey">
+		<transtext>Vorschau Fragebogen</transtext>
+	</transid>
+	<transid name="choose_project_for_preview">
+		<transtext>Bitte wählen Sie das Projekt zur Vorschau aus</transtext>
+	</transid>
+	<transid name="qa_response">
+		<transtext>Rückgabewert</transtext>
+	</transid>
+	<transid name="qa_textfield">
+		<transtext>Textfeld hinzufügen</transtext>
+	</transid>
+	<transid name="qa_rating_desc">
+		<transtext>Bitte erfassen Sie die Unterfragen und Antworten mit den untenstehenden Verweisen. Beenden Sie Ihre Eingabe mit dem "Fertig" Button.</transtext>
+	</transid>
+	<transid name="qa_rating_desc_edit">
+		<transtext>Bearbeiten Sie die Unterfragen und Antworten mit den untenstehenden Verweisen.</transtext>
+	</transid>
+	<transid name="qa_subquestions">
+		<transtext>Unterfragen erfassen</transtext>
+	</transid>
+	<transid name="qa_add_subquestions">
+		<transtext>Unterfrage erfassen in</transtext>
+	</transid>
+	<transid name="qa_added_subquestions">
+		<transtext>Erfasste Unterfragen</transtext>
+	</transid>
+	<transid name="qa_titlein">
+		<transtext>Titel in</transtext>
+	</transid>
+	<transid name="qa_imgin">
+		<transtext>Bild in</transtext>
+	</transid>
+	<transid name="qa_mandatory">
+		<transtext>Zwingende Beantwortung</transtext>
+	</transid>
+	<transid name="qa_kindofanswer_text">
+		<transtext>Textantwort (Textfeldeingabe)</transtext>
+	</transid>
+	<transid name="qa_insert_space">
+		<transtext>Abstand einfügen</transtext>
+	</transid>
+	<transid name="qa_insert_space_desc">
+		<transtext>Es wird ein Abstand nach diesem Datensatz eingefügt</transtext>
+	</transid>
+	<transid name="translations_new">
+		<transtext>Übersetzung erfassen</transtext>
+	</transid>
+	<transid name="translations_list">
+		<transtext>Alle Übersetzungen</transtext>
+	</transid>
+	<transid name="qa_filter">
+		<transtext>Filter</transtext>
+	</transid>
+	<transid name="qa_filter_desc_long">
+		<transtext>Wählen Sie die Frage und Antwort wonach dieser Eintrag gefiltert wird.</transtext>
+	</transid>
+	<transid name="qa_filter_desc">
+		<transtext>Filter anpassen</transtext>
+	</transid>
+	<transid name="qa_choose_question">
+		<transtext>Frage wählen</transtext>
+	</transid>
+	<transid name="qa_choose_answer">
+		<transtext>Antwort wählen</transtext>
+	</transid>
+	<transid name="qa_choose_action">
+		<transtext>Aktion wählen</transtext>
+	</transid>
+	<transid name="qa_filter_hide">
+		<transtext>Diese Frage nicht anzeigen</transtext>
+	</transid>
+	<transid name="qa_filter_goto">
+		<transtext>Weiter mit der folgenden Frage</transtext>
+	</transid>
+	<transid name="qa_filter_saved">
+		<transtext>Gespeicherte Filter für diesen Datensatz</transtext>
+	</transid>
+	<transid name="close_window">
+		<transtext>Fenster schliessen</transtext>
+	</transid>
+	<transid name="report_excel">
+		<transtext>Auswertung in Excel</transtext>
+	</transid>
+	<transid name="report_excel_desc">
+		<transtext>Klicken Sie auf einen der Projektnamen oben um für dieses Projekt die Auswertung in Excel anzuschauen. Hinweis: sie werden eventuell aufgefordert die Datei zu öffen oder zu speichern. Wählen Sie das gewünschte um die Auswertung in Excel anzuschauen.</transtext>
+	</transid>
+	<transid name="report_browser">
+		<transtext>Auswertungen anzeigen</transtext>
+	</transid>
+	<transid name="report_custom">
+		<transtext>Eigene Auswertungen</transtext>
+	</transid>
+	<transid name="report_question">
+		<transtext>Die Frage</transtext>
+	</transid>
+	<transid name="report_answer">
+		<transtext>Die Antwort(en)</transtext>
+	</transid>
+	<transid name="report_userid">
+		<transtext>Benutzer ID</transtext>
+	</transid>
+	<transid name="date">
+		<transtext>Datum</transtext>
+	</transid>
+	<transid name="time">
+		<transtext>Zeit</transtext>
+	</transid>
+	<transid name="filter_subquestion">
+		<transtext>Unterfrage wählen</transtext>
+	</transid>
+	<transid name="filter_if_goto">
+		<transtext>Fall Aktion "Weiterleiten" dann Frage unten wählen</transtext>
+	</transid>
+	<transid name="report_stats">
+		<transtext>Benutzer-Statistiken</transtext>
+	</transid>
+	<transid name="report_endinmin">
+		<transtext>Beantwortet in</transtext>
+	</transid>
+	<transid name="report_stats_all">
+		<transtext>Gesamtstatistik</transtext>
+	</transid>
+	<transid name="error_same_user">
+		<transtext>Dieser Benutzer befindet sich soeben im System. Sie können sich nicht gleichzeitg am System anmelden!</transtext>
+	</transid>
+	<transid name="error_con_users">
+		<transtext>Sie können sich nicht mehr anmelden, da die Anzahl erlaubter lizensierter Benutzer aufgebraucht ist!</transtext>
+	</transid>
+	<transid name="error_too_long">
+		<transtext>Sie wurden vom System abgemeldet da Sie zulange inaktiv waren!</transtext>
+	</transid>
+	<transid name="counts">
+		<transtext>Anzahl</transtext>
+	</transid>
+	<transid name="allowedinadmin">
+		<transtext>Benutzer ist Admin-Benutzer</transtext>
+	</transid>
+	<transid name="adminarea">
+		<transtext>Administrations-Bereich</transtext>
+	</transid>
+	<transid name="groups_link">
+		<transtext>Gruppen</transtext>
+	</transid>
+	<transid name="groups_admin">
+		<transtext><![CDATA[Gruppen (Administration)]]></transtext>
+	</transid>
+	<transid name="groups_dsc">
+		<transtext>Digital-Signage-Gruppen verwalten</transtext>
+	</transid>
+	<transid name="groups_new">
+		<transtext>Neue Gruppe erfassen</transtext>
+	</transid>
+	<transid name="group">
+		<transtext>Gruppe</transtext>
+	</transid>
+	<transid name="groups_edit">
+		<transtext>Gruppe bearbeiten</transtext>
+	</transid>
+	<transid name="group_permissions">
+		<transtext>Gruppen Rechte</transtext>
+	</transid>
+	<transid name="permission_to">
+		<transtext>Zugriff zu ...</transtext>
+	</transid>
+	<transid name="permission_read">
+		<transtext>Nur lesen</transtext>
+	</transid>
+	<transid name="permission_write">
+		<transtext>Ändern/Speichern</transtext>
+	</transid>
+	<transid name="users_modify">
+		<transtext>Benutzer verwalten</transtext>
+	</transid>
+	<transid name="permission_noaccess">
+		<transtext>Keinen Zugriff</transtext>
+	</transid>
+	<transid name="permission_dsc_action">
+		<transtext>Aktion</transtext>
+	</transid>
+	<transid name="permission_dsc_subaction">
+		<transtext>Sub-Aktion</transtext>
+	</transid>
+	<transid name="intraextra">
+		<transtext>Digital Asset Management</transtext>
+	</transid>
+	<transid name="website">
+		<transtext>Website</transtext>
+	</transid>
+	<transid name="user_active">
+		<transtext>Benutzer kann sich anmelden</transtext>
+	</transid>
+	<transid name="date_format">
+		<transtext>Format des Datums</transtext>
+	</transid>
+	<transid name="date_euro">
+		<transtext>Europäisches Datum (dd/mm/yyyy)</transtext>
+	</transid>
+	<transid name="date_us">
+		<transtext>Amerikanisches Datum (mm/dd/yyyy)</transtext>
+	</transid>
+	<transid name="date_sql">
+		<transtext>SQL Datum (yyyy/mm/dd)</transtext>
+	</transid>
+	<transid name="date_delimiter">
+		<transtext>Trennzeichen für Datum</transtext>
+	</transid>
+	<transid name="meta_keywords">
+		<transtext>Stichwörter (mit einem "," trennen)</transtext>
+	</transid>
+	<transid name="meta_custom">
+		<transtext>Eigene Meta's</transtext>
+	</transid>
+	<transid name="header_title_intra">
+		<transtext>Titel für die Digital Asset Management-Site</transtext>
+	</transid>
+	<transid name="header_title_web">
+		<transtext>Titel für Website</transtext>
+	</transid>
+	<transid name="title_in">
+		<transtext>Titel in</transtext>
+	</transid>
+	<transid name="header_title_meta">
+		<transtext>Meta Tags</transtext>
+	</transid>
+	<transid name="header_css_intra">
+		<transtext>CSS für die Digital Asset Management-Site</transtext>
+	</transid>
+	<transid name="header_css_web">
+		<transtext>CSS für Website</transtext>
+	</transid>
+	<transid name="translations_edit">
+		<transtext>Übersetzung bearbeiten</transtext>
+	</transid>
+	<transid name="image_settings">
+		<transtext>Bilder</transtext>
+	</transid>
+	<transid name="img_set_publishers">
+		<transtext>Hersteller / Kollektionen</transtext>
+	</transid>
+	<transid name="img_set_categories">
+		<transtext>Kategorien / Rubriken</transtext>
+	</transid>
+	<transid name="img_set_valuelist">
+		<transtext>Werteliste</transtext>
+	</transid>
+	<transid name="img_set_valuelist_new">
+		<transtext>Neu Werteliste erfassen</transtext>
+	</transid>
+	<transid name="img_set_valuelists">
+		<transtext>Wertelisten</transtext>
+	</transid>
+	<transid name="translations_search">
+		<transtext>Übersetzung suchen</transtext>
+	</transid>
+	<transid name="translation">
+		<transtext>Übersetzung</transtext>
+	</transid>
+	<transid name="publisher_new">
+		<transtext>Neuen Hersteller / Kollektion erfassen</transtext>
+	</transid>
+	<transid name="pub_ranking_1">
+		<transtext>1. Sehr hoch</transtext>
+	</transid>
+	<transid name="pub_ranking_2">
+		<transtext>2. Hoch</transtext>
+	</transid>
+	<transid name="pub_ranking_3">
+		<transtext>3. Normal</transtext>
+	</transid>
+	<transid name="pub_ranking_4">
+		<transtext>4. Tief</transtext>
+	</transid>
+	<transid name="pub_ranking_5">
+		<transtext>5. Sehr tief</transtext>
+	</transid>
+	<transid name="settings_website">
+		<transtext>Website</transtext>
+	</transid>
+	<transid name="settings_intra">
+		<transtext>Digital Asset Management</transtext>
+	</transid>
+	<transid name="url_sp_original">
+		<transtext>URL Original Bild</transtext>
+	</transid>
+	<transid name="url_sp_thumb">
+		<transtext>URL Thumbnail Bild</transtext>
+	</transid>
+	<transid name="url_sp_comp">
+		<transtext>URL Comping Bild</transtext>
+	</transid>
+	<transid name="url_sp_comp_uw">
+		<transtext>URL Comping Bild ohne Wasserzeichen</transtext>
+	</transid>
+	<transid name="url_desc">
+		<transtext>Geben Sie die URL zu den Stored Procedures für das Anzeigen der Bilder auf dem Oracle Server an. Wir empfehlen DNS-Namen zu verwenden, anstatt IP-Adressen.</transtext>
+	</transid>
+	<transid name="settings_languages">
+		<transtext>Sprachen</transtext>
+	</transid>
+	<transid name="img_set_ranking">
+		<transtext>Rangierung</transtext>
+	</transid>
+	<transid name="img_set_ranking_reset">
+		<transtext>Rangierung zurücksetzen</transtext>
+	</transid>
+	<transid name="publisher_edit">
+		<transtext>Hersteller / Gruppe bearbeiten</transtext>
+	</transid>
+	<transid name="groupnumber_header">
+		<transtext>Gruppe(n) bearbeiten</transtext>
+	</transid>
+	<transid name="groupnumber_header_new">
+		<transtext>Gruppe erfassen</transtext>
+	</transid>
+	<transid name="delete_group">
+		<transtext>Möchten Sie diese Gruppe wirklich löschen? Hinweis: Etwaige Bilder die in dieser Gruppe sind, können nicht mehr korrekt gefunden werden!</transtext>
+	</transid>
+	<transid name="publisher_folder">
+		<transtext>Hersteller / Kollektion Ordner</transtext>
+	</transid>
+	<transid name="publisher_folder_desc">
+		<transtext>Wählen Sie hier den Speicherort für die Hersteller-Ordner aus. Wenn Sie keine Speicherort auswählen, werden alle Ordner auf der ersten Ebene erstellt.</transtext>
+	</transid>
+	<transid name="chose_location">
+		<transtext>Zielordner wählen</transtext>
+	</transid>
+	<transid name="intranet_logo">
+		<transtext>Logo hinterlegen</transtext>
+	</transid>
+	<transid name="intranet_logo_desc">
+		<transtext>Sie können Ihr eigenes Logo anziegen, anstatt des Razuna Logo. Laden Sie die Bild-Datei mit der Funktion hier. Hinweis: Der Dateiname muss "logo.jpg" sein! (Am besten 200x29 pixel)</transtext>
+	</transid>
+	<transid name="header_url_app_server">
+		<transtext>URL des Oracle Application Server</transtext>
+	</transid>
+	<transid name="header_url_app_server_desc">
+		<transtext>Geben Sie hier die IP-Adresse des Oracle Application Server mit dem Port an (z.B. http://127.0.0.1:7777). Bitte kompletten Pfad mit http:// aber ohne "/" am Schluss angeben! Wir empfehlen DNS-Namen zu verwenden, anstatt IP-Adressen.</transtext>
+	</transid>
+	<transid name="delete_pubfolder">
+		<transtext>Wollen Sie diesen Hersteller wirklich löschen? Hinweis: ALLE darin enthaltenen Dateien, sowie Unterordner, gehen dabei unwiederruflich verloren!</transtext>
+	</transid>
+	<transid name="header_img_format">
+		<transtext>Bild Format</transtext>
+	</transid>
+	<transid name="header_img_format_desc">
+		<transtext>Geben Sie hier das Bild-Format an, für Bilder welche von Razuna erstellen werden (Thumbnails, Compings, usw.). Die Original-Datei bleibt immer unverändert wie diese in Razuna aufgenommen wurden.</transtext>
+	</transid>
+	<transid name="header_img_size">
+		<transtext>Bild-Grösse</transtext>
+	</transid>
+	<transid name="header_img_size_desc">
+		<transtext>Bestimmen Sie, mit diesen Angaben, die Grösse der zu erstellenden Thumbnail und Comping Bilder. Angaben sollten im Pixel-Format erfolgen.</transtext>
+	</transid>
+	<transid name="header_img_thumbnail">
+		<transtext>Thumbnail</transtext>
+	</transid>
+	<transid name="header_img_comping">
+		<transtext>Comping</transtext>
+	</transid>
+	<transid name="header_img_width">
+		<transtext>Breite</transtext>
+	</transid>
+	<transid name="header_img_height">
+		<transtext>Höhe</transtext>
+	</transid>
+	<transid name="report_user_actions">
+		<transtext>Benutzer-Aktionen</transtext>
+	</transid>
+	<transid name="action">
+		<transtext>Aktion</transtext>
+	</transid>
+	<transid name="theuser">
+		<transtext>Benutzer</transtext>
+	</transid>
+	<transid name="next">
+		<transtext>Weiter</transtext>
+	</transid>
+	<transid name="back">
+		<transtext>Zurück</transtext>
+	</transid>
+	<transid name="remove_selected">
+		<transtext>Ausgewählte Löschen</transtext>
+	</transid>
+	<transid name="report_user_searches">
+		<transtext>Suchresultate (Dokumente)</transtext>
+	</transid>
+	<transid name="report_user_searches_img">
+		<transtext>Suchresultate (Bilder)</transtext>
+	</transid>
+	<transid name="report_searched_for">
+		<transtext>Gesucht nach ...</transtext>
+	</transid>
+	<transid name="report_founditems">
+		<transtext>Anzahl gefundener Dokumente</transtext>
+	</transid>
+	<transid name="report_founditems_img">
+		<transtext>Anzahl gefundener Bilder</transtext>
+	</transid>
+	<transid name="intranet_download_doc">
+		<transtext>Download-Zugriff für Dokumente</transtext>
+	</transid>
+	<transid name="intranet_download_doc_desc">
+		<transtext>Dokumente können bei der Detail-Ansicht direkt heruntergeladen werden. Wenn Sie dies nicht möchten, sprich wollen, das die Benutzer ZUERST das Dokument in den Warenkorb legen und dann eine Bestellung aufgeben müssen, dann wählen Sie hier NEIN. In beiden Fällen, werden alle Download-Aktionen der Benutzer im Logfile gespeichert.</transtext>
+	</transid>
+	<transid name="intranet_download_img">
+		<transtext>Download-Zugriff für Bilder</transtext>
+	</transid>
+	<transid name="intranet_download_img_desc">
+		<transtext>Da Bilder generell direkt im Browser angezeigt werden und so zum direkten Download verfügbar sind, können Sie hier angeben ob die Benutzer nur die Thumbnail und Comping Varianten der Bilder sehen und runterladen können.</transtext>
+	</transid>
+	<transid name="intranet_download_doc_radio">
+		<transtext>Document Download ermöglichen</transtext>
+	</transid>
+	<transid name="intranet_download_img_radio">
+		<transtext>Original Bild Download ermöglichen</transtext>
+	</transid>
+	<transid name="yes">
+		<transtext>Ja</transtext>
+	</transid>
+	<transid name="no">
+		<transtext>Nein</transtext>
+	</transid>
+	<transid name="intranet_new_registration">
+		<transtext>Neue Registrationen</transtext>
+	</transid>
+	<transid name="intranet_new_registration_desc">
+		<transtext>Wenn sich ein Benutzer für Ihr Digital Asset Management neu registriert, werden Sie per eMail benachrichtigt um den Benutzer freizuschalten. Geben Sie dazu die eMail-Adresse(n) und den Betreff unten an. Dies ist eine interne eMail und wird nicht an Ihre Kunden verschickt.</transtext>
+	</transid>
+	<transid name="intranet_new_registration_emails">
+		<transtext>Registration geht an folgende eMail-Adresse(n)</transtext>
+	</transid>
+	<transid name="intranet_new_registration_email_subject">
+		<transtext>Betreff der eMail</transtext>
+	</transid>
+	<transid name="multiple_emails">
+		<transtext>Mehrere eMail-Adressen mit einem "," (Komma) trennen</transtext>
+	</transid>
+	<transid name="one_field_fill">
+		<transtext>Bitte geben Sie mind. einen Wert in den Feldern ein!</transtext>
+	</transid>
+	<transid name="icons_toggle">
+		<transtext>Alle auswählen</transtext>
+	</transid>
+	<transid name="icons_toggle_desc">
+		<transtext>Hier klicken wenn Sie alle aufgeführten Datensätze markieren wollen. Ebenfalls hier klicken um die Auswahl umzukehren</transtext>
+	</transid>
+	<transid name="icons_delete">
+		<transtext>Ausgewählte löschen</transtext>
+	</transid>
+	<transid name="icons_delete_desc">
+		<transtext>Alle markierten Datensätze werden gelöscht. Dieser Vorgang ist unwiederruflich</transtext>
+	</transid>
+	<transid name="icons_turnon">
+		<transtext>Ausgewählte aktivieren</transtext>
+	</transid>
+	<transid name="icons_turnon_desc">
+		<transtext>Die markierten Datensätze werden umgehend aktiviert</transtext>
+	</transid>
+	<transid name="icons_turnoff">
+		<transtext>Ausgewählte deaktivieren</transtext>
+	</transid>
+	<transid name="icons_turnoff_desc">
+		<transtext>Die markierten Datensätze werden umgehend deaktiviert</transtext>
+	</transid>
+	<transid name="delete_all">
+		<transtext>Sind Sie sicher, dass Sie alle ausgewählten Datensätze löschen wollen? Hinweis: Diese Aktion ist unwiederruflich!</transtext>
+	</transid>
+	<transid name="icons_email">
+		<transtext>Ausgewählte in Mailingliste</transtext>
+	</transid>
+	<transid name="icons_email_desc">
+		<transtext>Weisen Sie die ausgewählten Adressen einer Mailingliste zu</transtext>
+	</transid>
+	<transid name="user_company">
+		<transtext>Firma</transtext>
+	</transid>
+	<transid name="user_street">
+		<transtext>Strasse</transtext>
+	</transid>
+	<transid name="user_street_nr">
+		<transtext>Strassen-Nr.</transtext>
+	</transid>
+	<transid name="user_city">
+		<transtext>Ort</transtext>
+	</transid>
+	<transid name="user_zip">
+		<transtext>PLZ</transtext>
+	</transid>
+	<transid name="user_country">
+		<transtext>Land</transtext>
+	</transid>
+	<transid name="user_tel">
+		<transtext>Telefon</transtext>
+	</transid>
+	<transid name="user_fax">
+		<transtext>Fax</transtext>
+	</transid>
+	<transid name="user_mobile">
+		<transtext>Mobil</transtext>
+	</transid>
+	<transid name="intranet_download_general">
+		<transtext>Generelle Download Einstellung</transtext>
+	</transid>
+	<transid name="intranet_download_general_desc">
+		<transtext>Wenn Sie hier JA wählen, dann müssen alle Benutzer alle Dokumente zuerst bestellen, bevor diese zum Download bereit stehen. Diese Einstellung überschreibt die Einstellung zum Download von Dokumenten und Bilder weiter unten.</transtext>
+	</transid>
+	<transid name="intranet_download_general_radio">
+		<transtext>Bestellen vor dem Download</transtext>
+	</transid>
+	<transid name="active">
+		<transtext>Aktiv</transtext>
+	</transid>
+	<transid name="delete_valuelist">
+		<transtext>Wollen Sie diese Werteliste wirklich löschen? Hinweis: ALLE Werte dieser Liste werden ebenfalls gelöscht!</transtext>
+	</transid>
+	<transid name="img_set_valuelist_edit">
+		<transtext>Werteliste und Werte bearbeiten</transtext>
+	</transid>
+	<transid name="img_set_valuelist_edit_name">
+		<transtext>Name der Werteliste</transtext>
+	</transid>
+	<transid name="img_set_valuelist_values_new">
+		<transtext>Wert erfassen</transtext>
+	</transid>
+	<transid name="img_set_valuelist_values_list">
+		<transtext>Erfasste Werte</transtext>
+	</transid>
+	<transid name="intranet_area">
+		<transtext>Digital Asset Management-Bereich</transtext>
+	</transid>
+	<transid name="user_intranet_area">
+		<transtext>Benutzer darf sich am Digital Asset Management anmelden</transtext>
+	</transid>
+	<transid name="more_user_data">
+		<transtext>Weitere Eigenschaften</transtext>
+	</transid>
+	<transid name="user_department">
+		<transtext>Abteilung</transtext>
+	</transid>
+	<transid name="user_personalnumber">
+		<transtext>Personennummer</transtext>
+	</transid>
+	<transid name="header_onofflinedate">
+		<transtext>Aufschalt-Ablauf Datum</transtext>
+	</transid>
+	<transid name="onlinedate">
+		<transtext>Aufschalt-Datum</transtext>
+	</transid>
+	<transid name="offlinedate">
+		<transtext>Ablauf-Datum</transtext>
+	</transid>
+	<transid name="date_day">
+		<transtext>Tag</transtext>
+	</transid>
+	<transid name="date_month">
+		<transtext>Monat</transtext>
+	</transid>
+	<transid name="date_year">
+		<transtext>Jahr</transtext>
+	</transid>
+	<transid name="desc_onofflinedate">
+		<transtext>Das Aufschalt-/Ablaufdatum bezieht sich nur auf den Digital Asset Management-Bereich. Benutzer werden an den angegebenen Daten aktiviert, bzw. deaktiviert. Ein Tag beginnt und endet um Mitternacht.</transtext>
+	</transid>
+	<transid name="send_email">
+		<transtext>eMail senden</transtext>
+	</transid>
+	<transid name="send_email_desc">
+		<transtext>Senden Sie an diese Person eine eMail</transtext>
+	</transid>
+	<transid name="from">
+		<transtext>Von</transtext>
+	</transid>
+	<transid name="to">
+		<transtext>An</transtext>
+	</transid>
+	<transid name="subject">
+		<transtext>Betreff</transtext>
+	</transid>
+	<transid name="message">
+		<transtext>Nachricht</transtext>
+	</transid>
+	<transid name="message_sent">
+		<transtext>Ihre Nachricht wurde erfolgreich versandt.</transtext>
+	</transid>
+	<transid name="user_mailinglist">
+		<transtext>Mailinglisten</transtext>
+	</transid>
+	<transid name="user_mailinglist_new">
+		<transtext>Neue Mailingliste anlegen</transtext>
+	</transid>
+	<transid name="nothing_found">
+		<transtext>Wir konnten keine Einträge finden!</transtext>
+	</transid>
+	<transid name="list">
+		<transtext>Liste</transtext>
+	</transid>
+	<transid name="user_mailinglist_desc">
+		<transtext>Klicken Sie auf den Namen einer Mailingliste um alle erfassten Benutzer einzusehen.</transtext>
+	</transid>
+	<transid name="members">
+		<transtext>Mitglieder</transtext>
+	</transid>
+	<transid name="members_mailinglist">
+		<transtext>Mitglieder der Mailingliste</transtext>
+	</transid>
+	<transid name="which_mailinglist">
+		<transtext>Welche Mailingliste?</transtext>
+	</transid>
+	<transid name="which_mailinglist_desc">
+		<transtext>Wählen Sie in welche Mailingliste Sie die ausgewählten Adressen ablegen wollen.</transtext>
+	</transid>
+	<transid name="chose">
+		<transtext>Auswählen</transtext>
+	</transid>
+	<transid name="img_set_categories_desc">
+		<transtext>Bestimmen Sie hier ob sie Ihre Kategorien / Rubriken als Ordnerstruktur im Digital Asset Management, bzw. Website anzeigen wollen.</transtext>
+	</transid>
+	<transid name="show_in_intranet">
+		<transtext>Im Digital Asset Management anzeigen</transtext>
+	</transid>
+	<transid name="show_in_website">
+		<transtext>Auf der Website anzeigen</transtext>
+	</transid>
+	<transid name="edit">
+		<transtext>Bearbeiten</transtext>
+	</transid>
+	<transid name="cat_new">
+		<transtext>Neue Kategorie / Rubrik erfassen</transtext>
+	</transid>
+	<transid name="create_sub">
+		<transtext>Subkategorie erfassen</transtext>
+	</transid>
+	<transid name="delete_catfolder">
+		<transtext>Wollen Sie diese Kategorie/Rubrik wirklich löschen? Hinweis: ALLE darin enthaltenen Unterkategorien gehen dabei unwiederruflich verloren!</transtext>
+	</transid>
+	<transid name="create_sub_desc">
+		<transtext>Klicken Sie hier um eine neue Subkategorie zu erstellen</transtext>
+	</transid>
+	<transid name="edit_cat_desc">
+		<transtext>Klicken Sie hier um diese Kategorie zu bearbeiten</transtext>
+	</transid>
+	<transid name="edit_desc">
+		<transtext>Klicken Sie hier um diesen Eintrag zu bearbeiten</transtext>
+	</transid>
+	<transid name="send_email_mass_desc">
+		<transtext>Hier klicken um eine eMail an diese Liste zu senden</transtext>
+	</transid>
+	<transid name="cat_image">
+		<transtext>Bild für diese Kategorie</transtext>
+	</transid>
+	<transid name="image">
+		<transtext>Bild</transtext>
+	</transid>
+	<transid name="pageexplorer">
+		<transtext>Seiten-Explorer</transtext>
+	</transid>
+	<transid name="page_new">
+		<transtext>Neue Seite erstellen</transtext>
+	</transid>
+	<transid name="news">
+		<transtext>News</transtext>
+	</transid>
+	<transid name="news_edit">
+		<transtext>News bearbeiten</transtext>
+	</transid>
+	<transid name="page_new_desc">
+		<transtext>Hier klicken um auf der obersten Ebene eine neue Seite zu erstellen</transtext>
+	</transid>
+	<transid name="refresh">
+		<transtext>Aktualisieren</transtext>
+	</transid>
+	<transid name="refresh_desc">
+		<transtext>Hier klicken um den Seiten-Explorer zu aktualisieren</transtext>
+	</transid>
+	<transid name="page_settings">
+		<transtext>Seiten-Eigenschaften</transtext>
+	</transid>
+	<transid name="page_title">
+		<transtext>Name der Seite</transtext>
+	</transid>
+	<transid name="page_title_error">
+		<transtext>Bitte geben Sie einen Namen für die Seite ein</transtext>
+	</transid>
+	<transid name="menue_title">
+		<transtext>Name des Menü</transtext>
+	</transid>
+	<transid name="menue_title_error">
+		<transtext>Bitte geben Sie einen Namen für das Menü ein</transtext>
+	</transid>
+	<transid name="menue_url">
+		<transtext>Seiten URL</transtext>
+	</transid>
+	<transid name="menue_title_error">
+		<transtext>Bitte geben Sie einen URL-Namen für die Seite ein</transtext>
+	</transid>
+	<transid name="page_templates">
+		<transtext>Seiten-Vorlagen</transtext>
+	</transid>
+	<transid name="content_templates">
+		<transtext>Inhalts-Vorlagen</transtext>
+	</transid>
+	<transid name="page_edit">
+		<transtext>Seite bearbeiten</transtext>
+	</transid>
+	<transid name="page_actions">
+		<transtext>Seiten-Aktionen</transtext>
+	</transid>
+	<transid name="page_new_sub">
+		<transtext>Neue Unterseite erstellen</transtext>
+	</transid>
+	<transid name="page_move">
+		<transtext>Verschieben Sie diese Seite in einen anderen Baum</transtext>
+	</transid>
+	<transid name="page_put_onoff">
+		<transtext>Diese Seite online, bzw. offline, stellen</transtext>
+	</transid>
+	<transid name="page_delete">
+		<transtext>Löschen Sie diese Seite</transtext>
+	</transid>
+	<transid name="page_redirect">
+		<transtext>Umleitung auf eine andere Seite aktivieren</transtext>
+	</transid>
+	<transid name="page_title">
+		<transtext>Seitentitel</transtext>
+	</transid>
+	<transid name="preview">
+		<transtext>Vorschau</transtext>
+	</transid>
+	<transid name="menue_settings">
+		<transtext>Menü-Eigenschaften</transtext>
+	</transid>
+	<transid name="menue_orientation">
+		<transtext>Menü-Orientierung</transtext>
+	</transid>
+	<transid name="add_edit">
+		<transtext>Erfassen/Bearbeiten</transtext>
+	</transid>
+	<transid name="pages_delete">
+		<transtext>Wollen Sie diese Seite wirklich löschen? Hinweis: ALLE enthaltenen Sub-Seiten werden dabei auch gelöscht! Dieser Vorgang ist unwiederruflich!</transtext>
+	</transid>
+	<transid name="url_website">
+		<transtext>URL der Website</transtext>
+	</transid>
+	<transid name="http_desc">
+		<transtext>Geben Sie hier die URL Ihrer Website an. Bitte kompletten Pfad mit http:// aber ohne "/" am Schluss angeben! Hinweis: Falls sich Ihr Oracle Datenbank Server auf einem anderen Rechner befindet, müssen Sie hier eine legale IP-Adresse oder DNS-Namen eintragen!!!</transtext>
+	</transid>
+	<transid name="first_level">
+		<transtext>Erste Ebene</transtext>
+	</transid>
+	<transid name="categories">
+		<transtext>Kategorien</transtext>
+	</transid>
+	<transid name="no_subfolders">
+		<transtext>Keine weiteren Unterordner vorhanden. Sie finden den Inhalt dieses Ordners auf der rechten Seite.</transtext>
+	</transid>
+	<transid name="kind_of_file">
+		<transtext>Art der Datei</transtext>
+	</transid>
+	<transid name="images">
+		<transtext>Bilder</transtext>
+	</transid>
+	<transid name="documents">
+		<transtext>Dokumente</transtext>
+	</transid>
+	<transid name="find">
+		<transtext>Finden</transtext>
+	</transid>
+	<transid name="error_to_short">
+		<transtext>Geben Sie mind. zwei Buchstaben ein um die Suche erfolgreich abzuschliessen!</transtext>
+	</transid>
+	<transid name="please_wait">
+		<transtext>Bitte warten</transtext>
+	</transid>
+	<transid name="files_doc">
+		<transtext>Word</transtext>
+	</transid>
+	<transid name="files_xls">
+		<transtext>Excel</transtext>
+	</transid>
+	<transid name="files_pdf">
+		<transtext>PDF</transtext>
+	</transid>
+	<transid name="files_others">
+		<transtext>Andere Formate</transtext>
+	</transid>
+	<transid name="view">
+		<transtext>Ansicht</transtext>
+	</transid>
+	<transid name="file_name">
+		<transtext>Dateiname</transtext>
+	</transid>
+	<transid name="date_created">
+		<transtext>Erstellungsdatum</transtext>
+	</transid>
+	<transid name="date_changed">
+		<transtext>Änderungsdatum</transtext>
+	</transid>
+	<transid name="files_thumbnail">
+		<transtext>Thumbnail</transtext>
+	</transid>
+	<transid name="files_comp">
+		<transtext>Comping</transtext>
+	</transid>
+	<transid name="files_comp_uw">
+		<transtext>Comping (ohne Wasserzeichen)</transtext>
+	</transid>
+	<transid name="files_org">
+		<transtext>Original</transtext>
+	</transid>
+	<transid name="new_image">
+		<transtext>Neues Bild</transtext>
+	</transid>
+	<transid name="header_alt_title">
+		<transtext>Title und Alt Bezeichnungen eingeben</transtext>
+	</transid>
+	<transid name="alt_title_desc">
+		<transtext>Mit der Eingabe dieser zwei Felder verbessern Sie die Suchresultate in den Suchmaschinen</transtext>
+	</transid>
+	<transid name="new_file">
+		<transtext>Neue Datei</transtext>
+	</transid>
+	<transid name="page_meta_title">
+		<transtext>Titel der Seite</transtext>
+	</transid>
+	<transid name="error_image">
+		<transtext>Sie müssen hier ein Bild im Format JPG, PNG oder GIF angeben!</transtext>
+	</transid>
+	<transid name="create_link">
+		<transtext>Umleitung erstellen</transtext>
+	</transid>
+	<transid name="create_link_desc">
+		<transtext>Wenn Sie eine Umleitung auf eine bestehende Seite erstellen wollen, so wählen Sie die Seite hier aus und speichern Sie. Falls nicht, dann wählen Sie bitte eine Vorlage unten aus.</transtext>
+	</transid>
+	<transid name="flexbuilder">
+		<transtext>Flex-Module</transtext>
+	</transid>
+	<transid name="flexbuilder_list">
+		<transtext>Flex-Module anzeigen</transtext>
+	</transid>
+	<transid name="flexbuilder_name">
+		<transtext>Name des Flex-Modul</transtext>
+	</transid>
+	<transid name="flexbuilder_insert">
+		<transtext>Flex-Modul einfügen</transtext>
+	</transid>
+	<transid name="chose_modul">
+		<transtext>Modul wählen</transtext>
+	</transid>
+	<transid name="insert">
+		<transtext>Einfügen</transtext>
+	</transid>
+	<transid name="module">
+		<transtext>Modul</transtext>
+	</transid>
+	<transid name="clone">
+		<transtext>Duplizieren</transtext>
+	</transid>
+	<transid name="remove">
+		<transtext>Entfernen</transtext>
+	</transid>
+	<transid name="formview">
+		<transtext>Dieses formular kann in dieser Ansicht nicht angezeigt werden. Bitte verwenden Sie die Vorschau um das formular korrekt anzuzeigen.</transtext>
+	</transid>
+	<transid name="flex_remove_ask">
+		<transtext>Wollen Sie dieses Module wirklich aus dieser Seite löschen?</transtext>
+	</transid>
+	<transid name="change_image">
+		<transtext>Bild wechseln</transtext>
+	</transid>
+	<transid name="change_file">
+		<transtext>Verweis der Datei ändern</transtext>
+	</transid>
+	<transid name="existing_link">
+		<transtext>Diese Seite kann hier nicht editiert werden</transtext>
+	</transid>
+	<transid name="existing_link_desc">
+		<transtext>Diese Seite kann nicht hier angezeigt werden da entweder ein Umleitung auf eine andere Seite besteht oder eine fixe Vorlage besteht (z.B. News oder FAQ-Vorlage).</transtext>
+	</transid>
+	<transid name="page_redirected">
+		<transtext>umgeleitet</transtext>
+	</transid>
+	<transid name="pages_filesearchpage">
+		<transtext>Suchformular</transtext>
+	</transid>
+	<transid name="pages_myaccountpage">
+		<transtext>Kundenprofil / Login / Neuregistration</transtext>
+	</transid>
+	<transid name="pages_cartpage">
+		<transtext>Warenkorb</transtext>
+	</transid>
+	<transid name="pages_cdlistpage">
+		<transtext>CD Liste</transtext>
+	</transid>
+	<transid name="your_pages">
+		<transtext>Ihre Seiten</transtext>
+	</transid>
+	<transid name="dam_pages">
+		<transtext>Bild bezogene Seiten</transtext>
+	</transid>
+	<transid name="shop_pages">
+		<transtext>Shop bezogene Seiten</transtext>
+	</transid>
+	<transid name="pages_lightboxpage">
+		<transtext>Leuchtkasten</transtext>
+	</transid>
+	<transid name="same_host">
+		<transtext>Es besteht schon ein Mandant mit diesen Angaben!</transtext>
+	</transid>
+	<transid name="path_incoming">
+		<transtext>"Incoming"-Ordner</transtext>
+	</transid>
+	<transid name="path_incoming_desc">
+		<transtext>Geben Sie die URL für eingehende Dateien an (dam/incoming).</transtext>
+	</transid>
+	<transid name="path_outgoing">
+		<transtext>"Outgoing"-Ordner</transtext>
+	</transid>
+	<transid name="path_outgoing_desc">
+		<transtext>Geben Sie URL für ausgehende Dateien an (dam/outgoing).</transtext>
+	</transid>
+	<transid name="drop_host">
+		<transtext>Wollen Sie diesen Mandanten wirklich löschen? HINWEIS: ALLE Daten gehe dabei verloren!</transtext>
+	</transid>
+	<transid name="drop_host_success">
+		<transtext>Der Mandant wurde aus Ihrem System entfernt!</transtext>
+	</transid>
+	<transid name="price_add">
+		<transtext>Preis erfassen</transtext>
+	</transid>
+	<transid name="price">
+		<transtext>Preis</transtext>
+	</transid>
+	<transid name="price_text">
+		<transtext>Preis Text</transtext>
+	</transid>
+	<transid name="price_existing">
+		<transtext>Erfasst Preise</transtext>
+	</transid>
+	<transid name="delete_single">
+		<transtext>Löschen</transtext>
+	</transid>
+	<transid name="payment_options">
+		<transtext>Zahlungskonditionen</transtext>
+	</transid>
+	<transid name="memos">
+		<transtext>Memos</transtext>
+	</transid>
+	<transid name="payment_options_desc">
+		<transtext>Erfassen Sie hier die Zahlungskonditionen für diesen Kunden</transtext>
+	</transid>
+	<transid name="memos_desc">
+		<transtext>Erfassen oder bearbeiten Sie hier die Memos für diesen Kunden</transtext>
+	</transid>
+	<transid name="payment_cc">
+		<transtext>Kreditkarte</transtext>
+	</transid>
+	<transid name="payment_cc_cards">
+		<transtext>Kreditkartentypen</transtext>
+	</transid>
+	<transid name="separate_values_desc">
+		<transtext>Mehrere Werte mit einem "," (Komma) trennen</transtext>
+	</transid>
+	<transid name="payment_bill">
+		<transtext>Rechnung</transtext>
+	</transid>
+	<transid name="payment_pod">
+		<transtext>Nachnahme</transtext>
+	</transid>
+	<transid name="payment_pre">
+		<transtext>Vorauskasse</transtext>
+	</transid>
+	<transid name="payment_options_desc2">
+		<transtext>Die hier erfassten Zahlungskoditionen sind für alle Kunden verfügbar. Sie können für jeden Kunden individuell Zahlungskoditionen erfassen. Zum Beispiel können Sie das bezahlen per Rechnung generell deaktivieren, für einzelne Kunden aber aktivieren.</transtext>
+	</transid>
+	<transid name="memos_add">
+		<transtext>Memo erfassen</transtext>
+	</transid>
+	<transid name="memos_header">
+		<transtext>Memo Titel</transtext>
+	</transid>
+	<transid name="memos_edit">
+		<transtext>Memo bearbeiten</transtext>
+	</transid>
+	<transid name="created_on">
+		<transtext>Erstellt am</transtext>
+	</transid>
+	<transid name="changed_on">
+		<transtext>Geändert am</transtext>
+	</transid>
+	<transid name="cancel">
+		<transtext>Abbrechen</transtext>
+	</transid>
+	<transid name="orders">
+		<transtext>Bestellungen</transtext>
+	</transid>
+	<transid name="orders_desc">
+		<transtext>Sehen Sie hier alle Bestellungen dieses Kunden ein</transtext>
+	</transid>
+	<transid name="orders_customer">
+		<transtext>Bestellung(en) dieses Kunden</transtext>
+	</transid>
+	<transid name="orders_nr">
+		<transtext>Bestellung-Nr.</transtext>
+	</transid>
+	<transid name="quantity">
+		<transtext>Anz.</transtext>
+	</transid>
+	<transid name="status">
+		<transtext>Status</transtext>
+	</transid>
+	<transid name="price">
+		<transtext>Price</transtext>
+	</transid>
+	<transid name="orders_no">
+		<transtext>Dieser Kunde hat noch nichts bestellt!</transtext>
+	</transid>
+	<transid name="category">
+		<transtext>Kategorie</transtext>
+	</transid>
+	<transid name="same_record">
+		<transtext>Es besteht schon ein Eintrag mit diesen Angaben!</transtext>
+	</transid>
+	<transid name="removed_record">
+		<transtext>Der Datensatz wurde erfolgreich gelöscht!</transtext>
+	</transid>
+	<transid name="news_categories">
+		<transtext>News-Kategorien</transtext>
+	</transid>
+	<transid name="news_add">
+		<transtext>Beitrag erfassen</transtext>
+	</transid>
+	<transid name="news_date">
+		<transtext>Datum</transtext>
+	</transid>
+	<transid name="news_source">
+		<transtext>Quelle</transtext>
+	</transid>
+	<transid name="news_header">
+		<transtext>Titel</transtext>
+	</transid>
+	<transid name="news_text">
+		<transtext>Einführung</transtext>
+	</transid>
+	<transid name="news_text_desc">
+		<transtext>Der Titel und der Einführungstext erscheinen bei der generellen Übersicht dieser Kategorie.</transtext>
+	</transid>
+	<transid name="news_text_long_header">
+		<transtext>Text auf eigener Seite</transtext>
+	</transid>
+	<transid name="news_text_long_desc">
+		<transtext>Der folgende Textbereich erscheint auf einer eigenen Seite.</transtext>
+	</transid>
+	<transid name="news_text_long">
+		<transtext>Folgetext</transtext>
+	</transid>
+	<transid name="news_link">
+		<transtext>Verweis</transtext>
+	</transid>
+	<transid name="news_records">
+		<transtext>Alle Beiträge</transtext>
+	</transid>
+	<transid name="news_record">
+		<transtext>Beitrag</transtext>
+	</transid>
+	<transid name="created_by">
+		<transtext>Erstellt von</transtext>
+	</transid>
+	<transid name="edit_record">
+		<transtext>Beitrag bearbeiten</transtext>
+	</transid>
+	<transid name="flex_noshow">
+		<transtext>Dieses Modul ist ein Formular oder eine Funktion die in dieser Ansicht nicht angezeigt werden kann. Bitte verwenden Sie die Vorschau.</transtext>
+	</transid>
+	<transid name="parameter">
+		<transtext>Parameter</transtext>
+	</transid>
+	<transid name="update">
+		<transtext>Aktualisieren</transtext>
+	</transid>
+	<transid name="faq_edit">
+		<transtext>Faq's bearbeiten</transtext>
+	</transid>
+	<transid name="header_title_meta_lang">
+		<transtext>Meta Tags pro Sprache</transtext>
+	</transid>
+	<transid name="header_title_meta_general">
+		<transtext>Meta Tags für alle Sprachen</transtext>
+	</transid>
+	<transid name="code_meta">
+		<transtext>Kompletten Code eingeben</transtext>
+	</transid>
+	<transid name="fck_upload_done">
+		<transtext>Die Datei wurde erfolgreich auf den Server übertragen. Sie können diese nun auswählen und in Ihren Text einbauen.</transtext>
+	</transid>
+	<transid name="fck_upload_exists">
+		<transtext>Eine Datei mit dem gleichen Namen existiert schon in dem Upload-Ordner.</transtext>
+	</transid>
+	<transid name="wysiwyg_settings">
+		<transtext>Wysiwyg-Einstellungen</transtext>
+	</transid>
+	<transid name="wysiwyg_templates">
+		<transtext>Wysiwyg Templates</transtext>
+	</transid>
+	<transid name="wysiwyg_css">
+		<transtext>Wysiwyg CSS</transtext>
+	</transid>
+	<transid name="delete_main_cat">
+		<transtext>Wollen Sie wirklich diese Kategorie löschen? HINWEIS: Alle Unterkategorien werden dabei ebenfalls gelöscht und dieser Vorgang ist unwiederruflich!</transtext>
+	</transid>
+	<transid name="create_subcat">
+		<transtext>Unterkategorie erstellen</transtext>
+	</transid>
+	<transid name="records_found">
+		<transtext>Datensätze</transtext>
+	</transid>
+	<transid name="faq_question">
+		<transtext>FAQ Frage</transtext>
+	</transid>
+	<transid name="faq_answer">
+		<transtext>FAQ Antwort</transtext>
+	</transid>
+	<transid name="question">
+		<transtext>Frage</transtext>
+	</transid>
+	<transid name="answer">
+		<transtext>Antwort</transtext>
+	</transid>
+	<transid name="faq_categories">
+		<transtext>FAQ-Kategorien</transtext>
+	</transid>
+	<transid name="faq_cat_move">
+		<transtext>Verschieben Sie diese FAQ Kategorie in einen anderen Baum</transtext>
+	</transid>
+	<transid name="faq_cat_move_header">
+		<transtext>FAQ Kategorie verschieben</transtext>
+	</transid>
+	<transid name="faq_cat_move_desc">
+		<transtext>Wählen Sie hier das Ziel für Ihre FAQ Kategorie aus.</transtext>
+	</transid>
+	<transid name="faq_cat_move_here">
+		<transtext>Hierher verschieben</transtext>
+	</transid>
+	<transid name="page_move_header">
+		<transtext>Seite verschieben</transtext>
+	</transid>
+	<transid name="page_move_desc">
+		<transtext>Wählen Sie hier das Ziel für Ihre Seite aus.</transtext>
+	</transid>
+	<transid name="page_move_here">
+		<transtext>Hierher verschieben</transtext>
+	</transid>
+	<transid name="report_stats_overview">
+		<transtext>Statistikübersicht</transtext>
+	</transid>
+	<transid name="report_totalusers">
+		<transtext>Total Besucher</transtext>
+	</transid>
+	<transid name="report_totalclicks">
+		<transtext>Total Klicks</transtext>
+	</transid>
+	<transid name="report_firstdate">
+		<transtext>Datum des ersten Eintrages</transtext>
+	</transid>
+	<transid name="report_lastdate">
+		<transtext>Datum des letzten Eintrages</transtext>
+	</transid>
+	<transid name="report_toppages">
+		<transtext>Die 5 meist besuchtesten Seiten</transtext>
+	</transid>
+	<transid name="report_topsearches">
+		<transtext>Die 5 meist benutzten Suchbegriffe (Website)</transtext>
+	</transid>
+	<transid name="report_topsearches_dam">
+		<transtext>Die 5 meist benutzten Suchbegriffe (Bilder / Dokumente)</transtext>
+	</transid>
+	<transid name="report_topsystems">
+		<transtext>Die 5 meist benutzten Systeme</transtext>
+	</transid>
+	<transid name="report_topbrowsers">
+		<transtext>Die 5 meist benutzten Browser</transtext>
+	</transid>
+	<transid name="report_pages">
+		<transtext>Statistik aller Seiten</transtext>
+	</transid>
+	<transid name="searchresults">
+		<transtext>Suchbegriffe (website)</transtext>
+	</transid>
+	<transid name="searchresults_dam">
+		<transtext>Suchbegriffe (Bilder/Dokumente)</transtext>
+	</transid>
+	<transid name="mailing_for_all_langs">
+		<transtext>Liste für alle Sprachen</transtext>
+	</transid>
+	<transid name="mailing_public">
+		<transtext>Öffentlich</transtext>
+	</transid>
+	<transid name="mailing_privat">
+		<transtext>Geschlossen</transtext>
+	</transid>
+	<transid name="mailing_viewinlang">
+		<transtext>Nur ersichtlich in</transtext>
+	</transid>
+	<transid name="user_chose_mailinglist_desc">
+		<transtext>Selektieren Sie hier in welche Mailingliste Sie die ausgewählten Benutzer erfassen wollen. Sie können diese jederzeit über die generelle Mailingliste bearbeiten.</transtext>
+	</transid>
+	<transid name="mailing_sendmail">
+		<transtext>Mailing erfassen/senden</transtext>
+	</transid>
+	<transid name="mailing_editlists">
+		<transtext>Mailinglisten bearbeiten</transtext>
+	</transid>
+	<transid name="mailing_archive">
+		<transtext>Mailing-Archiv</transtext>
+	</transid>
+	<transid name="mailing_addedtolist">
+		<transtext>Die ausgewählten Benutzer wurden erfolgreich der Mailingliste hinzugefügt.</transtext>
+	</transid>
+	<transid name="mailing_sendmail_desc">
+		<transtext>Klicken Sie auf das Mail-Icon um eine eMail an alle Mitglieder einer Mailingliste zu senden. Sie können alle Mitglieder der Liste einsehen indem Sie auf den Namen der Mailingliste klicken.</transtext>
+	</transid>
+	<transid name="send_email_save">
+		<transtext>Speichern (nicht senden)</transtext>
+	</transid>
+	<transid name="mailing_sendmail_saved">
+		<transtext>Gespeicherte Mailings (noch nicht gesandt)</transtext>
+	</transid>
+	<transid name="mailing_sendmail_saved_desc">
+		<transtext>Hier sehen Sie eine Liste aller gespeicherten und noch nicht gesandten Mailings. Klicken Sie auf das Bearbeiten-Symbol um die Nachricht zu bearbeiten und gegebenenfalls abzusenden.</transtext>
+	</transid>
+	<transid name="edited_last_by">
+		<transtext>Zuletzt bearbeitet von</transtext>
+	</transid>
+	<transid name="edit_saved_message">
+		<transtext>Nachricht bearbeiten</transtext>
+	</transid>
+	<transid name="edit_saved_message_desc">
+		<transtext>Bearbeiten Sie diese gespeicherte Nachricht</transtext>
+	</transid>
+	<transid name="suretosend">
+		<transtext>Sind Sie sicher, dass Sie diese Mailing nun an alle Mitglieder dieser List senden wollen?</transtext>
+	</transid>
+	<transid name="mailing_archive_header">
+		<transtext>Ihr Mailing-Archiv</transtext>
+	</transid>
+	<transid name="mailing_archive_desc">
+		<transtext>Hier sehen Sie Ihr Mailing-Archiv. Mit einem Klick auf die Betreff-Zeile können Sie die komplette Nachricht einsehen. Ebenfalls können Sie hier eine Nachricht clonen und neu versenden.</transtext>
+	</transid>
+	<transid name="sent_by">
+		<transtext>Versandt von:</transtext>
+	</transid>
+	<transid name="clone_mailing">
+		<transtext>Mailing clonen</transtext>
+	</transid>
+	<transid name="clone_mailing_desc">
+		<transtext>Klicken Sie hier um dieses Mailing zu clonen. Somit können Sie diese Nachricht auch an andere Mailinglisten senden.</transtext>
+	</transid>
+	<transid name="sent_on">
+		<transtext>Versandt am:</transtext>
+	</transid>
+	<transid name="clone_mailing_header">
+		<transtext>Mailingliste wählen</transtext>
+	</transid>
+	<transid name="clone_mailing_header_desc">
+		<transtext>Wählen Sie unten die Mailingliste in welche Sie das Mailing clonen wollen.</transtext>
+	</transid>
+	<transid name="clone_done">
+		<transtext>Ihr Mailing wurde erfolgreich gecloned. Sie können dieses unter "Mailing erfassen/senden" und da in "Gespeicherte Mailing" finden und bearbeiten.</transtext>
+	</transid>
+	<transid name="salutation">
+		<transtext>Anrede</transtext>
+	</transid>
+	<transid name="chose_salutation">
+		<transtext>Anrede auswählen</transtext>
+	</transid>
+	<transid name="salutation_desc">
+		<transtext>Anrede vor der Nachricht einfügen</transtext>
+	</transid>
+	<transid name="change_anytime">
+		<transtext>Sie können diese Einstellung auch später nochmals ändern</transtext>
+	</transid>
+	<transid name="oracle_settings">
+		<transtext>Einstellungen für Oracle</transtext>
+	</transid>
+	<transid name="path_incoming_batch_desc">
+		<transtext>Geben Sie URL für mehrere eingehende Dateien an (dam/incoming_batch).</transtext>
+	</transid>
+	<transid name="no_space_umlauts">
+		<transtext>Keine Leerzeichen, Umläute oder Sonderzeichen verwenden!</transtext>
+	</transid>
+	<transid name="directories">
+		<transtext>Verzeichnisse</transtext>
+	</transid>
+	<transid name="host_menue">
+		<transtext>Domains bearbeiten/hinzufügen</transtext>
+	</transid>
+	<transid name="total_users">
+		<transtext>Benutzer insgesamt</transtext>
+	</transid>
+	<transid name="quicksearch">
+		<transtext>Schnellsuche</transtext>
+	</transid>
+	<transid name="report_browsers">
+		<transtext>Die meist benutzten Browser</transtext>
+	</transid>
+	<transid name="report_topusers">
+		<transtext>Die 5 aktivsten Benutzer</transtext>
+	</transid>
+	<transid name="report_topsearches_images">
+		<transtext>Die 5 meist benutzten Suchbegriffe (Bilder)</transtext>
+	</transid>
+	<transid name="report_topsearches_documents">
+		<transtext>Die 5 meist benutzten Suchbegriffe (Dokumente)</transtext>
+	</transid>
+	<transid name="search_term">
+		<transtext>Suchbegriffe</transtext>
+	</transid>
+	<transid name="search_terms_summarized">
+		<transtext>Suchbegriffe zusammengefasst</transtext>
+	</transid>
+	<transid name="search_terms_detailed">
+		<transtext>Suchbegriffe detailiert</transtext>
+	</transid>
+	<transid name="rep_nothing_found">
+		<transtext>Nichts gefunden</transtext>
+	</transid>
+	<transid name="report_totalhits">
+		<transtext>Total Hits</transtext>
+	</transid>
+	<transid name="keywords">
+		<transtext>Stichwörter</transtext>
+	</transid>
+	<transid name="keyword_new">
+		<transtext>Stichwort erfassen</transtext>
+	</transid>
+	<transid name="keyword_new_desc">
+		<transtext>Klicken Sie hier um auf der obersten Ebene ein Stichwort zu erfassen</transtext>
+	</transid>
+	<transid name="keyword_refresh_desc">
+		<transtext>Klicken Sie hier um den Stichwort-Explorer zu aktualisieren</transtext>
+	</transid>
+	<transid name="keyword">
+		<transtext>Stichwort</transtext>
+	</transid>
+	<transid name="keyword_enter_error">
+		<transtext>Sie müssen alle Stichwörter-Felder ausfüllen!</transtext>
+	</transid>
+	<transid name="keyword_explorer">
+		<transtext>Stichwort-Explorer</transtext>
+	</transid>
+	<transid name="keyword_sub">
+		<transtext>Sub Stichwort erfassen</transtext>
+	</transid>
+	<transid name="keyword_delete">
+		<transtext>Wollen Sie dieses Stichwort wirklich löschen? Hinweis: Etwaige Sub-Stichwörter werden dabei ebenfalls gelöscht!</transtext>
+	</transid>
+	<transid name="keyword_edit">
+		<transtext>Stichwort bearbeiten</transtext>
+	</transid>
+	<transid name="keyword_sub_desc">
+		<transtext>Wenn Sie ein Sub-Stichwort erfassen, erscheint dieses als "Unter-Kategorie" des obigen Stichwortes.</transtext>
+	</transid>
+	<transid name="cms_pages">
+		<transtext>CMS-Seiten</transtext>
+	</transid>
+	<transid name="category_explorer">
+		<transtext>Kategorie-Explorer</transtext>
+	</transid>
+	<transid name="category_new">
+		<transtext>Kategorie erfassen</transtext>
+	</transid>
+	<transid name="category_new_desc">
+		<transtext>Klicken Sie hier um auf der obersten Ebene eine Kategorie zu erfassen</transtext>
+	</transid>
+	<transid name="category_refresh_desc">
+		<transtext>Klicken Sie hier um den Kategorie-Explorer zu aktualisieren</transtext>
+	</transid>
+	<transid name="category_enter_error">
+		<transtext>Sie müssen alle Kategorie-Felder ausfüllen!</transtext>
+	</transid>
+	<transid name="category_edit">
+		<transtext>Kategorie bearbeiten</transtext>
+	</transid>
+	<transid name="category_delete">
+		<transtext>Wollen Sie diese Kategorie wirklich löschen? Hinweis: Etwaige Unter-Kategorien werden dabei ebenfalls gelöscht!</transtext>
+	</transid>
+	<transid name="page_homepage">
+		<transtext>Seite als Startseite (Home) einrichten</transtext>
+	</transid>
+	<transid name="last_modified">
+		<transtext>Letzte Änderung</transtext>
+	</transid>
+	<transid name="global_tmp_desc">
+		<transtext>Änderungen an diesen Vorlagen sollten von erfahrenen Personen vorgenommen werden. Eine unsachgemässe Handhabung kann zum Ausfall Ihres Systems führen.</transtext>
+	</transid>
+	<transid name="tmp_add">
+		<transtext>Vorlage hinzufügen</transtext>
+	</transid>
+	<transid name="add">
+		<transtext>Hinzufügen</transtext>
+	</transid>
+	<transid name="tmp_show_desc">
+		<transtext>Es werden nur Dateien oben angezeigt die mit "dsp_" beginnen!</transtext>
+	</transid>
+	<transid name="error_add_file">
+		<transtext>Sie müssen schon eine Datei auswählen!</transtext>
+	</transid>
+	<transid name="tmp_edit">
+		<transtext>Vorlage bearbeiten</transtext>
+	</transid>
+	<transid name="header_imagemagick">
+		<transtext>ImageMagick Pfade</transtext>
+	</transid>
+	<transid name="header_imagemagick_desc">
+		<transtext>Geben Sie hier den absoluten Pfad zu ImageMagick an. ImageMagick wird von Razuna benötigt um Bilder zu bearbeiten. Die Installation von ImageMagick ist ein Teil der Razuna Installation und ist im Installations-Handbuch beschrieben. ImageMagick ist generell unter C:\Programme\ImageMagick (Windows) oder /usr/local/ImageMagick (Unix/Linux) installiert. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!</transtext>
+	</transid>
+	<transid name="imagemagick_path">
+		<transtext>ImageMagick Pfad</transtext>
+	</transid>
+	<transid name="header_watermark">
+		<transtext>Logo für das Wasserzeichen</transtext>
+	</transid>
+	<transid name="header_watermark_desc">
+		<transtext>Alle Ihre Layout-Bilder werden mit einem Wasserzeichen versehen. Geben Sie hier das Logo für Ihr Wassserzeichen an <![CDATA[(Die Datei muss den Namen <b>logo.gif</b> haben)]]>. Besucher Ihrer Website sehen die Layout-Bilder mit einem Wasserzeichen. Registrierte Anwender sehen das Bild ohne Wasserzeichen. Unten finden Sie eine Vorschau vor (dieses Beispiel funktioniert nur wenn ImageMagick (oben) richtig installiert ist).</transtext>
+	</transid>
+	<transid name="watermark_path">
+		<transtext>Wasserzeichen-Logo (logo.gif)</transtext>
+	</transid>
+	<transid name="show_example">
+		<transtext>Beispiel des Wasserzeichen anzeigen</transtext>
+	</transid>
+	<transid name="first_time">
+		<transtext><![CDATA[Razuna benötigt noch ein paar Informationen, bevor es komplett installiert ist. Wenn Sie Hilfe zu diesem Punkt benötigen, steht Ihnen die <a href="http://wiki.razuna.com" target="_blank">Online-Hilfe</a> zur Verfügung. Desweiteren finden Sie eventuell Hilfe in unserem <a href="https://getsatisfaction.com/razuna" target="_blank">Razuna Kunden-Forum</a> oder aber wir stehen Ihnen mit einem gültigen Support-Plan mit Rat und Tat zur Hilfe.]]></transtext>
+	</transid>
+	<transid name="alert_submit_firsttime">
+		<transtext><![CDATA[Wir schliessen jetzt die Installation von Razuna ab! Dieser Vorgang kann einige Minuten beanspruchen.\n\nUnterbrechen Sie diesen Ablauf nicht!]]></transtext>
+	</transid>
+	<transid name="path_to_ecp">
+		<transtext>Pfad zu Razuna Ordner</transtext>
+	</transid>
+	<transid name="path_to_ecp_desc">
+		<transtext>Geben Sie hier den absoluten Pfad zu Ihrem Razuna Installation an. Beachten Sie, dass der Ordner genau "Razuna" heissen muss.</transtext>
+	</transid>
+	<transid name="button_firstime">
+		<transtext>Installation jetzt abschliessen</transtext>
+	</transid>
+	<transid name="page_new_onoff_header">
+		<transtext>Seite gleich online stellen</transtext>
+	</transid>
+	<transid name="find_cat_id">
+		<transtext>ID finden</transtext>
+	</transid>
+	<transid name="button_save_publish">
+		<transtext><![CDATA[Speichern & Publizieren]]></transtext>
+	</transid>
+	<transid name="preview_desc">
+		<transtext>In dieser Vorschau sehen Sie diese Seite wie auch Ihre komplette Website mit allen Seiten die noch nicht publiziert wurden. Wenn Sie Ihre Website sehen möchten wie diese Ihre Besucher sehen, dann klicken Sie auf den Website-Verweis oben rechts.</transtext>
+	</transid>
+	<transid name="publish_desc">
+		<transtext><![CDATA[Ihre aktuell gespeicherte Website wird nun durch den neuen Inhalt ersetzt! Klicken Sie auf "OK" um dies zu bestätigen. Je nach Einstellung muss das Publizieren dieser Seite noch genehmigt werden.]]></transtext>
+	</transid>
+	<transid name="version_history">
+		<transtext>Version History</transtext>
+	</transid>
+	<transid name="saved_on">
+		<transtext>Gespeichert am</transtext>
+	</transid>
+	<transid name="saved_by">
+		<transtext>Gespeichert von</transtext>
+	</transid>
+	<transid name="replace_this">
+		<transtext>Übernehmen</transtext>
+	</transid>
+	<transid name="preview_history_desc">
+		<transtext>Hier erhalten Sie eine Vorschau für diesen Eintrag.</transtext>
+	</transid>
+	<transid name="republish_alert">
+		<transtext>Sie sind im Begriff Ihren aktuellen Seiteninhalt mit dem gewählten Inhalt aus der Version-History zu überschreiben! Bitte bestätigen Sie diese Aktion.</transtext>
+	</transid>
+	<transid name="searchresults_header">
+		<transtext>Suchresultate</transtext>
+	</transid>
+	<transid name="welcome_to_ecp">
+		<transtext>Willkommen zu Razuna</transtext>
+	</transid>
+	<transid name="welcome_text">
+		<transtext><![CDATA[Auf der linken Seite finden Sie die Einstellungen für Ihre Razuna Installation. Alle digitalen Daten werden im «Digital Asset Management» verwaltet. Da können Sie Ihre Daten hochladen, bearbeiten, verteilen, usw.]]></transtext>
+	</transid>
+	<transid name="support_desc">
+		<transtext><![CDATA[Direkten Support von der Razuna ist nur mit einem Support-Vertrag verfügbar. Für die "Community-Edition" erhalten Sie Support im Razuna Forum, der Online Hilfe und/oder im Bug Tracking / Knowledge Base System.]]></transtext>
+	</transid>
+	<transid name="online_help_link">
+		<transtext>Wiki</transtext>
+	</transid>
+	<transid name="direct_support">
+		<transtext>Direkten Support</transtext>
+	</transid>
+	<transid name="contact_support">
+		<transtext>Support anfordern</transtext>
+	</transid>
+	<transid name="all_collections">
+		<transtext>Kollektionen</transtext>
+	</transid>
+	<transid name="host_lang_basis">
+		<transtext>Sprachbasis</transtext>
+	</transid>
+	<transid name="host_setings">
+		<transtext>Host-Angaben</transtext>
+	</transid>
+	<transid name="language_description">
+		<transtext>Sprach-Bezeichnung</transtext>
+	</transid>
+	<transid name="language_added">
+		<transtext>Neue Sprache hinzugefügt</transtext>
+	</transid>
+	<transid name="language_added_desc">
+		<transtext>Geben Sie hier die Sprachbezeichnung für die neue(n) Sprache(n) an und wählen Sie eine vordefinierte Sprache für die Übersetzung aus.</transtext>
+	</transid>
+	<transid name="error_nousername">
+		<transtext>Bitte geben Sie einen Benutzernamen an!</transtext>
+	</transid>
+	<transid name="error_nopassword">
+		<transtext>Bitte geben Sie Ihr Passwort an!</transtext>
+	</transid>
+	<transid name="language_demo_host">
+		<transtext>Sprachauswahl</transtext>
+	</transid>
+	<transid name="ecp_blog_noconn">
+		<transtext>Hier erscheint normalerweise der Razuna-Blog welcher aber nicht angezeigt werden kann da anscheinend Ihre Verbindung in das Internet limitiert ist (Keine Verbindung oder die FireWall blockiert den Zugang)!</transtext>
+	</transid>
+	<transid name="permissions">
+		<transtext>Zugriffsrechte</transtext>
+	</transid>
+	<transid name="page_permissions_desc">
+		<transtext>Hier können Sie diese Seite mit deiner Gruppe schützen. Wenn Sie diese Seite mit einer Gruppe schützen, können nur noch Mitglieder dieser Gruppe auf diese Seite zugreifen.</transtext>
+	</transid>
+	<transid name="page_permissions_nogroups">
+		<transtext><![CDATA[Es sind noch keine Gruppen erfasst. Sie können die Gruppen auf der linken Seite unter "Benutzer / Gruppen" erfassen.]]></transtext>
+	</transid>
+	<transid name="header_email_settings">
+		<transtext>eMail-Einstellungen</transtext>
+	</transid>
+	<transid name="header_email_settings_desc">
+		<transtext>Geben Sie hier die Absender eMail-Adresse für alle eMails von Ihrer Website an. Ebenfalls können Sie hier weitere Mail relevante Einstellungen vornehmen.</transtext>
+	</transid>
+	<transid name="field_emty_take_default">
+		<transtext>(bei keiner Angabe wird die Einstellung des CFML-Servers übernommen)</transtext>
+	</transid>
+	<transid name="smtp_username">
+		<transtext>SMTP Benutzername</transtext>
+	</transid>
+	<transid name="smtp_password">
+		<transtext>SMTP Passwort</transtext>
+	</transid>
+	<transid name="smtp_username_desc">
+		<transtext>Falls Ihr Mail-Server eine SMTP Authentifizierung benötigt, geben Sie hier den Benutzernamen ein...</transtext>
+	</transid>
+	<transid name="smtp_password_desc">
+		<transtext>...und hier das Passwort.</transtext>
+	</transid>
+	<transid name="smtp_only_apply">
+		<transtext>Diese SMTP-Einstellungen haben nur effekt wenn Sie auch einen Mail-Server angeben. Ansonsten werden die Einstellungen des CFML-Servers übernommen.</transtext>
+	</transid>
+	<transid name="email_from_desc">
+		<transtext>Diese eMail-Adresse wird für alle eMails verwendet die von Ihrer Administration gesendet werden. Sie sollten hier immer eine eMail-Adresse angeben, damit die eMails korrekt versendet werden. Hinweis: Sie müssen eine echte und existierende eMail-Adresse angeben!</transtext>
+	</transid>
+	<transid name="im_error">
+		<transtext>Wir haben einen Fehler mit Ihrer ImageMagick-Installation entdeckt. Bitte korrigieren Sie diesen Fehler umgehend!</transtext>
+	</transid>
+	<transid name="user_crm_header">
+		<transtext>Customer Center-Bereich</transtext>
+	</transid>
+	<transid name="user_crm_header_chk">
+		<transtext>Benutzer darf sich am Customer Center anmelden</transtext>
+	</transid>
+	<transid name="crm_settings">
+		<transtext>Customer Center-Einstellungen</transtext>
+	</transid>
+	<transid name="license">
+		<transtext>Lizenz</transtext>
+	</transid>
+	<transid name="license_desc">
+		<transtext>Der Benutzung von Razuna unterliegt einer Lizenz-Vereinbarung. Sie können diese mit dem nachvollgenden Verweis einsehen. Bitte stimmen Sie der Vereinbarung mit Ihren Angaben unten zu. Hinweis: Eine eMail mit Ihrer Zustimmung wird an uns gesandt.</transtext>
+	</transid>
+	<transid name="license_url">
+		<transtext>Lizenz-Vereinbarung lesen</transtext>
+	</transid>
+	<transid name="license_agree_header">
+		<transtext>Lizenz-Vereinbarung</transtext>
+	</transid>
+	<transid name="license_agree">
+		<transtext>Ja, ich stimme der Razuna Lizenz-Vereinbarung zu.</transtext>
+	</transid>
+	<transid name="license_submit">
+		<transtext>Lizenz akzeptieren</transtext>
+	</transid>
+	<transid name="license_agree_alert">
+		<transtext>Sie haben noch nicht der Razuna-Lizenzvereinbarung zugestimmt!</transtext>
+	</transid>
+	<transid name="icons_refresh">
+		<transtext>Cache aktualisieren</transtext>
+	</transid>
+	<transid name="icons_refresh_desc">
+		<transtext>Klicken Sie hier um den Cache zu aktualisieren. Dies ist teilweise nötig wenn angepasste Datensätze die Änderungen nicht anzeigen.</transtext>
+	</transid>
+	<transid name="oracle_schema">
+		<transtext>Oracle Schema</transtext>
+	</transid>
+	<transid name="oracle_schema_desc">
+		<transtext><![CDATA[Geben Sie das Oracle Schema an. Wenn Sie hier kein eigenes Schema angeben, dann verwenden Sie "Razuna"!]]></transtext>
+	</transid>
+	<transid name="error_imagemagick_novalue">
+		<transtext>Bitte geben Sie den Pfad zu Ihrer ImageMagick-Installation unter den generellen Einstellungen an!</transtext>
+	</transid>
+	<transid name="installation_checklist">
+		<transtext>Installation Checklist</transtext>
+	</transid>
+	<transid name="installation_checklist_license">
+		<transtext>Die Razuna-Lizenz akzeptiert</transtext>
+	</transid>
+	<transid name="installation_checklist_task">
+		<transtext>Aufgabe</transtext>
+	</transid>
+	<transid name="installation_checklist_progress">
+		<transtext>Fortschritt</transtext>
+	</transid>
+	<transid name="server_platform">
+		<transtext>Server Betriebsystem</transtext>
+	</transid>
+	<transid name="server_platform_version">
+		<transtext>Betriebsystem Version</transtext>
+	</transid>
+	<transid name="coldfusion_version">
+		<transtext>CFML Version</transtext>
+	</transid>
+	<transid name="coldfusion_product">
+		<transtext>CFML Produkt</transtext>
+	</transid>
+	<transid name="installation_checklist_impath">
+		<transtext>Pfad zu ImageMagick (für Bilder) gesetzt</transtext>
+	</transid>
+	<transid name="installation_checklist_emailfrom">
+		<transtext>eMail-Absender gesetzt</transtext>
+	</transid>
+	<transid name="oracle_settings_global">
+		<transtext>Oracle Datenbank</transtext>
+	</transid>
+	<transid name="directories_desc">
+		<transtext>Bitte geben Sie die URL's für die Transfer-Ordner im Digital Asset Management an. Die URL's sollten ohne http:// und ohne slash am Ende eingegeben werden. Razuna verwendet diese Pfade um Ihre Daten in das System einzupflegen.</transtext>
+	</transid>
+	<transid name="error_local_url">
+		<transtext><![CDATA[Hinweis: Der Aufruf von Razuna sollte unter einer erreichbaren IP-Adresse oder DNS-Namen erfolgen (NICHT: 192.168.1.1 oder 127.0.0.1)! Bitte rufen Sie Razuna mit einer korrekten Adresse auf oder Sie können sich nicht anmelden.]]></transtext>
+	</transid>
+	<transid name="update_host_manually">
+		<transtext><![CDATA[Hiermit wird dieser Host-Ordner mit der neusten Version aktualisiert. Ebenfalls werden die Application.cfm-Dateien und alle Übersetzungen (Ihre Änderungen bleiben erhalten) der Website und des Digital Asset Managment aktualisiert. Dies ist notwendig nach einem Update, wenn wir Sie darum bitten oder wenn etwas nicht mehr so läuft wie es sollte!]]></transtext>
+	</transid>
+	<transid name="update_host_manually_header">
+		<transtext>Mandant aktualisieren</transtext>
+	</transid>
+	<transid name="update_host_manually_desc">
+		<transtext>Mandant mit den neusten Einstellungen aktualisieren</transtext>
+	</transid>
+	<transid name="update_host_done">
+		<transtext>Der Mandant wurde erfolgreich aktualisiert!</transtext>
+	</transid>
+	<transid name="video_settings_global">
+		<transtext>Video</transtext>
+	</transid>
+	<transid name="header_ffmpeg">
+		<transtext>FFMpeg Pfad</transtext>
+	</transid>
+	<transid name="header_ffmpeg_desc">
+		<transtext><![CDATA[Geben Sie hier den absoluten Pfad zu FFMpeg an. FFMpeg wird von Razuna benötigt um die Videos in verschiedene Formate und Grössen umzuwandeln. Die Installation von FFMpeg war ein Teil der Razuna Installation und ist im Installations-Handbuch beschrieben. Sie können die Installations-Datei von der DVD laden oder aber direkt von der <a href="http://ffmpeg.mplayerhq.hu/index.html" target="_blank"><u>FFMpeg Website</u></a> laden. FFMpeg ist generell unter C:\Programme\FFMpeg (Windows) oder /usr/local/bin (Unix/Linux/MacOS X) installiert. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!]]></transtext>
+	</transid>
+	<transid name="header_video_preview_size">
+		<transtext>Video-Vorschau-Einstellungen</transtext>
+	</transid>
+	<transid name="header_video_preview_size_desc">
+		<transtext><![CDATA[Bestimmen Sie, in Pixel, die Grösse des zu erstellenden Vorschau-Bildes (Poster Images) und des Vorschau-Filmes und dir Vorschau-Zeit.<strong>Hinweis: Ihre Wert muss teilbar durch 2 sein, ist dies nit gewährleistet wird die Umwandlung fehlschlagen!</strong>]]></transtext>
+	</transid>
+	<transid name="header_video_preview_size_text">
+		<transtext>Vorschau-Grösse</transtext>
+	</transid>
+	<transid name="header_video_preview_sec_text">
+		<transtext>Vorschau-Länge</transtext>
+	</transid>
+	<transid name="installation_checklist_ffmpeg">
+		<transtext>Pfad zu FFMpeg (für Videos) gesetzt</transtext>
+	</transid>
+	<transid name="server_url">
+		<transtext>URL dieses Servers</transtext>
+	</transid>
+	<transid name="header_video_preview_timeframe">
+		<transtext>Bitte in HH:MM:SS angeben</transtext>
+	</transid>
+	<transid name="header_video_preview_sec_start">
+		<transtext>Vorschau startet von</transtext>
+	</transid>
+	<transid name="header_video_preview_timeframe_start">
+		<transtext>Geben Sie die Startzeit der Vorschau-Aufnahme in HH:MM:SS an</transtext>
+	</transid>
+	<transid name="error_form_oracle">
+		<transtext>Eine wichtige Oracle-Einstellung fehlt. Bitte korrigieren Sie dies umgehend!</transtext>
+	</transid>
+	<transid name="error_form_email_from">
+		<transtext>Die FROM-eMail-Adresse ist nicht gesetzt! Bitte korrigieren Sie dies!</transtext>
+	</transid>
+	<transid name="error_form_website_url">
+		<transtext>Es besteht keine Eintrag für die URL zu Ihrer Website! Bitte korrigieren Sie dies!</transtext>
+	</transid>
+	<transid name="error_form_ffmpeg">
+		<transtext>Der Pfad zu FFMpeg ist nicht eingetragen! Bitte korrigieren Sie dies!</transtext>
+	</transid>
+	<transid name="url_oracle_sp">
+		<transtext>URL zu Stored Procedures</transtext>
+	</transid>
+	<transid name="url_sp_video">
+		<transtext>URL Video</transtext>
+	</transid>
+	<transid name="url_sp_video_image">
+		<transtext>URL Video Bild-Vorschau</transtext>
+	</transid>
+	<transid name="header_video_preview_author">
+		<transtext>Author Tag</transtext>
+	</transid>
+	<transid name="header_video_preview_copyright">
+		<transtext>Copyright Tag</transtext>
+	</transid>
+	<transid name="header_video_preview_tag">
+		<transtext>Tag wird bei jedem generierten Film eingefügt</transtext>
+	</transid>
+	<transid name="playlist_area">
+		<transtext>Playlist-Center-Bereich</transtext>
+	</transid>
+	<transid name="user_playlist_area">
+		<transtext>Benutzer darf sich am Playlist-Center anmelden</transtext>
+	</transid>
+	<transid name="correct_video_aspect">
+		<transtext>Der Aspect Ratio der Vorschau muss immer durch 2 teilbar sein. Wir haben die Eingabe für Sie angepasst.</transtext>
+	</transid>
+	<transid name="general_settings">
+		<transtext>Generelle Einstellungen</transtext>
+	</transid>
+	<transid name="choose_asset">
+		<transtext>Anzeigen in</transtext>
+	</transid>
+	<transid name="cat_for_all">
+		<transtext>Für alle Dateitypen</transtext>
+	</transid>
+	<transid name="cat_for_img">
+		<transtext>Bei Bilder</transtext>
+	</transid>
+	<transid name="cat_for_vid">
+		<transtext>Bei Videos</transtext>
+	</transid>
+	<transid name="cat_for_doc">
+		<transtext>Bei Dokumenten (alle Typen)</transtext>
+	</transid>
+	<transid name="cat_for_aud">
+		<transtext>Bei Audio</transtext>
+	</transid>
+	<transid name="image_categories">
+		<transtext>Bild-Kategorien</transtext>
+	</transid>
+	<transid name="video_categories">
+		<transtext>Video-Kategorien</transtext>
+	</transid>
+	<transid name="allassets">
+		<transtext>Alle Dateien</transtext>
+	</transid>
+	<transid name="header_video">
+		<transtext>Videos</transtext>
+	</transid>
+	<transid name="results">
+		<transtext>Resultate</transtext>
+	</transid>
+	<transid name="header_images">
+		<transtext>Bilder</transtext>
+	</transid>
+	<transid name="preview_video">
+		<transtext>Vorschau</transtext>
+	</transid>
+	<transid name="available_as">
+		<transtext>Als</transtext>
+	</transid>
+	<transid name="assets_amount">
+		<transtext>Anzahl Assets</transtext>
+	</transid>
+	<transid name="host_enable_dsc">
+		<transtext>Digital Signage aktivieren</transtext>
+	</transid>
+	<transid name="host_enable_crm">
+		<transtext>CRM aktivieren</transtext>
+	</transid>
+	<transid name="host_enable_dms">
+		<transtext>DMS aktivieren</transtext>
+	</transid>
+	<transid name="host_enable_header">
+		<transtext>Per Host Einstellungen</transtext>
+	</transid>
+	<transid name="host_enable_header_desc">
+		<transtext>Diese Einstellungen können nur von den Admins bearbeitet werden und sich auch nur für diese zugänglich.</transtext>
+	</transid>
+	<transid name="host_license_exeeded">
+		<transtext><![CDATA[<span class="alerttext">Your allowed amount of assets storage has exeeded the license!</span><br><br>Currently your license allows your organization to store up to]]></transtext>
+	</transid>
+	<transid name="host_license_exeeded2">
+		<transtext><![CDATA[assets for this host.<br><br>Please <a href="mailto:support@Razuna.com">contact us</a> to order a license which allows you to store more assets.]]></transtext>
+	</transid>
+	<transid name="host_license_exeeded_header">
+		<transtext>Asset storage exeeded</transtext>
+	</transid>
+	<transid name="alert_toomany_hosts">
+		<transtext>Die erlaubte Anzahl Hosts/Domainen wurde erreicht. Um mehr Hosts/Domainen zu erfassen muss Ihre Lizenz um eine zusätzliche Lizenz erweitert werden. Bitte kontaktieren Sie uns diesbezüglich!</transtext>
+	</transid>
+	<transid name="alert_popup_hosts">
+		<transtext>Ihre Lizenz erlaubt Ihnen nicht die Eingabe dieser Anzahl Assets!</transtext>
+	</transid>
+	<transid name="complete_install_tasks_desc">
+		<transtext>Before you can successfully deploy Razuna you will need to make sure that all of the below installation tasks are done!</transtext>
+	</transid>
+	<transid name="show_license_info">
+		<transtext>Lizenz-Informationen</transtext>
+	</transid>
+	<transid name="show_license_info_desc">
+		<transtext>Ihre aktuell installierte Lizenz beinhaltet die folgenden Berechtigungen.</transtext>
+	</transid>
+	<transid name="ecp_version">
+		<transtext>Razuna Version</transtext>
+	</transid>
+	<transid name="ecp_allowed_hosts">
+		<transtext>Anzahl Hosts</transtext>
+	</transid>
+	<transid name="user_from">
+		<transtext>von</transtext>
+	</transid>
+	<transid name="icons_notinnewsletter">
+		<transtext>Benutzer ohne Newsletter</transtext>
+	</transid>
+	<transid name="icons_notinnewsletter_desc">
+		<transtext>Klicken Sie hier um alle Benutzer anzuzeigen die NICHT in einem Newsletter erfasst sind.</transtext>
+	</transid>
+	<transid name="goto">
+		<transtext>Host aufrufen...</transtext>
+	</transid>
+	<transid name="host_video_convert_mac">
+		<transtext><![CDATA[Razuna scheint auf einem MacOS X Rechner installiert zu sein. Leider wird die Konvertierung von Video-Daten unter MacOS X nicht zu 100% unterstützt (die Audio-Daten können meistens nicht umgewandelt werden). zum jetzigen Zeitpunkt gibt es keine Alternative.]]></transtext>
+	</transid>
+	<transid name="permission_dsc_action_companies">
+		<transtext>Firmen</transtext>
+	</transid>
+	<transid name="permission_dsc_action_contacts">
+		<transtext>Kontakte</transtext>
+	</transid>
+	<transid name="permission_dsc_action_distribution">
+		<transtext>Verteilung</transtext>
+	</transid>
+	<transid name="permission_dsc_action_layouts">
+		<transtext>Vorlagen (Layouts)</transtext>
+	</transid>
+	<transid name="permission_dsc_action_locations">
+		<transtext>Lokationen</transtext>
+	</transid>
+	<transid name="permission_dsc_action_playlists">
+		<transtext>Playlists</transtext>
+	</transid>
+	<transid name="permission_dsc_action_regions">
+		<transtext>Regionen</transtext>
+	</transid>
+	<transid name="permission_dsc_action_reports">
+		<transtext>Report Builder</transtext>
+	</transid>
+	<transid name="permission_dsc_action_screen">
+		<transtext>Bildschirme</transtext>
+	</transid>
+	<transid name="permission_dsc_action_settings">
+		<transtext>Einstellungen</transtext>
+	</transid>
+	<transid name="permission_dsc_action_timings">
+		<transtext>Zeitpläne</transtext>
+	</transid>
+	<transid name="permission_dsc_action_wizard">
+		<transtext>Assistent</transtext>
+	</transid>
+	<transid name="group_description_SystemAdmin">
+		<transtext>System-Gruppe</transtext>
+	</transid>
+	<transid name="group_description_Administrator">
+		<transtext>System-Gruppe</transtext>
+	</transid>
+	<transid name="versions">
+		<transtext>Versionen</transtext>
+	</transid>
+	<transid name="versions_updateserver">
+		<transtext>Update Server</transtext>
+	</transid>
+	<transid name="versions_updateserver_desc">
+		<transtext>Neue Versionen werden vom diesem Server bezogen.</transtext>
+	</transid>
+	<transid name="versions_updateserver_url">
+		<transtext>URL</transtext>
+	</transid>
+	<transid name="versions_update_availpackages">
+		<transtext>Verfügbare Updates</transtext>
+	</transid>
+	<transid name="versions_version">
+		<transtext>Version</transtext>
+	</transid>
+	<transid name="versions_Update">
+		<transtext>Update</transtext>
+	</transid>
+	<transid name="versions_update_start">
+		<transtext>Update Prozess starten</transtext>
+	</transid>
+	<transid name="versions_update_start_button">
+		<transtext>Start</transtext>
+	</transid>
+	<transid name="versions_update_start_desc">
+		<transtext>Update auf die nächste Version ausführen.</transtext>
+	</transid>
+	<transid name="versions_newversion">
+		<transtext>Neue Version</transtext>
+	</transid>
+	<transid name="versions_newversion_desc">
+		<transtext>Update-Server auf neue Versionen prüfen. Sie werden per Email informiert wenn ein neues Update heruntergeladen wurde.</transtext>
+	</transid>
+	<transid name="versions_newversion_start">
+		<transtext>Prüfung starten</transtext>
+	</transid>
+	<transid name="versions_new_mailtopic">
+		<transtext>Neue Version von Razuna verfügbar</transtext>
+	</transid>
+	<transid name="versions_new_mailtext">
+		<transtext>Eine neue Version von Razuna steht auf ihrem Server bereit zur Installation. Bitte benutzen Sie die Versionen-Administration unter admin/Setup um die Installation auszuführen.</transtext>
+	</transid>
+	<transid name="versions_manualdwnldstarted">
+		<transtext>Der Update-Server wird auf eine neue Version überprüft. Falls vorhanden, wird diese im Hintergrund heruntergeladen und sie werden per Email informiert.</transtext>
+	</transid>
+	<transid name="versions_preprocess_sql">
+		<transtext>Vorbereitende Datenbank-Änderungen</transtext>
+	</transid>
+	<transid name="versions_preprocess_sql_desc">
+		<transtext>Einige Änderungen an der Datenbank müssen manuel ausgeführt werden. Bitte melden Sie sich am Datenbank-Server an und führen Sie die SQL-Befehle aus folgenden Dateien aus:</transtext>
+	</transid>
+	<transid name="versions_preprocess_sql_confirm">
+		<transtext>Datenbank-Änderungen ausgeführt</transtext>
+	</transid>
+	<transid name="versions_preprocess_sql_jsalert">
+		<transtext>Bitte bestätigen Sie die manuelle Ausführung der Datenbank-Änderungen um fortzufahren!</transtext>
+	</transid>
+	<transid name="versions_installation_feedback">
+		<transtext>Die nächste Version von Razuna wurde erfolgreich installiert! Bitte starten Sie den CFML-Server neu!</transtext>
+	</transid>
+	<transid name="img_set_remoteusers">
+		<transtext>Externe Benutzer</transtext>
+	</transid>
+	<transid name="remoteusers">
+		<transtext>Externe Benutzer</transtext>
+	</transid>
+	<transid name="remoteusers_new">
+		<transtext>Neuer Externer Benutzer</transtext>
+	</transid>
+	<transid name="remoteusers_ct_u_ru_remote_url">
+		<transtext>Externe URL</transtext>
+	</transid>
+	<transid name="remoteusers_ct_u_ru_remote_url_desc">
+		<transtext>URL des externen Razuna-Servers</transtext>
+	</transid>
+	<transid name="remoteusers_ct_u_ru_remote_user_email">
+		<transtext>Externe Benutzer-Email</transtext>
+	</transid>
+	<transid name="versions_installation_CFupgrade">
+		<transtext>Dieses Update erfordert eine neuere Version von CFML. Bitte installieren Sie mindestens die folgende Version:</transtext>
+	</transid>
+	<transid name="remoteusers_edit">
+		<transtext>Externen Benutzer bearbeiten</transtext>
+	</transid>
+	<transid name="remoteusers_ct_u_ru_remote_user_name">
+		<transtext>Externer Benutzer Login</transtext>
+	</transid>
+	<transid name="remoteusers_ct_u_ru_remote_confirmed">
+		<transtext>Externer Benutzer hat bestätigt</transtext>
+	</transid>
+	<transid name="remoteusers_ct_u_ru_confirmed">
+		<transtext>Von Ihnen bestätigt</transtext>
+	</transid>
+	<transid name="remoteusers_confirmationstatus">
+		<transtext>Bestätigungs-Status</transtext>
+	</transid>
+	<transid name="remoteusers_confirmationstatus_active">
+		<transtext>Sie und der externe Benutzer haben beide bestätigt. Die Verbindung ist aktiv.</transtext>
+	</transid>
+	<transid name="remoteusers_confirmationstatus_await">
+		<transtext>Der externe Benutzer hat nicht bestätigt. Die Verbindung ist inaktiv.</transtext>
+	</transid>
+	<transid name="remoteusers_confirmationstatus_await_act">
+		<transtext>Sie und der externe Benutzer haben nicht bestätigt. Die Verbindung ist inaktiv. Klicken Sie hier zum Bestätigen.</transtext>
+	</transid>
+	<transid name="remoteusers_confirmationstatus_act">
+		<transtext>Die Verbindung ist inaktiv. Klicken Sie hier zum Bestätigen und Aktivieren.</transtext>
+	</transid>
+	<transid name="remoteusers_error_exists">
+		<transtext>Der externe Benutzer mit dieser URL und Email ist bereits registriert!</transtext>
+	</transid>
+	<transid name="remoteusers_error_connection">
+		<transtext>Keine Verbindung zum externen Server. Bitte prüfen Sie die URL!</transtext>
+	</transid>
+	<transid name="remoteusers_error_decrypt">
+		<transtext>Fehler bei der Entschlüsselung für gesicherte Verbindung. Bitte nochmals versuchen!</transtext>
+	</transid>
+	<transid name="remoteusers_error_nouser">
+		<transtext>Externer Benutzer nicht gefunden. Bitte prüfen Sie die Email!</transtext>
+	</transid>
+	<transid name="remoteusers_add">
+		<transtext>Externen Benutzer hinzufügen</transtext>
+	</transid>
+	<transid name="remoteusers_error_noremoteuser">
+		<transtext>Benutzer nicht gefunden auf dem externen Server!</transtext>
+	</transid>
+	<transid name="img_set_scheduler">
+		<transtext>Geplante Uploads</transtext>
+	</transid>
+	<transid name="event_scheduler">
+		<transtext>Geplante Uploads</transtext>
+	</transid>
+	<transid name="scheduled_uploads">
+		<transtext>Geplante Uploads</transtext>
+	</transid>
+	<transid name="scheduled_uploads_new">
+		<transtext>Neuer geplanter Upload</transtext>
+	</transid>
+	<transid name="scheduled_uploads_edit">
+		<transtext>Geplanter Upload bearbeiten</transtext>
+	</transid>
+	<transid name="scheduled_uploads_log">
+		<transtext>Log Daten</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_run_cap">
+		<transtext>Geplanter Task ausführen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_run_desc">
+		<transtext>Diese Schaltfläche starten den geplanten Prozess umgehend. Dies kann eine Weile dauern, üben Sie sich deshalb in ein wenig Geduld...</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_pause_cap">
+		<transtext>Geplanter Task pausieren</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_pause_desc">
+		<transtext>Diese Schaltfläche pausiert den gewünschten geplanten Task umgehend.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_resume_cap">
+		<transtext>Geplanten Task wiederaufnehmen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_resume_desc">
+		<transtext>Diese Schaltfläche nimmt die Ausführung des geplanten Task umgehend wieder auf.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_edit_cap">
+		<transtext>Geplanten Task anpassen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_edit_desc">
+		<transtext>Mit dem Betätigen dieser Schaltfläche kann der geplante Task bearbeitet werden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_delete_cap">
+		<transtext>Geplanten Task löschen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_delete_desc">
+		<transtext>Mit dem Betätigen dieser Schaltfläche wird der geplante Task gelöscht.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_mail_cap">
+		<transtext>Mail Verbindung überprüfen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_mail_desc">
+		<transtext>Mit dem Betätigen dieser Schaltfläche wird die Mailverbindung überprüft.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_ftp_cap">
+		<transtext>FTP Verbindung überprüfen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_ftp_desc">
+		<transtext>Mit dem Betätigen dieser Schaltfläche wird die FTP-Verbindung überprüft und der gewünschte FTP Ordner kann ausgewählt werden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_folder_cap">
+		<transtext>Ordner auswählen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_folder_desc">
+		<transtext>Mit dem Betätigen dieser Schaltfläche kann der gewünschte DAM-Ordner, wo die geplanten Uploads gespeichert werden sollen, gewählt werden.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_log_search_cap">
+		<transtext>Log-Einträge finden</transtext>
+	</transid>
+	<transid name="scheduled_uploads_log_search_desc">
+		<transtext>Mit der Eingabe/Auswahl der Suchfelder reduzieren Sie die Anzahl der angezeigten Log-Einträge.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_info_text1">
+		<transtext>Wenn Sie einen geplanten Task monatlich an einem Tag im Bereich von 28-31 tätigen, wird das System das folgende machen:</transtext>
+	</transid>
+	<transid name="scheduled_uploads_info_text2">
+		<transtext>Wenn Sie einen monatlichen Task planen, der am Monatsletzten laufen soll, wird dieser in allen Monaten am letzten Tag ausgeführt. Wenn Sie beispielsweise einen Task planen, der am 31. Januar anläuft, wird dieser am 31. Januar, am 28. oder 29. Februar, am 31. März usw. ausgeführt.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_info_text3">
+		<transtext>Wenn Sie einen monatlichen Task planen, der am 29. oder 30. des Monats laufen soll, der Task wird ausgeführt am bestimmten Tag in allen Monaten welche 30 oder 31 Tage haben, sowie am letzten Tag im Februar. Wenn Sie beispielsweise einen monatlichen Task per 30. Januar erfassen, wird dieser am 30. Januar, 28. oder 29. Februar, 30. März, 30. April usw. ausgeführt.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_info_text4">
+		<transtext>Wenn Sie einen einmaligen Task planen, dessen Anfangszeit in der Vergangenheit liegt und er Task noch nicht ausgeführt wurde, so läuft dieser augenblicklich ab. Ein wiederkehrender Task mit Anfangszeit in der Vergangenheit wird am nächstmöglichen Zeitpunkt in der Zukunft erstmals aufgeführt.</transtext>
+	</transid>
+	<transid name="scheduled_uploads_actions">
+		<transtext>Aktionen</transtext>
+	</transid>
+	<transid name="scheduled_uploads_task_name">
+		<transtext>Task Name</transtext>
+	</transid>
+	<transid name="scheduled_uploads_method">
+		<transtext>Methode</transtext>
+	</transid>
+	<transid name="scheduled_uploads_server">
+		<transtext>Server</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail">
+		<transtext>Mail</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp">
+		<transtext>FTP</transtext>
+	</transid>
+	<transid name="scheduled_uploads_server_folder">
+		<transtext>Server Ordner</transtext>
+	</transid>
+	<transid name="scheduled_uploads_server_recurse">
+		<transtext>Unterordner miteinbeziehen?</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail_server">
+		<transtext>POP Server</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail_user">
+		<transtext>Benutzername</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail_pass">
+		<transtext>Passwort</transtext>
+	</transid>
+	<transid name="scheduled_uploads_mail_subject">
+		<transtext>Betreff</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_server">
+		<transtext>Server</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_user">
+		<transtext>Benutzername</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_pass">
+		<transtext>Passwort</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_folder">
+		<transtext>Ordner</transtext>
+	</transid>
+	<transid name="scheduled_uploads_ftp_passive">
+		<transtext>Passiv-Modus</transtext>
+	</transid>
+	<transid name="scheduled_uploads_duration">
+		<transtext>Dauer</transtext>
+	</transid>
+	<transid name="scheduled_uploads_start_date">
+		<transtext>Anfangsdatum</transtext>
+	</transid>
+	<transid name="scheduled_uploads_end_date">
+		<transtext>Enddatum(optional)</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency">
+		<transtext>Häufigkeit</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_onetime">
+		<transtext>Einmalig</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_recurring">
+		<transtext>Wiederkehrend</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_daily_every">
+		<transtext>Täglich alle</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_at">
+		<transtext>um</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_daily">
+		<transtext>Täglich</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_weekly">
+		<transtext>Wöchentlich</transtext>
+	</transid>
+	<transid name="scheduled_uploads_frequency_monthly">
+		<transtext>Monatlich</transtext>
+	</transid>
+	<transid name="scheduled_uploads_start_time">
+		<transtext>Anfangszeit</transtext>
+	</transid>
+	<transid name="scheduled_uploads_end_time">
+		<transtext>Endzeit</transtext>
+	</transid>
+	<transid name="scheduled_uploads_zip_archive">
+		<transtext>ZIP Archiv</transtext>
+	</transid>
+	<transid name="scheduled_uploads_extract_zip">
+		<transtext>ZIP Archiv extrahieren</transtext>
+	</transid>
+	<transid name="scheduler_add">
+		<transtext>Geplanter Upload-Task hinzufügen</transtext>
+	</transid>
+	<transid name="scheduler_update">
+		<transtext>Geplanter Upload-Task aktualisieren</transtext>
+	</transid>
+	<transid name="scheduler_folder_back_cap">
+		<transtext>Vorheriger Ordner</transtext>
+	</transid>
+	<transid name="scheduler_folder_back_desc">
+		<transtext>Einen Ordner nach oben navigieren.</transtext>
+	</transid>
+	<transid name="scheduler_close_cap">
+		<transtext>Fenster schliessen</transtext>
+	</transid>
+	<transid name="scheduler_close_desc">
+		<transtext>Mit diesem Symbol wird dieses Fenster umgehend geschlossen.</transtext>
+	</transid>
+	<transid name="scheduler_folder_select_cap">
+		<transtext>Diesen Ordner auswählen</transtext>
+	</transid>
+	<transid name="scheduler_folder_select_desc">
+		<transtext>Mit diesem Symbold wird der gewünschte Ordner in den geplanten Task übernommen.</transtext>
+	</transid>
+	<transid name="scheduler_ftp_intro1">
+		<transtext>Wählen Sie bitte den gewünschten FTP-Ordner, woher der geplante Task die Dateien automatisch ermitteln soll, mittels anklicken des Symbols rechts des Ordnernamens.</transtext>
+	</transid>
+	<transid name="scheduler_ftp_intro2">
+		<transtext>Mittels klicken auf den Ordnernamen kann durch die Orderstruktur geblättert werden.</transtext>
+	</transid>
+	<transid name="scheduler_folder_intro1">
+		<transtext>Wählen Sie bitten den gewünschten Ordner, wo der geplante Task die automatisch geladenen Dateien speichern soll, mittels anklicken des Ordner-Symbols rechs des Ordnernamens.</transtext>
+	</transid>
+	<transid name="scheduler_folder_intro2">
+		<transtext>Mittels klicken auf den Ordnernamen kann durch die Orderstruktur geblättert werden.</transtext>
+	</transid>
+	<transid name="scheduler_mail_intro1">
+		<transtext>Dies ist nur eine Information betreffend der Verbindung zum gewünschten Email-Konto.</transtext>
+	</transid>
+	<transid name="scheduler_mail_intro2">
+		<transtext>Die aufgelistetend Email (sofern vorhanden) sind nur zur Ansicht.</transtext>
+	</transid>
+	<transid name="success_deleted">
+		<transtext>Der Datensatz wurde erfolgreich gelöscht!</transtext>
+	</transid>
+	<transid name="success_paused">
+		<transtext>Der geplante Task wurde erfolgreich pausiert!</transtext>
+	</transid>
+	<transid name="success_resumed">
+		<transtext>Der geplante Task wurde erfolgreich wiederaufgenommen!</transtext>
+	</transid>
+	<transid name="success_run">
+		<transtext>Der geplante Task wurde erfolgreich ausgeführt!</transtext>
+	</transid>
+	<transid name="error">
+		<transtext>Ein Fehler trat während der Vearbeitung auf!</transtext>
+	</transid>
+	<transid name="sched_actions">
+		<transtext>Aktionen</transtext>
+	</transid>
+	<transid name="calendar_day_names">
+		<transtext>So,Mo,Di,Mi,Do,Fr,Sa</transtext>
+	</transid>
+	<transid name="calendar_month_names">
+		<transtext>Januar,Februar,März,April,Mai,Juni,Juli,August,September,Oktober,November,Dezember</transtext>
+	</transid>
+	<transid name="sched_msg_task_name">
+		<transtext>Gebene Sie bitte eine Bezeichnung für diesen geplanten Upload-Task ein.</transtext>
+	</transid>
+	<transid name="sched_msg_choose_folder">
+		<transtext>Wählen Sie bitte einen Ordner aus, wo der geplante Upload-Task die Dateien speichern soll.</transtext>
+	</transid>
+	<transid name="sched_msg_server">
+		<transtext>Wählen Sie bitte einen Server-Ordner!</transtext>
+	</transid>
+	<transid name="sched_msg_ftp">
+		<transtext>Geben Sie bitte die benötigten Felder für den FTP Server, Benutzername und Passwort ein!</transtext>
+	</transid>
+	<transid name="sched_msg_mail">
+		<transtext>Geben Sie bitte die benötigten Felder für den POP Server, Benutzername und Passwort ein!</transtext>
+	</transid>
+	<transid name="hours">
+		<transtext>Stunden</transtext>
+	</transid>
+	<transid name="minutes">
+		<transtext>Minuten</transtext>
+	</transid>
+	<transid name="seconds">
+		<transtext>Sekunden</transtext>
+	</transid>
+	<transid name="sched_no_emails_found">
+		<transtext>Keine passenden Emails gefunden!</transtext>
+	</transid>
+	<transid name="sched_dam_folder">
+		<transtext>DAM Ordner</transtext>
+	</transid>
+	<transid name="sched_server_recursive">
+		<transtext>Rekursiv</transtext>
+	</transid>
+	<transid name="sched_server_deletemove">
+		<transtext>Erfolgreich hochgeladene Dateien löschen oder in einen temporären Ordner verschieben?</transtext>
+	</transid>
+	<transid name="sched_server_files">
+		<transtext>Dateien</transtext>
+	</transid>
+	<transid name="sched_server_delete">
+		<transtext>Löschen</transtext>
+	</transid>
+	<transid name="sched_server_move">
+		<transtext>Verschieben</transtext>
+	</transid>
+	<transid name="transfer_folder_urls">
+		<transtext>Transfer Ordner URLs</transtext>
+	</transid>
+	<transid name="application_paths">
+		<transtext>Pfade zu den Hilfs-Programmen</transtext>
+	</transid>
+	<transid name="error_imagemagick_notset">
+		<transtext>Bitte geben Sie den Pfad zu Ihrem ImageMagick-Programm an!</transtext>
+	</transid>
+	<transid name="header_imagemagick_desc_short">
+		<transtext>Geben Sie hier den absoluten Pfad zu ImageMagick an. ImageMagick wird von Razuna benötigt um die Bilder in verschiedene Formate und Grössen umzuwandeln. ImageMagick ist generell unter C:\Programme\ImageMagick (Windows) oder /usr/local/bin (Unix/Linux/MacOS X) installiert. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!</transtext>
+	</transid>
+	<transid name="header_ffmpeg_desc_short">
+		<transtext>Geben Sie hier den absoluten Pfad zu FFMpeg an. FFMpeg wird von Razuna benötigt um die Videos in verschiedene Formate und Grössen umzuwandeln. FFMpeg ist generell unter C:\Programme\FFMpeg (Windows) oder /usr/local/bin (Unix/Linux/MacOS X) installiert. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!</transtext>
+	</transid>
+	<transid name="page_title_error_header">
+		<transtext>Fehler beim Speichern der Seite:</transtext>
+	</transid>
+	<transid name="page_title_error_same">
+		<transtext>Der Name der Seite wird bereits verwendet!</transtext>
+	</transid>
+	<transid name="menue_title_error_same">
+		<transtext>Der Name des Menü wird bereits verwendet!</transtext>
+	</transid>
+	<transid name="menue_url_error_same">
+		<transtext>Die Seiten URL wird bereits verwendet, diese muss eindeutig sein!</transtext>
+	</transid>
+	<transid name="menue_url_error_sameonpage">
+		<transtext>Die Seiten-URL muss eindeutig sein, verschiedene Werte pro Sprache!</transtext>
+	</transid>
+	<transid name="headerlogin">
+		<transtext>Anmelden</transtext>
+	</transid>
+	<transid name="choosehost">
+		<transtext>Host auswählen</transtext>
+	</transid>
+	<transid name="host_setup_done">
+		<transtext>Der Mandant wurde erfolgreich installiert. Sie können sich nun an Ihrem Razuna anmelden. Als Administrator, können Sie zusätzliche Mandanten in der Administration erfasen. Viel Spass mit Razuna.</transtext>
+	</transid>
+	<transid name="saved_changes">
+		<transtext>Ihre Änderungen wurden erfolgreich gespeichert und angewandt!</transtext>
+	</transid>
+	<transid name="button_upload">
+		<transtext>Upload</transtext>
+	</transid>
+	<transid name="level">
+		<transtext>Ebene</transtext>
+	</transid>
+	<transid name="forgot_password">
+		<transtext>Ich habe mein Passwort vergessen</transtext>
+	</transid>
+	<transid name="clear_search">
+		<transtext>Zurück zur Liste</transtext>
+	</transid>
+	<transid name="datevalidation_error">
+		<transtext>Ungültiges Datum eingeben, bitte korrgieren!</transtext>
+	</transid>
+	<transid name="name_notunique">
+		<transtext>Der Name wird bereits verwendet!</transtext>
+	</transid>
+	<transid name="group_list">
+		<transtext>Liste der Gruppen</transtext>
+	</transid>
+	<transid name="newhost_desc">
+		<transtext>Bitte definieren Sie unten alle Angaben für Ihre neue Host/Domain.</transtext>
+	</transid>
+	<transid name="database_settings">
+		<transtext>Datenbank-Einstellungen</transtext>
+	</transid>
+	<transid name="tab_field">
+		<transtext>Navigieren Sie aus dem Feld um die Sprachen-Felder unten zu aktualisieren</transtext>
+	</transid>
+	<transid name="create_host">
+		<transtext>Host anlegen</transtext>
+	</transid>
+	<transid name="passwordsent">
+		<transtext>Wir haben Ihr Passwort an Ihre eMail-Adresse gesendet.</transtext>
+	</transid>
+	<transid name="youremail">
+		<transtext>Ihre eMail-Adresse</transtext>
+	</transid>
+	<transid name="buttonsendpassword">
+		<transtext>Jetzt Passwort zusenden</transtext>
+	</transid>
+	<transid name="errorretrievingpassword">
+		<transtext><![CDATA[Leider konnten wir Ihre eMail-Adresse in unserer Datenbank nicht finden. Eventuell haben Sie sich mit einer anderen eMail-Adresse angemeldet?]]></transtext>
+	</transid>
+	<transid name="errornoemailaddress">
+		<transtext>Bitte geben Sie eine email-Adresse an</transtext>
+	</transid>
+	<transid name="headerretrievepassword">
+		<transtext>Passwort zusenden</transtext>
+	</transid>
+	<transid name="database_in_use">
+		<transtext>Benutzte Datenbank</transtext>
+	</transid>
+	<transid name="path_to_assets">
+		<transtext>Pfad zu Daten</transtext>
+	</transid>
+	<transid name="path_to_assets_desc">
+		<transtext><![CDATA[Bitte geben Sie den absoluten Pfad zu Ihrem <b>existierenden</b> Ordner an worin Sie Ihre Daten lagern wollen. Unter Windows dieser Pfas sollte mit "C:\" und unter Linux/MaxOS X mit "/" beginnen. Der Pfad kann auch auf einem Netzwerk-Volumen sein, wichtig ist nur das Razuna die Rechte hat zum schreiben/lesen.<br>HINWEIS:Wenn Sie den Ordner ausserhalb des Razuna-Verzeichnis anlegen müssen Sie einen "Virtual Directory" Eintrag in Ihrem Web-Server vornehmen!!!<br>ACHTUNG: Wenn Sie diesen Pfad auf einem Produktion-Server ändern, dann sollten Sie den Inhalt des Daten-Ordner NACH dem ändern kopieren!]]></transtext>
+	</transid>
+	<transid name="db_update_here">
+		<transtext>Wir haben Razuna aktualisiert und ein Datenbank-Update is notwendig. Bitte klicken Sie auf den Button um das Update nun auszuführen.</transtext>
+	</transid>
+	<transid name="db_update_here_not">
+		<transtext>Wir haben Razuna erfolgreich aktualisiert. Es ist kein Datenbank-Update notwendig.</transtext>
+	</transid>
+	<transid name="button_update">
+		<transtext>Jetzt Aktualisieren</transtext>
+	</transid>
+	<transid name="button_update_continue">
+		<transtext>Ab zu Razuna</transtext>
+	</transid>
+	<transid name="db_update_done">
+		<transtext>Wir haben die Razuna Datenbank erfolgreich aktualisiert. Wir wünschen weiterhin viel Erfolg mit dem Umgang Ihrer digital Daten.</transtext>
+	</transid>
+	<transid name="header_exiftool">
+		<transtext>Exiftool</transtext>
+	</transid>
+	<transid name="header_exiftool_desc">
+		<transtext>Geben Sie hier den absoluten Pfad zu Exiftool an. Exiftool wird von Razuna benötigt um Metadaten zu bearbeiten. Die Installation von Exiftool ist ein Teil der Razuna Installation und ist im Installations-Handbuch beschrieben. Exiftool ist generell unter C:\Programme\Exiftool (Windows) oder /usr/local/bin (Unix/Linux/MacOS X) installiert. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!</transtext>
+	</transid>
+	<transid name="exiftool_path">
+		<transtext>Exiftool Pfad</transtext>
+	</transid>
+	<transid name="installation_checklist_exiftool">
+		<transtext>Pfad zu Exiftool gesetzt</transtext>
+	</transid>
+	<transid name="header_exiftool_desc_short">
+		<transtext>Geben Sie hier den absoluten Pfad zu Exiftool an. Exiftool wird von Razuna benötigt um Metadaten der Bilder zu lesen/schreiben. Exiftool ist generell unter C:\Programme\Exiftool (Windows) oder /usr/local/bin (Unix/Linux/MacOX X) installiert. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!</transtext>
+	</transid>
+	<transid name="no_space">
+		<transtext><![CDATA[Hinweis: Stellen Sie sicher, dass sich keine "Leerschläge" (space) und Sonderzeichen im Pfad befinden!]]></transtext>
+	</transid>
+	<transid name="path_to_assets_desc_create">
+		<transtext><![CDATA[Bitte geben Sie den absoluten Pfad zu Ihrem <b>existierenden</b> Ordner an worin Sie Ihre Daten lagern wollen. Wenn bereits einen anderen Host erstellt haben, können Sie das gleiche Verzeichniss benutzen. Unter Windows sollte dieser Pfad mit "C:\" und unter Linux/MaxOS X mit "/" beginnen. Der Pfad kann auch auf einem Netzwerk-Volumen sein, wichtig ist nur das Razuna die Rechte hat zum schreiben/lesen.<br>HINWEIS:Wenn Sie den Ordner ausserhalb des Razuna-Verzeichnis anlegen müssen Sie einen "Virtual Directory" Eintrag in Ihrem Web-Server vornehmen!!!]]></transtext>
+	</transid>
+	<transid name="installation_checklist_assetpath">
+		<transtext>Pfad zu Assets gesetzt</transtext>
+	</transid>
+	<transid name="storage_container">
+		<transtext>Wo sind Ihre Daten</transtext>
+	</transid>
+	<transid name="storage_desc">
+		<transtext><![CDATA[Ändern Sie unten die Einstellungen für Ihren Cloud Storage Anbieter. Klicken Sie auf den "Prüfen"-Button um Ihre Einstellungen zu testen.]]></transtext>
+	</transid>
+	<transid name="nirvanix_desc">
+		<transtext><![CDATA[Auf diesem Formular sollten Sie den Namen und Passwort eines "Child Account" angeben, NICHT Ihr "Master Account".<br><br>Normalerweise müssen Sie diese Angaben NICHT ändern! Ändern Sie diese nur, wenn Sie wissen was Sie tun oder wenn das Razuna-Team sie dazu auffordert!]]></transtext>
+	</transid>
+	<transid name="validate">
+		<transtext>Prüfen</transtext>
+	</transid>
+	<transid name="pref_types_header">
+		<transtext>Datei Typen</transtext>
+	</transid>
+	<transid name="pref_types_desc">
+		<transtext><![CDATA[In dieser Tabelle können Sie die Erweiterungen angeben welche Razuna verabeiten soll. Beim hinzufügen einer Datei, wird Razuna diese Tabelle als Referenz nehmen und so die Datei den Datei-Typ zuweisen. Diese Tabelle wird für ALLE Hosts angewendet. Beim hinzufügen einer neuen Erweiterung sollten Sie darauf achten, dass ImageMagick und FFMpeg diese auch verarveiten können! Ändern Sie diese nur, wenn Sie wissen was Sie tun!]]></transtext>
+	</transid>
+	<transid name="extension">
+		<transtext>Erweiterung</transtext>
+	</transid>
+	<transid name="file_type">
+		<transtext>Datei-Typ</transtext>
+	</transid>
+	<transid name="pref_types_header_add">
+		<transtext>Datei-Typ hinzufügen</transtext>
+	</transid>
+	<transid name="settings_host">
+		<transtext>Host-Einstellungen</transtext>
+	</transid>
+	<transid name="global_storage_desc">
+		<transtext><![CDATA[Razuna gib Ihnen verschiedene Möglichkeiten wo Sie Ihre Daten lagern können. Auf Ihrem lokalen Server (inkl. Netzwerk-Laufwerke, etc.), auf dem <a href="http://www.nirvanix.com" target="_blank">Nirvanix SDN</a> (Storage Deliver Network) oder auf Amazon S3.<br><br>Änderungen sind umgehend aktiv!]]></transtext>
+	</transid>
+	<transid name="global_storage_local_desc">
+		<transtext><![CDATA[The local storage option will store all your assets on this server, or on any attached network drive. For each host you can define an individual path or just the same path. Each host resides its assets in its own directory.]]></transtext>
+	</transid>
+	<transid name="global_storage_nirvanix_desc">
+		<transtext><![CDATA[<a href="http://www.nirvanix.com" target="_blank">Nirvanix</a> is a storage cloud provider. Their Storage Delivery Network makes your assets within Razuna available in the cloud and distributed to the closest place for faster delivery. You don't need to worry about anything with Razuna. Simply enable this option, enter your master information below. Each host within Razuna is setup as Child account and has their own child account. We just mention it here for your information, not something you need to configure :-)]]></transtext>
+	</transid>
+	<transid name="global_db_desc">
+		<transtext><![CDATA[Razuna comes with a high reliable embedded database. If you desire to host your own database, then you can make the required database adjustements below. If you need help you should <a href="http://wiki.razuna.com/display/ecp/Connecting+Razuna+to+a+database" target="_blank">read our Wiki pages</a>.<br><br><b>Note</b>: If you are planning to migrate from one database to another, you should make a Backup of your Razuna now. During the initial setup you can then restore the backup.<br><br>]]></transtext>
+	</transid>
+	<transid name="global_h2_desc">
+		<transtext><![CDATA[The <a href="http://www.h2database.com" target="_blank">H2 database</a> is the default installation and we call it the embedded database. Grammatically this might be wrong, since H2 is a very powerful database server based on Java and serves very well under heavy load. Since this is the default installation for Razuna you don't need to install or configure anything.]]></transtext>
+	</transid>
+	<transid name="global_mysql_desc">
+		<transtext><![CDATA[If you run your own <a href="http://www.mysql.com" target="_blank">MySQL database</a> then you can connect Razuna to your MySQL Server. Follow <a href="http://wiki.razuna.com/display/ecp/MySQL" target="_blank">these instructions for MySQL</a>.]]></transtext>
+	</transid>
+	<transid name="global_oracle_desc">
+		<transtext><![CDATA[You can use any <a href="http://www.oracle.com" target="_blank">Oracle database</a> with Razuna. We have tested Razuna with the Oracle Express Edition, 10g releases and the latest 11g release. Please refer to the <a href="http://wiki.razuna.com/display/ecp/Oracle" target="_blank">Oracle Database installation on how to install and configure it for Razuna.</a>]]></transtext>
+	</transid>
+	<transid name="global_mssql_desc">
+		<transtext><![CDATA[You can also use Microsoft SQL Server with Razuna. We have tested Razuna with MS SQL 2005 and 2008. Here are <a href="http://wiki.razuna.com/display/ecp/MSSQL" target="_blank">detailed instructions for running Razuna with MS SQL.</a>]]></transtext>
+	</transid>
+	<transid name="global_db_schema">
+		<transtext>Database Schema</transtext>
+	</transid>
+	<transid name="global_db_schema_desc">
+		<transtext><![CDATA[The default schema for all databases is called "razuna". If you feel the need to change it, then you can do so below. Otherwise we recommend to leave it at the default value!]]></transtext>
+	</transid>
+	<transid name="global_db_schema_name">
+		<transtext>Schema Name</transtext>
+	</transid>
+	<transid name="global_db_datasource">
+		<transtext>Datasource</transtext>
+	</transid>
+	<transid name="global_db_datasource_desc">
+		<transtext><![CDATA[This is the name of the datasource for your database. This is the same name as you have entered in the OpenBD Administration.]]></transtext>
+	</transid>
+	<transid name="remember_login">
+		<transtext>Login-Information speichern</transtext>
+	</transid>
+	<transid name="header_backup_restore">
+		<transtext><![CDATA[Backup & Restore]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_backup_desc">
+		<transtext><![CDATA[Backup Razuna Daten]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_backup_desc2">
+		<transtext><![CDATA[Sie können Ihre Daten als XML oder SQL-Datei ausgeben. Wenn Sie ein Backup herstellen wollen, welches Sie für eine Weiderherstellung hier oder auf einem anderen Razuna-Server verwenden wollen, dann müssen Sie das "Razuna format" verwenden. Mit diesem werden Ihre Daten in einer internen Datenbank gelagert, welche Sie jederzeit mit der Funktion unter wieder herstellen oder auf einen anderen Server übertragen können.<br /><br />Hinweis: Das Razuna format ist das einzige Dateiformat welches für den Import verwendet werden kann! Mit einem Backup werden NICHT Ihre Daten gesichert, sondern alle Angaben in der Datenbank. Im falles eines Problems, können Sie mit diesem Backup Ihre Datenbank wieder herstellen.]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_backup_tosystem">
+		<transtext><![CDATA[Backup auf dem Server lagern (empfohlen)]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_desc">
+		<transtext><![CDATA[Wiederherstellung von Razuna Daten]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_desc2">
+		<transtext><![CDATA[Beachten Sie folgendes:
+	<ul>
+	    <li> Die Wiederherstellung löscht den Inhalt Ihrer Razuna-Datenbank und stellt diese wieder neu her - Bitte machen Sie ein Backup aller Daten zuvor!
+	    <li> Es wird eventuell nötig sein, den Such-Index aller Hosts wieder neu aufzubauen.
+	    <li> Die Wiederherstellung kann ein paar Minuten dauern. Bitte warten Sie bis dieser Vorgang komplett fertig ist. 
+	</ul>
+	]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_upload">
+		<transtext><![CDATA[Upload der Backup-Datei]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_file">
+		<transtext><![CDATA[Backup-Dateien auf dem Server]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_rebuild">
+		<transtext><![CDATA[Rebuild Index]]></transtext>
+	</transid>
+	<transid name="admin_maintenance_restore_file_desc">
+		<transtext><![CDATA[Backup-Dateien müssen in den Ordner "/admin/backup" abgelegt werden. Wenn Sie Ihr Backup nicht in der Liste unten sehen, sollten Sie sicherstellen das alle Daten im Backup-Verzeichnis abgegelgt sind. Ebenfalls müssen Sie eventuell Ihre Apllikations-Server neu starten um die Änderungen zu sehen. Weitere Hilfe finden Sie in unseren <a href="http://wiki.razuna.com" target="_blank">Razuna Wiki Seiten</a>.]]></transtext>
+	</transid>
+	<transid name="header_backup_restore_desc">
+		<transtext><![CDATA[Hier können Sie ein komplettes Backup Ihres Razuna-Server vornehmen. Es wird ein Backup des ganzen Servers mit allen Hosts durchgeführt. Wenn Sie nur einen Host speichern wollen, dann steht diese Funktion in der Administration jedes Hosts ebenfalls zur Verfügung.]]></transtext>
+	</transid>
+	<transid name="admin_prefs_asset_path_webroot">
+		<transtext>Ordner im Web-Verzeichnis?</transtext>
+	</transid>
+	<transid name="header_first_time">
+		<transtext>Razuna Setup Wizard</transtext>
+	</transid>
+	<transid name="header_first_time_choose_installation">
+		<transtext>Installation Typ wählen</transtext>
+	</transid>
+	<transid name="header_first_time_choose_installation_desc">
+		<transtext>Es gibt zwei Arten von Installation um Razuna zu installieren. Wenn Sie nicht wissen, welche Art Sie wählen sollen, dann empfehlen wir die Standard-Installation.</transtext>
+	</transid>
+	<transid name="header_first_time_choose_installation_standard">
+		<transtext>Standard-Installation</transtext>
+	</transid>
+	<transid name="header_first_time_choose_installation_standard_desc">
+		<transtext>Hiermit wird Razuna mit den Standard-Werten und einer lokalen Datenbank installiert. Diese Art der Installation ist die schnellste und einfachste Methode um Razuna zu installieren (Sie können jederzeit die Datenbank alle Einstellungen später in Razuna vornehmen).</transtext>
+	</transid>
+	<transid name="header_first_time_choose_installation_custom">
+		<transtext>Angepasste Installation</transtext>
+	</transid>
+	<transid name="header_first_time_choose_installation_custom_desc">
+		<transtext>Führen Sie eine angepasste Installation aus. Wählen Sie diese Option, wenn Sie eine externe Datenbank verwenden wollen, oder von einem Backup Razuna wieder herstellen.</transtext>
+	</transid>
+	<transid name="application_paths_desc">
+		<transtext>Geben Sie die Pfade zu den nötigen Application an die Razuna verwendet.</transtext>
+	</transid>
+	<transid name="header_first_time_account">
+		<transtext>System Administration Account</transtext>
+	</transid>
+	<transid name="header_first_time_account_desc">
+		<transtext>Please enter the required information for your System Administration Account. This user is the System Administrator and has access to all settings.</transtext>
+	</transid>
+	<transid name="header_first_time_done">
+		<transtext>The Host has been setup successfully</transtext>
+	</transid>
+	<transid name="header_first_time_done_desc">
+		<transtext><![CDATA[We are now directing you to the general Administration of Razuna. Within you are able to add additional hosts or simply navigate to your Digital Asset Management System.<br /><br />Have fun and enjoy working with Razuna.]]></transtext>
+	</transid>
+	<transid name="header_first_time_database">
+		<transtext>Choose a database configuration</transtext>
+	</transid>
+	<transid name="header_first_time_database_desc">
+		<transtext><![CDATA[Choose which database you would like to use with Razuna.]]></transtext>
+	</transid>
+	<transid name="header_first_time_database_2">
+		<transtext>Databases</transtext>
+	</transid>
+	<transid name="header_first_time_database_2_desc">
+		<transtext><![CDATA[Select from the list below the database you would like to use with Razuna. The embedded database (H2 Database) is a high availability Java based database which can be used in production. If you are more confortable with your own external database, please choose so below and configure it in the next step.<br><br>Tip: You can read up on our actual <a href="http://wiki.razuna.com/display/ecp/Connecting+Razuna+to+a+database" target="_target">Database support in our Wiki</a>.]]></transtext>
+	</transid>
+	<transid name="header_first_time_database_config">
+		<transtext>Database Source Configuration</transtext>
+	</transid>
+	<transid name="header_first_time_database_config_desc">
+		<transtext><![CDATA[Please enter the values into the fields below to have Razuna connect to your selected database. We recommend that you check the connection as well!]]></transtext>
+	</transid>
+	<transid name="global_storage_amazon_desc">
+		<transtext><![CDATA[<a href="http://aws.amazon.com/s3/" target="_blank">Amazon S3</a> is a storage cloud service provided by Amazon. <a href="http://open.eucalyptus.com/" target="_blank">Eucalyptus</a> is a open source solution for building your private cloud. With this option enabled, Razuna will store all assets on Amazon S3 or Eucalyptus. You don't need to worry about anything with Razuna. Simply enable this option and enter your keys below. Each host has its own bucket which will need to be configured in the Host Settings for each host individually.]]></transtext>
+	</transid>
+	<transid name="header_ffmpeg2theora">
+		<transtext>FFMpeg2Theora Pfad</transtext>
+	</transid>
+	<transid name="header_header_ffmpeg2theora_desc">
+		<transtext><![CDATA[Geben Sie hier den absoluten Pfad zu FFMpeg2Theora an. FFMpeg2Theora wird von Razuna benötigt um die Videos in in das OGV-Format umzuwandeln. Dieses format wird vom HTML5-Standard unterstützt und der Video wird in dem eingebauten Video-Player abgespielt. Die Installation von FFMpeg2Theora war ein Teil der Razuna Installation und ist im Installations-Handbuch beschrieben. Sie können die Installations-Datei von der DVD laden oder aber direkt von der <a href="http://v2v.cc/~j/ffmpeg2theora/download.html" target="_blank"><u>FFMpeg2Theora Website</u></a> laden. FFMpeg2Theora ist generell unter C:\Programme\FFMpeg (Windows) oder /usr/local/bin (Unix/Linux/MacOS X) installiert. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!]]></transtext>
+	</transid>
+	<transid name="tools_desc">
+		<transtext><![CDATA[Razuna benötigt ein paar Programme um mit Bilder-, Video-, Audio- und Dokument-Dateien umzugehen. Diese Programme sollten installiert sein, damit Razuna mit diesen korrekt arbeiten kann. Geben Sie unten die Pfade zu diesen Programmen an.]]></transtext>
+	</transid>
+	<transid name="header_dcraw">
+		<transtext>DCRaw Pfad</transtext>
+	</transid>
+	<transid name="header_dcraw_desc">
+		<transtext><![CDATA[Geben Sie den absoluten Pad zu der DCRawm Installation an. DCRaw wird benötigt um RAW-Bilder zu bearbeiten. Die Installation von DCRaw wird in unserem Handbuch genau beschrieben. Sie sollten die aktuelle Verison unter <a href="http://www.insflug.org/raw/" target="_blank"><u>laden</u></a>. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!]]></transtext>
+	</transid>
+</translations>

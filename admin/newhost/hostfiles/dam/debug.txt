@@ -1,0 +1,6 @@
+
+]--- Logging Started ------[
+26/06/08 18:10.47: -] AlarmManager $Revision: 1.1 $ started
+
+]--- Logging Started ------[
+26/06/08 18:10.47: -] AlarmManager $Revision: 1.22.10.4 $ started

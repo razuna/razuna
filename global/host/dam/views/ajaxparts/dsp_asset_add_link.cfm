@@ -1,0 +1,98 @@
+<!---
+*
+* Copyright (C) 2005-2008 Razuna
+*
+* This file is part of Razuna - Enterprise Digital Asset Management.
+*
+* Razuna is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Razuna is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero Public License for more details.
+*
+* You should have received a copy of the GNU Affero Public License
+* along with Razuna. If not, see <http://www.gnu.org/licenses/>.
+*
+* You may restribute this Program with a special exception to the terms
+* and conditions of version 3.0 of the AGPL as described in Razuna's
+* FLOSS exception. You should have received a copy of the FLOSS exception
+* along with Razuna. If not, see <http://www.razuna.com/licenses/>.
+*
+--->
+<cfoutput>
+	<cfif session.hosttype EQ "F">
+		#defaultsObj.trans("link_desc")#<br><br>
+		<cfinclude template="dsp_host_upgrade.cfm">
+	<cfelse>
+		<form name="formassetlink" id="formassetlink" action="#self#" method="post" onsubmit="addlink();return false;">
+		<input type="hidden" name="#theaction#" value="#xfa.addlink#">
+		<input type="hidden" name="folder_id" value="#attributes.folder_id#">
+		<table border="0" cellpadding="0" cellspacing="0" width="600" class="tablepanel">
+			<tr>
+				<th>#defaultsObj.trans("link_tab_header")#</th>
+			</tr>
+			<tr>
+				<td>#defaultsObj.trans("link_desc")#</td>
+			</tr>
+			<tr>
+				<td class="td2"><hr></td>
+			</tr>
+			<tr>
+				<td class="td2" nowrap="true" style="padding-top:10px;"><strong>#defaultsObj.trans("link_asset_store")#</strong></td>
+			</tr>
+			<tr>
+				<td class="td2"><input name="link_kind" type="radio" value="url" checked="true"> On public URL <input name="link_kind" type="radio" value="urlvideo"> Video with embedded player <cfif NOT application.razuna.isp><input name="link_kind" type="radio" value="lan"> Available on my local network</cfif></td>
+			</tr>
+			<tr>
+				<td class="td2" width="1%" nowrap="true" style="padding-top:7px;"><strong>#defaultsObj.trans("link_path_url")#</strong></td>
+			</tr>
+			<tr>
+				<td class="td2" width="100%"><textarea name="link_path_url" style="width:550px;height:35px;"></textarea></td>
+			</tr>
+			<!--- <tr>
+				<td class="td2" nowrap="true" style="padding-top:7px;"><strong>#defaultsObj.trans("link_download")#</strong><br /><i>(#defaultsObj.trans("link_download_desc")#)</i></td>
+			</tr>
+			<tr>
+				<td class="td2"><input type="radio" name="link_download" value="no" checked="true">#defaultsObj.trans("no")# <input type="radio" name="link_download" value="yes">#defaultsObj.trans("yes")#</td>
+			</tr> --->
+			<tr>
+				<td class="td2" width="1%" nowrap="true" style="padding-top:7px;"><strong>#defaultsObj.trans("file_name")#</strong></td>
+			</tr>
+			<tr>
+				<td class="td2" width="100%"><input name="link_file_name" type="text" style="width:550px;"></td>
+			</tr>
+			<tr>
+				<td colspan="2" style="padding-top:20px;"><div style="float:left;"><input type="button" name="cancel" value="#defaultsObj.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><input type="button" name="submit" value="#defaultsObj.trans("header_add_asset")#" class="button" onclick="addlink();"></div></td>
+			</tr>
+		</table>
+		<div id="addlinkstatus" style="display:none;"></div>
+		</form>
+		<!--- JS for form --->
+		<script language="javascript">
+			function addlink(){
+				$("##addlinkstatus").css("display","");
+				loadinggif('addlinkstatus');
+				$("##addlinkstatus").fadeTo("fast", 100);
+				var url = formaction("formassetlink");
+				var items = formserialize("formassetlink");
+				// Submit Form
+		       	$.ajax({
+					type: "POST",
+					url: url,
+				   	data: items,
+				   	success: function(){
+						// Update Text
+						$("##addlinkstatus").css({'color':'red','font-weight':'bold','padding-top':'10px'});
+						$("##addlinkstatus").html("#defaultsObj.trans("link_added")#");
+						$("##addlinkstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+				   	}
+				});
+		        return false; 
+			}
+		</script>
+	</cfif>
+</cfoutput>

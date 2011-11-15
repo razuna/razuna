@@ -1,0 +1,2 @@
+Fusebox will take care of putting parsed files in here automatically. Just be 
+sure to have a directory off your root called "parsed" in all your Fusebox apps.

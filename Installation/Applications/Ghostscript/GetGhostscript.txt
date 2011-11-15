@@ -1,0 +1,8 @@
+Download the latest Ghostscript from http://ghostscript.com/releases/
+
+and follow the installation instructions outlined at http://wiki.razuna.com/display/ecp/1.+Install+ImageMagick,+Ghostscript,+FFmpeg+and+Exiftool
+
+Note for Windows Users!!!
+=========================
+
+Do NOT install the 64bit Ghostscript executable as ImageMagick looks for the 32bit file!

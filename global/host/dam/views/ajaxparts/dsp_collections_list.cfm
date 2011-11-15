@@ -1,0 +1,59 @@
+<!---
+*
+* Copyright (C) 2005-2008 Razuna
+*
+* This file is part of Razuna - Enterprise Digital Asset Management.
+*
+* Razuna is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Razuna is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero Public License for more details.
+*
+* You should have received a copy of the GNU Affero Public License
+* along with Razuna. If not, see <http://www.gnu.org/licenses/>.
+*
+* You may restribute this Program with a special exception to the terms
+* and conditions of version 3.0 of the AGPL as described in Razuna's
+* FLOSS exception. You should have received a copy of the FLOSS exception
+* along with Razuna. If not, see <http://www.razuna.com/licenses/>.
+*
+--->
+<cfoutput>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+		<tr>
+			<th width="100%" colspan="6">
+				<div style="float:left;height:30px;"><a href="##" onclick="showwindow('#myself#c.saveascollection_form&folder_id=#attributes.folder_id#&coladd=T','#defaultsObj.trans("collection_create")#',600,1);">#defaultsObj.trans("collection_create")#</a><cfif session.folderaccess EQ "X"> | <a href="##" onclick="showwindow('#myself#c.folder_new&theid=#qry_folder.folder_id#&level=#qry_folder.folder_level#&rid=#qry_folder.rid#&iscol=#qry_folder.folder_is_collection#','#defaultsObj.trans("folder_new")#',750,1);return false;">#defaultsObj.trans("folder_new")#</a></cfif></div>
+			</th>
+		</tr>
+		<tr>
+			<td nowrap="true" width="50%"><b>#defaultsObj.trans("header_collection_name")#</b></td>
+			<td nowrap="true" width="500%"><b>#defaultsObj.trans("description")#</b></td>
+			<td nowrap="true" align="center" width="1%"><b>#defaultsObj.trans("date_changed")#</b></td>
+			<cfif #session.folderaccess# EQ "X">
+				<td></td>
+			</cfif>
+		</tr>
+		<cfloop query="qry_col_list.collist">
+			<tr class="list">
+<!--- showwindow('#myself##xfa.collectiondetail#&col_id=#col_id#&folder_id=#folder_id#','#col_name#',700,1);return false;				 --->
+				<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself##xfa.collectiondetail#&col_id=#col_id#&folder_id=#folder_id#');">#col_name#</a></td>
+				<td valign="top">
+					<cfloop query="qry_col_list.collistdesc">
+						<cfif col_id_r EQ qry_col_list.collist.col_id>
+							#col_desc#<cfif qry_col_list.collistdesc.recordcount GT 1 AND col_desc NEQ ""><br></cfif>
+						</cfif>
+					</cfloop>
+				</td>
+				<td valign="top" align="center">#dateformat(change_date, "#defaultsObj.getdateformat()#")#</td>
+				<cfif #session.folderaccess# EQ "X">
+					<td align="center" width="1%" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&loaddiv=#kind#&folder_id=#folder_id#','#defaultsObj.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+				</cfif>
+			</tr>
+		</cfloop>
+</cfoutput>
+

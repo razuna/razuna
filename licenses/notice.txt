@@ -1,0 +1,18 @@
+Portions of this product distribution require certain copyright or other notices to 
+be included with the product distribution.  These notice may also appear in individual source files.
+
+This product includes software developed by The Apache Software Foundation 
+(http://www.apache.org/).
+
+Portions of this product are:
+Copyright 2001 The Apache Software Foundation.  
+Copyright 2000-2002 The Apache Software Foundation
+Copyright 2004 The Apache Software Foundation
+
+All rights reserved.
+
+This product includes software developed by the Fusebox Framework Project (http://www.fusebox.org)
+
+This product includes software developed by ImageMagick Studio LLC (http://www.imagemagick.org)
+
+This product includes software developed by the Spry Ajax Library (http://labs.adobe.com/technologies/spry/)
