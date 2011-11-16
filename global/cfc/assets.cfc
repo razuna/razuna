@@ -284,7 +284,10 @@
 <cfset tt = Replace( CreateUUid(), "-", "", "ALL" )>
 		<cfthread name="#tt#" intstruct="#arguments.thestruct#">
 --->
+			<!--- Get the file --->
 			<cfftp action="getfile" connection="myftp" server="#arguments.thestruct.ftp_server#" passive="#arguments.thestruct.ftp_passive#" stoponerror="no" username="#arguments.thestruct.ftp_user#" password="#arguments.thestruct.ftp_pass#" localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" remotefile="#arguments.thestruct.remote_file#" transfermode="AUTO" failifexists="no" timeout="3600" />
+			<!--- Close FTP --->
+			<cfftp action="close" connection="myftp" />
 		<!---
 </cfthread>
 		<!--- Wait for the download above to finish --->

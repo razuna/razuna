@@ -27,64 +27,64 @@
 
 <!--- GET FTP DIRECTORY --->
 <cffunction name="getdirectory" output="true">
-	<cfargument name="thestruct" type="struct">
-	<cfset var qry = structnew()>
-	<cfset qry.backpath = "">
-	<cfset qry.dirname = "">
-	<!--- Open Connection to FTP Server --->
-	<cfftp connection="Myftp" server="#session.ftp_server#" username="#session.ftp_user#" password="#session.ftp_pass#" action="Open" stoponerror="no" timeout="20" retrycount="1">
-	<!--- Set the response form the connection into scope --->
-	<cfset qry.ftp = cfftp>
-	<!--- Try to connect to the FTP server --->
-	<cfif cfftp.succeeded>
-		<cftry>
-			<cfif NOT structkeyexists(arguments.thestruct,"folderpath")>
-				<!--- Get the current directory name --->
-				<cfftp connection="Myftp" action="GetCurrentDir" stoponerror="yes" timeout="30">
-				<cfset thedirname="#cfftp.returnvalue#">
-				<cfset wodirname="#thedirname#">
-				<!--- Get a listing of the directory --->
-				<cfftp connection="myftp" action="listdir" directory="#thedirname#/" name="dirlist" stoponerror="yes" timeout="20">
-			<cfelse>
-				<cfftp connection="myftp" action="listdir" directory="#arguments.thestruct.folderpath#/" name="dirlist" stoponerror="yes" timeout="30">
-				<cfif findoneof(arguments.thestruct.folderpath,"/") EQ 0>
-					<cfset qry.backpath = "">
-				<cfelse>
-					<cfset temp = listlast(arguments.thestruct.folderpath, "/\")>
-					<cfset qry.backpath = replacenocase(arguments.thestruct.folderpath, "/#temp#", "", "ALL")>
-				</cfif>
-				<cfset thedirname="#arguments.thestruct.folderpath#">
-			</cfif>			
-			<!--- output dirlist results --->
-			<cfquery dbtype="query" name="ftplist">
-			SELECT *
-			FROM dirlist
-			ORDER BY isdirectory DESC, name
-			</cfquery>
-			<cfset qry.dirname = thedirname>
-			<cfset qry.ftplist = ftplist>
-			<!--- there is an error in the ftp connection thus redirect user and inform him --->
-			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="ftp error" type="html"><cfdump var="#cfcatch#"></cfmail>
-			</cfcatch>
-		</cftry>
-	</cfif>
+    <cfargument name="thestruct" type="struct">
+    <cfset var qry = structnew()>
+    <cfset qry.backpath = "">
+    <cfset qry.dirname = "">
+    <cfset var fc = "f" & randrange(1,100000000)>
+    <!--- Open Connection to FTP Server --->
+    <cfftp connection="#fc#" server="#session.ftp_server#" username="#session.ftp_user#" password="#session.ftp_pass#" action="Open" stoponerror="no" timeout="20" retrycount="1">
+    <!--- Set the response form the connection into scope --->
+    <cfset qry.ftp = cfftp>
+    <!--- Try to connect to the FTP server --->
+    <cfif cfftp.succeeded>                
+        <cfif NOT structkeyexists(arguments.thestruct,"folderpath")>
+                <!--- Get the current directory name --->
+                <cfftp connection="#fc#" action="GetCurrentDir" stoponerror="no" timeout="30">
+                <cfset thedirname="#cfftp.returnvalue#">
+                <cfset wodirname="#thedirname#">
+                <!--- Get a listing of the directory --->
+                <cfftp connection="#fc#" action="listdir" directory="#thedirname#/" name="dirlist" stoponerror="no" timeout="20">
+        <cfelse>
+                <cfftp connection="#fc#" action="listdir" directory="#arguments.thestruct.folderpath#/" name="dirlist" stoponerror="no" timeout="30">
+                <cfif findoneof(arguments.thestruct.folderpath,"/") EQ 0>
+                        <cfset qry.backpath = "">
+                <cfelse>
+                        <cfset temp = listlast(arguments.thestruct.folderpath, "/\")>
+                        <cfset qry.backpath = replacenocase(arguments.thestruct.folderpath, "/#temp#", "", "ALL")>
+                </cfif>
+                <cfset thedirname="#arguments.thestruct.folderpath#">
+        </cfif>
+        <!--- output dirlist results --->
+        <cfquery dbtype="query" name="ftplist">
+        SELECT *
+        FROM dirlist
+        ORDER BY isdirectory DESC, name
+        </cfquery>
+        <cfset qry.dirname = thedirname>
+        <cfset qry.ftplist = ftplist>
+    </cfif>
+    <!--- Close FTP --->
+    <cfftp connection="#fc#" action="close" />
 	<!--- Return --->
-	<cfreturn qry>
+    <cfreturn qry>
 </cffunction>
 
 <!--- PUT THE FILE ON THE FTP SITE --------------------------------------------------------------->
 <cffunction hint="PUT THE FILE ON THE FTP SITE" name="putfile" output="true">
 	<cfargument name="thestruct" type="struct">
 		<cftry>
+			<cfset var fc = "f" & randrange(1,100000000)>
 			<!--- Open ftp connection --->
-			<cfftp connection="myftp" server="#session.ftp_server#" username="#session.ftp_user#" password="#session.ftp_pass#" action="Open" stoponerror="yes">
+			<cfftp connection="#fc#" server="#session.ftp_server#" username="#session.ftp_user#" password="#session.ftp_pass#" action="Open" stoponerror="no">
 			<!--- Put the file on the FTP Site --->
-			<cfftp connection="myftp" action="putfile" server="#session.ftp_server#" passive="#session.ftp_passive#" stoponerror="yes" username="#session.ftp_user#" password="#session.ftp_pass#" localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" remotefile="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#" transfermode="auto" timeout="3600">
+			<cfftp connection="#fc#" action="putfile" server="#session.ftp_server#" passive="#session.ftp_passive#" stoponerror="no" username="#session.ftp_user#" password="#session.ftp_pass#" localfile="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#" remotefile="#arguments.thestruct.folderpath#/#arguments.thestruct.thefile#" transfermode="auto" timeout="3600">
 			<!--- Delete the file in the outgoing folder --->
 			<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#">
+			<!--- Close FTP --->
+   			<cfftp connection="#fc#" action="close" />
 			<cfoutput>success</cfoutput>
-		<cfcatch type="any"><cfoutput>#cfcatch.Detail#</cfoutput></cfcatch>
+			<cfcatch type="any"><cfoutput>#cfcatch.Detail#</cfoutput></cfcatch>
 		</cftry>
 </cffunction>
 
