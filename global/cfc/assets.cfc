@@ -280,19 +280,15 @@
 		</cfif>
 		<!--- Get file from FTP --->
 		<cfset arguments.thestruct.remote_file = remote_file>
-		<!---
-<cfset tt = Replace( CreateUUid(), "-", "", "ALL" )>
+		<cfset tt = Replace( CreateUUid(), "-", "", "ALL" )>
 		<cfthread name="#tt#" intstruct="#arguments.thestruct#">
---->
+			<cfset fc = "f" & randrange(1,10000000)>
 			<!--- Get the file --->
-			<cfftp action="getfile" connection="myftp" server="#arguments.thestruct.ftp_server#" passive="#arguments.thestruct.ftp_passive#" stoponerror="no" username="#arguments.thestruct.ftp_user#" password="#arguments.thestruct.ftp_pass#" localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" remotefile="#arguments.thestruct.remote_file#" transfermode="AUTO" failifexists="no" timeout="3600" />
-			<!--- Close FTP --->
-			<cfftp action="close" connection="myftp" />
-		<!---
-</cfthread>
+			<cfftp action="getfile" connection="#fc#" server="#attributes.intstruct.ftp_server#" passive="#attributes.intstruct.ftp_passive#" stoponerror="no" username="#attributes.intstruct.ftp_user#" password="#attributes.intstruct.ftp_pass#" localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#" remotefile="#attributes.intstruct.remote_file#" transfermode="AUTO" failifexists="no" timeout="3600" />
+			<cfftp action="close" connection="#fc#" />
+		</cfthread>
 		<!--- Wait for the download above to finish --->
 		<cfthread action="join" name="#tt#" />
---->
 		<!--- Get the filesize --->
 		<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 		<!--- MD5 Hash --->
