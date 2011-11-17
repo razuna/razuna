@@ -4862,6 +4862,7 @@
 		<!-- CFC: Query Widget -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<set name="attributes.folder_id" value="#qry_widget.folder_id_r#" />
+		<set name="attributes.fid" value="#qry_widget.folder_id_r#" />
 		<!-- Depending if there is a collection or not we call the content -->
 		<if condition="#session.iscol# EQ 'F'">
 			<true>
@@ -4932,6 +4933,7 @@
 	<!-- External call: Login with password only -->
 	<fuseaction name="w_login_password">
 		<set name="attributes.widget_id" value="#session.widget_id#" />
+		<set name="session.fid" value="#attributes.fid#" />
 		<!-- CFC: Query for the correct password -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="getpassword(attributes)" returnvariable="qry_wp" />
 	</fuseaction>
