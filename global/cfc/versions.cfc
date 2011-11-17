@@ -173,32 +173,28 @@
 			</cfthread>
 			<cfthread action="join" name="movec#arguments.thestruct.file_id#" />
 			<cfpause interval="10" />
-		<!--- 	<cfthread name="mover#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#"> --->
+			<cfthread name="mover#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<!--- Rename --->
 				<cfinvoke component="nirvanix" method="RenameFolders">
-					<cfinvokeargument name="folderPath" value="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/temp/#arguments.thestruct.version#">
-					<cfinvokeargument name="newFolderName" value="#arguments.thestruct.file_id#">
-					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					<cfinvokeargument name="folderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.file_id#/temp/#attributes.intstruct.version#">
+					<cfinvokeargument name="newFolderName" value="#attributes.intstruct.file_id#">
+					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
-	<!---
-		</cfthread>
+			</cfthread>
 			<cfthread action="join" name="mover#arguments.thestruct.file_id#" />
---->
-<!--- 			<cfthread name="movem#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#"> --->
+			<cfthread name="movem#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<!--- Since we have the id as the last element of the path to asset we need to take it apart --->
-				<cfset one = listgetat(arguments.thestruct.qry.path_to_asset,1,"/")>
-				<cfset two = listgetat(arguments.thestruct.qry.path_to_asset,2,"/")>
+				<cfset one = listgetat(attributes.intstruct.qry.path_to_asset,1,"/")>
+				<cfset two = listgetat(attributes.intstruct.qry.path_to_asset,2,"/")>
 				<cfset thepath = "#one#/#two#">
 				<!--- Move folder to original directory --->
 				<cfinvoke component="nirvanix" method="MoveFolders">
-					<cfinvokeargument name="srcFolderPath" value="/versions/#arguments.thestruct.type#/#arguments.thestruct.file_id#/temp/#arguments.thestruct.file_id#">
+					<cfinvokeargument name="srcFolderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.file_id#/temp/#attributes.intstruct.file_id#">
 					<cfinvokeargument name="destFolderPath" value="/#thepath#">
-					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
-		<!---
-	</cfthread>
+			</cfthread>
 			<cfthread action="join" name="movem#arguments.thestruct.file_id#" />
---->
 			<!--- Get SignedURL thumbnail --->
 			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_thumbnail#" nvxsession="#arguments.thestruct.nvxsession#">
 			<!--- Get SignedURL original --->
