@@ -698,23 +698,13 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 		<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
 	</cfif>
 	<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
-	<!---
-	<cfinvoke method="addassetthread" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.qryfile.path" />
-	<cfreturn #arguments.thestruct.qryfile.path#>
-	--->
 	<!--- Thread --->
-	<!--- <cfset tt = replace(createuuid(),"-","","ALL")> --->
-	<cfthread intstruct="#arguments.thestruct#">
-		<cfinvoke method="addassetthread" thestruct="#attributes.intstruct#" returnvariable="arguments.thestruct.qryfile.path" />
-	</cfthread>
-	<!---
-<cfthread action="join" name="#tt#" />
-	<cfmail to="nitai@razuna.com" from="server@razuna.com" subject="debug addasset" type="html">
-		#cfthread["#tt#"].status#
-	</cfmail>
---->
+	<cfif arguments.thestruct.qryfile.tempid NEQ "">
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="addassetthread" thestruct="#attributes.intstruct#" returnvariable="arguments.thestruct.qryfile.path" />
+		</cfthread>
+	</cfif>
 	<!--- Return --->
-	<!--- <cfreturn #cfthread["#tt#"].output#> --->
 	<cfreturn arguments.thestruct.qryfile.path>
 </cffunction>
 
@@ -1775,13 +1765,6 @@ This is the main function called directly by a single upload else from addassets
 								</cfinvoke>
 							</cfthread>
 							<cfthread action="join" name="#uplt#o" />
-							<!---
-							<cfinvoke component="nirvanix" method="Upload">
-								<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
-								<cfinvokeargument name="uploadfile" value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
-								<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-							</cfinvoke>
-							--->
 							<cfcatch type="any">
 								<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading original image to Nirvanix" dump="#cfcatch#">
 							</cfcatch>
@@ -1789,14 +1772,6 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 					<!--- Upload Thumbnail --->
 					<cftry>
-						<!---
-<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.destination#">
-							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-						</cfinvoke>
---->
-						
 						<cfthread name="#uplt#t" intstruct="#arguments.thestruct#">
 							<cfinvoke component="nirvanix" method="Upload">
 								<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
@@ -1805,7 +1780,6 @@ This is the main function called directly by a single upload else from addassets
 							</cfinvoke>
 						</cfthread>
 						<cfthread action="join" name="#uplt#t" />
-
 						<cfcatch type="any">
 							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
 						</cfcatch>
@@ -1821,41 +1795,32 @@ This is the main function called directly by a single upload else from addassets
 					<cftry>
 						<!--- Upload Original Image --->
 						<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-							<!---
-<cfset upt = Replace( Createuuid(), "-", "", "ALL" )>
+							<cfset upt = Replace( Createuuid(), "-", "", "ALL" )>
 							<cfthread name="#upt#" intstruct="#arguments.thestruct#">
---->
 								<cfinvoke component="amazon" method="Upload">
-									<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#attributes.intstruct.qryfile.filename#">
-									<cfinvokeargument name="theasset" value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
-									<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+									<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
+									<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
+									<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 								</cfinvoke>
-							<!---
-</cfthread>
+							</cfthread>
 							<cfthread action="join" name="#upt#" />
---->
 						</cfif>
 						<!--- Upload Thumbnail --->
-						<!---
-<cfset uptn = Replace( Createuuid(), "-", "", "ALL" )>
+						<cfset uptn = Replace( Createuuid(), "-", "", "ALL" )>
 						<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
---->
 							<cfinvoke component="amazon" method="Upload">
-								<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
-								<cfinvokeargument name="theasset" value="#arguments.thestruct.destination#">
-								<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
+								<cfinvokeargument name="theasset" value="#attributes.intstruct.destination#">
+								<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 							</cfinvoke>
-						<!---
-</cfthread>
+						</cfthread>
 						<cfthread action="join" name="#uptn#" />
---->
 						<!--- Get size of original and thumnail --->
 						<cfset orgsize = arguments.thestruct.qryfile.thesize>
 						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
 						<!--- Get signed URLS for thumb and original --->
 						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
-						
 						<cfcatch type="any">
 							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
 						</cfcatch>
@@ -2250,7 +2215,6 @@ This is the main function called directly by a single upload else from addassets
 			<!--- NIRVANIX --->
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Upload Movie Image --->
-				
 				<cfset upmi = Replace( Createuuid(), "-", "", "ALL" )>
 				<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="nirvanix" method="Upload">
@@ -2260,17 +2224,8 @@ This is the main function called directly by a single upload else from addassets
 					</cfinvoke>
 				</cfthread>
 				<cfthread action="join" name="#upmi#" />
-
-				<!---
-<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#">
-					<cfinvokeargument name="uploadfile" value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.thisvid.theorgimage#">
-					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-				</cfinvoke>
---->
 				<!--- Upload Movie --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-					
 					<cfset upmt = Replace( Createuuid(), "-", "", "ALL" )>
 					<cfthread name="#upmt#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
@@ -2280,14 +2235,6 @@ This is the main function called directly by a single upload else from addassets
 						</cfinvoke>
 					</cfthread>
 					<cfthread action="join" name="#upmt#" />
-
-					<!---
-<cfinvoke component="nirvanix" method="Upload">
-						<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#">
-						<cfinvokeargument name="uploadfile" value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
-						<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-					</cfinvoke>
---->
 				</cfif>
 				<!--- Get signed URLS for image and movie --->
 				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
@@ -2295,7 +2242,6 @@ This is the main function called directly by a single upload else from addassets
 			<!--- AMAZON --->
 			<cfelseif application.razuna.storage EQ "amazon">
 				<!--- Upload Movie Image --->
-				
 				<cfset upmi = Replace( Createuuid(), "-", "", "ALL" )>
 				<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Upload">
@@ -2305,17 +2251,8 @@ This is the main function called directly by a single upload else from addassets
 					</cfinvoke>
 				</cfthread>
 				<cfthread action="join" name="#upmi#" />
-
-				<!---
-<cfinvoke component="amazon" method="Upload">
-					<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.thisvid.theorgimage#">
-					<cfinvokeargument name="theasset" value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.thisvid.theorgimage#">
-					<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
-				</cfinvoke>
---->
 				<!--- Upload Movie --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-					
 					<cfset upmt = Replace( Createuuid(), "-", "", "ALL" )>
 					<cfthread name="#upmt#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="amazon" method="Upload">
@@ -2325,14 +2262,6 @@ This is the main function called directly by a single upload else from addassets
 						</cfinvoke>
 					</cfthread>
 					<cfthread action="join" name="#upmt#" />
-
-					<!---
-<cfinvoke component="amazon" method="Upload">
-						<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.qryfile.filename#">
-						<cfinvokeargument name="theasset" value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
-						<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
-					</cfinvoke>
---->
 				</cfif>
 				<!--- Get signed URLS for image and movie --->
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -2985,18 +2914,9 @@ This is the main function called directly by a single upload else from addassets
 									</cfinvoke>
 								</cfthread>
 								<cfthread action="join" name="#upa#" />
-
-								<!---
-<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filename#">
-									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-								</cfinvoke>
---->
 							</cfif>
 							<!--- Upload the WAV --->
 							<cfif attributes.audstruct.qryfile.extension NEQ "wav">
-								
 								<cfset upw = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upw#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="nirvanix" method="Upload">
@@ -3006,18 +2926,9 @@ This is the main function called directly by a single upload else from addassets
 									</cfinvoke>
 								</cfthread>
 								<cfthread action="join" name="#upw#" />
-
-								<!---
-<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.wav">
-									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-								</cfinvoke>
---->
 							</cfif>
 							<!--- Move the MP3 but only if local asset link --->
 							<cfif attributes.audstruct.qryfile.link_kind EQ "lan">
-								
 								<cfset upmp = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upmp#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="nirvanix" method="Upload">
@@ -3027,14 +2938,6 @@ This is the main function called directly by a single upload else from addassets
 									</cfinvoke>
 								</cfthread>
 								<cfthread action="join" name="#upmp#" />
-
-								<!---
-<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
-									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-								</cfinvoke>
---->
 							</cfif>
 							<!--- Get signed URLS --->
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
@@ -3063,7 +2966,6 @@ This is the main function called directly by a single upload else from addassets
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.audstruct.dsn#" thestruct="#attributes.audstruct#" assetid="#attributes.audstruct.newid#" category="aud">
 							<!--- Upload file --->
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
-								
 								<cfset upa = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upa#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="amazon" method="Upload">
@@ -3073,18 +2975,9 @@ This is the main function called directly by a single upload else from addassets
 									</cfinvoke>
 								</cfthread>
 								<cfthread action="join" name="#upa#" />
-
-								<!---
-<cfinvoke component="amazon" method="Upload">
-									<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filename#">
-									<cfinvokeargument name="theasset" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filename#">
-									<cfinvokeargument name="awsbucket" value="#attributes.audstruct.awsbucket#">
-								</cfinvoke>
---->
 							</cfif>
 							<!--- Upload the WAV --->
 							<cfif attributes.audstruct.qryfile.extension NEQ "wav">
-								
 								<cfset upw = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upw#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="amazon" method="Upload">
@@ -3094,18 +2987,9 @@ This is the main function called directly by a single upload else from addassets
 									</cfinvoke>
 								</cfthread>
 								<cfthread action="join" name="#upw#" />
-
-								<!---
-<cfinvoke component="amazon" method="Upload">
-									<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.wav">
-									<cfinvokeargument name="theasset" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.wav">
-									<cfinvokeargument name="awsbucket" value="#attributes.audstruct.awsbucket#">
-								</cfinvoke>
---->
 							</cfif>
 							<!--- Move the MP3 but only if local asset link --->
 							<cfif attributes.audstruct.qryfile.link_kind EQ "lan">
-								
 								<cfset upmp = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upmp#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="amazon" method="Upload">
@@ -3115,14 +2999,6 @@ This is the main function called directly by a single upload else from addassets
 									</cfinvoke>
 								</cfthread>
 								<cfthread action="join" name="#upmp#" />
-
-								<!---
-<cfinvoke component="amazon" method="Upload">
-									<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
-									<cfinvokeargument name="theasset" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
-									<cfinvokeargument name="awsbucket" value="#attributes.audstruct.awsbucket#">
-								</cfinvoke>
---->
 							</cfif>
 							<!--- Get signed URLS --->
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
@@ -3468,11 +3344,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif application.razuna.storage EQ "amazon">
 			<!--- Download original asset to temp dir --->
 			<cfthread name="download#thescript#" intstruct="#arguments.thestruct#">
-				<!--- <cfinvoke component="amazon" method="Download">
-					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_existing.path_to_asset#/#attributes.intstruct.qry_existing.orgname#">
-					<cfinvokeargument name="theasset" value="#attributes.intstruct.filepath##attributes.intstruct.qry_existing.orgname#">
-					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-				</cfinvoke> --->
 				<cfhttp url="#attributes.intstruct.qry_existing.cloud_url_org#" method="get" path="#attributes.intstruct.filepath#" file="#attributes.intstruct.qry_existing.orgname#" getAsBinary="yes" />
 			</cfthread>
 			<!--- Wait --->
@@ -3481,13 +3352,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<!--- Download original asset to temp dir --->
 			<cfthread name="download#thescript#" intstruct="#arguments.thestruct#">
-				<!---
-<cfinvoke component="nirvanix" method="Download">
-					<cfinvokeargument name="remotefile" value="/#attributes.intstruct.qry_existing.path_to_asset#/#attributes.intstruct.qry_existing.orgname#">
-					<cfinvokeargument name="localfile" value="#attributes.intstruct.filepath##attributes.intstruct.qry_existing.orgname#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
---->
 				<cfhttp url="#attributes.intstruct.qry_existing.cloud_url_org#" method="get" path="#attributes.intstruct.filepath#" file="#attributes.intstruct.qry_existing.orgname#" getAsBinary="yes" />
 			</cfthread>
 			<!--- Wait --->
