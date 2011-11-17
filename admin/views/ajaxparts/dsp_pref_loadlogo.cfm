@@ -29,10 +29,9 @@
 </cfif>
 
 <cfoutput>
-	<cfdirectory action="list" directory="#pathoneup#/global/host/logo/#session.hostid#" name="l">
-	<cfif l.recordcount EQ 0>
-		<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
-	<cfelse>
+	<cfif directoryexists("#pathoneup#global/host/logo/#session.hostid#")>
 		<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
+	<cfelse>
+		<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
 	</cfif>
 </cfoutput>

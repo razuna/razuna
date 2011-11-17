@@ -917,7 +917,6 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfloop>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in removing incoming folders" dump="#cfcatch#">
 			</cfcatch>
 		</cftry>
 	</cfthread>

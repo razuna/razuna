@@ -1280,8 +1280,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cftry>
 	<!--- Test for existance of asset folder --->
 	<cfif application.razuna.storage EQ "local">
-		<cfdirectory directory="#qrypathassets.set2_path_to_assets#" action="list" name="mydir">
-		<cfif mydir.recordcount EQ 0>
+		<cfif !directoryexists("#qrypathassets.set2_path_to_assets#")>
 			<cfset apps.af = "F">
 		</cfif>
 	</cfif>
