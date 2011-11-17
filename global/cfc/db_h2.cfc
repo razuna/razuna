@@ -615,7 +615,7 @@
 			47, 'People are made to be loved and things are made to be used. The confusion in this world is that people are used and things are loved!', 'Unknown');
 			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
 			48, 'Make peace with your past so it will not destroy your present.', 'Paulo Coelho');
-			INSERT INTO #arguments.thestruct.theschema#.wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
 			49, 'Obstacles are those frightful things you see when you take your eyes off your goal.', 'Henry Ford');
 			</cfquery>
 			<!--- FILE TYPES --->
