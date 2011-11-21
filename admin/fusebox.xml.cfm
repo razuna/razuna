@@ -33,6 +33,7 @@
 		<class alias="defaults" classpath="global.cfc.defaults" type="component" constructor="init"/>
 		<class alias="backuprestore" classpath="global.cfc.backuprestore" type="component" constructor="init"/>
 		<class alias="amazon" classpath="global.cfc.amazon" type="component" constructor="init"/>
+		<class alias="rfs" classpath="global.cfc.rfs" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>

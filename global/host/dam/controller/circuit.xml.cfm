@@ -529,6 +529,7 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.type" value="doc" />
 		<set name="attributes.hostid" value="#session.hostid#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -554,6 +555,7 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1296,6 +1298,8 @@
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1346,6 +1350,8 @@
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
 		<!-- CFC: Upload -->
@@ -1388,6 +1394,8 @@
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1440,6 +1448,8 @@
 	<fuseaction name="asset_upload_do">
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1456,6 +1466,8 @@
 		<set name="attributes.file_desc_1" value="" />
 		<set name="attributes.file_keywords_1" value="" />
 		<set name="attributes.av" value="0" overwrite="false" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1489,6 +1501,8 @@
 		<set name="attributes.file_desc_1" value="" />
 		<set name="attributes.file_keywords_1" value="" />
 		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->

@@ -283,5 +283,22 @@
 	<fuseaction name="redirector">
   		<include template="redirector" />
 	</fuseaction>
-
+	
+	<!-- Prefs: Rendering Farm -->
+	<fuseaction name="prefs_rendf">
+  		<include template="dsp_pref_global_rendfarm" />
+	</fuseaction>
+	<!-- Prefs: Rendering Farm Add -->
+	<fuseaction name="prefs_rendf_add">
+  		<include template="dsp_pref_global_rendfarm_add" />
+	</fuseaction>
+	<!-- Prefs: Rendering Farm Validate Server -->
+	<fuseaction name="prefs_rendf_valserver">
+  		<include template="dsp_pref_global_rendfarm_valserver" />
+	</fuseaction>
+	<!-- Prefs: Rendering Farm Validate FTP -->
+	<fuseaction name="prefs_rendf_valftp">
+  		<include template="dsp_pref_global_rendfarm_valftp" />
+	</fuseaction>
+	
 </circuit>

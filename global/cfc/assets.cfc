@@ -808,7 +808,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 	</cfif>
 	<!--- Remove record in DB and file system (when we come from converting we call the function in the loop) --->
-	<cfif NOT structkeyexists(arguments.thestruct,"fromconverting") AND NOT structkeyexists(arguments.thestruct,"sched")>
+	<cfif NOT structkeyexists(arguments.thestruct,"fromconverting") AND NOT structkeyexists(arguments.thestruct,"sched") AND NOT application.razuna.renderingfarm>
 		<cfinvoke method="removeasset" thestruct="#arguments.thestruct#">
 	</cfif>
 	<!--- If we are coming from a scheduled task then... --->
@@ -1634,28 +1634,13 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"'","\'","all")>
 		</cfif>
 		<!--- resize original to thumb --->
-		<!--- <cfthread name="re#arguments.thestruct.newid#" intstruct="#arguments.thestruct#"> --->
-			<cfinvoke method="resizeImage">
-				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
-				<cfinvokeargument name="width" value="#arguments.thestruct.thumbwidth#">
-				<cfinvokeargument name="height" value="#arguments.thestruct.thumbheigth#">
-			</cfinvoke>
-		<!--- </cfthread> --->
-		<!--- Wait until Thumbnail is done --->
-		<!--- <cfthread action="join" name="re#arguments.thestruct.newid#" timeout="240000" /> --->
-		<!--- Create MD5 hash --->
-		<!--- <cfset md5hash = hashbinary(arguments.thestruct.thesourceraw)> --->
+		<cfinvoke method="resizeImage">
+			<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+			<cfinvokeargument name="width" value="#arguments.thestruct.thumbwidth#">
+			<cfinvokeargument name="height" value="#arguments.thestruct.thumbheigth#">
+		</cfinvoke>
 			<!--- storing assets on file system --->
 			<cfset arguments.thestruct.storage = application.razuna.storage>
-			
-			<!--- <cfset tt = "importimages" & Replace( Createuuid(), "-", "", "ALL" )> --->
-			<!--- Threaded --->
-			<!--- <cfthread name="#tt#" intstruct="#arguments.thestruct#"> --->
-				<!--- 
-				Do an insert because with the oracle method this is done in the SP and our workflow
-				only does updates from there on. 
-				09.01.2009: We do an insert first now, so we can run a cfthread and update the db later
-				--->
 				<cfquery datasource="#arguments.thestruct.dsn#">
 				UPDATE #session.hostdbprefix#images
 				SET
@@ -1731,17 +1716,27 @@ This is the main function called directly by a single upload else from addassets
 						</cfif>
 						<!--- Move original image --->
 						<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-							<cffile action="move" source="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
+							<cfif application.razuna.renderingfarm>
+								<cfset var fileaction = "copy">
+							<cfelse>
+								<cfset var fileaction = "move">
+							</cfif>
+							<cffile action="#fileaction#" source="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
 						</cfif>
 						<!--- Move thumbnail --->
 						<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 							<cffile action="move" source="#arguments.thestruct.thetempdirectory#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
-						<cfelse>
+						<cfelseif !application.razuna.renderingfarm>
 							<cffile action="move" source="#arguments.thestruct.qryfile.path#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
 						</cfif>
 						<!--- Get size of original and thumnail --->
 						<cfset orgsize = arguments.thestruct.qryfile.thesize>
-						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
+						<cfif !application.razuna.renderingfarm>
+							<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
+						<cfelse>
+							<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
+							<cfset thumbsize = 1>
+						</cfif>
 						<!---
 <cfcatch type="any">
 							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in moving local image">
@@ -1770,25 +1765,32 @@ This is the main function called directly by a single upload else from addassets
 						</cftry>
 					</cfif>
 					<!--- Upload Thumbnail --->
-					<cftry>
-						<cfthread name="#uplt#t" intstruct="#arguments.thestruct#">
-							<cfinvoke component="nirvanix" method="Upload">
-								<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
-								<cfinvokeargument name="uploadfile" value="#attributes.intstruct.destination#">
-								<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-							</cfinvoke>
-						</cfthread>
-						<cfthread action="join" name="#uplt#t" />
-						<cfcatch type="any">
-							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
-						</cfcatch>
-					</cftry>
-					<!--- Get size of original and thumnail --->
+					<cfif !application.razuna.renderingfarm>
+						<cftry>
+							<cfthread name="#uplt#t" intstruct="#arguments.thestruct#">
+								<cfinvoke component="nirvanix" method="Upload">
+									<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
+									<cfinvokeargument name="uploadfile" value="#attributes.intstruct.destination#">
+									<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+								</cfinvoke>
+							</cfthread>
+							<cfthread action="join" name="#uplt#t" />
+							<cfcatch type="any">
+								<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
+							</cfcatch>
+						</cftry>
+						<!--- Get thumb file size --->
+						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
+						<!--- Get signed URL --->
+						<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
+					<cfelse>
+						<cfset thumbsize = 1>
+						<cfset cloud_url.theurl = "">
+					</cfif>
+					<!--- Get size of original --->
 					<cfset orgsize = arguments.thestruct.qryfile.thesize>
-					<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
-					<!--- Get signed URLS for thumb and original --->
+					<!--- Get signed URLS for original --->
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- AMAZON --->
 				<cfelseif arguments.thestruct.storage EQ "amazon">
 					<cftry>
@@ -1805,21 +1807,28 @@ This is the main function called directly by a single upload else from addassets
 							<cfthread action="join" name="#upt#" />
 						</cfif>
 						<!--- Upload Thumbnail --->
-						<cfset uptn = Replace( Createuuid(), "-", "", "ALL" )>
-						<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
-							<cfinvoke component="amazon" method="Upload">
-								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
-								<cfinvokeargument name="theasset" value="#attributes.intstruct.destination#">
-								<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-							</cfinvoke>
-						</cfthread>
-						<cfthread action="join" name="#uptn#" />
-						<!--- Get size of original and thumnail --->
+						<cfif !application.razuna.renderingfarm>
+							<cfset uptn = Replace( Createuuid(), "-", "", "ALL" )>
+							<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
+								<cfinvoke component="amazon" method="Upload">
+									<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
+									<cfinvokeargument name="theasset" value="#attributes.intstruct.destination#">
+									<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+								</cfinvoke>
+							</cfthread>
+							<cfthread action="join" name="#uptn#" />
+							<!--- Get size thumnail --->
+							<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
+							<!--- Get signed URLS for thumb --->
+							<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+						<cfelse>
+							<cfset thumbsize = 1>
+							<cfset cloud_url.theurl = "">
+						</cfif>
+						<!--- Get size of original --->
 						<cfset orgsize = arguments.thestruct.qryfile.thesize>
-						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
-						<!--- Get signed URLS for thumb and original --->
+						<!--- Get signed URLS original --->
 						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
-						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
 						<cfcatch type="any">
 							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
 						</cfcatch>
@@ -1849,7 +1858,6 @@ This is the main function called directly by a single upload else from addassets
 				WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 				</cfquery>
-				
 			<!---
 </cfthread>
 			<cfthread action="join" name="#tt#" />
@@ -1905,15 +1913,20 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct" required="true">
 	<cfargument name="width" type="numeric" required="true" hint="pixel">
 	<cfargument name="height" type="numeric" required="true" hint="pixel">
-	<!--- Params for cfthread --->
+	<!--- Params --->
 	<cfset arguments.thestruct.width = arguments.width>
 	<cfset arguments.thestruct.height = arguments.height>
-	<!--- ID for thread --->
-	<cfset var tri = replacenocase(createuuid(),"-","","all")>
-	<cfthread name="#tri#" intstruct="#arguments.thestruct#">
-		<cfinvoke method="resizeImagethread" thestruct="#attributes.intstruct#" />
-	</cfthread>
-	<cfthread action="join" name="#tri#" timeout="240000" />
+	<!--- RFS --->
+	<cfif application.razuna.renderingfarm>
+		<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
+	<cfelse>
+		<!--- ID for thread --->
+		<cfset var tri = replacenocase(createuuid(),"-","","all")>
+		<cfthread name="#tri#" intstruct="#arguments.thestruct#">
+			<cfinvoke method="resizeImagethread" thestruct="#attributes.intstruct#" />
+		</cfthread>
+		<cfthread action="join" name="#tri#" timeout="240000" />
+	</cfif>
 </cffunction>
 
 <!--- RESIZE IMAGE ------------------------------------------------------------------------------->
