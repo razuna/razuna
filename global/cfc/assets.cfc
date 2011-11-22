@@ -912,7 +912,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfdirectory action="list" directory="#attributes.intvars.thepath#/incoming" name="thedirs">
 			<!--- Loop over dirs --->
 			<cfloop query="thedirs">
-				<cfif type EQ "dir" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime AND directoryexists("#attributes.intvars.thepath#/incoming/#name#")>
+				<cfif datelastmodified LT removetime AND directoryexists("#attributes.intvars.thepath#/incoming/#name#")>
 					<cfdirectory action="delete" directory="#attributes.intvars.thepath#/incoming/#name#" recurse="true" mode="775">
 				</cfif>
 			</cfloop>

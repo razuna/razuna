@@ -1884,6 +1884,9 @@
 	</fuseaction>
 	<!-- Convert Video -->
 	<fuseaction name="videos_convert">
+		<!-- Param -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
@@ -1980,12 +1983,12 @@
 	<fuseaction name="images_convert">
 		<!-- Param -->
 		<set name="attributes.fromconverting" value="T" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- CFC: Get settings
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.qry_settings_dam" /> -->
 		<!-- CFC: Get image settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
 		<!-- CFC: Convert images -->	
@@ -2055,6 +2058,9 @@
 	</fuseaction>
 	<!-- Convert Audio -->
 	<fuseaction name="audios_convert">
+		<!-- Param -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
@@ -5264,10 +5270,20 @@
 		<do action="ajax.labels_main_collections" />
 	</fuseaction>
 	
-	
 	<!--  -->
 	<!-- LABELS: STOP -->
 	<!--  -->
 	
+	<!--  -->
+	<!-- RFS: START -->
+	<!--  -->
+	
+	<!-- Pick up asset from rfs -->
+	<fuseaction name="rfs">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="pickup(attributes)" />
+	</fuseaction>
 	
 </circuit>

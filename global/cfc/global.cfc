@@ -841,6 +841,11 @@ Comment:<br>
 		<!--- If there is a record then the user is in debt --->
 		<cfif qry_account.recordcount NEQ 0>
 			<cfset session.indebt = true>
+		<cfelse>
+			<cfset session.indebt = false>
+		</cfif>
+		<cfif Request.securityObj.CheckSystemAdminUser()>
+			<cfset session.indebt = false>
 		</cfif>
 		<!--- Return --->
 		<cfreturn qry_account>

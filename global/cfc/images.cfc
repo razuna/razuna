@@ -596,17 +596,19 @@
 <!--- CONVERT ASSET IN THREADS --->
 <cffunction name="convertimage" output="false">
 	<cfargument name="thestruct" type="struct">
-		<!--- Call method to send email
-		<cfset arguments.thestruct.emailwhat = "start_converting">
-		<cfset arguments.thestruct.dsn = variables.dsn>
-		<cfset arguments.thestruct.setid = variables.setid>
-		<cfset arguments.thestruct.emailorgname = arguments.thestruct.qry_detail.img_filename>
-		<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#"> --->
-<!--- 		<cfinvoke method="convertImagethread" thestruct="#arguments.thestruct#" /> --->
+	<!--- RFS --->
+	<cfif application.razuna.renderingfarm>
+		<cfset arguments.thestruct.convert = true>
+		<cfset arguments.thestruct.assettype = "img">
+		<cfthread name="convertimage#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+			<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
+		</cfthread>
+	<cfelse>
 		<!--- Start the thread for converting --->
 		<cfthread name="convertimage#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 			<cfinvoke method="convertImagethread" thestruct="#attributes.intstruct#" />
 		</cfthread>
+	</cfif>
 </cffunction>
 
 <!--- CONVERT AN ORIGINAL IMAGE TO ANOTHER FORMAT (JPG, GIF, TIFF, PNG, BMP) --------------------->
