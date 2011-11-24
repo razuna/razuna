@@ -1083,7 +1083,7 @@
 			<!--- Write files --->
 			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# #arguments.thestruct.theargument#" mode="777">
 			<!--- Convert video --->
-			<cfset ttexe = createuuid()>
+			<cfset ttexe = replace(createuuid(),"-","","all")>
 			<cfthread name="#ttexe#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="24000" />
 			</cfthread>
