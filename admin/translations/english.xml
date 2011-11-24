@@ -670,7 +670,7 @@
 		<transtext>New Registration</transtext>
 	</transid>
 	<transid name="intranet_new_registration_desc">
-		<transtext>When a user wants to register for an access to your Digital Asset Management then you will receive a notification email. Please enter here the eMail adress(es) and subject of that notification email. This email is only being sent to your internal stuff not to your customer.</transtext>
+		<transtext>When a user wants to register for an access to your Digital Asset Management then you will receive a notification email. Please enter here the eMail adress(es) and subject of that notification email. This email is only being sent to your internal staff not to your customer.</transtext>
 	</transid>
 	<transid name="intranet_new_registration_emails">
 		<transtext>Registration goes to the following eMail addresse(s)</transtext>
