@@ -144,6 +144,7 @@
 		<cfhttp url="#qry.rfs_server_name#" timeout="20">
 			<cfhttpparam name="rfsid" value="#qry.rfs_id#" type="URL">
 			<cfhttpparam name="hostid" value="#session.hostid#" type="URL">
+			<cfhttpparam name="userid" value="#session.theuserid#" type="URL">
 			<cfhttpparam name="dynpath" value="#arguments.thestruct.dynpath#" type="URL">
 			<cfhttpparam name="httphost" value="#arguments.thestruct.httphost#" type="URL">
 			<cfhttpparam name="storage" value="#application.razuna.storage#" type="URL">
@@ -163,13 +164,16 @@
 	<!--- Pickup asset from rfs --->
 	<cffunction name="pickup" output="true">
 		<cfargument name="thestruct" type="struct">
-		<cftry>	
-			<!--- Query temp DB --->
-			<cfquery dataSource="#application.razuna.datasource#" name="qry">
-			SELECT folder_id
-			FROM #session.hostdbprefix#assets_temp
-			WHERE tempid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_tempid#">
-			</cfquery>		
+		<cftry>
+			<!--- Params --->
+			<cfset var tt = replace(createuuid(),"-","","all")>
+			<!--- Go grab the platform --->
+			<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+			<!--- Prepare scripts --->
+			<cfset arguments.thestruct.thesh = gettempdirectory() & "/#tt#.sh">
+			<cfif isWindows>
+				<cfset arguments.thestruct.thesh = gettempdirectory() & "/#tt#.bat">
+			</cfif>
 			<!--- IMAGES --->
 			<cfif arguments.thestruct.rfs_assettype EQ "img">
 				<cfset var forpath = "img">
@@ -183,23 +187,64 @@
 			<cfelse>
 				<cfset var forpath = "doc">
 			</cfif>
-			<!--- Put asset path together --->
-			<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & qry.folder_id & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
-			<!--- Create folder with the asset id --->
+			<!--- If we come from convert we have jsondata in the arguments --->
+			<cfif structkeyexists(arguments.thestruct,"rfs_jsondata")>
+				<!--- Convert Json --->
+				<cfset arguments.thestruct.json = deserializejson(arguments.thestruct.rfs_jsondata)>
+				<cfset structappend(arguments.thestruct, arguments.thestruct.json)>
+				<!--- Images --->
+				<cfif forpath EQ "img">
+					<cfquery dataSource="#application.razuna.datasource#" name="qry">
+					SELECT folder_id_r
+					FROM #session.hostdbprefix#images
+					WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.jsondata.file_id#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
+					</cfquery>
+				<!--- Videos --->
+				<cfelseif forpath EQ "vid">
+					<cfquery dataSource="#application.razuna.datasource#" name="qry">
+					SELECT folder_id_r
+					FROM #session.hostdbprefix#videos
+					WHERE vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.jsondata.file_id#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
+					</cfquery>
+				<!--- Audios --->
+				<cfelseif forpath EQ "aud">
+					<cfquery dataSource="#application.razuna.datasource#" name="qry">
+					SELECT folder_id_r
+					FROM #session.hostdbprefix#audios
+					WHERE aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.jsondata.file_id#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
+					</cfquery>
+				<!--- Docs and all other files --->
+				<cfelse>
+					<cfquery dataSource="#application.razuna.datasource#" name="qry">
+					SELECT folder_id_r
+					FROM #session.hostdbprefix#files
+					WHERE file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.jsondata.file_id#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
+					</cfquery>
+				</cfif>
+				<!--- Put asset path together --->
+				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & qry.folder_id_r & "/" & forpath & "/" & arguments.thestruct.newid>
+				<!--- Write script file --->
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.thumbname# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" mode="777">
+			<cfelse>
+				<!--- Query temp DB --->
+				<cfquery dataSource="#application.razuna.datasource#" name="qry">
+				SELECT folder_id
+				FROM #session.hostdbprefix#assets_temp
+				WHERE tempid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_tempid#">
+				</cfquery>		
+				<!--- Put asset path together --->
+				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & qry.folder_id & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
+				<!--- Write script file --->
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.rfs_path#/#arguments.thestruct.rfs_asset#" mode="777">
+			</cfif>				
+			<!--- Create folder --->
 			<cfif NOT directoryexists(storein)>
 				<cfdirectory action="create" directory="#storein#" mode="775">
-			</cfif>
-			<!--- Go grab the platform --->
-			<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
-			<!--- Download asset from rfs and store in the correct location --->
-			<cfset var tt = replace(createuuid(),"-","","all")>
-			<cfset arguments.thestruct.thesh = gettempdirectory() & "/#tt#.sh">
-			<!--- On Windows a bat --->
-			<cfif isWindows>
-				<cfset arguments.thestruct.thesh = gettempdirectory() & "/#tt#.bat">
-			</cfif>
-			<!--- Write files --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.rfs_path#/#arguments.thestruct.rfs_asset#" mode="777">		
+			</cfif>						
 			<!--- Get file --->
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="9000" />
