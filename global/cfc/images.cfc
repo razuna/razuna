@@ -600,12 +600,12 @@
 	<cfif application.razuna.renderingfarm>
 		<cfset arguments.thestruct.convert = true>
 		<cfset arguments.thestruct.assettype = "img">
-		<cfthread name="convertimage#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
 		</cfthread>
 	<cfelse>
 		<!--- Start the thread for converting --->
-		<cfthread name="convertimage#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="convertImagethread" thestruct="#attributes.intstruct#" />
 		</cfthread>
 	</cfif>

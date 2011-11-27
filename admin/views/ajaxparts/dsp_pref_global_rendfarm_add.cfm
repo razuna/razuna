@@ -53,55 +53,7 @@
 			</tr>
 			<tr>
 				<td colspan="2"><input type="text" name="rfs_server_name" id="rfs_server_name" style="width:300px;" value="#qry_rfs.rfs_server_name#" /> <input type="button" class="button" value="#defaultsObj.trans("validate")#" onclick="valserver();" /><div id="div_valserver" style="display:none;"></div></td>
-			</tr>
-			<tr>
-				<th colspan="2">#defaultsObj.trans("header_server_watchfolder")#</th>
-			</tr>
-			<tr>
-				<td colspan="2">#defaultsObj.trans("header_server_watchfolder_desc")#</td>
-			</tr>
-			<tr class="list">
-				<td colspan="2"><input type="text" name="rfs_watchfolder" id="rfs_watchfolder" style="width:300px;" value="#qry_rfs.rfs_watchfolder#"></td>
-			</tr>
-
-			<tr>
-				<th colspan="2">#defaultsObj.trans("header_server_connection")#</th>
-			</tr>
-			<tr>
-				<td colspan="2">#defaultsObj.trans("header_server_connection_desc")#</td>
-			</tr>
-			<tr>
-				<td valign="top" align="center"><input type="radio" name="rfs_connection" id="rfs_connection" value="ftp"<cfif qry_rfs.rfs_connection EQ "ftp" OR qry_rfs.recordcount EQ 0> checked="checked"</cfif>></td>
-				<td>#defaultsObj.trans("header_server_connection_ftp")#
-					<br /><br />
-					FTP Server<br />
-					<input type="text" name="rfs_ftp_server" id="rfs_ftp_server" style="width:300px;" value="#qry_rfs.rfs_ftp_server#"> <input type="button" class="button" value="#defaultsObj.trans("validate")#" onclick="valftp();" /><div id="div_valftp" style="display:none;"></div><br />
-					#defaultsObj.trans("scheduled_uploads_ftp_user")#<br />
-					<input type="text" name="rfs_ftp_user" id="rfs_ftp_user" style="width:300px;" value="#qry_rfs.rfs_ftp_user#"><br />
-					#defaultsObj.trans("scheduled_uploads_ftp_pass")#<br />
-					<input type="password" name="rfs_ftp_pass" id="rfs_ftp_pass" style="width:300px;" value="#qry_rfs.rfs_ftp_pass#"><br />
-					#defaultsObj.trans("scheduled_uploads_ftp_passive")#<br />
-					<input type="radio" name="rfs_ftp_passive" id="rfs_ftp_passive" value="true"<cfif qry_rfs.rfs_ftp_passive EQ true> checked="checked"</cfif>> #defaultsObj.trans("yes")# <input type="radio" name="rfs_ftp_passive" id="rfs_ftp_passive" value="false"<cfif qry_rfs.rfs_ftp_passive EQ false OR qry_rfs.recordcount EQ 0> checked="checked"</cfif>> #defaultsObj.trans("no")#
-					<br /><br />
-				</td>
-			</tr>
-			<tr>
-				<td valign="top" align="center"><input type="radio" name="rfs_connection" id="rfs_connection" value="scp"<cfif qry_rfs.rfs_connection EQ "scp"> checked="checked"</cfif>></td>
-				<td>#defaultsObj.trans("header_server_connection_scp")#
-					<br /><br />
-					#defaultsObj.trans("header_server_connection_scp_account")#<br />
-					<input type="text" name="rfs_scp_login" id="rfs_scp_login" style="width:300px;" value="#qry_rfs.rfs_scp_login#"><br />
-					<em>(#defaultsObj.trans("header_server_connection_scp_account_desc")#)</em>
-					
-					<br /><br />
-				</td>
-			</tr>
-			<tr>
-				<td valign="top" align="center"><input type="radio" name="rfs_connection" id="rfs_connection" value="http"<cfif qry_rfs.rfs_connection EQ "http"> checked="checked"</cfif>></td>
-				<td>#defaultsObj.trans("header_server_connection_http")#</td>
-			</tr>
-			
-			
+			</tr>			
 		</table>
 	</div>
 	<!--- Tools --->
@@ -188,8 +140,6 @@
 			},
 			rules: {
 				rfs_server_name: "required",
-				rfs_watchfolder: "required",
-			   	rfs_connection: "required",
 			   	rfs_ffmpeg: "required",
 			   	rfs_dcraw: "required",
 			   	rfs_exiftool: "required",

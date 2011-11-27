@@ -573,8 +573,6 @@
 			<argument name="themessage" value="#attributes.message#" />
 			<argument name="thepath" value="#attributes.thepath#" />
 			<argument name="sendaszip" value="T" />
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="setid" value="#application.razuna.setid#" />
 		</invoke>
 	</fuseaction>
 	<!-- Basket FTP Form -->
@@ -2264,9 +2262,7 @@
 					<argument name="themessage" value="#attributes.message#" />
 					<argument name="thepath" value="#attributes.thepath#" />
 					<argument name="sendaszip" value="#attributes.sendaszip#" />
-					<argument name="dsn" value="#application.razuna.datasource#" />
 					<argument name="prefix" value="#session.hostdbprefix#" />
-					<argument name="setid" value="#application.razuna.setid#" />
 				</invoke>
 				<!-- Remove file from system -->
 				
@@ -2282,9 +2278,7 @@
 					<argument name="subject" value="#attributes.subject#" />
 					<argument name="themessage" value="#attributes.message#" />
 					<argument name="sendaszip" value="#attributes.sendaszip#" />
-					<argument name="dsn" value="#application.razuna.datasource#" />
 					<argument name="prefix" value="#session.hostdbprefix#" />
-					<argument name="setid" value="#application.razuna.setid#" />
 				</invoke>
 			</false>
 		</if>

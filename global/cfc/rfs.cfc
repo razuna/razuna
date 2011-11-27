@@ -31,7 +31,7 @@
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
 		SELECT rfs_id, rfs_server_name, rfs_active
-		FROM renderingfarm
+		FROM rfs
 		ORDER BY rfs_date_change
 		</cfquery>
 		<!--- Return --->
@@ -43,9 +43,8 @@
 		<cfargument name="rfs_id" type="string" required="true">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
-		SELECT rfs_id, rfs_active, rfs_server_name, rfs_watchfolder, rfs_connection, rfs_ftp_server, rfs_ftp_user, rfs_ftp_pass, rfs_ftp_passive,
-		rfs_scp_login, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_date_add, rfs_date_change
-		FROM renderingfarm
+		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_date_add, rfs_date_change
+		FROM rfs
 		WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.rfs_id#">
 		</cfquery>
 		<!--- Return --->
@@ -59,18 +58,11 @@
 		<cfif arguments.thestruct.rfs_add>
 			<!--- Insert --->
 			<cfquery dataSource="#application.razuna.datasource#" name="qry">
-			INSERT INTO renderingfarm
+			INSERT INTO rfs
 			(
 			rfs_id,
 			rfs_active,
 			rfs_server_name,
-			rfs_watchfolder,
-			rfs_connection,
-			rfs_ftp_server,
-			rfs_ftp_user,
-			rfs_ftp_pass,
-			rfs_ftp_passive,
-			rfs_scp_login,
 			rfs_imagemagick,
 			rfs_ffmpeg,
 			rfs_dcraw,
@@ -83,13 +75,6 @@
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_id#">,
 			<cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="#arguments.thestruct.rfs_active#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_server_name#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_watchfolder#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_connection#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ftp_server#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ftp_user#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ftp_pass#">,
-			<cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="#arguments.thestruct.rfs_ftp_passive#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_scp_login#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_imagemagick#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ffmpeg#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_dcraw#">,
@@ -101,17 +86,10 @@
 		<cfelse>
 			<!--- Update --->
 			<cfquery dataSource="#application.razuna.datasource#" name="qry">
-			UPDATE renderingfarm
+			UPDATE rfs
 			SET
 			rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="#arguments.thestruct.rfs_active#">,
 			rfs_server_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_server_name#">,
-			rfs_watchfolder = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_watchfolder#">,
-			rfs_connection = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_connection#">,
-			rfs_ftp_server = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ftp_server#">,
-			rfs_ftp_user = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ftp_user#">,
-			rfs_ftp_pass = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ftp_pass#">,
-			rfs_ftp_passive = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="#arguments.thestruct.rfs_ftp_passive#">,
-			rfs_scp_login = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_scp_login#">,
 			rfs_imagemagick = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_imagemagick#">,
 			rfs_ffmpeg = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ffmpeg#">,
 			rfs_dcraw = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_dcraw#">,
@@ -129,25 +107,26 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Get remote server records --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
-		SELECT rfs_id, rfs_server_name, rfs_watchfolder
-		FROM renderingfarm
+		SELECT rfs_id, rfs_server_name
+		FROM rfs
 		WHERE rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="true">
 		</cfquery>
 		<!--- Check here is the server is busy or not. If so, check for an alternate server in the pool --->
 		
-		<!--- If this is from convert we out data into json --->
+		<!--- If this is from convert we write data into json --->
 		<cfif structkeyexists(arguments.thestruct,"convert")>
 			<cfset var jsondata = serializejson(arguments.thestruct)> 
 		</cfif>
 		<!--- Notify remote servers about a new file waiting for download --->
 		<!--- Send the server ID with the request. The remote server checks the ID to this record --->
-		<cfhttp url="#qry.rfs_server_name#" timeout="20">
+		<cfhttp url="#qry.rfs_server_name#" timeout="30">
 			<cfhttpparam name="rfsid" value="#qry.rfs_id#" type="URL">
 			<cfhttpparam name="hostid" value="#session.hostid#" type="URL">
 			<cfhttpparam name="userid" value="#session.theuserid#" type="URL">
 			<cfhttpparam name="dynpath" value="#arguments.thestruct.dynpath#" type="URL">
 			<cfhttpparam name="httphost" value="#arguments.thestruct.httphost#" type="URL">
 			<cfhttpparam name="storage" value="#application.razuna.storage#" type="URL">
+			<cfhttpparam name="dsnhost" value="#application.razuna.datasource#" type="URL">
 			<cfif structkeyexists(arguments.thestruct,"convert")>
 				<cfhttpparam name="convert" value="#arguments.thestruct.convert#" type="URL">
 				<cfhttpparam name="assettype" value="#arguments.thestruct.assettype#" type="URL">
@@ -171,8 +150,10 @@
 			<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 			<!--- Prepare scripts --->
 			<cfset arguments.thestruct.thesh = gettempdirectory() & "/#tt#.sh">
+			<cfset arguments.thestruct.theshz = gettempdirectory() & "/#tt#z.sh">
 			<cfif isWindows>
 				<cfset arguments.thestruct.thesh = gettempdirectory() & "/#tt#.bat">
+				<cfset arguments.thestruct.theshz = gettempdirectory() & "/#tt#z.bat">
 			</cfif>
 			<!--- IMAGES --->
 			<cfif arguments.thestruct.rfs_assettype EQ "img">
@@ -228,7 +209,12 @@
 				<!--- Put asset path together --->
 				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & qry.folder_id_r & "/" & forpath & "/" & arguments.thestruct.newid>
 				<!--- Write script file --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.thumbname# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" mode="777">
+				<cfif forpath EQ "aud">
+					<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" mode="777">
+				<cfelse>
+					<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.thumbname# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" mode="777">
+				</cfif>
+			<!--- Pickup the preview asset --->
 			<cfelse>
 				<!--- Query temp DB --->
 				<cfquery dataSource="#application.razuna.datasource#" name="qry">
@@ -253,6 +239,23 @@
 			<cfthread action="join" name="#tt#" />
 			<!--- Remove script --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#" />
+			<!--- If we are DOC/PDF we need to download the PDf images folder (zip) and extract it --->
+			<cfif forpath EQ "doc">
+				<!--- Write script file --->
+				<cffile action="write" file="#arguments.thestruct.theshz#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.rfs_path#/razuna_pdf_images.zip" mode="777">
+				<!--- Get file --->
+				<cfthread name="z#tt#" intstruct="#arguments.thestruct#">
+					<cfexecute name="#attributes.intstruct.theshz#" timeout="9000" />
+				</cfthread>
+				<!--- Wait for the thread above until the file is downloaded fully --->
+				<cfthread action="join" name="z#tt#" />
+				<!--- Remove script --->
+				<cffile action="delete" file="#arguments.thestruct.theshz#" />
+				<!--- Extract ZIP --->
+				<cfzip action="extract" zipfile="#storein#/razuna_pdf_images.zip" destination="#storein#/razuna_pdf_images" />
+				<!--- Remove the ZIP file --->
+				<cffile action="delete" file="#storein#/razuna_pdf_images.zip" />
+			</cfif>
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="error pickup from rfs" type="html"><cfdump var="#cfcatch#"></cfmail>
 			</cfcatch>

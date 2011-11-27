@@ -346,7 +346,7 @@
 </cffunction>
 
 <!--- GET GLOBAL Settings --->
-<cffunction name="get_global">
+<cffunction name="get_global" access="remote" returnType="query">
 	<!--- Update --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, 

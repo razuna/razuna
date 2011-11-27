@@ -320,7 +320,7 @@ Password: #randompassword#
 		<!--- Get admins --->
 		<cfinvoke component="global.cfc.groups_users" method="getadmins" returnvariable="theadmins">
 		<cfloop query="theadmins">
-			<cfinvoke component="email" method="send_email" to="#user_email#" dsn="#application.razuna.datasource#" setid="#application.razuna.setid#" subject="Razuna: User requests access" themessage="The user #arguments.thestruct.user_first_name# #arguments.thestruct.user_last_name# (#arguments.thestruct.user_email#) is requesting access to your Razuna. You should go to the Razuna Administration and grant or deny this user access now!">
+			<cfinvoke component="email" method="send_email" to="#user_email#" subject="Razuna: User requests access" themessage="The user #arguments.thestruct.user_first_name# #arguments.thestruct.user_last_name# (#arguments.thestruct.user_email#) is requesting access to your Razuna. You should go to the Razuna Administration and grant or deny this user access now!">
 		</cfloop>
 	</cffunction>
 	
