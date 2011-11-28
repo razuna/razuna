@@ -257,6 +257,21 @@
 		 	ct_type 		varchar(100)
 		)
 		</cfquery>
+		<!--- CREATE RFS --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.tschema#.rfs
+		(
+			rfs_id 			varchar(100),
+			rfs_active 		BIGINT,
+			rfs_server_name varchar(200),
+			rfs_imagemagick varchar(200),
+			rfs_ffmpeg 		varchar(200),
+			rfs_dcraw 		varchar(200),
+			rfs_exiftool 	varchar(200),
+			rfs_date_add 	timestamp,
+			rfs_date_change timestamp
+		)
+		</cfquery>
 			
 		<!---  --->
 		<!--- END: CREATE TABLES --->
