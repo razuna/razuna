@@ -49,8 +49,11 @@ function jqtabs(tabs){
 }
 // Load Content with JQuery
 function loadcontent(ele,url){
+	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 	// Load the page
-	$("#" + ele).load(url);
+	$("#" + ele).load(url, function() {
+  		$("#bodyoverlay").remove();
+	});
 }
 // Tooltip
 function mytooltip(){
@@ -352,3 +355,16 @@ function raztagit(thediv,fileid,thetype,raztags,perm){
         }
 	});
 }
+// Global Loading Status
+$(document).ready(function()
+	{
+    	$(this).ajaxStart(function()
+       	{
+        	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+		});
+ 
+       	$(this).ajaxStop(function()
+       	{
+        	$("#bodyoverlay").remove();
+       	});
+	});
