@@ -16,7 +16,12 @@
 	<!--- FUNCTION: LOGIN --->
 	<cffunction name="login" returntype="string" access="public" output="false">
 		<cfargument name="thestruct" type="struct" required="false" />
-		<cfparam name="arguments.thestruct.isbrowser" default="F">
+		<cfif !isstruct(arguments.thestruct)>
+			<cfset arguments.thestruct = structnew()>
+			<cfset arguments.thestruct.isbrowser = "F">
+		<cfelse>
+			<cfparam name="arguments.thestruct.isbrowser" default="F" />
+		</cfif>
 		<!--- If we call this function directly we don't have the appkey in the variables --->
 		<cfif NOT structkeyexists(variables,"appkey")>
 			<cfset variables.appkey = application.razuna.nvxappkey>
@@ -24,7 +29,7 @@
 		<!--- Grab NVX settings --->
 		<cfinvoke component="settings" method="prefs_storage" returnVariable="qry_settings" />
 		<!--- Login and get session token --->
-		<cftry>
+<!--- 		<cftry> --->
 			<cfif arguments.thestruct.isbrowser EQ "F">
 				<cfhttp url="http://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="true" charset="utf-8">
 					<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
@@ -47,16 +52,17 @@
 				</cfhttp>
 			</cfif>
 			<!--- Get the XML node for each setting --->
-			<cfset xmlfound = xmlSearch(cfhttp.FileContent, "//SessionToken")>
-			<cfset nvxsession = xmlfound[1].xmlText>
-			<cfcatch type="any">
+			<cfset var thexml = xmlparse(cfhttp.FileContent)>
+			<cfset var nvxsession = thexml.Response.Sessiontoken[1].XmlText>
+			<!---
+<cfcatch type="any">
 				<cfmail to="nitai@razuna.com" from="server@razuna.com" subject="nvx error during login" type="html">
 					<cfdump var="#cfcatch#">
-					<cfdump var="#arguments.thestruct#">
 				</cfmail>
-				<cfset nvxsession = 0>
+				<cfset var nvxsession = 0>
 			</cfcatch>
 		</cftry>
+--->
 		<!--- Return --->
 		<cfreturn nvxsession>
 	</cffunction>
@@ -90,18 +96,25 @@
 	
 	<!--- FUNCTION: VALIDATE --->
 	<cffunction name="validate" returntype="string" access="public" output="true">
-		<cfargument name="thestruct" type="struct" required="yes" />
+		<cfargument name="thestruct" type="struct" required="yes" />		
 		<!--- Set the app key manually, master has another one for testing the the child account which takes it from the application scope --->
 		<cfset variables.appkey = arguments.thestruct.nvxappkey>
 		<!--- Login and get session token --->
 		<cftry>
-			<cfset nvxsession = NXLogin(variables.appkey,arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_name,arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_pass)>
+			<cfhttp url="http://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="true" charset="utf-8">
+				<cfhttpparam name="appKey" value="#arguments.thestruct.nvxkey#" type="url">
+				<cfhttpparam name="username" value="#arguments.thestruct.nvxname#" type="url">
+				<cfhttpparam name="password" value="#arguments.thestruct.nvxpass#" type="url">
+			</cfhttp>
+			<!--- Get the XML node for each setting --->
+			<cfset var thexml = xmlparse(cfhttp.FileContent)>
+			<cfset var nvxsession = thexml.Response.ResponseCode[1].XmlText>
 			<cfcatch type="any">
-				<cfset nvxsession = 0>
+				<cfset nvxsession = 1>
 			</cfcatch>
 		</cftry>
 		<cfoutput><br>
-			<cfif nvxsession NEQ 0>
+			<cfif nvxsession EQ 0>
 				<span style="color:green;font-weight:bold;">Connection is valid!</span>
 			<cfelse>
 				<span style="color:red;font-weight:bold;">Username and/or Password is NOT valid!</span>
@@ -137,10 +150,8 @@
 					<cfif cfcatch.message CONTAINS "bandwidth limit">
 						<cfinvoke component="email" method="send_email" dsn="#application.razuna.datasource#" setid="#application.razuna.setid#" subject="Razuna: Bandwidth exceeded" themessage="The file you are trying to upload exceeds the bandwidth limit for your plan. If you want to continue using Razuna you either have to wait until the end of your subsription period or simply upgrade to the PRO plan for only $1.80 per GB/month.">
 					<cfelse>
-						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error - #cgi.HTTP_HOST#">
-							<cfdump var="#cfhttp#" />
+						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
 							<cfdump var="#cfcatch#" />
-							<cfdump var="#arguments#">
 						</cfmail>
 					</cfif>
 				</cfcatch>
@@ -158,18 +169,11 @@
 			<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
 			<cfhttpparam name="sizeBytes" value="15000" type="url">
 		</cfhttp>
-		<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
-		<cfset trimxml = trim(cfhttp.FileContent)>
-		<cfset thelen = len(trimxml)>
-		<cfset findit = findoneof("<",cfhttp.FileContent)>
-		<cfset thexml = mid(cfhttp.FileContent, findit, thelen)>
-		<cfset xmlVar = xmlParse(thexml)/>
+		<!--- Parse --->
+		<cfset xmlVar = xmlParse(cfhttp.filecontent)/>
 		<!--- Get the XML node for each setting --->
-		<cfset var thehost = xmlSearch(xmlVar, "/Response/GetStorageNode/UploadHost")>
-		<cfset var thetoken = xmlSearch(xmlVar, "/Response/GetStorageNode/UploadToken")>
-		<!--- Get storage node stuff --->
-		<cfset thenode.uploadhost = thehost[1].xmlText>
-		<cfset thenode.uploadtoken = thetoken[1].xmlText>
+		<cfset thenode.uploadhost = xmlvar.Response.GetStorageNode.UploadHost[1].XmlText>
+		<cfset thenode.uploadtoken = xmlvar.Response.GetStorageNode.UploadToken[1].XmlText>
 		<!--- Return --->
 		<cfreturn thenode>
 	</cffunction>
@@ -567,7 +571,7 @@
 		<cfargument name="nvxsession" type="string" required="false">
 		<!--- Get session --->
 		<cfset var nvxsession = login()>
-		<cfset x = structnew()>
+		<cfset var x = structnew()>
 		<cfset x.theurl = "">
 		<!--- Create Epoc time --->
 		<cfset x.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
@@ -579,10 +583,15 @@
 				<cfhttpparam name="filePath" value="//razuna/#session.hostid#/#arguments.theasset#" type="url">
 				<cfhttpparam name="expiration" value="#x.newepoch#" type="url">
 			</cfhttp>
-			<!--- Get downloadurl --->
+			<!--- Get downloadurl
 			<cfset xmlfound = xmlSearch(cfhttp.FileContent, "//DownloadURL")>
-			<cfset x.theurl = xmlfound[1].xmlText>
-			<!--- <cfset x.theurl = theurl[1].DownloadURL> --->
+			<cfset x.theurl = xmlfound[1].xmlText> --->
+			<!--- Parse XML --->
+			<cfset var d = xmlparse(cfhttp.filecontent)>
+			<!--- Get Downloadtoken --->
+			<cfset var dtoken = d.Response.Download.DownloadToken[1].XmlText>
+			<!--- Set download url --->
+			<cfset x.theurl = "http://services.nirvanix.com/" & dtoken & "/razuna/#session.hostid#/#arguments.theasset#">
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug signedurl" type="html">
 					<cfdump var="#cfcatch#">

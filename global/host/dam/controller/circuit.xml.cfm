@@ -97,9 +97,9 @@
 	 	<if condition="application.razuna.storage EQ 'nirvanix'">
 			<true>
 				<!-- Get username and password from nirvanix settings -->
-				<!-- <invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_storage()" returnvariable="attributes.qry_settings_nirvanix" /> -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_storage()" returnvariable="attributes.qry_settings_nirvanix" />
 				<!-- Get session token -->
-				<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="login()" returnvariable="attributes.nvxsession" />
+				<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="login(attributes)" returnvariable="attributes.nvxsession" />
 				<!-- Set child name -->
 				<set name="attributes.nvxname" value="#attributes.qry_settings_nirvanix.set2_nirvanix_name#" />
 			</true>
@@ -153,7 +153,6 @@
 				<if condition="application.razuna.storage EQ 'nirvanix' OR session.hosttype EQ 'f'">
 					<true>
 						<!-- Action: Check storage -->
-						
 						<do action="storage" />
 						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
