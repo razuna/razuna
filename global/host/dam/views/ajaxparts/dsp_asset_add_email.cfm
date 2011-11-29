@@ -25,28 +25,28 @@
 --->
 <cfoutput>
 	<form name="assetemail" id="assetemail">
-	<table border="0" cellpadding="0" cellspacing="0" width="600" class="tablepanel">
-		<tr>
-			<th colspan="2">eMails</th>
-		</tr>
+	<table border="0" cellpadding="0" cellspacing="0" width="600">
 		<tr>
 			<td colspan="2">#defaultsObj.trans("email_desc")#</td>
 		</tr>
 		<tr>
-			<td class="td2" width="1%" nowrap="true">#defaultsObj.trans("email_mail_server")#</td>
-			<td class="td2" width="100%"><input name="email_server" type="text" size="40" tabindex="1" value="<cfif structkeyexists(session,"email_server")>#session.email_server#</cfif>"></td>
+			<td colspan="2" style="padding-top:15px;"></td>
 		</tr>
 		<tr>
-			<td class="td2" nowrap="true">#defaultsObj.trans("email_address")#</td>
-			<td class="td2"><input name="email_address" type="text" size="40" tabindex="2" value="<cfif structkeyexists(session,"email_address")>#session.email_address#</cfif>"></td>
+			<td nowrap="true" width="120">#defaultsObj.trans("email_mail_server")#</td>
+			<td width="480"><input name="email_server" type="text" size="40" tabindex="1" value="<cfif structkeyexists(session,"email_server")>#session.email_server#</cfif>"></td>
 		</tr>
 		<tr>
-			<td class="td2" nowrap="true">#defaultsObj.trans("password")#</td>
-			<td class="td2"><input name="email_pass" type="password" size="40" tabindex="3"></td>
+			<td nowrap="true">#defaultsObj.trans("email_address")#</td>
+			<td><input name="email_address" type="text" size="40" tabindex="2" value="<cfif structkeyexists(session,"email_address")>#session.email_address#</cfif>"></td>
 		</tr>
 		<tr>
-			<td nowrap="true" class="td2" style="padding-bottom:15px;">#defaultsObj.trans("email_subject")#</td>
-			<td class="td2" style="padding-bottom:15px;"><input name="email_subject" type="text" size="40" tabindex="4" value="<cfif structkeyexists(session,"email_subject")>#session.email_subject#</cfif>"></td>
+			<td nowrap="true">#defaultsObj.trans("password")#</td>
+			<td><input name="email_pass" type="password" size="40" tabindex="3"></td>
+		</tr>
+		<tr>
+			<td nowrap="true" style="padding-bottom:15px;">#defaultsObj.trans("email_subject")#</td>
+			<td style="padding-bottom:15px;"><input name="email_subject" type="text" size="40" tabindex="4" value="<cfif structkeyexists(session,"email_subject")>#session.email_subject#</cfif>"></td>
 		</tr>
 		<tr>
 			<td colspan="2"><div style="float:left;"><input type="button" name="cancel" value="#defaultsObj.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><input type="button" name="submit" value="#defaultsObj.trans("button_show_emails")#" class="button" onclick="submitassetemailshow();"></div></td>

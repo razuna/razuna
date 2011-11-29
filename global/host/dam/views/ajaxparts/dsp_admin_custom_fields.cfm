@@ -28,45 +28,39 @@
 		#defaultsObj.trans("custom_fields_desc")#<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
-			<tr>
-				<th colspan="2">#defaultsObj.trans("custom_fields_header")#</th>
-			</tr>
-			<tr>
-				<td colspan="2">#defaultsObj.trans("custom_fields_desc")#</td>
-			</tr>
-		</table>
+		#defaultsObj.trans("custom_fields_desc")#<br />
 		<!--- Show existing fields --->
 		<div id="thefields"></div>
+		<br />
 		<!--- Add a new field --->
 		<form name="form_cf_add" id="form_cf_add" method="post" action="#self#" onsubmit="customfieldadd();return false;">
 		<input type="hidden" name="#theaction#" value="c.custom_field_add">
 		<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%">
 			<tr>
-				<th colspan="3">#defaultsObj.trans("custom_fields_new")#</th>
+				<th colspan="3" style="padding-bottom:10px;">#defaultsObj.trans("custom_fields_new")#</th>
 			</tr>
 			<tr>
-				<td valign="top" width="1%" nowrap="true">
+				<td valign="top" nowrap="true">
 					<table border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td class="td2" width="1%" nowrap="true">#defaultsObj.trans("enabled")#</td>
-							<td class="td2"><input type="radio" name="cf_enabled" value="T" checked="true">#defaultsObj.trans("yes")# <input type="radio" name="cf_enabled" value="F">#defaultsObj.trans("no")#</td>
+							<td width="120" nowrap="true">#defaultsObj.trans("enabled")#</td>
+							<td><input type="radio" name="cf_enabled" value="T" checked="true">#defaultsObj.trans("yes")# <input type="radio" name="cf_enabled" value="F">#defaultsObj.trans("no")#</td>
 						</tr>
 						<!--- The text in the languages --->					
 						<cfloop query="qry_langs">
 							<tr>
-								<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#</td>
-								<td class="td2" width="100%"><input type="text" name="cf_text_#lang_id#" size="30"></td>
+								<td valign="top" width="120" nowrap="true">#lang_name#</td>
+								<td><input type="text" name="cf_text_#lang_id#" size="30"></td>
 							</tr>
 						</cfloop>
 					</table>
 				</td>
-				<td valign="top" width="100%">
+				<td valign="top" width="100%" style="padding-left:10px;">
 					<table border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td class="td2" width="1%" nowrap="true">#defaultsObj.trans("custom_field_type")#</td>
-							<td class="td2" width="100%">
+							<td width="120" nowrap="true">#defaultsObj.trans("custom_field_type")#</td>
+							<td>
 								<select name="cf_type" style="width:100px;">
 								<option value="text" selected="true">Text</option>
 								<option value="textarea">Textarea</option>
@@ -75,8 +69,8 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="td2" width="1%" nowrap="true">#defaultsObj.trans("custom_field_for")#</td>
-							<td class="td2" width="100%">
+							<td width="120" nowrap="true">#defaultsObj.trans("custom_field_for")#</td>
+							<td>
 								<select name="cf_show" style="width:100px;">
 								<option value="all" selected="true">All</option>
 								<option value="img">#defaultsObj.trans("only_images")#</option>
@@ -87,12 +81,12 @@
 							</td>
 						</tr>
 						<tr>
-							<td class="td2" width="1%" nowrap="true">Custom Group</td>
-							<td class="td2" width="100%"><input type="text" name="cf_group" style="width:99px;"></td>
+							<td nowrap="true">Custom Group</td>
+							<td><input type="text" name="cf_group" style="width:99px;"></td>
 						</tr>
 					</table>
 				</td>
-				<td valign="top" width="1%" nowrap="true"><input type="submit" name="submit" value="#defaultsObj.trans("button_add")#" class="button"></td>
+				<td valign="top" nowrap="true"><input type="submit" name="submit" value="#defaultsObj.trans("button_add")#" class="button"></td>
 			</tr>
 		</table>
 		</form>
