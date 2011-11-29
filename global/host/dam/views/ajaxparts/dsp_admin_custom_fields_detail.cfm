@@ -29,23 +29,20 @@
 	<input type="hidden" name="#theaction#" value="c.custom_field_update">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<input type="hidden" name="cf_id" value="#attributes.cf_id#">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
-		<tr>
-			<th colspan="2">#defaultsObj.trans("custom_fields_new")#</th>
-		</tr>
+	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
 			<td valign="top" width="1%" nowrap="true">
 				<table border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td class="td2" width="1%" nowrap="true">#defaultsObj.trans("enabled")#</td>
-						<td class="td2"><input type="radio" name="cf_enabled" value="T"<cfif qry_field.cf_enabled EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" name="cf_enabled" value="F"<cfif qry_field.cf_enabled EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("enabled")#</td>
+						<td><input type="radio" name="cf_enabled" value="T"<cfif qry_field.cf_enabled EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" name="cf_enabled" value="F"<cfif qry_field.cf_enabled EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
 					</tr>
 					<!--- The text in the languages --->					
 					<cfloop query="qry_langs">
 					<cfset thisid = lang_id>
 						<tr>
-							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#</td>
-							<td class="td2" width="100%">
+							<td valign="top" width="1%" nowrap="true">#lang_name#</td>
+							<td>
 								<cfloop query="qry_field">
 									<cfif lang_id_r EQ thisid>
 										<input type="text" name="cf_text_#thisid#" size="30" value="#cf_text#">
@@ -56,11 +53,11 @@
 					</cfloop>
 				</table>
 			</td>
-			<td valign="top" width="100%">
+			<td valign="top" width="100%" style="padding-left:10px;">
 				<table border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td class="td2" width="1%" nowrap="true">#defaultsObj.trans("custom_field_type")#</td>
-						<td class="td2" width="100%">
+						<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("custom_field_type")#</td>
+						<td width="100%">
 							<select name="cf_type" style="width:100px;">
 							<option value="text"<cfif qry_field.cf_type EQ "text"> selected="true"</cfif>>Text</option>
 							<option value="textarea"<cfif qry_field.cf_type EQ "textarea"> selected="true"</cfif>>Textarea</option>
@@ -69,8 +66,8 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="td2" width="1%" nowrap="true">#defaultsObj.trans("custom_field_for")#</td>
-						<td class="td2" width="100%">
+						<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("custom_field_for")#</td>
+						<td width="100%">
 							<select name="cf_show" style="width:100px;">
 							<option value="all"<cfif qry_field.cf_show EQ "all"> selected="true"</cfif>>All</option>
 							<option value="img"<cfif qry_field.cf_show EQ "img"> selected="true"</cfif>>#defaultsObj.trans("only_images")#</option>
@@ -81,8 +78,8 @@
 						</td>
 					</tr>
 					<tr>
-						<td class="td2" width="1%" nowrap="true">Custom Group</td>
-						<td class="td2" width="100%"><input type="text" name="cf_group" style="width:99px;" value="#qry_field.cf_group#"></td>
+						<td width="120" nowrap="true" style="padding-right:10px;">Custom Group</td>
+						<td width="100%"><input type="text" name="cf_group" style="width:99px;" value="#qry_field.cf_group#"></td>
 					</tr>
 				</table>
 			</td>

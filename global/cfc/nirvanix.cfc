@@ -15,20 +15,21 @@
 
 	<!--- FUNCTION: LOGIN --->
 	<cffunction name="login" returntype="string" access="public" output="false">
-		<cfargument name="thestruct" type="struct" required="yes" />
+		<cfargument name="thestruct" type="struct" required="false" />
 		<cfparam name="arguments.thestruct.isbrowser" default="F">
 		<!--- If we call this function directly we don't have the appkey in the variables --->
 		<cfif NOT structkeyexists(variables,"appkey")>
 			<cfset variables.appkey = application.razuna.nvxappkey>
 		</cfif>
+		<!--- Grab NVX settings --->
+		<cfinvoke component="settings" method="prefs_storage" returnVariable="qry_settings" />
 		<!--- Login and get session token --->
 		<cftry>
 			<cfif arguments.thestruct.isbrowser EQ "F">
-				<!--- <cfset nvxsession = NXLogin(variables.appkey,arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_name,arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_pass)> --->
 				<cfhttp url="http://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="true" charset="utf-8">
 					<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
-					<cfhttpparam name="username" value="#arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_name#" type="url">
-					<cfhttpparam name="password" value="#arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_pass#" type="url">
+					<cfhttpparam name="username" value="#qry_settings.set2_nirvanix_name#" type="url">
+					<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
 				</cfhttp>
 			<cfelse>
 				<!--- If this is a Squid request then the ip is not in the remote_addr cgi variable --->
@@ -37,23 +38,14 @@
 				<cfelse>
 					<cfset theremoteip = cgi.remote_addr>
 				</cfif>
-				<!--- <cfset nvxsession = NXLoginProxy(variables.appkey,arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_name,arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_pass,theremoteip)> --->
 				<!--- Get the SessionToken --->
 				<cfhttp url="http://services.nirvanix.com/ws/Authentication/LoginProxy.ashx" method="get" throwonerror="true" charset="utf-8">
 					<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
-					<cfhttpparam name="username" value="#arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_name#" type="url">
-					<cfhttpparam name="password" value="#arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_pass#" type="url">
+					<cfhttpparam name="username" value="#qry_settings.set2_nirvanix_name#" type="url">
+					<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
 					<cfhttpparam name="consumerIP" value="#theremoteip#" type="url">
 				</cfhttp>
 			</cfif>
-			<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
-			<!---
-			<cfset trimxml = trim(cfhttp.FileContent)>
-			<cfset thelen = len(trimxml)>
-			<cfset findit = findoneof("<",cfhttp.FileContent)>
-			<cfset thexml = mid(cfhttp.FileContent, findit, thelen)>
-			<cfset xmlVar = xmlParse(thexml)/>
---->
 			<!--- Get the XML node for each setting --->
 			<cfset xmlfound = xmlSearch(cfhttp.FileContent, "//SessionToken")>
 			<cfset nvxsession = xmlfound[1].xmlText>
@@ -76,19 +68,15 @@
 		<cfif NOT structkeyexists(variables,"appkey")>
 			<cfset variables.appkey = application.razuna.nvxappkey>
 		</cfif>
+		<!--- Grab NVX settings --->
+		<cfinvoke component="settings" method="prefs_storage" returnVariable="qry_settings" />
 		<!--- Login and get session token --->
 		<cftry>
 			<cfhttp url="http://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="true" charset="utf-8">
 				<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
-				<cfhttpparam name="username" value="#arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_name#" type="url">
-				<cfhttpparam name="password" value="#arguments.thestruct.qry_settings_nirvanix.set2_nirvanix_pass#" type="url">
+				<cfhttpparam name="username" value="#qry_settings.set2_nirvanix_name#" type="url">
+				<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
 			</cfhttp>
-			<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly
-			<cfset trimxml = trim(cfhttp.FileContent)>
-			<cfset thelen = len(trimxml)>
-			<cfset findit = findoneof("<",cfhttp.FileContent)>
-			<cfset thexml = mid(cfhttp.FileContent, findit, thelen)>
-			<cfset xmlVar = xmlParse(thexml)/> --->
 			<!--- Get the XML node for each setting --->
 			<cfset xmlfound = xmlSearch(cfhttp.FileContent, "//SessionToken")>
 			<cfset nvxsession = xmlfound[1].xmlText>
@@ -134,12 +122,10 @@
 		<!--- If file exists locally then upload --->
 		<cfif fileexists("#arguments.uploadfile#")>
 			<cftry>
-				<!--- If we call this function directly we don't have the session in the variables --->
-				<cfif NOT structkeyexists(variables,"nvxsession")>
-					<cfset variables.nvxsession = arguments.nvxsession>
-				</cfif>
+				<!--- Get session --->
+				<cfset var nvxsession = login()>
 				<!--- Get Storage Node Stuff --->
-				<cfset storagenode = getstoragenode(arguments)>
+				<cfset storagenode = getstoragenode(nvxsession)>
 				<!--- Upload Asset --->
 				<!--- <cfset NxPutfile(variables.nvxsession,arguments.uploadfile,arguments.destFolderPath)> --->
 				<cfhttp url="#storagenode.uploadhost#/Upload.ashx?" method="post" throwonerror="true">
@@ -165,16 +151,11 @@
 	
 	<!--- FUNCTION: GETSTORAGENODE --->
 	<cffunction name="GetStorageNode" returntype="struct" access="public" output="false">
-		<cfargument name="thestruct" type="struct" required="false">
+		<cfargument name="nvxsession" type="string" required="false">
 		<cfset var thenode = structnew()>
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.thestruct.nvxsession>
-		</cfif>
 		<!--- Call --->
-		<!--- <cfset thenode = NxGetstoragenode(variables.nvxsession, 15000)> --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="false">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
 			<cfhttpparam name="sizeBytes" value="15000" type="url">
 		</cfhttp>
 		<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
@@ -200,11 +181,13 @@
 	<!--- FUNCTION: CREATE FOLDERS --->
 	<cffunction name="CreateFolders" access="public" output="false">
 		<cfargument name="folderpath" type="string" required="true">
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cftry>
 			<!--- <cfset NxCreatefolder(variables.nvxsession,arguments.folderpath)> --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/CreateFolders.ashx" method="get" throwonerror="true">
-				<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 				<cfhttpparam name="folderPath" value="#arguments.folderpath#" type="url">
 			</cfhttp>
 			<cfcatch type="any">
@@ -218,14 +201,12 @@
 	<cffunction name="DeleteFolders" access="public" output="false">
 		<cfargument name="folderpath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<!--- <cfset NxDeletefolder(variables.nvxsession,arguments.folderpath)> --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/DeleteFolders.ashx" method="get" throwonerror="false">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="folderPath" value="#arguments.folderpath#" type="url">
 		</cfhttp>
 		<cfreturn />
@@ -236,14 +217,12 @@
 		<cfargument name="folderpath" type="string" required="true">
 		<cfargument name="newFolderName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<cftry>
 			<!--- Call --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/RenameFolder.ashx" method="post" throwonerror="true">
-				<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 				<cfhttpparam name="folderPath" value="#arguments.folderpath#" type="url">
 				<cfhttpparam name="newFolderName" value="#arguments.newFolderName#" type="url">
 			</cfhttp>
@@ -259,14 +238,12 @@
 		<cfargument name="srcFolderPath" type="string" required="true">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<cftry>
 			<!--- Call --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/CopyFolders.ashx" method="get" throwonerror="true">
-				<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 				<cfhttpparam name="srcFolderPath" value="#arguments.srcFolderPath#" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 			</cfhttp>
@@ -282,14 +259,12 @@
 		<cfargument name="srcFolderPath" type="string" required="true">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<cftry>
 			<!--- Call --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/MoveFolders.ashx" method="get" throwonerror="true">
-				<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 				<cfhttpparam name="srcFolderPath" value="#arguments.srcFolderPath#" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 			</cfhttp>
@@ -306,13 +281,11 @@
 		<cfargument name="folderPath" type="string" required="true">
 		<cfargument name="pageNumber" type="numeric" required="true">
 		<cfargument name="pageSize" type="numeric" required="true">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/ListFolder.ashx" method="get" throwonerror="true" charset="utf-8">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="folderPath" value="#arguments.folderPath#" type="url">
 			<cfhttpparam name="pageNumber" value="#arguments.pageNumber#" type="url">
 			<cfhttpparam name="pageSize" value="#arguments.pageSize#" type="url">
@@ -338,13 +311,11 @@
 		<cfargument name="srcFilePath" type="string" required="true">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/MoveFiles.ashx" method="get" throwonerror="true">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="srcFilePath" value="#arguments.srcFilePath#" type="url">
 			<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 		</cfhttp>
@@ -356,13 +327,11 @@
 		<cfargument name="srcFilePath" type="string" required="true">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/CopyFiles.ashx" method="get" throwonerror="true">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="srcFilePath" value="#arguments.srcFilePath#" type="url">
 			<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 		</cfhttp>
@@ -373,13 +342,11 @@
 	<cffunction name="DeleteFiles" access="public" output="false">
 		<cfargument name="filePath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/DeleteFiles.ashx" method="get" throwonerror="true">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="filePath" value="#arguments.filePath#" type="url">
 		</cfhttp>
 		<cfreturn />
@@ -390,13 +357,11 @@
 		<cfargument name="filePath" type="string" required="true">
 		<cfargument name="newFileName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/RenameFile.ashx" method="get" throwonerror="true">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="filePath" value="#arguments.filePath#" type="url">
 			<cfhttpparam name="newFileName" value="#arguments.newFileName#" type="url">
 		</cfhttp>
@@ -511,9 +476,11 @@
 	<!--- FUNCTION: GET STORAGE USAGE --->
 	<cffunction name="GetStorageUsage" access="public" output="false">
 		<cfargument name="userName" type="string" required="true">
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/accounting/GetStorageUsage.ashx" method="get" throwonerror="true" charset="utf-8">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="userName" value="#arguments.userName#" type="url">
 		</cfhttp>
 		<cfreturn cfhttp>
@@ -523,16 +490,14 @@
 	<cffunction name="GetAccountUsage" access="public" output="false">
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Set Structure --->
 		<cfset x = structnew()>
 		<!--- Call --->
 		<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
 		<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="true" charset="utf-8">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="userName" value="#arguments.username#" type="url">
 		</cfhttp>
 		<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
@@ -569,9 +534,11 @@
 	<!--- FUNCTION: GET ACCOUNT LIMITS --->
 	<cffunction name="GetAccountLimits" access="public" output="false">
 		<cfargument name="userName" type="string" required="true">
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountLimits.ashx" method="get" throwonerror="true" charset="utf-8">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="userName" value="#arguments.userName#" type="url">
 		</cfhttp>
 		<cfreturn cfhttp>
@@ -582,9 +549,11 @@
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="Type" type="string" required="true">
 		<cfargument name="Value" type="string" required="true">
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/accounting/SetAccountLimits.ashx" method="get" throwonerror="true">
-			<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 			<cfhttpparam name="userName" value="#arguments.userName#" type="url">
 			<cfhttpparam name="#arguments.Type#" value="#arguments.value#" type="url">
 		</cfhttp>
@@ -596,10 +565,8 @@
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="minutesValid" type="string" required="false" default="5259600">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- If we call this function directly we don't have the session in the variables --->
-		<cfif NOT structkeyexists(variables,"nvxsession")>
-			<cfset variables.nvxsession = arguments.nvxsession>
-		</cfif>
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<cfset x = structnew()>
 		<cfset x.theurl = "">
 		<!--- Create Epoc time --->
@@ -608,7 +575,7 @@
 		<cftry>
 			<!--- <cfset var theurl = NxGetoptimalurls(variables.nvxsession,"//razuna/#session.hostid#/#arguments.theasset#",x.newepoch)> --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetOptimalUrls.ashx" method="get" throwonerror="true">
-				<cfhttpparam name="sessionToken" value="#variables.nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 				<cfhttpparam name="filePath" value="//razuna/#session.hostid#/#arguments.theasset#" type="url">
 				<cfhttpparam name="expiration" value="#x.newepoch#" type="url">
 			</cfhttp>
@@ -633,8 +600,10 @@
 		<cfargument name="remotefile" type="string" required="true" />
 		<cfargument name="localfile" type="string" required="true" />
 		<cfargument name="nvxsession" type="string" required="true" />
+		<!--- Get session --->
+		<cfset var nvxsession = login()>
 		<!--- Download asset --->
-		<cfset NXGetFile(arguments.nvxsession, arguments.remotefile, arguments.localfile)>
+		<cfset NXGetFile(nvxsession, arguments.remotefile, arguments.localfile)>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

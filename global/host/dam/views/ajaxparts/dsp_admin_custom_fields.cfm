@@ -44,7 +44,7 @@
 				<td valign="top" nowrap="true">
 					<table border="0" cellpadding="0" cellspacing="0">
 						<tr>
-							<td width="120" nowrap="true">#defaultsObj.trans("enabled")#</td>
+							<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("enabled")#</td>
 							<td><input type="radio" name="cf_enabled" value="T" checked="true">#defaultsObj.trans("yes")# <input type="radio" name="cf_enabled" value="F">#defaultsObj.trans("no")#</td>
 						</tr>
 						<!--- The text in the languages --->					

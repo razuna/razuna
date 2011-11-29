@@ -37,7 +37,7 @@
 
 <!--- Get all settings for this host --->
 <cffunction name="allsettings_2">
-	<cfquery datasource="#application.razuna.datasource#" name="set2">
+	<cfquery datasource="#application.razuna.datasource#" name="set2" cachename="allsettings_2#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_id, set2_date_format, set2_date_format_del, set2_meta_author, set2_meta_publisher, set2_meta_copyright, 
 	set2_meta_robots, set2_meta_revisit, set2_url_sp_original, set2_url_sp_thumb, set2_url_sp_comp, set2_url_sp_comp_uw, 
 	set2_url_app_server, set2_create_imgfolders_where, set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, 
@@ -50,7 +50,7 @@
 	set2_url_sp_video_preview, set2_vid_preview_author, set2_vid_preview_copyright, set2_cat_vid_web, set2_cat_vid_intra,
 	set2_create_vidfolders_where, set2_path_to_assets, set2_aws_bucket
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn set2>
@@ -58,11 +58,11 @@
 
 <!--- Settings for Globals Preferences --->
 <cffunction name="prefs_global">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_global#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT SET2_DATE_FORMAT, SET2_DATE_FORMAT_DEL, SET2_EMAIL_SERVER, SET2_EMAIL_FROM, SET2_EMAIL_SMTP_USER, 
 	SET2_EMAIL_SMTP_PASSWORD, SET2_EMAIL_SERVER_PORT
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry>
@@ -70,10 +70,10 @@
 
 <!--- Settings for Meta --->
 <cffunction name="prefs_meta">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_meta#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_meta_author, set2_meta_publisher, set2_meta_copyright, set2_meta_robots, set2_meta_revisit
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry>
@@ -81,12 +81,12 @@
 
 <!--- Settings for DAM --->
 <cffunction name="prefs_dam">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_dam#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_intranet_gen_download, set2_doc_download, set2_img_download_org, set2_intranet_reg_emails, 
 	set2_intranet_reg_emails_sub, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing,
 	set2_path_to_assets
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry>
@@ -94,10 +94,10 @@
 
 <!--- Settings for Website --->
 <cffunction name="prefs_web">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_web#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_url_website, set2_payment_cc, set2_payment_cc_cards, set2_payment_bill, set2_payment_pod, set2_payment_pre, set2_payment_paypal
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry>
@@ -105,11 +105,11 @@
 
 <!--- Settings for Image --->
 <cffunction name="prefs_image">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_image#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_create_imgfolders_where, set2_cat_intra, set2_cat_web, set2_img_format, set2_img_thumb_width, 
 	set2_img_thumb_heigth, set2_img_comp_width, set2_img_comp_heigth
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- The tool paths --->
@@ -132,10 +132,10 @@
 
 <!--- Settings for Video --->
 <cffunction name="prefs_video">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_video#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_create_vidfolders_where, set2_cat_vid_intra, set2_cat_vid_web, <!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> set2_vid_preview_author, set2_vid_preview_copyright
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- The tool paths --->
@@ -150,10 +150,10 @@
 
 <!--- Settings for Oracle --->
 <cffunction name="prefs_oracle">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_oracle#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_url_app_server, set2_ora_path_internal, set2_url_sp_original, set2_url_sp_thumb, set2_url_sp_comp, set2_url_sp_comp_uw, set2_url_sp_video, set2_url_sp_video_preview, set2_ora_path_incoming, set2_ora_path_incoming_batch, set2_ora_path_outgoing
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry>
@@ -161,10 +161,10 @@
 
 <!--- Settings for Storage --->
 <cffunction name="prefs_storage">
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_storage#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry>
@@ -743,11 +743,12 @@
 			<cfif commad EQ "T">,</cfif>set2_aws_bucket = <cfqueryparam value="#arguments.thestruct.set2_aws_bucket#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
-		WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 	</cftransaction>
-	
+	<!--- Flush --->
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_setting2" />
 	
 </cffunction>
 
@@ -774,7 +775,7 @@
 	<cffile action="rename" source="#arguments.thestruct.thepath#/incoming/#result.ServerFile#" destination="#arguments.thestruct.thepathup#global/host/logo/#session.hostid#/#thefilename#"> --->
 	<!--- Run the SP: IMPORT_IMAGE
 	<CFSTOREDPROC PROCEDURE="#session.theoraschema#.import_intranet_logo" DATASOURCE="#application.razuna.datasource#">
-		<CFPROCPARAM VALUE="#variables.setid#" CFSQLTYPE="CF_SQL_NUMERIC" type="in">
+		<CFPROCPARAM VALUE="#application.razuna.setid#" CFSQLTYPE="CF_SQL_NUMERIC" type="in">
 		<CFPROCPARAM VALUE="#result.serverfile#" CFSQLTYPE="cf_sql_varchar" type="in">
 		<CFPROCPARAM VALUE="#session.hostdbprefix#SETTINGS_2" CFSQLTYPE="cf_sql_varchar" type="in">
 		<CFPROCPARAM VALUE="#arguments.thestruct.thefield#" CFSQLTYPE="cf_sql_varchar" type="in">
@@ -1116,10 +1117,10 @@
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#application.razuna.datasource#" name="qLocal" cachename="assetpath#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_path_to_assets
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_path_to_assets)>
@@ -1129,10 +1130,10 @@
 <cffunction hint="IMAGE: URL FOR THUMBNAIL" name="url_thumb" output="false" returntype="string">
 	<!--- init internal vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
+	<cfquery datasource="#application.razuna.datasource#" name="qLocal" cachename="url_thumb#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_url_sp_thumb 
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_thumb)>
@@ -1146,7 +1147,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
 	SELECT set2_url_sp_comp<cfif #arguments.weblogin# EQ "T">_uw</cfif> thecomp
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.thecomp)>
@@ -1159,7 +1160,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
 	SELECT set2_url_sp_comp_uw 
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_comp_uw)>
@@ -1172,7 +1173,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
 	SELECT set2_url_sp_original 
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_original)>
@@ -1199,7 +1200,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
 	SELECT set2_url_sp_video_preview
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_video_preview)>
@@ -1212,7 +1213,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qLocal">
 	SELECT set2_url_sp_video
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(qLocal.set2_url_sp_video)>
@@ -1237,10 +1238,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset apps.ex = "T">
 	<cfset apps.ff = "T">
 	<cfset apps.af = "T"><!--- This is the assets folder --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypathassets">
+	<cfquery datasource="#application.razuna.datasource#" name="qrypathassets" cachename="applicationcheck#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_path_to_assets
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Get platform --->
