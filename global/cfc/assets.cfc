@@ -156,6 +156,8 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
 		)
 		</cfquery>
+		<!--- We don't need to send an email --->
+		<cfset arguments.thestruct.sendemail = false>
 		<!--- Call the addasset function --->
 		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 	</cfloop>
@@ -216,8 +218,8 @@
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
 						)
 						</cfquery>
-						
-						
+						<!--- We don't need to send an email --->
+						<cfset arguments.thestruct.sendemail = false>
 						<!--- Call the addasset function --->
 						<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 					</cfif>
@@ -312,6 +314,8 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
 		)
 		</cfquery>
+		<!--- We don't need to send an email --->
+		<cfset arguments.thestruct.sendemail = false>
 		<!--- Call the addasset function --->
 		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 		<cfcatch type="any">
