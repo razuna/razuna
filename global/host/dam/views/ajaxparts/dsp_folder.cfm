@@ -28,40 +28,40 @@
 		<ul>
 			<!--- If we are a collection show the list of collections else the content of folder --->
 			<cfif attributes.iscol EQ "F">
-				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all');">#defaultsObj.trans("folder_content")#</a></li>
+				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all');" rel="prefetch prerender">#defaultsObj.trans("folder_content")#</a></li>
 			<cfloop query="qry_fileTotalAllTypes">
 				<cfif qry_fileTotalAllTypes.cnt GT 0>
 					<cfif ext EQ "img">
-						<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img');">#defaultsObj.trans("folder_images")#</a></li>
+						<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img');" rel="prefetch prerender">#defaultsObj.trans("folder_images")#</a></li>
 					</cfif>
 					<cfif ext EQ "vid">
-						<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid');">#defaultsObj.trans("folder_videos")#</a></li>
+						<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid');" rel="prefetch">#defaultsObj.trans("folder_videos")#</a></li>
 					</cfif>
 					<cfif ext EQ "aud">
-						<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud');">#defaultsObj.trans("folder_audios")#</a></li>
+						<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud');" rel="prefetch">#defaultsObj.trans("folder_audios")#</a></li>
 					</cfif>
 					<cfif ext EQ "doc">
-						<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc');">#defaultsObj.trans("folder_word")#</a></li>
+						<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc');" rel="prefetch">#defaultsObj.trans("folder_word")#</a></li>
 					</cfif>
 					<cfif ext EQ "xls">
-						<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls');">#defaultsObj.trans("folder_excel")#</a></li>
+						<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls');" rel="prefetch">#defaultsObj.trans("folder_excel")#</a></li>
 					</cfif>
 					<cfif ext EQ "pdf">
-						<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf');">#defaultsObj.trans("folder_pdf")#</a></li>
+						<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf');" rel="prefetch">#defaultsObj.trans("folder_pdf")#</a></li>
 					</cfif>
 					<cfif ext EQ "other">
-						<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other');">#defaultsObj.trans("folder_others")#</a></li>
+						<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other');" rel="prefetch">#defaultsObj.trans("folder_others")#</a></li>
 					</cfif>
 				</cfif>
 			</cfloop>
 			<cfelse>
-				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content');">#defaultsObj.trans("header_collections")#</a></li>
+				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content');" rel="prefetch">#defaultsObj.trans("header_collections")#</a></li>
 			</cfif>
 			<!--- If user or admin has folderaccess x --->
 			<cfif session.folderaccess EQ "x">
-				<li><a href="##properties" onclick="loadcontent('properties','#myself##xfa.fproperties#&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');">#defaultsObj.trans("folder_properties")#</a></li>
+				<li><a href="##properties" onclick="loadcontent('properties','#myself##xfa.fproperties#&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#defaultsObj.trans("folder_properties")#</a></li>
 				<cfif attributes.iscol EQ "F">
-					<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');">#defaultsObj.trans("header_widget")#</a></li>
+					<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');" rel="prefetch">#defaultsObj.trans("header_widget")#</a></li>
 				</cfif>
 			</cfif>
 		</ul>
