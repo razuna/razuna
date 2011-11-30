@@ -35,7 +35,7 @@
 					<a href="#av_link_url#" target="_blank">#av_link_title#</a><br />
 				</cfloop>
 				<cfloop query="qry_av.assets">
-					<a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a><br />
+					<a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a><br />
 				</cfloop>
 			</td>
 		</tr>
