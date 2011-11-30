@@ -393,28 +393,34 @@
 		</cfquery>
 		 --->
 		<!--- Create the UploadBin Folder --->
+		<!---
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		Insert into #arguments.thestruct.host_db_prefix#folders
 		(FOLDER_ID, FOLDER_NAME, FOLDER_LEVEL, FOLDER_ID_R, FOLDER_MAIN_ID_R, host_id)
 		Values('1', 'UploadBin', 1, '1', '1', #arguments.thestruct.host_id#<!--- <cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric"> --->)
 		</cfquery>
+		--->
 		<!--- and description with it --->
+		<!---
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		Insert into #arguments.thestruct.host_db_prefix#folders_desc
 		(FOLDER_ID_R, LANG_ID_R, FOLDER_DESC, host_id)
 		Values('1', 1, 'This is the default folder for storing files that get uploaded within the administration. Feel free to move the files to other folders, but be careful with removing files because they might be used within the CMS part.', <!--- <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->#arguments.thestruct.host_id#)
 		</cfquery>
+		--->
+		<!--- Create a new ID --->
+		<cfset var newfolderid = replace(createuuid(),"-","","ALL")>
 		<!--- Create the default Collections Folder --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		Insert into #arguments.thestruct.host_db_prefix#folders
 		(FOLDER_ID, FOLDER_NAME, FOLDER_LEVEL, FOLDER_ID_R, FOLDER_MAIN_ID_R, FOLDER_IS_COLLECTION, host_id)
-		Values('2', 'Collections', 1, '2', '2', 'T', <!--- <cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric"> --->#arguments.thestruct.host_id#)
+		Values('#newfolderid#', 'Collections', 1, '#newfolderid#', '#newfolderid#', 'T', #arguments.thestruct.host_id#)
 		</cfquery>
 		<!--- and description with it --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		Insert into #arguments.thestruct.host_db_prefix#folders_desc
 		(FOLDER_ID_R, LANG_ID_R, FOLDER_DESC, host_id)
-		Values('2', 1, 'This is the default collections folder for storing collections. Collections can be used with other systems or within the Razuna CMS.', <!--- <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->#arguments.thestruct.host_id#)
+		Values('#newfolderid#', 1, 'This is the default collections folder for storing collections.', #arguments.thestruct.host_id#)
 		</cfquery>
 		<cfcatch type="any">
 			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error during inserting default values" type="html">

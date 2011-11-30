@@ -52,7 +52,7 @@
 				<tr>
 					<td><strong>#defaultsObj.trans("folder_name")#</strong></td>
 					<td>
-						<cfif qry_folder.folder_name EQ "My Folder" OR qry_folder.folder_id EQ 1>
+						<cfif qry_folder.folder_name EQ "My Folder">
 							<input type="hidden" name="folder_name" id="folder_name" value="#qry_folder.folder_name#">
 							#qry_folder.folder_name#
 						<cfelse>
@@ -121,7 +121,7 @@
 				<br>
 				<table border="0" cellpadding="0" cellspacing="0" class="grid" style="width:660px;">
 					<!--- Share Options --->
-					<cfif qry_folder.folder_id NEQ 1 AND (qry_folder.folder_is_collection EQ "F" OR qry_folder.folder_is_collection EQ "")>
+					<cfif qry_folder.folder_is_collection EQ "F" OR qry_folder.folder_is_collection EQ "">
 						<tr>
 							<td colspan="2" class="list"></td>
 						</tr>
@@ -237,11 +237,11 @@
 			</div>
 		</cfif>
 		<div style="float:left;padding-top:10px;padding-bottom:10px;">
-			<cfif attributes.isdetail EQ "T" AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder") AND qry_folder.folder_id NEQ 1 AND qry_folder.folder_id NEQ 2>
+			<cfif attributes.isdetail EQ "T" AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder") AND qry_folder.folder_id NEQ 2>
 				<input type="button" name="movefolder" value="#defaultsObj.trans("move_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=movefolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#defaultsObj.trans("move_folder")#',600,1);"> 
 			</cfif>
 			<cfif attributes.isdetail EQ "T">
-				<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND qry_folder.folder_id NEQ 1>
+				<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 					<input type="button" name="removefolder" value="#defaultsObj.trans("remove_folder")#" class="button" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#defaultsObj.trans("remove_folder")#',400,1);" style="margin-right:20px;">
 				<cfelseif qry_folder.folder_name NEQ "my folder" AND qry_folder.folder_owner EQ session.theuserid>
 					<input type="button" name="removefolder" value="#defaultsObj.trans("remove_folder")#" class="button" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#defaultsObj.trans("remove_folder")#',400,1);" style="margin-right:20px;">

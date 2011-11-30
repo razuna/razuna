@@ -30,10 +30,12 @@
 		<div style="float:left;"><a href="##" onclick="$('##collectiontools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" border="0" onclick="$('##collectiontools').toggle();" class="ddicon"></div>
 		<div id="collectiontools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
-			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+			<!---
+<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 				<p><a href="##" onclick="showwindow('#myself##xfa.foldernew#&theid=2&level=1&rid=2&iscol=T','#defaultsObj.trans("folder_new")#',750,1);$('##explorertools').toggle();return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">Add Collection Folder</a></p>
 				<p><hr></p>
 			</cfif>
+--->
 			<p><a href="##" onclick="loadcontent('explorer_col','#myself#c.explorer_col');return false;" title="#defaultsObj.trans("tooltip_refresh_tree")#">#defaultsObj.trans("reload")#</a></p>
 		</div>
 	</div>
