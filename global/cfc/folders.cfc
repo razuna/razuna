@@ -72,8 +72,8 @@
 					) THEN 'unlocked'
 				<!--- If this is the user folder or he is the owner --->
 				WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
-				<!--- If this is the upload bin --->
-				WHEN f.folder_id = 1 THEN 'unlocked'
+				<!--- If this is the upload bin
+				WHEN f.folder_id = 1 THEN 'unlocked' --->
 				<!--- If this is a collection --->
 				WHEN lower(f.folder_is_collection) = 't' THEN 'unlocked'
 				<!--- If nothing meets the above lock the folder --->
@@ -385,7 +385,7 @@
 		<!--- Param --->
 		<cfset arguments.thestruct.folder_id = newfolderid>
 		<!--- Thread for adding files of this folder --->
-		<cfthread name="#createuuid()#" intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#">
 			<!--- Loop over the assets --->
 			<cfloop query="attributes.intstruct.thefiles">
 				<!--- Params --->
@@ -408,7 +408,7 @@
 			<!--- Put folderid into struct --->
 			<cfset arguments.thestruct.theid = newfolderid>
 			<!--- Call function --->
-			<cfthread name="#createuuid()#" intstruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="folder_link_rec" thestruct="#attributes.intstruct#">
 			</cfthread>
 		</cfif>
@@ -1426,7 +1426,7 @@
 			</cfif>
 		</cfloop>
 		<!--- If the user want this folder to himself then we set appropriate --->
-		<cfif arguments.thestruct.grpno EQ "T" AND arguments.thestruct.folder_id NEQ 1>
+		<cfif arguments.thestruct.grpno EQ "T">
 			<!--- Set user folder to T --->
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
@@ -2558,7 +2558,7 @@
 	<cfif arguments.thestruct.actionismove EQ "F">
 		<cfoutput query="qRet">
 		<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>><a href="##" onclick="$('##rightside').load('index.cfm?fa=<cfif iscol EQ "T">c.collections<cfelse>c.folder</cfif>&col=F&folder_id=<cfif iscol EQ "T">col-</cfif>#folder_id#');" rel="prefetch"><ins>&nbsp;</ins>#folder_name#
-		<cfif theid EQ 0><cfif iscol EQ "F" AND folder_id NEQ 1 AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner> (#username#)</cfif></cfif></cfif></a></li>
+		<cfif theid EQ 0><cfif iscol EQ "F" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner> (#username#)</cfif></cfif></cfif></a></li>
 		</cfoutput>
 	<!--- If we come from a move action --->
 	<cfelse>
@@ -2668,8 +2668,8 @@
 						) THEN 'unlocked'
 					<!--- If this is the user folder or he is the owner --->
 					WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
-					<!--- If this is the upload bin --->
-					WHEN f.folder_id = 1 THEN 'unlocked'
+					<!--- If this is the upload bin
+					WHEN f.folder_id = 1 THEN 'unlocked' --->
 					<!--- If this is a collection
 					WHEN lower(f.folder_is_collection) = 't' THEN 'unlocked' --->
 					<!--- If nothing meets the above lock the folder --->
