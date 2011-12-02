@@ -402,8 +402,10 @@
 		<!--- Check the platform and then decide on the Exiftool tag --->
 		<cfif isWindows>
 			<cfset theexe = """#attributes.intstruct.thetools.exiftool#/exiftool.exe""">
+			<cfset thewget = """#attributes.intstruct.thetools.wget#/wget.exe""">
 		<cfelse>
 			<cfset theexe = "#attributes.intstruct.thetools.exiftool#/exiftool">
+			<cfset thewget = "#attributes.intstruct.thetools.wget#/wget">
 			<cfset attributes.intstruct.thesource = replacenocase(attributes.intstruct.thesource," ","\ ","all")>
 		</cfif>
 		<!--- Storage: Local --->
@@ -455,18 +457,23 @@
 				<cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#">
 				<!--- LOCATION OF XMP FILE --->
 				<cfset thexmpfile = "#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/xmp-#attributes.intstruct.file_id#">
+				<cfset attributes.intstruct.thesh = GetTempDirectory() & "/#attributes.intstruct.tempfolder#.sh">
 				<!--- On Windows --->
 				<cfif iswindows>
 					<cfset thexmpfile = """#thexmpfile#""">
+					<cfset attributes.intstruct.thesh = GetTempDirectory() & "/#attributes.intstruct.tempfolder#.bat">
 				</cfif>
 				<!--- Write XMP file --->
 				<cffile action="write" file="#thexmpfile#" output="#tostring(thexmp)#" charset="utf-8">
+				<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.thewget# -P #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder# http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#" mode="777">
 				<!--- Download image --->
 				<cfthread name="download#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#">
-					<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#" method="get" path="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#" />
+					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
 				</cfthread>
 				<!--- Wait for the thread above until the file is downloaded fully --->
 				<cfthread action="join" name="download#attributes.intstruct.file_id#" />
+				<!--- Remove script file --->
+				<cffile action="delete" file="#attributes.intstruct.thesh#" />
 				<!--- Remove file on Nirvanix or else we get errors during uploading --->
 				<cfinvoke component="nirvanix" method="DeleteFiles">
 					<cfinvokeargument name="filePath" value="/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#">
@@ -1177,8 +1184,10 @@
 	<!--- Check the platform and then decide on the Exiftool tag --->
 	<cfif isWindows>
 		<cfset theexe = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+		<cfset thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
 	<cfelse>
 		<cfset theexe = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		<cfset thewget = "#arguments.thestruct.thetools.wget#/wget">
 		<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.thesource," ","\ ","all")>
 	</cfif>
 	<!--- Storage: Local --->
@@ -1214,8 +1223,17 @@
 		<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#">
 		<!--- Download file --->
 		<cfif application.razuna.storage EQ "nirvanix">
+			<!--- For wget script --->
+			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.tempfolder#.sh">
+			<!--- On Windows a .bat --->
+			<cfif arguments.thestruct.iswindows>
+				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.tempfolder#.bat">
+			</cfif>
+			<!--- Write --->	
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.qrydetail.filenameorg#" mode="777">
+			<!--- Finally download --->
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qrydetail.path_to_asset#/#attributes.intstruct.qrydetail.filenameorg#" method="get" path="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#" />
+				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
 			</cfthread>
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
@@ -1228,6 +1246,10 @@
 		</cfif>	
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
+		<!--- For nirvanix remove the wget script --->
+		<cfif application.razuna.storage EQ "nirvanix">
+			<cffile action="delete" file="#arguments.thestruct.thesh#" />
+		</cfif>
 		<!--- Write XMP to image with Exiftool --->
 		<cfexecute name="#theexe#" arguments="-subject='#arguments.thestruct.file_desc#' -keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" timeout="10" />
 		<!--- Upload file again to its original position --->

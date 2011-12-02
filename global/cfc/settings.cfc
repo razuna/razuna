@@ -125,6 +125,8 @@
 			<cfset qry.set2_path_to_exiftool = thepath>
 		<cfelseif thetool EQ "dcraw">
 			<cfset qry.set2_path_dcraw = thepath>
+		<cfelseif thetool EQ "wget">
+			<cfset qry.set2_path_wget = thepath>
 		</cfif>
 	</cfloop>
 	<cfreturn qry>
@@ -365,6 +367,7 @@
 	<cfparam default="" name="qry.exiftool">
 	<cfparam default="" name="qry.ffmpeg">
 	<cfparam default="" name="qry.dcraw">
+	<cfparam default="" name="qry.wget">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
 	SELECT thetool, thepath
@@ -430,7 +433,7 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- Update Tools --->
 	<cfloop collection="#arguments.thestruct#" item="myform">
-		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw">
+		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw" OR myform CONTAINS "wget">
 			<!--- Select --->
 			<cfquery datasource="#application.razuna.datasource#" name="x">
 			SELECT thetool
@@ -1234,10 +1237,11 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="applicationcheck" output="false">
 	<!--- Params --->
 	<cfset apps = structnew()>
-	<cfset apps.im = "T">
-	<cfset apps.ex = "T">
-	<cfset apps.ff = "T">
-	<cfset apps.af = "T"><!--- This is the assets folder --->
+	<cfset apps.im = "T"><!--- ImageMagick --->
+	<cfset apps.ex = "T"><!--- Exiftool --->
+	<cfset apps.ff = "T"><!--- FFmpeg --->
+	<cfset apps.af = "T"><!--- Assets folder --->
+	<cfset apps.wg = "T"><!--- wget --->
 	<cfquery datasource="#application.razuna.datasource#" name="qrypathassets" cachename="applicationcheck#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_path_to_assets
 	FROM #session.hostdbprefix#settings_2
@@ -1253,10 +1257,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfset appim = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
 		<cfset appex = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 		<cfset appff = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+		<cfset appwg = """#arguments.thestruct.thetools.wget#/wget.exe""">
 	<cfelse>
 		<cfset appim = "#arguments.thestruct.thetools.imagemagick#/convert">
 		<cfset appex = "#arguments.thestruct.thetools.exiftool#/exiftool">
 		<cfset appff = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+		<cfset appwg = "#arguments.thestruct.thetools.ffmpeg#/wget">
 	</cfif>
 	<!--- Test imagemagick --->
 	<cftry>
@@ -1277,6 +1283,13 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfexecute name="#appex#" arguments="-version" timeout="5" />
 		<cfcatch type="any">
 			<cfset apps.ex = "F">
+		</cfcatch>
+	</cftry>
+	<!--- Test Wget --->
+	<cftry>
+		<cfexecute name="#appwg#" arguments="-version" timeout="5" />
+		<cfcatch type="any">
+			<cfset apps.wg = "F">
 		</cfcatch>
 	</cftry>
 	<!--- Test for existance of asset folder --->

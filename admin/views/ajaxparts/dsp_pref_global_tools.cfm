@@ -80,6 +80,18 @@
 			<td><input type="text" name="ffmpeg" id="ffmpeg" value="#thetools.ffmpeg#" size="60" class="text" onkeyup="checkpath('ffmpeg');">
 			<div id="checkffmpeg" style="display:none;"></div></td>
 		</tr>
+		<!--- Wget Paths --->
+		<tr>
+			<th class="textbold" colspan="2">#defaultsObj.trans("header_wget")#</th>
+		</tr>
+		<tr>
+			<td colspan="2">#defaultsObj.trans("header_wget_desc")#</td>
+		</tr>
+		<tr>
+			<td nowrap="true">#defaultsObj.trans("header_wget")#</td>
+			<td><input type="text" name="wget" id="wget" value="#thetools.wget#" size="60" class="text" onkeyup="checkpath('wget');">
+			<div id="checkwget" style="display:none;"></div></td>
+		</tr>
 	</table>
 </cfoutput>
 <script language="javascript">

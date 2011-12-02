@@ -27,15 +27,18 @@
 <cfif server.os.name CONTAINS "Mac">
 	<cfset im = "/opt/local/bin">
 	<cfset ff = "/opt/local/bin">
+	<cfset wg = "/opt/local/bin">
 	<cfset ex = "/usr/bin">
 <cfelseif server.os.name CONTAINS "Windows">
 	<cfset im = "C:\ImageMagick">
 	<cfset ff = "C:\FFMpeg\bin">
 	<cfset ex = "C:\Exiftool">
+	<cfset wg = "C:\wget">
 <cfelse>
 	<cfset im = "/usr/bin">
 	<cfset ff = "/usr/bin">
 	<cfset ex = "/usr/bin">
+	<cfset wg = "/usr/bin">
 </cfif>
 <!--- If sessions exists then use the session values --->
 <cfif structkeyexists(session.firsttime,"path_im") AND session.firsttime.path_im NEQ "">
@@ -46,6 +49,9 @@
 </cfif>
 <cfif structkeyexists(session.firsttime,"path_exiftool") AND session.firsttime.path_exiftool NEQ "">
 	<cfset ex = session.firsttime.path_exiftool>
+</cfif>
+<cfif structkeyexists(session.firsttime,"path_wget") AND session.firsttime.path_wget NEQ "">
+	<cfset wg = session.firsttime.path_wget>
 </cfif>
 <cfoutput>
 	<form id="form_paths">
@@ -78,6 +84,14 @@
 		<br />
 		<div id="checkexiftool" style="display:none;"></div>
 		<br />
+		<span class="loginform_header">#defaultsObj.trans("header_wget")#</span>
+		<br />
+		#defaultsObj.trans("header_wget_desc")#
+		<br />
+		<input type="text" name="path_wget" id="path_wget" size="60" class="text" value="#wg#" onkeyup="checkpath('wget');">
+		<br />
+		<div id="checkwget" style="display:none;"></div>
+		<br />
 		<div>
 			<div style="float:left;padding:20px 0px 0px 0px;">
 				<input type="button" id="next" value="#defaultsObj.trans("back")#" onclick="location.href=('/');" class="button"> 
@@ -104,8 +118,9 @@
 		var pathim = $('#path_imagemagick').val();
 		var pathff = $('#path_ffmpeg').val();
 		var pathex = $('#path_exiftool').val();
+		var pathwg = $('#path_wget').val();
 		// Check value or else inform user
-		if ((pathim == "") | (pathex == "") | (pathff == "")){
+		if ((pathim == "") | (pathex == "") | (pathff == "") | (pathwg == "")){
 			alert('Please fill in all required form fields!');
 		}
 		else {

@@ -57,6 +57,13 @@
 				</tr>
 			</table>
 			<br />
+		<cfelseif appcheck.wg NEQ "T">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
+				<tr>
+					<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;color:##900;">Wget is not properly installed! Please check your settings now.</td>
+				</tr>
+			</table>
+			<br />
 		<cfelseif appcheck.af NEQ "T">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
 				<tr>

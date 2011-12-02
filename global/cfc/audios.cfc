@@ -651,7 +651,11 @@
 		<cfset cloud_url.theurl = "">
 		<cfset cloud_url_2.theurl = "">
 		<cfset cloud_url_org.newepoch = 0>
-		<cfparam name="arguments.thestruct.upl_template" default="0">
+		<cfparam name="arguments.thestruct.upl_template" default="0">		
+		<!--- Get Tools --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 		<!--- Get details --->
 		<cfinvoke method="detail" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.qry_detail">
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
@@ -678,27 +682,40 @@
 			<cfthread name="convert#arguments.thestruct.file_id#" />
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.link_kind NEQ "lan">
+			<!--- For wget script --->
+			<cfset var wgetscript = createuuid()>
+			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.sh">
+			<cfset var thewget = "#arguments.thestruct.thetools.wget#/wget">
+			<!--- On Windows a .bat --->
+			<cfif iswindows()>
+				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.bat">
+				<cfset var thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
+			</cfif>
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
-				<!--- Set Name --->
-				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org>
+				<!--- Write --->	
+				<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_org#" mode="777">
 				<!--- Download file --->
 				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-					<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry_detail.detail.path_to_asset#/#attributes.intstruct.qry_detail.detail.aud_name_org#" getasbinary="yes" timeout="9000" path="#attributes.intstruct.thisfolder#" file="#attributes.intstruct.thename#" />
+					<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
 				</cfthread>
 			<cfelse>
 				<!--- Set Name --->
 				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org & ".wav">
+				<!--- Write --->	
+				<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.thename# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_org#" mode="777">
 				<!--- Download file --->
 				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-					<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry_detail.detail.path_to_asset#/#attributes.intstruct.thenamenoext#.wav" getasbinary="yes" timeout="9000" path="#attributes.intstruct.thisfolder#" file="#attributes.intstruct.thename#" />
+					<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
 				</cfthread>
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 			<cfthread name="convert#arguments.thestruct.file_id#" />
 			<!--- Set the input path --->
-			<cfset inputpath = "#thisfolder#/#arguments.thestruct.thename#">
+			<cfset inputpath = "#arguments.thestruct.thisfolder#/#arguments.thestruct.thename#">
+			<!--- Remove wget script --->
+			<cffile action="delete" file="#arguments.thestruct.theshw#" />
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
@@ -738,10 +755,7 @@
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="convert#arguments.thestruct.file_id#" />
 		<!--- Ok, file is here so continue --->
-		<!--- Get Tools --->
-		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
-		<!--- Go grab the platform --->
-		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+		
 		<!--- Check the platform and then decide on the ffmpeg tag --->
 		<cfif isWindows>
 			<cfset arguments.thestruct.theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
@@ -975,6 +989,16 @@
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
 	<!--- Put the audio id into a variable --->
 	<cfset theaudioid = #arguments.thestruct.file_id#>
+	<!--- The tool paths --->
+	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<!--- Set path for wget --->
+	<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
+	<!--- On Windows a .bat --->
+	<cfif arguments.thestruct.iswindows>
+		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
+	</cfif>
 	<!--- Start the loop to get the different kinds of audios --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
@@ -1020,9 +1044,18 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND qry.link_kind EQ "">
+			<!--- For wget script --->
+			<cfset wgetscript = createuuid()>
+			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
+			<!--- On Windows a .bat --->
+			<cfif arguments.thestruct.iswindows>
+				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
+			</cfif>
+			<!--- Write --->	
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# -O #arguments.thestruct.thefinalname# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.thefinalname#" mode="777">
 			<!--- Download file --->
 			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
-				<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.thefinalname#" method="get" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#" file="#attributes.intstruct.thefinalname#" />
+				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
 			</cfthread>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
@@ -1049,6 +1082,10 @@
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#art##theaudioid#" />
+		<!--- For nirvanix remove the wget script --->
+		<cfif application.razuna.storage EQ "nirvanix">
+			<cffile action="delete" file="#arguments.thestruct.thesh#" />
+		</cfif>
 		<!--- Set extension --->
 		<cfset theext = qry.aud_extension>
 		<!--- If the art id not thumb and original we need to get the name from the parent record --->

@@ -619,6 +619,16 @@
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset thetempids = "">
 	<cfparam name="arguments.thestruct.upl_template" default="0">
+	<!--- The tool paths --->
+	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+	<!--- Set path for wget --->
+	<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
+	<!--- On Windows a .bat --->
+	<cfif iswindows>
+		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
+	</cfif>
 	<!--- Get details of image --->
 	<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_id,folder_id_r,img_filename_org,img_extension,img_filename,path_to_asset,img_width,img_height" returnvariable="arguments.thestruct.qry_detail">
 	<!--- Create a temp directory to hold the image file (needed because we are doing other files from it as well) --->
@@ -636,10 +646,6 @@
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.thenamenoext = thenamenoext>
 	<cfset arguments.thestruct.thesource = "#thisfolder#/#thename#">
-	<!--- Go grab the platform --->
-	<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
-	<!--- Get Tools --->
-	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Local --->
 	<!--- On local link asset we have a different input path --->
 	<cfif arguments.thestruct.link_kind NEQ "lan">
@@ -649,9 +655,18 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
+			<!--- For wget script --->
+			<cfset wgetscript = createuuid()>
+			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#.sh">
+			<!--- On Windows a .bat --->
+			<cfif arguments.thestruct.iswindows>
+				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#.bat">
+			</cfif>
+			<!--- Write --->	
+			<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.thename# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry_detail.path_to_asset#/#arguments.thestruct.qry_detail.img_filename_org#" mode="777">
 			<!--- Download file --->
 			<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry_detail.path_to_asset#/#attributes.intstruct.qry_detail.img_filename_org#" method="get" path="#attributes.intstruct.thisfolder#" file="#attributes.intstruct.thename#" />
+				<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
 			</cfthread>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
@@ -675,6 +690,10 @@
 	</cfif>
 	<!--- Wait for the thread above until the file is downloaded fully --->
 	<cfthread action="join" name="convert#arguments.thestruct.file_id#" />
+	<!--- For nirvanix remove the wget script --->
+	<cfif application.razuna.storage EQ "nirvanix">
+		<cffile action="delete" file="#arguments.thestruct.theshw#" />
+	</cfif>
 	<!--- Ok, file is here so continue --->
 	
 	<!--- Check the platform and then decide on the ImageMagick tag --->
@@ -959,6 +978,16 @@
 	<!--- Create a temp folder --->
 	<cfset tempfolder = createuuid()>
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
+	<!--- The tool paths --->
+	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<!--- Set path for wget --->
+	<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
+	<!--- On Windows a .bat --->
+	<cfif arguments.thestruct.iswindows>
+		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
+	</cfif>
 	<!--- Put the id into a variable --->
 	<cfset theimageid = #arguments.thestruct.file_id#>
 	<!--- Start the loop to get the different kinds of images --->
@@ -1018,9 +1047,18 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
+				<!--- For wget script --->
+				<cfset wgetscript = createuuid()>
+				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
+				<!--- On Windows a .bat --->
+				<cfif arguments.thestruct.iswindows>
+					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
+				</cfif>
+				<!--- Write --->	
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# -O #arguments.thestruct.thefinalname# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#" mode="777">
 				<!--- Download file --->
 				<cfthread name="download#art##theimageid#" intstruct="#arguments.thestruct#">
-					<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#" method="get" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#" file="#attributes.intstruct.thefinalname#" />
+					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
 				</cfthread>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon">
@@ -1041,6 +1079,10 @@
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#art##theimageid#" />
+		<!--- For nirvanix remove the wget script --->
+		<cfif application.razuna.storage EQ "nirvanix">
+			<cffile action="delete" file="#arguments.thestruct.thesh#" />
+		</cfif>
 		<!--- Set extension --->
 		<cfif thecolname EQ "thumb">
 			<cfset theext = qry.thumb_extension>

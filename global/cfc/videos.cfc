@@ -880,6 +880,10 @@
 		<cfset cloud_url_2.theurl = "">
 		<cfset cloud_url_org.newepoch = 0>
 		<cfparam name="arguments.thestruct.upl_template" default="0">
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+		<!--- Get Tools --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 		<!--- Get details --->
 		<cfinvoke method="getdetails" vid_id="#arguments.thestruct.file_id#" returnvariable="arguments.thestruct.qry_detail">
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
@@ -905,12 +909,26 @@
 			<cfset thenamenoext = listfirst(arguments.thestruct.qry_detail.vid_name_org, ".")>
 			<cfset thename = arguments.thestruct.qry_detail.vid_name_org>
 			<cfset arguments.thestruct.thename = thename>
+			<!--- For wget script --->
+			<cfset var wgetscript = createuuid()>
+			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#w.sh">
+			<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#wgetscript#wt.sh">
+			<cfset var thewget = "#arguments.thestruct.thetools.wget#/wget">
+			<!--- On Windows a .bat --->
+			<cfif iswindows>
+				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#w.bat">
+				<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#wgetscript#wt.bat">
+				<cfset var thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
+			</cfif>
+			<!--- Write --->	
+			<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.thename# #arguments.thestruct.qry_detail.cloud_url_org#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshwt#" output="#thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.qry_detail.vid_name_image# #arguments.thestruct.qry_detail.cloud_url#" mode="777">
 			<!--- Download and write the file --->
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<!--- Download video --->
-				<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry_detail.path_to_asset#/#attributes.intstruct.qry_detail.vid_name_org#" getasbinary="yes" timeout="9000" path="#attributes.intstruct.thisfolder#" file="#attributes.intstruct.thename#" />
+				<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
 				<!--- Download still images --->
-				<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry_detail.path_to_asset#/#attributes.intstruct.qry_detail.vid_name_image#" getasbinary="yes" timeout="9000" path="#attributes.intstruct.thisfolder#" file="#attributes.intstruct.qry_detail.vid_name_image#" />
+				<cfexecute name="#attributes.intstruct.theshwt#" timeout="600" />
 			</cfthread>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="download#arguments.thestruct.file_id#" />	
@@ -919,6 +937,9 @@
 			<cfset inputpath = "#arguments.thestruct.thisfolder#/#thename#">
 			<!--- Set the input path for the still image --->
 			<cfset inputpathimage = "#arguments.thestruct.thisfolder#/#arguments.thestruct.qry_detail.vid_name_image#">
+			<!--- Remove scripts --->
+			<cffile action="delete" file="#arguments.thestruct.theshw#" />
+			<cffile action="delete" file="#arguments.thestruct.theshwt#" />
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<!--- Now get the extension and the name after the position from above --->
@@ -954,10 +975,6 @@
 		<cfif arguments.thestruct.link_kind EQ "lan">
 			<cfset inputpath = "#arguments.thestruct.link_path_url#">
 		</cfif>
-		<!--- Go grab the platform --->
-		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
-		<!--- Get Tools --->
-		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 		<!--- Check the platform and then decide on the ffmpeg tag --->
 		<cfif isWindows>
 			<cfset theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
@@ -1255,6 +1272,16 @@
 	<!--- Create a temp folder --->
 	<cfset tempfolder = createuuid()>
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
+	<!--- The tool paths --->
+	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<!--- Set path for wget --->
+	<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
+	<!--- On Windows a .bat --->
+	<cfif arguments.thestruct.iswindows>
+		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
+	</cfif>
 	<!--- Put the video id into a variable --->
 	<cfset thevideoid = #arguments.thestruct.file_id#>
 	<!--- Start the loop to get the different kinds of videos --->
@@ -1312,9 +1339,18 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
+				<!--- For wget script --->
+				<cfset wgetscript = createuuid()>
+				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
+				<!--- On Windows a .bat --->
+				<cfif arguments.thestruct.iswindows>
+					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
+				</cfif>
+				<!--- Write --->	
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# -O #arguments.thestruct.thefinalname# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.thefinalname#" mode="777">
 				<!--- Download file --->
 				<cfthread name="download#art##thevideoid#" intstruct="#arguments.thestruct#">
-					<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.thefinalname#" method="get" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#" file="#attributes.intstruct.thefinalname#" />
+					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
 				</cfthread>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon">
@@ -1335,6 +1371,10 @@
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#art##thevideoid#" />
+		<!--- For nirvanix remove the wget script --->
+		<cfif application.razuna.storage EQ "nirvanix">
+			<cffile action="delete" file="#arguments.thestruct.thesh#" />
+		</cfif>
 		<!--- Set extension --->
 		<cfif thecolname EQ "video_preview">
 			<cfset theext = "mov">

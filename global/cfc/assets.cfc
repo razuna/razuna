@@ -3260,11 +3260,13 @@ This is the main function called directly by a single upload else from addassets
 		<cfset thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
 		<cfset themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
 		<cfset theffmpeg = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
 	<cfelse>
 		<cfset theexe = "#arguments.thestruct.thetools.imagemagick#/convert">
 		<cfset thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
 		<cfset themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
 		<cfset theffmpeg = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+		<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
 	</cfif>
 	<!--- Loop over file id --->
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
@@ -3297,10 +3299,12 @@ This is the main function called directly by a single upload else from addassets
 		<cfset thescript = Replace( Createuuid(), "-", "", "ALL" )>
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 		<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.sh">
+		<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.sh">
 		<!--- On Windows a .bat --->
 		<cfif iswindows()>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 			<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.bat">
+			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.bat">
 		</cfif>
 		<!--- The path to original: different on local --->
 		<cfif application.razuna.storage EQ "local">
@@ -3337,6 +3341,10 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Write script file --->
 		<cffile action="write" file="#arguments.thestruct.thesh#" output="#theargs#" mode="777">
 		<cffile action="write" file="#arguments.thestruct.theshdc#" output="#theargsdc#" mode="777">
+		<!--- Write Wget script --->
+		<cfif application.razuna.storage NEQ "local">
+			<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.filepath# #arguments.thestruct.qry_existing.cloud_url_org#" mode="777">
+		</cfif>
 		<!--- Local: Delete thumbnail --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- Delete old thumb (if there) --->
@@ -3347,7 +3355,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif application.razuna.storage EQ "amazon">
 			<!--- Download original asset to temp dir --->
 			<cfthread name="download#thescript#" intstruct="#arguments.thestruct#">
-				<cfhttp url="#attributes.intstruct.qry_existing.cloud_url_org#" method="get" path="#attributes.intstruct.filepath#" file="#attributes.intstruct.qry_existing.orgname#" getAsBinary="yes" />
+				<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
 			</cfthread>
 			<!--- Wait --->
 			<cfthread action="join" name="download#thescript#" />
@@ -3355,7 +3363,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<!--- Download original asset to temp dir --->
 			<cfthread name="download#thescript#" intstruct="#arguments.thestruct#">
-				<cfhttp url="#attributes.intstruct.qry_existing.cloud_url_org#" method="get" path="#attributes.intstruct.filepath#" file="#attributes.intstruct.qry_existing.orgname#" getAsBinary="yes" />
+				<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
 			</cfthread>
 			<!--- Wait --->
 			<cfthread action="join" name="download#thescript#" />
@@ -3375,6 +3383,9 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Delete scripts --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.theshdc#">
+		<cfif application.razuna.storage NEQ "local">
+			<cffile action="delete" file="#arguments.thestruct.theshw#">
+		</cfif>
 		<!--- Amazon: upload file --->
 		<cfif application.razuna.storage EQ "amazon">
 			<cfthread name="upload#thescript#" intstruct="#arguments.thestruct#">

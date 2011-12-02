@@ -722,6 +722,16 @@
 	<cffunction name="writefile" output="true">
 		<cfargument name="thestruct" type="struct">
 		<cfparam name="arguments.thestruct.sendaszip" default="F">
+		<!--- The tool paths --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+		<!--- Set path for wget --->
+		<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
+		<!--- On Windows a .bat --->
+		<cfif arguments.thestruct.iswindows>
+			<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
+		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#variables.dsn#" name="getbin" cachename="writedoc#session.hostid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_files">
 		SELECT file_extension, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset
@@ -746,9 +756,18 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND getbin.link_kind EQ "">
+			<!--- For wget script --->
+			<cfset wgetscript = createuuid()>
+			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
+			<!--- On Windows a .bat --->
+			<cfif arguments.thestruct.iswindows>
+				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
+			</cfif>
+			<!--- Write --->	
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.getbin.path_to_asset#/#arguments.thestruct.getbin.file_name_org#" mode="777">
 			<!--- Download file --->
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.getbin.path_to_asset#/#attributes.intstruct.getbin.file_name_org#" method="get" path="#attributes.intstruct.thepath#/outgoing" />
+				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
 			</cfthread>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND getbin.link_kind EQ "">
@@ -769,6 +788,10 @@
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
+		<!--- For nirvanix remove the wget script --->
+		<cfif application.razuna.storage EQ "nirvanix">
+			<cffile action="delete" file="#arguments.thestruct.thesh#" />
+		</cfif>
 		<!--- Remove any file with the same name in this directory. Wrap in a cftry so if the file does not exist we don't have a error --->
 		<cftry>
 			<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#newnamenoext#.zip">

@@ -2880,4 +2880,13 @@
 	<transid name="header_dcraw_desc">
 		<transtext><![CDATA[Enter here the absolute path to your DCRaw installation. DCRaw is being used by Razuna to convert RAW images to different formats. Installation of DCRaw is described within the installation manual, you can grab your copy from the DVD we supplied or download the latest version from <a href="http://www.insflug.org/raw/" target="_blank"><u>their website</u></a>. DO NOT enter a trailingslash at the end!]]></transtext>
 	</transid>
+	<transid name="header_wget">
+		<transtext>Wget Path</transtext>
+	</transid>
+	<transid name="header_wget_desc">
+		<transtext><![CDATA[Enter here the absolute path to the wget executable. Wget is being used by Razuna to transfer your assets. DO NOT enter a trailingslash at the end!]]></transtext>
+	</transid>
+	<transid name="installation_checklist_wget">
+		<transtext>Set path to Wget</transtext>
+	</transid>
 </translations>

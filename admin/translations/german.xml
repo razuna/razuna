@@ -2878,6 +2878,15 @@
 		<transtext>DCRaw Pfad</transtext>
 	</transid>
 	<transid name="header_dcraw_desc">
-		<transtext><![CDATA[Geben Sie den absoluten Pad zu der DCRawm Installation an. DCRaw wird benötigt um RAW-Bilder zu bearbeiten. Die Installation von DCRaw wird in unserem Handbuch genau beschrieben. Sie sollten die aktuelle Verison unter <a href="http://www.insflug.org/raw/" target="_blank"><u>laden</u></a>. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!]]></transtext>
+		<transtext><![CDATA[Geben Sie den absoluten Pad zu der DCRaw Installation an. DCRaw wird benötigt um RAW-Bilder zu bearbeiten. Die Installation von DCRaw wird in unserem Handbuch genau beschrieben. Sie sollten die aktuelle Verison unter <a href="http://www.insflug.org/raw/" target="_blank"><u>laden</u></a>. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!]]></transtext>
+	</transid>
+	<transid name="header_wget">
+		<transtext>Wget Pfad</transtext>
+	</transid>
+	<transid name="header_wget_desc">
+		<transtext><![CDATA[Geben Sie den absoluten Pad zu wget an. Wget wird benötigt um Daten zu transferieren. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!]]></transtext>
+	</transid>
+	<transid name="installation_checklist_wget">
+		<transtext>Pfad zu Wget gesetzt</transtext>
 	</transid>
 </translations>

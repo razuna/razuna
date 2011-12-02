@@ -516,6 +516,16 @@
 			<cfset arguments.thestruct.hostid = session.hostid>
 			<!--- Create a temp folder for the documents --->
 			<cfdirectory action="create" directory="#arguments.thestruct.qryfile.path#" mode="775">
+			<!--- The tool paths --->
+			<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+			<!--- Go grab the platform --->
+			<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+			<!--- Set path for wget --->
+			<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
+			<!--- On Windows a .bat --->
+			<cfif arguments.thestruct.iswindows>
+				<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
+			</cfif>
 			<!--- Loop over records --->
 			<cfloop query="qry">
 				<!--- Params --->
@@ -525,10 +535,25 @@
 					<!--- Feedback --->
 					<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
 					<cfflush>
+					<!--- For wget script --->
+					<cfset wgetscript = createuuid()>
+					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
+					<!--- On Windows a .bat --->
+					<cfif arguments.thestruct.iswindows>
+						<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
+					</cfif>
+					<!--- Write --->	
+					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.qryfile.path# -O #file_name_org# #cloud_url_org#" mode="777">
 					<!--- Download --->
-					<cfhttp url="#cloud_url_org#" method="get" path="#arguments.thestruct.qryfile.path#" file="#file_name_org#" timeout="20" />
+					<cfthread name="#wgetscript#" intstruct="#arguments.thestruct#">
+						<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
+					</cfthread>
+					<!--- Wait for the thread above until the file is downloaded fully --->
+					<cfthread action="join" name="#wgetscript#" />
+					<!--- Remove the wget script --->
+					<cffile action="delete" file="#arguments.thestruct.thesh#" />
 					<!--- If download was successful --->
-					<cfif cfhttp.statuscode CONTAINS "200">
+					<cfif fileexists("#arguments.thestruct.qryfile.path#/#file_name_org#")>
 						<!--- Call to update asset --->
 						<cfinvoke method="index_update">
 							<cfinvokeargument name="thestruct" value="#arguments.thestruct#">

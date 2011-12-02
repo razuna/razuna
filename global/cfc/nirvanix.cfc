@@ -589,9 +589,9 @@
 			<!--- Parse XML --->
 			<cfset var d = xmlparse(cfhttp.filecontent)>
 			<!--- Get Downloadtoken --->
-			<cfset var dtoken = d.Response.Download.DownloadToken[1].XmlText>
+			<cfset x.theurl = d.Response.Download.DownloadURL[1].XmlText>
 			<!--- Set download url --->
-			<cfset x.theurl = "http://services.nirvanix.com/" & dtoken & "/razuna/#session.hostid#/#arguments.theasset#">
+<!--- 			<cfset x.theurl = "http://services.nirvanix.com/" & dtoken & "/razuna/#session.hostid#/#arguments.theasset#"> --->
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug signedurl" type="html">
 					<cfdump var="#cfcatch#">
