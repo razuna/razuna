@@ -1287,7 +1287,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cftry>
 	<!--- Test Wget --->
 	<cftry>
-		<cfexecute name="#appwg#" arguments="-version" timeout="5" />
+		<cfexecute name="#appwg#" arguments="-V" timeout="5" />
 		<cfcatch type="any">
 			<cfset apps.wg = "F">
 		</cfcatch>
