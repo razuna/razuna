@@ -1262,7 +1262,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfset appim = "#arguments.thestruct.thetools.imagemagick#/convert">
 		<cfset appex = "#arguments.thestruct.thetools.exiftool#/exiftool">
 		<cfset appff = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-		<cfset appwg = "#arguments.thestruct.thetools.ffmpeg#/wget">
+		<cfset appwg = "#arguments.thestruct.thetools.wget#/wget">
 	</cfif>
 	<!--- Test imagemagick --->
 	<cftry>
