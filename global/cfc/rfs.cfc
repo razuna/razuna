@@ -43,7 +43,7 @@
 		<cfargument name="rfs_id" type="string" required="true">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
-		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_date_add, rfs_date_change
+		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_wget, rfs_date_add, rfs_date_change
 		FROM rfs
 		WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.rfs_id#">
 		</cfquery>
@@ -67,6 +67,7 @@
 			rfs_ffmpeg,
 			rfs_dcraw,
 			rfs_exiftool,
+			rfs_wget,
 			rfs_date_add,
 			rfs_date_change
 			)
@@ -79,6 +80,7 @@
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ffmpeg#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_dcraw#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_exiftool#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_wget#">,
 			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
 			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 			)
@@ -94,6 +96,7 @@
 			rfs_ffmpeg = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ffmpeg#">,
 			rfs_dcraw = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_dcraw#">,
 			rfs_exiftool = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_exiftool#">,
+			rfs_wget = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_wget#">,
 			rfs_date_change = <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 			WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_id#">
 			</cfquery>

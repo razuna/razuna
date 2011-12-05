@@ -32,7 +32,7 @@
 	<ul>
 		<li><a href="##serversetup">#defaultsObj.trans("header_server_setup")#</a></li>
 		<li><a href="##servertools">Tools</a></li>
-		<li><a href="##encodingsetup">Encoding Parameters</a></li>
+		<!--- <li><a href="##encodingsetup">Encoding Parameters</a></li> --->
 	</ul>
 	<!--- Server --->
 	<div id="serversetup">
@@ -75,8 +75,7 @@
 			</tr>
 			<tr>
 				<td nowrap="nowrap">#defaultsObj.trans("imagemagick_path")#</td>
-				<td><input type="text" name="rfs_imagemagick" id="rfs_imagemagick" value="#qry_rfs.rfs_imagemagick#" class="text" onkeyup="rfs_checkpath('rfs_imagemagick');" style="width:300px;">
-				<div id="checkrfs_imagemagick" style="display:none;"></div></td>
+				<td><input type="text" name="rfs_imagemagick" id="rfs_imagemagick" value="#qry_rfs.rfs_imagemagick#" class="text" style="width:300px;"></td>
 			</tr>
 			<!--- Exiftool Path --->
 			<tr>
@@ -87,8 +86,7 @@
 			</tr>
 			<tr>
 				<td>#defaultsObj.trans("exiftool_path")#</td>
-				<td><input type="text" name="rfs_exiftool" id="rfs_exiftool" value="#qry_rfs.rfs_exiftool#" style="width:300px;" class="text" onkeyup="rfs_checkpath('rfs_exiftool');">
-				<div id="checkrfs_exiftool" style="display:none;"></div></td>
+				<td><input type="text" name="rfs_exiftool" id="rfs_exiftool" value="#qry_rfs.rfs_exiftool#" style="width:300px;" class="text"></td>
 			</tr>
 			<!--- DCRAW Paths --->
 			<tr>
@@ -99,8 +97,7 @@
 			</tr>
 			<tr>
 				<td nowrap="true">#defaultsObj.trans("header_dcraw")#</td>
-				<td><input type="text" name="rfs_dcraw" id="rfs_dcraw" value="#qry_rfs.rfs_dcraw#" style="width:300px;" class="text" onkeyup="rfs_checkpath('rfs_dcraw');">
-				<div id="checkrfs_dcraw" style="display:none;"></div></td>
+				<td><input type="text" name="rfs_dcraw" id="rfs_dcraw" value="#qry_rfs.rfs_dcraw#" style="width:300px;" class="text"></td>
 			</tr>
 			<!--- FFmpeg Paths --->
 			<tr>
@@ -111,18 +108,30 @@
 			</tr>
 			<tr>
 				<td nowrap="true">#defaultsObj.trans("header_ffmpeg")#</td>
-				<td><input type="text" name="rfs_ffmpeg" id="rfs_ffmpeg" value="#qry_rfs.rfs_ffmpeg#" style="width:300px;" class="text" onkeyup="rfs_checkpath('rfs_ffmpeg');">
-				<div id="checkrfs_ffmpeg" style="display:none;"></div></td>
+				<td><input type="text" name="rfs_ffmpeg" id="rfs_ffmpeg" value="#qry_rfs.rfs_ffmpeg#" style="width:300px;" class="text"></td>
+			</tr>
+			<!--- Wget Paths --->
+			<tr>
+				<th class="textbold" colspan="2">#defaultsObj.trans("header_wget")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">#defaultsObj.trans("header_wget_desc")#</td>
+			</tr>
+			<tr>
+				<td nowrap="true">#defaultsObj.trans("header_wget")#</td>
+				<td><input type="text" name="rfs_wget" id="rfs_wget" value="#qry_rfs.rfs_wget#" style="width:300px;" class="text"></td>
 			</tr>
 		</table>
 	</div>
 	<!--- Encoding Params --->
-	<div id="encodingsetup">
+	<!---
+<div id="encodingsetup">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 		
 		
 		</table>
 	</div>
+--->
 	<div id="submit" style="float:right;padding:10px;"><div id="updatetext" style="color:green;padding:10px;display:none;float:left;"></div><input type="submit" name="Submit" value="#defaultsObj.trans("save")#" class="button"></div>
 </div>
 </form>
@@ -143,7 +152,8 @@
 			   	rfs_ffmpeg: "required",
 			   	rfs_dcraw: "required",
 			   	rfs_exiftool: "required",
-			   	rfs_imagemagick: "required"
+			   	rfs_imagemagick: "required",
+			   	rfs_wget: "required"
 			 }
 		});
 	});
@@ -167,15 +177,6 @@
 		var passive = $('##rfs_ftp_passive:checked').val();
 		$("##div_valftp").css("display","");
 		loadcontent('div_valftp', '#myself#ajax.prefs_rendf_valftp&server=' + server + '&user=' + user + '&pass=' + pass + '&passive=' + passive);
-	}
-	// Check paths
-	function rfs_checkpath(theapp){
-		// Get path
-		var thepath = $('##' + theapp).val();
-		// Enable div
-		$('##check' + theapp).css('display','');
-		// Load page in div
-		loadcontent('check' + theapp,'<cfoutput>#myself#</cfoutput>c.check_paths&theapp=' + theapp + '&thepath=' + escape(thepath));
 	}
 </script>
 </cfoutput>
