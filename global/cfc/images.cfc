@@ -596,17 +596,19 @@
 <!--- CONVERT ASSET IN THREADS --->
 <cffunction name="convertimage" output="false">
 	<cfargument name="thestruct" type="struct">
-		<!--- Call method to send email
-		<cfset arguments.thestruct.emailwhat = "start_converting">
-		<cfset arguments.thestruct.dsn = variables.dsn>
-		<cfset arguments.thestruct.setid = variables.setid>
-		<cfset arguments.thestruct.emailorgname = arguments.thestruct.qry_detail.img_filename>
-		<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#"> --->
-<!--- 		<cfinvoke method="convertImagethread" thestruct="#arguments.thestruct#" /> --->
+	<!--- RFS --->
+	<cfif application.razuna.renderingfarm>
+		<cfset arguments.thestruct.convert = true>
+		<cfset arguments.thestruct.assettype = "img">
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
+		</cfthread>
+	<cfelse>
 		<!--- Start the thread for converting --->
-		<cfthread name="convertimage#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="convertImagethread" thestruct="#attributes.intstruct#" />
 		</cfthread>
+	</cfif>
 </cffunction>
 
 <!--- CONVERT AN ORIGINAL IMAGE TO ANOTHER FORMAT (JPG, GIF, TIFF, PNG, BMP) --------------------->
@@ -783,39 +785,29 @@
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -c #theoriginalasset# > #theformatconv#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #theformatconv# #theformatconv#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="#theexe# #theimargumentsthumb#" mode="777">
-				<!--- Convert image to desired format --->
-				<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
-				</cfthread>
-				<cfthread action="join" name="1#thescript#" />
-				<!--- Since the image can not be read we use img to convert to itself --->
-				<cfthread name="2#thescript#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesht#" timeout="60" />
-				</cfthread>
-				<cfthread action="join" name="2#thescript#" />
-				<!--- Thumb it --->
-				<cfthread name="3#thescript#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.theshtt#" timeout="60" />
-				</cfthread>
-				<cfthread action="join" name="3#thescript#" />
 			</cfcase>
 			<cfdefaultcase>
 				<!--- Write files --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# #theimarguments#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #theimargumentsthumb#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="x" mode="777">
-				<!--- Convert image to desired format --->
-				<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
-				</cfthread>
-				<cfthread action="join" name="1#thescript#" />
-				<!--- Thumb it --->
-				<cfthread name="3#thescript#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesht#" timeout="60" />
-				</cfthread>
-				<cfthread action="join" name="3#thescript#" />
 			</cfdefaultcase>
 		</cfswitch>
+		<!--- Convert image to desired format --->
+		<cfthread name="1#thescript#" intstruct="#arguments.thestruct#">
+			<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
+		</cfthread>
+		<cfthread action="join" name="1#thescript#" />
+		<!--- Since the image can not be read we use img to convert to itself --->
+		<cfthread name="2#thescript#" intstruct="#arguments.thestruct#">
+			<cfexecute name="#attributes.intstruct.thesht#" timeout="60" />
+		</cfthread>
+		<cfthread action="join" name="2#thescript#" />
+		<!--- Thumb it --->
+		<cfthread name="3#thescript#" intstruct="#arguments.thestruct#">
+			<cfexecute name="#attributes.intstruct.theshtt#" timeout="60" />
+		</cfthread>
+		<cfthread action="join" name="3#thescript#" />
 		<!--- Delete scripts --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.thesht#">

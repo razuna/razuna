@@ -56,6 +56,7 @@
 		<class alias="views" classpath="global.cfc.views" type="component" constructor="init"/>
 		<class alias="widgets" classpath="global.cfc.widgets" type="component" constructor="init"/>
 		<class alias="labels" classpath="global.cfc.labels" type="component" constructor="init"/>
+		<class alias="rfs" classpath="global.cfc.rfs" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>

@@ -277,6 +277,22 @@
 		 	ct_type 		varchar2(100 char)
 		)
 		</cfquery>
+		<!--- CREATE RFS --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE rfs
+		(
+			rfs_id 			varchar2(100 char),
+			rfs_active 		number,
+			rfs_server_name varchar2(200 char),
+			rfs_imagemagick varchar2(200 char),
+			rfs_ffmpeg 		varchar2(200 char),
+			rfs_dcraw 		varchar2(200 char),
+			rfs_exiftool 	varchar2(200 char),
+			rfs_date_add 	timestamp,
+			rfs_date_change timestamp,
+			CONSTRAINT RFS_PK PRIMARY KEY (rfs_id)
+		)
+		</cfquery>
 			
 		<!---  --->
 		<!--- END: CREATE TABLES --->

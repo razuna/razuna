@@ -264,7 +264,7 @@
 		FROM users
 		WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 		</cfquery>
-		<cfinvoke component="email" method="send_email" dsn="#variables.dsn#" setid="#variables.setid#" to="#qryuser.user_email#" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#</a>">
+		<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->
 	<cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput>
@@ -722,7 +722,7 @@
 		
 		Log in to Razuna to process this order.">
 	<cftry>
-		<cfinvoke component="email" method="send_email" dsn="#application.razuna.datasource#" setid="#application.razuna.setid#" to="#qry_user.user_email#" subject="#thesubject#" themessage="#mailmessage#">
+		<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="#thesubject#" themessage="#mailmessage#">
 		<cfcatch type="any">
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
 		</cfcatch>

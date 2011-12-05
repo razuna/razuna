@@ -68,9 +68,7 @@
 </cffunction>
 
 <!--- GLOBAL SENDEMAIL --->
-<cffunction hint="global sendemail" name="send_email" output="false">
-	<cfargument name="dsn" default="" required="yes" type="string">
-	<cfargument name="setid" default="" required="yes" type="string">
+<cffunction hint="global sendemail" name="send_email" output="false" access="remote" returnType="void">
 	<cfargument name="to" default="" required="no" type="string">
 	<cfargument name="cc" default="" required="no" type="string">
 	<cfargument name="bcc" default="" required="no" type="string">
@@ -80,25 +78,51 @@
 	<cfargument name="themessage" default="" required="no" type="string">
 	<cfargument name="thepath" default="" required="no" type="string">
 	<cfargument name="sendaszip" default="F" required="no" type="string">
+	<cfargument name="dsn" default="" required="no" type="string">
+	<cfargument name="hostdbprefix" default="" required="no" type="string">
+	<cfargument name="userid" default="" required="no" type="string">
+	<cfargument name="hostid" default="" required="no" type="string">
+	<!--- Set data source since this call could also come from RFS --->
+	<cfif arguments.dsn EQ "" OR !structkeyexists(arguments,"dsn")>
+		<cfset var thedsn = application.razuna.datasource>
+	<cfelse>
+		<cfset var thedsn = arguments.dsn>
+	</cfif>
+	<!--- Set data source since this call could also come from RFS --->
+	<cfif arguments.hostdbprefix EQ "" OR !structkeyexists(arguments,"hostdbprefix")>
+		<cfset var thehostdbprefix = session.hostdbprefix>
+	<cfelse>
+		<cfset var thehostdbprefix = arguments.hostdbprefix>
+	</cfif>
+	<!--- Set data source since this call could also come from RFS --->
+	<cfif arguments.hostid EQ "" OR !structkeyexists(arguments,"hostid")>
+		<cfset var thehostid = session.hostid>
+	<cfelse>
+		<cfset var thehostid = arguments.hostid>
+	</cfif>
+	<!--- Set data source since this call could also come from RFS --->
+	<cfif arguments.userid EQ "" OR !structkeyexists(arguments,"userid")>
+		<cfset var theuserid = session.theuserid>
+	<cfelse>
+		<cfset var theuserid = arguments.userid>
+	</cfif>
 	<!--- Query email settings --->
-	<cfquery datasource="#arguments.dsn#" name="emaildata">
+	<cfquery datasource="#thedsn#" name="emaildata">
 	SELECT set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, set2_email_server_port, set2_intranet_reg_emails, set2_intranet_reg_emails_sub
-	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.setid#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	FROM #thehostdbprefix#settings_2
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thehostid#">
 	</cfquery>
-	<!--- Query the user and use his email as replyto --->
-	<cfquery datasource="#arguments.dsn#" name="qryuser">
-	SELECT user_email
-	FROM users
-	WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
-	</cfquery>
-	<!--- If the to is empty we take the email from the qry above --->
+	<!--- If the to is empty --->
 	<cfif arguments.to EQ "">
+		<cfquery datasource="#thedsn#" name="qryuser">
+		SELECT user_email
+		FROM users
+		WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">
+		</cfquery>
 		<cfset arguments.to = qryuser.user_email>
 	</cfif>
 	<!--- Always take the email address from the settings --->
-	<cfset var thefrom = "#emaildata.set2_email_from#">
+	<cfset var thefrom = emaildata.set2_email_from>
 	<!--- send message if mail server setting is empty thus take the CF admin settings--->
 	<cftry>
 		<cfif emaildata.set2_email_server EQ "">

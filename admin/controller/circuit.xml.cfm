@@ -1189,4 +1189,37 @@
 		<do action="ajax.randompass" />
 	</fuseaction>
 	
+	<!--  -->
+	<!-- START: Rendering Farm -->
+	<!--  -->
+	
+	<!-- Load -->
+	<fuseaction name="prefs_renf">
+		<!-- Global -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_global()" returnvariable="gprefs" />
+		<!-- CFC: Check if there is an update for this DB -->
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_get_all()" returnvariable="qry_rfs" />
+		<!-- Show -->
+		<do action="ajax.prefs_rendf" />
+	</fuseaction>
+	<!-- Server Edit -->
+	<fuseaction name="prefs_renf_detail">
+		<!-- If new then create id -->
+		<if condition="attributes.rfs_id EQ 0">
+			<true>
+				<set name="attributes.rfs_id" value="#replace(createuuid(),'-','','all')#" />
+			</true>
+		</if>
+		<!-- CFC: Check if there is an update for this DB -->
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_get_detail(attributes.rfs_id)" returnvariable="qry_rfs" />
+		<!-- Show -->
+		<do action="ajax.prefs_rendf_add" />
+	</fuseaction>
+	<!-- Server Save -->
+	<fuseaction name="prefs_renf_add">
+		<!-- Save -->
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_update(attributes)" />
+	</fuseaction>
+	
+	
 </circuit>

@@ -623,19 +623,19 @@
 <!--- CONVERT AUDIO IN A THREAD --->
 <cffunction name="convertaudiothread" output="true">
 	<cfargument name="thestruct" type="struct">
-	<!--- Call method to send email --->
-	<!---
-	<cfset arguments.thestruct.emailwhat = "start_converting">
-	<cfset arguments.thestruct.dsn = variables.dsn>
-	<cfset arguments.thestruct.setid = variables.setid>
-	<cfset arguments.thestruct.emailorgname = arguments.thestruct.qry_detail.detail.aud_name>
-	<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#">
-	--->
-	<!--- Start the thread for converting --->
-	<!--- <cfinvoke method="convertaudio" thestruct="#arguments.thestruct#" /> --->
-	<cfthread name="tconvert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-		<cfinvoke method="convertaudio" thestruct="#attributes.intstruct#" />
-	</cfthread>
+	<!--- RFS --->
+	<cfif application.razuna.renderingfarm>
+		<cfset arguments.thestruct.convert = true>
+		<cfset arguments.thestruct.assettype = "aud">
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
+		</cfthread>
+	<cfelse>
+		<!--- Start the thread for converting --->
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="convertaudio" thestruct="#attributes.intstruct#" />
+		</cfthread>
+	</cfif>
 </cffunction>
 
 <!--- CONVERT AUDIO --->
@@ -773,7 +773,6 @@
 			<!--- Param --->
 			<cfparam name="arguments.thestruct.convert_bitrate_#theformat#" default="">
 			<!--- Create a new ID for the audio --->
-			<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#variables.database#" dsn="#variables.dsn#" thetable="#session.hostdbprefix#audios" theid="aud_id"> --->
 			<cftransaction>
 				<cfset newid = structnew()>
 				<cfset newid.id = replace(createuuid(),"-","","ALL")>
@@ -846,7 +845,7 @@
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# #arguments.thestruct.theargument#" mode="777">
 				<!--- Convert audio --->
 				<cfthread name="#ttexe#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
+					<cfexecute name="#attributes.intstruct.thesh#" timeout="9000" />
 				</cfthread>
 			</cfif>
 			<!--- Wait for the thread above until the file is fully converted --->
@@ -861,7 +860,7 @@
 				FROM users
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
-				<cfinvoke component="email" method="send_email" dsn="#application.razuna.datasource#" setid="#application.razuna.setid#" to="#qryuser.user_email#" subject="Error on converting your audio" themessage="Your Audio could not be converted to the format #ucase(theformat)#. This can happen when the source audio is rendered with codecs that our conversion engine can not read/write.">
+				<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="Error on converting your audio" themessage="Your Audio could not be converted to the format #ucase(theformat)#. This can happen when the source audio is rendered with codecs that our conversion engine can not read/write.">
 			<cfelse>
 				<!--- Get size of original --->
 				<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#finalaudioname#" returnvariable="orgsize">
@@ -923,7 +922,7 @@
 				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 				)
 				</cfquery>
-				<!--- Update the video record with other information --->
+				<!--- Update the audio record with other information --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
 				SET 

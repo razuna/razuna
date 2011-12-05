@@ -1,3 +1,28 @@
+<!---
+*
+* Copyright (C) 2005-2008 Razuna
+*
+* This file is part of Razuna - Enterprise Digital Asset Management.
+*
+* Razuna is free software: you can redistribute it and/or modify
+* it under the terms of the GNU Affero Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* Razuna is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU Affero Public License for more details.
+*
+* You should have received a copy of the GNU Affero Public License
+* along with Razuna. If not, see <http://www.gnu.org/licenses/>.
+*
+* You may restribute this Program with a special exception to the terms
+* and conditions of version 3.0 of the AGPL as described in Razuna's
+* FLOSS exception. You should have received a copy of the FLOSS exception
+* along with Razuna. If not, see <http://www.razuna.com/licenses/>.
+*
+--->
 <cfcomponent>
 
 	<!---  --->
@@ -14,6 +39,7 @@
 	</cffunction>
 
 	<!--- FUNCTION: LOGIN --->
+<<<<<<< HEAD
 	<cffunction name="login" returntype="string" access="public" output="false">
 		<cfargument name="thestruct" type="struct" required="false" />
 		<cfif !isstruct(arguments.thestruct)>
@@ -22,6 +48,11 @@
 		<cfelse>
 			<cfparam name="arguments.thestruct.isbrowser" default="F" />
 		</cfif>
+=======
+	<cffunction name="login" returntype="string" access="remote" output="false">
+		<cfargument name="thestruct" type="struct" required="yes" />
+		<cfparam name="arguments.thestruct.isbrowser" default="F">
+>>>>>>> rendering
 		<!--- If we call this function directly we don't have the appkey in the variables --->
 		<cfif NOT structkeyexists(variables,"appkey")>
 			<cfset variables.appkey = application.razuna.nvxappkey>
@@ -148,7 +179,7 @@
 				</cfhttp>
 				<cfcatch type="any">
 					<cfif cfcatch.message CONTAINS "bandwidth limit">
-						<cfinvoke component="email" method="send_email" dsn="#application.razuna.datasource#" setid="#application.razuna.setid#" subject="Razuna: Bandwidth exceeded" themessage="The file you are trying to upload exceeds the bandwidth limit for your plan. If you want to continue using Razuna you either have to wait until the end of your subsription period or simply upgrade to the PRO plan for only $1.80 per GB/month.">
+						<cfinvoke component="email" method="send_email" subject="Razuna: Bandwidth exceeded" themessage="The file you are trying to upload exceeds the bandwidth limit for your plan. If you want to continue using Razuna you either have to wait until the end of your subsription period or simply upgrade to the PRO plan for only $1.80 per GB/month.">
 					<cfelse>
 						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
 							<cfdump var="#cfcatch#" />

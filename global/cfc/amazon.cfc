@@ -128,37 +128,6 @@
 		<cfset x.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
 		<!--- Wait --->
 		<cfinvoke component="s3" method="getobject" bucketName="#arguments.awsbucket#" filekey="#arguments.key#" minutesValid="#arguments.minutesValid#" returnVariable="x.theurl" />
-
-		<!---
-
-		<!--- Get signed URL with a expiration date in 10 years --->
-		<cfset x.theurl = AmazonS3geturl(application.razuna.s3ds,arguments.awsbucket, arguments.key, x.newepoch )>
-		<!--- Wait --->
-		<cfpause interval="10" />
-		<!--- Now test the url --->
-		<cfhttp url="#x.theurl#" />
-		<!--- Do we have a valid URL --->
-		<cfif cfhttp.statuscode DOES NOT CONTAIN "200">
-			<cfpause interval="10" />
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="amazon url">				
-				Amazon url is not valid, we are trying it again
-			</cfmail>
-			<cfset x.theurl = "">
-			<cfset x.theurl = AmazonS3geturl(application.razuna.s3ds,arguments.awsbucket, arguments.key, x.newepoch )>		
-			<cfpause interval="10" />
-			<!--- Now test the url --->
-			<cfhttp url="#x.theurl#" />
-			<!--- Do we have a valid URL --->
-			<cfif cfhttp.statuscode DOES NOT CONTAIN "200">
-				<cfpause interval="10" />
-				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="amazon url 2">				
-					Amazon url is still not valid, we are trying it again for the second time
-				</cfmail>
-				<cfset x.theurl = "">
-				<cfset x.theurl = AmazonS3geturl(application.razuna.s3ds,arguments.awsbucket, arguments.key, x.newepoch )>
-			</cfif>
-		 </cfif>
---->
 		<!--- Return --->
 		<cfreturn x />
 	</cffunction>

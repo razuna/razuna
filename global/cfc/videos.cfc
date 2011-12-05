@@ -419,51 +419,61 @@
 <!--- THREAD: CREATE THE PREVIEW IMAGE AND VIDEO --------------------------------------------------------->
 <cffunction name="create_previews" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cftry>
-		<!--- Choose platform --->
-		<cfif arguments.thestruct.isWindows>
-			<cfset theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
-			<cfset theasset = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#""">
-			<cfset theorg = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#""">
-		<cfelse>
-			<cfset theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-			<cfset theasset = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#">
-			<cfset theorg = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#">
-			<cfset theorg = replace(theorg," ","\ ","all")>
-			<cfset theorg = replace(theorg,"&","\&","all")>
-			<cfset theorg = replace(theorg,"'","\'","all")>
-		</cfif>
-		<!--- If linked asset --->
-		<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+	<!--- RFS --->
+	<cfif application.razuna.renderingfarm>
+		<cfset arguments.thestruct.newid = arguments.thestruct.thisvid.newid>
+		<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
+	<cfelse>
+		<cftry>
+			<!--- Choose platform --->
 			<cfif arguments.thestruct.isWindows>
-				<cfset theasset = """#arguments.thestruct.qryfile.path#""">
+				<cfset theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+				<cfset theasset = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#""">
+				<cfset theorg = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#""">
 			<cfelse>
-				<cfset theasset = replace(arguments.thestruct.qryfile.path," ","\ ","all")>
-				<cfset theasset = replace(theasset,"&","\&","all")>
-				<cfset theasset = replace(theasset,"'","\'","all")>
+				<cfset theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+				<cfset theasset = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#">
+				<cfset theorg = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#">
+				<cfset theorg = replace(theorg," ","\ ","all")>
+				<cfset theorg = replace(theorg,"&","\&","all")>
+				<cfset theorg = replace(theorg,"'","\'","all")>
 			</cfif>
-		</cfif>
-		<!--- Write and execute script --->
-		<cfset var thescript = arguments.thestruct.thisvid.newid>
-		<cfset var thesh = gettempdirectory() & "/#thescript#p.sh">
-		<!--- On Windows a bat --->
-		<cfif arguments.thestruct.isWindows>
-			<cfset thesh = gettempdirectory() & "/#thescript#p.bat">
-		</cfif>
-		<!--- Write files --->
-		<cffile action="write" file="#thesh#" output="#theexe# -i #theasset# -vframes 1 -f image2 -vcodec mjpeg #theorg#" mode="777">
-		<!--- Execute --->
-		<cfexecute name="#thesh#" timeout="30" />
-		<!--- Delete scripts --->
-		<cffile action="delete" file="#thesh#">
-		<!--- If we can't create a still image we resort to a placeholder image --->
-		<cfif NOT FileExists("#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#")>
-			<cffile action="copy" source="#arguments.thestruct.theplaceholderpic#" destination="#theorg#" mode="775">
-		</cfif>
-		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
-		</cfcatch>
-	</cftry>
+			<!--- If linked asset --->
+			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cfif arguments.thestruct.isWindows>
+					<cfset theasset = """#arguments.thestruct.qryfile.path#""">
+				<cfelse>
+					<cfset theasset = replace(arguments.thestruct.qryfile.path," ","\ ","all")>
+					<cfset theasset = replace(theasset,"&","\&","all")>
+					<cfset theasset = replace(theasset,"'","\'","all")>
+				</cfif>
+			</cfif>
+			<!--- Write and execute script --->
+			<cfset var thescript = arguments.thestruct.thisvid.newid>
+			<cfset arguments.thestruct.thesh = gettempdirectory() & "/#thescript#p.sh">
+			<!--- On Windows a bat --->
+			<cfif arguments.thestruct.isWindows>
+				<cfset arguments.thestruct.thesh = gettempdirectory() & "/#thescript#p.bat">
+			</cfif>
+			<!--- Write files --->
+			<cffile action="write" file="#thesh#" output="#theexe# -i #theasset# -vframes 1 -f image2 -vcodec mjpeg #theorg#" mode="777">
+			<!--- Execute --->
+			<cfthread name="#thescript#" intstruct="#arguments.thestruct#">
+				<cfexecute name="#attributes.intstruct.thesh#" timeout="9000" />
+			</cfthread>
+			<!--- Wait for the thread above --->
+			<cfthread action="join" name="#thescript#" />
+			<!--- Delete scripts --->
+			<cffile action="delete" file="#thesh#">
+			<!--- If we can't create a still image we resort to a placeholder image --->
+			<cfif NOT FileExists("#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#")>
+				<cffile action="copy" source="#arguments.thestruct.theplaceholderpic#" destination="#theorg#" mode="775">
+			</cfif>
+			<cfcatch type="any">
+				<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
+			</cfcatch>
+		</cftry>
+	</cfif>
 	<cfreturn />
 </cffunction>
 
@@ -851,19 +861,18 @@
 <!--- CONVERT VIDEO IN A THREAD --->
 <cffunction name="convertvideothread" output="true">
 	<cfargument name="thestruct" type="struct">
-	<!--- Call method to send email --->
-	<!---
-	<cfset arguments.thestruct.emailwhat = "start_converting">
-	<cfset arguments.thestruct.dsn = variables.dsn>
-	<cfset arguments.thestruct.setid = variables.setid>
-	<cfset arguments.thestruct.emailorgname = arguments.thestruct.qry_detail.vid_filename>
-	<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#">
-	--->
-	<!--- Start the thread for converting --->
-	<!--- <cfinvoke method="convertvideo" thestruct="#arguments.thestruct#" /> --->
-	<cfthread name="tconvert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-		<cfinvoke method="convertvideo" thestruct="#attributes.intstruct#" />
-	</cfthread>
+	<!--- RFS --->
+	<cfif application.razuna.renderingfarm>
+		<cfset arguments.thestruct.convert = true>
+		<cfset arguments.thestruct.assettype = "vid">
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
+		</cfthread>
+	<cfelse>
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="convertvideo" thestruct="#attributes.intstruct#" />
+		</cfthread>
+	</cfif>
 </cffunction>
 
 <!--- CONVERT VIDEO --->
@@ -1100,7 +1109,7 @@
 			<!--- Write files --->
 			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# #arguments.thestruct.theargument#" mode="777">
 			<!--- Convert video --->
-			<cfset ttexe = createuuid()>
+			<cfset ttexe = replace(createuuid(),"-","","all")>
 			<cfthread name="#ttexe#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="24000" />
 			</cfthread>
@@ -1116,7 +1125,7 @@
 				FROM users
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
-				<cfinvoke component="email" method="send_email" dsn="#application.razuna.datasource#" prefix="#session.hostdbprefix#" setid="#application.razuna.setid#" to="#qryuser.user_email#" subject="Error on converting your video" themessage="Your Video could not be converted to the format #ucase(theformat)#. This can happen when the source video is rendered with codecs that our conversion engine can not read/write.">
+				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on converting your video" themessage="Your Video could not be converted to the format #ucase(theformat)#. This can happen when the source video is rendered with codecs that our conversion engine can not read/write.">
 			<cfelse>
 				<!--- Get size of original --->
 				<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.thisfolder#/#previewvideo#" returnvariable="orgsize">

@@ -474,10 +474,9 @@ Comment:<br>
 	</cffunction>
 
 <!--- Clear Cache ---------------------------------------------------------------------->
-	<cffunction name="clearcache" output="false">
+	<cffunction name="clearcache" output="false" access="remote" returnType="void">
 		<cfargument name="theaction" type="string" required="true">
-		<cfargument name="thename" type="string" required="false">
-		<cfargument name="thedomain" type="any" required="true">
+		<cfargument name="thedomain" type="string" required="true">
 		<!--- Flush Cache --->
 		<cfif arguments.theaction EQ "flushall">
 			<cfquery datasource="#application.razuna.datasource#" action="flushall" cachedomain="#arguments.thedomain#" />
@@ -841,6 +840,11 @@ Comment:<br>
 		<!--- If there is a record then the user is in debt --->
 		<cfif qry_account.recordcount NEQ 0>
 			<cfset session.indebt = true>
+		<cfelse>
+			<cfset session.indebt = false>
+		</cfif>
+		<cfif Request.securityObj.CheckSystemAdminUser()>
+			<cfset session.indebt = false>
 		</cfif>
 		<!--- Return --->
 		<cfreturn qry_account>

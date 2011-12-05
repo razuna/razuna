@@ -156,8 +156,13 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
-		<!-- Widgets -->
+		<!-- Labels -->
 		<instantiate class="labels" object="myFusebox.getApplicationData().labels" overwrite="true">
+			<argument name="dsn" value="#application.razuna.datasource#" />
+			<argument name="database" value="#application.razuna.thedatabase#" />
+		</instantiate>
+		<!-- RFS -->
+		<instantiate class="rfs" object="myFusebox.getApplicationData().rfs" overwrite="true">
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>

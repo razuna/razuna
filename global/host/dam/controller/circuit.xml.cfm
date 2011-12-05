@@ -528,6 +528,7 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.type" value="doc" />
 		<set name="attributes.hostid" value="#session.hostid#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -553,6 +554,7 @@
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -570,8 +572,6 @@
 			<argument name="themessage" value="#attributes.message#" />
 			<argument name="thepath" value="#attributes.thepath#" />
 			<argument name="sendaszip" value="T" />
-			<argument name="dsn" value="#application.razuna.datasource#" />
-			<argument name="setid" value="#application.razuna.setid#" />
 		</invoke>
 	</fuseaction>
 	<!-- Basket FTP Form -->
@@ -1295,6 +1295,8 @@
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1345,6 +1347,8 @@
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
 		<!-- CFC: Upload -->
@@ -1387,6 +1391,8 @@
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1439,6 +1445,8 @@
 	<fuseaction name="asset_upload_do">
 		<!-- Param -->
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1455,6 +1463,8 @@
 		<set name="attributes.file_desc_1" value="" />
 		<set name="attributes.file_keywords_1" value="" />
 		<set name="attributes.av" value="0" overwrite="false" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1488,6 +1498,8 @@
 		<set name="attributes.file_desc_1" value="" />
 		<set name="attributes.file_keywords_1" value="" />
 		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -1869,6 +1881,9 @@
 	</fuseaction>
 	<!-- Convert Video -->
 	<fuseaction name="videos_convert">
+		<!-- Param -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
@@ -1965,12 +1980,12 @@
 	<fuseaction name="images_convert">
 		<!-- Param -->
 		<set name="attributes.fromconverting" value="T" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- CFC: Get settings
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_dam()" returnvariable="attributes.qry_settings_dam" /> -->
 		<!-- CFC: Get image settings -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
 		<!-- CFC: Convert images -->	
@@ -2040,6 +2055,9 @@
 	</fuseaction>
 	<!-- Convert Audio -->
 	<fuseaction name="audios_convert">
+		<!-- Param -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
@@ -2243,9 +2261,7 @@
 					<argument name="themessage" value="#attributes.message#" />
 					<argument name="thepath" value="#attributes.thepath#" />
 					<argument name="sendaszip" value="#attributes.sendaszip#" />
-					<argument name="dsn" value="#application.razuna.datasource#" />
 					<argument name="prefix" value="#session.hostdbprefix#" />
-					<argument name="setid" value="#application.razuna.setid#" />
 				</invoke>
 				<!-- Remove file from system -->
 				
@@ -2261,9 +2277,7 @@
 					<argument name="subject" value="#attributes.subject#" />
 					<argument name="themessage" value="#attributes.message#" />
 					<argument name="sendaszip" value="#attributes.sendaszip#" />
-					<argument name="dsn" value="#application.razuna.datasource#" />
 					<argument name="prefix" value="#session.hostdbprefix#" />
-					<argument name="setid" value="#application.razuna.setid#" />
 				</invoke>
 			</false>
 		</if>
@@ -5249,10 +5263,20 @@
 		<do action="ajax.labels_main_collections" />
 	</fuseaction>
 	
-	
 	<!--  -->
 	<!-- LABELS: STOP -->
 	<!--  -->
 	
+	<!--  -->
+	<!-- RFS: START -->
+	<!--  -->
+	
+	<!-- Pick up asset from rfs -->
+	<fuseaction name="rfs">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="pickup(attributes)" />
+	</fuseaction>
 	
 </circuit>

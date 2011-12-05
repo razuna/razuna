@@ -2889,4 +2889,76 @@
 	<transid name="installation_checklist_wget">
 		<transtext>Pfad zu Wget gesetzt</transtext>
 	</transid>
+	<transid name="header_rf">
+		<transtext>Rendering Farm</transtext>
+	</transid>
+	<transid name="header_rf_desc">
+		<transtext><![CDATA[By default Razuna, transcodes all your assets on the local server. If you enable the rendering farm feature, you will be able to transcode your videos, images and audio assets on an external server farm. This will free up the ressources on this server and is the recommended way for large encoding transactions.<br /><br />Enter below the server(s) and their individual settings. It doesn't matter if your rendering server(s) are within your local network or instances on the cloud (Amazon EC2, VMWare, etc.).]]></transtext>
+	</transid>
+	<transid name="header_rf_enable">
+		<transtext>Enable a rendering farm</transtext>
+	</transid>
+	<transid name="header_rf_enable_desc">
+		<transtext><![CDATA[If you enable the rendering farm it will take effect immediately. <strong>Caution: Only enable this if you have at least one rendering server setup below!</strong>]]></transtext>
+	</transid>
+	<transid name="enable">
+		<transtext>Enabled</transtext>
+	</transid>
+	<transid name="disable">
+		<transtext>Disabled</transtext>
+	</transid>
+	<transid name="header_rf_servers">
+		<transtext>Rendering Farm Server(s)</transtext>
+	</transid>
+	<transid name="header_rf_server">
+		<transtext>Rendering Farm Server</transtext>
+	</transid>
+	<transid name="header_server_setup">
+		<transtext>Server Setup</transtext>
+	</transid>
+	<transid name="header_server_name">
+		<transtext>Server Address</transtext>
+	</transid>
+	<transid name="header_server_name_desc">
+		<transtext><![CDATA[Please enter the DNS name or the IP address of your server below. Click on validate to check if Razuna can reach your server (this simply fires of a HTTP request to the server).]]></transtext>
+	</transid>
+	<transid name="server_validated">
+		<transtext>The connection to the server was established successfully.</transtext>
+	</transid>
+	<transid name="server_problem">
+		<transtext><![CDATA[We've encountered the following issue with your server:]]></transtext>
+	</transid>
+	<transid name="server_name_empty">
+		<transtext>Please enter a valid address!</transtext>
+	</transid>
+	<transid name="header_server_connection">
+		<transtext>Server Connection</transtext>
+	</transid>
+	<transid name="header_server_connection_desc">
+		<transtext><![CDATA[Please enter below your preferred connection method to the rendering server. This means, how Razuna should transfer the assets from this server to your rendering server. This transfer only takes place, when assets are being uploaded for the first time. Additional renditions will be downloaded from the rendering server directly!]]></transtext>
+	</transid>
+	<transid name="header_server_connection_ftp">
+		<transtext><![CDATA[<strong>FTP</strong><br />Use FTP to transfer assets. You will need to have a FTP server running on the rendering server and a valid account! FTP is best used for large data transfers.]]></transtext>
+	</transid>
+	<transid name="header_server_connection_scp">
+		<transtext><![CDATA[<strong>SCP/SSH</strong><br />Use SCP to transfer assets. SCP uses the SSH shell and therefore can only be used on a Linux/Unix based machine. You need to exchange ssh keys with your Razuna and rendering server to establish a seamless transfer. SCP can also be used for large data transfers.]]></transtext>
+	</transid>
+	<transid name="header_server_connection_scp_account">
+		<transtext>Account &amp; Address</transtext>
+	</transid>
+	<transid name="header_server_connection_scp_account_desc">
+		<transtext><![CDATA[This should be entered like razuna@serveraddress.]]></transtext>
+	</transid>
+		<transid name="header_server_watchfolder">
+		<transtext>Path to Watchfolder</transtext>
+	</transid>
+	<transid name="header_server_watchfolder_desc">
+		<transtext><![CDATA[Enter the <strong>absolute</strong> path to the watchfolder on the rendering server below]]></transtext>
+	</transid>
+	<transid name="header_server_connection_http">
+		<transtext><![CDATA[<strong>HTTP</strong><br />Use HTTP to transfer assets. This is the simplest method, since assets will simply be uploaded to the rendering server over HTTP, just like you would upload your assets to Razuna directly.<br /><br />Note: HTTP transfer is limited to 2GB!]]></transtext>
+	</transid>
+	<transid name="header_server_enable">
+		<transtext>Activate Rendering Server</transtext>
+	</transid>
 </translations>

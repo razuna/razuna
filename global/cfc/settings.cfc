@@ -348,11 +348,11 @@
 </cffunction>
 
 <!--- GET GLOBAL Settings --->
-<cffunction name="get_global">
+<cffunction name="get_global" access="remote" returnType="query">
 	<!--- Update --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, 
-	conf_nirvanix_master_pass, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key
+	conf_nirvanix_master_pass, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
 	<!--- Return --->
@@ -425,7 +425,15 @@
 		<cfif commad EQ "T">,</cfif>conf_aws_secret_access_key = <cfqueryparam value="#arguments.thestruct.conf_aws_secret_access_key#" cfsqltype="cf_sql_varchar">
 		<cfset commad = "T">
 	</cfif>
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>
+		<cfif commad EQ "T">,</cfif>conf_rendering_farm = <cfqueryparam value="#arguments.thestruct.conf_rendering_farm#" cfsqltype="CF_SQL_DOUBLE">
+		<cfset commad = "T">
+	</cfif>
 	</cfquery>
+	<!--- Set rendering setting in application scope --->
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>
+		<cfset application.razuna.renderingfarm = arguments.thestruct.conf_rendering_farm>
+	</cfif>
 </cffunction>
 
 <!--- Update TOOLS --->
@@ -842,7 +850,7 @@
 	<cftry>
 		<cfquery datasource="razuna_default" name="qry">
 		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key
+		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
@@ -882,14 +890,15 @@
 				conf_nirvanix_master_pass	VARCHAR(100),
 				conf_nirvanix_url_services	VARCHAR(100),
 				conf_isp					VARCHAR(100),
-				conf_firsttime				BOOLEAN
+				conf_firsttime				BOOLEAN,
+				conf_rendering_farm			BOOLEAN
 			)
 			</cfquery>
 			<!--- Insert values --->
 			<cfquery datasource="razuna_default">
 			INSERT INTO razuna_config
 			(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, 
-			conf_nirvanix_url_services, conf_isp, conf_firsttime)
+			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_rendering_farm)
 			VALUES(
 			'h2',
 			'razuna',
@@ -898,13 +907,14 @@
 			'local',
 			'http://services.nirvanix.com',
 			'false',
-			true
+			true,
+			false
 			)
 			</cfquery>
 			<!--- Query again --->
 			<cfquery datasource="razuna_default" name="qry">
 			SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key
+			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
 			FROM razuna_config
 			</cfquery>
 		</cfcatch>
@@ -962,6 +972,7 @@
 	<cfset application.razuna.awskeysecret = qry.conf_aws_secret_access_key>
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.firsttime = qry.conf_firsttime>
+	<cfset application.razuna.renderingfarm = qry.conf_rendering_farm>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -970,7 +981,7 @@
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_nirvanix_url_services,
-	conf_aws_access_key, conf_aws_secret_access_key
+	conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -982,6 +993,7 @@
 	<cfset application.razuna.api.nvxurlservices = qry.conf_nirvanix_url_services>
 	<cfset application.razuna.api.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.api.awskeysecret = qry.conf_aws_secret_access_key>
+	<cfset application.razuna.api.renderingfarm = qry.conf_rendering_farm>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -990,7 +1002,7 @@
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key
+	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -1004,6 +1016,7 @@
 	<cfset application.razuna.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.awskeysecret = qry.conf_aws_secret_access_key>
 	<cfset application.razuna.isp = qry.conf_isp>
+	<cfset application.razuna.renderingfarm = qry.conf_rendering_farm>
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
