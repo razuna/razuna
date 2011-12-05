@@ -196,7 +196,7 @@
 						<!--- Copy the file into the temp dir --->
 						<cffile action="copy" source="#arguments.thestruct.thepath#/incoming/emails/#arguments.thestruct.thefilename#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" mode="775">
 						<!--- Get the filesize --->
-						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
+						<cfinvoke component="global" method="resizeImage" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 						<!--- MD5 Hash --->
 						<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						<!--- Add to temp db --->
@@ -1636,8 +1636,8 @@ This is the main function called directly by a single upload else from addassets
 		</cftransaction>
 		<!--- <cfset resizeImagett = createuuid()> --->
 		<cfset arguments.thestruct.theplaceholderpic = theplaceholderpic>
-		<cfset arguments.thestruct.thumbwidth = thumbwidth>
-		<cfset arguments.thestruct.thumbheigth = thumbheigth>
+		<cfset arguments.thestruct.width = thumbwidth>
+		<cfset arguments.thestruct.heigth = thumbheigth>
 		<cfset arguments.thestruct.destination = "#arguments.thestruct.thetempdirectory#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
 		<cfif isWindows()>
 			<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
@@ -1649,8 +1649,6 @@ This is the main function called directly by a single upload else from addassets
 		<!--- resize original to thumb --->
 		<cfinvoke method="resizeImage">
 			<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
-			<cfinvokeargument name="width" value="#arguments.thestruct.thumbwidth#">
-			<cfinvokeargument name="height" value="#arguments.thestruct.thumbheigth#">
 		</cfinvoke>
 			<!--- storing assets on file system --->
 			<cfset arguments.thestruct.storage = application.razuna.storage>
@@ -1924,13 +1922,8 @@ This is the main function called directly by a single upload else from addassets
 <!--- RESIZE IMAGE ------------------------------------------------------------------------------->
 <cffunction name="resizeImage" returntype="void" access="public" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
-	<cfargument name="width" type="numeric" required="true" hint="pixel">
-	<cfargument name="height" type="numeric" required="true" hint="pixel">
-	<!--- Params --->
-	<cfset arguments.thestruct.width = arguments.width>
-	<cfset arguments.thestruct.height = arguments.height>
 	<!--- RFS --->
-	<cfif application.razuna.renderingfarm>
+	<cfif application.razuna.renderingfarm AND arguments.thestruct.qryfile.file_id EQ 0>
 		<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
 	<cfelse>
 		<!--- ID for thread --->
@@ -2816,7 +2809,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Delete scripts --->
 						<cffile action="delete" file="#attributes.audstruct.thesh#">
 						<!--- RFS --->
-						<cfif application.razuna.renderingfarm AND attributes.audstruct.qryfile.extension NEQ "wav">
+						<cfif application.razuna.renderingfarm AND attributes.audstruct.qryfile.extension NEQ "wav" AND arguments.thestruct.qryfile.file_id NEQ 0>
 							<cfinvoke component="rfs" method="notify" thestruct="#attributes.audstruct#" />
 						<cfelse>
 						<!--- Create Raw file --->
@@ -3499,6 +3492,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfset arguments.thestruct.convert_to = "">
+	<cfset arguments.thestruct.convert = true>
 	<cfset arguments.thestruct.qry_settings_image = arguments.thestruct.qrysettings>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">

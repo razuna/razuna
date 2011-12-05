@@ -4395,6 +4395,8 @@
 		<set name="attributes.sendemail" value="false" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -4417,6 +4419,9 @@
 	</fuseaction>
 	<!-- Playback a version -->
 	<fuseaction name="versions_playback">
+		<!-- Param -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->

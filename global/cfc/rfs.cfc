@@ -105,6 +105,8 @@
 	<!--- Notify remote server --->
 	<cffunction name="notify" output="true">
 		<cfargument name="thestruct" type="struct">
+		<!--- Param --->
+		<cfparam name="arguments.thestruct.upl_template" default="0" />
 		<!--- Get remote server records --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
 		SELECT rfs_id, rfs_server_name
@@ -115,7 +117,18 @@
 		
 		<!--- If this is from convert we write data into json --->
 		<cfif structkeyexists(arguments.thestruct,"convert")>
-			<cfset var jsondata = serializejson(arguments.thestruct)> 
+			<!--- Variable --->
+			<cfset var jdata = structnew()>
+			<!--- Loop over structs --->
+			<cfloop collection="#arguments.thestruct#" item="item">
+				<!--- Only grab the needed fields --->
+				<cfif item CONTAINS "file_id" OR item CONTAINS "convert">
+					<!--- Add to struct --->
+					<cfset structinsert(jdata, item, arguments.thestruct["#item#"])>
+				</cfif>
+			</cfloop>
+			<!--- Create Json --->
+			<cfset var jsondata = serializejson(jdata)>
 		</cfif>
 		<!--- Notify remote servers about a new file waiting for download --->
 		<!--- Send the server ID with the request. The remote server checks the ID to this record --->
@@ -128,6 +141,7 @@
 			<cfhttpparam name="storage" value="#application.razuna.storage#" type="URL">
 			<cfhttpparam name="dsnhost" value="#application.razuna.datasource#" type="URL">
 			<cfif structkeyexists(arguments.thestruct,"convert")>
+				<cfhttpparam name="upl_template" value="#arguments.thestruct.upl_template#" type="URL">
 				<cfhttpparam name="convert" value="#arguments.thestruct.convert#" type="URL">
 				<cfhttpparam name="assettype" value="#arguments.thestruct.assettype#" type="URL">
 				<cfhttpparam name="jsondata" value="#jsondata#" type="URL">
@@ -138,6 +152,15 @@
 		</cfhttp>		
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+	
+	<cffunction name="SafeSerializeJSON" output="false" access="private" returntype="string">
+		<cfargument name="obj" type="any" required="true" />
+		<cfargument name="serializeQueryByColumns" type="boolean" required="false" default="false" />
+		<cfset var jsonOutput = SerializeJSON(arguments.obj, arguments.serializeQueryByColumns) />
+		<cfset jsonOutput = Replace(jsonOutput, chr(8232), "\u2028", "all") />
+		<cfset jsonOutput = Replace(jsonOutput, chr(8233), "\u2029", "all") />
+		<cfreturn jsonOutput />
 	</cffunction>
 	
 	<!--- Pickup asset from rfs --->

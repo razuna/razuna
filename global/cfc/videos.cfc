@@ -420,7 +420,7 @@
 <cffunction name="create_previews" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- RFS --->
-	<cfif application.razuna.renderingfarm>
+	<cfif application.razuna.renderingfarm AND arguments.thestruct.qryfile.file_id EQ 0>
 		<cfset arguments.thestruct.newid = arguments.thestruct.thisvid.newid>
 		<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
 	<cfelse>
@@ -456,7 +456,7 @@
 				<cfset arguments.thestruct.thesh = gettempdirectory() & "/#thescript#p.bat">
 			</cfif>
 			<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -i #theasset# -vframes 1 -f image2 -vcodec mjpeg #theorg#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -i #theasset# -vframes 1 -f image2 -vcodec mjpeg #theorg#" mode="777">
 			<!--- Execute --->
 			<cfthread name="#thescript#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="9000" />
@@ -464,7 +464,7 @@
 			<!--- Wait for the thread above --->
 			<cfthread action="join" name="#thescript#" />
 			<!--- Delete scripts --->
-			<cffile action="delete" file="#thesh#">
+			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<!--- If we can't create a still image we resort to a placeholder image --->
 			<cfif NOT FileExists("#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#")>
 				<cffile action="copy" source="#arguments.thestruct.theplaceholderpic#" destination="#theorg#" mode="775">

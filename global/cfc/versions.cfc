@@ -440,7 +440,7 @@
 			<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 			<cfset arguments.thestruct.newid = arguments.thestruct.therandom>
 			<!--- resize original to thumb. This also returns the original width and height --->
-			<cfinvoke component="assets" method="resizeImagethread" returnvariable="orgwidthheight">
+			<cfinvoke component="assets" method="resizeImage">
 				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 			</cfinvoke>
 			<!--- Get size of original and thumbnail --->
@@ -455,6 +455,26 @@
 				<cfoutput>#orgsize#</cfoutput>
 			</cfthread>
 			<cfthread action="join" name="#ts#,#ths#" timeout="6000" />
+			<!--- Write the sh script files --->
+			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#ts#w.sh">
+			<cfset arguments.thestruct.theshh = GetTempDirectory() & "/#ts#h.sh">
+			<!--- On Windows a .bat --->
+			<cfif iswindows>
+				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#ts#w.bat">
+				<cfset arguments.thestruct.theshh = GetTempDirectory() & "/#ts#h.bat">
+			</cfif>
+			<!--- Write script for getting height and weight --->
+			<cffile action="write" file="#arguments.thestruct.theshh#" output="#arguments.thestruct.theexif# -S -s -ImageHeight #arguments.thestruct.thesource#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.theexif# -S -s -ImageWidth #arguments.thestruct.thesource#" mode="777">
+			<!--- Get height and width --->
+			<cfexecute name="#arguments.thestruct.theshh#" timeout="60" variable="theheight" />
+			<cfexecute name="#arguments.thestruct.theshw#" timeout="60" variable="thewidth" />
+			<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
+			<cfset theheight = trim(listlast(theheight," "))>
+			<cfset thewidth = trim(listlast(thewidth," "))>
+			<!--- Remove the temp file sh --->
+			<cffile action="delete" file="#arguments.thestruct.theshw#">
+			<cffile action="delete" file="#arguments.thestruct.theshh#">
 			<!--- Name for thumbnail upload --->
 			<cfset arguments.thestruct.thumbnailname_existing = "thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
 			<cfset arguments.thestruct.thumbnailname_new = arguments.thestruct.thumbnailname_existing>
@@ -659,16 +679,16 @@
 		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
-		,
-		thumb_width, thumb_height, img_width, img_height, img_size, thumb_size
+			,
+			thumb_width, thumb_height, img_width, img_height, img_size, thumb_size
 		<!--- For Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
-		,
-		vid_size, vid_width, vid_height, vid_name_image
+			,
+			vid_size, vid_width, vid_height, vid_name_image
 		<!--- For Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
-		,
-		vid_size
+			,
+			vid_size
 		</cfif>
 		)
 		VALUES(
@@ -685,24 +705,24 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.hashtag#">
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
-		,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.thumb_width#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.thumb_height#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_width#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_height#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_size#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.thumb_size#">
+			,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.thumb_width#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.thumb_height#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_width#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_height#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_size#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.thumb_size#">
 		<!--- For Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
-		,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_size#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_width#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_height#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.vid_name_image#">
+			,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_size#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_width#">, 
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_height#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.vid_name_image#">
 		<!--- For Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
-		,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.aud_size#">
+			,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.aud_size#">
 		</cfif>
 		)
 		</cfquery>
@@ -719,8 +739,8 @@
 			thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
 			thumb_width = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">, 
 			thumb_height = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
-			img_width = <cfqueryparam value="#orgwidthheight.thewidth#" cfsqltype="cf_sql_numeric">, 
-			img_height = <cfqueryparam value="#orgwidthheight.theheight#" cfsqltype="cf_sql_numeric">,
+			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">, 
+			img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">,
 			img_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#ts#"].output#">,
 			thumb_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#ths#"].output#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
