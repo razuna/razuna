@@ -39,8 +39,7 @@
 	</cffunction>
 
 	<!--- FUNCTION: LOGIN --->
-<<<<<<< HEAD
-	<cffunction name="login" returntype="string" access="public" output="false">
+	<cffunction name="login" returntype="string" access="remote" output="false">
 		<cfargument name="thestruct" type="struct" required="false" />
 		<cfif !isstruct(arguments.thestruct)>
 			<cfset arguments.thestruct = structnew()>
@@ -48,11 +47,6 @@
 		<cfelse>
 			<cfparam name="arguments.thestruct.isbrowser" default="F" />
 		</cfif>
-=======
-	<cffunction name="login" returntype="string" access="remote" output="false">
-		<cfargument name="thestruct" type="struct" required="yes" />
-		<cfparam name="arguments.thestruct.isbrowser" default="F">
->>>>>>> rendering
 		<!--- If we call this function directly we don't have the appkey in the variables --->
 		<cfif NOT structkeyexists(variables,"appkey")>
 			<cfset variables.appkey = application.razuna.nvxappkey>
