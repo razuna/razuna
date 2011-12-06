@@ -1221,5 +1221,4 @@
 		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_update(attributes)" />
 	</fuseaction>
 	
-	
 </circuit>

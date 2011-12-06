@@ -2961,4 +2961,10 @@
 	<transid name="header_server_enable">
 		<transtext>Activate Rendering Server</transtext>
 	</transid>
+	<transid name="header_location">
+		<transtext>Location</transtext>
+	</transid>
+	<transid name="header_location_desc">
+		<transtext><![CDATA[Enter a location value into the field below. This value should be in line with the default location value of this server. Like this we can group the rendering farm servers to one location.]]></transtext>
+	</transid>
 </translations>

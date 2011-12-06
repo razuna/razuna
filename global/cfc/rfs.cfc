@@ -43,7 +43,8 @@
 		<cfargument name="rfs_id" type="string" required="true">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
-		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_wget, rfs_date_add, rfs_date_change
+		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_wget, rfs_date_add, rfs_date_change, 
+		rfs_location
 		FROM rfs
 		WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.rfs_id#">
 		</cfquery>
@@ -68,6 +69,7 @@
 			rfs_dcraw,
 			rfs_exiftool,
 			rfs_wget,
+			rfs_location,
 			rfs_date_add,
 			rfs_date_change
 			)
@@ -81,6 +83,7 @@
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_dcraw#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_exiftool#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_wget#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_location#">,
 			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
 			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 			)
@@ -97,6 +100,7 @@
 			rfs_dcraw = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_dcraw#">,
 			rfs_exiftool = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_exiftool#">,
 			rfs_wget = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_wget#">,
+			rfs_location = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_location#">,
 			rfs_date_change = <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 			WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_id#">
 			</cfquery>
@@ -112,11 +116,13 @@
 		<cfparam name="arguments.thestruct.upl_template" default="0" />
 		<!--- Get remote server records --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
-		SELECT rfs_id, rfs_server_name
+		SELECT rfs_id, rfs_server_name, rfs_location
 		FROM rfs
 		WHERE rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="true">
 		</cfquery>
 		<!--- Check here is the server is busy or not. If so, check for an alternate server in the pool --->
+		
+		<!--- Check according to location --->
 		
 		<!--- If this is from convert we write data into json --->
 		<cfif structkeyexists(arguments.thestruct,"convert")>

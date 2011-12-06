@@ -53,7 +53,17 @@
 			</tr>
 			<tr>
 				<td colspan="2"><input type="text" name="rfs_server_name" id="rfs_server_name" style="width:300px;" value="#qry_rfs.rfs_server_name#" /> <input type="button" class="button" value="#defaultsObj.trans("validate")#" onclick="valserver();" /><div id="div_valserver" style="display:none;"></div></td>
-			</tr>			
+			</tr>
+			<!--- Server Location --->
+			<tr>
+				<th colspan="2">#defaultsObj.trans("header_location")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">#defaultsObj.trans("header_location_desc")#</td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="text" name="rfs_location" id="rfs_location" style="width:300px;" value="#qry_rfs.rfs_location#" /></td>
+			</tr>	
 		</table>
 	</div>
 	<!--- Tools --->

@@ -34,19 +34,29 @@
 		</tr>
 		<!--- Enable/Disable --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_rf_enable")#</th>
+			<th class="textbold" colspan="2" style="padding-top:15px;">#defaultsObj.trans("header_rf_enable")#</th>
 		</tr>
 		<tr>
 			<td colspan="3">#defaultsObj.trans("header_rf_enable_desc")#</td>
 		</tr>
-		<tr class="list">
+		<tr>
 			<td><input type="radio" name="conf_rendering_farm" id="conf_rendering_farm" value="true"<cfif gprefs.conf_rendering_farm> checked="checked"</cfif>> #defaultsObj.trans("enable")# <input type="radio" name="conf_rendering_farm" id="conf_rendering_farm" value="false"<cfif !gprefs.conf_rendering_farm> checked="checked"</cfif>> #defaultsObj.trans("disable")#</td>
 		</tr>
+		<!--- Server Location --->
+		<tr>
+			<th colspan="2">#defaultsObj.trans("header_location")#</th>
+		</tr>
+		<tr>
+			<td colspan="2">#defaultsObj.trans("header_location_desc")#</td>
+		</tr>
+		<tr class="list">
+			<td colspan="2"><input type="text" name="rendering_farm_location" id="rendering_farm_location" style="width:300px;" value="#settingsObj.thissetting('rendering_farm_location')#" /></td>
+		</tr>	
 		<!--- List --->
 		<tr>
 			<th class="textbold" colspan="2" style="padding-bottom:20px;">
 				<div style="float:left;padding-top:10px;">#defaultsObj.trans("header_rf_servers")#</div>
-				<div style="float:right;"><input type="button" class="button" value="Add Server" onclick="showwindow('#myself#c.prefs_renf_detail&rfs_id=0&rfs_add=true','#defaultsObj.trans("header_rf_server")#',550,1);" /></div>
+				<div style="float:right;padding-top:10px;"><input type="button" class="button" value="Add Server" onclick="showwindow('#myself#c.prefs_renf_detail&rfs_id=0&rfs_add=true','#defaultsObj.trans("header_rf_server")#',550,1);" /></div>
 			</th>
 		</tr>
 		<!--- List of servers --->
@@ -57,4 +67,20 @@
 			</tr>
 		</cfloop>
 	</table>
+
+	<div style="display:none;" id="div_rfs_location"></div>
+	<!--- JS --->
+	<script type="text/javascript">
+		// Save location
+		function saveloc(){
+			setTimeout("delaysave()", 2000);
+		}
+		// Delay call
+		function delaysave(){
+			// Grab value
+			var rfsloc = $('##rendering_farm_location').val();
+			loadcontent('div_rfs_location','#myself#c.rfs_location_save&thefield=rendering_farm_location&thevalue=' + rfsloc);
+		}
+	</script>
+
 </cfoutput>

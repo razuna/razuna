@@ -2896,7 +2896,7 @@
 		<transtext><![CDATA[By default Razuna, transcodes all your assets on the local server. If you enable the rendering farm feature, you will be able to transcode your videos, images and audio assets on an external server farm. This will free up the ressources on this server and is the recommended way for large encoding transactions.<br /><br />Enter below the server(s) and their individual settings. It doesn't matter if your rendering server(s) are within your local network or instances on the cloud (Amazon EC2, VMWare, etc.).]]></transtext>
 	</transid>
 	<transid name="header_rf_enable">
-		<transtext>Enable a rendering farm</transtext>
+		<transtext>Enable the rendering farm</transtext>
 	</transid>
 	<transid name="header_rf_enable_desc">
 		<transtext><![CDATA[If you enable the rendering farm it will take effect immediately. <strong>Caution: Only enable this if you have at least one rendering server setup below!</strong>]]></transtext>
@@ -2949,7 +2949,7 @@
 	<transid name="header_server_connection_scp_account_desc">
 		<transtext><![CDATA[This should be entered like razuna@serveraddress.]]></transtext>
 	</transid>
-		<transid name="header_server_watchfolder">
+	<transid name="header_server_watchfolder">
 		<transtext>Path to Watchfolder</transtext>
 	</transid>
 	<transid name="header_server_watchfolder_desc">
@@ -2960,5 +2960,11 @@
 	</transid>
 	<transid name="header_server_enable">
 		<transtext>Activate Rendering Server</transtext>
+	</transid>
+	<transid name="header_location">
+		<transtext>Location</transtext>
+	</transid>
+	<transid name="header_location_desc">
+		<transtext><![CDATA[Enter a location value into the field below. This value should be in line with the default location value of this server. Like this we can group the rendering farm servers to one location.]]></transtext>
 	</transid>
 </translations>

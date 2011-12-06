@@ -434,6 +434,23 @@
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>
 		<cfset application.razuna.renderingfarm = arguments.thestruct.conf_rendering_farm>
 	</cfif>
+	<!--- Save in global setting the rendering farm location --->
+	<cfif StructKeyExists(#arguments.thestruct#, "rendering_farm_location")>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) = <cfqueryparam value="rendering_farm_location" cfsqltype="cf_sql_varchar">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#settings
+		(set_pref, set_id, host_id)
+		VALUES(
+		<cfqueryparam value="#arguments.thestruct.rendering_farm_location#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="rendering_farm_location" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		)
+		</cfquery>
+	</cfif>
 </cffunction>
 
 <!--- Update TOOLS --->
@@ -826,6 +843,27 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn trim(sett.set_pref)>
+</cffunction>
+
+<!--- ------------------------------------------------------------------------------------- --->
+<!--- Get specific setting --->
+<cffunction name="savesetting" output="false" returntype="void">
+	<cfargument name="thefield" type="string" default="" required="yes">
+	<cfargument name="thevalue" type="string" default="" required="yes">
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#settings
+	WHERE lower(set_id) = <cfqueryparam value="#lcase(arguments.thefield)#" cfsqltype="cf_sql_varchar">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfquery datasource="#application.razuna.datasource#">
+	INSERT INTO #session.hostdbprefix#settings
+	(set_pref, set_id, host_id)
+	VALUES(
+	<cfqueryparam value="#arguments.thevalue#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#lcase(arguments.thefield)#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	)
+	</cfquery>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
