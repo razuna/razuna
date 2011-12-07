@@ -239,14 +239,14 @@
 	</cfif>
 	<!--- Now show video according to extension --->
 	<cfswitch expression="#theextension#">
-	<!--- QUICKTIME --->
-		<cfcase value="mov,3gp,mpg4,m4v,swf,flv,f4v">
+	<!--- Flowplayer compatible formats --->
+		<cfcase value="3gp,mpg4,m4v,swf,flv,f4v">
 			<cfsavecontent variable="thevideo"><cfoutput><div style="height:auto;width:auto;padding-top:50px;"><!--- <cfif application.razuna.storage EQ "local">#thevideo#<br /></cfif> ---><a class="flowplayerdetail" href="#thevideo#" style="height:#arguments.thestruct.videodetails.vheight#px;width:#arguments.thestruct.videodetails.vwidth#px;"><img src="#theimage#" border="0" width="#arguments.thestruct.videodetails.vwidth#" height="#arguments.thestruct.videodetails.vheight#"></a>
 			<script language="javascript" type="text/javascript">
 				// this simple call does the magic
 				flowplayer("a.flowplayerdetail", "#arguments.thestruct.dynpath#/global/videoplayer/flowplayer-3.2.7.swf", { 
 				    clip: {
-				    	autoBuffering: false, 
+				    	autoBuffering: true, 
 				    	autoplay: false, 
 				    plugins: { 
 				        controls: { 
@@ -263,10 +263,31 @@
 				}});
 			</script><br>Click on the image above to start watching the movie.<br>(If the video is not showing try to <a href="#thevideo#">watch it in QuickTime directly</a>.)</div></cfoutput>
 			</cfsavecontent>
-			<!--- This is the QUICKTIME PLAYER: Disabled cause we use the new Flash Player --->
-			<!--- 
-			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
+		</cfcase>
+		<!--- Quicktime only MOV --->
+		<cfcase value="mov">
+			<!--- <cflocation url="#thevideo#"> --->
 			<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
+			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
+			<cfsavecontent variable="thevideo"><cfoutput>
+			<cfif cgi.user_agent CONTAINS "safari" AND NOT cgi.user_agent CONTAINS "chrome">
+				<video controls="" autoplay="" style="margin: auto; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" name="media" src="#thevideo#"></video>
+			<cfelse>
+				<OBJECT CLASSID="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" HEIGHT="#theheight#" WIDTH="#thewidth#" CODEBASE="http://www.apple.com/qtactivex/qtplugin.cab">
+				
+				<PARAM NAME="src" VALUE="#theimage#" >
+				<PARAM NAME="autoplay" VALUE="true" >
+				<PARAM NAME="HREF" VALUE="#thevideo#" >
+				<PARAM NAME="TARGET" VALUE="myself" >
+				<!--- The Embed code --->
+				<embed width="#thewidth#" height="#theheight#" name="plugin" autoplay="true" src="#theimage#" href="#thevideo#" target="myself" type="video/quicktime" pluginspage="http://www.apple.com/quicktime/download/"> 
+				</OBJECT>
+			</cfif>
+			<br>Click on the image to start watching the movie.<br>(If the video is not showing try to <a href="#thevideo#">watch it in QuickTime directly</a>.)
+			</cfoutput></cfsavecontent>
+			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
+			<!---
+<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
 			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
 			<cfsavecontent variable="thevideo"><cfoutput>
 			<script language="JavaScript" type="text/javascript">
@@ -279,11 +300,16 @@
 			'scale','tofit',
 			'loop','false',
 			'bgcolor','##FFFFFF',
-			'kioskmode','true',
+			'kioskmode','false',
+			'EnableJavaScript', 'True',
+			'postdomevents', 'True',
+			'emb##NAME', 'movie#arguments.thestruct.vid_id#', 
+			'obj##id', 'movie#arguments.thestruct.vid_id#', 
+			'emb##id', 'movie_embed#arguments.thestruct.vid_id#',
 			'movieid','#arguments.thestruct.vid_id#');
-			</script></cfoutput>
-			</cfsavecontent> 
-			--->
+			</script>
+			<br>Click on the image above to start watching the movie.<br>(If the video is not showing try to <a href="#thevideo#">watch it in QuickTime directly</a>.)</cfoutput>
+			</cfsavecontent> --->
 		</cfcase>
 		<!--- MP4 / HTML5 --->
 		<cfcase value="ogv,webm,mp4">
@@ -383,20 +409,6 @@
 		<cfdefaultcase>
 			<!--- Just redirect to the download page for videos --->
 			<cflocation url="index.cfm?fa=c.serve_file&file_id=#arguments.thestruct.vid_id#&type=vid">
-			<!--- This is the DIVX Player which we can not use now --->
-			<!---<cfif #arguments.thestruct.videofield# EQ "video">
-			<cfset theheight = #arguments.thestruct.vheight#>
-			<cfset thewidth = #arguments.thestruct.vwidth#>
-			<cfelse>
-			<cfset theheight = #arguments.thestruct.vid_preview_heigth#>
-			<cfset thewidth = #arguments.thestruct.vid_preview_width#>
-			</cfif>
-			<object classid="clsid:67DABFBF-D0AB-41fa-9C46-CC0F21721616" width="#thewidth#" height="#theheight#" codebase="http://go.divx.com/plugin/DivXBrowserPlugin.cab">
-			<param name="src" value="#arguments.thewebroot#/outgoing/#arguments.thestruct.vid_filename#" />
-			<param name="autoPlay" value="false">
-			<embed type="video/divx" src="#arguments.thewebroot#/outgoing/#arguments.thestruct.vid_filename#" autoplay="false" width="#thewidth#" height="#theheight#" pluginspage="http://go.divx.com/plugin/download/">
-			</embed>
-			</object>--->
 		</cfdefaultcase>
 	</cfswitch>
 <cfreturn thevideo>
