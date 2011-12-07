@@ -502,8 +502,8 @@
 		<cfset arguments.thestruct.setid = variables.setid>
 		<!--- Start the thread for updating --->
 		<!--- <cfinvoke method="updatethread" thestruct="#arguments.thestruct#" /> --->
-		<cfset tt = CreateUUid()>
-		<cfthread name="#tt#" intstruct="#arguments.thestruct#">
+		<!--- <cfset tt = CreateUUid()> --->
+		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 		</cfthread>
 		<!--- <cfthread action="join" name="#tt#" /> --->
