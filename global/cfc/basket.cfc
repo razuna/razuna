@@ -400,6 +400,9 @@
 				<cfset thefname = listfirst(qry.img_filename, ".")>
 				<cfset thenewname = listfirst(qry.img_filename, ".") & "." & theext>
 			</cfif>
+			<!--- convert the foldername without space and foreign chars --->
+			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
+			<cfset thefname = listfirst(thefnamewithext, ".")>
 			<!--- Create subfolder for the kind of image --->
 			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#/#theart#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#/#theart#" mode="775">
@@ -512,6 +515,9 @@
 				<cfset thefname = qry.vid_filename>
 				<cfset thenewname = listfirst(qry.vid_filename, ".") & "." & qry.vid_extension>
 			</cfif>
+			<!--- convert the foldername without space and foreign chars --->
+			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
+			<cfset thefname = listfirst(thefnamewithext, ".")>
 			<!--- Create subfolder for the kind of video --->
 			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#/#theart#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#/#theart#" mode="775">
@@ -621,6 +627,9 @@
 				<cfset thefname = listfirst(qry.aud_name, ".")>
 				<cfset thenewname = listfirst(qry.aud_name, ".") & "." & qry.aud_extension>
 			</cfif>
+			<!--- convert the foldername without space and foreign chars --->
+			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
+			<cfset thefname = listfirst(thefnamewithext, ".")>
 			<!--- Create subfolder for the kind of audio --->
 			<cfif NOT directoryexists("#arguments.thestruct.newpath#/x/#theart#/")>
 				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#/#theart#/" mode="775">
