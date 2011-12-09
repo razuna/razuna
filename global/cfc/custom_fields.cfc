@@ -73,12 +73,13 @@
 				<cftransaction>
 					<cfquery datasource="#variables.dsn#">
 					INSERT INTO #session.hostdbprefix#custom_fields_text
-					(cf_id_r, lang_id_r, cf_text, host_id)
+					(cf_id_r, lang_id_r, cf_text, host_id, rec_uuid)
 					VALUES(
 					<cfqueryparam value="#newcfid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="#evaluate(thetext)#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 				</cftransaction>
@@ -157,12 +158,13 @@
 			<cfif qry.recordcount EQ 0>
 				<cfquery datasource="#variables.dsn#">
 				INSERT INTO #session.hostdbprefix#custom_fields_values
-				(cf_id_r, asset_id_r, cf_value, host_id)
+				(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
 				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct[i]#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			<!--- Update --->

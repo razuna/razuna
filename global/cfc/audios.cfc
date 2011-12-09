@@ -683,18 +683,18 @@
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- For wget script --->
-			<cfset var wgetscript = createuuid()>
-			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.sh">
+			<cfset var wgetscript = replace(createuuid(),"-","","all")>
+			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#w.sh">
 			<cfset var thewget = "#arguments.thestruct.thetools.wget#/wget">
 			<!--- On Windows a .bat --->
-			<cfif iswindows()>
-				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.bat">
+			<cfif iswindows>
+				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#w.bat">
 				<cfset var thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
 			</cfif>
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
 				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_org#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# #arguments.thestruct.qry_detail.detail.cloud_url_org#" mode="777">
 				<!--- Download file --->
 				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 					<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
@@ -703,7 +703,7 @@
 				<!--- Set Name --->
 				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org & ".wav">
 				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.thename# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_org#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.thisfolder#/#arguments.thestruct.thename# #arguments.thestruct.qry_detail.detail.cloud_url_org#" mode="777">
 				<!--- Download file --->
 				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 					<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
@@ -910,7 +910,7 @@
 				<!--- Add to shared options --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#share_options
-				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order)
+				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#newid.id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
@@ -919,7 +919,8 @@
 				<cfqueryparam value="aud" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#newid.id#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 				<!--- Update the audio record with other information --->
@@ -1019,7 +1020,7 @@
 		<!--- Query the db --->
 		<cfquery name="qry" datasource="#variables.dsn#">
 		SELECT a.aud_name, a.aud_extension, a.aud_name_org, a.folder_id_r, a.aud_group, a.link_kind, 
-		a.link_path_url, a.path_to_asset
+		a.link_path_url, a.path_to_asset, a.cloud_url_org
 		FROM #session.hostdbprefix#audios a, #session.hostdbprefix#settings_2 s
 		WHERE a.aud_id = <cfqueryparam value="#theaudioid#" cfsqltype="CF_SQL_VARCHAR">
 		AND s.set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
@@ -1044,14 +1045,14 @@
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND qry.link_kind EQ "">
 			<!--- For wget script --->
-			<cfset wgetscript = createuuid()>
+			<cfset wgetscript = replace(createuuid(),"-","","all")>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
 			<!--- On Windows a .bat --->
 			<cfif arguments.thestruct.iswindows>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
 			</cfif>
 			<!--- Write --->	
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# -O #arguments.thestruct.thefinalname# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.thefinalname#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# #arguments.thestruct.qry.cloud_url_org#" mode="777">
 			<!--- Download file --->
 			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />

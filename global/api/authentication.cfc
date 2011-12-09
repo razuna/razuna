@@ -26,7 +26,7 @@
 <cfcomponent output="false">
 	
 	<!--- Log user in and create sessiontoken --->
-	<cffunction name="login" access="remote" output="false" returntype="string">
+	<cffunction name="login" access="remote" output="false" returnFormat="wddx">
 		<cfargument name="hostid" type="numeric">
 		<cfargument name="user" type="string">
 		<cfargument name="pass" type="string">
@@ -94,12 +94,17 @@
 				<cfset var thetoken = "Access Denied">
 			</cfif>
 			<!--- Create the XML --->
-			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+			<cfset var thexml = structnew()>
+			<cfset thexml.responsecode = response>
+			<cfset thexml.sessiontoken = thetoken>
+			<!---
+<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 <Response>
 <responsecode>#response#</responsecode>
 <sessiontoken>#thetoken#</sessiontoken>
 </Response></cfoutput>
 			</cfsavecontent>
+--->
 			<cfcatch type="any">
 				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error api login">
 					<cfdump var="#cfcatch#" />

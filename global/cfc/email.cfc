@@ -83,7 +83,7 @@
 	<cfargument name="userid" default="" required="no" type="string">
 	<cfargument name="hostid" default="" required="no" type="string">
 	<!--- Set data source since this call could also come from RFS --->
-	<cfif arguments.dsn EQ "" OR !structkeyexists(arguments,"dsn")>
+	<cfif arguments.dsn EQ "">
 		<cfset var thedsn = application.razuna.datasource>
 	<cfelse>
 		<cfset var thedsn = arguments.dsn>

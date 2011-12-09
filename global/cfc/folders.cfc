@@ -1065,12 +1065,13 @@
 				<cftransaction>
 					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#folders_desc
-					(folder_id_r, lang_id_r, folder_desc, host_id)
+					(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
 					VALUES(
 					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="#evaluate(thisfield)#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 				</cftransaction>
@@ -1086,12 +1087,13 @@
 			<cftransaction>
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#folders_groups
-				(folder_id_r, grp_id_r, grp_permission, host_id)
+				(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#grpid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#evaluate(theper)#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			</cftransaction>
@@ -1377,12 +1379,13 @@
 				<cfelse>
 					<cfquery datasource="#variables.dsn#">
 					INSERT INTO #session.hostdbprefix#folders_desc
-					(folder_id_r, lang_id_r, folder_desc, host_id)
+					(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
 					VALUES (
 					<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="#evaluate(thisfield)#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 				</cfif>
@@ -1404,7 +1407,7 @@
 				<cfset theper = "per_" & "#grpidno#">
 				<cfquery datasource="#variables.dsn#">
 				INSERT INTO #session.hostdbprefix#folders_groups
-				(folder_id_r, grp_id_r, grp_permission, host_id)
+				(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#grpid#" cfsqltype="CF_SQL_VARCHAR">,
@@ -1413,7 +1416,8 @@
 				<cfelse>
 					<cfqueryparam value="#evaluate(theper)#" cfsqltype="cf_sql_varchar">,
 				</cfif>
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 				<!--- Set user folder to f --->
@@ -1489,7 +1493,7 @@
 					<!--- Insert permission into folder_groups --->
 					<cfquery datasource="#variables.dsn#">
 					INSERT INTO #session.hostdbprefix#folders_groups
-					(folder_id_r, grp_id_r, grp_permission, host_id)
+					(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
 					VALUES(
 					<cfqueryparam value="#thisfolderid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#grpid#" cfsqltype="CF_SQL_VARCHAR">,
@@ -1498,7 +1502,8 @@
 					<cfelse>
 						<cfqueryparam value="#evaluate(theper)#" cfsqltype="cf_sql_varchar">,
 					</cfif>
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 					<!--- Set user folder to f --->

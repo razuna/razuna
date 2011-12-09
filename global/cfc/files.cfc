@@ -734,7 +734,7 @@
 		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#variables.dsn#" name="getbin" cachename="writedoc#session.hostid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_files">
-		SELECT file_extension, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset
+		SELECT file_extension, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset, cloud_url_org
 		FROM #session.hostdbprefix#files
 		WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -757,14 +757,14 @@
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND getbin.link_kind EQ "">
 			<!--- For wget script --->
-			<cfset wgetscript = createuuid()>
+			<cfset wgetscript = replace(createuuid(),"-","","all")>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
 			<!--- On Windows a .bat --->
 			<cfif arguments.thestruct.iswindows>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
 			</cfif>
 			<!--- Write --->	
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.getbin.path_to_asset#/#arguments.thestruct.getbin.file_name_org#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing #arguments.thestruct.getbin.cloud_url_org#" mode="777">
 			<!--- Download file --->
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />

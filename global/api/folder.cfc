@@ -689,12 +689,13 @@
 			<!--- Insert description --->
 			<cfquery datasource="#application.razuna.api.dsn#">
 			INSERT INTO #application.razuna.api.prefix["#arguments.sessiontoken#"]#folders_desc
-			(folder_id_r, lang_id_r, folder_desc, host_id)
+			(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
 			<cfqueryparam value="#arguments.folder_description#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 			<!--- Flush cache --->

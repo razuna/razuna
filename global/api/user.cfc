@@ -84,20 +84,22 @@
 				<!--- Insert the user to the user host cross table --->
 				<cfquery datasource="#application.razuna.api.dsn#">
 				INSERT INTO ct_users_hosts
-				(ct_u_h_user_id, ct_u_h_host_id)
+				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">,
-				#application.razuna.api.hostid["#arguments.sessiontoken#"]#
+				#application.razuna.api.hostid["#arguments.sessiontoken#"]#,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 				<!--- Insert into group --->
 				<cfif arguments.groupid NEQ 0>
 					<cfquery datasource="#application.razuna.api.dsn#">
 					INSERT INTO	ct_groups_users
-					(ct_g_u_grp_id, ct_g_u_user_id)
+					(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
 					VALUES(
 					<cfqueryparam value="#arguments.groupid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">
+					<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 				</cfif>

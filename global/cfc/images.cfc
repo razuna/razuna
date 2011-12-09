@@ -632,7 +632,7 @@
 		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
 	</cfif>
 	<!--- Get details of image --->
-	<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_id,folder_id_r,img_filename_org,img_extension,img_filename,path_to_asset,img_width,img_height" returnvariable="arguments.thestruct.qry_detail">
+	<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_id,folder_id_r,img_filename_org,img_extension,img_filename,path_to_asset,img_width,img_height,cloud_url_org" returnvariable="arguments.thestruct.qry_detail">
 	<!--- Create a temp directory to hold the image file (needed because we are doing other files from it as well) --->
 	<cfset tempfolder = "img#replace(createuuid(),"-","","all")#">
 	<!--- set the folder path in a var --->
@@ -658,14 +658,14 @@
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<!--- For wget script --->
-			<cfset wgetscript = createuuid()>
+			<cfset wgetscript = replace(createuuid(),"-","","all")>
 			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#.sh">
 			<!--- On Windows a .bat --->
-			<cfif arguments.thestruct.iswindows>
+			<cfif iswindows>
 				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#.bat">
 			</cfif>
 			<!--- Write --->	
-			<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.thename# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry_detail.path_to_asset#/#arguments.thestruct.qry_detail.img_filename_org#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thisfolder# #arguments.thestruct.qry_detail.cloud_url_org#" mode="777">
 			<!--- Download file --->
 			<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
@@ -697,7 +697,7 @@
 		<cffile action="delete" file="#arguments.thestruct.theshw#" />
 	</cfif>
 	<!--- Ok, file is here so continue --->
-	
+
 	<!--- Check the platform and then decide on the ImageMagick tag --->
 	<cfif isWindows>
 		<cfset theexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
@@ -881,7 +881,7 @@
 		<cftransaction>
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#share_options
-			(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order)
+			(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
@@ -890,7 +890,8 @@
 			<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 			<!--- Add to DB --->
@@ -931,11 +932,6 @@
 	</cfloop>
 	<!--- Remove folder --->
 	<cfdirectory action="delete" directory="#thisfolder#" recurse="true">
-	<!--- Call method to send emailx
-	<cfset arguments.thestruct.emailwhat = "end_converting">
-	<cfset arguments.thestruct.dsn = application.razuna.datasource>
-	<cfset arguments.thestruct.setid = application.razuna.setid>
-	<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#"> --->
 	<!--- Flush Cache --->
 	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
 	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
@@ -1040,14 +1036,14 @@
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
 				<!--- For wget script --->
-				<cfset wgetscript = createuuid()>
+				<cfset wgetscript = replace(createuuid(),"-","","all")>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
 				<!--- On Windows a .bat --->
 				<cfif arguments.thestruct.iswindows>
 					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
 				</cfif>
 				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# -O #arguments.thestruct.thefinalname# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# -O #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art#/#arguments.thestruct.thefinalname# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#" mode="777">
 				<!--- Download file --->
 				<cfthread name="download#art##theimageid#" intstruct="#arguments.thestruct#">
 					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />

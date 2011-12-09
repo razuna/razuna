@@ -736,8 +736,7 @@ This is the main function called directly by a single upload else from addassets
 	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
 	set2_img_comp_heigth, set2_vid_preview_author, set2_vid_preview_copyright, set2_path_to_assets
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#variables.setid#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -1055,8 +1054,6 @@ This is the main function called directly by a single upload else from addassets
 							<!--- Delete scripts --->
 							<cffile action="delete" file="#attributes.intstruct.thesh#">
 							<cffile action="delete" file="#attributes.intstruct.thesht#">
-							<!--- Parse PDF XMP and write to DB --->
-							<cfinvoke component="xmp" method="getpdfxmp" thestruct="#attributes.intstruct#" />
 							<!--- If no PDF could be generated then copy the thumbnail placeholder --->
 							<cfif NOT fileexists("#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#")>
 								<cffile action="copy" source="#attributes.intstruct.rootpath#global/host/dam/images/icons/icon_pdf.png" destination="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="775">
@@ -1460,7 +1457,7 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Add to shared options --->
 				<cfquery datasource="#attributes.intstruct.dsn#">
 				INSERT INTO #attributes.intstruct.hostdbprefix#share_options
-				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order)
+				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
@@ -1469,12 +1466,13 @@ This is the main function called directly by a single upload else from addassets
 				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="thumb" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 				<cfquery datasource="#attributes.intstruct.dsn#">
 				INSERT INTO #attributes.intstruct.hostdbprefix#share_options
-				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order)
+				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
@@ -1483,7 +1481,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 				<!--- If there are metadata fields then add them here --->
@@ -1605,14 +1604,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfif isAnimGIF>
 			<cfset QuerySetCell(arguments.thestruct.qrysettings, "set2_img_format", "gif", 1)>
 		</cfif>
-		<!--- Decide if we need to take the width and heigth from the arguments of from the query above --->
-		<!--- <cfif #arguments.thestruct.fieldname# EQ "NewFile" or #arguments.thestruct.img_thumb_width# EQ "" or #arguments.thestruct.img_thumb_heigth# EQ ""> --->
-			<cfset thumbwidth  = "#arguments.thestruct.qrysettings.set2_img_thumb_width#">
-			<cfset thumbheigth = "#arguments.thestruct.qrysettings.set2_img_thumb_heigth#">
-		<!--- <cfelse>
-			<cfset thumbwidth  = "#arguments.thestruct.img_thumb_width#">
-			<cfset thumbheigth = "#arguments.thestruct.img_thumb_heigth#">
-		</cfif> --->
 		<!--- Add the filename to the temp table so we can remove these files in one go later on --->
 		<cftransaction>
 			<cfquery datasource="#variables.dsn#">
@@ -1636,8 +1627,8 @@ This is the main function called directly by a single upload else from addassets
 		</cftransaction>
 		<!--- <cfset resizeImagett = createuuid()> --->
 		<cfset arguments.thestruct.theplaceholderpic = theplaceholderpic>
-		<cfset arguments.thestruct.width = thumbwidth>
-		<cfset arguments.thestruct.heigth = thumbheigth>
+		<cfset arguments.thestruct.width  = arguments.thestruct.qrysettings.set2_img_thumb_width>
+		<cfset arguments.thestruct.heigth = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 		<cfset arguments.thestruct.destination = "#arguments.thestruct.thetempdirectory#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
 		<cfif isWindows()>
 			<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
@@ -1647,9 +1638,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"'","\'","all")>
 		</cfif>
 		<!--- resize original to thumb --->
-		<cfinvoke method="resizeImage">
-			<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
-		</cfinvoke>
+		<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
 			<!--- storing assets on file system --->
 			<cfset arguments.thestruct.storage = application.razuna.storage>
 				<cfquery datasource="#arguments.thestruct.dsn#">
@@ -1988,7 +1977,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset orgwh.theheight = trim(listlast(orgwh.theheight," "))>
 		<cfset orgwh.thewidth = trim(listlast(orgwh.thewidth," "))>
 		<!--- Set correct width or heigth --->
-		<cfif orgwh.theheight LTE Arguments.thestruct.height AND orgwh.thewidth LTE Arguments.thestruct.width>
+		<cfif orgwh.theheight LTE Arguments.thestruct.heigth AND orgwh.thewidth LTE Arguments.thestruct.width>
 			<cfset theImgConvertParams = "-strip -colorspace RGB">
 		<cfelseif orgwh.thewidth GT Arguments.thestruct.width>
 			<cfset theImgConvertParams = "-thumbnail #Arguments.thestruct.width#x -strip -colorspace RGB">
@@ -2318,7 +2307,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Set shared options --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#share_options
-		(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order)
+		(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 		VALUES(
 		<cfqueryparam value="#arguments.thestruct.thisvid.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
@@ -2327,7 +2316,8 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="vid" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
 		</cfquery>
 		<!--- Add the rest of informations to the video db --->
@@ -3079,7 +3069,7 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Set shared options --->
 					<cfquery datasource="#attributes.audstruct.dsn#">
 					INSERT INTO #attributes.audstruct.hostdbprefix#share_options
-					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order)
+					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 					VALUES(
 					<cfqueryparam value="#attributes.audstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#attributes.audstruct.hostid#" cfsqltype="cf_sql_numeric">,
@@ -3088,7 +3078,8 @@ This is the main function called directly by a single upload else from addassets
 					<cfqueryparam value="aud" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 					<!--- If there are metadata fields then add them here --->

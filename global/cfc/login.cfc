@@ -161,12 +161,13 @@
 						<!--- Insert the DESCRIPTION --->
 						<cfquery datasource="#attributes.intstruct.dsn#">
 						insert into #attributes.intstruct.hostdbprefix#folders_desc
-						(folder_id_r, lang_id_r, folder_desc, host_id)
+						(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
 						values(
 						<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
 						<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
 						<cfqueryparam value="This is your personal folder" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 						)
 						</cfquery>
 					</cfif>

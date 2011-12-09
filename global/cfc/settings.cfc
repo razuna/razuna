@@ -277,12 +277,13 @@
 		<cfif qry.recordcount EQ 0>
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#languages
-			(lang_id, lang_name, lang_active, host_id)
+			(lang_id, lang_name, lang_active, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#langid#" cfsqltype="cf_sql_numeric">,
 			<cfqueryparam value="#ucase(left(thislang,1))##mid(thislang,2,20)#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="f" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_lang" />
@@ -443,11 +444,12 @@
 		</cfquery>
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#settings
-		(set_pref, set_id, host_id)
+		(set_pref, set_id, host_id, rec_uuid)
 		VALUES(
 		<cfqueryparam value="#arguments.thestruct.rendering_farm_location#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="rendering_farm_location" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
 		</cfquery>
 	</cfif>
@@ -502,11 +504,12 @@
 				</cfquery>
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#settings
-				(set_pref, set_id, host_id)
+				(set_pref, set_id, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#form["#myform#"]#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#lcase(myform)#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			</cfif>
@@ -521,9 +524,13 @@
 		<cfif ishere.recordcount EQ 0>
 			<cfquery datasource="#application.razuna.datasource#" name="ishere">
 			INSERT INTO #session.hostdbprefix#settings_2
-			(set2_id, host_id)
-			VALUES(<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">)
+			(set2_id, host_id, rec_uuid)
+			VALUES
+			(
+			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
 			</cfquery>
 		</cfif>
 		<!--- Update Settings_2 --->
@@ -857,11 +864,12 @@
 	</cfquery>
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#settings
-	(set_pref, set_id, host_id)
+	(set_pref, set_id, host_id, rec_uuid)
 	VALUES(
 	<cfqueryparam value="#arguments.thevalue#" cfsqltype="cf_sql_varchar">,
 	<cfqueryparam value="#lcase(arguments.thefield)#" cfsqltype="cf_sql_varchar">,
-	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+	<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 	)
 	</cfquery>
 </cffunction>

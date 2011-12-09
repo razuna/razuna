@@ -536,14 +536,14 @@
 					<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
 					<cfflush>
 					<!--- For wget script --->
-					<cfset wgetscript = createuuid()>
+					<cfset wgetscript = replace(createuuid(),"-","","all")>
 					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
 					<!--- On Windows a .bat --->
 					<cfif arguments.thestruct.iswindows>
 						<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
 					</cfif>
 					<!--- Write --->	
-					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.qryfile.path# -O #file_name_org# #cloud_url_org#" mode="777">
+					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.qryfile.path# -O #arguments.thestruct.qryfile.path#/#file_name_org# #cloud_url_org#" mode="777">
 					<!--- Download --->
 					<cfthread name="#wgetscript#" intstruct="#arguments.thestruct#">
 						<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />

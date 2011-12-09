@@ -136,9 +136,11 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE ct_groups_users
 		(	CT_G_U_GRP_ID 		VARCHAR2(100 CHAR) NOT NULL ENABLE, 
-			CT_G_U_USER_ID 		VARCHAR2(100 CHAR) NOT NULL ENABLE, 
-		CONSTRAINT CT_GROUPS_USERS_UK1 UNIQUE (CT_G_U_GRP_ID, CT_G_U_USER_ID), 
-		CONSTRAINT CT_GROUPS_USERS_GROUPS_FK1 FOREIGN KEY (CT_G_U_GRP_ID)
+			CT_G_U_USER_ID 		VARCHAR2(100 CHAR) NOT NULL ENABLE,
+			rec_uuid			VARCHAR2(100 CHAR),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#CTGU_PK PRIMARY KEY (rec_uuid),
+			CONSTRAINT CT_GROUPS_USERS_UK1 UNIQUE (CT_G_U_GRP_ID, CT_G_U_USER_ID), 
+			CONSTRAINT CT_GROUPS_USERS_GROUPS_FK1 FOREIGN KEY (CT_G_U_GRP_ID)
 			REFERENCES groups (GRP_ID) ENABLE
 		)
 		</cfquery>
@@ -168,7 +170,9 @@
 		CREATE TABLE ct_users_hosts 
 		(
 		  CT_U_H_USER_ID  VARCHAR2(100 CHAR),
-		  CT_U_H_HOST_ID  NUMBER
+		  CT_U_H_HOST_ID  NUMBER,
+		  rec_uuid		  VARCHAR2(100 CHAR),
+		  CONSTRAINT CTUH_PK PRIMARY KEY (rec_uuid) ENABLE
 		)
 		</cfquery>
 		<!--- USERS_LOGIN --->
@@ -274,7 +278,9 @@
 		(
 			ct_label_id 	varchar2(100 char),
 		 	ct_id_r 		varchar2(100 char),
-		 	ct_type 		varchar2(100 char)
+		 	ct_type 		varchar2(100 char),
+		 	rec_uuid		VARCHAR2(100 char),
+		 	PRIMARY KEY(rec_uuid)
 		)
 		</cfquery>
 		<!--- CREATE RFS --->
@@ -1089,7 +1095,8 @@
 			FILE_ID			VARCHAR2(100 CHAR),
 			LINK_KIND		VARCHAR2(20 CHAR),
 			HOST_ID			NUMBER,
-			md5hash			VARCHAR2(100 CHAR)
+			md5hash			VARCHAR2(100 CHAR),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#ASSETSTEMP PRIMARY KEY (TEMPID)
 		)
 		
 		</cfquery>
@@ -1192,6 +1199,7 @@
 		  share_order			varchar2(1 char) DEFAULT 'f',
 		  share_order_user		VARCHAR2(100 CHAR),
 		  HOST_ID				NUMBER,
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDER_PK PRIMARY KEY (FOLDER_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
 		
@@ -1205,6 +1213,8 @@
 		  LANG_ID_R    	NUMBER,
 		  FOLDER_DESC  	CLOB,
 		  HOST_ID		NUMBER,
+		  rec_uuid		VARCHAR2(100 CHAR),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#FD_PK PRIMARY KEY (rec_uuid) ENABLE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_DESC_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
 		
@@ -1218,6 +1228,8 @@
 		  GRP_ID_R        	VARCHAR2(100 CHAR),
 		  GRP_PERMISSION  	VARCHAR2(2 CHAR),
 		  HOST_ID			NUMBER,
+		  rec_uuid			VARCHAR2(100 CHAR),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#FG_PK PRIMARY KEY (LOG_ACT_ID) ENABLE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_GROUPS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
 		
@@ -1445,6 +1457,8 @@
 		  SET_ID    VARCHAR2(100 CHAR) NOT NULL,
 		  SET_PREF  CLOB,
 		  HOST_ID	NUMBER,
+		  rec_uuid			VARCHAR(100),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#settings_PK PRIMARY KEY (rec_uuid) ENABLE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE ENABLE
 		)
 		
@@ -1521,7 +1535,9 @@
 		  SET2_NIRVANIX_PASS			VARCHAR2(500 CHAR),
 		  HOST_ID						NUMBER,
 		  SET2_AWS_BUCKET				VARCHAR2(100 CHAR),
-		  SET2_LABELS_USERS				VARCHAR2(2 CHAR) DEFAULT 'f'
+		  SET2_LABELS_USERS				VARCHAR2(2 CHAR) DEFAULT 'f',
+		  rec_uuid			VARCHAR(100),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS2_PK PRIMARY KEY (rec_uuid) ENABLE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS2_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE ENABLE
 		)
 		
@@ -1574,6 +1590,8 @@
 		  COL_KEYWORDS  CLOB,
 		  COL_NAME      VARCHAR2(200 CHAR),
 		  HOST_ID		 NUMBER,
+		  rec_uuid			VARCHAR2(100 CHAR),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#COLCT_PK PRIMARY KEY (rec_uuid) ENABLE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_TEXT_#arguments.thestruct.host_db_prefix#FK1 FOREIGN KEY (COL_ID_R)
 	REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1589,9 +1607,11 @@
 		  COL_FILE_TYPE  	VARCHAR2(5 CHAR),
 		  COL_ITEM_ORDER  	NUMBER,
 		  COL_FILE_FORMAT  	VARCHAR2(100 CHAR),
-		  HOST_ID		 NUMBER,
-		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_CT_FILES_FK1 FOREIGN KEY (COL_ID_R)
-	REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE ENABLE
+		  HOST_ID		 	NUMBER,
+		  rec_uuid			VARCHAR2(100 CHAR),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#CCTF_PK PRIMARY KEY (rec_uuid) ENABLE,
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_CT_FILES_FK1 FOREIGN KEY (COL_ID_R)
+	      REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE ENABLE
 		)
 		
 		</cfquery>
@@ -1603,9 +1623,11 @@
 		  COL_ID_R       	VARCHAR2(100 CHAR),
 		  GRP_ID_R			VARCHAR2(100 CHAR),
 		  GRP_PERMISSION	VARCHAR2(2 CHAR),
-		  HOST_ID		 NUMBER,
-		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_GROUPS_FK1 FOREIGN KEY (COL_ID_R)
-	  REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE SET NULL ENABLE
+		  HOST_ID		 	NUMBER,
+		  rec_uuid			VARCHAR2(100 CHAR),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#COLCG_PK PRIMARY KEY (rec_uuid) ENABLE,
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_GROUPS_FK1 FOREIGN KEY (COL_ID_R)
+	      REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE SET NULL ENABLE
 		)
 		
 		</cfquery>
@@ -1620,6 +1642,8 @@
 		  FAV_KIND   	VARCHAR2(8 CHAR),
 		  FAV_ORDER  	NUMBER,
 		  HOST_ID		NUMBER,
+		  rec_uuid			VARCHAR2(100 CHAR),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#UF_PK PRIMARY KEY (LOG_ACT_ID) ENABLE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#USERS_FAVORITES_FK1 FOREIGN KEY (USER_ID_R)
 	  REFERENCES USERS (USER_ID) ON DELETE SET NULL ENABLE
 		)
@@ -1780,6 +1804,8 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			lang_id_r 		NUMBER, 
 			cf_text			CLOB,
 			HOST_ID		 NUMBER,
+			rec_uuid			VARCHAR2(100 CHAR),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#cft_PK PRIMARY KEY (rec_uuid) ENABLE,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#cf_text FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
 		
@@ -1791,6 +1817,8 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			asset_id_r 		VARCHAR2(100 CHAR), 
 			cf_value		CLOB,
 			HOST_ID		 NUMBER,
+			rec_uuid			VARCHAR(100),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#CFV_PK PRIMARY KEY (rec_uuid) ENABLE,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#cf_values FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
 		
@@ -1836,7 +1864,9 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			HOST_ID		 		NUMBER,
 			cloud_url_org		VARCHAR2(500 CHAR),
 			ver_thumbnail		VARCHAR2(200 CHAR),
-			hashtag				VARCHAR2(100 CHAR)
+			hashtag				VARCHAR2(100 CHAR),
+			rec_uuid			VARCHAR2(100 CHAR),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#versions_PK PRIMARY KEY (rec_uuid) ENABLE
 		)
 		</cfquery>
 		
@@ -1847,7 +1877,9 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			lang_id				NUMBER NOT NULL,
 			lang_name			VARCHAR2(100 CHAR) NOT NULL,
 			lang_active			VARCHAR2(2 CHAR) default 'f',
-			HOST_ID				NUMBER
+			HOST_ID				NUMBER,
+			rec_uuid			VARCHAR2(100 CHAR),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#languages_PK PRIMARY KEY (rec_uuid) ENABLE
 		)
 		</cfquery>
 		
@@ -1900,6 +1932,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			aud_DESCRIPTION     CLOB,
 			aud_KEYWORDS		CLOB,
 			HOST_ID		 NUMBER,
+			CONSTRAINT #arguments.thestruct.host_db_prefix#AUDIOS_TEXT_PK PRIMARY KEY (ID_INC),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_DESC_FK_FILE FOREIGN KEY (aud_ID_R)
 			REFERENCES #arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
 		)
@@ -1917,7 +1950,9 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			asset_format	varchar2(100 CHAR),
 			asset_dl		varchar2(1 CHAR) DEFAULT '0',
 			asset_order		varchar2(1 CHAR) DEFAULT '0',
-			asset_selected	varchar2(1 CHAR) DEFAULT '0'
+			asset_selected	varchar2(1 CHAR) DEFAULT '0',
+			rec_uuid			VARCHAR2(100 CHAR),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#share_options_pk PRIMARY KEY (rec_uuid) ENABLE
 		)
 		</cfquery>
 		
@@ -1958,7 +1993,9 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		  	upl_temp_value		varchar2(100 CHAR) DEFAULT NULL,
 		  	upl_temp_type		varchar2(5 CHAR) DEFAULT NULL,
 		  	upl_temp_format		varchar2(5 CHAR) DEFAULT NULL,
-		  	host_id				number DEFAULT NULL		
+		  	host_id				number DEFAULT NULL,
+		  	rec_uuid			VARCHAR2(100 CHAR),
+		  	CONSTRAINT #arguments.thestruct.host_db_prefix#UTV_PK PRIMARY KEY (rec_uuid) ENABLE	
 		)
 		</cfquery>
 		

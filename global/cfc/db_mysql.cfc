@@ -154,6 +154,8 @@
 		(	
 		CT_G_U_GRP_ID 		VARCHAR(100) NOT NULL, 
 		CT_G_U_USER_ID 		VARCHAR(100) NOT NULL,
+		rec_uuid			VARCHAR(100),
+		PRIMARY KEY (rec_uuid),
 		KEY CT_G_U_GRP_ID (ct_g_u_grp_id),
   		KEY ct_g_u_user_id (ct_g_u_user_id),
 		FOREIGN KEY (CT_G_U_GRP_ID) REFERENCES groups (GRP_ID) ON DELETE CASCADE
@@ -189,6 +191,8 @@
 		(
 		  CT_U_H_USER_ID  VARCHAR(100),
 		  CT_U_H_HOST_ID  INT,
+		  rec_uuid		  VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY ct_u_h_user_id (ct_u_h_user_id),
   		  KEY ct_u_h_host_id (CT_U_H_HOST_ID)
 		)
@@ -304,7 +308,9 @@
 		(
 			ct_label_id 	varchar(100),
 		 	ct_id_r 		varchar(100),
-		 	ct_type 		varchar(100)
+		 	ct_type 		varchar(100),
+		 	rec_uuid		VARCHAR(100),
+		 	PRIMARY KEY(rec_uuid)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -506,8 +512,8 @@
 			<!--- DEFAULT ADMIN CROSS TABLE --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO #arguments.thestruct.theschema#.ct_groups_users
-			(CT_G_U_GRP_ID, CT_G_U_USER_ID)
-			VALUES(	'1', '1')
+			(CT_G_U_GRP_ID, CT_G_U_USER_ID, rec_uuid)
+			VALUES(	'1', '1', '#createuuid()#')
 			</cfquery>
 			<!--- DEFAULT ADMIN PERMISSIONS --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -1128,7 +1134,7 @@
 			LINK_KIND		VARCHAR(20),
 			HOST_ID			INT,
 			md5hash			VARCHAR(100),
-			KEY #arguments.thestruct.host_db_prefix#t_id (TEMPID),
+			PRIMARY KEY (TEMPID),
 		    KEY #arguments.thestruct.host_db_prefix#t_date (DATE_ADD),
 			KEY #arguments.thestruct.host_db_prefix#t_hostid (HOST_ID)
 		)
@@ -1240,6 +1246,7 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				INT,
+		  PRIMARY KEY (FOLDER_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fo_hostid (HOST_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fo_id (folder_id),
 		  KEY #arguments.thestruct.host_db_prefix#fo_name (FOLDER_NAME),
@@ -1261,6 +1268,8 @@
 		  LANG_ID_R    INT,
 		  FOLDER_DESC  text,
 		  HOST_ID	   INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#fod_hostid (HOST_ID),
 		  KEY #arguments.thestruct.host_db_prefix#fod_fidr (folder_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#fod_lang (LANG_ID_R),
@@ -1277,6 +1286,8 @@
 		  GRP_ID_R        VARCHAR(100),
 		  GRP_PERMISSION  VARCHAR(2),
 		  HOST_ID		  INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#fg_grpid (grp_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#fg_grpperm (GRP_PERMISSION),
 		  KEY #arguments.thestruct.host_db_prefix#fg_hostid (HOST_ID),
@@ -1539,6 +1550,8 @@
 		  SET_ID    VARCHAR(100) NOT NULL,
 		  SET_PREF  text,
 		  HOST_ID	INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#set_hostid (HOST_ID),
   		  KEY #arguments.thestruct.host_db_prefix#set_id (SET_ID),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
@@ -1618,6 +1631,8 @@
 		  HOST_ID						INT,
 		  SET2_AWS_BUCKET				VARCHAR(100),
 		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 'f',
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#set2_HOST_ID (HOST_ID),
   		  KEY #arguments.thestruct.host_db_prefix#set2_id (SET2_ID),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
@@ -1674,6 +1689,8 @@
 		  COL_KEYWORDS  text,
 		  COL_NAME      text,
 		  HOST_ID		INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#col_text_id (col_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#col_text_lang (LANG_ID_R),
 		  FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
@@ -1691,6 +1708,8 @@
 		  COL_ITEM_ORDER  	INT,
 		  COL_FILE_FORMAT  	VARCHAR(100),
 		  HOST_ID			INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#col_idr (col_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#col_fileid (file_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#col_filetype (COL_FILE_TYPE),
@@ -1708,6 +1727,8 @@
 		  GRP_ID_R			VARCHAR(100),
 		  GRP_PERMISSION	VARCHAR(2),
 		  HOST_ID			INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#cg_colid_r (col_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#cg_grpid_r (grp_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#cg_hostid (HOST_ID),
@@ -1726,6 +1747,8 @@
 		  FAV_KIND   VARCHAR(8),
 		  FAV_ORDER  INT,
 		  HOST_ID	 INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  KEY #arguments.thestruct.host_db_prefix#uf_idr (user_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#uf_id (fav_id),
 		  KEY #arguments.thestruct.host_db_prefix#uf_hostid (HOST_ID),
@@ -1903,6 +1926,8 @@
 			lang_id_r 		INT, 
 			cf_text			text,
 			HOST_ID			INT,
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid),
 			KEY #arguments.thestruct.host_db_prefix#cft_id (cf_id_r),
 			KEY #arguments.thestruct.host_db_prefix#cft_lang (lang_id_r),
 			KEY #arguments.thestruct.host_db_prefix#cft_hostid (HOST_ID),
@@ -1917,6 +1942,8 @@
 			asset_id_r 		VARCHAR(100), 
 			cf_value		text,
 			HOST_ID			INT,
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid),
 			KEY #arguments.thestruct.host_db_prefix#cfv_idr (cf_id_r),
 		    KEY #arguments.thestruct.host_db_prefix#cfv_hostid (HOST_ID),
 		    KEY #arguments.thestruct.host_db_prefix#cfv_assetid (asset_id_r),
@@ -1967,7 +1994,9 @@
 			HOST_ID				INT,
 			cloud_url_org		VARCHAR(500),
 			ver_thumbnail		VARCHAR(200),
-			hashtag				VARCHAR(100)
+			hashtag				VARCHAR(100),
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid)
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -1980,6 +2009,8 @@
 			lang_name		VARCHAR(100),
 			lang_active		VARCHAR(2) default 'f',
 			HOST_ID			INT,
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid),
 			KEY #arguments.thestruct.host_db_prefix#l_active (lang_active),
   			KEY #arguments.thestruct.host_db_prefix#l_hostid (HOST_ID)
 		)
@@ -2040,6 +2071,7 @@
 			aud_DESCRIPTION     TEXT,
 			aud_KEYWORDS		TEXT,
 			HOST_ID				INT,
+			PRIMARY KEY (id_inc),
 			KEY #arguments.thestruct.host_db_prefix#at_idr (aud_id_r),
 		    KEY #arguments.thestruct.host_db_prefix#at_lang (LANG_ID_R),
 		    KEY #arguments.thestruct.host_db_prefix#at_hostid (HOST_ID),
@@ -2061,6 +2093,8 @@
 			asset_dl		varchar(1) DEFAULT '0',
 			asset_order		varchar(1) DEFAULT '0',
 			asset_selected	varchar(1) DEFAULT '0',
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid),
 			KEY #arguments.thestruct.host_db_prefix#so_hostid (host_id),
 		    KEY #arguments.thestruct.host_db_prefix#so_asset_type (asset_type),
 		    KEY #arguments.thestruct.host_db_prefix#so_folderid (folder_id_r),
@@ -2114,6 +2148,8 @@
 		  	upl_temp_type		varchar(5) DEFAULT NULL,
 		  	upl_temp_format		varchar(5) DEFAULT NULL,
 		  	host_id				int DEFAULT NULL,
+		  	rec_uuid			VARCHAR(100),
+		  	PRIMARY KEY (rec_uuid),
 		  	KEY #arguments.thestruct.host_db_prefix#utv_idr (upl_temp_id_r),
   			KEY #arguments.thestruct.host_db_prefix#utv_hostid (host_id)	
 		)

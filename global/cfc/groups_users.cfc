@@ -178,8 +178,8 @@
 	<!--- insert --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO	ct_groups_users
-	(ct_g_u_grp_id, ct_g_u_user_id)
-	SELECT groups.grp_id, users.user_id
+	(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+	SELECT groups.grp_id, users.user_id, '#createuuid()#'
 	FROM groups
 	INNER JOIN users ON	NOT EXISTS(
 								SELECT ct_g_u_grp_id, ct_g_u_user_id

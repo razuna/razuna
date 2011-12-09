@@ -132,7 +132,8 @@
 		CREATE TABLE #arguments.thestruct.tschema#.ct_groups_users
 		(	
 		CT_G_U_GRP_ID 		VARCHAR(100) NOT NULL, 
-		CT_G_U_USER_ID 		VARCHAR(100) NOT NULL
+		CT_G_U_USER_ID 		VARCHAR(100) NOT NULL,
+		rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 		<!--- CREATE CT_GROUPS_PERMISSIONS --->
@@ -157,6 +158,7 @@
 		(
 		  CT_U_H_USER_ID  VARCHAR(100),
 		  CT_U_H_HOST_ID  BIGINT
+		  rec_uuid		  VARCHAR(100)
 		)
 		</cfquery>
 		<!--- CREATE USERS_LOGIN --->
@@ -254,7 +256,8 @@
 		(
 			ct_label_id 	varchar(100),
 		 	ct_id_r 		varchar(100),
-		 	ct_type 		varchar(100)
+		 	ct_type 		varchar(100),
+		 	rec_uuid		VARCHAR(100)
 		)
 		</cfquery>
 		<!--- CREATE RFS --->
@@ -414,7 +417,8 @@
 		  FOLDER_ID_R		VARCHAR(100),
 		  LANG_ID_R			BIGINT,
 		  FOLDER_DESC		VARCHAR(1000),
-		  HOST_ID			BIGINT
+		  HOST_ID			BIGINT,
+		  rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -425,7 +429,8 @@
 		  FOLDER_ID_R		VARCHAR(100),
 		  GRP_ID_R			VARCHAR(100) DEFAULT NULL,
 		  GRP_PERMISSION	VARCHAR(2),
-		  HOST_ID			BIGINT
+		  HOST_ID			BIGINT,
+		  rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -628,7 +633,8 @@
 		(
 		  SET_ID			VARCHAR(100) NOT NULL,
 		  SET_PREF			VARCHAR(2000),
-		  HOST_ID			BIGINT
+		  HOST_ID			BIGINT,
+		  rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -703,7 +709,8 @@
 		  SET2_NIRVANIX_PASS			VARCHAR(500),
 		  HOST_ID						BIGINT,
 		  SET2_AWS_BUCKET				VARCHAR(100),
-		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 't'
+		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 't',
+		  rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 				
@@ -750,6 +757,7 @@
 		  COL_KEYWORDS  VARCHAR(2000),
 		  COL_NAME      VARCHAR(300),
 		  HOST_ID		BIGINT
+		  rec_uuid		VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -762,7 +770,8 @@
 		  COL_FILE_TYPE  	VARCHAR(5),
 		  COL_ITEM_ORDER  	BIGINT,
 		  COL_FILE_FORMAT  	VARCHAR(100),
-		  HOST_ID			BIGINT
+		  HOST_ID			BIGINT,
+		  rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -773,7 +782,8 @@
 		  COL_ID_R       	VARCHAR(100),
 		  GRP_ID_R			VARCHAR(100) DEFAULT NULL,
 		  GRP_PERMISSION	VARCHAR(2),
-		  HOST_ID			BIGINT		
+		  HOST_ID			BIGINT,
+		  rec_uuid			VARCHAR(100)	
 		)
 		</cfquery>
 		
@@ -786,7 +796,8 @@
 		  FAV_ID     VARCHAR(100),
 		  FAV_KIND   VARCHAR(8),
 		  FAV_ORDER  BIGINT,
-		  HOST_ID	 BIGINT
+		  HOST_ID	 BIGINT,
+		  rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -927,7 +938,9 @@
 			cf_id_r			VARCHAR(100), 
 			lang_id_r 		bigint, 
 			cf_text			VARCHAR(500),
-			HOST_ID			BIGINT
+			HOST_ID			BIGINT,
+			rec_uuid			VARCHAR(100)
+			
 		)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -936,7 +949,8 @@
 			cf_id_r			VARCHAR(100), 
 			asset_id_r 		VARCHAR(100), 
 			cf_value		VARCHAR(4000),
-			HOST_ID			BIGINT
+			HOST_ID			BIGINT,
+			rec_uuid		VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -978,7 +992,8 @@
 			HOST_ID				BIGINT,
 			cloud_url_org		VARCHAR(500),
 			ver_thumbnail		VARCHAR(200),
-			hashtag				VARCHAR(100)
+			hashtag				VARCHAR(100),
+			rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -989,7 +1004,8 @@
 			lang_id			BIGINT NOT NULL,
 			lang_name		VARCHAR(100),
 			lang_active		VARCHAR(2) default 'f',
-			host_id			BIGINT
+			host_id			BIGINT,
+			rec_uuid		VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -1055,7 +1071,8 @@
 			asset_format	varchar(100),
 			asset_dl		varchar(1) DEFAULT '0',
 			asset_order		varchar(1) DEFAULT '0',
-			asset_selected		varchar(1) DEFAULT '0'
+			asset_selected		varchar(1) DEFAULT '0',
+			rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
 		
@@ -1095,7 +1112,8 @@
 		  	upl_temp_value		varchar(100) DEFAULT NULL,
 		  	upl_temp_type		varchar(5) DEFAULT NULL,
 		  	upl_temp_format		varchar(5) DEFAULT NULL,
-		  	host_id				BIGINT DEFAULT NULL		
+		  	host_id				BIGINT DEFAULT NULL,
+		  	rec_uuid			VARCHAR(100)	
 		)
 		</cfquery>
 		

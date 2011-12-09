@@ -153,10 +153,11 @@
 				<!--- Insert the user as systemadmin to the cross table --->
 				<cfquery datasource="#variables.dsn#">
 				INSERT INTO ct_groups_users
-				(ct_g_u_user_id, ct_g_u_grp_id)
+				(ct_g_u_user_id, ct_g_u_grp_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">, 
-				<cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">
+				<cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 				<!--- Set session for the user --->
@@ -174,10 +175,11 @@
 				<cftransaction>
 					<cfquery datasource="#variables.dsn#">
 					insert into ct_users_hosts
-					(ct_u_h_user_id, ct_u_h_host_id)
+					(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 					values(
 					<cfqueryparam value="#user_id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#hostid.id#" cfsqltype="cf_sql_numeric">
+					<cfqueryparam value="#hostid.id#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 				</cftransaction>
@@ -260,12 +262,13 @@
 			<!--- Insert --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#languages
-			(lang_id, lang_name, lang_active, host_id)
+			(lang_id, lang_name, lang_active, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#langid#" cfsqltype="cf_sql_numeric">,
 			<cfqueryparam value="#langname#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric">
+			<cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 			<!--- Setting DB: Titel Intra --->
@@ -273,11 +276,12 @@
 			<cfset thelang = replacenocase("#thelang#","arguments.thestruct.","","ALL")>
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO #arguments.thestruct.host_db_prefix#settings
-			(set_id, set_pref, host_id)
+			(set_id, set_pref, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#ucase(thelang)#" cfsqltype="cf_sql_varchar">, 
 			<cfqueryparam value="Razuna - Enterprise Digital Asset Management (DAM)" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric">
+			<cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 		</cfloop>
@@ -322,7 +326,8 @@
 		set2_create_vidfolders_where, 
 		set2_email_from, 
 		set2_path_to_assets,
-		host_id
+		host_id,
+		rec_uuid
 		)
 		Values
 		(1, 
@@ -363,7 +368,8 @@
 		0,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.email_from#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.path_assets#">,
-		<cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric">
+		<cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
 		</cfquery>
 		<!--- Tools
@@ -419,8 +425,8 @@
 		<!--- and description with it --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		Insert into #arguments.thestruct.host_db_prefix#folders_desc
-		(FOLDER_ID_R, LANG_ID_R, FOLDER_DESC, host_id)
-		Values('#newfolderid#', 1, 'This is the default collections folder for storing collections.', #arguments.thestruct.host_id#)
+		(FOLDER_ID_R, LANG_ID_R, FOLDER_DESC, host_id, rec_uuid)
+		Values('#newfolderid#', 1, 'This is the default collections folder for storing collections.', #arguments.thestruct.host_id#, <cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
 		<cfcatch type="any">
 			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error during inserting default values" type="html">

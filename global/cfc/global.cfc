@@ -440,7 +440,7 @@ Comment:<br>
 		<!--- Do Insert --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#share_options
-		(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, asset_selected)
+		(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, asset_selected, rec_uuid)
 		VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
@@ -450,7 +450,8 @@ Comment:<br>
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.format#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#download#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#order#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#selected#">
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#selected#">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
 		</cfquery>
 		<!--- Flush Cache --->
@@ -583,14 +584,15 @@ Comment:<br>
 			<!--- Save the convert to --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#upload_templates_val
-			(upl_temp_id_r, upl_temp_field, upl_temp_value, upl_temp_type, upl_temp_format, host_id)
+			(upl_temp_id_r, upl_temp_field, upl_temp_value, upl_temp_type, upl_temp_format, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_temp_id#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="convert_to">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theformat#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thetype#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theformat#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 			<!--- Save the additional values --->
@@ -601,14 +603,15 @@ Comment:<br>
 					<cfif tv NEQ "">
 						<cfquery datasource="#application.razuna.datasource#">
 						INSERT INTO #session.hostdbprefix#upload_templates_val
-						(upl_temp_id_r, upl_temp_field, upl_temp_value, upl_temp_type, upl_temp_format, host_id)
+						(upl_temp_id_r, upl_temp_field, upl_temp_value, upl_temp_type, upl_temp_format, host_id, rec_uuid)
 						VALUES(
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_temp_id#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#tf#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#tv#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thetype#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theformat#">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 						)
 						</cfquery>
 					</cfif>

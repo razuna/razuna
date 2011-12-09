@@ -60,14 +60,15 @@
 			<!--- do the insert --->
 			<cfquery datasource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#users_favorites
-			(user_id_r, fav_type, fav_id, fav_kind, fav_order, host_id)
+			(user_id_r, fav_type, fav_id, fav_kind, fav_order, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#arguments.thestruct.favtype#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#arguments.thestruct.favid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#arguments.thestruct.favkind#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#neworder#" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 			<!--- Flush Cache --->

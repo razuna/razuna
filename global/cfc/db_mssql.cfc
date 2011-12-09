@@ -296,7 +296,9 @@
 		CREATE TABLE #arguments.thestruct.theschema#.ct_groups_users
 		(	
 		CT_G_U_GRP_ID 		VARCHAR(100) NOT NULL, 
-		CT_G_U_USER_ID 		VARCHAR(100) NOT NULL, 
+		CT_G_U_USER_ID 		VARCHAR(100) NOT NULL,
+		rec_uuid			VARCHAR(100),
+		PRIMARY KEY (rec_uuid), 
 		FOREIGN KEY (CT_G_U_GRP_ID) REFERENCES #arguments.thestruct.theschema#.groups (GRP_ID) ON DELETE CASCADE
 		)
 		
@@ -327,7 +329,9 @@
 		CREATE TABLE #arguments.thestruct.theschema#.ct_users_hosts 
 		(
 		  CT_U_H_USER_ID  VARCHAR(100),
-		  CT_U_H_HOST_ID  INT
+		  CT_U_H_HOST_ID  INT,
+		  rec_uuid		  VARCHAR(100),
+		  PRIMARY KEY (rec_uuid)
 		)
 		
 		</cfquery>
@@ -439,7 +443,9 @@
 		(
 			ct_label_id 	varchar(100),
 		 	ct_id_r 		varchar(100),
-		 	ct_type 		varchar(100)
+		 	ct_type 		varchar(100),
+		 	rec_uuid		VARCHAR(100),
+		 	PRIMARY KEY(rec_uuid)
 		)
 		</cfquery>
 		<!--- CREATE RFS --->
@@ -497,8 +503,8 @@
 		<!--- DEFAULT ADMIN CROSS TABLE --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #arguments.thestruct.theschema#.ct_groups_users
-		(CT_G_U_GRP_ID, CT_G_U_USER_ID)
-		VALUES(	'1', '1')
+		(CT_G_U_GRP_ID, CT_G_U_USER_ID, rec_uuid)
+		VALUES(	'1', '1', '#createuuid()#')
 		</cfquery>
 		<!--- DEFAULT ADMIN PERMISSIONS --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -1121,7 +1127,8 @@
 			FILE_ID			VARCHAR(100),
 			LINK_KIND		VARCHAR(20),
 			HOST_ID			INT,
-			md5hash			VARCHAR(100)
+			md5hash			VARCHAR(100),
+			PRIMARY KEY (TEMPID)
 		)
 		</cfquery>
 		
@@ -1223,6 +1230,7 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				INT,
+		  PRIMARY KEY (FOLDER_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		
@@ -1236,6 +1244,8 @@
 		  LANG_ID_R    INT,
 		  FOLDER_DESC  NVARCHAR(max),
 		  HOST_ID	   INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		
@@ -1249,6 +1259,8 @@
 		  GRP_ID_R        VARCHAR(100),
 		  GRP_PERMISSION  VARCHAR(2),
 		  HOST_ID		  INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		
@@ -1474,6 +1486,8 @@
 		  SET_ID    VARCHAR(100) NOT NULL,
 		  SET_PREF  NVARCHAR(max),
 		  HOST_ID				INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		
@@ -1551,6 +1565,8 @@
 		  HOST_ID						INT,
 		  SET2_AWS_BUCKET				VARCHAR(100),
 		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 'f',
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
 		
@@ -1602,6 +1618,8 @@
 		  COL_KEYWORDS  NVARCHAR(max),
 		  COL_NAME      NVARCHAR(max),
 		  HOST_ID				INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
 		)
 		
@@ -1616,8 +1634,10 @@
 		  COL_FILE_TYPE  	VARCHAR(5),
 		  COL_ITEM_ORDER  	INT,
 		  COL_FILE_FORMAT  	VARCHAR(100),
-		  HOST_ID				INT,
-		FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
+		  HOST_ID			INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
+   		  FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
 		)
 		
 		</cfquery>
@@ -1630,6 +1650,8 @@
 		  GRP_ID_R			VARCHAR(100),
 		  GRP_PERMISSION	VARCHAR(2),
 		  HOST_ID			INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
 		)
 		
@@ -1645,6 +1667,8 @@
 		  FAV_KIND   VARCHAR(8),
 		  FAV_ORDER  INT,
 		  HOST_ID	 INT,
+		  rec_uuid			VARCHAR(100),
+		  PRIMARY KEY (rec_uuid),
 		FOREIGN KEY (USER_ID_R) REFERENCES #arguments.thestruct.theschema#.users (USER_ID) ON DELETE SET NULL
 		)
 		
@@ -1802,6 +1826,8 @@
 			lang_id_r 		INT, 
 			cf_text			nvarchar(max),
 			HOST_ID			INT,
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid),
 			FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
 		
@@ -1813,6 +1839,8 @@
 			asset_id_r 		VARCHAR(100), 
 			cf_value		nvarchar(max),
 			HOST_ID			INT,
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid),
 			FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
 		
@@ -1858,7 +1886,9 @@
 			HOST_ID				INT,
 			cloud_url_org		VARCHAR(500),
 			ver_thumbnail		VARCHAR(200),
-			hashtag				VARCHAR(100)
+			hashtag				VARCHAR(100),
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid)
 		)
 		
 		</cfquery>
@@ -1870,7 +1900,9 @@
 			lang_id			INT NOT NULL,
 			lang_name		VARCHAR(100),
 			lang_active		VARCHAR(2) default 'f',
-			HOST_ID			INT
+			HOST_ID			INT,
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid)
 		)
 		
 		</cfquery>
@@ -1924,6 +1956,7 @@
 			aud_DESCRIPTION     NVARCHAR(max),
 			aud_KEYWORDS		NVARCHAR(max),
 			HOST_ID				INT,
+			PRIMARY KEY (ID_INC),
 			FOREIGN KEY (aud_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
 		)
 		</cfquery>
@@ -1940,7 +1973,9 @@
 			asset_format	varchar(100),
 			asset_dl		varchar(1) DEFAULT '0',
 			asset_order		varchar(1) DEFAULT '0',
-			asset_selected	varchar(1) DEFAULT '0'
+			asset_selected	varchar(1) DEFAULT '0',
+			rec_uuid			VARCHAR(100),
+			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
 		
@@ -1981,7 +2016,9 @@
 		  	upl_temp_value		varchar(100) DEFAULT NULL,
 		  	upl_temp_type		varchar(5) DEFAULT NULL,
 		  	upl_temp_format		varchar(5) DEFAULT NULL,
-		  	host_id				int DEFAULT NULL		
+		  	host_id				int DEFAULT NULL,
+		  	rec_uuid			VARCHAR(100),
+		  	PRIMARY KEY (rec_uuid)	
 		)
 		</cfquery>
 		

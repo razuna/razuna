@@ -931,7 +931,7 @@
 			<cfset thename = arguments.thestruct.qry_detail.vid_name_org>
 			<cfset arguments.thestruct.thename = thename>
 			<!--- For wget script --->
-			<cfset var wgetscript = createuuid()>
+			<cfset var wgetscript = replace(createuuid(),"-","","all")>
 			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#w.sh">
 			<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#wgetscript#wt.sh">
 			<cfset var thewget = "#arguments.thestruct.thetools.wget#/wget">
@@ -942,8 +942,8 @@
 				<cfset var thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
 			</cfif>
 			<!--- Write --->	
-			<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.thename# #arguments.thestruct.qry_detail.cloud_url_org#" mode="777">
-			<cffile action="write" file="#arguments.thestruct.theshwt#" output="#thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.qry_detail.vid_name_image# #arguments.thestruct.qry_detail.cloud_url#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder#  #arguments.thestruct.qry_detail.cloud_url_org#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshwt#" output="#thewget# -P #arguments.thestruct.thisfolder# #arguments.thestruct.qry_detail.cloud_url#" mode="777">
 			<!--- Download and write the file --->
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<!--- Download video --->
@@ -1219,7 +1219,7 @@
 				<cftransaction>
 					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#share_options
-					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order)
+					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 					VALUES(
 					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
@@ -1228,7 +1228,8 @@
 					<cfqueryparam value="vid" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
 					<!--- Update the video record with other information --->
@@ -1330,7 +1331,7 @@
 		<!--- Query the db --->
 		<cfquery name="qry" datasource="#variables.dsn#">
 		SELECT v.vid_mimetype mt, v.vid_filename, v.vid_extension, v.vid_name_pre, v.vid_name_org, v.folder_id_r,
-		v.vid_group, s.set2_url_sp_#thecolname# urloracle, v.link_kind, v.link_path_url, v.path_to_asset
+		v.vid_group, s.set2_url_sp_#thecolname# urloracle, v.link_kind, v.link_path_url, v.path_to_asset, cloud_url, cloud_url_org
 		FROM #session.hostdbprefix#videos v, #session.hostdbprefix#settings_2 s
 		WHERE v.vid_id = <cfqueryparam value="#thevideoid#" cfsqltype="CF_SQL_VARCHAR">
 		AND s.set2_id = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
@@ -1361,14 +1362,14 @@
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
 				<!--- For wget script --->
-				<cfset wgetscript = createuuid()>
+				<cfset wgetscript = replace(createuuid(),"-","","all")>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
 				<!--- On Windows a .bat --->
 				<cfif arguments.thestruct.iswindows>
 					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
 				</cfif>
 				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# -O #arguments.thestruct.thefinalname# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.thefinalname#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# -O #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art#/#attributes.intstruct.thefinalname# #arguments.thestruct.qry.cloud_url_org#" mode="777">
 				<!--- Download file --->
 				<cfthread name="download#art##thevideoid#" intstruct="#arguments.thestruct#">
 					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />

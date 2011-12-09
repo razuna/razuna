@@ -212,10 +212,11 @@
 			<cftransaction>
 				<cfquery datasource="#variables.dsn#">
 				INSERT INTO ct_users_hosts
-				(ct_u_h_user_id, ct_u_h_host_id)
+				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#thehostid#" cfsqltype="cf_sql_integer">
+				<cfqueryparam value="#thehostid#" cfsqltype="cf_sql_integer">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			</cftransaction>
@@ -364,10 +365,11 @@
 		<cfloop delimiters="," index="thehostid" list="#arguments.thestruct.hostid#">
 			<cfquery datasource="#variables.dsn#">
 			insert into ct_users_hosts
-			(ct_u_h_user_id, ct_u_h_host_id)
+			(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 			values(
 			<cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#thehostid#" cfsqltype="CF_SQL_NUMERIC">
+			<cfqueryparam value="#thehostid#" cfsqltype="CF_SQL_NUMERIC">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 		</cfloop>

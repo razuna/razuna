@@ -160,17 +160,21 @@
 		<!--- If file exists locally then upload --->
 		<cfif fileexists("#arguments.uploadfile#")>
 			<cftry>
+				<!--- Params --->
+				<cfset var tt = replace(createuuid(),"-","","all")>
 				<!--- Get session --->
 				<cfset var nvxsession = login()>
 				<!--- Get Storage Node Stuff --->
-				<cfset storagenode = getstoragenode(nvxsession)>
+				<cfset arguments.storagenode = getstoragenode(nvxsession)>
 				<!--- Upload Asset --->
-				<!--- <cfset NxPutfile(variables.nvxsession,arguments.uploadfile,arguments.destFolderPath)> --->
-				<cfhttp url="#storagenode.uploadhost#/Upload.ashx?" method="post" throwonerror="true">
-					<cfhttpparam name="uploadtoken" value="#storagenode.uploadtoken#" type="url">
-					<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
-					<cfhttpparam name="uploadFile" file="#arguments.uploadfile#" type="file">
-				</cfhttp>
+				<cfthread name="#tt#" intstruct="#arguments#">
+					<cfhttp url="#attributes.intstruct.storagenode.uploadhost#/Upload.ashx?" method="post" throwonerror="true">
+						<cfhttpparam name="uploadtoken" value="#attributes.intstruct.storagenode.uploadtoken#" type="url">
+						<cfhttpparam name="destFolderPath" value="#attributes.intstruct.destFolderPath#" type="url">
+						<cfhttpparam name="uploadFile" file="#attributes.intstruct.uploadfile#" type="file">
+					</cfhttp>
+				</cfthread>
+				<cfthread action="join" name="#tt#" />
 				<cfcatch type="any">
 					<cfif cfcatch.message CONTAINS "bandwidth limit">
 						<cfinvoke component="email" method="send_email" subject="Razuna: Bandwidth exceeded" themessage="The file you are trying to upload exceeds the bandwidth limit for your plan. If you want to continue using Razuna you either have to wait until the end of your subsription period or simply upgrade to the PRO plan for only $1.80 per GB/month.">

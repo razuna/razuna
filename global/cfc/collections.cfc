@@ -110,14 +110,15 @@
 			<cfif #thisdesc# CONTAINS "#langindex#">
 				<cfquery datasource="#variables.dsn#">
 					insert into #session.hostdbprefix#collections_text
-					(col_id_r, lang_id_r, col_desc, col_keywords, col_name, host_id)
+					(col_id_r, lang_id_r, col_desc, col_keywords, col_name, host_id, rec_uuid)
 					values(
 					<cfqueryparam value="#newcolid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="#evaluate(thisdesc)#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#evaluate(thiskeys)#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#arguments.thestruct.collectionname#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 				</cfquery>
 			</cfif>
@@ -158,7 +159,7 @@
 			<!--- Insert --->
 			<cfquery datasource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#collections_ct_files
-			(col_id_r, file_id_r, col_file_type, col_item_order, col_file_format, host_id)
+			(col_id_r, file_id_r, col_file_type, col_item_order, col_file_format, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#cart_product_id#" cfsqltype="CF_SQL_VARCHAR">,
@@ -171,7 +172,8 @@
 			<cfelse>
 				<cfqueryparam value="" cfsqltype="cf_sql_varchar">
 			</cfif>,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 			<!--- Flush Cache --->
@@ -208,7 +210,7 @@
 			<!--- Insert --->
 			<cfquery datasource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#collections_ct_files
-			(col_id_r, file_id_r, col_file_type, col_item_order, col_file_format, host_id)
+			(col_id_r, file_id_r, col_file_type, col_item_order, col_file_format, host_id, rec_uuid)
 			VALUES(
 			<cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
@@ -221,7 +223,8 @@
 			<cfelse>
 				<cfqueryparam value="" cfsqltype="cf_sql_varchar">
 			</cfif>,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 		</cfif>
@@ -465,14 +468,15 @@
 				<!--- Insert --->
 				<cfquery datasource="#variables.dsn#">
 				INSERT INTO #session.hostdbprefix#collections_text
-				(lang_id_r, col_desc, col_keywords, col_name, col_id_r, host_id)
+				(lang_id_r, col_desc, col_keywords, col_name, col_id_r, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">, 
 				<cfqueryparam value="#evaluate(thisdesc)#" cfsqltype="cf_sql_varchar">, 
 				<cfqueryparam value="#evaluate(thiskeys)#" cfsqltype="cf_sql_varchar">, 
 				<cfqueryparam value="#arguments.thestruct.collectionname#" cfsqltype="cf_sql_varchar">,
 				<cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			</cfif>
@@ -543,12 +547,13 @@
 				<cfset theper = "per_" & "#grpid#">
 				<cfquery datasource="#variables.dsn#">
 				INSERT INTO #session.hostdbprefix#collections_groups
-				(col_id_r, grp_id_r, grp_permission, host_id)
+				(col_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#grpid#" cfsqltype="CF_SQL_VARCHAR">,
 				<cfqueryparam value="#arguments.thestruct[theper]#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			</cfif>

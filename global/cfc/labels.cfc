@@ -44,13 +44,15 @@
 			(
 				ct_label_id,
 				ct_id_r,
-				ct_type
+				ct_type,
+				rec_uuid
 			)
 			VALUES
 			(
 				<cfqueryparam value="#qry.labelid#" cfsqltype="cf_sql_varchar" />,
 				<cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_varchar" />,
-				<cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar" />
+				<cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar" />,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
 		<!--- If label does NOT exists then add label and add to this record --->
@@ -64,13 +66,15 @@
 				(
 					ct_label_id,
 					ct_id_r,
-					ct_type
+					ct_type,
+					rec_uuid
 				)
 				VALUES
 				(
 					<cfqueryparam value="#labelid#" cfsqltype="cf_sql_varchar" />,
 					<cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_varchar" />,
-					<cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar" />
+					<cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
 			</cfif>

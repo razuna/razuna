@@ -240,7 +240,7 @@
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#versions
-		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag
+		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag, rec_uuid
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
 		,
@@ -266,7 +266,8 @@
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thethumbname#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.hashtag#">	
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.hashtag#">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
 		,
@@ -676,7 +677,7 @@
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #session.hostdbprefix#versions
-		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag
+		(asset_id_r, ver_version, ver_type,	ver_date_add, ver_who, ver_filename_org, ver_extension, host_id, cloud_url_org, ver_thumbnail, hashtag, rec_uuid
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
 			,
@@ -702,7 +703,8 @@
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#cloud_url_version.theurl#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thumbnailname_existing#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.hashtag#">
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.hashtag#">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		<!--- For images --->
 		<cfif arguments.thestruct.type EQ "img">
 			,
