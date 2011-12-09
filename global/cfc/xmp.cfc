@@ -465,7 +465,7 @@
 				</cfif>
 				<!--- Write XMP file --->
 				<cffile action="write" file="#thexmpfile#" output="#tostring(thexmp)#" charset="utf-8">
-				<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.thewget# -P #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder# http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#" mode="777">
+				<cffile action="write" file="#attributes.intstruct.thesh#" output="#thewget# -P #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder# http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#" mode="777">
 				<!--- Download image --->
 				<cfthread name="download#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#">
 					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
@@ -1104,7 +1104,7 @@
 	<!--- Query the record --->
 	<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrydetail">
 	SELECT  f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_name, f.file_name_org filenameorg, f.link_path_url, 
-	f.link_kind, f.lucene_key, f.path_to_asset
+	f.link_kind, f.lucene_key, f.path_to_asset, f.cloud_url_org
 	FROM #session.hostdbprefix#files f
 	WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
@@ -1230,7 +1230,7 @@
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.tempfolder#.bat">
 			</cfif>
 			<!--- Write --->	
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder# http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.qrydetail.filenameorg#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#thewget# -P #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder# #arguments.thestruct.qrydetail.cloud_url_org#" mode="777">
 			<!--- Finally download --->
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
