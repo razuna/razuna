@@ -2563,7 +2563,7 @@
 	<cfif arguments.thestruct.actionismove EQ "F">
 		<cfoutput query="qRet">
 		<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>><a href="##" onclick="$('##rightside').load('index.cfm?fa=<cfif iscol EQ "T">c.collections<cfelse>c.folder</cfif>&col=F&folder_id=<cfif iscol EQ "T">col-</cfif>#folder_id#');" rel="prefetch"><ins>&nbsp;</ins>#folder_name#
-		<cfif theid EQ 0><cfif iscol EQ "F" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner> (#username#)</cfif></cfif></cfif></a></li>
+		<cfif theid EQ 0><cfif iscol EQ "F" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif></cfif></a></li>
 		</cfoutput>
 	<!--- If we come from a move action --->
 	<cfelse>
@@ -2585,7 +2585,7 @@
 		<cfelseif session.type EQ "choosecollection">
 			<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
 		</cfif>
-		<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner> (#username#)</cfif></cfif></a>
+		<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif></a>
 		</li>
 		</cfoutput>
 	</cfif>
