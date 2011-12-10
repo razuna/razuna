@@ -157,7 +157,7 @@
 		CREATE TABLE #arguments.thestruct.tschema#.ct_users_hosts 
 		(
 		  CT_U_H_USER_ID  VARCHAR(100),
-		  CT_U_H_HOST_ID  BIGINT
+		  CT_U_H_HOST_ID  BIGINT,
 		  rec_uuid		  VARCHAR(100)
 		)
 		</cfquery>
@@ -272,6 +272,7 @@
 			rfs_dcraw 		varchar(200),
 			rfs_exiftool 	varchar(200),
 			rfs_wget	 	varchar(200),
+			rfs_location 	varchar(200),
 			rfs_date_add 	timestamp,
 			rfs_date_change timestamp
 		)
@@ -756,7 +757,7 @@
 		  COL_DESC      VARCHAR(1000),
 		  COL_KEYWORDS  VARCHAR(2000),
 		  COL_NAME      VARCHAR(300),
-		  HOST_ID		BIGINT
+		  HOST_ID		BIGINT,
 		  rec_uuid		VARCHAR(100)
 		)
 		</cfquery>

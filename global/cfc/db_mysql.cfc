@@ -326,6 +326,7 @@
 			rfs_dcraw 		varchar(200),
 			rfs_exiftool 	varchar(200),
 			rfs_wget	 	varchar(200),
+			rfs_location 	varchar(200),
 			rfs_date_add 	timestamp,
 			rfs_date_change timestamp,
 			PRIMARY KEY (rfs_id)

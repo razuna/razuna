@@ -276,51 +276,56 @@
 			<cfset len_count_meta2 = 1>
 			<!--- Insert records into backup db	 --->	
 			<cfloop query="sourcedb">
-				<cfquery dataSource="#arguments.thestruct.dsn#">
-				INSERT INTO #lcase(arguments.thestruct.tschema)#.#lcase(thetable)#
-				(<cfloop list="#sourcedb.columnlist#" index="m">#listfirst(m,"-")#<cfif len_count_meta NEQ len_meta>, </cfif><cfset len_count_meta = len_count_meta + 1></cfloop>)
-				VALUES(
-					<cfloop list="#sourcedb.columnlist#" index="cl">
-						<cfset lf = ListContainsNoCase(thecollist, cl)>
-						<cfset lg = ListGetAt(thecollist, lf)>
-						<!--- Varchar --->
-						<cfif trim(listlast(lg,"-")) CONTAINS "varchar" OR trim(listlast(lg,"-")) CONTAINS "text">
-							<cfif evaluate(cl) EQ "">
-								''
-							<cfelse>
-								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(cl)#">
+				<cftry>
+					<cfquery dataSource="#arguments.thestruct.dsn#">
+					INSERT INTO #lcase(arguments.thestruct.tschema)#.#lcase(thetable)#
+					(<cfloop list="#sourcedb.columnlist#" index="m">#listfirst(m,"-")#<cfif len_count_meta NEQ len_meta>, </cfif><cfset len_count_meta = len_count_meta + 1></cfloop>)
+					VALUES(
+						<cfloop list="#sourcedb.columnlist#" index="cl">
+							<cfset lf = ListContainsNoCase(thecollist, cl)>
+							<cfset lg = ListGetAt(thecollist, lf)>
+							<!--- Varchar --->
+							<cfif trim(listlast(lg,"-")) CONTAINS "varchar" OR trim(listlast(lg,"-")) CONTAINS "text">
+								<cfif evaluate(cl) EQ "">
+									''
+								<cfelse>
+									<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(cl)#">
+								</cfif>
+							<cfelseif trim(listlast(lg,"-")) CONTAINS "clob">
+								<cfif evaluate(cl) EQ "">
+									NULL
+								<cfelse>
+									<cfqueryparam CFSQLType="CF_SQL_CLOB" value="#evaluate(cl)#">
+								</cfif>
+							<cfelseif trim(listlast(lg,"-")) CONTAINS "int">
+								<cfif isnumeric(evaluate(cl))>
+									<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#evaluate(cl)#">
+								<cfelse>
+									NULL
+								</cfif>
+							<cfelseif trim(listlast(lg,"-")) EQ "date">
+								<cfif evaluate(cl) EQ "">
+									<cfqueryparam cfsqltype="CF_SQL_DATE" value="#now()#">
+								<cfelse>
+									<cfqueryparam CFSQLType="CF_SQL_DATE" value="#evaluate(cl)#">
+								</cfif>
+							<cfelseif trim(listlast(lg,"-")) EQ "timestamp" OR trim(listlast(lg,"-")) EQ "datetime">
+								<cfif evaluate(cl) EQ "">
+									<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+								<cfelse>
+									<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#evaluate(cl)#">
+								</cfif>
+							<cfelseif trim(listlast(lg,"-")) CONTAINS "blob">
+									''
 							</cfif>
-						<cfelseif trim(listlast(lg,"-")) CONTAINS "clob">
-							<cfif evaluate(cl) EQ "">
-								NULL
-							<cfelse>
-								<cfqueryparam CFSQLType="CF_SQL_CLOB" value="#evaluate(cl)#">
-							</cfif>
-						<cfelseif trim(listlast(lg,"-")) CONTAINS "int">
-							<cfif isnumeric(evaluate(cl))>
-								<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#evaluate(cl)#">
-							<cfelse>
-								NULL
-							</cfif>
-						<cfelseif trim(listlast(lg,"-")) EQ "date">
-							<cfif evaluate(cl) EQ "">
-								<cfqueryparam cfsqltype="CF_SQL_DATE" value="#now()#">
-							<cfelse>
-								<cfqueryparam CFSQLType="CF_SQL_DATE" value="#evaluate(cl)#">
-							</cfif>
-						<cfelseif trim(listlast(lg,"-")) EQ "timestamp" OR trim(listlast(lg,"-")) EQ "datetime">
-							<cfif evaluate(cl) EQ "">
-								<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
-							<cfelse>
-								<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#evaluate(cl)#">
-							</cfif>
-						<cfelseif trim(listlast(lg,"-")) CONTAINS "blob">
-								''
-						</cfif>
-						<cfif len_count_meta2 NEQ len_meta>,</cfif><cfset len_count_meta2 = len_count_meta2 + 1>
-					</cfloop>
-				)
-				</cfquery>
+							<cfif len_count_meta2 NEQ len_meta>,</cfif><cfset len_count_meta2 = len_count_meta2 + 1>
+						</cfloop>
+					)
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "#thetable#"!</span><br>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
 				<!--- Reset loop variables --->
 				<cfset len_count_meta = 1>
 				<cfset len_count_meta2 = 1>
@@ -877,6 +882,11 @@
 		<!--- Feedback --->
 		<cfoutput><strong>Starting the Restore</strong><br><br></cfoutput>
 		<cfflush>
+		<!--- Feedback --->
+		<cfoutput><strong>Checking consistency of records...</strong><br><br></cfoutput>
+		<cfflush>
+		<!--- Check that records have values and insert rec_uuid if not there already --->
+		<cfinvoke method="check_rec_uuid" theschema="#arguments.thestruct.back_id#" />
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.admin" default="F">
 		<cfparam name="arguments.thestruct.uploadxml" default="F">
@@ -1031,6 +1041,372 @@
 		<cfreturn />
 	</cffunction>
 	
+	<!--- Check rec_uuid --->
+	<cffunction name="check_rec_uuid" output="true">
+		<cfargument name="theschema" required="true" />
+		<!--- ct_groups_users --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.ct_groups_users
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.ct_groups_users
+				set rec_uuid = '#createuuid()#'
+				WHERE CT_G_U_GRP_ID = '#CT_G_U_GRP_ID#'
+				AND CT_G_U_USER_ID = '#CT_G_U_USER_ID#'
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- ct_labels --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.ct_labels
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.ct_labels
+				set rec_uuid = '#createuuid()#'
+				WHERE ct_label_id = '#ct_label_id#'
+				AND ct_id_r = '#ct_label_id#'
+				AND ct_type = '#ct_label_id#'
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- ct_users_hosts --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.ct_users_hosts
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.ct_users_hosts
+				set rec_uuid = '#createuuid()#'
+				WHERE ct_u_h_user_id = '#ct_u_h_user_id#'
+				AND CT_U_H_HOST_ID = #CT_U_H_HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_folders_desc --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_folders_desc
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_folders_desc
+				set rec_uuid = '#createuuid()#'
+				WHERE folder_id_r = '#folder_id_r#'
+				AND LANG_ID_R = #LANG_ID_R#
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_folders_groups --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_folders_groups
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_folders_groups
+				set rec_uuid = '#createuuid()#'
+				WHERE folder_id_r = '#folder_id_r#'
+				AND grp_id_r = '#grp_id_r#'
+				AND GRP_PERMISSION = '#GRP_PERMISSION#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_settings --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_settings
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_settings
+				set rec_uuid = '#createuuid()#'
+				WHERE set_id = '#set_id#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_settings_2 --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_settings_2
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_settings_2
+				set rec_uuid = '#createuuid()#'
+				WHERE set2_id = '#set2_id#'
+				AND set2_nirvanix_pass = '#set2_nirvanix_pass#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_collections_text --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_collections_text
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_collections_text
+				set rec_uuid = '#createuuid()#'
+				WHERE col_id_r = 'col_id_r'
+				AND LANG_ID_R = lang_id_r
+		        AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_collections_ct_files --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_collections_ct_files
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_collections_ct_files
+				set rec_uuid = '#createuuid()#'
+				WHERE col_id_r = '#col_id_r#'
+				AND file_id_r = '#file_id_r#'
+				AND COL_FILE_TYPE = '#COL_FILE_TYPE#'
+				AND COL_FILE_FORMAT = '#COL_FILE_FORMAT#'
+		        AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_collections_groups --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_collections_groups
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_collections_groups
+				set rec_uuid = '#createuuid()#'
+				WHERE col_id_r = '#col_id_r#'
+				AND grp_id_r = '#grp_id_r#'
+				AND GRP_PERMISSION = '#GRP_PERMISSION#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_users_favorites --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_users_favorites
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_users_favorites
+				set rec_uuid = '#createuuid()#'
+				WHERE user_id_r = '#user_id_r#'
+				AND FAV_TYPE = '#FAV_TYPE#'
+				AND fav_id = '#fav_id#'
+				AND FAV_KIND = '#FAV_KIND#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_custom_fields_text --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_custom_fields_text
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_custom_fields_text
+				set rec_uuid = '#createuuid()#'
+				WHERE cf_id_r = '#cf_id_r#'
+				AND lang_id_r = lang_id_r
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_custom_fields_values --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_custom_fields_values
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_custom_fields_values
+				set rec_uuid = '#createuuid()#'
+				WHERE cf_id_r = '#cf_id_r#'
+				AND asset_id_r = '#asset_id_r#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_versions --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_versions
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_versions
+				set rec_uuid = '#createuuid()#'
+				WHERE asset_id_r = '#asset_id_r#'
+				AND ver_version = #ver_version#
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_languages --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_languages
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_languages
+				set rec_uuid = '#createuuid()#'
+				WHERE lang_id = #lang_id#
+				AND lang_name = '#lang_name#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_share_options --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_share_options
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_share_options
+				set rec_uuid = '#createuuid()#'
+				WHERE asset_id_r = '#asset_id_r#'
+				AND group_asset_id = '#group_asset_id#'
+				AND folder_id_r = '#folder_id_r#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- raz1_upload_templates_val --->
+		<cfquery datasource="razuna_backup" name="x">
+		select * 
+		from #arguments.theschema#.raz1_upload_templates_val
+		where rec_uuid IS NULL or rec_uuid = ''
+		</cfquery>
+		<!--- Update --->
+		<cfloop query="x">
+			<cftry>
+				<cfquery datasource="razuna_backup">
+				update #arguments.theschema#.raz1_upload_templates_val
+				set rec_uuid = '#createuuid()#'
+				WHERE upl_temp_id_r = '#upl_temp_id_r#'
+		  		AND upl_temp_field = '#upl_temp_field#'
+				AND HOST_ID = #HOST_ID#
+				</cfquery>
+				<cfcatch type="database">
+					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+	</cffunction>
+	
 	<!--- Drop Constraints --->
 	<cffunction name="dropconst" output="true">
 		<cfargument name="theindex" type="string">
@@ -1041,7 +1417,7 @@
 				ALTER TABLE #lcase(arguments.theindex)# NOCHECK CONSTRAINT ALL
 				</cfquery>
 				<cfcatch type="database">
-					<cfoutput><p><span style="color:red;font-weight:bold;">A error occured during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
+					<cfoutput><p><span style="color:red;font-weight:bold;">A error occurred during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
 				</cfcatch>
 			</cftry>
 		<!--- MySQL: Drop all constraints --->
@@ -1056,7 +1432,7 @@
 				ALTER TABLE #lcase(arguments.theindex)# SET REFERENTIAL_INTEGRITY false
 				</cfquery>
 				<cfcatch type="database">
-					<cfoutput><p><span style="color:red;font-weight:bold;">A error occured during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
+					<cfoutput><p><span style="color:red;font-weight:bold;">A error occurred during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
 				</cfcatch>
 			</cftry>
 		<!--- Oracle: Drop all constraints --->
@@ -1073,7 +1449,7 @@
 					</cfquery>
 				</cfloop>
 				<cfcatch type="database">
-					<cfoutput><p><span style="color:red;font-weight:bold;">A error occured during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
+					<cfoutput><p><span style="color:red;font-weight:bold;">A error occurred during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
 				</cfcatch>
 			</cftry>
 		</cfif>
@@ -1098,7 +1474,7 @@
 					</cfquery>
 				</cfloop>
 				<cfcatch type="database">
-					<cfoutput><p><span style="color:red;font-weight:bold;">A error occured during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
+					<cfoutput><p><span style="color:red;font-weight:bold;">A error occurred during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
 				</cfcatch>
 			</cftry>
 		<!--- MySQL: Drop all constraints --->
@@ -1118,7 +1494,7 @@
 					</cfquery>
 				</cfloop>
 				<cfcatch type="database">
-					<cfoutput><p><span style="color:red;font-weight:bold;">A error occured during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
+					<cfoutput><p><span style="color:red;font-weight:bold;">A error occurred during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
 				</cfcatch>
 			</cftry>
 		<!--- H2: Drop all constraints --->
@@ -1140,7 +1516,7 @@
 					</cfquery>
 				</cfloop>
 				<cfcatch type="database">
-					<cfoutput><p><span style="color:red;font-weight:bold;">A error occured during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
+					<cfoutput><p><span style="color:red;font-weight:bold;">A error occurred during import on table #arguments.theindex#!</span><br>#cfcatch.detail#</p></cfoutput>
 				</cfcatch>
 			</cftry>
 		</cfif>
