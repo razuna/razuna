@@ -73,17 +73,17 @@
 	// Add DAM group
 	$("##grpdamadd").submit(function(e){
 		// Get values
-		var item = escape($("##damgrpnew").val());
+		var g = $("##damgrpnew").val();
 		// Submit Form
-		loadcontent('grpdamlist', '#myself#c.groups_add&kind=ecp&loaddiv=grpdamlist&newgrp=' + item);
+		loadcontent('grpdamlist', '#myself#c.groups_add&kind=ecp&loaddiv=grpdamlist&newgrp=' + g);
 		return false;
 	});
 	// Add ADM group
 	$("##grpadmadd").submit(function(e){
 		// Get values
-		var item = escape($("##admgrpnew").val());
+		var g = $("##admgrpnew").val();
 		// Submit Form
-		loadcontent('grpadmlist', '#myself#c.groups_add&kind=adm&loaddiv=grpadmlist&newgrp=' + item);
+		loadcontent('grpadmlist', '#myself#c.groups_add&kind=adm&loaddiv=grpadmlist&newgrp=' + g);
 		return false;
 	});
 </script>
