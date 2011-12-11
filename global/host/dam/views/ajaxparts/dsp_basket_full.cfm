@@ -98,12 +98,12 @@
 									<cfif myid EQ img_id>
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-												<img src="#cloud_url#" border="0" width="120">
+												<img src="#cloud_url#" border="0">
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0" width="120">
+												<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
 											</cfif>
 										<cfelse>
-											<img src="#link_path_url#" border="0" width="120">
+											<img src="#link_path_url#" border="0">
 										</cfif>
 									</cfif>
 								</cfloop>
@@ -179,7 +179,7 @@
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 												<img src="#cloud_url#" border="0" width="120">
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0" width="120">
+												<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
