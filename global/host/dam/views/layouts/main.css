@@ -529,7 +529,7 @@ hr {
 	font-weight: bold; 
 }
 /* Limit image size of thumbnail view */
-.thumbview img {
+.thumbview img, .ui-draggable-dragging img {
 	max-width: 110px;
   	max-height: 110px;
   	width: expression(this.width > 110 ? "110px" : true);

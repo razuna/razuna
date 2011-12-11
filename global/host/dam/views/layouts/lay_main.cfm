@@ -52,14 +52,12 @@
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js" type="text/javascript"></script>
-<!--- <script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script> --->
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.js" type="text/javascript"></script>
 <!--- CSS --->
-<!--- <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" /> --->
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/tagit.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/multiple-instances.css" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/css/jquery.tagit.css" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.css" />
@@ -80,9 +78,9 @@
 <script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js"></script>
 <!--- CSS --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css" />

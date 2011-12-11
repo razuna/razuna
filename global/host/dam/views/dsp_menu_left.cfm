@@ -43,7 +43,7 @@
 <script language="JavaScript" type="text/javascript">
 	jqtabs("tabs_left");
 	loadcontent('explorer','#myself#c.explorer');
-	
+	// Show or hide left side
 	function hideshow(state){
 		if (state == "off"){
 			$('##tabs_left').css('display','none');
@@ -62,5 +62,7 @@
 			$('##apDiv4').css({'left':'280px','width':'75%'});
 		}
 	}
+	//
+	
 </script>
 </cfoutput>
