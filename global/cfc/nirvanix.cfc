@@ -54,7 +54,7 @@
 		<!--- Grab NVX settings --->
 		<cfinvoke component="settings" method="prefs_storage" returnVariable="qry_settings" />
 		<!--- Login and get session token --->
-<!--- 		<cftry> --->
+		<cftry>
 			<cfif arguments.thestruct.isbrowser EQ "F">
 				<cfhttp url="http://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="true" charset="utf-8">
 					<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
@@ -79,15 +79,13 @@
 			<!--- Get the XML node for each setting --->
 			<cfset var thexml = xmlparse(cfhttp.FileContent)>
 			<cfset var nvxsession = thexml.Response.Sessiontoken[1].XmlText>
-			<!---
-<cfcatch type="any">
+			<cfcatch type="any">
 				<cfmail to="nitai@razuna.com" from="server@razuna.com" subject="nvx error during login" type="html">
 					<cfdump var="#cfcatch#">
 				</cfmail>
 				<cfset var nvxsession = 0>
 			</cfcatch>
 		</cftry>
---->
 		<!--- Return --->
 		<cfreturn nvxsession>
 	</cffunction>
