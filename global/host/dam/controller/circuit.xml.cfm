@@ -5294,10 +5294,18 @@
 	
 	<!-- Export -->
 	<fuseaction name="meta_export">
-		<!-- CFC: get assets -->
-		<!-- <invoke object="myFusebox.getApplicationData().labels" methodcall="labels_count(attributes.label_id)" returnvariable="qry_labels_count" /> -->
+		<!-- Param -->
+		<set name="attributes.what" value="" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.meta_export" />
+	</fuseaction>
+	<!-- Export DO -->
+	<fuseaction name="meta_export_do">
+		
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().xmp" methodcall="meta_export(attributes)" />
+		<!-- Show -->
+		<!-- <do action="ajax.meta_export" /> -->
 	</fuseaction>
 	
 	<!--  -->

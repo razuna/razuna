@@ -1360,4 +1360,18 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Export metadata --->
+<cffunction name="meta_export" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- If this is from basket --->
+	<cfif arguments.thestruct.what EQ "basket">
+		<!--- Read Basket --->
+		<cfinvoke component="basket" method="readbasket" returnvariable="thebasket">
+		<cfdump var="#thebasket#"><cfabort>
+	</cfif>
+	
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
 </cfcomponent>

@@ -26,6 +26,18 @@
 <cfoutput>
 #defaultsObj.trans("header_export_metadata_desc")# <br /><br />
 <div>
-<div style="float:left;padding-top:7px;">#defaultsObj.trans("total_amount")#</div> <div style="float:right;"><select id="export_format"><option value="" selected="selected">#defaultsObj.trans("choose_format")#</option><option value="xlsx">XLSX</option><option value="xls">XLS</option><option value="csv">CSV</option></select><span style="padding-right:7px;"></span><input type="button" value="#defaultsObj.trans("export")#" onclick="" /></div>
+	<div style="float:left;padding-top:7px;">#defaultsObj.trans("total_amount")#</div> 
+	<div style="float:right;"><select id="export_format"><option value="" selected="selected">#defaultsObj.trans("choose_format")#</option><option value="xlsx">XLSX</option><option value="xls">XLS</option><option value="csv">CSV</option></select><span style="padding-right:7px;"></span><input type="button" value="#defaultsObj.trans("export")#" onclick="exportfile()" />
+	</div>
 </div>
+<script type="text/javascript">
+	function exportfile(){
+		//Get export format
+		var format = $('##export_format option:selected').val();
+		// Only if select is a format
+		if (format != ''){
+			window.open('#myself#c.meta_export_do&what=#attributes.what#&format=' + format)
+		}
+	}
+</script>
 </cfoutput>

@@ -82,8 +82,8 @@
 </cffunction>
 
 <!--- READ BASKET --->
-<cffunction name="readbasket" output="false">
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#readbasket#session.thecart#" cachedomain="#session.theuserid#_cart">
+<cffunction name="readbasket" output="false" returnType="query">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="#session.hostid#readbasket#session.thecart#" cachedomain="#session.theuserid#_cart">
 		SELECT c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, 
 			CASE 
 				WHEN c.cart_file_type = 'doc' 
