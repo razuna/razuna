@@ -1285,6 +1285,7 @@
 		  FILE_DESC      CLOB,
 		  FILE_KEYWORDS  CLOB,
 		  HOST_ID		 NUMBER,
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#FILES_DESC_PK PRIMARY KEY (ID_INC),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_DESC_FK_FILE FOREIGN KEY (FILE_ID_R)
 	REFERENCES #arguments.thestruct.host_db_prefix#files (FILE_ID)
 	ON DELETE CASCADE ENABLE
@@ -1365,6 +1366,7 @@
 		  IMG_KEYWORDS     CLOB,
 		  IMG_DESCRIPTION  CLOB,
 		  HOST_ID		 NUMBER,
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGES_TEXT_PK PRIMARY KEY (ID_INC),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_TEXT_FK_IMG FOREIGN KEY (IMG_ID_R)
 	REFERENCES #arguments.thestruct.host_db_prefix#images (IMG_ID)
 	ON DELETE CASCADE ENABLE
@@ -1720,6 +1722,7 @@
 		  VID_DESCRIPTION  CLOB,
 		  VID_TITLE		   CLOB,
 		  HOST_ID		 NUMBER,
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEOS_TEXT_PK PRIMARY KEY (ID_INC),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_TEXT_FK_VID FOREIGN KEY (VID_ID_R)
 		REFERENCES #arguments.thestruct.host_db_prefix#VIDEOS (VID_ID) ON DELETE CASCADE ENABLE
 		)

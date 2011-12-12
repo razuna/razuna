@@ -165,7 +165,7 @@
 		CT_G_U_GRP_ID 		VARCHAR(100) NOT NULL, 
 		CT_G_U_USER_ID 		VARCHAR(100) NOT NULL,
 		rec_uuid			VARCHAR(100),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#CTGU_PK PRIMARY KEY (REC_UUID)
+		PRIMARY KEY (rec_uuid),
 		CONSTRAINT CT_GROUPS_USERS_UK1 UNIQUE (CT_G_U_GRP_ID, CT_G_U_USER_ID), 
 		CONSTRAINT CT_GROUPS_USERS_GROUPS_FK1 FOREIGN KEY (CT_G_U_GRP_ID)
 		REFERENCES groups (GRP_ID)
@@ -501,7 +501,7 @@
 			<!--- DEFAULT ADMIN CROSS TABLE --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO ct_groups_users
-			(CT_G_U_GRP_ID, CT_G_U_USER_ID, red_uuid)
+			(CT_G_U_GRP_ID, CT_G_U_USER_ID, rec_uuid)
 			VALUES(	'1', '1', '#createuuid()#');
 			</cfquery>
 			<!--- DEFAULT ADMIN PERMISSIONS --->
@@ -901,7 +901,7 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				BIGINT,
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDER_PK PRIMARY KEY (FOLDER_ID)
+		  PRIMARY KEY (FOLDER_ID),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_HOSTID_FK1 FOREIGN KEY (HOST_ID)
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -986,6 +986,7 @@
 		  FILE_KEYWORDS  VARCHAR(2000),
 		  ID_INC		 VARCHAR(100),
 		  HOST_ID		 BIGINT,
+		  PRIMARY KEY (ID_INC),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_DESC_FK_FILE FOREIGN KEY (FILE_ID_R)
 		REFERENCES #arguments.thestruct.host_db_prefix#files (FILE_ID) ON DELETE CASCADE
 		)
@@ -1064,6 +1065,7 @@
 		  IMG_DESCRIPTION  VARCHAR(4000),
 		  ID_INC		   VARCHAR(100),
 		  HOST_ID		   BIGINT,
+		  PRIMARY KEY (ID_INC),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_TEXT_FK_IMG FOREIGN KEY (IMG_ID_R)
 		REFERENCES #arguments.thestruct.host_db_prefix#images (IMG_ID) ON DELETE CASCADE
 		)
@@ -1409,9 +1411,9 @@
 		  VID_TITLE		   VARCHAR(400),
 		  ID_INC		   VARCHAR(100),
 		  HOST_ID		   BIGINT,
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_TEXT_FK_VID FOREIGN KEY (VID_ID_R)
-		  REFERENCES #arguments.thestruct.host_db_prefix#videos (VID_ID)
-		  ON DELETE CASCADE
+		  PRIMARY KEY (ID_INC),
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#videos_text_FK1 FOREIGN KEY (VID_ID_R)
+			REFERENCES #arguments.thestruct.host_db_prefix#videos (VID_ID) ON DELETE CASCADE
 		)
 		</cfquery>
 		
@@ -1616,7 +1618,7 @@
 			aud_KEYWORDS		VARCHAR(4000),
 			ID_INC		   		VARCHAR(100),
 			HOST_ID				BIGINT,
-			CONSTRAINT #arguments.thestruct.host_db_prefix#AUDIOS_TEXT_PK PRIMARY KEY (ID_INC)
+			PRIMARY KEY (ID_INC),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_DESC_FK_FILE FOREIGN KEY (aud_ID_R)
 			REFERENCES #arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
 		)

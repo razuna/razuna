@@ -1731,7 +1731,7 @@
 		  VID_KEYWORDS     VARCHAR(4000),
 		  VID_DESCRIPTION  VARCHAR(4000),
 		  VID_TITLE		   VARCHAR(4000),
-		  HOST_ID				INT,
+		  HOST_ID			INT,
 		PRIMARY KEY (ID_INC),
 		FOREIGN KEY (VID_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#videos (VID_ID) ON DELETE CASCADE
 		)
