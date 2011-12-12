@@ -598,4 +598,9 @@
   		<include template="win_additional_versions_edit" />
 	</fuseaction>
 	
+	<!-- Meta: Export -->
+	<fuseaction name="meta_export">
+  		<include template="dsp_meta_export" />
+	</fuseaction>
+	
 </circuit>

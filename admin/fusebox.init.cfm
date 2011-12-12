@@ -34,6 +34,9 @@
 <cfparam name="cookie.loginpassadmin" default="">
 
 <!--- Set the session for the language --->
+<cfparam name="session.locale" type="string" default="en">
+<cfset application.razuna.trans.setLocaleCode(session.locale) />
+
 <cfparam name="session.thelang" default="english">
 
 <!--- Set the session for the login --->

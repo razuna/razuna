@@ -5284,4 +5284,24 @@
 		<invoke object="myFusebox.getApplicationData().rfs" methodcall="pickup(attributes)" />
 	</fuseaction>
 	
+	<!--  -->
+	<!-- RFS: STOP -->
+	<!--  -->
+	
+	<!--  -->
+	<!-- METADATA: START -->
+	<!--  -->
+	
+	<!-- Export -->
+	<fuseaction name="meta_export">
+		<!-- CFC: get assets -->
+		<!-- <invoke object="myFusebox.getApplicationData().labels" methodcall="labels_count(attributes.label_id)" returnvariable="qry_labels_count" /> -->
+		<!-- Show -->
+		<do action="ajax.meta_export" />
+	</fuseaction>
+	
+	<!--  -->
+	<!-- METADATA: STOP -->
+	<!--  -->
+	
 </circuit>
