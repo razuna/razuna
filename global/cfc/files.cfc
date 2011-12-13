@@ -926,7 +926,7 @@
 	<cffunction name="gettext" output="false">
 		<cfargument name="qry" type="query">
 		<!--- Query --->
-		<cfquery datasource="#variables.dsn#" name="qryintern" cachename="doc#session.hostid#gettext#arguments.qry.id#" cachedomain="#session.theuserid#_files">
+		<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachename="doc#session.hostid#gettext#arguments.qry.id#" cachedomain="#session.theuserid#_files">
 		SELECT file_id_r tid, file_desc description, file_keywords keywords
 		FROM #session.hostdbprefix#files_desc
 		WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)

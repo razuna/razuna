@@ -28,7 +28,7 @@
 <!--- Read XMP DB --->
 <cffunction name="readxmpdb" output="false">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#variables.dsn#" name="xmp">
+		<cfquery datasource="#application.razuna.datasource#" name="xmp">
 		SELECT 
 		subjectcode iptcsubjectcode, 
 		creator, 
@@ -1363,15 +1363,173 @@
 <!--- Export metadata --->
 <cffunction name="meta_export" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset arguments.thestruct.meta_fields = "id, filename, labels, keywords, iptcsubjectcode, creator, title, authorstitle, descwriter, iptcaddress, category, categorysub, urgency, description, iptccity, iptccountry, iptclocation, iptczip, iptcemail, iptcwebsite, iptcphone, iptcintelgenre, iptcinstructions, iptcsource, iptcusageterms, copystatus, iptcjobidentifier, copyurl, iptcheadline, iptcdatecreated, iptcimagecity, iptcimagestate, iptcimagecountry, iptcimagecountrycode, iptcscene, iptcstate, iptccredit, copynotice">
 	<!--- If this is from basket --->
 	<cfif arguments.thestruct.what EQ "basket">
 		<!--- Read Basket --->
 		<cfinvoke component="basket" method="readbasket" returnvariable="thebasket">
-		<cfdump var="#thebasket#"><cfabort>
+		<!--- Add another query structure for gettext --->
+		<cfset arguments.thestruct.qry = querynew("id")>
+		<!--- Create query object to store results --->
+		<cfset arguments.thestruct.tq = querynew(arguments.thestruct.meta_fields)>
+		<!--- Loop trough the basket --->
+		<cfloop query="thebasket">
+			<!--- Set the asset id into a var --->
+			<cfset QueryAddRow(arguments.thestruct.qry)>
+			<cfset QuerySetCell(arguments.thestruct.qry, "id", cart_product_id)>
+			<cfset arguments.thestruct.file_id = cart_product_id>
+			<cfset arguments.thestruct.cf_show = "all">
+			<!--- Get the files according to the extension --->
+			<cfswitch expression="#cart_file_type#">
+				<!--- Images --->
+				<cfcase value="img">
+					<!--- Get asset detail --->
+					<cfinvoke component="images" method="filedetail" theid="#cart_product_id#" thecolumn="img_filename" returnVariable="qry_image" />
+					<!--- Get Lables --->
+					<cfinvoke component="labels" method="getlabels" theid="#cart_product_id#" thetype="img" returnVariable="qry_labels" />
+					<!--- Get Custom Fields --->
+					<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="qry_cf" />
+					<!--- Get keywords and description --->
+					<cfinvoke component="images" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="qry_text" />
+					<!--- Get XMP values --->
+					<cfinvoke method="readxmpdb" thestruct="#arguments.thestruct#" returnVariable="qry_xmp" />
+					<!--- Add to local query --->
+					<cfset QueryAddRow(arguments.thestruct.tq)>
+					<!--- Add id --->
+					<cfset QuerySetCell(arguments.thestruct.tq, "id", cart_product_id)>
+					<!--- Add filename --->
+					<cfset QuerySetCell(arguments.thestruct.tq, "filename", qry_image.img_filename)>
+					<!--- Add Labels --->
+					<cfif qry_labels NEQ "">
+						<cfset QuerySetCell(arguments.thestruct.tq, "labels", qry_labels)>
+					</cfif>
+					<!--- Add custom fields --->
+					<cfif qry_cf.recordcount NEQ 0>
+						<!--- Add the custom fields rows --->
+						<cfloop query="qry_cf">
+							<cfset MyArray = ArrayNew(1)>
+							<cfset MyArray[1] = cf_value>
+							<cfset QueryAddcolumn(arguments.thestruct.tq, cf_text, "varchar", MyArray)>
+							<cfset arguments.thestruct.meta_fields = arguments.thestruct.meta_fields & "," & cf_text>
+						</cfloop>
+					</cfif>
+					<!--- Add keywords --->
+					<cfif qry_text.recordcount NEQ 0>
+						<cfset QuerySetCell(arguments.thestruct.tq, "keywords", qry_text.keywords)>
+					</cfif>
+					<!--- Add XMP --->
+					<cfif qry_xmp.recordcount NEQ 0>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcsubjectcode", qry_xmp.iptcsubjectcode)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "creator", qry_xmp.creator)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "title", qry_xmp.title)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "authorstitle", qry_xmp.authorstitle)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "descwriter", qry_xmp.descwriter)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcaddress", qry_xmp.iptcaddress)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "category", qry_xmp.category)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "categorysub", qry_xmp.categorysub)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "urgency", qry_xmp.urgency)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "description", qry_xmp.description)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptccity", qry_xmp.iptccity)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptccountry", qry_xmp.iptccountry)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptclocation", qry_xmp.iptclocation)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptczip", qry_xmp.iptczip)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcemail", qry_xmp.iptcemail)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcwebsite", qry_xmp.iptcwebsite)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcphone", qry_xmp.iptcphone)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcintelgenre", qry_xmp.iptcintelgenre)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcinstructions", qry_xmp.iptcinstructions)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcsource", qry_xmp.iptcsource)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcusageterms", qry_xmp.iptcusageterms)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "copystatus", qry_xmp.copystatus)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcjobidentifier", qry_xmp.iptcjobidentifier)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "copyurl", qry_xmp.copyurl)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcheadline", qry_xmp.iptcheadline)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcdatecreated", qry_xmp.iptcdatecreated)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcimagecity", qry_xmp.iptcimagecity)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcimagestate", qry_xmp.iptcimagestate)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcimagecountry", qry_xmp.iptcimagecountry)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcimagecountrycode", qry_xmp.iptcimagecountrycode)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcscene", qry_xmp.iptcscene)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptcstate", qry_xmp.iptcstate)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "iptccredit", qry_xmp.iptccredit)>
+						<cfset QuerySetCell(arguments.thestruct.tq, "copynotice", qry_xmp.copynotice)>
+					</cfif>
+				</cfcase>
+				<!--- Videos --->
+				<cfcase value="vid">
+					
+				</cfcase>
+				<!--- Audios --->
+				<cfcase value="aud">
+					
+				</cfcase>
+				<!--- All other files --->
+				<cfdefaultcase>
+					
+				</cfdefaultcase>
+			</cfswitch>
+		</cfloop>
 	</cfif>
+	
+	
+	<!--- We got the query ready, continue export --->
+	
+	<!--- CVS --->
+	<cfif arguments.thestruct.format EQ "csv">
+		<cfinvoke method="export_csv" thestruct="#arguments.thestruct#" />
+	<!--- XLS --->
+	<cfelse>
+		<!--- Add custom fields to meta fields --->
+		<cfinvoke method="export_xls" thestruct="#arguments.thestruct#" />
+	</cfif>
+	
+	
 	
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
+
+<!--- Export CSV --->
+<cffunction name="export_csv" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Create CSV --->
+	<cfset var csv = csvwrite(arguments.thestruct.tq)>
+	<!--- Stream to browser --->
+	<!--- Default file name when prompted to download --->
+	<cfheader name="content-disposition" value="attachment; filename=export.csv" />
+	<!--- Serve the file --->
+	<cfcontent type="application/force-download" variable="#csv#">
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Export CLS --->
+<cffunction name="export_xls" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Create Spreadsheet --->
+	<cfif arguments.thestruct.format EQ "xls">
+		<cfset var sxls = spreadsheetnew()>
+	<cfelseif arguments.thestruct.format EQ "xlsx">
+		<cfset var sxls = spreadsheetnew(true)>
+	</cfif>
+	<!--- Create header row --->
+	<cfset SpreadsheetAddrow(sxls, arguments.thestruct.meta_fields, 1)>
+	<cfset SpreadsheetFormatRow(sxls, {bold=TRUE, alignment="left"}, 1)>
+	<cfset SpreadsheetColumnfittosize(sxls, "1-#len(arguments.thestruct.meta_fields)#")>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 1, 10000)>
+	<!--- Add orders from query --->
+	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)> 
+	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
+	<!--- Stream to browser --->
+	<!--- Default file name when prompted to download --->
+	<cfheader name="content-disposition" value="attachment; filename=export.#arguments.thestruct.format#" />
+	<!--- Serve the file --->
+	<cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#">
+	<cfabort>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
 
 </cfcomponent>

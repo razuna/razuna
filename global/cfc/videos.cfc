@@ -1514,7 +1514,7 @@
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qryintern" cachename="vid#session.hostid#gettext#arguments.qry.id#" cachedomain="#session.theuserid#_videos">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachename="vid#session.hostid#gettext#arguments.qry.id#" cachedomain="#session.theuserid#_videos">
 	SELECT vid_id_r tid, vid_description description, vid_keywords keywords
 	FROM #session.hostdbprefix#videos_text
 	WHERE vid_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
