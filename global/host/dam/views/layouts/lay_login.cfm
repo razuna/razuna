@@ -46,7 +46,7 @@
 				<br>Licensed under <a href="#dynpath#/licenses/agpl.txt" target="_blank">AGPL</a>
 			<br>
 			</cfif>
-			Razuna by <a href="http://razuna.com" target="_blank">Razuna</a>
+			Powered by <a href="http://razuna.com" target="_blank">Razuna</a>
 			<br><a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
 		</div>
 	</div>

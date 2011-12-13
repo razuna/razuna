@@ -36,7 +36,7 @@
 		var format = $('##export_format option:selected').val();
 		// Only if select is a format
 		if (format != ''){
-			window.open('#myself#c.meta_export_do&what=#attributes.what#&format=' + format)
+			window.open('#myself#c.meta_export_do&what=#attributes.what#&file_id=#attributes.file_id#&format=' + format)
 		}
 	}
 </script>

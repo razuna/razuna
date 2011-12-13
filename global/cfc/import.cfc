@@ -23,4 +23,18 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<a href="http://www.razuna.com" target="_blank">Razuna</a> <cfoutput>#settingsObj.getconfig("version")#</cfoutput> | Licensed under <a href="<cfoutput>#dynpath#</cfoutput>/licenses/agpl.txt" target="_blank">AGPL</a> | Powered by <a href="http://razuna.com" target="_blank">Razuna</a> | <a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
+<cfcomponent output="false" extends="extQueryCaching">
+
+	!--- Rendering Farm: Get all --->
+	<cffunction name="getTemplates" output="true">
+		<cfargument name="thestruct" type="struct">
+		<!--- Query --->
+		<cfquery dataSource="#application.razuna.datasource#" name="qry">
+		
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry>
+	</cffunction>
+
+
+</cfcomponent>

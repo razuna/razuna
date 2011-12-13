@@ -123,6 +123,7 @@
 					<option value="move">#defaultsObj.trans("move")#</option>
 					<option value="batch">#defaultsObj.trans("batch")#</option>
 					<option value="chcoll">#defaultsObj.trans("add_to_collection")#</option>
+					<option value="exportmeta">#defaultsObj.trans("header_export_metadata")#</option>
 					<cfif kind EQ "img" OR kind EQ "vid">
 						<option value="prev">#defaultsObj.trans("batch_recreate_preview")#</option>
 					</cfif>

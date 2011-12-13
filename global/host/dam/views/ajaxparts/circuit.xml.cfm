@@ -449,6 +449,10 @@
 	<fuseaction name="labels_main_comments">
   		<include template="dsp_labels_main_comments" />
 	</fuseaction>
+	<!-- ADMIN: Import Templates -->
+	<fuseaction name="imp_templates">
+  		<include template="dsp_admin_imp_templates" />
+	</fuseaction>
 	
 	<!-- Gears -->
 	<fuseaction name="gears">

@@ -124,6 +124,9 @@ function batchaction(theform, what, kind, folder_id, theid){
 			case "chcoll":
 				showwindow('<cfoutput>#myself#</cfoutput>c.choose_collection&artofimage=list&artofvideo=&artofaudio=&artoffile=&file_id=' + fileids + '&thetype=' + what, '<cfoutput>#defaultsObj.trans("add_to_collection")#</cfoutput>', 550, 1);
 				break;
+			case "exportmeta":
+				showwindow('<cfoutput>#myself#</cfoutput>c.meta_export&what=&file_id=' + fileids + '&thetype=' + what, '<cfoutput>#defaultsObj.trans("header_export_metadata")#</cfoutput>', 600, 1);
+				break;
 			case "shareon":
 				// Show loading gif
 				loadinggif("feedback_delete_" + kind);

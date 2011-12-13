@@ -49,6 +49,7 @@
 								<p><a href="##" onclick="basketemail('#qry_basket.cart_order_email#');return false;">#defaultsObj.trans("send_basket_email")#</a></p>
 								<p><a href="##" onclick="basketftp();return false;">#defaultsObj.trans("send_basket_ftp")#</a></p>
 								<p><a href="##" onclick="basketsave();return false;">#defaultsObj.trans("save_basket")#</a></p>
+								<p><a href="##" onclick="showwindow('#myself#c.meta_export&what=basket','#defaultsObj.trans("header_export_metadata")#',600,1);return false;">#defaultsObj.trans("header_export_metadata")#</a></p>
 								<p><a href="##" onclick="showwindow('#myself#ajax.remove_basket','#Jsstringformat(defaultsObj.trans("delete_basket"))#',400,1);return false;">#defaultsObj.trans("delete_basket")#</a></p>
 							</div>
 						</div>

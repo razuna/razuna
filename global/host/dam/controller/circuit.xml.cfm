@@ -3418,6 +3418,17 @@
 		<do action="upl_templates" />
 	</fuseaction>
 	
+	<!--  -->
+	<!-- ADMIN: IMPORT TEMPLATES START -->
+	<!--  -->
+	
+	<!-- Templates List -->
+	<fuseaction name="imp_templates">
+		<!-- CFC: get templates -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="gettemplates()" returnvariable="qry_templates" />
+		<!-- Show -->
+		<do action="ajax.imp_templates" />
+	</fuseaction>
 	
 	
 	<!--  -->
@@ -5296,16 +5307,14 @@
 	<fuseaction name="meta_export">
 		<!-- Param -->
 		<set name="attributes.what" value="" overwrite="false" />
+		<set name="attributes.file_id" value="" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.meta_export" />
 	</fuseaction>
 	<!-- Export DO -->
 	<fuseaction name="meta_export_do">
-		
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().xmp" methodcall="meta_export(attributes)" />
-		<!-- Show -->
-		<!-- <do action="ajax.meta_export" /> -->
 	</fuseaction>
 	
 	<!--  -->
