@@ -27,7 +27,7 @@
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<!--- Header --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_rf")#</th>
+			<th class="textbold" colspan="3">#defaultsObj.trans("header_rf")#</th>
 		</tr>
 		<tr class="list">
 			<td colspan="3">#defaultsObj.trans("header_rf_desc")#</td>
@@ -40,21 +40,21 @@
 			<td colspan="3">#defaultsObj.trans("header_rf_enable_desc")#</td>
 		</tr>
 		<tr>
-			<td><input type="radio" name="conf_rendering_farm" id="conf_rendering_farm" value="true"<cfif gprefs.conf_rendering_farm> checked="checked"</cfif>> #defaultsObj.trans("enable")# <input type="radio" name="conf_rendering_farm" id="conf_rendering_farm" value="false"<cfif !gprefs.conf_rendering_farm> checked="checked"</cfif>> #defaultsObj.trans("disable")#</td>
+			<td colspan="3"><input type="radio" name="conf_rendering_farm" id="conf_rendering_farm" value="true"<cfif gprefs.conf_rendering_farm> checked="checked"</cfif>> #defaultsObj.trans("enable")# <input type="radio" name="conf_rendering_farm" id="conf_rendering_farm" value="false"<cfif !gprefs.conf_rendering_farm> checked="checked"</cfif>> #defaultsObj.trans("disable")#</td>
 		</tr>
 		<!--- Server Location --->
 		<tr>
-			<th colspan="2">#defaultsObj.trans("header_location")#</th>
+			<th colspan="3">#defaultsObj.trans("header_location")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("header_location_desc")#</td>
+			<td colspan="3">#defaultsObj.trans("header_location_desc")#</td>
 		</tr>
 		<tr class="list">
-			<td colspan="2"><input type="text" name="rendering_farm_location" id="rendering_farm_location" style="width:300px;" value="#settingsObj.thissetting('rendering_farm_location')#" /></td>
+			<td colspan="3"><input type="text" name="rendering_farm_location" id="rendering_farm_location" style="width:300px;" value="#settingsObj.thissetting('rendering_farm_location')#" /></td>
 		</tr>	
 		<!--- List --->
 		<tr>
-			<th class="textbold" colspan="2" style="padding-bottom:20px;">
+			<th class="textbold" colspan="3" style="padding-bottom:20px;">
 				<div style="float:left;padding-top:10px;">#defaultsObj.trans("header_rf_servers")#</div>
 				<div style="float:right;padding-top:10px;"><input type="button" class="button" value="Add Server" onclick="showwindow('#myself#c.prefs_renf_detail&rfs_id=0&rfs_add=true','#defaultsObj.trans("header_rf_server")#',550,1);" /></div>
 			</th>
@@ -64,6 +64,7 @@
 			<tr class="list">
 				<td width="100%"><a href="##" onclick="showwindow('#myself#c.prefs_renf_detail&rfs_id=#rfs_id#&rfs_add=false','#defaultsObj.trans("header_rf_server")#',550,1);">#rfs_server_name#</a></td>
 				<td nowrap="nowrap"><a href="##" onclick="showwindow('#myself#c.prefs_renf_detail&rfs_id=#rfs_id#&rfs_add=false','#defaultsObj.trans("header_rf_server")#',550,1);"><cfif rfs_active><img src="images/online_16.png" width="16" height="16" border="0"/><cfelse><img src="images/offline_16.png" width="16" height="16" border="0"/></cfif></a></td>
+				<td nowrap="nowrap"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=rfs&id=#rfs_id#&loaddiv=renf','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"/></a></td>
 			</tr>
 		</cfloop>
 	</table>

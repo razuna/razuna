@@ -709,7 +709,7 @@
 	<!-- Validate: Amazon Bucket -->
 	<fuseaction name="prefs_aws_bucket_validate">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().amazon" methodcall="validatebucket(attributes.awsbucket)" />
+		<invoke object="myFusebox.getApplicationData().amazon" methodcall="validate(attributes)" />
 	</fuseaction>
 	<!-- Save preferences -->
 	<fuseaction name="prefs_global_save">
@@ -1219,6 +1219,13 @@
 	<fuseaction name="prefs_renf_add">
 		<!-- Save -->
 		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_update(attributes)" />
+	</fuseaction>
+	<!-- Server Remove -->
+	<fuseaction name="rfs_remove">
+		<!-- Save -->
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_remove(attributes)" />
+		<!-- Show -->
+		<do action="prefs_renf" />
 	</fuseaction>
 	
 </circuit>
