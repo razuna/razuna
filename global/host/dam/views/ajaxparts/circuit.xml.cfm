@@ -453,6 +453,10 @@
 	<fuseaction name="imp_templates">
   		<include template="dsp_admin_imp_templates" />
 	</fuseaction>
+	<!-- ADMIN: Import Templates Details -->
+	<fuseaction name="imp_template_detail">
+  		<include template="dsp_admin_imp_template_detail" />
+	</fuseaction>
 	
 	<!-- Gears -->
 	<fuseaction name="gears">

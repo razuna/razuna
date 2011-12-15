@@ -1226,7 +1226,7 @@
 			<!--- For wget script --->
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.tempfolder#.sh">
 			<!--- On Windows a .bat --->
-			<cfif arguments.thestruct.iswindows>
+			<cfif iswindows>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.tempfolder#.bat">
 			</cfif>
 			<!--- Write --->	

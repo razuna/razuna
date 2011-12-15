@@ -25,16 +25,130 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
-	!--- Rendering Farm: Get all --->
+	!--- Templates: Get all --->
 	<cffunction name="getTemplates" output="true">
-		<cfargument name="thestruct" type="struct">
+		<cfargument name="theactive" type="boolean" required="false" default="0">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
-		
+		SELECT imp_temp_id, imp_active, imp_name, imp_description
+		FROM #session.hostdbprefix#import_templates
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.theactive EQ "T">
+			AND imp_active = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+		</cfif>
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction>
 
+	<!--- Get DETAILED Upload Templates ---------------------------------------------------------------------->
+	<cffunction name="gettemplatedetail" output="false">
+		<cfargument name="imp_temp_id" type="string" required="true">
+		<!--- New struct --->
+		<cfset var qry = structnew()>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry.imp">
+		SELECT imp_who, imp_active, imp_name, imp_description
+		FROM #session.hostdbprefix#import_templates
+		WHERE imp_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.imp_temp_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Query values --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry.impval">
+		SELECT imp_field, imp_map
+		FROM #session.hostdbprefix#import_templates_val
+		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.imp_temp_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfreturn qry />
+	</cffunction>
+	
+	<!--- Save Upload Templates ---------------------------------------------------------------------->
+	<cffunction name="settemplate" output="false">
+		<cfargument name="thestruct" type="struct" required="true">
+		<!--- Param --->
+		<cfparam name="arguments.thestruct.imp_active" default="0">
+		<!--- Delete all records with this ID in the MAIN DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#import_templates
+		WHERE imp_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">
+		</cfquery>
+		<!--- Save to main DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#import_templates
+		(imp_temp_id, imp_date_create, imp_date_update, imp_who, imp_active, host_id, imp_name, imp_description)
+		VALUES(
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">,
+		<cfqueryparam cfsqltype="CF_SQL_TIMESTAMP" value="#now()#">,
+		<cfqueryparam cfsqltype="CF_SQL_TIMESTAMP" value="#now()#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_active#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_name#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_description#">
+		)
+		</cfquery>
+		<!--- Delete all records with this ID in the DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#import_templates_val
+		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">
+		</cfquery>
+		<!--- Get the name and select fields --->
+		<cfset var thefield = "">
+		<cfset var theselect = "">
+		<cfloop collection="#arguments.thestruct#" item="i">
+			<cfif i CONTAINS "field_">
+				<!--- Get values --->
+				<cfset f = listfirst(i,"_")>
+				<cfset fn = listlast(i,"_")>
+				<cfset fg = f & "_" & fn>
+				<cfset thefield = thefield & "," & fg>
+			</cfif>
+			<cfif i CONTAINS "select_">
+				<!--- Get values --->
+				<cfset s = listfirst(i,"_")>
+				<cfset sn = listlast(i,"_")>
+				<cfset sg = s & "_" & sn>
+				<cfset theselect = theselect & "," & sg>
+			</cfif>
+		</cfloop>
+		<!--- loop over list amount and do insert and listgetat --->
+		<cfloop from="1" to="#listlen(thefield)#" index="i">
+			<cfset fi = listgetat(thefield, listfindnocase(thefield,"field_#i#"))>
+			<cfset se = listgetat(theselect, listfindnocase(theselect,"select_#i#"))>
+			<cfset fi_value = arguments.thestruct["#fi#"]>
+			<cfset se_value = arguments.thestruct["#se#"]>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#import_templates_val
+			(imp_temp_id_r, host_id, rec_uuid, imp_field, imp_map)
+			VALUES(
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fi_value#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#se_value#">
+			)
+			</cfquery>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Remove Templates ---------------------------------------------------------------------->
+	<cffunction name="removetemplate" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#import_templates
+		WHERE imp_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#import_templates_val
+		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfreturn  />
+	</cffunction>
 
 </cfcomponent>

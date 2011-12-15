@@ -3429,7 +3429,35 @@
 		<!-- Show -->
 		<do action="ajax.imp_templates" />
 	</fuseaction>
-	
+	<!-- Templates Detail or add -->
+	<fuseaction name="imp_template_detail">
+		<!-- Param -->
+		<set name="attributes.meta_default" value="id,type,filename,labels,keywords,description" />
+		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice" />
+		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
+		<!-- Create new ID -->
+		<if condition="attributes.imp_temp_id EQ 0">
+			<true>
+				<set name="attributes.imp_temp_id" value="#replace(createuuid(),'-','','all')#" />
+			</true>
+		</if>
+		<!-- CFC: get details -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="gettemplatedetail(attributes.imp_temp_id)" returnvariable="qry_detail" />
+		<!-- Show -->
+		<do action="ajax.imp_template_detail" />
+	</fuseaction>
+	<!-- Templates Save -->
+	<fuseaction name="imp_template_save">
+		<!-- CFC: save -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="settemplate(attributes)" />
+	</fuseaction>
+	<!-- Templates Remove -->
+	<fuseaction name="imp_templates_remove">
+		<!-- CFC: save -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="removetemplate(attributes)" />
+		<!-- Show -->
+		<do action="imp_templates" />
+	</fuseaction>
 	
 	<!--  -->
 	<!-- ADMIN: UPLOAD TEMPLATES STOP -->
