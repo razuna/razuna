@@ -2863,7 +2863,7 @@
 		<transtext><![CDATA[Please enter the values into the fields below to have Razuna connect to your selected database. We recommend that you check the connection as well!]]></transtext>
 	</transid>
 	<transid name="global_storage_amazon_desc">
-		<transtext><![CDATA[<a href="http://aws.amazon.com/s3/" target="_blank">Amazon S3</a> is a storage cloud service provided by Amazon. <a href="http://open.eucalyptus.com/" target="_blank">Eucalyptus</a> is a open source solution for building your private cloud. With this option enabled, Razuna will store all assets on Amazon S3 or Eucalyptus. You don't need to worry about anything with Razuna. Simply enable this option and enter your keys below. Each tenant has its own bucket which will need to be configured in the settings for each tenant individually.]]></transtext>
+		<transtext><![CDATA[<a href="http://aws.amazon.com/s3/" target="_blank">Amazon S3</a> is a cloud storage service provided by Amazon. <a href="http://open.eucalyptus.com/" target="_blank">Eucalyptus</a> is a open source solution for building your private cloud. With this option enabled, Razuna will store all assets on Amazon S3 or Eucalyptus. You don't need to worry about anything with Razuna. Simply enable this option and enter your keys below.<br /><br />Note: Choose the location of your bucket below. Each tenant has its own bucket which will need to be configured in the settings for each tenant individually. Those buckets have to be in the same region as defined below.]]></transtext>
 	</transid>
 	<transid name="header_ffmpeg2theora">
 		<transtext>FFMpeg2Theora Path</transtext>

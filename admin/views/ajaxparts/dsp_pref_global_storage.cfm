@@ -51,17 +51,17 @@
 			<tr>
 				<td></td>
 				<td nowrap="true" valign="top">Master Account Name</td>
-				<td><input type="text" name="conf_nirvanix_master_name" id="conf_nirvanix_master_name" size="40" value="#gprefs.conf_nirvanix_master_name#" /></td>
+				<td><input type="text" name="conf_nirvanix_master_name" id="conf_nirvanix_master_name" style="width:300px;" value="#gprefs.conf_nirvanix_master_name#" /></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td nowrap="true" valign="top">Master Account Password</td>
-				<td><input type="password" name="conf_nirvanix_master_pass" id="conf_nirvanix_master_pass" size="40" value="#gprefs.conf_nirvanix_master_pass#" /></td>
+				<td><input type="password" name="conf_nirvanix_master_pass" id="conf_nirvanix_master_pass" style="width:300px;" value="#gprefs.conf_nirvanix_master_pass#" /></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td nowrap="true" valign="top">Nirvanix Application Key</td>
-				<td><input type="text" name="conf_nirvanix_appkey" id="conf_nirvanix_appkey" size="40" value="#gprefs.conf_nirvanix_appkey#" /></td>
+				<td><input type="text" name="conf_nirvanix_appkey" id="conf_nirvanix_appkey" style="width:300px;" value="#gprefs.conf_nirvanix_appkey#" /></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -79,18 +79,18 @@
 			<tr>
 				<td></td>
 				<td nowrap="true" valign="top">Access Key ID</td>
-				<td><input type="text" name="conf_aws_access_key" id="conf_aws_access_key" size="40" value="#gprefs.conf_aws_access_key#" /></td>
+				<td><input type="text" name="conf_aws_access_key" id="conf_aws_access_key" style="width:300px;" value="#gprefs.conf_aws_access_key#" /></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td nowrap="true" valign="top">Secret Access Key</td>
-				<td><input type="text" name="conf_aws_secret_access_key" id="conf_aws_secret_access_key" size="40" value="#gprefs.conf_aws_secret_access_key#" /></td>
+				<td><input type="text" name="conf_aws_secret_access_key" id="conf_aws_secret_access_key" style="width:300px;" value="#gprefs.conf_aws_secret_access_key#" /></td>
 			</tr>
 			<tr>
 				<td></td>
 				<td>Bucket Location</td>
 				<td>
-					<select name="conf_aws_location" id="conf_aws_location">
+					<select name="conf_aws_location" id="conf_aws_location" style="width:310px;">
 						<option value="us-east"<cfif application.razuna.awslocation EQ "" OR application.razuna.awslocation EQ "us-east"> selected="selected"</cfif>>US Standard</option>
 						<option value="us-west-2"<cfif application.razuna.awslocation EQ "us-west-2"> selected="selected"</cfif>>US West (Oregon)</option>
 						<option value="us-west-1"<cfif application.razuna.awslocation EQ "us-west-1"> selected="selected"</cfif>>US West (Northern California)</option>
