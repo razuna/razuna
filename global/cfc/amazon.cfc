@@ -33,8 +33,9 @@
 	<cffunction name="init" returntype="amazon" access="public" output="false">
 		<cfargument name="awskey" type="string" required="true" />
 		<cfargument name="awskeysecret" type="string" required="true" />
+		<cfargument name="awslocation" type="string" required="true" default="us-east" />
 		<!--- Set --->
-		<cfset application.razuna.s3ds = AmazonRegisterDataSource("amz","#arguments.awskey#","#arguments.awskeysecret#")>
+		<cfset application.razuna.s3ds = AmazonRegisterDataSource("amz","#arguments.awskey#","#arguments.awskeysecret#","#arguments.awslocation#")>
 		<!--- Return --->
 		<cfreturn this />
 	</cffunction>
@@ -42,23 +43,23 @@
 	<!--- FUNCTION: VALIDATE --->
 	<cffunction name="validate" returntype="string" access="public" output="true">
 		<cfargument name="thestruct" type="struct" required="yes" />
-			<!--- Set Source --->
-			<cfset application.razuna.s3ds = AmazonRegisterDataSource("amz","#arguments.thestruct.awskey#","#application.razuna.awskeysecret#")>
+			<!--- Register Datasource --->
+			<cfset application.razuna.s3ds = AmazonRegisterDataSource("amz","#arguments.thestruct.awskey#","#arguments.thestruct.awskeysecret#","#arguments.thestruct.awslocation#")>
 			<!--- Create a bucket --->
-			<cfset var tempid = replace(createuuid(),"-","","ALL")>
-			<cfinvoke component="s3" method="putBucket" bucketName="#tempid#" returnVariable="x" />
-			<!--- Check to see if we can list the buckets
-			<cfset awsbuckets = AmazonS3listbuckets(application.razuna.s3ds)>
-			<cfdump var="#awsbuckets#"><cfabort> --->
+			<cfset var tempid = lcase(replace(createuuid(),"-","","ALL"))>
+			<cfinvoke component="s3" method="putBucket" bucketName="#tempid#" storageLocation="#arguments.thestruct.awslocation#" returnVariable="x" />
 			<cfoutput>
-			<cfif x>
-				<br>
+			<cfif x.responseheader.STATUS_CODE EQ "200">
+				<br />
 				<span style="color:green;font-weight:bold;">Connection is valid!</span>
 				<!--- Delete Bucket --->
 				<cfinvoke component="s3" method="deleteBucket" bucketName="#tempid#" />
 			<cfelse>
-				<br>
+				<cfset var thexml = xmlparse(x.filecontent)>
+				<br />
 				<span style="color:red;font-weight:bold;">We could not validate your credentials!</span>
+				<br />
+				AWS Error Message: #thexml.error[1].message.xmltext#
 			</cfif>
 			</cfoutput>
 		<!--- Return --->
@@ -70,7 +71,7 @@
 		<cfargument name="awsbucket" type="string" required="true" />
 		<cftry>
 			<!--- Check to see if we can list the buckets --->
-			<cfset mydir = AmazonS3list(application.razuna.s3ds,"#arguments.awsbucket#")>
+			<cfset mydir = AmazonS3list(application.razuna.s3ds,"#lcase(arguments.awsbucket)#")>
 			<cfoutput>
 				<span style="color:green;font-weight:bold;">Success. The bucket can be read by Razuna!</span>
 			</cfoutput>

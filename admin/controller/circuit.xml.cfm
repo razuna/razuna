@@ -709,7 +709,7 @@
 	<!-- Validate: Amazon Bucket -->
 	<fuseaction name="prefs_aws_bucket_validate">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().amazon" methodcall="validate(attributes)" />
+		<invoke object="myFusebox.getApplicationData().amazon" methodcall="validatebucket(attributes.awsbucket)" />
 	</fuseaction>
 	<!-- Save preferences -->
 	<fuseaction name="prefs_global_save">

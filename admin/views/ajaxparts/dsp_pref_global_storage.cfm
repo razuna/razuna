@@ -88,8 +88,23 @@
 			</tr>
 			<tr>
 				<td></td>
+				<td>Bucket Location</td>
+				<td>
+					<select name="conf_aws_location" id="conf_aws_location">
+						<option value="us-east"<cfif application.razuna.awslocation EQ "" OR application.razuna.awslocation EQ "us-east"> selected="selected"</cfif>>US Standard</option>
+						<option value="us-west-2"<cfif application.razuna.awslocation EQ "us-west-2"> selected="selected"</cfif>>US West (Oregon)</option>
+						<option value="us-west-1"<cfif application.razuna.awslocation EQ "us-west-1"> selected="selected"</cfif>>US West (Northern California)</option>
+						<option value="EU"<cfif application.razuna.awslocation EQ "EU"> selected="selected"</cfif>>EU (Ireland)</option>
+						<option value="ap-southeast-1"<cfif application.razuna.awslocation EQ "ap-southeast-1"> selected="selected"</cfif>>Asia Pacific (Singapore)</option>
+						<option value="ap-northeast-1"<cfif application.razuna.awslocation EQ "ap-northeast-1"> selected="selected"</cfif>>Asia Pacific (Tokyo)</option>
+						<option value="sa-east-1"<cfif application.razuna.awslocation EQ "sa-east-1"> selected="selected"</cfif>>South America (Sao Paulo)</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
 				<td></td>
-				<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidateaws','#myself#c.prefs_aws_validate&awskey=' + escape($('##conf_aws_access_key').val()) + '&awskeysecret=' + escape($('##conf_aws_secret_access_key').val()));" /><div id="divvalidateaws"></div></td>
+				<td></td>
+				<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidateaws','#myself#c.prefs_aws_validate&awskey=' + escape($('##conf_aws_access_key').val()) + '&awskeysecret=' + escape($('##conf_aws_secret_access_key').val()) + '&awslocation=' + $('##conf_aws_location :selected').val());" /><div id="divvalidateaws"></div></td>
 			</tr>
 	</table>
 </cfoutput>
