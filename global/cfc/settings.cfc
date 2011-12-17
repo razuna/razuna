@@ -443,7 +443,7 @@
 		<cfset application.razuna.awskey = arguments.thestruct.conf_aws_access_key>
 		<cfset application.razuna.awskeysecret = arguments.thestruct.conf_aws_secret_access_key>
 		<cfset application.razuna.awslocation = arguments.thestruct.conf_aws_location>
-		<cfset application.razuna.s3ds = AmazonRegisterDataSource("amz","#application.razuna.awskey#","#application.razuna.awskeysecret#","#application.razuna.awslocation#")>
+		<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws","#arguments.thestruct.conf_aws_access_key#","#arguments.thestruct.conf_aws_secret_access_key#","#arguments.thestruct.conf_aws_location#")>
 	</cfif>
 	<!--- Set rendering setting in application scope --->
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>

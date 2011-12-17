@@ -107,6 +107,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfargument name="bucketName" type="string" required="true">
 		<cfargument name="acl" type="string" required="false" default="public-read">
 		<cfargument name="storageLocation" type="string" required="false" default="">
+		<cfargument name="awskey" type="string" required="true">
 		
 		<cfset var strXML = "">
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
@@ -133,7 +134,7 @@ Version 1.8 - Released: July 27, 2010
 			<cfhttpparam type="header" name="Content-Type" value="text/html">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
 			<cfhttpparam type="header" name="x-amz-acl" value="#arguments.acl#">
-			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
+			<cfhttpparam type="header" name="Authorization" value="AWS #arguments.awskey#:#signature#">
 			<cfhttpparam type="body" value="#trim(strXML)#">
 		</cfhttp>
 		
@@ -249,7 +250,9 @@ Version 1.8 - Released: July 27, 2010
 	
 	<cffunction name="deleteBucket" access="public" output="false" returntype="boolean" 
 				description="Deletes a bucket.">
-		<cfargument name="bucketName" type="string" required="yes">	
+		<cfargument name="bucketName" type="string" required="yes">
+		<cfargument name="awskey" type="string" required="yes">	
+		<cfargument name="endpoint" type="string" required="yes">	
 		
 		<cfset var dateTimeString = GetHTTPTimeString(Now())>
 		
@@ -260,11 +263,11 @@ Version 1.8 - Released: July 27, 2010
 		<cfset var signature = createSignature(cs)>
 		
 		<!--- delete the bucket via REST --->
-		<cfhttp method="DELETE" url="http://s3.amazonaws.com/#arguments.bucketName#" charset="utf-8">
+		<cfhttp method="DELETE" url="http://s3.amazon.com/#arguments.bucketName#" charset="utf-8">
 			<cfhttpparam type="header" name="Date" value="#dateTimeString#">
-			<cfhttpparam type="header" name="Authorization" value="AWS #variables.accessKeyId#:#signature#">
+			<cfhttpparam type="header" name="Authorization" value="AWS #arguments.awskey#:#signature#">
 		</cfhttp>
-		
+
 		<cfreturn true>
 	</cffunction>
 	

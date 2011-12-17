@@ -31,11 +31,6 @@
 	
 	<!--- FUNCTION: INIT --->
 	<cffunction name="init" returntype="amazon" access="public" output="false">
-		<cfargument name="awskey" type="string" required="true" />
-		<cfargument name="awskeysecret" type="string" required="true" />
-		<cfargument name="awslocation" type="string" required="true" default="us-east" />
-		<!--- Set --->
-		<cfset application.razuna.s3ds = AmazonRegisterDataSource("amz","#arguments.awskey#","#arguments.awskeysecret#","#arguments.awslocation#")>
 		<!--- Return --->
 		<cfreturn this />
 	</cffunction>
@@ -44,16 +39,18 @@
 	<cffunction name="validate" returntype="string" access="public" output="true">
 		<cfargument name="thestruct" type="struct" required="yes" />
 			<!--- Register Datasource --->
-			<cfset application.razuna.s3ds = AmazonRegisterDataSource("amz","#arguments.thestruct.awskey#","#arguments.thestruct.awskeysecret#","#arguments.thestruct.awslocation#")>
+			<!--- <cfset application.razuna.s3ds = AmazonRegisterDataSource("aws","#arguments.thestruct.awskey#","#arguments.thestruct.awskeysecret#","#arguments.thestruct.awslocation#")> --->
 			<!--- Create a bucket --->
 			<cfset var tempid = lcase(replace(createuuid(),"-","","ALL"))>
-			<cfinvoke component="s3" method="putBucket" bucketName="#tempid#" storageLocation="#arguments.thestruct.awslocation#" returnVariable="x" />
+			<cfinvoke component="s3" method="putBucket" bucketName="#tempid#" awskey="#arguments.thestruct.awskey#" storageLocation="#arguments.thestruct.awslocation#" returnVariable="x" />
+			<!--- Get endpoint --->
+			<cfset var ep = endpoints(arguments.thestruct.awslocation)>
 			<cfoutput>
 			<cfif x.responseheader.STATUS_CODE EQ "200">
 				<br />
 				<span style="color:green;font-weight:bold;">Connection is valid!</span>
 				<!--- Delete Bucket --->
-				<cfinvoke component="s3" method="deleteBucket" bucketName="#tempid#" />
+				<cfinvoke component="s3" method="deleteBucket" bucketName="#tempid#" awskey="#arguments.thestruct.awskey#" endpoint="#ep#" />
 			<cfelse>
 				<cfset var thexml = xmlparse(x.filecontent)>
 				<br />
@@ -90,12 +87,13 @@
 		<cfargument name="key" type="string" required="true" />
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
+		<!--- <cfset var aws = AmazonRegisterDataSource("up",application.razuna.awskey,application.razuna.awskeysecret,application.razuna.awslocation)> --->
 		<!--- Upload asset --->
 		<cfset AmazonS3write(
-			datasource="#application.razuna.s3ds#",
-			bucket="#arguments.awsbucket#",
-			key="#arguments.key#",
-			file="#arguments.theasset#"
+			datasource=application.razuna.s3ds,
+			bucket=arguments.awsbucket,
+			key=arguments.key,
+			file=arguments.theasset
 		)>
 		<!--- Return --->
 		<cfreturn />
@@ -108,10 +106,10 @@
 		<cfargument name="awsbucket" type="string" required="true" />
 		<!--- Download asset --->
 		<cfset AmazonS3read(
-			datasource="#application.razuna.s3ds#",
-			bucket="#arguments.awsbucket#",
-			key="#arguments.key#",
-			file="#arguments.theasset#"
+			datasource=application.razuna.s3ds,
+			bucket=arguments.awsbucket,
+			key=arguments.key,
+			file=arguments.theasset
 		)>
 		<!--- Return --->
 		<cfreturn />
@@ -122,13 +120,19 @@
 		<cfargument name="key" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
 		<cfargument name="minutesValid" type="string" required="false" default="5259600">
-		
+		<cfset var aws = AmazonRegisterDataSource("up",application.razuna.awskey,application.razuna.awskeysecret,application.razuna.awslocation)>
 		<cfset var x = structnew()>
 		<!--- Add 10 years to the current time and convert to epoch time: 31556926 is a year in seconds --->
 		<!--- <cfset x.newepoch = ceiling(getTickCount() / 1000) + 315569260> --->
 		<cfset x.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
 		<!--- Wait --->
-		<cfinvoke component="s3" method="getobject" bucketName="#arguments.awsbucket#" filekey="#arguments.key#" minutesValid="#arguments.minutesValid#" returnVariable="x.theurl" />
+		<!--- <cfinvoke component="s3" method="getobject" bucketName="#arguments.awsbucket#" filekey="#arguments.key#" minutesValid="#arguments.minutesValid#" returnVariable="x.theurl" /> --->
+		<cfset x.theurl = AmazonS3geturl(
+		   datasource=aws, 
+		   bucket=arguments.awsbucket, 
+		   key=arguments.key, 
+		   expiration=arguments.minutesValid
+		)>
 		<!--- Return --->
 		<cfreturn x />
 	</cffunction>
@@ -199,6 +203,32 @@
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+	
+	<!--- get endpoint --->
+	<cffunction name="endpoints" access="public" output="true">
+		<cfargument name="location" type="string" required="true" />
+		<cfset var x = "">
+		<!--- Define endpoint --->
+		<cfif arguments.location EQ "us-east">
+			<cfset x = "s3">
+		<cfelseif arguments.location EQ "us-west-2">
+			<cfset x = "s3-us-west-2">
+		<cfelseif arguments.location EQ "us-west-1">
+			<cfset x = "s3-us-west-1">
+		<cfelseif arguments.location EQ "eu">
+			<cfset x = "s3-eu-west-1">
+		<cfelseif arguments.location EQ "ap-southeast-1">
+			<cfset x = "s3-ap-southeast-1">
+		<cfelseif arguments.location EQ "ap-northeast-1">
+			<cfset x = "s3-ap-northeast-1">
+		<cfelseif arguments.location EQ "sa-east-1">
+			<cfset x = "s3-sa-east-1">
+		</cfif> 
+		<!--- Append amazon.com --->
+		<cfset x = x & ".amazon.com">
+		<!--- Return --->
+		<cfreturn x />
 	</cffunction>
 	
 </cfcomponent>
