@@ -26,7 +26,6 @@
 <!--- The default div. This will be overwritten by any call that calls the id of this div --->
 <div id="rightside">
 	<cfoutput>
-		<cfdump var="#application.razuna#">
 		<!--- If a new version is avaiable we show this table --->
 		<cfif newversion.versionavailable EQ "T">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
