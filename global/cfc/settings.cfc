@@ -105,6 +105,7 @@
 
 <!--- Settings for Image --->
 <cffunction name="prefs_image">
+	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="prefs_image#session.hostid#" cachedomain="#session.hostid#_settings2">
 	SELECT set2_create_imgfolders_where, set2_cat_intra, set2_cat_web, set2_img_format, set2_img_thumb_width, 
 	set2_img_thumb_heigth, set2_img_comp_width, set2_img_comp_heigth
