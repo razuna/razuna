@@ -30,12 +30,15 @@
 		<div id="firebugalert" style="display:none;"></div>
 		<!--- Storage Check --->
 		<cfif application.razuna.storage EQ "nirvanix" AND attributes.nvxsession EQ 0>
-			<cfmail to="nitai@razuna.com" from="server@razuna.com" subject="nir" type="html">
-				<cfdump var="#application.razuna#">
-			</cfmail>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
 				<tr>
-					<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;color:##900;">Caution: You are using the Nirvanix Cloud Storage, but it looks like it is not properly set up. Thus no assets will be shown! <br />Please check with your Administrator to resolve this immediately</td>
+					<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;color:##900;">
+						<cfif application.razuna.isp>
+						<strong>Caution: Something is wrong with your setup. Please <a href="mailto:support@razuna.com?subject=Login error for #session.hostid#">contact the Razuna support team</a> with this error. Do NOT continue until you hear from us!</strong>
+						<cfelse>
+						Caution: You are using the Nirvanix Cloud Storage, but it looks like it is not properly set up. Thus no assets will be shown! <br />Please check with your Administrator to resolve this immediately
+						</cfif>
+					</td>
 				</tr>
 			</table>
 			<br />

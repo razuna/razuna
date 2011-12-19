@@ -522,21 +522,23 @@
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
 		<!--- Get session --->
-		<cfset var nvxsession = login()>
+		<!--- <cfset var nvxsession = login()> --->
 		<!--- Set Structure --->
 		<cfset x = structnew()>
 		<!--- Call --->
 		<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
-		<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="true" charset="utf-8">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+		<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="true" charset="utf-8" timeout="10">
+			<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
 			<cfhttpparam name="userName" value="#arguments.username#" type="url">
 		</cfhttp>
 		<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
-		<cfset trimxml = trim(cfhttp.FileContent)>
+		<!---
+<cfset trimxml = trim(cfhttp.FileContent)>
 		<cfset thelen = len(trimxml)>
 		<cfset findit = findoneof("<",cfhttp.FileContent)>
 		<cfset thexml = mid(cfhttp.FileContent, findit, thelen)>
-		<cfset xmlVar = xmlParse(thexml)/>
+--->
+		<cfset xmlVar = xmlParse(cfhttp.FileContent)/>
 		<!--- Get the XML node for each setting --->
 		<!--- <cfset x.DBU = nvxusage[1].usage>
 		<cfset x.UBU = nvxusage[3].usage>
