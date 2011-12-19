@@ -143,13 +143,19 @@
 	        newElem.children(':nth-child(2)').attr('id', 'select_' + newNum).attr('name', 'select_' + newNum);
 	        newElem.children(':nth-child(3)').attr('id', 'radio_' + newNum);
 	      	
-	        // insert the new element after the last "duplicatable" input field
+	        // Add the fields to the page
 	        $('##input' + num).after(newElem)
-	
+	        
 	        // enable the "remove" button
 	        $('##btnDel').css('display','');
-	
+			
+			// Add the new num as the new radio value
 	        $('##radio_' + newNum).val(newNum);
+	         // Reset the values for the new field set
+	        $('##field_' + newNum).val('');
+	        $('##select_' + newNum).val($('option:first', this).val());
+	        $('##radio_' + newNum).prop('checked',false);
+	        
 	        // business rule: you can only add 5 names
 	        /*
 	        	if (newNum == 5)
