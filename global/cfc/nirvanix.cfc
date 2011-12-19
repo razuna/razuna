@@ -54,7 +54,7 @@
 		<!--- Login and get session token --->
 		<cftry>
 			<cfif arguments.thestruct.isbrowser EQ "F">
-				<cfhttp url="http://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="true" charset="utf-8" timeout="10">
+				<cfhttp url="https://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="true" charset="utf-8" timeout="10">
 					<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
 					<cfhttpparam name="username" value="#qry_settings.set2_nirvanix_name#" type="url">
 					<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
@@ -67,7 +67,7 @@
 					<cfset theremoteip = cgi.remote_addr>
 				</cfif>
 				<!--- Get the SessionToken --->
-				<cfhttp url="http://services.nirvanix.com/ws/Authentication/LoginProxy.ashx" method="get" throwonerror="true" charset="utf-8" timeout="10">
+				<cfhttp url="https://services.nirvanix.com/ws/Authentication/LoginProxy.ashx" method="get" throwonerror="true" charset="utf-8" timeout="10">
 					<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
 					<cfhttpparam name="username" value="#qry_settings.set2_nirvanix_name#" type="url">
 					<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
@@ -80,6 +80,7 @@
 			<cfcatch type="any">
 				<cfmail to="nitai@razuna.com" from="server@razuna.com" subject="nvx error during login" type="html">
 					<cfdump var="#cfcatch#">
+					<cfdump var="#arguments.thestruct#">
 				</cfmail>
 				<cfset var nvxsession = 0>
 			</cfcatch>
