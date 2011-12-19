@@ -1378,7 +1378,7 @@
 		<!--- Loop over items in basket --->
 		<cfloop query="thebasket">
 			<!--- Set query --->
-			<cfset QueryAddRow(arguments.thestruct.qry)>
+			<cfset QueryAddRow(arguments.thestruct.qry,1)>
 			<cfset QuerySetCell(arguments.thestruct.qry, "id", cart_product_id)>
 			<cfset arguments.thestruct.file_id = cart_product_id>
 			<cfset arguments.thestruct.filetype = cart_file_type>
@@ -1393,7 +1393,7 @@
 			<cfset arguments.thestruct.file_id = listfirst(i, "-")>
 			<cfset arguments.thestruct.filetype = listlast(i, "-")>
 			<!--- Set query --->
-			<cfset QueryAddRow(arguments.thestruct.qry)>
+			<cfset QueryAddRow(arguments.thestruct.qry,1)>
 			<cfset QuerySetCell(arguments.thestruct.qry, "id", arguments.thestruct.file_id)>
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
@@ -1538,7 +1538,7 @@
 <cffunction name="add_to_query" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Add row local query --->
-	<cfset QueryAddRow(arguments.thestruct.tq)>
+	<cfset QueryAddRow(arguments.thestruct.tq,1)>
 	<!--- Add id --->
 	<cfset QuerySetCell(arguments.thestruct.tq, "id", arguments.thestruct.file_id)>
 	<!--- Add type --->

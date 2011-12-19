@@ -54,23 +54,46 @@
 	</div>
 	<!--- Fields --->
 	<div id="tab_imp_temp_fields">
-	    <div id="input1" style="margin-bottom:4px;" class="clonedInput">
-	        <input type="text" name="field_1" id="field_1" style="width:250px;" />
-	        <!--- <select data-placeholder="Map to..." id="select1" name="select1" class="chzn-select" style="width:250px;"> --->
-	        <select id="select_1" name="select_1" style="width:250px;">
-	        	<option selected="selected">Map to ...</option>
-	        	<option>--- Default ---</option>
-	        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-	        	<option>--- For Images ---</option>
-	        	<cfloop list="#attributes.meta_img#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-	        	<option>--- For Documents (PDF) ---</option>
-	        	<cfloop list="#attributes.meta_doc#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
-	        </select>
-	    </div>
+		<!--- List the mapped fields --->
+		<cfloop query="qry_detail.impval">
+			<div id="input#currentRow#" style="margin-bottom:4px;" class="clonedInput">
+		        <input type="text" name="field_#currentRow#" id="field_#currentRow#" style="width:250px;" value="#imp_field#" />
+		        <!--- <select data-placeholder="Map to..." id="select1" name="select1" class="chzn-select" style="width:250px;"> --->
+		        <select id="select_#currentRow#" name="select_#currentRow#" style="width:250px;">
+		        	<option selected="selected">Map to ...</option>
+		        	<option>--- Default ---</option>
+		        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
+		        	<option>--- For Images ---</option>
+		        	<cfloop list="#attributes.meta_img#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
+		        	<option>--- For Documents (PDF) ---</option>
+		        	<cfloop list="#attributes.meta_doc#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
+		        </select>
+		        <input type="radio" name="radio_key" id="radio_#currentRow#" value="#currentRow#"<cfif imp_key> checked="checked"</cfif> />*
+		    </div>
+		</cfloop>
+		<!--- Add one to the recodcount --->
+		<cfif qry_detail.impval.recordcount EQ 0>
+		    <div id="input1" style="margin-bottom:4px;" class="clonedInput">
+		        <input type="text" name="field_1" id="field_1" style="width:250px;" />
+		        <!--- <select data-placeholder="Map to..." id="select1" name="select1" class="chzn-select" style="width:250px;"> --->
+		        <select id="select_1" name="select_1" style="width:250px;">
+		        	<option selected="selected">Map to ...</option>
+		        	<option>--- Default ---</option>
+		        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
+		        	<option>--- For Images ---</option>
+		        	<cfloop list="#attributes.meta_img#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
+		        	<option>--- For Documents (PDF) ---</option>
+		        	<cfloop list="#attributes.meta_doc#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
+		        </select>
+		        <input type="radio" name="radio_key" id="radio_1" value="1" />*
+		    </div>
+	    </cfif>
 	    <div style="width:50px;height:40px;">
 	 		<img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" align="left" id="btnAdd" />
 	    	<img src="#dynpath#/global/host/dam/images/list-remove-3.png" width="24" height="24" border="0" align="right" id="btnDel" />
 		</div>
+		<br />
+		<em>(* #defaultsObj.trans("mapping_key_desc")#)</em>
 	</div>
 </div>
 <div id="submit" style="float:right;padding:10px;">
@@ -118,7 +141,7 @@
 	        // manipulate the name/id values of the input inside the new element
 	        newElem.children(':first').attr('id', 'field_' + newNum).attr('name', 'field_' + newNum);
 	        newElem.children(':nth-child(2)').attr('id', 'select_' + newNum).attr('name', 'select_' + newNum);
-	        //newElem.children(':nth-child(3)').attr('id', 'select' + num + '_chzn').attr('id', 'select' + newNum + '_chzn');
+	        newElem.children(':nth-child(3)').attr('id', 'radio_' + newNum);
 	      	
 	        // insert the new element after the last "duplicatable" input field
 	        $('##input' + num).after(newElem)
@@ -126,6 +149,7 @@
 	        // enable the "remove" button
 	        $('##btnDel').css('display','');
 	
+	        $('##radio_' + newNum).val(newNum);
 	        // business rule: you can only add 5 names
 	        /*
 	        	if (newNum == 5)

@@ -55,10 +55,11 @@
 		</cfquery>
 		<!--- Query values --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.impval">
-		SELECT imp_field, imp_map
+		SELECT imp_field, imp_map, imp_key
 		FROM #session.hostdbprefix#import_templates_val
 		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.imp_temp_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		ORDER BY imp_field
 		</cfquery>
 		<cfreturn qry />
 	</cffunction>
@@ -120,13 +121,16 @@
 			<cfset se_value = arguments.thestruct["#se#"]>
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#import_templates_val
-			(imp_temp_id_r, host_id, rec_uuid, imp_field, imp_map)
+			(imp_temp_id_r, host_id, rec_uuid, imp_field, imp_map<cfif arguments.thestruct.radio_key EQ i>, imp_key</cfif>)
 			VALUES(
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.imp_temp_id#">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fi_value#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#se_value#">
+			<cfif arguments.thestruct.radio_key EQ i>, 				
+				<cfqueryparam cfsqltype="CF_SQL_DOUBLE" value="true">
+			</cfif>
 			)
 			</cfquery>
 		</cfloop>
