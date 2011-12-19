@@ -353,7 +353,7 @@
 	<!--- Update --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, 
-	conf_nirvanix_master_pass, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
+	conf_nirvanix_master_pass, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
 	<!--- Return --->
@@ -426,11 +426,25 @@
 		<cfif commad EQ "T">,</cfif>conf_aws_secret_access_key = <cfqueryparam value="#arguments.thestruct.conf_aws_secret_access_key#" cfsqltype="cf_sql_varchar">
 		<cfset commad = "T">
 	</cfif>
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_aws_location")>
+		<cfif commad EQ "T">,</cfif>conf_aws_location = <cfqueryparam value="#arguments.thestruct.conf_aws_location#" cfsqltype="cf_sql_varchar">
+		<cfset commad = "T">
+	</cfif>
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>
 		<cfif commad EQ "T">,</cfif>conf_rendering_farm = <cfqueryparam value="#arguments.thestruct.conf_rendering_farm#" cfsqltype="CF_SQL_DOUBLE">
 		<cfset commad = "T">
 	</cfif>
 	</cfquery>
+	<!--- Set application scopes --->
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_nirvanix_appkey")>
+		<cfset application.razuna.nvxappkey = arguments.thestruct.conf_nirvanix_appkey>
+	</cfif>
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_aws_access_key")>
+		<cfset application.razuna.awskey = arguments.thestruct.conf_aws_access_key>
+		<cfset application.razuna.awskeysecret = arguments.thestruct.conf_aws_secret_access_key>
+		<cfset application.razuna.awslocation = arguments.thestruct.conf_aws_location>
+		<cfset application.razuna.s3ds = AmazonRegisterDataSource("amz","#application.razuna.awskey#","#application.razuna.awskeysecret#","#application.razuna.awslocation#")>
+	</cfif>
 	<!--- Set rendering setting in application scope --->
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>
 		<cfset application.razuna.renderingfarm = arguments.thestruct.conf_rendering_farm>
@@ -775,7 +789,7 @@
 			<cfset commad = "T">
 		</cfif>
 		<cfif StructKeyExists(#arguments.thestruct#, "set2_aws_bucket")>
-			<cfif commad EQ "T">,</cfif>set2_aws_bucket = <cfqueryparam value="#arguments.thestruct.set2_aws_bucket#" cfsqltype="cf_sql_varchar">
+			<cfif commad EQ "T">,</cfif>set2_aws_bucket = <cfqueryparam value="#lcase(arguments.thestruct.set2_aws_bucket)#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
 		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
@@ -896,7 +910,7 @@
 	<cftry>
 		<cfquery datasource="razuna_default" name="qry">
 		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
+		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
@@ -931,6 +945,7 @@
 				conf_storage				VARCHAR(100),
 				conf_aws_access_key			VARCHAR(100),
 				conf_aws_secret_access_key	VARCHAR(100),
+				conf_aws_location			VARCHAR(100),
 				conf_nirvanix_appkey		VARCHAR(100),
 				conf_nirvanix_master_name	VARCHAR(100),
 				conf_nirvanix_master_pass	VARCHAR(100),
@@ -960,7 +975,7 @@
 			<!--- Query again --->
 			<cfquery datasource="razuna_default" name="qry">
 			SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
+			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 			FROM razuna_config
 			</cfquery>
 		</cfcatch>
@@ -1016,6 +1031,7 @@
 	<cfset application.razuna.nvxurlservices = qry.conf_nirvanix_url_services>
 	<cfset application.razuna.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.awskeysecret = qry.conf_aws_secret_access_key>
+	<cfset application.razuna.awslocation = qry.conf_aws_location>
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.firsttime = qry.conf_firsttime>
 	<cfset application.razuna.renderingfarm = qry.conf_rendering_farm>
@@ -1027,7 +1043,7 @@
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_nirvanix_url_services,
-	conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
+	conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -1039,6 +1055,7 @@
 	<cfset application.razuna.api.nvxurlservices = qry.conf_nirvanix_url_services>
 	<cfset application.razuna.api.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.api.awskeysecret = qry.conf_aws_secret_access_key>
+	<cfset application.razuna.api.awslocation = qry.conf_aws_location>
 	<cfset application.razuna.api.renderingfarm = qry.conf_rendering_farm>
 </cffunction>
 
@@ -1048,7 +1065,7 @@
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_rendering_farm
+	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -1061,6 +1078,7 @@
 	<cfset application.razuna.nvxurlservices = qry.conf_nirvanix_url_services>
 	<cfset application.razuna.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.awskeysecret = qry.conf_aws_secret_access_key>
+	<cfset application.razuna.awslocation = qry.conf_aws_location>
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.renderingfarm = qry.conf_rendering_farm>
 </cffunction>

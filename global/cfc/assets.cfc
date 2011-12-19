@@ -1628,7 +1628,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- <cfset resizeImagett = createuuid()> --->
 		<cfset arguments.thestruct.theplaceholderpic = theplaceholderpic>
 		<cfset arguments.thestruct.width  = arguments.thestruct.qrysettings.set2_img_thumb_width>
-		<cfset arguments.thestruct.heigth = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
+		<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 		<cfset arguments.thestruct.destination = "#arguments.thestruct.thetempdirectory#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
 		<cfif isWindows()>
 			<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
@@ -1977,12 +1977,12 @@ This is the main function called directly by a single upload else from addassets
 		<cfset orgwh.theheight = trim(listlast(orgwh.theheight," "))>
 		<cfset orgwh.thewidth = trim(listlast(orgwh.thewidth," "))>
 		<!--- Set correct width or heigth --->
-		<cfif orgwh.theheight LTE Arguments.thestruct.heigth AND orgwh.thewidth LTE Arguments.thestruct.width>
+		<cfif orgwh.theheight LTE arguments.thestruct.height AND orgwh.thewidth LTE arguments.thestruct.width>
 			<cfset theImgConvertParams = "-strip -colorspace RGB">
-		<cfelseif orgwh.thewidth GT Arguments.thestruct.width>
-			<cfset theImgConvertParams = "-thumbnail #Arguments.thestruct.width#x -strip -colorspace RGB">
-		<cfelseif orgwh.theheight GT Arguments.thestruct.height>
-			<cfset theImgConvertParams = "-thumbnail x#Arguments.thestruct.height# -strip -colorspace RGB">
+		<cfelseif orgwh.thewidth GT arguments.thestruct.width>
+			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
+		<cfelseif orgwh.theheight GT arguments.thestruct.height>
+			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# -strip -colorspace RGB">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>

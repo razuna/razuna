@@ -58,7 +58,10 @@
 				<th class="textbold" colspan="2">Amazon / Eucalyptus Bucket</th>
 			</tr>
 			<tr>
-				<td colspan="2">Every host has their own bucket for storing assets. Please enter the name of your *existing* bucket in the field below and click on validate to check that we can read/write to it.</td>
+				<td colspan="2">Every host has their own bucket for storing assets. Please enter the name of your bucket in the field below and click on validate to check that we can read/write to it.</td>
+			</tr>
+			<tr>
+				<td colspan="2">NOTE: Define a EXISTING bucket here! Also make sure the bucket is in your defined region. You authenticated Razuna on AWS with the region "#application.razuna.awslocation#".</td>
 			</tr>
 			<tr>
 				<td>Bucket Name</td>
@@ -66,10 +69,11 @@
 			</tr>
 			<tr>
 				<td></td>
-				<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidateaws','#myself#c.prefs_aws_bucket_validate&awsbucket=' + escape($('##set2_aws_bucket').val()));" /><div id="divvalidateaws"></div></td>
+				<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidateaws','#myself#c.prefs_aws_bucket_validate&awsbucket=' + escape($('##set2_aws_bucket').val()));" /><div id="divvalidateaws"></div>
+				<br />
+				<div id="divvalidateaws"></div>
+				</td>
 			</tr>
-			<br>
-			<div id="divvalidateaws"></div>
 		</cfif>
 	</table>
 

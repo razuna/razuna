@@ -52,6 +52,18 @@
 		<cfreturn qry>
 	</cffunction>
 	
+	<!--- Rendering Farm: remove --->
+	<cffunction name="rfs_remove" output="true">
+		<cfargument name="thestruct" type="struct" required="true">
+		<!--- Query --->
+		<cfquery dataSource="#application.razuna.datasource#">
+		DELETE FROM rfs
+		WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+	
 	<!--- Rendering Farm: update --->
 	<cffunction name="rfs_update" output="true">
 		<cfargument name="thestruct" type="struct" required="true">

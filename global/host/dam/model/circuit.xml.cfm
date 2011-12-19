@@ -126,6 +126,7 @@
 		<instantiate class="amazon" object="myFusebox.getApplicationData().amazon" overwrite="true">
 			<argument name="awskey" value="#application.razuna.awskey#" />
 			<argument name="awskeysecret" value="#application.razuna.awskeysecret#" />
+			<argument name="awslocaction" value="#application.razuna.awslocation#" />
 		</instantiate>
 		<!-- Comments -->
 		<instantiate class="comments" object="myFusebox.getApplicationData().comments" overwrite="true">

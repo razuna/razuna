@@ -103,8 +103,7 @@ Version 1.8 - Released: July 27, 2010
 		<cfreturn allBuckets>		
 	</cffunction>
 	
-	<cffunction name="putBucket" access="public" output="false" returntype="boolean" 
-				description="Creates a bucket.">
+	<cffunction name="putBucket" access="public" output="false" returntype="struct" description="Creates a bucket.">
 		<cfargument name="bucketName" type="string" required="true">
 		<cfargument name="acl" type="string" required="false" default="public-read">
 		<cfargument name="storageLocation" type="string" required="false" default="">
@@ -114,18 +113,21 @@ Version 1.8 - Released: July 27, 2010
 
 		<!--- Create a canonical string to send based on operation requested ---> 
 		<cfset var cs = "PUT\n\ntext/html\n#dateTimeString#\nx-amz-acl:#arguments.acl#\n/#arguments.bucketName#">
-
+		
+		<cfif arguments.storageLocation EQ "us-east">
+			<cfset arguments.storageLocation = "">
+		</cfif>
+		
 		<!--- Create a proper signature --->
 		<cfset var signature = createSignature(cs)>
-
-		<cfif compare(arguments.storageLocation,'')>
-			<cfsavecontent variable="strXML">
+		<cfif arguments.storageLocation NEQ "">
+			<cfsavecontent variable="strXML"><cfoutput>
 				<CreateBucketConfiguration xmlns="http://s3.amazonaws.com/doc/2006-03-01/"><LocationConstraint>#arguments.storageLocation#</LocationConstraint></CreateBucketConfiguration>
-			</cfsavecontent>
+			</cfoutput></cfsavecontent>
 		<cfelse>
 			<cfset strXML = "">
 		</cfif>
-
+		
 		<!--- put the bucket via REST --->
 		<cfhttp method="PUT" url="http://s3.amazonaws.com/#arguments.bucketName#" charset="utf-8">
 			<cfhttpparam type="header" name="Content-Type" value="text/html">
@@ -135,7 +137,7 @@ Version 1.8 - Released: July 27, 2010
 			<cfhttpparam type="body" value="#trim(strXML)#">
 		</cfhttp>
 		
-		<cfreturn true>
+		<cfreturn cfhttp>
 	</cffunction>
 	
 	<cffunction name="getBucket" access="public" output="false" returntype="array" 

@@ -1220,5 +1220,12 @@
 		<!-- Save -->
 		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_update(attributes)" />
 	</fuseaction>
+	<!-- Server Remove -->
+	<fuseaction name="rfs_remove">
+		<!-- Save -->
+		<invoke object="myFusebox.getApplicationData().rfs" methodcall="rfs_remove(attributes)" />
+		<!-- Show -->
+		<do action="prefs_renf" />
+	</fuseaction>
 	
 </circuit>

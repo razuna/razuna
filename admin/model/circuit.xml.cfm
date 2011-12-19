@@ -54,6 +54,7 @@
 		<instantiate class="amazon" object="myFusebox.getApplicationData().amazon" overwrite="true">
 			<argument name="awskey" value="#application.razuna.awskey#" />
 			<argument name="awskeysecret" value="#application.razuna.awskeysecret#" />
+			<argument name="awslocation" value="#application.razuna.awslocation#" />
 		</instantiate>
 		<!-- Defaults -->
 		<instantiate class="defaults" object="myFusebox.getApplicationData().defaults" overwrite="true">

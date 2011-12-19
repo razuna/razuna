@@ -327,6 +327,7 @@
 		<cfif arguments.thestruct.qrydetail.recordcount NEQ 0>
 			<cfloop query="arguments.thestruct.qrydetail">
 				<cfset arguments.thestruct.link_kind = link_kind>
+				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 				<!--- Remove Lucene Index --->
 			 	<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#id#" category="doc">
 				<!--- Delete file in folder --->
@@ -347,6 +348,7 @@
 		<cfif arguments.thestruct.qrydetail.recordcount NEQ 0>
 			<cfloop query="arguments.thestruct.qrydetail">
 				<cfset arguments.thestruct.link_kind = link_kind>
+				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 				<!--- Remove Lucene Index --->
 			 	<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#id#" category="img">
 			 	<!--- Delete file in folder --->
@@ -367,6 +369,7 @@
 		<cfif arguments.thestruct.qrydetail.recordcount NEQ 0>
 			<cfloop query="arguments.thestruct.qrydetail">
 				<cfset arguments.thestruct.link_kind = link_kind>
+				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 				<!--- Remove Lucene Index --->
 			 	<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#id#" category="vid">
 				<!--- Delete file in folder --->
@@ -387,6 +390,7 @@
 		<cfif arguments.thestruct.qrydetail.recordcount NEQ 0>
 			<cfloop query="arguments.thestruct.qrydetail">
 				<cfset arguments.thestruct.link_kind = link_kind>
+				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 				<!--- Remove Lucene Index --->
 			 	<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#id#" category="aud">
 				<!--- Delete file in folder --->
