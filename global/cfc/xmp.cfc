@@ -269,85 +269,85 @@
 		<cftry>
 			<cfsavecontent variable="thexmp">-xmp:all=<!--- Remove all fileds first --->
 <!--- Keywords ---><cfif ltrim(rereplace(attributes.intstruct.img_keywords,"\,","","all")) EQ "">-xmp:subject=
-	keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.img_keywords#"><cfif ltrim(key) NEQ "">-xmp:subject=#ltrim(key)#
-	-keywords=#ltrim(key)#</cfif>
-	</cfloop></cfif><!--- Creator --->
-	-xmp:creator=#attributes.intstruct.xmp_author#
-	-IPTC:By-line=#attributes.intstruct.xmp_author#
-	-xmp:rights=#replacenocase(ParagraphFormat(attributes.intstruct.xmp_copyright_notice),"<p>","","all")#
-	-IPTC:CopyrightNotice=#replacenocase(ParagraphFormat(attributes.intstruct.xmp_copyright_notice),"<p>","","all")#
-	-xmp:title=#attributes.intstruct.xmp_document_title#
-	-IPTC:ObjectName=#attributes.intstruct.xmp_document_title#
-	-xmp:description=#replacenocase(ParagraphFormat(attributes.intstruct.img_desc),"<p>","","all")#
-	-IPTC:Caption-Abstract=#replacenocase(ParagraphFormat(attributes.intstruct.img_desc),"<p>","","all")#
-	-xmp:AuthorsPosition=#attributes.intstruct.xmp_author_title#
-	-IPTC:By-lineTitle=#attributes.intstruct.xmp_author_title#
-	-xmp:CaptionWriter=#attributes.intstruct.xmp_description_writer#
-	-IPTC:Writer-Editor=#attributes.intstruct.xmp_description_writer#
-	-xmp:Category=#attributes.intstruct.xmp_category#
-	-iptc:Category=#attributes.intstruct.xmp_category#
-	-xmp:Headline=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_content_headline),"<p>","","all")#
-	-iptc:Headline=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_content_headline),"<p>","","all")#
-	-xmp:DateCreated=#attributes.intstruct.iptc_date_created#
-	-iptc:DateCreated=#attributes.intstruct.iptc_date_created#
-	-xmp:City=#attributes.intstruct.iptc_image_city#
-	-iptc:City=#attributes.intstruct.iptc_image_city#
-	-xmp:State=#attributes.intstruct.iptc_image_state_province#
-	-iptc:Province-State=#attributes.intstruct.iptc_image_state_province#
-	-xmp:Country=#attributes.intstruct.iptc_image_country#
-	-IPTC:Country-PrimaryLocationName=#attributes.intstruct.iptc_image_country#
-	-xmp:TransmissionReference=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_job_identifier),"<p>","","all")#
-	-IPTC:OriginalTransmissionReference=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_job_identifier),"<p>","","all")#
-	-xmp:Instructions=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_instruction),"<p>","","all")#
-	-IPTC:SpecialInstructions=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_instruction),"<p>","","all")#
-	-xmp:Credit=#attributes.intstruct.iptc_status_provider#
-	-iptc:Credit=#attributes.intstruct.iptc_status_provider#
-	-XMP-xmpPLUS:CreditLineReq=#attributes.intstruct.iptc_status_provider#
-	-xmp:Source=#attributes.intstruct.iptc_status_source#
-	-iptc:Source=#attributes.intstruct.iptc_status_source#
-	-xmp:Urgency=#attributes.intstruct.xmp_origin_urgency#
-	-iptc:Urgency=#attributes.intstruct.xmp_origin_urgency#<cfloop delimiters="," index="cats" list="#attributes.intstruct.xmp_supplemental_categories#">
-	-xmp:SupplementalCategories=#ltrim(cats)#
-	-iptc:SupplementalCategories=#ltrim(cats)#
-	</cfloop><!--- Iptc4 Core --->
-	-xmp:Location=#attributes.intstruct.iptc_image_location#
-	-XMP-iptcCore:Location=#attributes.intstruct.iptc_image_location#
-	-xmp:CountryCode=#attributes.intstruct.iptc_iso_country_code#
-	-XMP-iptcCore:CountryCode=#attributes.intstruct.iptc_iso_country_code#
-	-xmp:IntellectualGenre=#attributes.intstruct.iptc_intellectual_genre#
-	-XMP-iptcCore:IntellectualGenre=#attributes.intstruct.iptc_intellectual_genre#
-	-xmp:CiAdrExtadr=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_address),"<p>","","all")#
-	-XMP-iptcCore:CreatorAddress=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_address),"<p>","","all")#
-	-xmp:CiAdrCity=#attributes.intstruct.iptc_contact_city#
-	-XMP-iptcCore:CreatorCity=#attributes.intstruct.iptc_contact_city#
-	-xmp:CiAdrCtry=#attributes.intstruct.iptc_contact_country#
-	-XMP-iptcCore:CreatorCountry=#attributes.intstruct.iptc_contact_country#
-	-xmp:CiTelWork=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_phones),"<p>","","all")#
-	-XMP-iptcCore:CreatorWorkTelephone=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_phones),"<p>","","all")#
-	-xmp:CiAdrRegion=#attributes.intstruct.iptc_contact_state_province#
-	-XMP-iptcCore:CreatorRegion=#attributes.intstruct.iptc_contact_state_province#
-	-xmp:CiAdrPcode=#attributes.intstruct.iptc_contact_postal_code#
-	-XMP-iptcCore:CreatorPostalCode=#attributes.intstruct.iptc_contact_postal_code#
-	-xmp:CiEmailWork=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_emails),"<p>","","all")#
-	-XMP-iptcCore:CreatorWorkEmail=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_emails),"<p>","","all")#
-	-xmp:CiUrlWork=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_websites),"<p>","","all")#
-	-XMP-iptcCore:CreatorWorkURL=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_websites),"<p>","","all")#<!--- Iptc Subject Code ---><cfloop delimiters="," index="subcode" list="#attributes.intstruct.iptc_content_subject_code#">
-	-xmp:SubjectCode=#ltrim(subcode)#
-	-XMP-iptcCore:SubjectCode=#ltrim(subcode)#
-	</cfloop><!--- Iptc Scene ---><cfloop delimiters="," index="scene" list="#attributes.intstruct.iptc_scene#">
-	-xmp:Scene=#ltrim(scene)# 
-	-XMP-iptcCore:Scene=#ltrim(scene)#
-	</cfloop>
-	-xmp:WebStatement=<cfif attributes.intstruct.xmp_copyright_info_url NEQ "">'#attributes.intstruct.xmp_copyright_info_url#'</cfif>
-	-XMP-xmpRights:WebStatement=<cfif attributes.intstruct.xmp_copyright_info_url NEQ "">'#attributes.intstruct.xmp_copyright_info_url#'</cfif>
-	<cfif attributes.intstruct.xmp_copyright_status EQ "true">-xmp:copyrightstatus='true'
-	-XMP-xmpRights:Marked='true'
-	<cfelseif attributes.intstruct.xmp_copyright_status EQ "false">-xmp:copyrightstatus='false'
-	-XMP-xmpRights:Marked='false'
-	<cfelse>-xmp:copyrightstatus=
-	-XMP-xmpRights:Marked=
-	</cfif>
-	-xmp:UsageTerms=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_rights_usage_terms),"<p>","","all")#
+keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.img_keywords#"><cfif ltrim(key) NEQ "">-xmp:subject=#ltrim(key)#
+-keywords=#ltrim(key)#</cfif>
+</cfloop></cfif><!--- Creator --->
+-xmp:creator=#attributes.intstruct.xmp_author#
+-IPTC:By-line=#attributes.intstruct.xmp_author#
+-xmp:rights=#replacenocase(ParagraphFormat(attributes.intstruct.xmp_copyright_notice),"<p>","","all")#
+-IPTC:CopyrightNotice=#replacenocase(ParagraphFormat(attributes.intstruct.xmp_copyright_notice),"<p>","","all")#
+-xmp:title=#attributes.intstruct.xmp_document_title#
+-IPTC:ObjectName=#attributes.intstruct.xmp_document_title#
+-xmp:description=#replacenocase(ParagraphFormat(attributes.intstruct.img_desc),"<p>","","all")#
+-IPTC:Caption-Abstract=#replacenocase(ParagraphFormat(attributes.intstruct.img_desc),"<p>","","all")#
+-xmp:AuthorsPosition=#attributes.intstruct.xmp_author_title#
+-IPTC:By-lineTitle=#attributes.intstruct.xmp_author_title#
+-xmp:CaptionWriter=#attributes.intstruct.xmp_description_writer#
+-IPTC:Writer-Editor=#attributes.intstruct.xmp_description_writer#
+-xmp:Category=#attributes.intstruct.xmp_category#
+-iptc:Category=#attributes.intstruct.xmp_category#
+-xmp:Headline=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_content_headline),"<p>","","all")#
+-iptc:Headline=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_content_headline),"<p>","","all")#
+-xmp:DateCreated=#attributes.intstruct.iptc_date_created#
+-iptc:DateCreated=#attributes.intstruct.iptc_date_created#
+-xmp:City=#attributes.intstruct.iptc_image_city#
+-iptc:City=#attributes.intstruct.iptc_image_city#
+-xmp:State=#attributes.intstruct.iptc_image_state_province#
+-iptc:Province-State=#attributes.intstruct.iptc_image_state_province#
+-xmp:Country=#attributes.intstruct.iptc_image_country#
+-IPTC:Country-PrimaryLocationName=#attributes.intstruct.iptc_image_country#
+-xmp:TransmissionReference=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_job_identifier),"<p>","","all")#
+-IPTC:OriginalTransmissionReference=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_job_identifier),"<p>","","all")#
+-xmp:Instructions=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_instruction),"<p>","","all")#
+-IPTC:SpecialInstructions=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_instruction),"<p>","","all")#
+-xmp:Credit=#attributes.intstruct.iptc_status_provider#
+-iptc:Credit=#attributes.intstruct.iptc_status_provider#
+-XMP-xmpPLUS:CreditLineReq=#attributes.intstruct.iptc_status_provider#
+-xmp:Source=#attributes.intstruct.iptc_status_source#
+-iptc:Source=#attributes.intstruct.iptc_status_source#
+-xmp:Urgency=#attributes.intstruct.xmp_origin_urgency#
+-iptc:Urgency=#attributes.intstruct.xmp_origin_urgency#<cfloop delimiters="," index="cats" list="#attributes.intstruct.xmp_supplemental_categories#">
+-xmp:SupplementalCategories=#ltrim(cats)#
+-iptc:SupplementalCategories=#ltrim(cats)#
+</cfloop><!--- Iptc4 Core --->
+-xmp:Location=#attributes.intstruct.iptc_image_location#
+-XMP-iptcCore:Location=#attributes.intstruct.iptc_image_location#
+-xmp:CountryCode=#attributes.intstruct.iptc_iso_country_code#
+-XMP-iptcCore:CountryCode=#attributes.intstruct.iptc_iso_country_code#
+-xmp:IntellectualGenre=#attributes.intstruct.iptc_intellectual_genre#
+-XMP-iptcCore:IntellectualGenre=#attributes.intstruct.iptc_intellectual_genre#
+-xmp:CiAdrExtadr=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_address),"<p>","","all")#
+-XMP-iptcCore:CreatorAddress=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_address),"<p>","","all")#
+-xmp:CiAdrCity=#attributes.intstruct.iptc_contact_city#
+-XMP-iptcCore:CreatorCity=#attributes.intstruct.iptc_contact_city#
+-xmp:CiAdrCtry=#attributes.intstruct.iptc_contact_country#
+-XMP-iptcCore:CreatorCountry=#attributes.intstruct.iptc_contact_country#
+-xmp:CiTelWork=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_phones),"<p>","","all")#
+-XMP-iptcCore:CreatorWorkTelephone=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_phones),"<p>","","all")#
+-xmp:CiAdrRegion=#attributes.intstruct.iptc_contact_state_province#
+-XMP-iptcCore:CreatorRegion=#attributes.intstruct.iptc_contact_state_province#
+-xmp:CiAdrPcode=#attributes.intstruct.iptc_contact_postal_code#
+-XMP-iptcCore:CreatorPostalCode=#attributes.intstruct.iptc_contact_postal_code#
+-xmp:CiEmailWork=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_emails),"<p>","","all")#
+-XMP-iptcCore:CreatorWorkEmail=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_emails),"<p>","","all")#
+-xmp:CiUrlWork=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_websites),"<p>","","all")#
+-XMP-iptcCore:CreatorWorkURL=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_contact_websites),"<p>","","all")#<!--- Iptc Subject Code ---><cfloop delimiters="," index="subcode" list="#attributes.intstruct.iptc_content_subject_code#">
+-xmp:SubjectCode=#ltrim(subcode)#
+-XMP-iptcCore:SubjectCode=#ltrim(subcode)#
+</cfloop><!--- Iptc Scene ---><cfloop delimiters="," index="scene" list="#attributes.intstruct.iptc_scene#">
+-xmp:Scene=#ltrim(scene)# 
+-XMP-iptcCore:Scene=#ltrim(scene)#
+</cfloop>
+-xmp:WebStatement=<cfif attributes.intstruct.xmp_copyright_info_url NEQ "">'#attributes.intstruct.xmp_copyright_info_url#'</cfif>
+-XMP-xmpRights:WebStatement=<cfif attributes.intstruct.xmp_copyright_info_url NEQ "">'#attributes.intstruct.xmp_copyright_info_url#'</cfif>
+<cfif attributes.intstruct.xmp_copyright_status EQ "true">-xmp:copyrightstatus='true'
+-XMP-xmpRights:Marked='true'
+<cfelseif attributes.intstruct.xmp_copyright_status EQ "false">-xmp:copyrightstatus='false'
+-XMP-xmpRights:Marked='false'
+<cfelse>-xmp:copyrightstatus=
+-XMP-xmpRights:Marked=
+</cfif>
+-xmp:UsageTerms=#replacenocase(ParagraphFormat(attributes.intstruct.iptc_status_rights_usage_terms),"<p>","","all")#
 			</cfsavecontent>
 			<cfcatch type="any"><cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in writing the XML file to savecontent - CFC: XMP Line 320" dump="#cfcatch#"></cfcatch>
 		</cftry>
@@ -449,65 +449,65 @@
 					<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="error in xmp writing xml file line 400" dump="#cfcatch#">
 				</cfcatch>
 			</cftry>
-			<!--- Storage: Nirvanix --->
-			<cfelseif attributes.intstruct.storage EQ "nirvanix">
-				<!--- Create temp directory --->
-				<cfset attributes.intstruct.tempfolder = replace(createuuid(),"-","","ALL")>
-				<cfdirectory action="create" directory="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#" mode="775">
-				<cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#">
-				<!--- LOCATION OF XMP FILE --->
-				<cfset thexmpfile = "#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/xmp-#attributes.intstruct.file_id#">
-				<cfset attributes.intstruct.thesh = GetTempDirectory() & "/#attributes.intstruct.tempfolder#.sh">
-				<!--- On Windows --->
-				<cfif iswindows>
-					<cfset thexmpfile = """#thexmpfile#""">
-					<cfset attributes.intstruct.thesh = GetTempDirectory() & "/#attributes.intstruct.tempfolder#.bat">
-				</cfif>
-				<!--- Write XMP file --->
-				<cffile action="write" file="#thexmpfile#" output="#tostring(thexmp)#" charset="utf-8">
-				<cffile action="write" file="#attributes.intstruct.thesh#" output="#thewget# -P #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder# http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#" mode="777">
-				<!--- Download image --->
-				<cfthread name="download#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#">
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-				</cfthread>
-				<!--- Wait for the thread above until the file is downloaded fully --->
-				<cfthread action="join" name="download#attributes.intstruct.file_id#" />
-				<!--- Remove script file --->
-				<cffile action="delete" file="#attributes.intstruct.thesh#" />
-				<!--- Remove file on Nirvanix or else we get errors during uploading --->
-				<cfinvoke component="nirvanix" method="DeleteFiles">
-					<cfinvokeargument name="filePath" value="/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#">
+		<!--- Storage: Nirvanix --->
+		<cfelseif attributes.intstruct.storage EQ "nirvanix">
+			<!--- Create temp directory --->
+			<cfset attributes.intstruct.tempfolder = replace(createuuid(),"-","","ALL")>
+			<cfdirectory action="create" directory="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#" mode="775">
+			<cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#">
+			<!--- LOCATION OF XMP FILE --->
+			<cfset thexmpfile = "#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/xmp-#attributes.intstruct.file_id#">
+			<cfset attributes.intstruct.thesh = GetTempDirectory() & "/#attributes.intstruct.tempfolder#.sh">
+			<!--- On Windows --->
+			<cfif iswindows>
+				<cfset thexmpfile = """#thexmpfile#""">
+				<cfset attributes.intstruct.thesh = GetTempDirectory() & "/#attributes.intstruct.tempfolder#.bat">
+			</cfif>
+			<!--- Write XMP file --->
+			<cffile action="write" file="#thexmpfile#" output="#tostring(thexmp)#" charset="utf-8">
+			<cffile action="write" file="#attributes.intstruct.thesh#" output="#thewget# -P #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder# http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#" mode="777">
+			<!--- Download image --->
+			<cfthread name="download#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#">
+				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
+			</cfthread>
+			<!--- Wait for the thread above until the file is downloaded fully --->
+			<cfthread action="join" name="download#attributes.intstruct.file_id#" />
+			<!--- Remove script file --->
+			<cffile action="delete" file="#attributes.intstruct.thesh#" />
+			<!--- Remove file on Nirvanix or else we get errors during uploading --->
+			<cfinvoke component="nirvanix" method="DeleteFiles">
+				<cfinvokeargument name="filePath" value="/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#">
+				<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+			</cfinvoke>
+			<!--- Write XMP to image with Exiftool --->
+			<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#" timeout="10" />
+			<!--- Upload file again to its original position --->
+			<cfthread name="upload#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#">
+				<cfinvoke component="nirvanix" method="Upload">
+					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.path_to_asset#">
+					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#">
 					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
-				<!--- Write XMP to image with Exiftool --->
-				<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#" timeout="10" />
-				<!--- Upload file again to its original position --->
-				<cfthread name="upload#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#">
-					<cfinvoke component="nirvanix" method="Upload">
-						<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.path_to_asset#">
-						<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#">
-						<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-					</cfinvoke>
-				</cfthread>
-				<!--- Lucene: Delete Records --->
-				<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.file_id#" category="img">
-				<!--- Lucene: Update Records --->
-				<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.file_id#" category="img">
-				<!--- Update images db with the new Lucene_Key --->
-				<cftransaction>
-					<cfquery datasource="#attributes.intstruct.dsn#">
-					UPDATE #session.hostdbprefix#images
-					SET lucene_key = <cfqueryparam value="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#" cfsqltype="cf_sql_varchar">
-					WHERE img_id = <cfqueryparam value="#attributes.intstruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-				</cftransaction>
-				<!--- Remove the tempfolder but only if image has been uploaded already --->
-				<cfthread action="join" name="upload#attributes.intstruct.file_id#" />
-				<cfif directoryExists("#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#")>
-					<cfdirectory action="delete" directory="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#" recurse="true">
-				</cfif>
+			</cfthread>
+			<!--- Lucene: Delete Records --->
+			<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.file_id#" category="img">
+			<!--- Lucene: Update Records --->
+			<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.file_id#" category="img">
+			<!--- Update images db with the new Lucene_Key --->
+			<cftransaction>
+				<cfquery datasource="#attributes.intstruct.dsn#">
+				UPDATE #session.hostdbprefix#images
+				SET lucene_key = <cfqueryparam value="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#" cfsqltype="cf_sql_varchar">
+				WHERE img_id = <cfqueryparam value="#attributes.intstruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cftransaction>
+			<!--- Remove the tempfolder but only if image has been uploaded already --->
+			<cfthread action="join" name="upload#attributes.intstruct.file_id#" />
+			<cfif directoryExists("#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#")>
+				<cfdirectory action="delete" directory="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#" recurse="true">
 			</cfif>
+		</cfif>
 	</cfthread>
 	<!--- </cfif> --->
 </cffunction>
