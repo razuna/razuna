@@ -61,6 +61,7 @@
 				<a href="#myself#c.view_rss&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" title="#defaultsObj.trans("view_rss_desc")#"><img src="#dynpath#/global/host/dam/images/application-rss+xml.png" hspace="5" border="0" style="margin-left:7px;" width="16" height="16" /></a>
 				<a href="#myself#c.view_xls&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" title="#defaultsObj.trans("view_xls_desc")#"><img src="#dynpath#/global/host/dam/images/page-excel.png" hspace="5" border="0" style="margin-left:7px;" width="16" height="16" /></a>
 				<a href="#myself#c.view_doc&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" title="#defaultsObj.trans("view_doc_desc")#"><img src="#dynpath#/global/host/dam/images/page-word.png" hspace="5" border="0" style="margin-left:7px;" width="16" height="16" /></a>
+				<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#defaultsObj.trans("header_import_metadata")#',500,1);return false;" title="#defaultsObj.trans("header_import_metadata_desc")#"><img src="#dynpath#/global/host/dam/images/package-add.png" hspace="5" border="0" style="margin-left:7px;" width="16" height="16" /></a>
 			</div>
 		</td>
 		<div id="feedback_delete_#kind#" style="white-space:no-wrap;"></div><div id="dummy_#kind#" style="display:none;"></div>

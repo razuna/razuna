@@ -5328,7 +5328,7 @@
 	<!--  -->
 	
 	<!--  -->
-	<!-- METADATA: START -->
+	<!-- EXPORT METADATA: START -->
 	<!--  -->
 	
 	<!-- Export -->
@@ -5346,7 +5346,37 @@
 	</fuseaction>
 	
 	<!--  -->
-	<!-- METADATA: STOP -->
+	<!-- EXPORT METADATA: STOP -->
 	<!--  -->
+	
+	<!--  -->
+	<!-- IMPORT METADATA: START -->
+	<!--  -->
+	
+	<!-- Import show window -->
+	<fuseaction name="meta_imp">
+		<!-- Param -->
+		<set name="attributes.tempid" value="#replace(createuuid(),'-','','all')#" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="getTemplates(false)" returnvariable="qry_imptemp" />
+		<!-- Show -->
+		<do action="ajax.meta_imp" />
+	</fuseaction>
+	<!-- Upload file -->
+	<fuseaction name="meta_imp_upload_do">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="upload(attributes)" />
+	</fuseaction>
+	<!-- Import DO -->
+	<fuseaction name="meta_imp_do">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="doimport(attributes)" />
+	</fuseaction>
+	
+	
+	<!--  -->
+	<!-- IMPORT METADATA: STOP -->
+	<!--  -->
+	
 	
 </circuit>

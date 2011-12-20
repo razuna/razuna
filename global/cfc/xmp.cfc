@@ -1500,7 +1500,7 @@
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
 	<!--- Stream to browser --->
 	<!--- Default file name when prompted to download --->
-	<cfheader name="content-disposition" value="attachment; filename=export.csv" />
+	<cfheader name="content-disposition" value="attachment; filename=razuna-metadata-export.csv" />
 	<!--- Serve the file --->
 	<cfcontent type="application/force-download" variable="#csv#">
 	<!--- Return --->

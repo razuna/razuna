@@ -611,4 +611,13 @@
   		<include template="dsp_meta_export" />
 	</fuseaction>
 	
+	<!-- Meta: Import -->
+	<fuseaction name="meta_imp">
+  		<include template="dsp_meta_import" />
+	</fuseaction>
+	<!-- Meta: Import Upload window -->
+	<fuseaction name="meta_imp_upload">
+  		<include template="dsp_meta_import_upload" />
+	</fuseaction>
+	
 </circuit>

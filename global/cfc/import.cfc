@@ -27,13 +27,13 @@
 
 	!--- Templates: Get all --->
 	<cffunction name="getTemplates" output="true">
-		<cfargument name="theactive" type="boolean" required="false" default="0">
+		<cfargument name="theactive" type="boolean" required="false" default="false">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
 		SELECT imp_temp_id, imp_active, imp_name, imp_description
 		FROM #session.hostdbprefix#import_templates
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif arguments.theactive EQ "T">
+		<cfif arguments.theactive>
 			AND imp_active = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 		</cfif>
 		</cfquery>
@@ -154,5 +154,34 @@
 		</cfquery>
 		<cfreturn  />
 	</cffunction>
-
+	
+	<!--- Upload ---------------------------------------------------------------------->
+	<cffunction name="upload" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Upload file to the temp folder --->
+		<cffile action="upload" destination="#GetTempdirectory()#" nameconflict="overwrite" filefield="#arguments.thestruct.thefieldname#" result="thefile">
+		<!--- Grab the extensions and create new name --->
+		<cfset var ext = listlast(thefile.serverFile,".")>
+		<cfset var thenamenew = arguments.thestruct.tempid & "." & ext>
+		<!--- Rename --->
+		<cffile action="rename" source="#GetTempdirectory()#/#thefile.serverFile#" destination="#GetTempdirectory()#/#thenamenew#" />
+		<!--- Return --->
+		<cfreturn  />
+	</cffunction>
+	
+	<!--- Do the Import ---------------------------------------------------------------------->
+	<cffunction name="doimport" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfdump var="#arguments.thestruct#"><cfabort>
+		<!--- Upload file to the temp folder --->
+		<cffile action="upload" destination="#GetTempdirectory()#" nameconflict="overwrite" filefield="#arguments.thestruct.thefieldname#" result="thefile">
+		<!--- Grab the extensions and create new name --->
+		<cfset var ext = listlast(thefile.serverFile,".")>
+		<cfset var thenamenew = arguments.thestruct.tempid & "." & ext>
+		<!--- Rename --->
+		<cffile action="rename" source="#GetTempdirectory()#/#thefile.serverFile#" destination="#GetTempdirectory()#/#thenamenew#" />
+		<!--- Return --->
+		<cfreturn  />
+	</cffunction>
+	
 </cfcomponent>
