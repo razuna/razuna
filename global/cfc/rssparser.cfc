@@ -41,7 +41,7 @@
 	<cfset var node = "">
 	
 		<cfcachecontent action="cache" cachename="razunacache" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
-			<cfhttp url="#arguments.thefeed#" method="get" throwonerror="yes" timeout="6">
+			<cfhttp url="#arguments.thefeed#" method="get" throwonerror="no" timeout="6">
 		</cfcachecontent>
 		
 			<cfset xmlData = xmlParse(arguments.thefeed)>

@@ -66,7 +66,7 @@
 		<cfinvoke component="settings" method="getconfig" thenode="version" returnvariable="currentversion">
 		<!--- Parse the version file on the server --->
 		<cftry>
-			<cfhttp url="#versionfile#" method="get" throwonerror="true" timeout="5">
+			<cfhttp url="#versionfile#" method="get" throwonerror="no" timeout="5">
 			<cfset var xmlVar=xmlParse(versionfile)/>
 			<cfset var theversion=xmlSearch(xmlVar, "update/version[@name='version']")>
 			<cfset v.newversionnr = trim(#theversion[1].thetext.xmlText#)>
