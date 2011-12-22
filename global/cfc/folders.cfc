@@ -2948,6 +2948,7 @@
 				<!--- Lucene --->
 				<!--- Get file detail --->
 				<cfinvoke component="videos" method="getdetails" vid_id="#theid#" ColumnList="v.path_to_asset, v.link_kind, v.vid_name_org filenameorg, v.lucene_key, v.link_path_url" returnvariable="arguments.thestruct.qrydetail">
+				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#theid#" category="vid" notfile="F">
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#theid#" category="vid" notfile="F">
 			</cfif>
@@ -3015,6 +3016,7 @@
 				WHERE aud_id = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#theid#" category="aud" notfile="F">
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#theid#" category="aud" notfile="F">
 			</cfif>
@@ -3077,6 +3079,7 @@
 				<!--- Lucene --->
 				<!--- Get file detail --->
 				<cfinvoke component="files" method="filedetail" theid="#theid#" thecolumn="path_to_asset, link_kind, file_name_org filenameorg, lucene_key, link_path_url" returnvariable="arguments.thestruct.qrydetail">
+				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#theid#" category="doc" notfile="F">
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#theid#" category="doc" notfile="F">
 			</cfif>
