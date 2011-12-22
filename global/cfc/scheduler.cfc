@@ -412,7 +412,7 @@
 			<cfelse>
 				<cfset thisdir = "#arguments.thedirstring#/#thedirs.name#">
 			</cfif>
-			<cfset QueryAddRow(Arguments.qReturn)>
+			<cfset QueryAddRow(Arguments.qReturn,1)>
 			<cfset QuerySetCell(Arguments.qReturn, "path", "#arguments.thepath#/#thedirs.name#")>
 			<cfset QuerySetCell(Arguments.qReturn, "name", "#foldername#")>
 			<!--- call me again to guarantee recursive loop --->

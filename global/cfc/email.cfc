@@ -37,7 +37,7 @@
 		<!--- set the appropriate records into the new query --->
 		<cfloop query="qryemailheaders">
 			<cfif #findNoCase(arguments.thestruct.email_subject, subject)# GT 0>
-				<cfset tmp = QueryAddRow(qryHeaders)>
+				<cfset tmp = QueryAddRow(qryHeaders,1)>
 				<cfloop list="#columnList#" index="column">
 					<cfset tmp = querySetCell(qryHeaders, column, qryemailheaders[column][currentrow])>
 				</cfloop>

@@ -321,7 +321,7 @@ limitations under the License.
 		
 		<cfloop collection="#stDatasources#" item="thisDSN">
 			<cfif structKeyExists(stDBMSLookup,stDatasources[thisDSN].driver)>
-				<cfset QueryAddRow(qRawDatasources)>
+				<cfset QueryAddRow(qRawDatasources,1)>
 				<cfset QuerySetCell(qRawDatasources,"Datasourcename",stDatasources[thisDSN].name)>
 				<cfset QuerySetCell(qRawDatasources,"DBName",stDatasources[thisDSN].urlmap.database)>
 				<cfset QuerySetCell(qRawDatasources,"Driver",stDBMSLookup[stDatasources[thisDSN].driver])>
