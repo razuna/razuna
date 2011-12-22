@@ -1812,7 +1812,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
 								<cfinvoke component="amazon" method="Upload">
 									<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
-									<cfinvokeargument name="theasset" value="#attributes.intstruct.destination#">
+									<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
 									<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 								</cfinvoke>
 							</cfthread>

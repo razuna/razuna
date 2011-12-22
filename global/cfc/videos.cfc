@@ -1204,7 +1204,7 @@
 						<!--- Upload: Still Image --->
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.folder_id_r#/vid/#attributes.intstruct.newid#/#attributes.intstruct.thispreviewimage#">
-							<cfinvokeargument name="theasset" value="#attributes.intstruct.thispreviewimage#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.previewimage#">
 							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 						</cfinvoke>
 					</cfthread>
