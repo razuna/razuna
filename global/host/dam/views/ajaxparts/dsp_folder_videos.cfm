@@ -195,7 +195,7 @@
 					});
 				});
 				</script>
-				<tr>
+				<tr class="thumbview">
 					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"></td>
 					<td valign="top" width="1%" nowrap="true">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">

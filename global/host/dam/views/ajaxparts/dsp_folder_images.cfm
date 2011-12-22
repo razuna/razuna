@@ -142,7 +142,7 @@
 					});
 				});
 				</script>
-				<tr>
+				<tr class="thumbview">
 					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#img_id#-img" onclick="enablesub('#kind#form');"></td>
 					<td valign="top" width="1%" nowrap="true">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
