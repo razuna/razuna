@@ -1385,6 +1385,38 @@
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
+	<!--- If we export all assets from folder --->
+	<cfelseif arguments.thestruct.what EQ "folder">
+		<!--- Set local var --->
+		<cfset var qry = "">
+		<!--- Get id from folder with type --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT img_id AS theid, 'img' AS thetype
+		FROM #session.hostdbprefix#images
+		WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		UNION ALL
+		SELECT vid_id AS theid, 'vid' AS thetype
+		FROM #session.hostdbprefix#videos
+		WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		UNION ALL
+		SELECT aud_id AS theid, 'aud' AS thetype
+		FROM #session.hostdbprefix#audios
+		WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		UNION ALL
+		SELECT file_id AS theid, 'doc' AS thetype
+		FROM #session.hostdbprefix#files
+		WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		</cfquery>
+		<!--- Loop over items in basket --->
+		<cfloop query="qry">
+			<!--- Set query --->
+			<cfset QueryAddRow(arguments.thestruct.qry,1)>
+			<cfset QuerySetCell(arguments.thestruct.qry, "id", theid)>
+			<cfset arguments.thestruct.file_id = theid>
+			<cfset arguments.thestruct.filetype = thetype>
+			<!--- Get the files --->
+			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
+		</cfloop>
 	<!--- This is coming from a file list --->
 	<cfelse>
 		<!--- Loop over filelist --->

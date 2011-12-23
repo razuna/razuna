@@ -1767,4 +1767,61 @@
 	<transid name="reload_list">
 		<transtext>Reload list</transtext>
 	</transid>
+	<transid name="clear_basket">
+		<transtext>Clear basket</transtext>
+	</transid>
+	<transid name="reload_basket">
+		<transtext>Reload basket</transtext>
+	</transid>
+	<transid name="checkout_basket">
+		<transtext>Checkout basket</transtext>
+	</transid>
+	<transid name="header_export_metadata">
+		<transtext>Export metadata</transtext>
+	</transid>
+	<transid name="header_export_metadata_desc">
+		<transtext><![CDATA[You are about to export the metadata for the selected assets. You can choose to export the file to a XLS, XLSX or CSV (comma separated) file.]]></transtext>
+	</transid>
+	<transid name="total_amount">
+		<transtext>Amount of assets</transtext>
+	</transid>
+	<transid name="export">
+		<transtext>Export</transtext>
+	</transid>
+	<transid name="choose_format">
+		<transtext>Choose file format</transtext>
+	</transid>
+	<transid name="header_import">
+		<transtext>Import metadata</transtext>
+	</transid>
+	<transid name="import_templates">
+		<transtext>Import Templates</transtext>
+	</transid>
+	<transid name="admin_import_templates_intro">
+		<transtext><![CDATA[With Import Templates you map your own import fields to the available fields in Razuna. You can add or modify them any time and will be applied when your users import metadata to assets.]]></transtext>
+	</transid>
+	<transid name="admin_import_templates_new">
+		<transtext>Add a Import Template</transtext>
+	</transid>
+	<transid name="admin_import_templates_active">
+		<transtext>Import Template is active</transtext>
+	</transid>
+	<transid name="mapping">
+		<transtext>Mapping</transtext>
+	</transid>
+	<transid name="mapping_key_desc">
+		<transtext>Select the field that is the "key" to match the record.</transtext>
+	</transid>
+	<transid name="header_import_metadata">
+		<transtext>Import metadata</transtext>
+	</transid>
+	<transid name="header_import_metadata_desc">
+		<transtext><![CDATA[Import metadata from an external file to all assets in this folder (if you want to apply this to only selected assets then use the select drop-down menu).]]></transtext>
+	</transid>
+	<transid name="import_metadata_desc">
+		<transtext><![CDATA[Upload your CSV, XML or XLS(x) file here in order to apply the metadata to all assets in this folder or only to the selected assets. If you have a custom metadata file then make sure to define the file format and the import template below.<br /><br />Note: You only need to choose an import template if your file is not following our metadata columns, else leave it blank!]]></transtext>
+	</transid>
+	<transid name="tooltip_export_metadata_desc">
+		<transtext><![CDATA[Export metadata from all assets in this folder or only from the selected assets (if you want to export only from selected assets then use the select drop-down menu).]]></transtext>
+	</transid>
 </translations>

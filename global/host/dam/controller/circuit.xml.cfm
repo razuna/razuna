@@ -5336,6 +5336,7 @@
 		<!-- Param -->
 		<set name="attributes.what" value="" overwrite="false" />
 		<set name="attributes.file_id" value="" overwrite="false" />
+		<set name="attributes.folder_id" value="" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.meta_export" />
 	</fuseaction>
