@@ -409,7 +409,7 @@
 		<cfargument name="hostid" type="numeric">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfif NOT arguments.criteria CONTAINS ":">
-			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#)">
+			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#)">
 		</cfif>
 		<cftry>
 			<cfsearch collection="#arguments.hostid#" criteria="#arguments.criteria#" name="qrylucene" category="#arguments.category#">
