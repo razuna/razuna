@@ -1044,6 +1044,13 @@
 	<!--- Check rec_uuid --->
 	<cffunction name="check_rec_uuid" output="true">
 		<cfargument name="theschema" required="true" />
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.ct_groups_users ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<!--- ct_groups_users --->
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
@@ -1065,6 +1072,13 @@
 			</cftry>
 		</cfloop>
 		<!--- ct_labels --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.ct_labels ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.ct_labels
@@ -1086,6 +1100,13 @@
 			</cftry>
 		</cfloop>
 		<!--- ct_users_hosts --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.ct_users_hosts ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.ct_users_hosts
@@ -1106,6 +1127,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_folders_desc --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_folders_desc ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_folders_desc
@@ -1127,6 +1155,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_folders_groups --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_folders_groups ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_folders_groups
@@ -1149,6 +1184,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_settings --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_settings ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_settings
@@ -1169,6 +1211,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_settings_2 --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_settings_2 ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_settings_2
@@ -1190,6 +1239,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_collections_text --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_collections_text ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_collections_text
@@ -1211,6 +1267,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_collections_ct_files --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_collections_ct_files ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_collections_ct_files
@@ -1234,6 +1297,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_collections_groups --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_collections_groups ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_collections_groups
@@ -1256,6 +1326,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_users_favorites --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_users_favorites ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_users_favorites
@@ -1279,6 +1356,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_custom_fields_text --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_custom_fields_text ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_custom_fields_text
@@ -1300,6 +1384,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_custom_fields_values --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_custom_fields_values ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_custom_fields_values
@@ -1321,6 +1412,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_versions --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_versions ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_versions
@@ -1342,6 +1440,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_languages --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_languages ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_languages
@@ -1363,6 +1468,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_share_options --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_share_options ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_share_options
@@ -1385,6 +1497,13 @@
 			</cftry>
 		</cfloop>
 		<!--- raz1_upload_templates_val --->
+		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
+		<cftry>
+			<cfquery datasource="razuna_backup">
+			ALTER TABLE #arguments.theschema#.raz1_upload_templates_val ADD rec_uuid VARCHAR(100)
+			</cfquery>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<cfquery datasource="razuna_backup" name="x">
 		select * 
 		from #arguments.theschema#.raz1_upload_templates_val
