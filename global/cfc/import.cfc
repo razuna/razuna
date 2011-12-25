@@ -172,14 +172,20 @@
 	<!--- Do the Import ---------------------------------------------------------------------->
 	<cffunction name="doimport" output="false">
 		<cfargument name="thestruct" type="struct">
-		<cfdump var="#arguments.thestruct#"><cfabort>
-		<!--- Upload file to the temp folder --->
-		<cffile action="upload" destination="#GetTempdirectory()#" nameconflict="overwrite" filefield="#arguments.thestruct.thefieldname#" result="thefile">
-		<!--- Grab the extensions and create new name --->
-		<cfset var ext = listlast(thefile.serverFile,".")>
-		<cfset var thenamenew = arguments.thestruct.tempid & "." & ext>
-		<!--- Rename --->
-		<cffile action="rename" source="#GetTempdirectory()#/#thefile.serverFile#" destination="#GetTempdirectory()#/#thenamenew#" />
+		<!--- CSV and XML --->
+		<cfif arguments.thestruct.file_format EQ "csv" OR arguments.thestruct.file_format EQ "xml">
+			<!--- Read the file --->
+			<cffile action="read" file="#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#" charset="utf-8" variable="thefile" />
+		<!--- XLS and XLSX --->
+		<cfelse>
+			
+		</cfif>
+		<!--- Read CSV --->
+		<cfif arguments.thestruct.file_format EQ "csv">
+			<cfset var thecsv = csvread(string=thefile, headerline=arguments.thestruct.imp_header)>
+		</cfif>
+		<cfdump var="#thecsv#"><cfabort>
+
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
