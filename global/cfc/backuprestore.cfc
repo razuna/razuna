@@ -1052,25 +1052,30 @@
 			<cfcatch type="database"></cfcatch>
 		</cftry>
 		<!--- ct_groups_users --->
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.ct_groups_users
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.ct_groups_users
-				set rec_uuid = '#createuuid()#'
-				WHERE CT_G_U_GRP_ID = '#CT_G_U_GRP_ID#'
-				AND CT_G_U_USER_ID = '#CT_G_U_USER_ID#'
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.ct_groups_users
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.ct_groups_users
+					set rec_uuid = '#createuuid()#'
+					WHERE CT_G_U_GRP_ID = '#CT_G_U_GRP_ID#'
+					AND CT_G_U_USER_ID = '#CT_G_U_USER_ID#'
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "ct_groups_users"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- ct_labels --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1079,26 +1084,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.ct_labels
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.ct_labels
-				set rec_uuid = '#createuuid()#'
-				WHERE ct_label_id = '#ct_label_id#'
-				AND ct_id_r = '#ct_label_id#'
-				AND ct_type = '#ct_label_id#'
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.ct_labels
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.ct_labels
+					set rec_uuid = '#createuuid()#'
+					WHERE ct_label_id = '#ct_label_id#'
+					AND ct_id_r = '#ct_label_id#'
+					AND ct_type = '#ct_label_id#'
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "ct_labels"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- ct_users_hosts --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1107,25 +1117,30 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.ct_users_hosts
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.ct_users_hosts
-				set rec_uuid = '#createuuid()#'
-				WHERE ct_u_h_user_id = '#ct_u_h_user_id#'
-				AND CT_U_H_HOST_ID = #CT_U_H_HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.ct_users_hosts
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.ct_users_hosts
+					set rec_uuid = '#createuuid()#'
+					WHERE ct_u_h_user_id = '#ct_u_h_user_id#'
+					AND CT_U_H_HOST_ID = #CT_U_H_HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "ct_users_hosts"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_folders_desc --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1134,26 +1149,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_folders_desc
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_folders_desc
-				set rec_uuid = '#createuuid()#'
-				WHERE folder_id_r = '#folder_id_r#'
-				AND LANG_ID_R = #LANG_ID_R#
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_folders_desc
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_folders_desc
+					set rec_uuid = '#createuuid()#'
+					WHERE folder_id_r = '#folder_id_r#'
+					AND LANG_ID_R = #LANG_ID_R#
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_folders_desc"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_folders_groups --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1162,27 +1182,32 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_folders_groups
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_folders_groups
-				set rec_uuid = '#createuuid()#'
-				WHERE folder_id_r = '#folder_id_r#'
-				AND grp_id_r = '#grp_id_r#'
-				AND GRP_PERMISSION = '#GRP_PERMISSION#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_folders_groups
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_folders_groups
+					set rec_uuid = '#createuuid()#'
+					WHERE folder_id_r = '#folder_id_r#'
+					AND grp_id_r = '#grp_id_r#'
+					AND GRP_PERMISSION = '#GRP_PERMISSION#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_folders_groups"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_settings --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1191,25 +1216,30 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_settings
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_settings
-				set rec_uuid = '#createuuid()#'
-				WHERE set_id = '#set_id#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_settings
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_settings
+					set rec_uuid = '#createuuid()#'
+					WHERE set_id = '#set_id#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_settings"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_settings_2 --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1218,26 +1248,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_settings_2
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_settings_2
-				set rec_uuid = '#createuuid()#'
-				WHERE set2_id = '#set2_id#'
-				AND set2_nirvanix_pass = '#set2_nirvanix_pass#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_settings_2
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_settings_2
+					set rec_uuid = '#createuuid()#'
+					WHERE set2_id = '#set2_id#'
+					AND set2_nirvanix_pass = '#set2_nirvanix_pass#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_settings_2"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_collections_text --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1246,26 +1281,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_collections_text
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_collections_text
-				set rec_uuid = '#createuuid()#'
-				WHERE col_id_r = 'col_id_r'
-				AND LANG_ID_R = lang_id_r
-		        AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_collections_text
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_collections_text
+					set rec_uuid = '#createuuid()#'
+					WHERE col_id_r = 'col_id_r'
+					AND LANG_ID_R = lang_id_r
+			        AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_collections_text"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_collections_ct_files --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1274,28 +1314,33 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_collections_ct_files
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_collections_ct_files
-				set rec_uuid = '#createuuid()#'
-				WHERE col_id_r = '#col_id_r#'
-				AND file_id_r = '#file_id_r#'
-				AND COL_FILE_TYPE = '#COL_FILE_TYPE#'
-				AND COL_FILE_FORMAT = '#COL_FILE_FORMAT#'
-		        AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_collections_ct_files
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_collections_ct_files
+					set rec_uuid = '#createuuid()#'
+					WHERE col_id_r = '#col_id_r#'
+					AND file_id_r = '#file_id_r#'
+					AND COL_FILE_TYPE = '#COL_FILE_TYPE#'
+					AND COL_FILE_FORMAT = '#COL_FILE_FORMAT#'
+			        AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_collections_ct_files"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_collections_groups --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1304,27 +1349,32 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_collections_groups
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_collections_groups
-				set rec_uuid = '#createuuid()#'
-				WHERE col_id_r = '#col_id_r#'
-				AND grp_id_r = '#grp_id_r#'
-				AND GRP_PERMISSION = '#GRP_PERMISSION#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_collections_groups
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_collections_groups
+					set rec_uuid = '#createuuid()#'
+					WHERE col_id_r = '#col_id_r#'
+					AND grp_id_r = '#grp_id_r#'
+					AND GRP_PERMISSION = '#GRP_PERMISSION#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_collections_groups"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_users_favorites --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1333,28 +1383,33 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_users_favorites
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_users_favorites
-				set rec_uuid = '#createuuid()#'
-				WHERE user_id_r = '#user_id_r#'
-				AND FAV_TYPE = '#FAV_TYPE#'
-				AND fav_id = '#fav_id#'
-				AND FAV_KIND = '#FAV_KIND#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_users_favorites
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_users_favorites
+					set rec_uuid = '#createuuid()#'
+					WHERE user_id_r = '#user_id_r#'
+					AND FAV_TYPE = '#FAV_TYPE#'
+					AND fav_id = '#fav_id#'
+					AND FAV_KIND = '#FAV_KIND#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_users_favorites"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_custom_fields_text --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1363,26 +1418,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_custom_fields_text
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_custom_fields_text
-				set rec_uuid = '#createuuid()#'
-				WHERE cf_id_r = '#cf_id_r#'
-				AND lang_id_r = lang_id_r
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_custom_fields_text
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_custom_fields_text
+					set rec_uuid = '#createuuid()#'
+					WHERE cf_id_r = '#cf_id_r#'
+					AND lang_id_r = lang_id_r
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_custom_fields_text"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_custom_fields_values --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1391,26 +1451,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_custom_fields_values
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_custom_fields_values
-				set rec_uuid = '#createuuid()#'
-				WHERE cf_id_r = '#cf_id_r#'
-				AND asset_id_r = '#asset_id_r#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_custom_fields_values
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_custom_fields_values
+					set rec_uuid = '#createuuid()#'
+					WHERE cf_id_r = '#cf_id_r#'
+					AND asset_id_r = '#asset_id_r#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_custom_fields_values"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_versions --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1419,26 +1484,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_versions
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_versions
-				set rec_uuid = '#createuuid()#'
-				WHERE asset_id_r = '#asset_id_r#'
-				AND ver_version = #ver_version#
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_versions
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_versions
+					set rec_uuid = '#createuuid()#'
+					WHERE asset_id_r = '#asset_id_r#'
+					AND ver_version = #ver_version#
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_versions"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_languages --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1447,26 +1517,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_languages
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_languages
-				set rec_uuid = '#createuuid()#'
-				WHERE lang_id = #lang_id#
-				AND lang_name = '#lang_name#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_languages
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_languages
+					set rec_uuid = '#createuuid()#'
+					WHERE lang_id = #lang_id#
+					AND lang_name = '#lang_name#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_languages"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_share_options --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1475,27 +1550,32 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_share_options
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_share_options
-				set rec_uuid = '#createuuid()#'
-				WHERE asset_id_r = '#asset_id_r#'
-				AND group_asset_id = '#group_asset_id#'
-				AND folder_id_r = '#folder_id_r#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_share_options
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_share_options
+					set rec_uuid = '#createuuid()#'
+					WHERE asset_id_r = '#asset_id_r#'
+					AND group_asset_id = '#group_asset_id#'
+					AND folder_id_r = '#folder_id_r#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_share_options"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 		<!--- raz1_upload_templates_val --->
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
@@ -1504,26 +1584,31 @@
 			</cfquery>
 			<cfcatch type="database"></cfcatch>
 		</cftry>
-		<cfquery datasource="razuna_backup" name="x">
-		select * 
-		from #arguments.theschema#.raz1_upload_templates_val
-		where rec_uuid IS NULL or rec_uuid = ''
-		</cfquery>
-		<!--- Update --->
-		<cfloop query="x">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				update #arguments.theschema#.raz1_upload_templates_val
-				set rec_uuid = '#createuuid()#'
-				WHERE upl_temp_id_r = '#upl_temp_id_r#'
-		  		AND upl_temp_field = '#upl_temp_field#'
-				AND HOST_ID = #HOST_ID#
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<cfquery datasource="razuna_backup" name="x">
+			select * 
+			from #arguments.theschema#.raz1_upload_templates_val
+			where rec_uuid IS NULL or rec_uuid = ''
+			</cfquery>
+			<!--- Update --->
+			<cfloop query="x">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					update #arguments.theschema#.raz1_upload_templates_val
+					set rec_uuid = '#createuuid()#'
+					WHERE upl_temp_id_r = '#upl_temp_id_r#'
+			  		AND upl_temp_field = '#upl_temp_field#'
+					AND HOST_ID = #HOST_ID#
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database">
+				<cfoutput><p><span style="color:red;font-weight:bold;">Error on table "raz1_upload_templates_val"!</span><br>#cfcatch.detail#</p></cfoutput>
+			</cfcatch>
+		</cftry>
 	</cffunction>
 	
 	<!--- Drop Constraints --->
