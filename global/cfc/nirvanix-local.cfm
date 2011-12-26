@@ -5,7 +5,9 @@
 <!--- Set host id to migrate --->
 <cfset mig.hostid = 0>
 
+
 <cfparam name="url.action" default="" />
+<cfquery datasource="#mig.db_local#" action="flushall" />
 <!--- Migrate Database first --->
 <cfif url.action EQ "db">
 	<cfinvoke component="nirvanix-local" method="migrate_db" thestruct="#mig#" />
