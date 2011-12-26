@@ -3,7 +3,7 @@
 <cfset mig.db_hosted = "mysql-live">
 <cfset mig.db_local = "mysql">
 <!--- Set host id to migrate --->
-<cfset mig.hostid = 1837>
+<cfset mig.hostid = 0>
 
 <cfparam name="url.action" default="" />
 <!--- Migrate Database first --->

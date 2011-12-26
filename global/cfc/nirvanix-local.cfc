@@ -12,7 +12,7 @@
 	</cffunction>
 	
 	<!--- Migrate Files --->
-	<cffunction name="migrate_files">
+	<cffunction name="migrate_files" output="yes">
 		<cfargument name="thestruct" type="struct">
 		<!--- Get host table --->
 		<cfinvoke method="gethost" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_host" />
@@ -22,16 +22,15 @@
 		FROM #arguments.thestruct.qry_host.HOST_DB_PREFIX#settings_2
 		WHERE host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
 		</cfquery>
-		
-		<cfset arguments.thestruct.thepath = "/opt/tomcat/webapps/razuna/assets">
-		
+		<!--- Set path into variable --->
+		<cfset arguments.thestruct.thepath = qry_setting.SET2_PATH_TO_ASSETS>
+		<!--- Feedback --->
+		<cfoutput><strong>Creating host folder...</strong><br><br></cfoutput>
+		<cfflush>
 		<!--- Create hostid folder ---> 
 		<cfif !directoryexists("#arguments.thestruct.thepath#/#arguments.thestruct.hostid#")>
 			<cfdirectory action="create" directory="#arguments.thestruct.thepath#/#arguments.thestruct.hostid#" mode="775" />
 		</cfif>
-		
-		<!--- !!!!!!!! Do NOT forget to change DB to local !!!!!!!! --->
-		
 		<!--- Grab folder db --->
 		<cfquery datasource="#arguments.thestruct.db_local#" name="qry_folders">
 		SELECT folder_id, FOLDER_IS_COLLECTION
@@ -40,6 +39,9 @@
 		AND (lower(FOLDER_IS_COLLECTION) != <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 		OR FOLDER_IS_COLLECTION IS NULL)
 		</cfquery>
+		<!--- Feedback --->
+		<cfoutput><strong>Creating folders...</strong><br><br></cfoutput>
+		<cfflush>
 		<!--- Create folders --->
 		<cfloop query="qry_folders">
 			<cfif !directoryexists("#arguments.thestruct.thepath#/#arguments.thestruct.hostid#/#folder_id#")>
@@ -64,12 +66,16 @@
 		<!--- IMAGES --->
 		<cfset arguments.thestruct.type = "images">
 		<cfinvoke method="getnirvanix" thestruct="#arguments.thestruct#" />
-	
+		<!--- Return --->
+		<cfreturn />
 	</cffunction>
 	
 	<!--- Get files --->
-	<cffunction name="getnirvanix">
+	<cffunction name="getnirvanix" output="yes">
 		<cfargument name="thestruct" type="struct">
+		<!--- Feedback --->
+		<cfoutput><strong>Getting "#arguments.thestruct.type#" assets...</strong><br><br></cfoutput>
+		<cfflush>
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.db_local#" name="qry">
 		SELECT cloud_url, cloud_url_org, path_to_asset
@@ -86,6 +92,9 @@
 			<!--- Get names from cloud urls --->
 			<cfset tname = listlast(cloud_url, "/")>
 			<cfset oname = listlast(cloud_url_org, "/")>
+			<!--- Feedback --->
+			<cfoutput><strong>Getting: #oname#</strong><br></cfoutput>
+			<cfflush>
 			<!--- Get thumb --->
 			<cfif !fileexists("#arguments.thestruct.thepath#/#arguments.thestruct.hostid#/#path_to_asset#/#tname#")>
 				<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.thepath#/#arguments.thestruct.hostid#/#path_to_asset# #cloud_url#" timeout="9999" />
@@ -100,6 +109,9 @@
 	<!--- Migrate sharding group tables --->
 	<cffunction name="migrate_sharding">
 		<cfargument name="thestruct" type="struct">
+		<!--- Feedback --->
+		<cfoutput><strong>Migrating sharding tables...</strong><br><br></cfoutput>
+		<cfflush>
 		<!--- All tables with hostid --->
 		<cfset var tbl_hostid = "#arguments.thestruct.qry_host.host_shard_group#xmp,#arguments.thestruct.qry_host.host_shard_group#cart,#arguments.thestruct.qry_host.host_shard_group#folders,#arguments.thestruct.qry_host.host_shard_group#folders_desc,#arguments.thestruct.qry_host.host_shard_group#folders_groups,#arguments.thestruct.qry_host.host_shard_group#files,#arguments.thestruct.qry_host.host_shard_group#files_desc,#arguments.thestruct.qry_host.host_shard_group#images,#arguments.thestruct.qry_host.host_shard_group#images_text,#arguments.thestruct.qry_host.host_shard_group#settings,#arguments.thestruct.qry_host.host_shard_group#settings_2,#arguments.thestruct.qry_host.host_shard_group#collections,#arguments.thestruct.qry_host.host_shard_group#collections_text,#arguments.thestruct.qry_host.host_shard_group#collections_ct_files,#arguments.thestruct.qry_host.host_shard_group#collections_groups,#arguments.thestruct.qry_host.host_shard_group#users_favorites,#arguments.thestruct.qry_host.host_shard_group#videos,#arguments.thestruct.qry_host.host_shard_group#videos_text,#arguments.thestruct.qry_host.host_shard_group#custom_fields,#arguments.thestruct.qry_host.host_shard_group#custom_fields_text,#arguments.thestruct.qry_host.host_shard_group#custom_fields_values,#arguments.thestruct.qry_host.host_shard_group#comments,#arguments.thestruct.qry_host.host_shard_group#versions,#arguments.thestruct.qry_host.host_shard_group#languages,#arguments.thestruct.qry_host.host_shard_group#audios,#arguments.thestruct.qry_host.host_shard_group#audios_text,#arguments.thestruct.qry_host.host_shard_group#share_options,#arguments.thestruct.qry_host.host_shard_group#upload_templates,#arguments.thestruct.qry_host.host_shard_group#upload_templates_val,#arguments.thestruct.qry_host.host_shard_group#widgets,#arguments.thestruct.qry_host.host_shard_group#additional_versions,#arguments.thestruct.qry_host.host_shard_group#files_xmp,#arguments.thestruct.qry_host.host_shard_group#labels">
 		<!--- Loop over the hostid tables and insert values from hosted --->
@@ -141,6 +153,9 @@
 				<cfset i = i>
 				<cfloop query="qry">
 					<cftry>
+						<!--- Feedback --->
+						<cfoutput><strong>Working on #i#...</strong><br><br></cfoutput>
+						<cfflush>
 						<cfquery datasource="#arguments.thestruct.db_local#">
 						INSERT INTO #i#
 						(<cfloop list="#thecollist#" index="c" delimiters=",">#listfirst(c,"-")#<cfif len_count_meta NEQ len_meta>, </cfif><cfset len_count_meta = len_count_meta + 1></cfloop>)
@@ -199,8 +214,11 @@
 	</cffunction>
 	
 	<!--- Default Tables --->
-	<cffunction name="migrate_default">
+	<cffunction name="migrate_default" output="yes">
 		<cfargument name="thestruct" type="struct">
+		<!--- Feedback --->
+		<cfoutput><strong>Migrating default tables...</strong><br><br></cfoutput>
+		<cfflush>
 		<!--- Disable Foreign key checks --->
 		<cfquery datasource="#arguments.thestruct.db_local#">
 		SET FOREIGN_KEY_CHECKS = 0
