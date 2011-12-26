@@ -160,14 +160,14 @@
 			<cfset thepdfjpgslist = thepdfjpgslist & "," & replacenocase(qry_pdfjpgs.name,"-0","-#i#","all")>
 		</cfloop>
 		<!--- Create razuna_pdf_images directory --->
-		<cfif !directoryexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images")>
-			<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images" mode="775" />
+		<cfif !directoryexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.pathtoasset#/razuna_pdf_images")>
+			<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.pathtoasset#/razuna_pdf_images" mode="775" />
 		</cfif>
 		<!--- Loop over list and download images --->
 		<cfloop list="#thepdfjpgslist#" delimiters="," index="i">
 			<cfset thenr = replacenocase(i,".jpg","","all")>
 			<cfset thenr = listlast(thenr,"-")>
-			<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images http://services.nirvanix.com/#nvxsession#/razuna/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images/#i#" timeout="9999" />
+			<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.pathtoasset#/razuna_pdf_images http://services.nirvanix.com/#nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.pathtoasset#/razuna_pdf_images/#i#" timeout="9999" />
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />
