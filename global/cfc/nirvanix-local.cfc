@@ -43,11 +43,11 @@
 		<!--- Create folders --->
 		<cfloop query="qry_folders">
 			<cfif !directoryexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#" mode="775" />
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/doc" mode="775" />
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/img" mode="775" />
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/vid" mode="775" />
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/aud" mode="775" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/doc" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/img" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/vid" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/aud" />
 			</cfif>
 		</cfloop>
 		<!--- Call sub function on each asset table to grab assets --->
