@@ -19,7 +19,7 @@
 		<!--- Grab the asset path from local --->
 		<cfquery datasource="#arguments.thestruct.db_local#" name="arguments.thestruct.qry_setting">
 		SELECT SET2_PATH_TO_ASSETS, set2_nirvanix_name, set2_nirvanix_pass
-		FROM #arguments.thestruct.qry_host.HOST_DB_PREFIX#settings_2
+		FROM #arguments.thestruct.qry_host.host_shard_group#settings_2
 		WHERE host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
 		</cfquery>
 		<!--- Feedback --->
@@ -32,7 +32,7 @@
 		<!--- Grab folder db --->
 		<cfquery datasource="#arguments.thestruct.db_local#" name="qry_folders">
 		SELECT folder_id, FOLDER_IS_COLLECTION
-		FROM #arguments.thestruct.qry_host.HOST_DB_PREFIX#folders
+		FROM #arguments.thestruct.qry_host.host_shard_group#folders
 		WHERE host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
 		AND (lower(FOLDER_IS_COLLECTION) != <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 		OR FOLDER_IS_COLLECTION IS NULL)
@@ -79,7 +79,7 @@
 		<!--- Query --->
 		<cfquery datasource="#arguments.thestruct.db_local#" name="qry">
 		SELECT cloud_url, cloud_url_org, path_to_asset<cfif arguments.thestruct.type EQ "files">, file_extension, folder_id_r</cfif>
-		FROM #arguments.thestruct.qry_host.HOST_DB_PREFIX##arguments.thestruct.type#
+		FROM #arguments.thestruct.qry_host.host_shard_group##arguments.thestruct.type#
 		WHERE host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
 		AND (folder_id_r != '' OR folder_id_r IS NOT NULL)
 		AND file_extension = 'pdf'
