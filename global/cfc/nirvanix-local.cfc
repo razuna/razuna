@@ -26,8 +26,8 @@
 		<cfoutput><strong>Creating host folder...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Create hostid folder ---> 
-		<cfif !directoryexists("#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#")>
-			<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#" mode="775" />
+		<cfif !directoryexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#" mode="775" />
 		</cfif>
 		<!--- Grab folder db --->
 		<cfquery datasource="#arguments.thestruct.db_local#" name="qry_folders">
@@ -40,14 +40,15 @@
 		<!--- Feedback --->
 		<cfoutput><strong>Creating folders...</strong><br><br></cfoutput>
 		<cfflush>
+		<cfdump var="#qry_folders#"><cfabort>
 		<!--- Create folders --->
 		<cfloop query="qry_folders">
-			<cfif !directoryexists("#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#folder_id#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#folder_id#" mode="775" />
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#folder_id#/doc" mode="775" />
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#folder_id#/img" mode="775" />
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#folder_id#/vid" mode="775" />
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#folder_id#/aud" mode="775" />
+			<cfif !directoryexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#" mode="775" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/doc" mode="775" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/img" mode="775" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/vid" mode="775" />
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#/aud" mode="775" />
 			</cfif>
 		</cfloop>
 		<!--- Call sub function on each asset table to grab assets --->
@@ -88,8 +89,8 @@
 		<!--- Loop --->
 		<cfloop query="qry">
 			<!--- Create id folder --->
-			<cfif !directoryexists("#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset#")>
-				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset#" mode="775" />
+			<cfif !directoryexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#" mode="775" />
 			</cfif>
 			<!--- Get names from cloud urls --->
 			<cfset tname = listlast(cloud_url, "/")>
@@ -98,12 +99,12 @@
 			<cfoutput><strong>Getting: #oname# (#path_to_asset#)</strong><br></cfoutput>
 			<cfflush>
 			<!--- Get thumb --->
-			<cfif !fileexists("#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset#/#tname#")>
-				<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset# #cloud_url#" timeout="9999" />
+			<cfif !fileexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/#tname#")>
+				<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset# #cloud_url#" timeout="9999" />
 			</cfif>
 			<!--- Get org --->
-			<cfif !fileexists("#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset#/#oname#")>
-				<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset# #cloud_url_org#" timeout="9999" />
+			<cfif !fileexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/#oname#")>
+				<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset# #cloud_url_org#" timeout="9999" />
 			</cfif>
 			<!--- If this is a PDF then pull down thumbnail folder also --->
 			<cfif arguments.thestruct.type EQ "files" AND file_extension EQ "pdf">
@@ -160,14 +161,14 @@
 			<cfset thepdfjpgslist = thepdfjpgslist & "," & replacenocase(qry_pdfjpgs.name,"-0","-#i#","all")>
 		</cfloop>
 		<!--- Create razuna_pdf_images directory --->
-		<cfif !directoryexists("#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images")>
-			<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images" mode="775" />
+		<cfif !directoryexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images")>
+			<cfdirectory action="create" directory="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images" mode="775" />
 		</cfif>
 		<!--- Loop over list and download images --->
 		<cfloop list="#thepdfjpgslist#" delimiters="," index="i">
 			<cfset thenr = replacenocase(i,".jpg","","all")>
 			<cfset thenr = listlast(thenr,"-")>
-			<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.SET2_PATH_TO_ASSETS#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images http://services.nirvanix.com/#nvxsession#/razuna/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images/#i#" timeout="9999" />
+			<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images http://services.nirvanix.com/#nvxsession#/razuna/#arguments.thestruct.hostid#/#path_to_asset#/razuna_pdf_images/#i#" timeout="9999" />
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />
