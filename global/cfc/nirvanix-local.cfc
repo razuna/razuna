@@ -40,7 +40,6 @@
 		<!--- Feedback --->
 		<cfoutput><strong>Creating folders...</strong><br><br></cfoutput>
 		<cfflush>
-		<cfdump var="#qry_folders#"><cfabort>
 		<!--- Create folders --->
 		<cfloop query="qry_folders">
 			<cfif !directoryexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#folder_id#")>
