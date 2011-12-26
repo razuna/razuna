@@ -56,8 +56,7 @@
 		<cfset arguments.thestruct.type = "files">
 		<cfinvoke method="getnirvanix" thestruct="#arguments.thestruct#" />
 		<!--- AUDIOS --->
-		<!---
-<cfset arguments.thestruct.type = "audios">
+		<cfset arguments.thestruct.type = "audios">
 		<cfinvoke method="getnirvanix" thestruct="#arguments.thestruct#" />
 		<!--- VIDEOS --->
 		<cfset arguments.thestruct.type = "videos">
@@ -65,7 +64,6 @@
 		<!--- IMAGES --->
 		<cfset arguments.thestruct.type = "images">
 		<cfinvoke method="getnirvanix" thestruct="#arguments.thestruct#" />
---->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -82,8 +80,6 @@
 		FROM #arguments.thestruct.qry_host.host_shard_group##arguments.thestruct.type#
 		WHERE host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
 		AND (folder_id_r != '' OR folder_id_r IS NOT NULL)
-		AND file_extension = 'pdf'
-		LIMIT 10
 		</cfquery>
 		<!--- Loop --->
 		<cfloop query="qry">
