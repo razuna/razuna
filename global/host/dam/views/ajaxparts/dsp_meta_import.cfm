@@ -32,6 +32,7 @@
 	<input type="hidden" name="tempid" value="#attributes.tempid#">
 	<!--- Desc --->
 	<p>#defaultsObj.trans("import_metadata_desc")#</p>
+	<p><hr /></p>
 	<div>
 		<div style="float:left;width:150px;font-weight:bold;">Apply to...</div>
 		<div style="float:left;">
@@ -40,7 +41,7 @@
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<div style="float:left;width:150px;font-weight:bold;">File Format</div>
 		<div style="float:left;">
-			<select name="file_format" id="file_format" style="width:150px;" onchange="appendurl();">
+			<select name="file_format" id="file_format" style="width:150px;" onchange="enabletemplates();">
 				<option value="csv" selected="selected">CSV</option>
 				<option value="xls">XLS</option>
 				<option value="xlsx">XLSX</option>
@@ -48,15 +49,17 @@
 			</select>
 		</div>
 		<!--- First Row --->
-		<div style="clear:both;padding-bottom:10px;"></div>
+		<!---
+<div style="clear:both;padding-bottom:10px;"></div>
 		<div style="float:left;width:150px;font-weight:bold;">Header/Columns</div>
 		<div style="float:left;width:300px;">Does the first row in the file contain the header/columns?<br /><input type="radio" name="imp_header" value="true" checked="checked" /> Yes <input type="radio" name="imp_header" value="false" /> No</div>
 		<div style="clear:both;padding-bottom:10px;"></div>
+--->
 		<!--- Template --->
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<div style="float:left;width:150px;font-weight:bold;">Upload Template</div>
 		<div style="float:left;">
-			<select name="impp_template" style="width:150px;">
+			<select name="impp_template" id="impp_template" style="width:150px;" disabled="disabled">
 				<option value="" selected="selected">No template</option>
 				<cfloop query="qry_imptemp">
 					<option value="#imp_temp_id#">#imp_name#</option>
@@ -82,12 +85,16 @@
 	<script language="JavaScript" type="text/javascript">
 		// Load the below when this page gets hit
 		// Append to frame url
-		function appendurl(){
-			// Greab selected file format
+		function enabletemplates(){
+			// Grab selected file format
 			var u = $('##file_format :selected').val();
-			alert(u);
-			// Append to iframe URL
-			$('##metaupload').append('src','&ft=' + u);
+			// Enable Upload templates
+			if (u == 'xml'){
+				$('##impp_template').removeAttr('disabled');
+				}
+			else{
+				$('##impp_template').attr('disabled','disabled');
+			}
 		}
 	</script>	
 </cfoutput>

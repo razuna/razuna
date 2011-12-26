@@ -172,6 +172,9 @@
 	<!--- Do the Import ---------------------------------------------------------------------->
 	<cffunction name="doimport" output="false">
 		<cfargument name="thestruct" type="struct">
+		<!--- Feedback --->
+		<cfoutput><strong>Starting the import</strong><br><br></cfoutput>
+		<cfflush>
 		<!--- CSV and XML --->
 		<cfif arguments.thestruct.file_format EQ "csv" OR arguments.thestruct.file_format EQ "xml">
 			<!--- Read the file --->
@@ -182,12 +185,59 @@
 		</cfif>
 		<!--- Read CSV --->
 		<cfif arguments.thestruct.file_format EQ "csv">
-			<cfset var thecsv = csvread(string=thefile, headerline=arguments.thestruct.imp_header)>
+			<cfset arguments.thestruct.theimport = csvread(string=thefile, headerline=true)>
 		</cfif>
-		<cfdump var="#thecsv#"><cfabort>
+		<!--- Feedback --->
+		<cfoutput><strong>We could read your file. Continuing...</strong><br><br></cfoutput>
+		<cfflush>
+		<!--- Do the import --->
+		<cfinvoke method="doimporttables" thestruct="#arguments.thestruct#" />
+		
+		
+		<cfdump var="#arguments.thestruct#">
+		<cfabort>
 
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
+	
+	<!---Import: Loop over tables ---------------------------------------------------------------------->
+	<cffunction name="doimporttables" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Get the columnlist --->
+		<cfset var thecolumns = arguments.thestruct.theimport.columnlist>
+		<!--- Feedback --->
+		<cfoutput><strong>Import to images...</strong><br><br></cfoutput>
+		<cfflush>
+		<!--- Loop --->
+		<cfloop query="arguments.thestruct.theimport">
+			<!--- Feedback --->
+			<cfoutput><strong>Importing ID: #id#</strong><br><br></cfoutput>
+			<cfflush>
+			<!--- Images: main table --->
+			<cfquery dataSource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#filename#">
+			WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#id#">
+			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			</cfquery>
+			<!--- Images: XMP --->
+			
+		</cfloop>
+		
+		
+		
+		
+		
+		<!--- Labels --->
+		
+		<!--- Flush tables --->
+		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
+		
+		<!--- Return --->
+		<cfreturn  />
+	</cffunction>
+	
 	
 </cfcomponent>
