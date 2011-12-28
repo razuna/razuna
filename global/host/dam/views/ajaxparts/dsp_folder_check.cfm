@@ -25,8 +25,8 @@
 --->
 <cfoutput>
 	<cfif attributes.checkstatus.dir>
-		Success. The directory can be read and contains <cfif attributes.checkstatus.countdirs.thecount NEQ "">#attributes.checkstatus.countdirs.thecount# sub-folders and</cfif> #attributes.checkstatus.countfiles.thecount# files.
+		<span style="color:green;font-weight:bold;">Success. The directory can be read and contains <cfif attributes.checkstatus.countdirs.thecount NEQ "">#attributes.checkstatus.countdirs.thecount# sub-folders and</cfif> #attributes.checkstatus.countfiles.thecount# files.</span>
 	<cfelse>
-		Ups. We can't read the provided directory!
+		<span style="color:red;font-weight:bold;">Ups. We can't read the provided directory!</span>
 	</cfif>
 </cfoutput>

@@ -1011,9 +1011,14 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- DETAIL OF ADD A NEW FOLDER --->
-<cffunction name="fnew_detail" output="true" returntype="string" access="private">
+<cffunction name="fnew_detail" output="true" returntype="string" access="public">
 	<cfargument name="thestruct" type="struct">
 	<cfargument name="thefolderparam" required="no"  type="struct" default="#StructNew()#" hint="special argument only for call from CFC files.extractZip">
+	<!--- Param --->
+	<cfparam name="arguments.thestruct.coll_folder" default="f" />
+	<cfparam name="arguments.thestruct.link_path" default="" />
+	<cfparam name="arguments.thestruct.langcount" default="1" />
+	<cfparam name="arguments.thestruct.folder_desc_1" default="" />
 	<!--- Create a new ID --->
 	<cfset var newfolderid = replace(createuuid(),"-","","ALL")>
 	<!--- Insert --->

@@ -1497,7 +1497,6 @@
 		<set name="attributes.langcount" value="1" />
 		<set name="attributes.file_desc_1" value="" />
 		<set name="attributes.file_keywords_1" value="" />
-		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<!-- Action: Get asset path -->
@@ -1506,6 +1505,25 @@
 		<do action="storage" />
 		<!-- CFC: Add link -->
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetlink(attributes)" returnvariable="result" />
+	</fuseaction>
+	
+	<!-- Add asset from path -->
+	<fuseaction name="asset_add_path">
+		<!-- Param -->
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<!-- Query folder -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.theid)" returnvariable="qry" />
+		<set name="attributes.level" value="#qry.folder_level#" />
+		<set name="attributes.rid" value="#qry.rid#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
+		<!-- CFC: Add path -->
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
 	</fuseaction>
 	
 	<!--

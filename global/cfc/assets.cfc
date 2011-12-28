@@ -723,6 +723,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfparam default="" name="arguments.thestruct.fieldname">
 	<cfparam default="" name="arguments.thestruct.uploadkind">
 	<cfparam default="" name="arguments.thestruct.link_kind">
+	<cfparam default="false" name="arguments.thestruct.importpath">
 	<cfparam default="0" name="arguments.thestruct.upl_template">
 	<cfparam default="0" name="arguments.thestruct.metadata">
 	<cfparam default="" name="arguments.thestruct.assetmetadata">
@@ -769,9 +770,9 @@ This is the main function called directly by a single upload else from addassets
 		</cfquery>
 		<!--- set attributes of file structure --->
 		<cfif fileType.recordCount GT 0>
-			<cfset arguments.thestruct.thefiletype = "#fileType.type_type#">
-			<cfset arguments.thestruct.contentType = "#fileType.type_mimecontent#">
-			<cfset arguments.thestruct.contentSubType = "#fileType.type_mimesubcontent#">
+			<cfset arguments.thestruct.thefiletype = fileType.type_type>
+			<cfset arguments.thestruct.contentType = fileType.type_mimecontent>
+			<cfset arguments.thestruct.contentSubType = fileType.type_mimesubcontent>
 		<cfelse>
 			<cfset arguments.thestruct.thefiletype = "other">
 			<cfset arguments.thestruct.contentType = "">
@@ -1559,7 +1560,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thesh = "#arguments.thestruct.gettemp#/#imguuid#.sh">
 		</cfif>
 		<!--- If linked asset then set source and filename different --->
-		<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+		<cfif arguments.thestruct.qryfile.link_kind EQ "lan" OR arguments.thestruct.importpath>
 			<cfif isWindows()>
 				<cfset arguments.thestruct.thesource = """#arguments.thestruct.qryfile.path#""">
 			<cfelse>
@@ -1567,12 +1568,11 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.thesource,"&","\&","all")>
 				<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.thesource,"'","\'","all")>
 			</cfif>
-			<!--- Save raw source path. Needed for md5hash --->
-			<cfset arguments.thestruct.thesourceraw = arguments.thestruct.qryfile.path>
 			<!--- Create var with temp directory --->
 			<cfset arguments.thestruct.thetempdirectory = "#arguments.thestruct.thepath#/incoming/#replace(createuuid(),"-","","all")#">
 			<!--- Create temp folder --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thetempdirectory#" mode="775">
+			<cfset arguments.thestruct.thesourceraw = arguments.thestruct.qryfile.path>
 		<cfelse>
 			<cfif isWindows()>
 				<cfset arguments.thestruct.thesource = """#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#""">
@@ -1581,10 +1581,9 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.thesource,"&","\&","all")>
 				<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.thesource,"'","\'","all")>
 			</cfif>
-			<!--- Save raw source path. Needed for md5hash --->
-			<cfset arguments.thestruct.thesourceraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<!--- Create var with temp directory --->
 			<cfset arguments.thestruct.thetempdirectory = "#arguments.thestruct.qryfile.path#">
+			<cfset arguments.thestruct.thesourceraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 		</cfif>
 		<!--- GET RAW METADATA --->
 		<cfif isWindows()>
@@ -1639,225 +1638,225 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- resize original to thumb --->
 		<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
-			<!--- storing assets on file system --->
-			<cfset arguments.thestruct.storage = application.razuna.storage>
-				<cfquery datasource="#arguments.thestruct.dsn#">
-				UPDATE #session.hostdbprefix#images
-				SET
-				img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
-				img_meta = <cfqueryparam value="#arguments.thestruct.img_meta#" cfsqltype="cf_sql_varchar">
-				WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-				</cfquery>
-				<!--- Write the Keywords and Description to the DB (if we are JPG we parse XMP and add them together) --->
-				<!--- <cfif attributes.intstruct.qryfile.extension EQ "jpg" OR attributes.intstruct.qryfile.filename EQ "jpeg"> --->
-					<cftry>
-						<!--- Set Variable --->
-						<cfset arguments.thestruct.assetpath = arguments.thestruct.qrysettings.set2_path_to_assets>
-						<!--- Invoke XMP Methods --->
-						<cfinvoke component="xmp" method="xmpparse" thestruct="#arguments.thestruct#" returnvariable="thexmp" />
-						<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
-						<!--- Store XMP values in DB --->
-						<cfquery datasource="#arguments.thestruct.dsn#">
-						INSERT INTO #session.hostdbprefix#xmp
-						(id_r, asset_type, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, supplementalcategories, urgency, description, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, intellectualgenre, instructions, source, usageterms, copyrightstatus, transmissionreference, webstatement, headline, datecreated, city, ciadrregion, country, countrycode, scene, state, credit, rights, host_id)
-						VALUES(
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="img">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcsubjectcode#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.creator#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.title#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.authorstitle#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.descwriter#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcaddress#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.category#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.categorysub#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.urgency#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.description#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccity#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccountry#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptclocation#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptczip#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcemail#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcwebsite#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcphone#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcintelgenre#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcinstructions#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcsource#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcusageterms#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copystatus#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcjobidentifier#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copyurl#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcheadline#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcdatecreated#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecity#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagestate#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecountry#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecountrycode#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcscene#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcstate#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccredit#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copynotice#">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-						</cfquery>
-						<cfcatch type="any">
-							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in images text table for jpg">
-								<cfdump var="#cfcatch#" />
-							</cfmail>
-						</cfcatch>
-					</cftry>
-				<!--- Move or upload to the right places --->
-				<!--- If we are local --->
-				<cfif arguments.thestruct.storage EQ "local">
-					<!--- <cftry> --->
-						<!--- Create folder with the asset id --->
-						<cfif NOT directoryexists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#")>
-							<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" mode="775">
-						</cfif>
-						<!--- Move original image --->
-						<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-							<cfif application.razuna.renderingfarm>
-								<cfset var fileaction = "copy">
-							<cfelse>
-								<cfset var fileaction = "move">
-							</cfif>
-							<cffile action="#fileaction#" source="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
-						</cfif>
-						<!--- Move thumbnail --->
-						<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
-							<cffile action="move" source="#arguments.thestruct.thetempdirectory#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
-						<cfelseif !application.razuna.renderingfarm>
-							<cffile action="move" source="#arguments.thestruct.qryfile.path#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
-						</cfif>
-						<!--- Get size of original and thumnail --->
-						<cfset orgsize = arguments.thestruct.qryfile.thesize>
-						<cfif !application.razuna.renderingfarm>
-							<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
+		<!--- storing assets on file system --->
+		<cfset arguments.thestruct.storage = application.razuna.storage>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			UPDATE #session.hostdbprefix#images
+			SET
+			img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
+			img_meta = <cfqueryparam value="#arguments.thestruct.img_meta#" cfsqltype="cf_sql_varchar">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<!--- Write the Keywords and Description to the DB (if we are JPG we parse XMP and add them together) --->
+			<!--- <cfif attributes.intstruct.qryfile.extension EQ "jpg" OR attributes.intstruct.qryfile.filename EQ "jpeg"> --->
+				<cftry>
+					<!--- Set Variable --->
+					<cfset arguments.thestruct.assetpath = arguments.thestruct.qrysettings.set2_path_to_assets>
+					<!--- Invoke XMP Methods --->
+					<cfinvoke component="xmp" method="xmpparse" thestruct="#arguments.thestruct#" returnvariable="thexmp" />
+					<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
+					<!--- Store XMP values in DB --->
+					<cfquery datasource="#arguments.thestruct.dsn#">
+					INSERT INTO #session.hostdbprefix#xmp
+					(id_r, asset_type, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, supplementalcategories, urgency, description, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, intellectualgenre, instructions, source, usageterms, copyrightstatus, transmissionreference, webstatement, headline, datecreated, city, ciadrregion, country, countrycode, scene, state, credit, rights, host_id)
+					VALUES(
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="img">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcsubjectcode#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.creator#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.title#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.authorstitle#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.descwriter#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcaddress#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.category#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.categorysub#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.urgency#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.description#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccity#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccountry#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptclocation#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptczip#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcemail#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcwebsite#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcphone#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcintelgenre#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcinstructions#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcsource#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcusageterms#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copystatus#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcjobidentifier#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copyurl#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcheadline#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcdatecreated#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecity#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagestate#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecountry#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecountrycode#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcscene#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcstate#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccredit#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copynotice#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+					</cfquery>
+					<cfcatch type="any">
+						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in images text table for jpg">
+							<cfdump var="#cfcatch#" />
+						</cfmail>
+					</cfcatch>
+				</cftry>
+			<!--- Move or upload to the right places --->
+			<!--- If we are local --->
+			<cfif arguments.thestruct.storage EQ "local">
+				<!--- <cftry> --->
+					<!--- Create folder with the asset id --->
+					<cfif NOT directoryexists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#")>
+						<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" mode="775">
+					</cfif>
+					<!--- Move original image --->
+					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+						<cfif application.razuna.renderingfarm OR arguments.thestruct.importpath>
+							<cfset var fileaction = "copy">
 						<cfelse>
-							<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
-							<cfset thumbsize = 1>
+							<cfset var fileaction = "move">
 						</cfif>
-						<!---
+						<cffile action="#fileaction#" source="#arguments.thestruct.thesourceraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
+					</cfif>
+					<!--- Move thumbnail --->
+					<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+						<cffile action="move" source="#arguments.thestruct.destination#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
+					<cfelseif !application.razuna.renderingfarm>
+						<cffile action="move" source="#arguments.thestruct.destination#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
+					</cfif>
+					<!--- Get size of original and thumnail --->
+					<cfset orgsize = arguments.thestruct.qryfile.thesize>
+					<cfif !application.razuna.renderingfarm>
+						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
+					<cfelse>
+						<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
+						<cfset thumbsize = 1>
+					</cfif>
+					<!---
 <cfcatch type="any">
-							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in moving local image">
-								<cfdump var="#cfcatch#" />
-							</cfmail>
+						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in moving local image">
+							<cfdump var="#cfcatch#" />
+						</cfmail>
+					</cfcatch>
+				</cftry>
+--->
+			<!--- NIRVANIX --->
+			<cfelseif arguments.thestruct.storage EQ "nirvanix">
+				<cfset uplt = "u" & Replace( Createuuid(), "-", "", "ALL" )>
+				<!--- Upload Original Image --->
+				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+					<cftry>
+						<cfthread name="#uplt#o" intstruct="#arguments.thestruct#">
+							<cfinvoke component="nirvanix" method="Upload">
+								<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
+								<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thesource#">
+								<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+							</cfinvoke>
+						</cfthread>
+						<cfthread action="join" name="#uplt#o" />
+						<cfcatch type="any">
+							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading original image to Nirvanix" dump="#cfcatch#">
 						</cfcatch>
 					</cftry>
---->
-				<!--- NIRVANIX --->
-				<cfelseif arguments.thestruct.storage EQ "nirvanix">
-					<cfset uplt = "u" & Replace( Createuuid(), "-", "", "ALL" )>
+				</cfif>
+				<!--- Upload Thumbnail --->
+				<cfif !application.razuna.renderingfarm>
+					<cftry>
+						<cfthread name="#uplt#t" intstruct="#arguments.thestruct#">
+							<cfinvoke component="nirvanix" method="Upload">
+								<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
+								<cfinvokeargument name="uploadfile" value="#attributes.intstruct.destination#">
+								<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+							</cfinvoke>
+						</cfthread>
+						<cfthread action="join" name="#uplt#t" />
+						<cfcatch type="any">
+							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
+						</cfcatch>
+					</cftry>
+					<!--- Get thumb file size --->
+					<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
+					<!--- Get signed URL --->
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
+				<cfelse>
+					<cfset thumbsize = 1>
+					<cfset cloud_url.theurl = "">
+				</cfif>
+				<!--- Get size of original --->
+				<cfset orgsize = arguments.thestruct.qryfile.thesize>
+				<!--- Get signed URLS for original --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
+			<!--- AMAZON --->
+			<cfelseif arguments.thestruct.storage EQ "amazon">
+				<cftry>
 					<!--- Upload Original Image --->
 					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-						<cftry>
-							<cfthread name="#uplt#o" intstruct="#arguments.thestruct#">
-								<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
-									<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-								</cfinvoke>
-							</cfthread>
-							<cfthread action="join" name="#uplt#o" />
-							<cfcatch type="any">
-								<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading original image to Nirvanix" dump="#cfcatch#">
-							</cfcatch>
-						</cftry>
+						<cfset upt = Replace( Createuuid(), "-", "", "ALL" )>
+						<cfthread name="#upt#" intstruct="#arguments.thestruct#">
+							<cfinvoke component="amazon" method="Upload">
+								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
+								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesource#">
+								<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+							</cfinvoke>
+						</cfthread>
+						<cfthread action="join" name="#upt#" />
 					</cfif>
 					<!--- Upload Thumbnail --->
 					<cfif !application.razuna.renderingfarm>
-						<cftry>
-							<cfthread name="#uplt#t" intstruct="#arguments.thestruct#">
-								<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.intstruct.destination#">
-									<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-								</cfinvoke>
-							</cfthread>
-							<cfthread action="join" name="#uplt#t" />
-							<cfcatch type="any">
-								<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
-							</cfcatch>
-						</cftry>
-						<!--- Get thumb file size --->
+						<cfset uptn = Replace( Createuuid(), "-", "", "ALL" )>
+						<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
+							<cfinvoke component="amazon" method="Upload">
+								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
+								<cfinvokeargument name="theasset" value="#attributes.intstruct.destination#">
+								<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+							</cfinvoke>
+						</cfthread>
+						<cfthread action="join" name="#uptn#" />
+						<!--- Get size thumnail --->
 						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
-						<!--- Get signed URL --->
-						<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
+						<!--- Get signed URLS for thumb --->
+						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
 					<cfelse>
 						<cfset thumbsize = 1>
 						<cfset cloud_url.theurl = "">
 					</cfif>
 					<!--- Get size of original --->
 					<cfset orgsize = arguments.thestruct.qryfile.thesize>
-					<!--- Get signed URLS for original --->
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
-				<!--- AMAZON --->
-				<cfelseif arguments.thestruct.storage EQ "amazon">
-					<cftry>
-						<!--- Upload Original Image --->
-						<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-							<cfset upt = Replace( Createuuid(), "-", "", "ALL" )>
-							<cfthread name="#upt#" intstruct="#arguments.thestruct#">
-								<cfinvoke component="amazon" method="Upload">
-									<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
-									<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
-									<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-								</cfinvoke>
-							</cfthread>
-							<cfthread action="join" name="#upt#" />
-						</cfif>
-						<!--- Upload Thumbnail --->
-						<cfif !application.razuna.renderingfarm>
-							<cfset uptn = Replace( Createuuid(), "-", "", "ALL" )>
-							<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
-								<cfinvoke component="amazon" method="Upload">
-									<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
-									<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
-									<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-								</cfinvoke>
-							</cfthread>
-							<cfthread action="join" name="#uptn#" />
-							<!--- Get size thumnail --->
-							<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
-							<!--- Get signed URLS for thumb --->
-							<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
-						<cfelse>
-							<cfset thumbsize = 1>
-							<cfset cloud_url.theurl = "">
-						</cfif>
-						<!--- Get size of original --->
-						<cfset orgsize = arguments.thestruct.qryfile.thesize>
-						<!--- Get signed URLS original --->
-						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
-						<cfcatch type="any">
-							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
-						</cfcatch>
-					</cftry>
-				</cfif>
-				<!--- Orgsize and thumbsize variables are not here --->
-				<cfif NOT isdefined(orgsize)>
-					<cfset orgsize = arguments.thestruct.qryfile.thesize>
-				</cfif>
-				<cfif NOT isdefined(thumbsize)>
-					<cfset thumbsize = 0>
-				</cfif>
-				<!--- Update DB with the sizes from above --->
-				<cfquery datasource="#arguments.thestruct.dsn#">
-				UPDATE #session.hostdbprefix#images
-				SET 
-				img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
-				thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
-				hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.md5hash#">
-				<!--- AMAZON --->
-				<cfif arguments.thestruct.storage EQ "amazon" OR arguments.thestruct.storage EQ "nirvanix">
-					,
-					cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
-					cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
-					cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
-				</cfif>
-				WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-				</cfquery>
+					<!--- Get signed URLS original --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
+					<cfcatch type="any">
+						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
+					</cfcatch>
+				</cftry>
+			</cfif>
+			<!--- Orgsize and thumbsize variables are not here --->
+			<cfif NOT isdefined(orgsize)>
+				<cfset orgsize = arguments.thestruct.qryfile.thesize>
+			</cfif>
+			<cfif NOT isdefined(thumbsize)>
+				<cfset thumbsize = 0>
+			</cfif>
+			<!--- Update DB with the sizes from above --->
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			UPDATE #session.hostdbprefix#images
+			SET 
+			img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
+			thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
+			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.md5hash#">
+			<!--- AMAZON --->
+			<cfif arguments.thestruct.storage EQ "amazon" OR arguments.thestruct.storage EQ "nirvanix">
+				,
+				cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
+				cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+				cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
+			</cfif>
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
 			<!---
 </cfthread>
 			<cfthread action="join" name="#tt#" />
@@ -1971,13 +1970,15 @@ This is the main function called directly by a single upload else from addassets
 		<cffile action="write" file="#arguments.thestruct.theshh#" output="#arguments.thestruct.theexif# -S -s -ImageHeight #arguments.thestruct.thesource#" mode="777">
 		<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.theexif# -S -s -ImageWidth #arguments.thestruct.thesource#" mode="777">
 		<!--- Get height and width --->
-		<cfexecute name="#arguments.thestruct.theshh#" timeout="60" variable="orgwh.theheight" />
+		<cfexecute name="#arguments.thestruct.theshh#" timeout="60" variable="orgwh.theheight" ERRORVARIABLE="y" />
 		<cfexecute name="#arguments.thestruct.theshw#" timeout="60" variable="orgwh.thewidth" />
 		<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
 		<cfset orgwh.theheight = trim(listlast(orgwh.theheight," "))>
 		<cfset orgwh.thewidth = trim(listlast(orgwh.thewidth," "))>
 		<!--- Set correct width or heigth --->
-		<cfif orgwh.theheight LTE arguments.thestruct.height AND orgwh.thewidth LTE arguments.thestruct.width>
+		<cfif orgwh.thewidth EQ "" OR orgwh.theheight EQ "">
+			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
+		<cfelseif orgwh.theheight LTE arguments.thestruct.height AND orgwh.thewidth LTE arguments.thestruct.width>
 			<cfset theImgConvertParams = "-strip -colorspace RGB">
 		<cfelseif orgwh.thewidth GT arguments.thestruct.width>
 			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
@@ -1988,14 +1989,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfif isAnimGIF>
 			<cfset theImgConvertParams = "-coalesce " & theImgConvertParams>
 		</cfif>
-		<!--- Escape destination
-		<cfif iswindows()>
-			<cfset Arguments.thestruct.destination = """#Arguments.thestruct.destination#""">
-		<cfelse>
-			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination," ","\ ","all")>
-			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"&","\&","all")>
-			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"'","\'","all")>
-		</cfif> --->
 		<!--- Switch to create correct arguments to pass for executables --->
 		<cfswitch expression="#arguments.thestruct.qryfile.extension#">
 			<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
@@ -3609,6 +3602,744 @@ This is the main function called directly by a single upload else from addassets
 	</cfsavecontent>
 	<!--- Return --->
 	<cfreturn thexml />
+</cffunction>
+
+<!--- INSERT FROM PATH --->
+<cffunction name="addassetpath" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>Reading: #arguments.thestruct.folder_path#</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Params --->
+	<cfset arguments.thestruct.userid = session.theuserid>
+	<!--- Increase folder level --->
+	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
+	<!--- Read the name of the root folder --->
+	<cfset arguments.thestruct.folder_name = listlast(arguments.thestruct.folder_path,"/\")>
+	<!--- Add the folder --->
+	<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+	<!--- If we store on the file system we create the folder here --->
+	<cfif application.razuna.storage EQ "local">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#" mode="775">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img" mode="775">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid" mode="775">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc" mode="775">
+		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud" mode="775">
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput>List files of this folder...<br><br></cfoutput>
+	<cfflush>
+	<!--- Now add all assets of this folder --->
+	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thefiles" type="file">
+	<!--- Filter out hidden dirs --->
+	<cfquery dbtype="query" name="thefiles">
+	SELECT *
+	FROM thefiles
+	WHERE attributes != 'H'
+	</cfquery>
+	<!--- Feedback --->
+	<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
+	<cfflush>
+	<!--- New folder id into struct --->
+	<cfset arguments.thestruct.new_folder_id = new_folder_id>
+	<!--- Loop over the assets --->
+	<cfloop query="thefiles">
+		<!--- Feedback --->
+		<cfoutput>Adding: #name#<br></cfoutput>
+		<cfflush>
+		<!--- Params --->
+		<cfset arguments.thestruct.filepath = directory & "/" & name>
+		<cfset arguments.thestruct.filename = name>
+		<cfset arguments.thestruct.orgsize = size>
+		<!--- Now add the asset --->
+		<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+	</cfloop>
+	<!--- Feedback --->
+	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+	<cfflush>
+	<!--- Check if folder has subfolders if so add them recursively --->
+	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thedir" type="dir">
+	<!--- Filter out hidden dirs --->
+	<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+	SELECT *
+	FROM thedir
+	WHERE attributes != 'H'
+	</cfquery>
+	<!--- Call rec function --->
+	<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+		<!--- Feedback --->
+		<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+		<cfflush>
+		<!--- folder_id into theid --->
+		<cfset arguments.thestruct.theid = new_folder_id>
+		<!--- Call function --->
+		<cfinvoke method="addassetpath2" thestruct="#arguments.thestruct#">
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput><span style="color:green;font-weight:bold;">Successfully added all folders and assets!</span><br><br></cfoutput>
+	<cfflush>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- INSERT FROM PATH 2 --->
+<cffunction name="addassetpath2" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Increase folder level --->
+	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
+	<!--- The loop --->
+	<cfloop query="arguments.thestruct.thesubdirs">
+		<!--- Read the name of the root folder --->
+		<cfset arguments.thestruct.folder_name = name>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud" mode="775">
+		</cfif>
+		<!--- Add the dirname to the link_path --->
+		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<!--- Feedback --->
+		<cfoutput>List files of this folder...<br><br></cfoutput>
+		<cfflush>
+		<!--- Now add all assets of this folder --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
+		<cfflush>
+		<!--- New folder id into struct --->
+		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<!--- Loop over the assets --->
+		<cfloop query="thefiles">
+			<!--- Feedback --->
+			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfflush>
+			<!--- Params --->
+			<cfset arguments.thestruct.filepath = directory & "/" & name>
+			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.orgsize = size>
+			<!--- Now add the asset --->
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+		<cfflush>
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<cfset arguments.thestruct.folderpath = arguments.thestruct.folder_path>
+		<cfset arguments.thestruct.thisfolderid = arguments.thestruct.theid>
+		<cfset arguments.thestruct.thislevel = arguments.thestruct.level>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Add directory to the folder_path --->
+			<cfset arguments.thestruct.folder_path = directory & "/#name#">
+			<!--- Call function --->
+			<cfinvoke method="addassetpath3" thestruct="#arguments.thestruct#">
+		</cfif>
+		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath>
+		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid>
+		<cfset arguments.thestruct.level = arguments.thestruct.thislevel>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- INSERT FROM PATH 3 --->
+<cffunction name="addassetpath3" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>Reading: #arguments.thestruct.folder_path#</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Increase folder level --->
+	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
+	<!--- The loop --->
+	<cfloop query="arguments.thestruct.thesubdirs">
+		<!--- Read the name of the root folder --->
+		<cfset arguments.thestruct.folder_name = name>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud" mode="775">
+		</cfif>
+		<!--- Add the dirname to the link_path --->
+		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<!--- Feedback --->
+		<cfoutput>List files of this folder...<br><br></cfoutput>
+		<cfflush>
+		<!--- Now add all assets of this folder --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
+		<cfflush>
+		<!--- New folder id into struct --->
+		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<!--- Loop over the assets --->
+		<cfloop query="thefiles">
+			<!--- Feedback --->
+			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfflush>
+			<!--- Params --->
+			<cfset arguments.thestruct.filepath = directory & "/" & name>
+			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.orgsize = size>
+			<!--- Now add the asset --->
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+		<cfflush>
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<cfset arguments.thestruct.folderpath2 = arguments.thestruct.folder_path>
+		<cfset arguments.thestruct.thisfolderid2 = arguments.thestruct.theid>
+		<cfset arguments.thestruct.thislevel2 = arguments.thestruct.level>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Add directory to the folder_path --->
+			<cfset arguments.thestruct.folder_path = directory & "/#name#">
+			<!--- Call function --->
+			<cfinvoke method="addassetpath4" thestruct="#arguments.thestruct#">
+		</cfif>
+		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath2>
+		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid2>
+		<cfset arguments.thestruct.level = arguments.thestruct.thislevel2>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- INSERT FROM PATH 4 --->
+<cffunction name="addassetpath4" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>Reading: #arguments.thestruct.folder_path#</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Increase folder level --->
+	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
+	<!--- The loop --->
+	<cfloop query="arguments.thestruct.thesubdirs">
+		<!--- Read the name of the root folder --->
+		<cfset arguments.thestruct.folder_name = name>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud" mode="775">
+		</cfif>
+		<!--- Add the dirname to the link_path --->
+		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<!--- Feedback --->
+		<cfoutput>List files of this folder...<br><br></cfoutput>
+		<cfflush>
+		<!--- Now add all assets of this folder --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
+		<cfflush>
+		<!--- New folder id into struct --->
+		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<!--- Loop over the assets --->
+		<cfloop query="thefiles">
+			<!--- Feedback --->
+			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfflush>
+			<!--- Params --->
+			<cfset arguments.thestruct.filepath = directory & "/" & name>
+			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.orgsize = size>
+			<!--- Now add the asset --->
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+		<cfflush>
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<cfset arguments.thestruct.folderpath3 = arguments.thestruct.folder_path>
+		<cfset arguments.thestruct.thisfolderid3 = arguments.thestruct.theid>
+		<cfset arguments.thestruct.thislevel3 = arguments.thestruct.level>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Add directory to the folder_path --->
+			<cfset arguments.thestruct.folder_path = directory & "/#name#">
+			<!--- Call function --->
+			<cfinvoke method="addassetpath5" thestruct="#arguments.thestruct#">
+		</cfif>
+		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath3>
+		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid3>
+		<cfset arguments.thestruct.level = arguments.thestruct.thislevel3>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- INSERT FROM PATH 5 --->
+<cffunction name="addassetpath5" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>Reading: #arguments.thestruct.folder_path#</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Increase folder level --->
+	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
+	<!--- The loop --->
+	<cfloop query="arguments.thestruct.thesubdirs">
+		<!--- Read the name of the root folder --->
+		<cfset arguments.thestruct.folder_name = name>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud" mode="775">
+		</cfif>
+		<!--- Add the dirname to the link_path --->
+		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<!--- Feedback --->
+		<cfoutput>List files of this folder...<br><br></cfoutput>
+		<cfflush>
+		<!--- Now add all assets of this folder --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
+		<cfflush>
+		<!--- New folder id into struct --->
+		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<!--- Loop over the assets --->
+		<cfloop query="thefiles">
+			<!--- Feedback --->
+			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfflush>
+			<!--- Params --->
+			<cfset arguments.thestruct.filepath = directory & "/" & name>
+			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.orgsize = size>
+			<!--- Now add the asset --->
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+		<cfflush>
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<cfset arguments.thestruct.folderpath4 = arguments.thestruct.folder_path>
+		<cfset arguments.thestruct.thisfolderid4 = arguments.thestruct.theid>
+		<cfset arguments.thestruct.thislevel4 = arguments.thestruct.level>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Add directory to the folder_path --->
+			<cfset arguments.thestruct.folder_path = directory & "/#name#">
+			<!--- Call function --->
+			<cfinvoke method="addassetpath6" thestruct="#arguments.thestruct#">
+		</cfif>
+		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath4>
+		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid4>
+		<cfset arguments.thestruct.level = arguments.thestruct.thislevel4>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- INSERT FROM PATH 6 --->
+<cffunction name="addassetpath6" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>Reading: #arguments.thestruct.folder_path#</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Increase folder level --->
+	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
+	<!--- The loop --->
+	<cfloop query="arguments.thestruct.thesubdirs">
+		<!--- Read the name of the root folder --->
+		<cfset arguments.thestruct.folder_name = name>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud" mode="775">
+		</cfif>
+		<!--- Add the dirname to the link_path --->
+		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<!--- Feedback --->
+		<cfoutput>List files of this folder...<br><br></cfoutput>
+		<cfflush>
+		<!--- Now add all assets of this folder --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
+		<cfflush>
+		<!--- New folder id into struct --->
+		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<!--- Loop over the assets --->
+		<cfloop query="thefiles">
+			<!--- Feedback --->
+			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfflush>
+			<!--- Params --->
+			<cfset arguments.thestruct.filepath = directory & "/" & name>
+			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.orgsize = size>
+			<!--- Now add the asset --->
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+		<cfflush>
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<cfset arguments.thestruct.folderpath5 = arguments.thestruct.folder_path>
+		<cfset arguments.thestruct.thisfolderid5 = arguments.thestruct.theid>
+		<cfset arguments.thestruct.thislevel5 = arguments.thestruct.level>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Add directory to the folder_path --->
+			<cfset arguments.thestruct.folder_path = directory & "/#name#">
+			<!--- Call function --->
+			<cfinvoke method="addassetpath7" thestruct="#arguments.thestruct#">
+		</cfif>
+		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath5>
+		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid5>
+		<cfset arguments.thestruct.level = arguments.thestruct.thislevel5>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- INSERT FROM PATH 7 --->
+<cffunction name="addassetpath7" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>Reading: #arguments.thestruct.folder_path#</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Increase folder level --->
+	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
+	<!--- The loop --->
+	<cfloop query="arguments.thestruct.thesubdirs">
+		<!--- Read the name of the root folder --->
+		<cfset arguments.thestruct.folder_name = name>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud" mode="775">
+		</cfif>
+		<!--- Add the dirname to the link_path --->
+		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<!--- Feedback --->
+		<cfoutput>List files of this folder...<br><br></cfoutput>
+		<cfflush>
+		<!--- Now add all assets of this folder --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
+		<cfflush>
+		<!--- New folder id into struct --->
+		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<!--- Loop over the assets --->
+		<cfloop query="thefiles">
+			<!--- Feedback --->
+			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfflush>
+			<!--- Params --->
+			<cfset arguments.thestruct.filepath = directory & "/" & name>
+			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.orgsize = size>
+			<!--- Now add the asset --->
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+		<cfflush>
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<cfset arguments.thestruct.folderpath6 = arguments.thestruct.folder_path>
+		<cfset arguments.thestruct.thisfolderid6 = arguments.thestruct.theid>
+		<cfset arguments.thestruct.thislevel6 = arguments.thestruct.level>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Add directory to the folder_path --->
+			<cfset arguments.thestruct.folder_path = directory & "/#name#">
+			<!--- Call function --->
+			<cfinvoke method="addassetpath8" thestruct="#arguments.thestruct#">
+		</cfif>
+		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath6>
+		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid6>
+		<cfset arguments.thestruct.level = arguments.thestruct.thislevel6>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- INSERT FROM PATH 8 --->
+<cffunction name="addassetpath8" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>Reading: #arguments.thestruct.folder_path#</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Increase folder level --->
+	<cfset arguments.thestruct.level = arguments.thestruct.level + 1>
+	<!--- The loop --->
+	<cfloop query="arguments.thestruct.thesubdirs">
+		<!--- Read the name of the root folder --->
+		<cfset arguments.thestruct.folder_name = name>
+		<!--- Add the folder --->
+		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
+		<!--- If we store on the file system we create the folder here --->
+		<cfif application.razuna.storage EQ "local">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/doc" mode="775">
+			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud" mode="775">
+		</cfif>
+		<!--- Add the dirname to the link_path --->
+		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<!--- Feedback --->
+		<cfoutput>List files of this folder...<br><br></cfoutput>
+		<cfflush>
+		<!--- Now add all assets of this folder --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
+		<cfflush>
+		<!--- New folder id into struct --->
+		<cfset arguments.thestruct.new_folder_id = new_folder_id>
+		<!--- Loop over the assets --->
+		<cfloop query="thefiles">
+			<!--- Feedback --->
+			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfflush>
+			<!--- Params --->
+			<cfset arguments.thestruct.filepath = directory & "/" & name>
+			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.orgsize = size>
+			<!--- Now add the asset --->
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		<!---
+		<!--- Feedback --->
+		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
+		<cfflush>
+		<!--- Check if folder has subfolders if so add them recursively --->
+		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+		<!--- Filter out hidden dirs --->
+		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+		SELECT *
+		FROM thedir
+		WHERE attributes != 'H'
+		</cfquery>
+		<cfset arguments.thestruct.folderpath3 = arguments.thestruct.folder_path>
+		<cfset arguments.thestruct.thisfolderid3 = arguments.thestruct.theid>
+		<cfset arguments.thestruct.thislevel3 = arguments.thestruct.level>
+		<!--- Call rec function --->
+		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- Feedback --->
+			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfflush>
+			<!--- folder_id into theid --->
+			<cfset arguments.thestruct.theid = new_folder_id>
+			<!--- Add directory to the folder_path --->
+			<cfset arguments.thestruct.folder_path = directory & "/#name#">
+			<!--- Call function --->
+			<!--- <cfinvoke method="addassetpath5" thestruct="#arguments.thestruct#"> --->
+		</cfif>
+		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath3>
+		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid3>
+		<cfset arguments.thestruct.level = arguments.thestruct.thislevel3>
+		--->
+	</cfloop>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- INSERT FROM SERVER --->
+<cffunction name="addassetpathfiles" output="true">
+	<cfargument name="thestruct" type="struct">	
+	<!--- Create a unique name for the temp directory to hold the file --->
+	<cfset arguments.thestruct.tempid = replace(createuuid(),"-","","ALL")>
+	<!---
+<cfset arguments.thestruct.thetempfolder = "asset#arguments.thestruct.tempid#">
+	<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
+--->
+	<!--- Create a temp directory to hold the file --->
+	<!--- <cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775"> --->
+	<!--- Copy the file into the temp dir --->
+	<!--- <cffile action="copy" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.filename#" mode="775"> --->
+	<!--- Get file extension --->
+	<cfset var theextension = listlast("#arguments.thestruct.filename#",".")>
+	<!--- If the extension is longer then 9 chars --->
+	<cfif len(theextension) GT 9>
+		<cfset theextension = "txt">
+	</cfif>
+	<cfset var namenoext = replacenocase("#arguments.thestruct.filename#",".#theextension#","","All")>
+	<!--- Store the original filename --->
+	<cfset arguments.thestruct.thefilenameoriginal = arguments.thestruct.filename>
+	<!--- Rename the file so that we can remove any spaces --->
+	<!---
+<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#arguments.thestruct.filename#">
+	<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
+--->
+	<!--- Do the rename action on the file --->
+	<!--- <cffile action="copy" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#"> --->
+	<!--- MD5 Hash --->
+	<cfset var md5hash = hashbinary(arguments.thestruct.filepath)>
+	<!--- Add to temp db --->
+	<cfquery datasource="#variables.dsn#">
+	INSERT INTO #session.hostdbprefix#assets_temp
+	(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, file_id, host_id, thesize, md5hash)
+	VALUES(
+	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.filename#">,
+	<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+	<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.new_folder_id#">,
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+	<cfqueryparam cfsqltype="cf_sql_varchar" value="#namenoext#">,
+	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.filepath#">,
+	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+	<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.orgsize#">,
+	<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+	)
+	</cfquery>
+	<!--- We don't need to send an email --->
+	<cfset arguments.thestruct.sendemail = false>
+	<!--- We set that this is from this function --->
+	<cfset arguments.thestruct.importpath = true>
+	<!--- Call the addasset function --->
+	<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+	<cfabort>
 </cffunction>
 
 </cfcomponent>
