@@ -55,6 +55,8 @@
 					</cfoutput>
 				</cfcatch>
 			</cftry>
+			<!--- Remove source --->
+			<cfset AmazonRemovedatasource("amazoncon")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
