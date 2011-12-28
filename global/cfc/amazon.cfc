@@ -38,27 +38,23 @@
 	<!--- FUNCTION: VALIDATE --->
 	<cffunction name="validate" returntype="string" access="public" output="true">
 		<cfargument name="thestruct" type="struct" required="yes" />
-			<!--- Register Datasource --->
-			<!--- <cfset application.razuna.s3ds = AmazonRegisterDataSource("aws","#arguments.thestruct.awskey#","#arguments.thestruct.awskeysecret#","#arguments.thestruct.awslocation#")> --->
-			<!--- Create a bucket --->
-			<cfset var tempid = lcase(replace(createuuid(),"-","","ALL"))>
-			<cfinvoke component="s3" method="putBucket" bucketName="#tempid#" awskey="#arguments.thestruct.awskey#" storageLocation="#arguments.thestruct.awslocation#" returnVariable="x" />
-			<!--- Get endpoint --->
-			<cfset var ep = endpoints(arguments.thestruct.awslocation)>
-			<cfoutput>
-			<cfif x.responseheader.STATUS_CODE EQ "200">
+			<cftry>
+				<!--- Register Datasource --->
+				<cfset AmazonRegisterDataSource("amazoncon","#arguments.thestruct.awskey#","#arguments.thestruct.awskeysecret#","#arguments.thestruct.awslocation#")>
+				<cfset d = AmazonS3listbuckets("amazoncon")>
+				<cfoutput>
 				<br />
 				<span style="color:green;font-weight:bold;">Connection is valid!</span>
-				<!--- Delete Bucket --->
-				<cfinvoke component="s3" method="deleteBucket" bucketName="#tempid#" awskey="#arguments.thestruct.awskey#" endpoint="#ep#" />
-			<cfelse>
-				<cfset var thexml = xmlparse(x.filecontent)>
-				<br />
-				<span style="color:red;font-weight:bold;">We could not validate your credentials!</span>
-				<br />
-				AWS Error Message: #thexml.error[1].message.xmltext#
-			</cfif>
-			</cfoutput>
+				</cfoutput>
+				<cfcatch type="any">
+					<cfoutput>
+					<br />
+					<span style="color:red;font-weight:bold;">We could not validate your credentials!</span>
+					<br />
+					#cfcatch.message#
+					</cfoutput>
+				</cfcatch>
+			</cftry>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

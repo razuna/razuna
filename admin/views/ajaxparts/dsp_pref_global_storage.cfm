@@ -104,7 +104,20 @@
 			<tr>
 				<td></td>
 				<td></td>
-				<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="loadcontent('divvalidateaws','#myself#c.prefs_aws_validate&awskey=' + escape($('##conf_aws_access_key').val()) + '&awskeysecret=' + escape($('##conf_aws_secret_access_key').val()) + '&awslocation=' + $('##conf_aws_location :selected').val());" /><div id="divvalidateaws"></div></td>
+				<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="valaws();" /><div id="divvalidateaws"></div></td>
 			</tr>
 	</table>
+	<script type="text/javascript">
+		function valaws(){
+			// Get values
+			var key = $('##conf_aws_access_key').val();
+			var keysecret = $('##conf_aws_secret_access_key').val();
+			var loc = $('##conf_aws_location :selected').val();
+			// Show loading gif
+			loadinggif('divvalidateaws');
+			
+			// Load
+			loadcontent('divvalidateaws','#myself#c.prefs_aws_validate&awskey=' + encodeURIComponent(key) + '&awskeysecret=' + encodeURIComponent(keysecret) + '&awslocation=' + loc);
+		}
+	</script>
 </cfoutput>
