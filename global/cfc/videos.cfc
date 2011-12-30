@@ -441,11 +441,11 @@
 			<cfif arguments.thestruct.isWindows>
 				<cfset theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
 				<cfset theasset = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#""">
-				<cfset theorg = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#""">
+				<cfset theorg = """#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#""">
 			<cfelse>
 				<cfset theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
 				<cfset theasset = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#">
-				<cfset theorg = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#">
+				<cfset theorg = "#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#">
 				<cfset theorg = replace(theorg," ","\ ","all")>
 				<cfset theorg = replace(theorg,"&","\&","all")>
 				<cfset theorg = replace(theorg,"'","\'","all")>
@@ -478,8 +478,12 @@
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<!--- If we can't create a still image we resort to a placeholder image --->
-			<cfif NOT FileExists("#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#")>
+			<cfif NOT FileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#")>
 				<cffile action="copy" source="#arguments.thestruct.theplaceholderpic#" destination="#theorg#" mode="775">
+			</cfif>
+			<!--- If we are coming from a path and we are local we move the thumbnail to the final destination, else we leave it here for pickup --->
+			<cfif arguments.thestruct.importpath AND application.razuna.storage EQ "local">
+				<cffile action="move" source="#theorg#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#" mode="775" />
 			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">

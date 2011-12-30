@@ -160,10 +160,10 @@
 		<cfset thefilename = REReplace(thefilename, "([^A-Za-z0-9_-]+)", "_", "ALL")>
 		<!--- <cfdump var="#thefilename#"> --->
 		<!--- Re-add the extension to the name --->
-		<cfif #fileNameExt.theExt# NEQ "">
+		<cfif fileNameExt.theExt NEQ "">
 			<cfset thefilename = "#thefilename#.#fileNameExt.theExt#">
 		</cfif>
-		<cfreturn lcase(thefilename)>
+		<cfreturn thefilename>
 	</cffunction>
 
 <!--- GET ALL ALLOWED FILE TYPES ---------------------------------------------------------------------->
