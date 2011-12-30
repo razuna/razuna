@@ -84,9 +84,6 @@
 					<td width="1%" valign="top" style="padding-top:20px;">
 						<table border="0" width="300" cellpadding="0" cellspacing="0" class="grid">
 							<tr>
-								<th>Your Asset</th>
-							</tr>
-							<tr>
 								<td width="100%" nowrap="true">
 									<cfif qry_detail.detail.link_kind NEQ "url">
 										<cfif qry_detail.detail.shared EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" target="_blank"></cfif>Original #defaultsObj.trans("format")#: #ucase(qry_detail.detail.aud_extension)#</a> <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>

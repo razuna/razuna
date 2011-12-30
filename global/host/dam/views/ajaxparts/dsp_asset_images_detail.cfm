@@ -99,9 +99,6 @@
 					<td width="1%" nowrap="true" valign="top" style="padding-top:20px;">
 						<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 							<tr>
-								<th colspan="2">Your Asset</th>
-							</tr>
-							<tr>
 								<td colspan="2">
 									<cfif qry_detail.detail.link_kind NEQ "url">
 										<cfif qry_detail.detail.shared EQ "F">

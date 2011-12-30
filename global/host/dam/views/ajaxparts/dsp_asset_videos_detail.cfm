@@ -99,9 +99,6 @@
 					<!--- show video according to extension --->
 					<td width="1%" valign="top" style="padding-top:20px;">
 						<table border="0" width="100%" cellpadding="0" cellspacing="0">
-							<tr>
-								<th>Your Asset</th>
-							</tr>
 							<cfif qry_detail.detail.link_kind NEQ "url">
 								<tr>
 									<td width="100%" nowrap="true">
