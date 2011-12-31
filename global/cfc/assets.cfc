@@ -1046,9 +1046,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 					<!--- If we are PDF we create thumbnail and images from the PDF --->
 					<!--- RFS --->
-					<cfif application.razuna.renderingfarm>
-						<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
-					<cfelse>
+					<cfif !application.razuna.renderingfarm>
 						<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND attributes.intstruct.qryfile.link_kind NEQ "url">
 							<!--- Create folder to hold the images --->
 							<cfif NOT directoryexists("#attributes.intstruct.thetempdirectory#/razuna_pdf_images")>
@@ -1343,12 +1341,14 @@ This is the main function called directly by a single upload else from addassets
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.newid#" category="doc">
 						</cfif>
 						<!--- Update DB to make asset available --->
-						<cfquery datasource="#attributes.intstruct.dsn#">
-						UPDATE #attributes.intstruct.hostdbprefix#files
-						SET is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
-						WHERE file_id = <cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">
-						</cfquery>
+						<cfif !application.razuna.renderingfarm>
+							<cfquery datasource="#attributes.intstruct.dsn#">
+							UPDATE #attributes.intstruct.hostdbprefix#files
+							SET is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+							WHERE file_id = <cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">
+							</cfquery>
+						</cfif>
 					</cfif>
 					<!--- Log --->
 					<cfinvoke component="extQueryCaching" method="log_assets">
@@ -1359,6 +1359,11 @@ This is the main function called directly by a single upload else from addassets
 					</cfinvoke>
 					<!--- Flush Cache --->
 					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.theuserid#_files" />
+					<!--- RFS --->
+					<cfif application.razuna.renderingfarm>
+						<cfset attributes.intstruct.assettype = "doc">	
+						<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
+					</cfif>
 					<!--- Catch --->
 					<cfcatch type="any">
 						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in creating doc">
@@ -1440,19 +1445,26 @@ This is the main function called directly by a single upload else from addassets
 				thumb_extension = <cfqueryparam value="#attributes.intstruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
 				link_path_url = <cfqueryparam value="#attributes.intstruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
 				link_kind = <cfqueryparam value="#attributes.intstruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
-				path_to_asset = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#" cfsqltype="cf_sql_varchar">,
-				is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				path_to_asset = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#" cfsqltype="cf_sql_varchar">
+				<cfif !application.razuna.renderingfarm>
+					,
+					is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+				</cfif>
 				<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
+					,
 					img_filename_org = <cfqueryparam value="#attributes.intstruct.lanorgname#" cfsqltype="cf_sql_varchar">
 				<cfelse>
+					,
 					img_filename_org = <cfqueryparam value="#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 				</cfif>
 				<cfif structkeyexists(attributes.intstruct.qryfile,"groupid") AND attributes.intstruct.qryfile.groupid NEQ "">
-					,img_group = <cfqueryparam value="#attributes.intstruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
+					,
+					img_group = <cfqueryparam value="#attributes.intstruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
 				</cfif>
 				<!--- For Nirvanix --->
 				<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND attributes.intstruct.qryfile.link_kind EQ "">
-					,lucene_key = <cfqueryparam value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+					,
+					lucene_key = <cfqueryparam value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 				</cfif>
 				WHERE img_id = <cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">
@@ -1517,6 +1529,11 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Flush Cache --->
 				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.hostid#_images" />
 				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.hostid#_share_options" />
+				<!--- RFS --->
+				<cfif application.razuna.renderingfarm>
+					<cfset attributes.intstruct.assettype = "img">
+					<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
+				</cfif>
 			</cfthread>
 		</cfif>
 	</cfif>
@@ -1938,9 +1955,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="resizeImage" returntype="void" access="public" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
 	<!--- RFS --->
-	<cfif application.razuna.renderingfarm AND arguments.thestruct.qryfile.file_id EQ 0>
-		<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
-	<cfelse>
+	<cfif !application.razuna.renderingfarm>
 		<!--- ID for thread --->
 		<cfset var tri = replacenocase(createuuid(),"-","","all")>
 		<cfthread name="#tri#" intstruct="#arguments.thestruct#">
@@ -2325,7 +2340,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfthread>
 					<cfthread action="join" name="#upmt#" />
 				</cfif>
-				<!--- Get signed URLS for image and movie --->
+				<!--- Get signed URLS for movie --->
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 			</cfif>
 			<cfset var ts = arguments.thestruct.qryfile.thesize>
@@ -2395,11 +2410,16 @@ This is the main function called directly by a single upload else from addassets
 		link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
 		link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
 		vid_meta = <cfqueryparam value="#vid_meta#" cfsqltype="cf_sql_varchar">,
-		is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">,
+		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
+		<cfif !application.razuna.renderingfarm>
+			,
+			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+		</cfif>
 		<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+			,
 			vid_name_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
 		<cfelse>
+			,
 			vid_name_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 		</cfif>
 		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
@@ -2467,6 +2487,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
+		<!--- RFS --->
+		<cfif application.razuna.renderingfarm>
+			<cfset arguments.thestruct.newid = arguments.thestruct.thisvid.newid>
+			<cfset arguments.thestruct.assettype = "vid">
+			<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
+		</cfif>
 	</cfif>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.thisvid.newid />
@@ -2847,9 +2873,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Delete scripts --->
 						<cffile action="delete" file="#attributes.audstruct.thesh#">
 						<!--- RFS --->
-						<cfif application.razuna.renderingfarm AND attributes.audstruct.qryfile.extension NEQ "wav" AND arguments.thestruct.qryfile.file_id NEQ 0>
-							<cfinvoke component="rfs" method="notify" thestruct="#attributes.audstruct#" />
-						<cfelse>
+						<cfif !application.razuna.renderingfarm>
 							<!--- Create Raw file --->
 							<cfif attributes.audstruct.qryfile.extension NEQ "wav">
 								<!--- Write files --->
@@ -3112,12 +3136,14 @@ This is the main function called directly by a single upload else from addassets
 						<cfinvoke component="lucene" method="index_update" dsn="#attributes.audstruct.dsn#" thestruct="#attributes.audstruct#" assetid="#attributes.audstruct.newid#" category="aud">
 					</cfif>
 					<!--- Update DB to make asset available --->
-					<cfquery datasource="#attributes.audstruct.dsn#">
-					UPDATE #attributes.audstruct.hostdbprefix#audios
-					SET is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
-					WHERE aud_id = <cfqueryparam value="#attributes.audstruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.audstruct.hostid#">
-					</cfquery>
+					<cfif !application.razuna.renderingfarm>
+						<cfquery datasource="#attributes.audstruct.dsn#">
+						UPDATE #attributes.audstruct.hostdbprefix#audios
+						SET is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+						WHERE aud_id = <cfqueryparam value="#attributes.audstruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.audstruct.hostid#">
+						</cfquery>
+					</cfif>
 					<!--- Set shared options --->
 					<cfquery datasource="#attributes.audstruct.dsn#">
 					INSERT INTO #attributes.audstruct.hostdbprefix#share_options
@@ -3153,6 +3179,11 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Flush Cache --->
 					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.audstruct.theuserid#_audios" />
 					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.audstruct.theuserid#_share_options" />	
+					<!--- RFS --->
+					<cfif application.razuna.renderingfarm AND attributes.audstruct.qryfile.extension NEQ "wav" AND attributes.audstruct.newid NEQ 0>
+						<cfset attributes.audstruct.assettype = "aud">
+						<cfinvoke component="rfs" method="notify" thestruct="#attributes.audstruct#" />
+					</cfif>
 				</cfif>
 			</cfthread>
 			<!--- Join above thread --->

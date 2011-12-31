@@ -432,10 +432,7 @@
 <cffunction name="create_previews" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- RFS --->
-	<cfif application.razuna.renderingfarm AND arguments.thestruct.qryfile.file_id EQ 0>
-		<cfset arguments.thestruct.newid = arguments.thestruct.thisvid.newid>
-		<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
-	<cfelse>
+	<cfif !application.razuna.renderingfarm>
 		<cftry>
 			<!--- Choose platform --->
 			<cfif arguments.thestruct.isWindows>

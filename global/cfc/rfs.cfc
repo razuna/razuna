@@ -161,13 +161,12 @@
 			<cfhttpparam name="httphost" value="#arguments.thestruct.httphost#" type="URL">
 			<cfhttpparam name="storage" value="#application.razuna.storage#" type="URL">
 			<cfhttpparam name="dsnhost" value="#application.razuna.datasource#" type="URL">
+			<cfhttpparam name="assettype" value="#arguments.thestruct.assettype#" type="URL">
 			<cfif structkeyexists(arguments.thestruct,"convert")>
 				<cfhttpparam name="upl_template" value="#arguments.thestruct.upl_template#" type="URL">
 				<cfhttpparam name="convert" value="#arguments.thestruct.convert#" type="URL">
-				<cfhttpparam name="assettype" value="#arguments.thestruct.assettype#" type="URL">
 				<cfhttpparam name="jsondata" value="#jsondata#" type="URL">
 			<cfelse>
-				<cfhttpparam name="tempid" value="#arguments.thestruct.tempid#" type="URL">
 				<cfhttpparam name="assetid" value="#arguments.thestruct.newid#" type="URL">
 			</cfif>
 		</cfhttp>		
@@ -202,56 +201,31 @@
 			<!--- IMAGES --->
 			<cfif arguments.thestruct.rfs_assettype EQ "img">
 				<cfset var forpath = "img">
+				<cfset var fordb = "#session.hostdbprefix#images">
+				<cfset var fordbid = "img_id">
 			<!--- VIDEOS --->
 			<cfelseif arguments.thestruct.rfs_assettype EQ "vid">
 				<cfset var forpath = "vid">
+				<cfset var fordb = "#session.hostdbprefix#videos">
+				<cfset var fordbid = "vid_id">
 			<!--- AUDIOS --->
 			<cfelseif arguments.thestruct.rfs_assettype EQ "aud">
 				<cfset var forpath = "aud">
+				<cfset var fordb = "#session.hostdbprefix#audios">
+				<cfset var fordbid = "aud_id">
 			<!--- Docs and all other files --->
 			<cfelse>
 				<cfset var forpath = "doc">
+				<cfset var fordb = "#session.hostdbprefix#files">
+				<cfset var fordbid = "file_id">
 			</cfif>
 			<!--- If we come from convert we have jsondata in the arguments --->
 			<cfif structkeyexists(arguments.thestruct,"rfs_jsondata")>
 				<!--- Convert Json --->
 				<cfset arguments.thestruct.json = deserializejson(arguments.thestruct.rfs_jsondata)>
 				<cfset structappend(arguments.thestruct, arguments.thestruct.json)>
-				<!--- Images --->
-				<cfif forpath EQ "img">
-					<cfquery dataSource="#application.razuna.datasource#" name="qry">
-					SELECT folder_id_r
-					FROM #session.hostdbprefix#images
-					WHERE img_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.jsondata.file_id#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
-					</cfquery>
-				<!--- Videos --->
-				<cfelseif forpath EQ "vid">
-					<cfquery dataSource="#application.razuna.datasource#" name="qry">
-					SELECT folder_id_r
-					FROM #session.hostdbprefix#videos
-					WHERE vid_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.jsondata.file_id#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
-					</cfquery>
-				<!--- Audios --->
-				<cfelseif forpath EQ "aud">
-					<cfquery dataSource="#application.razuna.datasource#" name="qry">
-					SELECT folder_id_r
-					FROM #session.hostdbprefix#audios
-					WHERE aud_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.jsondata.file_id#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
-					</cfquery>
-				<!--- Docs and all other files --->
-				<cfelse>
-					<cfquery dataSource="#application.razuna.datasource#" name="qry">
-					SELECT folder_id_r
-					FROM #session.hostdbprefix#files
-					WHERE file_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.jsondata.file_id#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#arguments.thestruct.hostid#">
-					</cfquery>
-				</cfif>
 				<!--- Put asset path together --->
-				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & qry.folder_id_r & "/" & forpath & "/" & arguments.thestruct.newid>
+				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.newid>
 				<!--- Write script file --->
 				<cfif forpath EQ "aud">
 					<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" mode="777">
@@ -260,14 +234,8 @@
 				</cfif>
 			<!--- Pickup the preview asset --->
 			<cfelse>
-				<!--- Query temp DB --->
-				<cfquery dataSource="#application.razuna.datasource#" name="qry">
-				SELECT folder_id
-				FROM #session.hostdbprefix#assets_temp
-				WHERE tempid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_tempid#">
-				</cfquery>		
 				<!--- Put asset path together --->
-				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & qry.folder_id & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
+				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
 				<!--- Write script file --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.rfs_path#/#arguments.thestruct.rfs_asset#" mode="777">
 			</cfif>				
@@ -283,7 +251,7 @@
 			<cfthread action="join" name="#tt#" />
 			<!--- Remove script --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#" />
-			<!--- If we are DOC/PDF we need to download the PDf images folder (zip) and extract it --->
+			<!--- If we are DOC/PDF we need to download the PDF images folder (zip) and extract it --->
 			<cfif forpath EQ "doc">
 				<!--- Write script file --->
 				<cffile action="write" file="#arguments.thestruct.theshz#" output="wget -P #storein# #arguments.thestruct.rfs_server#/incoming/#arguments.thestruct.rfs_path#/razuna_pdf_images.zip" mode="777">
@@ -299,6 +267,14 @@
 				<cfzip action="extract" zipfile="#storein#/razuna_pdf_images.zip" destination="#storein#/razuna_pdf_images" />
 				<!--- Remove the ZIP file --->
 				<cffile action="delete" file="#storein#/razuna_pdf_images.zip" />
+			</cfif>
+			<!--- If we are the preview file then set the available flag --->
+			<cfif !structkeyexists(arguments.thestruct,"rfs_jsondata")>
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #fordb#
+				SET is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+				WHERE #fordbid# = <cfqueryparam value="#arguments.thestruct.rfs_assetid#" cfsqltype="cf_sql_varchar">
+				</cfquery>
 			</cfif>
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="error pickup from rfs" type="html"><cfdump var="#cfcatch#"></cfmail>
