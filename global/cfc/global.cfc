@@ -725,6 +725,7 @@ Comment:<br>
 		<cfargument name="thestruct" type="struct">
 		<!--- Param --->
 		<cfset var foundsome = false>
+		<cfset var theids = "">
 		<!--- Feedback --->
 		<cfoutput><strong>Starting the Clean up process...</strong><br><br></cfoutput>
 		<cfflush>
@@ -767,15 +768,21 @@ Comment:<br>
 			</cfquery>
 		</cfif>
 		<!--- Feedback --->
-		<cfoutput><strong>You have #qry.recordcount# records. We are starting to check each record now...</strong><br><br>Below you will find records that are missing the asset on the filesytem.<br /><br /></cfoutput>
+		<cfoutput><strong>You have #qry.recordcount# records. We are starting to check each record now...</strong><br><br>Below you will find records that are missing the asset on the filesytem. Tip: If you want to remove all at once scroll down to the bottom.<br /><br /></cfoutput>
 		<cfflush>
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
 			<cfloop query="qry">
+				<!--- Checking message --->
+				<cfoutput>Checking: #filename#...<br></cfoutput>
+				<cfflush>
 				<!--- Check Original --->
 				<cfif NOT fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#filenameorg#")>
 					<cfset foundsome = true>
+					<cfset theids = theids & "," & id>
 					<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br>We checked at: #arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#filenameorg#<br />
+					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#">Remove this asset in the database</a><br />
+					<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
 					</cfoutput>
 					<cfflush>
 				</cfif>
@@ -788,7 +795,7 @@ Comment:<br>
 					</cfif>
 					<cfif NOT fileexists("#pathtocheck#")>
 						<cfset foundsome = true>
-						<cfoutput><strong style="color:red;">Missing Thumbnail: #filename#</strong><br>We checked at: #pathtocheck#<br />
+						<cfoutput><strong style="color:red;">Missing Thumbnail: #filename#</strong><br>We checked at: #pathtocheck#<br /><br />
 						</cfoutput>
 						<cfflush>
 					</cfif>
@@ -797,23 +804,42 @@ Comment:<br>
 		<!--- Cloud --->
 		<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 			<cfloop query="qry">
-				<!--- Check Original --->
-				<cfhttp url="#cloud_url_org#" timeout="20" />
-				<cfif cfhttp.statuscode DOES NOT CONTAIN "200">
-					<cfset foundsome = true>
-					<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br>We checked at: #cloud_url_org#<br />
-					</cfoutput>
+				<cfif cloud_url_org NEQ "">
+					<!--- Checking message --->
+					<cfoutput>Checking: #filename#...<br></cfoutput>
 					<cfflush>
-				</cfif>
-				<!--- Check thumbnail --->
-				<cfif arguments.thestruct.thetype EQ "img" OR arguments.thestruct.thetype EQ "vid">
-					<cfhttp url="#cloud_url#" timeout="20" />
-					<cfif cfhttp.statuscode DOES NOT CONTAIN "200">
+					<!--- Check Original --->
+					<cfhttp url="#cloud_url_org#" />
+					<cfif cfhttp.responseheader.status_code NEQ 200>
 						<cfset foundsome = true>
-						<cfoutput><strong style="color:red;">Missing Thumbnail: #filename#</strong><br>We checked at: #cloud_url#<br />
+						<cfset theids = theids & "," & id>
+						<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br>We checked at: #cloud_url_org#<br />
+						<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#">Remove this asset in the database</a><br />
+						<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
 						</cfoutput>
 						<cfflush>
 					</cfif>
+					<!--- Check thumbnail --->
+					<cfif arguments.thestruct.thetype EQ "img" OR arguments.thestruct.thetype EQ "vid">
+						<cfif cloud_url NEQ "">
+							<cfhttp url="#cloud_url#" />
+							<cfif cfhttp.responseheader.status_code NEQ 200>
+								<cfset foundsome = true>
+								<cfoutput><strong style="color:red;">Missing Thumbnail: #filename#</strong><br>We checked at: #cloud_url#<br />
+								</cfoutput>
+								<cfflush>
+							</cfif>
+						</cfif>
+					</cfif>
+				<!--- If cloud url org is empty we display message --->
+				<cfelse>
+					<cfset foundsome = true>
+					<cfset theids = theids & "," & id>
+					<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br />
+					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#">Remove this asset in the database</a><br />
+					<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
+					</cfoutput>
+					<cfflush>
 				</cfif>
 			</cfloop>
 		</cfif>
@@ -821,6 +847,15 @@ Comment:<br>
 		<cfif foundsome>
 			<cfoutput><br /><strong>Looks like some assets are missing on the system.</strong><br /><br /></cfoutput>
 			<cfflush>
+			You can remove all the asset above with one single click below. Note: This will remove the assets from the database and the search index.<br />
+			<cfoutput>
+			<form action="index.cfm" method="post">
+				<input type="hidden" name="fa" value="c.admin_cleaner_check_asset_delete" />
+				<input type="hidden" name="id" value="#theids#" />
+				<input type="hidden" name="thetype" value="#arguments.thestruct.thetype#" />
+				<input type="submit" value="Remove above assets" name="submitbutton" class="button" />
+			</form>
+			</cfoutput>
 		<cfelse>
 			<cfoutput><br /><strong style="color:green;">Awesome. All looks stylish and clean. Rock on.</strong><br><br></cfoutput>
 			<cfflush>

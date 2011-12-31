@@ -817,24 +817,25 @@ This is the main function called directly by a single upload else from addassets
 <!--- 	</cfif> --->
 	<!--- If we are coming from a scheduled task then... --->
 	<cfif structkeyexists(arguments.thestruct,"sched")>
-		<cfset newschedlogid = createuuid()>
 		<!--- Insert --->
-		<cfquery datasource="#variables.dsn#">
-		INSERT INTO #session.hostdbprefix#schedules_log
-		(sched_log_id, sched_id_r, sched_log_action, sched_log_date, sched_log_time, sched_log_desc,
-		sched_log_user, host_id)
-		VALUES 
-		(
-		<cfqueryparam value="#newschedlogid#" cfsqltype="CF_SQL_VARCHAR">, 
-		<cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
-		<cfqueryparam value="Upload" cfsqltype="cf_sql_varchar">, 
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-		<cfqueryparam value="Added file #arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		)
-		</cfquery>
+		<cftransaction>
+			<cfquery datasource="#variables.dsn#">
+			INSERT INTO #session.hostdbprefix#schedules_log
+			(sched_log_id, sched_id_r, sched_log_action, sched_log_date, sched_log_time, sched_log_desc,
+			sched_log_user, host_id)
+			VALUES 
+			(
+			<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
+			<cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
+			<cfqueryparam value="Upload" cfsqltype="cf_sql_varchar">, 
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			<cfqueryparam value="Added file #arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			)
+			</cfquery>
+		</cftransaction>
 		<!--- Check if we have to remove or move the asset --->
 		<!--- First only do this for assets with the same sched id --->
 		<cfif arguments.thestruct.sched_id EQ arguments.thestruct.qryfile.sched_id>

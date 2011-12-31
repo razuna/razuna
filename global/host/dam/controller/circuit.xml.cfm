@@ -3799,8 +3799,31 @@
 		<!-- Show -->
 		<do action="ajax.admin_maintenance_cleaner" />
 	</fuseaction>
-	<!-- Cleaner -->
+	<!-- Cleaner: remove -->
 	<fuseaction name="admin_cleaner_delete">
+		<!-- Include the remove code -->
+		<do action="inc_admin_cleaner_delete" />
+		<!-- Show -->
+		<do action="admin_cleaner" />
+	</fuseaction>
+	<!-- Cleaner remove from asset -->
+	<fuseaction name="admin_cleaner_check_asset_delete">
+		<!-- Include the remove code -->
+		<do action="inc_admin_cleaner_delete" />
+		<!-- Show -->
+		<do action="admin_cleaner_check_asset" />
+	</fuseaction>
+	<!-- Cleaner -->
+	<fuseaction name="admin_cleaner_check_asset">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- Call CFCs -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="checkassets(attributes)" />
+	</fuseaction>
+	<!-- Cleaner -->
+	<fuseaction name="inc_admin_cleaner_delete">
 		<!-- Param -->
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
@@ -3830,19 +3853,7 @@
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudiomany(attributes)" />
 			</true>
 		</if>
-		<!-- Show -->
-		<do action="admin_cleaner" />
 	</fuseaction>
-	<!-- Cleaner -->
-	<fuseaction name="admin_cleaner_check_asset">
-		<!-- Action: Get asset path -->
-		<do action="assetpath" />
-		<!-- Action: Storage -->
-		<do action="storage" />
-		<!-- Call CFCs -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="checkassets(attributes)" />
-	</fuseaction>
-	
 	<!--  -->
 	<!-- ADMIN: MAINTENANCE END -->
 	<!--  -->
