@@ -4393,10 +4393,10 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Get extension --->
 		<cfset var namenoext = replacenocase("#arguments.thestruct.filename#",".#theextension#","","All")>
 		<!--- Rename the file so that we can remove any spaces --->
-		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#arguments.thestruct.filename#">
-		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
+		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#arguments.thestruct.filename#" />
+		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#" />
 		<!--- Do the rename action on the file --->
-		<cffile action="rename" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#">
+		<cffile action="rename" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#" charset="utf-8">
 		<!--- If the extension is longer then 9 chars --->
 		<cfif len(theextension) GT 9>
 			<cfset theextension = "txt">
