@@ -160,6 +160,10 @@
 		<cfset thefilename = REReplace(thefilename, "([^A-Za-z0-9_-]+)", "_", "ALL")>
 		<!--- Convert any special alphanumeric character --->
 		<cfset thefilename = REReplace(thefilename, "([^\?\\\|\[\]]+)", "_", "ALL")>
+		<!--- Danish Chars --->
+		<cfset thefilename = REReplace(thefilename, "(å)", "aa", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "(æ)", "ae", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "(ø)", "o", "ALL")>
 		<!--- <cfdump var="#thefilename#"> --->
 		<!--- Re-add the extension to the name --->
 		<cfif fileNameExt.theExt NEQ "">
