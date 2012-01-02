@@ -4431,7 +4431,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Call the addasset function --->
 		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 		<cfcatch type="any">
-			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br /></cfoutput>
+			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br />#arguments.thestruct.filepath# to #arguments.thestruct.thedir#/#arguments.thestruct.thefilename#<br /></cfoutput>
 		</cfcatch>
 	</cftry>
 </cffunction>
