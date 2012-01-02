@@ -4397,7 +4397,9 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#" />
 		<!--- Do the rename action on the file --->
 		<cfif arguments.thestruct.filename NEQ arguments.thestruct.thefilename>
-			<cffile action="move" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#" charset="utf-8">
+			<cfset var thepathsource = replace(arguments.thestruct.filepath," ","\ ","all")>
+			<cfset var thepathdest = replace(arguments.thestruct.thedir," ","\ ","all")>
+			<cffile action="rename" source="#thepathsource#" destination="#thepathdest#/#arguments.thestruct.thefilename#" />
 		</cfif>
 		<!--- If the extension is longer then 9 chars --->
 		<cfif len(theextension) GT 9>
