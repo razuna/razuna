@@ -153,25 +153,19 @@
 		<cfinvoke component="assets" method="getFileExtension" theFileName="#thename#" returnvariable="fileNameExt">
 		<cfset thefilename = "#fileNameExt.theName#">
 		<!--- All foreign chars are now converted, except the - --->
-		<cfset thefilename = REReplace(thefilename, "([^[:word:]^-]+)", "_", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "[^[:word:]^-]", "_", "ALL")>
 		<!--- Danish Chars --->
-		<cfset thefilename = REReplace(thefilename, "([^å]+)", "aa", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([^æ]+)", "ae", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([^ø]+)", "o", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([å]+)", "aa", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([æ]+)", "ae", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([ø]+)", "o", "ALL")>
 		<!--- German Chars --->
-		<cfset thefilename = REReplace(thefilename, "([^ü]+)", "ue", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([^ä]+)", "ae", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([^ö]+)", "oe", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([ü]+)", "ue", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([ä]+)", "ae", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([ö]+)", "oe", "ALL")>
 		<!--- French Chars --->
-		<cfset thefilename = REReplace(thefilename, "([^è]+)", "e", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([^à]+)", "a", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([^é]+)", "e", "ALL")>
-		<!--- <cfdump var="#thefilename#"> --->
-		<!--- Convert any special alphanumeric character --->
-		<!--- <cfset thefilename = REReplace(thefilename, "([^A-Za-z0-9_-]+)", "_", "ALL")> --->
-		<!--- Convert any special character --->
-		<cfset thefilename = REReplace(thefilename, "([^\?\\\|\[\]]+)", "_", "ALL")>
-		<!--- <cfdump var="#thefilename#"> --->
+		<cfset thefilename = REReplace(thefilename, "([è]+)", "e", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([à]+)", "a", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([é]+)", "e", "ALL")>
 		<!--- Re-add the extension to the name --->
 		<cfif fileNameExt.theExt NEQ "">
 			<cfset thefilename = "#thefilename#.#fileNameExt.theExt#">
