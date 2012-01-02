@@ -4382,61 +4382,58 @@ This is the main function called directly by a single upload else from addassets
 	<cfreturn />
 </cffunction>
 
-<!--- INSERT FROM SERVER --->
+<!--- Add assets from import path --->
 <cffunction name="addassetpathfiles" output="true">
 	<cfargument name="thestruct" type="struct">	
-	<!--- Create a unique name for the temp directory to hold the file --->
-	<cfset arguments.thestruct.tempid = replace(createuuid(),"-","","ALL")>
-	<!---
-<cfset arguments.thestruct.thetempfolder = "asset#arguments.thestruct.tempid#">
-	<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
---->
-	<!--- Create a temp directory to hold the file --->
-	<!--- <cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775"> --->
-	<!--- Copy the file into the temp dir --->
-	<!--- <cffile action="copy" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.filename#" mode="775"> --->
-	<!--- Get file extension --->
-	<cfset var theextension = listlast("#arguments.thestruct.filename#",".")>
-	<!--- Get extension --->
-	<cfset var namenoext = replacenocase("#arguments.thestruct.filename#",".#theextension#","","All")>
-	<!--- Rename the file so that we can remove any spaces --->
-	<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#arguments.thestruct.filename#">
-	<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
-	<!--- Do the rename action on the file --->
-	<cffile action="rename" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#">
-	<!--- If the extension is longer then 9 chars --->
-	<cfif len(theextension) GT 9>
-		<cfset theextension = "txt">
-	</cfif>
-	<!--- Store the original filename --->
-	<cfset arguments.thestruct.thefilenameoriginal = arguments.thestruct.filename>
-	<!--- MD5 Hash --->
-	<cfset var md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
-	<!--- Add to temp db --->
-	<cfquery datasource="#variables.dsn#">
-	INSERT INTO #session.hostdbprefix#assets_temp
-	(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, file_id, host_id, thesize, md5hash)
-	VALUES(
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-	<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.new_folder_id#">,
-	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thedir#">,
-	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-	<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.orgsize#">,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-	)
-	</cfquery>
-	<!--- We don't need to send an email --->
-	<cfset arguments.thestruct.sendemail = false>
-	<!--- We set that this is from this function --->
-	<cfset arguments.thestruct.importpath = true>
-	<!--- Call the addasset function --->
-	<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+	<cftry>
+		<!--- Create a unique name for the temp directory to hold the file --->
+		<cfset arguments.thestruct.tempid = replace(createuuid(),"-","","ALL")>
+		<!--- Get file extension --->
+		<cfset var theextension = listlast("#arguments.thestruct.filename#",".")>
+		<!--- Get extension --->
+		<cfset var namenoext = replacenocase("#arguments.thestruct.filename#",".#theextension#","","All")>
+		<!--- Rename the file so that we can remove any spaces --->
+		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#arguments.thestruct.filename#">
+		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
+		<!--- Do the rename action on the file --->
+		<cffile action="rename" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#">
+		<!--- If the extension is longer then 9 chars --->
+		<cfif len(theextension) GT 9>
+			<cfset theextension = "txt">
+		</cfif>
+		<!--- Store the original filename --->
+		<cfset arguments.thestruct.thefilenameoriginal = arguments.thestruct.filename>
+		<!--- MD5 Hash --->
+		<cfset var md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
+		<!--- Add to temp db --->
+		<cfquery datasource="#variables.dsn#">
+		INSERT INTO #session.hostdbprefix#assets_temp
+		(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, file_id, host_id, thesize, md5hash)
+		VALUES(
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.new_folder_id#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thedir#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.orgsize#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+		)
+		</cfquery>
+		<!--- We don't need to send an email --->
+		<cfset arguments.thestruct.sendemail = false>
+		<!--- We set that this is from this function --->
+		<cfset arguments.thestruct.importpath = true>
+		<!--- Call the addasset function --->
+		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+		<cfcatch type="any">
+			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.thefilename#" could not be proccessed!</span><br /></cfoutput>
+		</cfcatch>
+	</cftry>
 </cffunction>
 
 </cfcomponent>
