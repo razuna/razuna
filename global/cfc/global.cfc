@@ -157,7 +157,7 @@
 		<cfset thefilename = REReplace(thefilename, "([^[:word:]^-]+)", "_", "ALL")>
 		<!--- <cfdump var="#thefilename#"> --->
 		<!--- Convert any special alphanumeric character --->
-		<cfset thefilename = REReplace(thefilename, "([^A-Za-z0-9_-?]+)", "_", "ALL")>
+		<cfset thefilename = REReplace(thefilename, "([^A-Za-z0-9_-\?]+)", "_", "ALL")>
 		<!--- <cfdump var="#thefilename#"> --->
 		<!--- Re-add the extension to the name --->
 		<cfif fileNameExt.theExt NEQ "">
