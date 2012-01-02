@@ -4384,6 +4384,18 @@ This is the main function called directly by a single upload else from addassets
 
 <!--- Add assets from import path --->
 <cffunction name="addassetpathfiles" output="true">
+	<cfargument name="thestruct" type="struct">
+	<cfset var t = createuuid()>
+	<cfthread name="#t#" intstruct="#arguments.thestruct#">
+		<cfinvoke method="addassetpathfilesthread" thestruct="#attributes.intstruct#" />
+	</cfthread>
+	<cfthread action="join" name="#t#" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Add assets from import path --->
+<cffunction name="addassetpathfilesthread" output="true">
 	<cfargument name="thestruct" type="struct">	
 	<cftry>
 		<!--- Create a unique name for the temp directory to hold the file --->
@@ -4393,16 +4405,10 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Get extension --->
 		<cfset var namenoext = replacenocase("#arguments.thestruct.filename#",".#theextension#","","All")>
 		<!--- Rename the file so that we can remove any spaces --->
-		<!---
-<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#arguments.thestruct.filename#" />
-		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#" />
---->
+		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#arguments.thestruct.filename#">
+		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
 		<!--- Do the rename action on the file --->
-		<cfset var thepath = replace(arguments.thestruct.folder_path," ","\ ","all")>
-	<!---
-	<cfdump var="#thepath#/#arguments.thestruct.filename#"><cfabort>
-		<cffile action="rename" source="#thepath#/#arguments.thestruct.filename#" destination="#thepath#/#arguments.thestruct.thefilename#" /
---->>
+		<cffile action="rename" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#">
 		<!--- If the extension is longer then 9 chars --->
 		<cfif len(theextension) GT 9>
 			<cfset theextension = "txt">
@@ -4410,19 +4416,19 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Store the original filename --->
 		<cfset arguments.thestruct.thefilenameoriginal = arguments.thestruct.filename>
 		<!--- MD5 Hash --->
-		<cfset var md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.filename#")>
+		<cfset var md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
 		<!--- Add to temp db --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#assets_temp
 		(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, file_id, host_id, thesize, md5hash)
 		VALUES(
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.filename#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
 		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.new_folder_id#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#namenoext#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thedir#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
@@ -4437,8 +4443,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Call the addasset function --->
 		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 		<cfcatch type="any">
-			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br />
-			</cfoutput>
+			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br /></cfoutput>
 		</cfcatch>
 	</cftry>
 </cffunction>
