@@ -41,7 +41,7 @@
 				<p><a href="##" onclick="showwindow('#myself##xfa.addserver#&folder_id=#folder_id#','#defaultsObj.trans("header_add_asset_server")#',800,2);">#defaultsObj.trans("import_from_folder")#</a> #defaultsObj.trans("import_from_folder_custom")#.</p>
 				<p>
 					<strong>#defaultsObj.trans("link_folder_path_header")#</strong><br />
-					<input type="text" style="width:400px;" id="folder_path" /> <input type="button" value="#defaultsObj.trans("validate")#" onclick="importfoldercheck();" class="button" /><br /><div id="path_validate"></div>
+					<input type="text" style="width:400px;" id="folder_path" /> <input type="button" value="#defaultsObj.trans("validate")#" onclick="importfoldercheck();" class="button" /><br /><span style="color:red;">#defaultsObj.trans("import_from_folder_foreign")#</span><br /><div id="path_validate"></div>
 				</p>
 				<p>
 					#defaultsObj.trans("import_from_folder_desc")#

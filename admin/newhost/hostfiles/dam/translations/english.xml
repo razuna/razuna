@@ -1839,4 +1839,7 @@
 	<transid name="import_from_folder_button">
 		<transtext>Import from path</transtext>
 	</transid>
+	<transid name="import_from_folder_foreign">
+		<transtext><![CDATA[Caution: Make sure your folders and files do not contain foreign characters!]]></transtext>
+	</transid>
 </translations>
