@@ -471,7 +471,7 @@
 							WHERE cg.col_id_r = c.col_id
 							AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 							AND gu.ct_g_u_grp_id = cg.grp_id_r
-							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+							AND lower(cg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 						) THEN 'unlocked'
 						else 'locked'
 					END AS perm
