@@ -25,7 +25,7 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
-	!--- Templates: Get all --->
+	<!--- Templates: Get all --->
 	<cffunction name="getTemplates" output="true">
 		<cfargument name="theactive" type="boolean" required="false" default="false">
 		<!--- Query --->
