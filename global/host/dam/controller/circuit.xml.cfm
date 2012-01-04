@@ -937,6 +937,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
 		<!-- CFC: Get the total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotaltype(attributes)" returnvariable="qry_filecount" />
+		<!-- CFC: Get user name -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get files -->
 		<invoke object="myFusebox.getApplicationData().files" method="getFolderAssetDetails" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
@@ -966,6 +968,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
 		<!-- CFC: Get the total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotaltype(attributes)" returnvariable="qry_filecount" />
+		<!-- CFC: Get user name -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get images -->
 		<invoke object="myFusebox.getApplicationData().images" method="getFolderAssetDetails" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
@@ -999,6 +1003,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
 		<!-- CFC: Get the total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotaltype(attributes)" returnvariable="qry_filecount" />
+		<!-- CFC: Get user name -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Get Videos -->
@@ -1051,6 +1057,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
 		<!-- CFC: Get the total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotaltype(attributes)" returnvariable="qry_filecount" />
+		<!-- CFC: Get user name -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get files -->
 		<invoke object="myFusebox.getApplicationData().audios" method="getFolderAssets" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
@@ -1097,6 +1105,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
 		<!-- CFC: Get all assets -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
+		<!-- CFC: Get user name -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get the total of files count and kind of files
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="fileTotalAllTypes(attributes.folder_id)" returnvariable="qry_fileTotalAllTypes" /> -->
 	</fuseaction>

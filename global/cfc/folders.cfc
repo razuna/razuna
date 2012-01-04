@@ -2568,7 +2568,7 @@
 	<cfif arguments.thestruct.actionismove EQ "F">
 		<cfoutput query="qRet">
 		<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>><a href="##" onclick="$('##rightside').load('index.cfm?fa=<cfif iscol EQ "T">c.collections<cfelse>c.folder</cfif>&col=F&folder_id=<cfif iscol EQ "T">col-</cfif>#folder_id#');" rel="prefetch"><ins>&nbsp;</ins>#folder_name#
-		<cfif theid EQ 0><cfif iscol EQ "F" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif></cfif></a></li>
+		<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif></cfif></a></li>
 		</cfoutput>
 	<!--- If we come from a move action --->
 	<cfelse>
@@ -2798,13 +2798,36 @@
 <!--- Get foldername --->
 <cffunction name="getfoldername" output="false">
 	<cfargument name="folder_id" required="yes" type="string">
-	<cfquery datasource="#variables.dsn#" name="qry">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid##session.theuserid#getfoldername#arguments.folder_id#" cachedomain="#session.theuserid#_folders">
 	SELECT folder_name
 	FROM #session.hostdbprefix#folders
 	WHERE folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry.folder_name>
+</cffunction>
+
+<!--- Get username of folder --->
+<cffunction name="getusername" output="false">
+	<cfargument name="folder_id" required="yes" type="string">
+	<!--- Param --->
+	<cfset var x = structnew()>
+	<!--- Query --->
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid##session.theuserid#getusername#arguments.folder_id#" cachedomain="#session.theuserid#_folders">
+	SELECT u.user_first_name, u.user_last_name, f.folder_owner
+	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON f.folder_owner = u.user_id 
+	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Check --->
+	<cfif qry.recordcount EQ 0>
+		<cfset x.user = "User not found">
+		<cfset x.folder_owner = 0>
+	<cfelse>
+		<cfset x.user = qry.user_first_name & " " & qry.user_last_name>
+		<cfset x.folder_owner = qry.folder_owner>
+	</cfif>
+	<cfreturn x>
 </cffunction>
 
 <!--- Save the combined view --->
