@@ -41,9 +41,11 @@
 	<div id="col_detail#col_id#">
 		<ul>
 			<li><a href="##colassets">#defaultsObj.trans("collection_assets")# (<cfif qry_assets.recordcount EQ "">0<cfelse>#qry_assets.recordcount#</cfif>)</a></li>
-			<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
-			<li><a href="##settings">#defaultsObj.trans("settings")# & #defaultsObj.trans("share_header")#</a></li>
-			<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("header_widget")#</a></li>
+			<cfif session.folderaccess NEQ "R">
+				<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
+				<li><a href="##settings">#defaultsObj.trans("settings")# & #defaultsObj.trans("share_header")#</a></li>
+				<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("header_widget")#</a></li>
+			</cfif>
 		</ul>
 		<div id="colassets">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -107,7 +109,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif session.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- VIDEOS --->
@@ -163,7 +165,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif session.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- AUDIOS --->
@@ -203,7 +205,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif session.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- FILES --->
@@ -241,184 +243,188 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif session.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfdefaultcase>
 					</cfswitch>
 				</cfloop>
-				<tr>
-					<td colspan="5"><div style="float:right;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
-				</tr>
+				<cfif session.folderaccess NEQ "R">
+					<tr>
+						<td colspan="5"><div style="float:right;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
+					</tr>
+				</cfif>
 			</table>
 		</div>
-		<!--- Desc and Keywords --->
-		<div id="detaildesc">
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-				<tr>
-					<th colspan="2">#defaultsObj.trans("header_collection_name")#</th>
-				</tr>
-				<tr>
-					<td>#defaultsObj.trans("header_collection_name")#</td>
-					<td><input type="text" name="collectionname" style="width:400px;" value="#qry_detail.col_name#"></td>
-				</tr>
-				<tr>
-					<td>ID</td>
-					<td>#attributes.col_id#</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="list"></td>
-				</tr>
-				<tr>
-					<th colspan="2">#defaultsObj.trans("asset_desc")#</th>
-				</tr>
-				<cfloop query="qry_langs">
-				<cfset thisid = lang_id>
+		<cfif session.folderaccess NEQ "R">
+			<!--- Desc and Keywords --->
+			<div id="detaildesc">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("description")#</td>
-						<td class="td2" width="100%"><textarea name="col_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_desc#</cfif></cfloop></textarea></td>
+						<th colspan="2">#defaultsObj.trans("header_collection_name")#</th>
 					</tr>
 					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("keywords")#</td>
-						<td class="td2" width="100%"><textarea name="col_keywords_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_keywords#</cfif></cfloop></textarea></td>
+						<td>#defaultsObj.trans("header_collection_name")#</td>
+						<td><input type="text" name="collectionname" style="width:400px;" value="#qry_detail.col_name#"></td>
 					</tr>
-				</cfloop>
-				<!--- Labels --->
-				<tr>
-					<td>#defaultsObj.trans("labels")#</td>
-					<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_col" value="#qry_labels#"></td>
-				</tr>
-				<tr>
-					<td></td>
-					<td colspan="5" style="padding-bottom:10px;"><em>(<cfif settingsobj.get_label_set().set2_labels_users EQ "f">You can only choose from available labels. Simply start typing to select from available labels.<cfelse>Simple start typing to choose from available labels or add a new one by entering above and hit ",".</cfif>)</em></td>
-				</tr>
-				<tr>
-					<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
-				</tr>
-			</table>
-		</div>
-		<!--- Settings --->
-		<div id="settings">
-			<!--- Groups and Permission --->
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-				<tr>
-					<th width="100%" colspan="2">#defaultsObj.trans("access_for")#</th>
-					<th width="1%" nowrap align="center">#defaultsObj.trans("per_read")#</th>
-					<th width="1%" nowrap align="center">#defaultsObj.trans("per_read_write")#</th>
-					<th width="1%" nowrap align="center">#defaultsObj.trans("per_all")#</th>
-				</tr>
-				<tr class="list">
-					<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_0" value="0" <cfif qry_col_groups_zero.grp_id_r EQ 0> checked</cfif> onclick="checkradio(0);"></td>
-					<td width="100%" nowrap class="textbold" style="padding:4px;">#defaultsObj.trans("everybody")#</td>
-					<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="R" name="per_0" id="per_0"<cfif (qry_col_groups_zero.grp_permission EQ "R") OR (qry_col_groups_zero.grp_permission EQ "")> checked</cfif>></td>
-					<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="W" name="per_0"<cfif qry_col_groups_zero.grp_permission EQ "W"> checked</cfif>></td>
-					<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="X" name="per_0"<cfif qry_col_groups_zero.grp_permission EQ "X"> checked</cfif>></td>
-				</tr>
-				<cfloop query="qry_groups">
+					<tr>
+						<td>ID</td>
+						<td>#attributes.col_id#</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="list"></td>
+					</tr>
+					<tr>
+						<th colspan="2">#defaultsObj.trans("asset_desc")#</th>
+					</tr>
+					<cfloop query="qry_langs">
+					<cfset thisid = lang_id>
+						<tr>
+							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("description")#</td>
+							<td class="td2" width="100%"><textarea name="col_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_desc#</cfif></cfloop></textarea></td>
+						</tr>
+						<tr>
+							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("keywords")#</td>
+							<td class="td2" width="100%"><textarea name="col_keywords_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_keywords#</cfif></cfloop></textarea></td>
+						</tr>
+					</cfloop>
+					<!--- Labels --->
+					<tr>
+						<td>#defaultsObj.trans("labels")#</td>
+						<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_col" value="#qry_labels#"></td>
+					</tr>
+					<tr>
+						<td></td>
+						<td colspan="5" style="padding-bottom:10px;"><em>(<cfif settingsobj.get_label_set().set2_labels_users EQ "f">You can only choose from available labels. Simply start typing to select from available labels.<cfelse>Simple start typing to choose from available labels or add a new one by entering above and hit ",".</cfif>)</em></td>
+					</tr>
+					<tr>
+						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
+					</tr>
+				</table>
+			</div>
+			<!--- Settings --->
+			<div id="settings">
+				<!--- Groups and Permission --->
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+					<tr>
+						<th width="100%" colspan="2">#defaultsObj.trans("access_for")#</th>
+						<th width="1%" nowrap align="center">#defaultsObj.trans("per_read")#</th>
+						<th width="1%" nowrap align="center">#defaultsObj.trans("per_read_write")#</th>
+						<th width="1%" nowrap align="center">#defaultsObj.trans("per_all")#</th>
+					</tr>
 					<tr class="list">
-						<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_#grp_id#" value="#grp_id#"<cfloop query="qry_col_groups"><cfif grp_id_r EQ #qry_groups.grp_id#> checked</cfif></cfloop> onclick="checkradio('#grp_id#');"></td>
-						<td width="1%" nowrap style="padding:4px;">#grp_name#</td>
-						<td align="center" style="padding:4px;"><input type="radio" value="R" name="per_#grp_id#" id="per_#grp_id#"<cfloop query="qry_col_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "R"> checked<cfelseif grp_id_r NEQ #qry_groups.grp_id#> checked</cfif></cfloop>></td>
-						<td align="center" style="padding:4px;"><input type="radio" value="W" name="per_#grp_id#"<cfloop query="qry_col_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "W"> checked</cfif></cfloop>></td>
-						<td align="center" style="padding:4px;"><input type="radio" value="X" name="per_#grp_id#"<cfloop query="qry_col_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "X"> checked</cfif></cfloop>></td>
+						<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_0" value="0" <cfif qry_col_groups_zero.grp_id_r EQ 0> checked</cfif> onclick="checkradio(0);"></td>
+						<td width="100%" nowrap class="textbold" style="padding:4px;">#defaultsObj.trans("everybody")#</td>
+						<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="R" name="per_0" id="per_0"<cfif (qry_col_groups_zero.grp_permission EQ "R") OR (qry_col_groups_zero.grp_permission EQ "")> checked</cfif>></td>
+						<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="W" name="per_0"<cfif qry_col_groups_zero.grp_permission EQ "W"> checked</cfif>></td>
+						<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="X" name="per_0"<cfif qry_col_groups_zero.grp_permission EQ "X"> checked</cfif>></td>
 					</tr>
-				</cfloop>
-			</table>
-			<br />
-			<!--- Share Collection --->
-			<table border="0" cellpadding="0" cellspacing="0" style="width:660px;" class="grid">
-				<tr>
-					<th colspan="2">#defaultsObj.trans("share_folder")#</th>
-				</tr>
-				<tr>
-					<td colspan="2">#defaultsObj.trans("share_collection_desc")#</td>
-				</tr>
-				<tr>
-					<td class="td2">#defaultsObj.trans("share_collection")#</td>
-					<td class="td2"><input type="radio" value="T" name="col_shared"<cfif qry_detail.col_shared EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="col_shared"<cfif qry_detail.col_shared EQ "F" OR qry_detail.col_shared EQ ""> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
-				</tr>
-				<tr>
-					<td class="td2" valign="top">#defaultsObj.trans("collection")# URL</td>
-					<td class="td2"><!--- http://#cgi.http_host##replacenocase(cgi.script_name,"/index.cfm","","ALL")#/sharec/#attributes.col_id#/<input type="text" id="col_name_shared" name="col_name_shared" size="20" value="#qry_detail.col_name_shared#"><br /> ---><a href="http://#cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#&v=#createuuid()#" target="_blank">http://#cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#</a></td>
-				</tr>
-				<!--- Download Original --->
-				<tr>
-					<td colspan="2" class="list"></td>
-				</tr>
-				<tr>
-					<td colspan="2"><strong>#defaultsObj.trans("share_allow_download_original")#</strong></td>
-				</tr>
-				<tr>
-					<td colspan="2" class="td2">#defaultsObj.trans("share_allow_download_desc")#</td>
-				</tr>
-				<tr>
-					<td class="td2" nowrap="nowrap" valign="top">#defaultsObj.trans("share_allow_download_original")#</td>
-					<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#
-					<br><br>
-					<a href="##" onclick="resetdl();return false;">#defaultsObj.trans("share_folder_download_reset")#</a>
-					<div id="reset_dl" style="color:green;font-weight:bold;padding-top:5px;"></div>
-					</td>
-				</tr>
-				<!--- Comments --->
-				<tr>
-					<td colspan="2" class="list"></td>
-				</tr>
-				<tr>
-					<td colspan="2"><strong>#defaultsObj.trans("share_allow_commenting")#</strong></td>
-				</tr>
-				<tr>
-					<td class="td2">#defaultsObj.trans("share_allow_commenting")#</td>
-					<td class="td2"><input type="radio" value="T" name="share_comments"<cfif qry_detail.share_comments EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_comments"<cfif qry_detail.share_comments EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
-				</tr>
-				<!--- Upload --->
-				<tr>
-					<td colspan="2" class="list"></td>
-				</tr>
-				<tr>
-					<td colspan="2"><strong>#defaultsObj.trans("share_allow_upload")#</strong></td>
-				</tr>
-				<tr>
-					<td colspan="2" class="td2">#defaultsObj.trans("share_allow_upload_desc")#</td>
-				</tr>
-				<tr>
-					<td class="td2">#defaultsObj.trans("share_allow_upload")#</td>
-					<td class="td2"><input type="radio" value="T" name="share_upload"<cfif qry_detail.share_upload EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_upload"<cfif qry_detail.share_upload EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
-				</tr>
-				<!--- Order --->
-				<tr>
-					<td colspan="2" class="list"></td>
-				</tr>
-				<tr>
-					<td colspan="2"><strong>#defaultsObj.trans("share_allow_order")#</strong></td>
-				</tr>
-				<tr>
-					<td colspan="2" class="td2">#defaultsObj.trans("share_allow_order_desc")#</td>
-				</tr>
-				<tr>
-					<td class="td2">#defaultsObj.trans("share_allow_order")#</td>
-					<td class="td2"><input type="radio" value="T" name="share_order"<cfif qry_detail.share_order EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_order"<cfif qry_detail.share_order EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
-				</tr>
-				<tr>
-					<td colspan="2" class="td2">#defaultsObj.trans("share_allow_order_email_desc")#</td>
-				</tr>
-				<tr>
-					<td class="td2">#defaultsObj.trans("share_allow_order_email")#</td>
-					<td class="td2">
-						<select name="share_order_user">
-							<cfloop query="qry_users">
-								<option value="#user_id#"<cfif qry_detail.share_order_user EQ user_id> selected</cfif>>#user_first_name# #user_last_name#</option>
-							</cfloop>
-						</select>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
-				</tr>
-			</table>
+					<cfloop query="qry_groups">
+						<tr class="list">
+							<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_#grp_id#" value="#grp_id#"<cfloop query="qry_col_groups"><cfif grp_id_r EQ #qry_groups.grp_id#> checked</cfif></cfloop> onclick="checkradio('#grp_id#');"></td>
+							<td width="1%" nowrap style="padding:4px;">#grp_name#</td>
+							<td align="center" style="padding:4px;"><input type="radio" value="R" name="per_#grp_id#" id="per_#grp_id#"<cfloop query="qry_col_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "R"> checked<cfelseif grp_id_r NEQ #qry_groups.grp_id#> checked</cfif></cfloop>></td>
+							<td align="center" style="padding:4px;"><input type="radio" value="W" name="per_#grp_id#"<cfloop query="qry_col_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "W"> checked</cfif></cfloop>></td>
+							<td align="center" style="padding:4px;"><input type="radio" value="X" name="per_#grp_id#"<cfloop query="qry_col_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "X"> checked</cfif></cfloop>></td>
+						</tr>
+					</cfloop>
+				</table>
+				<br />
+				<!--- Share Collection --->
+				<table border="0" cellpadding="0" cellspacing="0" style="width:660px;" class="grid">
+					<tr>
+						<th colspan="2">#defaultsObj.trans("share_folder")#</th>
+					</tr>
+					<tr>
+						<td colspan="2">#defaultsObj.trans("share_collection_desc")#</td>
+					</tr>
+					<tr>
+						<td class="td2">#defaultsObj.trans("share_collection")#</td>
+						<td class="td2"><input type="radio" value="T" name="col_shared"<cfif qry_detail.col_shared EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="col_shared"<cfif qry_detail.col_shared EQ "F" OR qry_detail.col_shared EQ ""> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+					</tr>
+					<tr>
+						<td class="td2" valign="top">#defaultsObj.trans("collection")# URL</td>
+						<td class="td2"><!--- http://#cgi.http_host##replacenocase(cgi.script_name,"/index.cfm","","ALL")#/sharec/#attributes.col_id#/<input type="text" id="col_name_shared" name="col_name_shared" size="20" value="#qry_detail.col_name_shared#"><br /> ---><a href="http://#cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#&v=#createuuid()#" target="_blank">http://#cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#</a></td>
+					</tr>
+					<!--- Download Original --->
+					<tr>
+						<td colspan="2" class="list"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><strong>#defaultsObj.trans("share_allow_download_original")#</strong></td>
+					</tr>
+					<tr>
+						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_download_desc")#</td>
+					</tr>
+					<tr>
+						<td class="td2" nowrap="nowrap" valign="top">#defaultsObj.trans("share_allow_download_original")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#
+						<br><br>
+						<a href="##" onclick="resetdl();return false;">#defaultsObj.trans("share_folder_download_reset")#</a>
+						<div id="reset_dl" style="color:green;font-weight:bold;padding-top:5px;"></div>
+						</td>
+					</tr>
+					<!--- Comments --->
+					<tr>
+						<td colspan="2" class="list"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><strong>#defaultsObj.trans("share_allow_commenting")#</strong></td>
+					</tr>
+					<tr>
+						<td class="td2">#defaultsObj.trans("share_allow_commenting")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_comments"<cfif qry_detail.share_comments EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_comments"<cfif qry_detail.share_comments EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+					</tr>
+					<!--- Upload --->
+					<tr>
+						<td colspan="2" class="list"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><strong>#defaultsObj.trans("share_allow_upload")#</strong></td>
+					</tr>
+					<tr>
+						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_upload_desc")#</td>
+					</tr>
+					<tr>
+						<td class="td2">#defaultsObj.trans("share_allow_upload")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_upload"<cfif qry_detail.share_upload EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_upload"<cfif qry_detail.share_upload EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+					</tr>
+					<!--- Order --->
+					<tr>
+						<td colspan="2" class="list"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><strong>#defaultsObj.trans("share_allow_order")#</strong></td>
+					</tr>
+					<tr>
+						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_order_desc")#</td>
+					</tr>
+					<tr>
+						<td class="td2">#defaultsObj.trans("share_allow_order")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_order"<cfif qry_detail.share_order EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_order"<cfif qry_detail.share_order EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+					</tr>
+					<tr>
+						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_order_email_desc")#</td>
+					</tr>
+					<tr>
+						<td class="td2">#defaultsObj.trans("share_allow_order_email")#</td>
+						<td class="td2">
+							<select name="share_order_user">
+								<cfloop query="qry_users">
+									<option value="#user_id#"<cfif qry_detail.share_order_user EQ user_id> selected</cfif>>#user_first_name# #user_last_name#</option>
+								</cfloop>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
+					</tr>
+				</table>
+			</div>
+			<!--- Widgets --->
+			<div id="widgets"></div>
 		</div>
-		<!--- Widgets --->
-		<div id="widgets"></div>
-	</div>
-	<div id="updatecol" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
+		<div id="updatecol" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
+	</cfif>
 	</form>
 	<!--- JS --->
 	<script language="JavaScript" type="text/javascript">
