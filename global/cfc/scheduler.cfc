@@ -242,7 +242,7 @@
 	<cfargument name="thedesc"    default=""  required="yes" type="string">
 	<!--- get next id --->
 	<cfset var newid = createuuid()>
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#schedules_log
 	(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
 	sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id)
