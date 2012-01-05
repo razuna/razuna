@@ -2564,9 +2564,12 @@
 		</cfquery>
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytables">
-			<cfquery datasource="#session.firsttime.database#">
-			DROP TABLE #tabname#
-			</cfquery>
+			<cftry>
+				<cfquery datasource="#session.firsttime.database#">
+				DROP TABLE #tabname#
+				</cfquery>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		</cfloop>
 		<cfreturn />
 	</cffunction>

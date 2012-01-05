@@ -2008,12 +2008,15 @@
 		</cfquery>
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytables">
-			<cfquery datasource="#session.firsttime.database#">
-			ALTER TABLE #table_name# SET REFERENTIAL_INTEGRITY false
-			</cfquery>
-			<cfquery datasource="#session.firsttime.database#">
-			DROP TABLE #table_name#
-			</cfquery>
+			<cftry>
+				<cfquery datasource="#session.firsttime.database#">
+				ALTER TABLE #table_name# SET REFERENTIAL_INTEGRITY false
+				</cfquery>
+				<cfquery datasource="#session.firsttime.database#">
+				DROP TABLE #table_name#
+				</cfquery>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		</cfloop>
 		<!--- Query Sequences --->
 		<cfquery datasource="#session.firsttime.database#" name="qryseq">

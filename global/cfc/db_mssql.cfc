@@ -2551,24 +2551,33 @@
 		<!--- Drop foreign key constraints --->
 		<cfloop query="qryconst">
 			<cfif constraint_type EQ "foreign key">
-				<cfquery datasource="#session.firsttime.database#">
-				ALTER TABLE #session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
-				</cfquery>
+				<cftry>
+					<cfquery datasource="#session.firsttime.database#">
+					ALTER TABLE #session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
+					</cfquery>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
 			</cfif>
 		</cfloop>
 		<!--- Drop primary key constraints --->
 		<cfloop query="qryconst">
 			<cfif constraint_type EQ "primary key">
-				<cfquery datasource="#session.firsttime.database#">
-				ALTER TABLE #session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
-				</cfquery>
+				<cftry>	
+					<cfquery datasource="#session.firsttime.database#">
+					ALTER TABLE #session.firsttime.db_schema#.#table_name# DROP CONSTRAINT #constraint_name#
+					</cfquery>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
 			</cfif>
 		</cfloop>
 		<!--- Drop tables --->
 		<cfloop query="qrytables">
-			<cfquery datasource="#session.firsttime.database#">
-			DROP TABLE #session.firsttime.db_schema#.#table_name#
-			</cfquery>
+			<cftry>
+				<cfquery datasource="#session.firsttime.database#">
+				DROP TABLE #session.firsttime.db_schema#.#table_name#
+				</cfquery>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		</cfloop>
 		<cfreturn />
 	</cffunction>

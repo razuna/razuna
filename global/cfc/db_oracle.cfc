@@ -2517,20 +2517,6 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		
 	<!--- Clear database completely --->
 	<cffunction name="clearall" access="public" output="false">
-		<!---
-		<!--- Query Constraints --->
-		<cfquery datasource="#session.firsttime.database#" name="qrycon">
-		SELECT CONSTRAINT_NAME
-		FROM user_constraints
-		WHERE owner = 'RAZUNA'
-		</cfquery>
-		<!--- Loop and drop tables --->
-		<cfloop query="qrycon">
-			<cfquery datasource="#session.firsttime.database#">
-			ALTER TABLE #CONSTRAINT_NAME# DISABLE CONSTRAINT #CONSTRAINT_NAME# CASCADE
-			</cfquery>
-		</cfloop>
-		--->
 		<!--- Query tables --->
 		<cfquery datasource="#session.firsttime.database#" name="qrytbl">
 		SELECT object_name
@@ -2539,9 +2525,12 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		</cfquery>
 		<!--- Loop and drop tables --->
 		<cfloop query="qrytbl">
-			<cfquery datasource="#session.firsttime.database#">
-			DROP TABLE #object_name# CASCADE CONSTRAINTS
-			</cfquery>
+			<cftry>
+				<cfquery datasource="#session.firsttime.database#">
+				DROP TABLE #object_name# CASCADE CONSTRAINTS
+				</cfquery>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		</cfloop>
 		<!--- Query Sequences --->
 		<cfquery datasource="#session.firsttime.database#" name="qryseq">
@@ -2551,9 +2540,12 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		</cfquery>
 		<!--- Loop over Sequences and remove them --->
 		<cfloop query="qryseq">
-			<cfquery datasource="#session.firsttime.database#">
-			DROP SEQUENCE #sequence_name#
-			</cfquery>
+			<cftry>
+				<cfquery datasource="#session.firsttime.database#">
+				DROP SEQUENCE #sequence_name#
+				</cfquery>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		</cfloop>
 		<cfreturn />
 	</cffunction>
