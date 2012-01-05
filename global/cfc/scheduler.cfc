@@ -28,7 +28,7 @@
 <!--- GET ALL SCHEDULED EVENTS ------------------------------------------------------------------>
 <cffunction name="getAllEvents" returntype="query" output="true" access="public">
 	<!--- Query to get all records --->
-	<cfquery datasource="#variables.dsn#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT sched_id, sched_name, sched_method, sched_status
 		FROM #session.hostdbprefix#schedules
 		WHERE set2_id_r  = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
@@ -56,7 +56,7 @@
 		<cfinvoke method="initMethodFields" returnvariable="schedData" thestruct="#arguments.thestruct#">
 		<!--- get next id --->
 		<cfset var newschid = createuuid()>
-		<cfquery datasource="#variables.dsn#">
+		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#schedules 
 		(sched_id, 
 		 set2_id_r, 
@@ -265,7 +265,7 @@
 <cffunction name="remove" output="true" access="public">
 	<cfargument name="sched_id"   type="string" required="yes" default="">
 	<!--- append to the DB --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#schedules
 	WHERE sched_id = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -279,7 +279,7 @@
 <cffunction name="detail" returntype="query" output="true" access="public">
 	<cfargument name="sched_id" type="string" required="yes">
 	<!--- Query to get all records --->
-	<cfquery datasource="#variables.dsn#" name="qSchedDetail">
+	<cfquery datasource="#application.razuna.datasource#" name="qSchedDetail">
 	SELECT s.sched_id, s.set2_id_r, s.sched_user, s.sched_status, s.sched_method, s.sched_name,
 	s.sched_folder_id_r, s.sched_zip_extract, s.sched_server_folder, s.sched_mail_pop, s.sched_mail_user,
 	s.sched_mail_pass, s.sched_mail_subject, s.sched_ftp_server, s.sched_ftp_user, s.sched_ftp_pass,
@@ -311,7 +311,7 @@
 		<!--- Validate and initialise fields depending on upload method --->
 		<cfinvoke method="initMethodFields" returnvariable="schedData" thestruct="#arguments.thestruct#">
 		<!--- append to the DB --->
-		<cfquery datasource="#variables.dsn#">
+		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#schedules
 		SET    
 		set2_id_r = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">, 
@@ -449,7 +449,7 @@
 <cffunction name="getlog" returntype="query" output="true" access="public">
 	<cfargument name="sched_id"   type="string" required="yes" default="">
 	<!--- Query to get all records --->
-	<cfquery datasource="#variables.dsn#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT l.sched_log_date, l.sched_log_time, l.sched_log_desc, l.sched_log_action, l.sched_log_user, u.user_login_name
 	FROM #session.hostdbprefix#schedules_log l, users u
 	WHERE l.sched_id_r = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -462,7 +462,7 @@
 <!--- REMOVE LOG -------------------------------------------------------->
 <cffunction name="removelog" returntype="query" output="true" access="public">
 	<cfargument name="sched_id"   type="string" required="yes" default="">
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#schedules_log
 	WHERE sched_id_r = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
@@ -489,7 +489,7 @@
 			<!--- 
 			<cfset theextension = listlast("#name#",".")>
 			<!--- Insert into temp db --->
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#assets_temp
 			(tempid, filename, extension, path)
 			VALUES(
