@@ -2243,13 +2243,16 @@
 		WHERE table_schema = '#session.firsttime.db_schema#'
 		</cfquery>
 		<!--- Loop and drop tables --->
-		<cfloop query="qrytables">
+		<cfloop query="qrytables">			
 			<cfquery datasource="#session.firsttime.database#">
 			SET foreign_key_checks = 0
 			</cfquery>
-			<cfquery datasource="#session.firsttime.database#">
-			DROP TABLE #table_name#
-			</cfquery>
+			<cftry>
+				<cfquery datasource="#session.firsttime.database#">
+				DROP TABLE #table_name#
+				</cfquery>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		</cfloop>
 		<cfreturn />
 	</cffunction>
