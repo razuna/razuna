@@ -818,7 +818,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- If we are coming from a scheduled task then... --->
 	<cfif structkeyexists(arguments.thestruct,"sched")>
 		<!--- Log Insert --->
-		<cfinvoke method="tolog" theschedid="#arguments.thestruct.sched_id#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Added file #arguments.thestruct.qryfile.filename#">
+		<cfinvoke component="scheduler" method="tolog" theschedid="#arguments.thestruct.sched_id#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Added file #arguments.thestruct.qryfile.filename#">
 		<!---
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#schedules_log
@@ -4403,7 +4403,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">	
 	<cftry>
 		<!--- Throttle engine a bit --->
-		<cfpause interval="4" />
+		<cfpause interval="2" />
 		<!--- Create a unique name for the temp directory to hold the file --->
 		<cfset arguments.thestruct.tempid = replace(createuuid(),"-","","ALL")>
 		<!--- Get file extension --->
