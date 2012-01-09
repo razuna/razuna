@@ -42,6 +42,16 @@
 		<tr>
 			<td colspan="3"><input type="radio" name="conf_rendering_farm" id="conf_rendering_farm" value="true"<cfif gprefs.conf_rendering_farm> checked="checked"</cfif>> #defaultsObj.trans("enable")# <input type="radio" name="conf_rendering_farm" id="conf_rendering_farm" value="false"<cfif !gprefs.conf_rendering_farm> checked="checked"</cfif>> #defaultsObj.trans("disable")#</td>
 		</tr>
+		<!--- Server Address --->
+		<tr>
+			<th colspan="3">#defaultsObj.trans("header_root_server")#</th>
+		</tr>
+		<tr>
+			<td colspan="3">#defaultsObj.trans("header_root_server_desc")#</td>
+		</tr>
+		<tr>
+			<td colspan="3"><input type="text" name="rendering_farm_server" id="rendering_farm_server" style="width:300px;" value="#settingsObj.thissetting('rendering_farm_server')#" /></td>
+		</tr>
 		<!--- Server Location --->
 		<tr>
 			<th colspan="3">#defaultsObj.trans("header_location")#</th>
@@ -51,7 +61,7 @@
 		</tr>
 		<tr class="list">
 			<td colspan="3"><input type="text" name="rendering_farm_location" id="rendering_farm_location" style="width:300px;" value="#settingsObj.thissetting('rendering_farm_location')#" /></td>
-		</tr>	
+		</tr>
 		<!--- List --->
 		<tr>
 			<th class="textbold" colspan="3" style="padding-bottom:20px;">

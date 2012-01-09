@@ -468,6 +468,24 @@
 		)
 		</cfquery>
 	</cfif>
+	<!--- Save in global setting the rendering farm server --->
+	<cfif StructKeyExists(#arguments.thestruct#, "rendering_farm_server")>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) = <cfqueryparam value="rendering_farm_server" cfsqltype="cf_sql_varchar">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#settings
+		(set_pref, set_id, host_id, rec_uuid)
+		VALUES(
+		<cfqueryparam value="#arguments.thestruct.rendering_farm_server#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="rendering_farm_server" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+		)
+		</cfquery>
+	</cfif>
 </cffunction>
 
 <!--- Update TOOLS --->

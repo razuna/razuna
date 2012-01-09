@@ -2967,4 +2967,10 @@
 	<transid name="header_location_desc">
 		<transtext><![CDATA[Enter a location value into the field below. This value should be in line with the default location value of this server. Like this we can group the rendering farm servers to one location.]]></transtext>
 	</transid>
+	<transid name="header_root_server">
+		<transtext>Address of this server</transtext>
+	</transid>
+	<transid name="header_root_server_desc">
+		<transtext><![CDATA[Enter the public facing address of <strong>this server</strong> in the field below. This shoudl most likely be the same address as you are using in this browser, but under some circumstances it could be a different IP address. Enter the <strong>full address</strong>!]]></transtext>
+	</transid>
 </translations>
