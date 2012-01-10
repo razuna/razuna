@@ -1401,7 +1401,8 @@
 		  LOG_BROWSER 		VARCHAR(4000), 
 		  LOG_IP		 	VARCHAR(200), 
 		  LOG_TIMESTAMP 	TIMESTAMP,
-		  HOST_ID			INT, 
+		  HOST_ID			INT,
+		  asset_id_r		VARCHAR(100),
 		  PRIMARY KEY (LOG_ID)
 		)
 		

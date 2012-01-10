@@ -501,6 +501,7 @@
 		<cfinvokeargument name="logaction" value="Delete">
 		<cfinvokeargument name="logdesc" value="Removed: #thedetail.vid_filename#">
 		<cfinvokeargument name="logfiletype" value="vid">
+		<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
 	</cfinvoke>
 	<!--- Delete from files DB (including referenced data)--->
 	<cfquery datasource="#application.razuna.datasource#">
@@ -571,6 +572,7 @@
 			<cfinvokeargument name="logaction" value="Delete">
 			<cfinvokeargument name="logdesc" value="Removed: #thedetail.vid_filename#">
 			<cfinvokeargument name="logfiletype" value="vid">
+			<cfinvokeargument name="assetid" value="#i#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -864,7 +866,7 @@
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid" notfile="T">
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='vid')#>
+		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='vid',assetid='#arguments.thestruct.file_id#')#>
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
 	</cfloop>
@@ -1267,7 +1269,7 @@
 					</cfquery>
 				</cftransaction>
 				<!--- Log --->
-				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.vid_name_org# to #previewimage# (#thewidth#x#theheight#)',logfiletype='vid')#>
+				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.vid_name_org# to #previewimage# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.newid#')#>
 				<!--- Call method to send email --->
 				<!---
 				<cfset arguments.thestruct.emailwhat = "end_converting">
@@ -1477,7 +1479,7 @@
 			<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 			<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid')#>
+			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.vid_id#')#>
 		</cfif>
 		<cfcatch type="any">
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">

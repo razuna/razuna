@@ -256,71 +256,75 @@
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i">
 		<cftry>
-		<!--- Create a unique name for the temp directory to hold the file --->
-		<cfset arguments.thestruct.tempid = replace(createuuid(),"-","","ALL")>
-		<cfset arguments.thestruct.thetempfolder = "ftp#arguments.thestruct.tempid#">
-		<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
-		<!--- Create a temp directory to hold the file --->
-		<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
-		<!--- Get file extension --->
-		<cfset theextension = listlast("#i#",".")>
-		<cfset namenoext = replacenocase("#i#",".#theextension#","","All")>
-		<!--- If the extension is longer then 9 chars --->
-		<cfif len(theextension) GT 9>
-			<cfset theextension = "txt">
-		</cfif>
-		<!--- Rename the file so that we can remove any spaces --->
-		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#i#">
-		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
-		<!--- Get the file from FTP --->
-		
-		<!--- If we are coming from a scheduled task then... --->
-		<cfif structkeyexists(arguments.thestruct,"sched")>
-			<cfset remote_file = arguments.thestruct.folderpath & "/" & i>
-		<cfelse>
-			<cfset remote_file = arguments.thestruct.folderpath & "/" & i>
-		</cfif>
-		<!--- Get file from FTP --->
-		<cfset arguments.thestruct.remote_file = remote_file>
-		<cfset tt = Replace( CreateUUid(), "-", "", "ALL" )>
-		<cfthread name="#tt#" intstruct="#arguments.thestruct#">
-			<cfset fc = "f" & randrange(1,10000000)>
-			<!--- Get the file --->
-			<cfftp action="getfile" connection="#fc#" server="#attributes.intstruct.ftp_server#" passive="#attributes.intstruct.ftp_passive#" stoponerror="no" username="#attributes.intstruct.ftp_user#" password="#attributes.intstruct.ftp_pass#" localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#" remotefile="#attributes.intstruct.remote_file#" transfermode="AUTO" failifexists="no" timeout="3600" />
-			<cfftp action="close" connection="#fc#" />
-		</cfthread>
-		<!--- Wait for the download above to finish --->
-		<cfthread action="join" name="#tt#" />
-		<!--- Get the filesize --->
-		<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
-		<!--- MD5 Hash --->
-		<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
-		<!--- Add to temp db --->
-		<cfquery datasource="#variables.dsn#">
-		INSERT INTO #session.hostdbprefix#assets_temp
-		(TEMPID,FILENAME,EXTENSION,DATE_ADD,FOLDER_ID,WHO,FILENAMENOEXT,PATH,file_id,host_id,thesize,md5hash)
-		VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-		)
-		</cfquery>
-		<!--- We don't need to send an email --->
-		<cfset arguments.thestruct.sendemail = false>
-		<!--- Call the addasset function --->
-		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
-		</cfcatch>
+			<!--- Create a unique name for the temp directory to hold the file --->
+			<cfset arguments.thestruct.tempid = replace(createuuid(),"-","","ALL")>
+			<cfset arguments.thestruct.thetempfolder = "ftp#arguments.thestruct.tempid#">
+			<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
+			<!--- Create a temp directory to hold the file --->
+			<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
+			<!--- Get file extension --->
+			<cfset theextension = listlast("#i#",".")>
+			<cfset namenoext = replacenocase("#i#",".#theextension#","","All")>
+			<!--- If the extension is longer then 9 chars --->
+			<cfif len(theextension) GT 9>
+				<cfset theextension = "txt">
+			</cfif>
+			<!--- Rename the file so that we can remove any spaces --->
+			<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#i#">
+			<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
+			<!--- Get the file from FTP --->
+			
+			<!--- If we are coming from a scheduled task then... --->
+			<cfif structkeyexists(arguments.thestruct,"sched")>
+				<cfset remote_file = arguments.thestruct.folderpath & "/" & i>
+			<cfelse>
+				<cfset remote_file = arguments.thestruct.folderpath & "/" & i>
+			</cfif>
+			<!--- Get file from FTP --->
+			<cfset arguments.thestruct.remote_file = remote_file>
+			<!---
+<cfset tt = Replace(CreateUUid(),"-","","ALL")>
+			<cfthread name="#tt#" intstruct="#arguments.thestruct#">
+--->
+				<cfset fc = "f" & randrange(1,10000000)>
+				<!--- Get the file --->
+				<cfftp action="getfile" connection="#fc#" server="#arguments.thestruct.ftp_server#" passive="#arguments.thestruct.ftp_passive#" stoponerror="no" username="#arguments.thestruct.ftp_user#" password="#arguments.thestruct.ftp_pass#" localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" remotefile="#arguments.thestruct.remote_file#" transfermode="AUTO" failifexists="no" timeout="3600" />
+				<cfftp action="close" connection="#fc#" />
+			<!---
+</cfthread>
+			<!--- Wait for the download above to finish --->
+			<cfthread action="join" name="#tt#" />
+--->
+			<!--- Get the filesize --->
+			<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
+			<!--- MD5 Hash --->
+			<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+			<!--- Add to temp db --->
+			<cfquery datasource="#variables.dsn#">
+			INSERT INTO #session.hostdbprefix#assets_temp
+			(TEMPID,FILENAME,EXTENSION,DATE_ADD,FOLDER_ID,WHO,FILENAMENOEXT,PATH,file_id,host_id,thesize,md5hash)
+			VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+			)
+			</cfquery>
+			<!--- We don't need to send an email --->
+			<cfset arguments.thestruct.sendemail = false>
+			<!--- Call the addasset function --->
+			<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+			<cfcatch type="any">
+				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
+			</cfcatch>
 		</cftry>
 	</cfloop>
 </cffunction>
@@ -888,7 +892,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset ts.assetpath = arguments.thestruct.assetpath>
 	<cfset ts.database = arguments.thestruct.database>
 	<cfset ts.dsn = application.razuna.datasource>
-	<cfset tt = Createuuid()>
+	<cfset var tt = Createuuid()>
 	<cfthread name="#tt#" intvars="#ts#">
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -6, "#now()#")>
@@ -1358,6 +1362,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfinvokeargument name="logaction" value="Add">
 						<cfinvokeargument name="logdesc" value="Added: #attributes.intstruct.qryfile.filename#">
 						<cfinvokeargument name="logfiletype" value="doc">
+						<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
 					</cfinvoke>
 					<!--- Flush Cache --->
 					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.theuserid#_files" />
@@ -1527,6 +1532,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvokeargument name="logaction" value="Add">
 					<cfinvokeargument name="logdesc" value="Added: #attributes.intstruct.qryfile.filename#">
 					<cfinvokeargument name="logfiletype" value="img">
+					<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
 				</cfinvoke>
 				<!--- Flush Cache --->
 				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.hostid#_images" />
@@ -2415,7 +2421,7 @@ This is the main function called directly by a single upload else from addassets
 		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
 		<cfif !application.razuna.renderingfarm>
 			,
-			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 		</cfif>
 		<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 			,
@@ -2485,7 +2491,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.thisvid.newid#" category="vid" online="#arguments.thestruct.vid_online#">
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid')#>
+		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid='#arguments.thestruct.thisvid.newid#')#>
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
@@ -2519,7 +2525,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset folderlevel = folders.folder_level>
 		<cfset loopname = "">
 		<!--- Loop over the zip directories and rename them if needed --->
-		<cfset ttf = Replace( Createuuid(), "-", "", "ALL" )>
+		<cfset var ttf = Replace( Createuuid(), "-", "", "ALL" )>
 		<cfthread name="#ttf#" intstruct="#arguments.thestruct#">
 			<cfinvoke method="rec_renamefolders" thedirectory="#attributes.intstruct.qryfile.path#" />
 		</cfthread>
@@ -2806,7 +2812,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.theuserid = session.theuserid>
 			<cfset arguments.thestruct.iswindows = iswindows()>
 			<!--- thread --->
-			<cfset tt = Replace( Createuuid(), "-", "", "ALL" )>
+			<cfset var tt = Replace( Createuuid(), "-", "", "ALL" )>
 			<cfthread name="#tt#" audstruct="#arguments.thestruct#">
 				<!--- Params --->
 				<cfset cloud_url_org.theurl = "">
@@ -3177,6 +3183,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfinvokeargument name="logaction" value="Add">
 						<cfinvokeargument name="logdesc" value="Added: #attributes.audstruct.qryfile.filename#">
 						<cfinvokeargument name="logfiletype" value="aud">
+						<cfinvokeargument name="assetid" value="#attributes.audstruct.newid#">
 					</cfinvoke>
 					<!--- Flush Cache --->
 					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.audstruct.theuserid#_audios" />

@@ -571,7 +571,8 @@
 		  LOG_BROWSER		VARCHAR(500), 
 		  LOG_IP			VARCHAR(200), 
 		  LOG_TIMESTAMP		TIMESTAMP,
-		  HOST_ID			BIGINT
+		  HOST_ID			BIGINT,
+		  asset_id_r		VARCHAR(100)
 		)
 		</cfquery>
 		

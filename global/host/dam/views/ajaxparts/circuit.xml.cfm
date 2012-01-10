@@ -203,6 +203,10 @@
 	<fuseaction name="asset_add_link">
   		<include template="dsp_asset_add_link" />
 	</fuseaction>
+	<!-- Assets: Show history -->
+	<fuseaction name="log_history">
+  		<include template="dsp_asset_log" />
+	</fuseaction>
 	
 	
 	<!-- Files: Detail -->

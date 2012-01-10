@@ -214,6 +214,7 @@
 			<cfinvokeargument name="logaction" value="Delete">
 			<cfinvokeargument name="logdesc" value="Removed: #thedetail.img_filename#">
 			<cfinvokeargument name="logfiletype" value="img">
+			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data) --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -284,6 +285,7 @@
 			<cfinvokeargument name="logaction" value="Delete">
 			<cfinvokeargument name="logdesc" value="Removed: #thedetail.img_filename#">
 			<cfinvokeargument name="logfiletype" value="img">
+			<cfinvokeargument name="assetid" value="#i#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -587,7 +589,7 @@
 			<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='img')#>
+		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='img',assetid='#arguments.thestruct.file_id#')#>
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
 	</cfloop>
@@ -928,7 +930,7 @@
 			</cfquery>
 		</cftransaction>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img')#>
+		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.newid#')#>
 	</cfloop>
 	<!--- Remove folder --->
 	<cfdirectory action="delete" directory="#thisfolder#" recurse="true">
@@ -1148,7 +1150,7 @@
 			<cfset arguments.thestruct.storage = application.razuna.storage>
 			<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img')#>
+			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid='#arguments.thestruct.img_id#')#>
 		</cfif>
 	<cfreturn />
 </cffunction>

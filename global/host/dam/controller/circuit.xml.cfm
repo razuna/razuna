@@ -1536,6 +1536,30 @@
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
 	</fuseaction>
 	
+	<!-- Load history asset log -->
+	<fuseaction name="log_history">
+		<!-- Params -->
+		<set name="attributes.logswhat" value="log_assets" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().log" methodcall="get_log_assets(attributes)" returnvariable="qry_log" />
+		<!-- Show -->
+		<do action="ajax.log_history" />
+	</fuseaction>
+	<!-- Search log history -->
+	<fuseaction name="log_history_search">
+		<!-- CFC: Search log -->
+		<invoke object="myFusebox.getApplicationData().log" methodcall="log_search(attributes)" returnvariable="qry_log" />
+		<!-- Show -->
+		<do action="ajax.log_history" />
+	</fuseaction>
+	<!-- Remove Log file -->
+	<fuseaction name="log_history_remove">
+		<!-- CFC: Remove log -->
+		<invoke object="myFusebox.getApplicationData().log" methodcall="remove_log_assets(attributes.id)" />
+		<!-- Show -->
+		<do action="log_history" />
+	</fuseaction>
+	
 	<!--
 		END: WORKING WITH ASSETS
 	 -->

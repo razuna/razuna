@@ -1389,6 +1389,7 @@
 		  LOG_IP			VARCHAR2(200 CHAR), 
 		  LOG_TIMESTAMP		TIMESTAMP, 
 		  HOST_ID			NUMBER,
+		  asset_id_r		VARCHAR2(100 CHAR),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#LOG_ASSETS_PK PRIMARY KEY (LOG_ID)
 		)
 		

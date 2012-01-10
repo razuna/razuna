@@ -314,7 +314,7 @@
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud" online="#arguments.thestruct.aud_online#" notfile="T">
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='aud')#>
+		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')#>
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
 	</cfloop>
@@ -337,6 +337,7 @@
 		<cfinvokeargument name="logaction" value="Delete">
 		<cfinvokeargument name="logdesc" value="Removed: #details.aud_name#">
 		<cfinvokeargument name="logfiletype" value="aud">
+		<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
 	</cfinvoke>
 	<!--- Delete from files DB (including referenced data)--->
 	<cfquery datasource="#application.razuna.datasource#">
@@ -407,6 +408,7 @@
 			<cfinvokeargument name="logaction" value="Delete">
 			<cfinvokeargument name="logdesc" value="Removed: #thedetail.aud_name#">
 			<cfinvokeargument name="logfiletype" value="aud">
+			<cfinvokeargument name="assetid" value="#i#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -562,7 +564,7 @@
 				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 				<!--- Log --->
-				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud')#>
+				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid='#arguments.thestruct.aud_id#')#>
 			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving audio" dump="#cfcatch#">
@@ -946,7 +948,7 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Log --->
-				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud')#>
+				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#newid.id#')#>
 				<!--- Call method to send email --->
 				<!---
 				<cfset arguments.thestruct.emailwhat = "end_converting">

@@ -172,8 +172,12 @@
 	<cfif variables.database NEQ "oracle">
 		<cfset var theoffset = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
 	</cfif>
+	<!--- this is also called from individual asset log entries thus we have a id in the struct --->
+	<cfif !structkeyexists(arguments.thestruct,"id")>
+		<cfset arguments.thestruct.id = 0>
+	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_assets#session.hostid##arguments.thestruct.logaction##arguments.thestruct.offset#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_assets#session.hostid##arguments.thestruct.logaction##arguments.thestruct.offset##arguments.thestruct.id#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
 			SELECT rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_file_type, 
@@ -192,11 +196,17 @@
 						<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 							AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 						</cfif>
+						<cfif arguments.thestruct.id NEQ 0>
+							AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+						</cfif>
 					) as thetotal
 					FROM #session.hostdbprefix#log_assets l LEFT JOIN users u ON l.log_user = u.user_id
 					WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 						AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+					</cfif>
+					<cfif arguments.thestruct.id NEQ 0>
+						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 					</cfif>
 					GROUP BY log_timestamp, log_id, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_file_type, 
 					user_first_name, user_last_name
@@ -216,9 +226,15 @@
 				<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 					AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 				</cfif>
+				<cfif arguments.thestruct.id NEQ 0>
+					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+				</cfif>
 			) as thetotal
 			FROM #session.hostdbprefix#log_assets l LEFT JOIN users u ON l.log_user = u.user_id
 			WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif arguments.thestruct.id NEQ 0>
+				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+			</cfif>
 			<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 			<cfelseif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "" AND variables.database EQ "mssql">
@@ -229,6 +245,9 @@
 					FROM #session.hostdbprefix#log_assets
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 						WHERE lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+					</cfif>
+					<cfif arguments.thestruct.id NEQ 0>
+						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 					</cfif>
 				)
 			</cfif>
@@ -246,9 +265,13 @@
 
 <!--- REMOVE LOG USERS --->
 <cffunction name="remove_log_assets" output="false" access="public">
-	<cfquery datasource="#variables.dsn#">
+	<cfargument name="id" type="string" required="false" />
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#log_assets
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfif structkeyexists(arguments,"id")>
+		AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.id#">
+	</cfif>
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
@@ -574,12 +597,19 @@
 <!--- SEARCH LOG --->
 <cffunction name="log_search" output="false" access="public">
 	<cfargument name="thestruct" required="true" type="struct">
+	<!--- this is also called from individual asset log entries thus we have a id in the struct --->
+	<cfif !structkeyexists(arguments.thestruct,"id")>
+		<cfset arguments.thestruct.id = 0>
+	</cfif>
 	<!--- Qry --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="searchlog#session.theuserid##session.hostid##arguments.thestruct.searchtext#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="searchlog#session.theuserid##session.hostid##arguments.thestruct.searchtext##arguments.thestruct.id#" cachedomain="#session.theuserid#_log">
 	SELECT l.LOG_ACTION, l.LOG_DESC, <cfif arguments.thestruct.logtype EQ "log_assets">l.LOG_FILE_TYPE,</cfif> l.LOG_TIMESTAMP, u.user_first_name, u.user_last_name
 	FROM #session.hostdbprefix##arguments.thestruct.logtype# l LEFT JOIN users u ON l.log_user = u.user_id
 	WHERE lower(l.log_desc) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.thestruct.searchtext)#%">
 	AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfif arguments.thestruct.id NEQ 0>
+		AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+	</cfif>
 	GROUP BY log_timestamp, log_action, log_desc, <cfif arguments.thestruct.logtype EQ "log_assets">log_file_type,</cfif> user_first_name, user_last_name
 	ORDER BY log_timestamp DESC
 	</cfquery>

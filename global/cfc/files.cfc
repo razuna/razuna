@@ -272,6 +272,7 @@
 			<cfinvokeargument name="logaction" value="Delete">
 			<cfinvokeargument name="logdesc" value="Removed: #thedetail.file_name#">
 			<cfinvokeargument name="logfiletype" value="doc">
+			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
 		</cfinvoke>
 		<!--- Delete from files DB (including referenced data)--->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -343,6 +344,7 @@
 				<cfinvokeargument name="logaction" value="Delete">
 				<cfinvokeargument name="logdesc" value="Removed: #thedetail.file_name#">
 				<cfinvokeargument name="logfiletype" value="doc">
+				<cfinvokeargument name="assetid" value="#i#">
 			</cfinvoke>
 			<!--- Remove --->
 			<cfquery datasource="#application.razuna.datasource#">
@@ -648,7 +650,7 @@
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
 			</cfif>
 			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='doc')#>
+			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')#>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_files" />
@@ -846,7 +848,7 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Log --->
-				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc')#>
+				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid='#arguments.thestruct.doc_id#')#>
 			</cfif>
 		<cfreturn />
 	</cffunction>

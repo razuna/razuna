@@ -100,11 +100,12 @@
 	<cfargument name="logaction" type="string" required="yes" />
 	<cfargument name="logdesc" type="string" required="yes" />
 	<cfargument name="logfiletype" type="string" required="yes" />
+	<cfargument name="assetid" type="string" required="false" />
 	<cftry>
 		<cfthread intstruct="#arguments#">
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#log_assets
-			(log_id,log_user,log_action,log_date,log_time,log_desc,log_file_type,log_timestamp, host_id<!--- ,log_browser,log_ip --->)
+			(log_id,log_user,log_action,log_date,log_time,log_desc,log_file_type,log_timestamp, host_id, asset_id_r<!--- ,log_browser,log_ip --->)
 			VALUES(
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.theuserid#">,
@@ -114,7 +115,8 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.logdesc#">,	
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.logfiletype#">,
 			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.assetid#">
 			<!---
 			,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#cgi.HTTP_USER_AGENT#">,

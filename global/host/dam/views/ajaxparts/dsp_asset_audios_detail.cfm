@@ -58,6 +58,7 @@
 			<cfif session.folderaccess NEQ "R">
 				<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
 				<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
+				<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
 			</cfif>
 		</ul>
 		<div id="detailinfo">
@@ -325,6 +326,7 @@
 		<cfif session.folderaccess NEQ "R">
 			<div id="shareoptions"></div>
 			<div id="moreversions"></div>
+			<div id="history"></div>
 		</cfif>
 		</div>
 		<cfif session.folderaccess NEQ "R">

@@ -1467,7 +1467,8 @@
 		  LOG_BROWSER 		text, 
 		  LOG_IP		 	VARCHAR(200), 
 		  LOG_TIMESTAMP 	TIMESTAMP,
-		  HOST_ID			INT, 
+		  HOST_ID			INT,
+		  asset_id_r		VARCHAR(100),
 		  PRIMARY KEY (LOG_ID),
 		  KEY #arguments.thestruct.host_db_prefix#la_user (log_user),
   		  KEY #arguments.thestruct.host_db_prefix#la_hostid (HOST_ID)

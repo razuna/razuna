@@ -1405,17 +1405,18 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#log_assets
 		(
-		  LOG_ID VARCHAR(100) NOT NULL, 
-		  LOG_USER VARCHAR(100), 
-		  LOG_ACTION VARCHAR(100), 
-		  LOG_DATE DATETIME, 
-		  LOG_TIME DATETIME, 
-		  LOG_DESC NVARCHAR(max), 
-		  LOG_FILE_TYPE VARCHAR(5), 
-		  LOG_BROWSER NVARCHAR(max), 
-		  LOG_IP VARCHAR(200), 
-		  LOG_TIMESTAMP DATETIME,
-		  HOST_ID INT, 
+		  LOG_ID 			VARCHAR(100) NOT NULL, 
+		  LOG_USER 			VARCHAR(100), 
+		  LOG_ACTION 		VARCHAR(100), 
+		  LOG_DATE 			DATETIME, 
+		  LOG_TIME 			DATETIME, 
+		  LOG_DESC 			NVARCHAR(max), 
+		  LOG_FILE_TYPE 	VARCHAR(5), 
+		  LOG_BROWSER 		NVARCHAR(max), 
+		  LOG_IP 			VARCHAR(200), 
+		  LOG_TIMESTAMP 	DATETIME,
+		  HOST_ID 			INT,
+		  asset_id_r		VARCHAR(100),
 		  PRIMARY KEY (LOG_ID)
 		)
 		
