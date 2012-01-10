@@ -482,13 +482,13 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			<!--- Write XMP to image with Exiftool --->
 			<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#" timeout="10" />
 			<!--- Upload file again to its original position --->
-			<cfthread name="upload#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#">
+			<!--- <cfthread name="upload#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#"> --->
 				<cfinvoke component="nirvanix" method="Upload">
 					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.path_to_asset#">
 					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#">
 					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
-			</cfthread>
+			<!--- </cfthread> --->
 			<!--- Lucene: Delete Records --->
 			<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.file_id#" category="img">
 			<!--- Lucene: Update Records --->
@@ -503,7 +503,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 				</cfquery>
 			</cftransaction>
 			<!--- Remove the tempfolder but only if image has been uploaded already --->
-			<cfthread action="join" name="upload#attributes.intstruct.file_id#" />
+			<!--- <cfthread action="join" name="upload#attributes.intstruct.file_id#" /> --->
 			<cfif directoryExists("#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#")>
 				<cfdirectory action="delete" directory="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#" recurse="true">
 			</cfif>
@@ -1255,18 +1255,18 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<!--- Upload file again to its original position --->
 		<!--- NIRVANIX --->
 		<cfif application.razuna.storage EQ "nirvanix">
-			<cfthread name="upload#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+			<!--- <cfthread name="upload#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#"> --->
 				<!--- Remove file on Nirvanix or else we get errors during uploading --->
 				<cfinvoke component="nirvanix" method="DeleteFiles">
-					<cfinvokeargument name="filePath" value="/#attributes.intstruct.qrydetail.path_to_asset#/#attributes.intstruct.qrydetail.filenameorg#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+					<cfinvokeargument name="filePath" value="/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.qrydetail.filenameorg#">
+					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
 				</cfinvoke>
 				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qrydetail.path_to_asset#">
-					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.qrydetail.filenameorg#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+					<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qrydetail.path_to_asset#">
+					<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#">
+					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
 				</cfinvoke>
-			</cfthread>
+			<!--- </cfthread> --->
 		<!--- AMAZON --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfthread name="upload#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
@@ -1291,7 +1291,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			</cfquery>
 		</cftransaction>
 		<!--- Remove the tempfolder but only if image has been uploaded already --->
-		<cfthread action="join" name="upload#arguments.thestruct.file_id#" />
+		<!--- <cfthread action="join" name="upload#arguments.thestruct.file_id#" /> --->
 		<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
 	</cfif>
 </cffunction>

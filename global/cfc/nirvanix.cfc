@@ -150,13 +150,12 @@
 	<!---  --->
 	<!--- UPLOAD --->
 	<!---  --->
-	
 	<cffunction name="Upload" access="public" output="false">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="uploadfile" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
 		<!--- If file exists locally then upload --->
-		<cfif fileexists("#arguments.uploadfile#")>
+		<cfif fileexists(arguments.uploadfile)>
 			<cftry>
 				<!--- Params --->
 				<cfset var tt = replace(createuuid(),"-","","all")>
