@@ -23,17 +23,14 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<!---
-<cfif cgi.http_user_agent CONTAINS "windows" OR cgi.http_user_agent CONTAINS "safari" AND cgi.http_user_agent DOES NOT CONTAIN "chrome">
-	<cfset session.pluploadruntimes = "flash,html5,silverlight">
+<cfif cgi.http_user_agent CONTAINS "windows" AND cgi.http_user_agent CONTAINS "msie">
+	<cfset session.pluploadruntimes = "flash">
 <cfelse>
---->
 	<cfset session.pluploadruntimes = "html5,flash,silverlight">
-<!--- </cfif> --->
+</cfif>
 <cfif structkeyexists(attributes,"pluploadruntimes")>
 	<cfset session.pluploadruntimes = attributes.pluploadruntimes>
 </cfif>
-<cfdump var="#session.pluploadruntimes#">
 <!--- The url to this page --->
 <cfif structkeyexists(attributes,"_w")>
 	<cfset theaddurl = "document.location.href='#myself#c.asset_add_single&folder_id=#session.fid#&_w=t">
@@ -42,7 +39,7 @@
 </cfif>
 <cfoutput>
 <div>
-	<iframe src="#myself#c.asset_add_upload&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:400px;padding:0px;margin:0px;"></iframe>
+	<iframe src="#myself#c.asset_add_upload&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&v=#createuuid()#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:400px;padding:0px;margin:0px;"></iframe>
 	<cfif attributes.nopreview EQ 0>		
 		<cfif structkeyexists(attributes,"_w")>
 			<a href="##" onclick="#theaddurl#';" style="float:right;">
@@ -53,8 +50,8 @@
 	<br />
 	If the uploader does not perform well then maybe switching to another runtime could help?<br />Switch to: 
 <cfif structkeyexists(attributes,"_w")>
-	<a href="##" onclick="#theaddurl#&pluploadruntimes=html5&v=#createuuid()#';">Html5</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=flash&v=#createuuid()#';">Flash</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=silverlight&v=#createuuid()#';">Silverlight</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=html4&v=#createuuid()#';">Html4</a>
+	<a href="##" onclick="#theaddurl#&pluploadruntimes=html5';">Html5</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=flash';">Flash</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=silverlight';">Silverlight</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=html4';">Html4</a>
 <cfelse>
-	<a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html5&v=#createuuid()#');">Html5</a></cfif> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=flash&v=#createuuid()#');">Flash</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=silverlight&v=#createuuid()#');">Silverlight</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html4&v=#createuuid()#');">Html4</a>
+	<a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html5');">Html5</a></cfif> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=flash');">Flash</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=silverlight');">Silverlight</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html4');">Html4</a>
 </div>
 </cfoutput>
