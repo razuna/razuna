@@ -29,6 +29,10 @@
 <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
 <cfoutput>
 <title>Plupload</title>
+<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
+<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <cfparam name="attributes.file_id" default="0">
 <!-- Load Queue widget CSS and jQuery -->
 <cfif application.razuna.isp>
