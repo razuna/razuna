@@ -447,11 +447,11 @@
 		<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws","#arguments.thestruct.conf_aws_access_key#","#arguments.thestruct.conf_aws_secret_access_key#","#arguments.thestruct.conf_aws_location#")>
 	</cfif>
 	<!--- Set rendering setting in application scope --->
-	<cfif StructKeyExists(#arguments.thestruct#, "conf_rendering_farm")>
+	<cfif StructKeyExists(arguments.thestruct, "conf_rendering_farm")>
 		<cfset application.razuna.renderingfarm = arguments.thestruct.conf_rendering_farm>
 	</cfif>
 	<!--- Save in global setting the rendering farm location --->
-	<cfif StructKeyExists(#arguments.thestruct#, "rendering_farm_location")>
+	<cfif StructKeyExists(arguments.thestruct, "rendering_farm_location")>
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
 		WHERE lower(set_id) = <cfqueryparam value="rendering_farm_location" cfsqltype="cf_sql_varchar">
@@ -469,7 +469,7 @@
 		</cfquery>
 	</cfif>
 	<!--- Save in global setting the rendering farm server --->
-	<cfif StructKeyExists(#arguments.thestruct#, "rendering_farm_server")>
+	<cfif StructKeyExists(arguments.thestruct, "rendering_farm_server")>
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
 		WHERE lower(set_id) = <cfqueryparam value="rendering_farm_server" cfsqltype="cf_sql_varchar">
@@ -1054,6 +1054,7 @@
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.firsttime = qry.conf_firsttime>
 	<cfset application.razuna.renderingfarm = qry.conf_rendering_farm>
+	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->

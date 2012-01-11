@@ -1304,11 +1304,7 @@ This is the main function called directly by a single upload else from addassets
 							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">
 							</cfquery>
 							<!--- Add to Lucene --->
-							<!---
-<cfset console("before lucene")>
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.newid#" category="doc">
---->
-							<cfset console("lucene done")>
 						<!--- AMAZON --->
 						<cfelseif attributes.intstruct.storage EQ "amazon" AND attributes.intstruct.qryfile.link_kind NEQ "url">
 							<!--- Upload file --->
