@@ -40,11 +40,6 @@ Page output starts here
 	<span class="loginform_header">#defaultsObj.trans("headerlogin")#</span>
 	<br />
 	<br />
-	<cfif cgi.HTTP_USER_AGENT contains "MSIE 6.0" OR cgi.HTTP_USER_AGENT contains "MSIE 7.0">
-		<span style="color:red;font-weight:bold;">It looks like you are using an unsupported version of Internet Explorer! Please upgrade to Internet Explorer 8 or 9 to use Razuna!</span>
-	<br />
-	<br />
-	</cfif>
 	<div id="login_feedback">
 	<form action="//#cgi.http_host##self#" method="post" name="form_login" id="form_login">
 	<input type="hidden" name="#theaction#" value="#xfa.submitform#">
