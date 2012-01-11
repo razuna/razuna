@@ -33,6 +33,7 @@
 <cfif structkeyexists(attributes,"pluploadruntimes")>
 	<cfset session.pluploadruntimes = attributes.pluploadruntimes>
 </cfif>
+<cfdump var="#session.pluploadruntimes#">
 <!--- The url to this page --->
 <cfif structkeyexists(attributes,"_w")>
 	<cfset theaddurl = "document.location.href='#myself#c.asset_add_single&folder_id=#session.fid#&_w=t">
