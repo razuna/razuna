@@ -899,8 +899,9 @@
 		<cfelse>
 			<cfset theloopstart = 0>
 		</cfif>
+		<cfset looptil = lqry.qry_pdfjpgs.recordcount - 1>
 		<!--- Loop over the directory list and replace the name with the actual record number found --->
-		<cfloop from="#theloopstart#" to="#lqry.qry_pdfjpgs.recordcount#" index="i">
+		<cfloop from="#theloopstart#" to="#looptil#" index="i">
 			<cfset lqry.thepdfjpgslist = lqry.thepdfjpgslist & "," & replacenocase(lqry.qry_pdfjpgs.name,"-0","-#i#","all")>
 			<!--- <cfoutput>#replacenocase(qry_pdfjpgs.name,"-0","-#i#","all")#<br /></cfoutput> --->
 		</cfloop>

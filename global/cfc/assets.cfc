@@ -1054,14 +1054,14 @@ This is the main function called directly by a single upload else from addassets
 					<!--- RFS --->
 					<cfif !application.razuna.renderingfarm>
 						<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND attributes.intstruct.qryfile.link_kind NEQ "url">
+							<!--- Create a temp folder to hold the PDF images --->
+							<cfset attributes.intstruct.thepdfdirectory = "#attributes.intstruct.thetempdirectory#/#replace(createuuid(),"-","","all")#/razuna_pdf_images">
 							<!--- Create folder to hold the images --->
-							<cfif NOT directoryexists("#attributes.intstruct.thetempdirectory#/razuna_pdf_images")>
-								<cfdirectory action="create" directory="#attributes.intstruct.thetempdirectory#/razuna_pdf_images" mode="775">
-							</cfif>
+							<cfdirectory action="create" directory="#attributes.intstruct.thepdfdirectory#" mode="775">
 							<!--- Script: Create thumbnail --->
 							<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfileflat# -thumbnail 128x -strip -colorspace RGB #attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 							<!--- Script: Create images --->
-							<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thetempdirectory#/razuna_pdf_images/#attributes.intstruct.thepdfimage#" mode="777">
+							<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thepdfdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 							<!--- Execute --->
 							<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
 							<cfif attributes.intstruct.storage NEQ "amazon">
@@ -1232,52 +1232,34 @@ This is the main function called directly by a single upload else from addassets
 								<!--- Create image folder --->
 								<cfdirectory action="create" directory="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#/razuna_pdf_images" mode="775">
 								<!--- List all images and then move them --->
-								<cfdirectory action="list" directory="#attributes.intstruct.thetempdirectory#/razuna_pdf_images" name="pdfjpgs">
+								<cfdirectory action="list" directory="#attributes.intstruct.thepdfdirectory#" name="pdfjpgs">
 								<cfloop query="pdfjpgs">
-									<cffile action="move" source="#attributes.intstruct.thetempdirectory#/razuna_pdf_images/#name#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#/razuna_pdf_images/#name#" mode="775">
+									<cffile action="move" source="#attributes.intstruct.thepdfdirectory#/#name#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#/razuna_pdf_images/#name#" mode="775">
 								</cfloop>
 							</cfif>
 							<!--- Add to Lucene --->
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.newid#" category="doc">
 						<!--- NIRVANIX --->
 						<cfelseif attributes.intstruct.storage EQ "nirvanix" AND attributes.intstruct.qryfile.link_kind NEQ "url">
-							<!--- Upload file --->
-							<!---
-<cfset upd = Replace( Createuuid(), "-", "", "ALL" )>
-							<cfthread name="#upd#" intupstruct="#attributes.intstruct#">
---->
-								<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
-									<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-								</cfinvoke>
-							<!---
-</cfthread>
-							<cfthread action="join" name="#upd#" />
---->
+							<cfinvoke component="nirvanix" method="Upload">
+								<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#">
+								<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
+								<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+							</cfinvoke>
 							<!--- If we are PDF we need to upload the thumbnail and image as well --->
 							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.renderingfarm>
-								<!--- Upload thumbnail --->
-								<!---
-<cfset updt = Replace( Createuuid(), "-", "", "ALL" )>
-								<cfthread name="#updt#" intpdfstruct="#attributes.intstruct#">
---->
-									<cfinvoke component="nirvanix" method="Upload">
-										<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#">
-										<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#">
-										<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-									</cfinvoke>
-								<!---
-</cfthread>
-								<cfthread action="join" name="#updt#" />
---->
+								<cfinvoke component="nirvanix" method="Upload">
+									<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#">
+									<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#">
+									<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+								</cfinvoke>
 								<!--- List all images and then upload them --->
-								<cfdirectory action="list" directory="#attributes.intstruct.thetempdirectory#/razuna_pdf_images" name="pdfjpgs">
+								<cfdirectory action="list" directory="#attributes.intstruct.thepdfdirectory#" name="pdfjpgs">
 								<!--- Upload images --->
 								<cfloop query="pdfjpgs">
 									<cfinvoke component="nirvanix" method="Upload">
 										<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#/razuna_pdf_images">
-										<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thetempdirectory#/razuna_pdf_images/#name#">
+										<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thepdfdirectory#/#name#">
 										<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 									</cfinvoke>
 								</cfloop>
@@ -1332,12 +1314,12 @@ This is the main function called directly by a single upload else from addassets
 								<!--- Get signed URLS for the thumbnail --->
 								<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#/#attributes.intstruct.thepdfimage#" awsbucket="#attributes.intstruct.awsbucket#">
 								<!--- List all images and then upload them --->
-								<cfdirectory action="list" directory="#attributes.intstruct.thetempdirectory#/razuna_pdf_images" name="pdfjpgs">
+								<cfdirectory action="list" directory="#attributes.intstruct.thepdfdirectory#" name="pdfjpgs">
 								<!--- Upload images --->
 								<cfloop query="pdfjpgs">
 									<cfinvoke component="amazon" method="Upload">
 										<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#/razuna_pdf_images/#name#">
-										<cfinvokeargument name="theasset" value="#attributes.intstruct.thetempdirectory#/razuna_pdf_images/#name#">
+										<cfinvokeargument name="theasset" value="#attributes.intstruct.thepdfdirectory#/#name#">
 										<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 									</cfinvoke>
 								</cfloop>
@@ -2628,18 +2610,18 @@ This is the main function called directly by a single upload else from addassets
 				</cfquery>
 				<!--- set attributes of file structure --->
 				<cfif #fileType.recordCount# GT 0>
-					<cfset arguments.thestruct.thefiletype = "#fileType.type_type#">
-					<cfset arguments.thestruct.contentType = "#fileType.type_mimecontent#">
-					<cfset arguments.thestruct.contentSubType = "#fileType.type_mimesubcontent#">
+					<cfset arguments.thestruct.thefiletype = fileType.type_type>
+					<cfset arguments.thestruct.contentType = fileType.type_mimecontent>
+					<cfset arguments.thestruct.contentSubType = fileType.type_mimesubcontent>
 				<cfelse>
 					<cfset arguments.thestruct.thefiletype = "other">
 					<cfset arguments.thestruct.contentType = "">
 					<cfset arguments.thestruct.contentSubType = "">
 				</cfif>
 				<cfset arguments.thestruct.tempid = replace(createuuid(),"-","","ALL")>
-				<cfset arguments.thestruct.thefilename = "#newFileName#">
+				<cfset arguments.thestruct.thefilename = newFileName>
 				<cfset arguments.thestruct.thefilenamenoext = replacenocase("#newFileName#", ".#fileNameExt.theext#", "", "ALL")>
-				<cfset arguments.thestruct.theincomingtemppath = "#directory#">
+				<cfset arguments.thestruct.theincomingtemppath = directory>
 				<!--- MD5 Hash --->
 				<cfset md5hash = hashbinary("#directory#/#newfilename#")>
 				<!--- Get folder id with the name of the folder --->
@@ -2654,7 +2636,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfif qryfolderid.recordcount NEQ 0>
 					<cfset arguments.thestruct.theid = qryfolderid.folder_id>
 				<cfelse>
-					<cfset arguments.thestruct.theid = #rootfolderId#>
+					<cfset arguments.thestruct.theid = rootfolderId>
 					<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
 				</cfif>
 				<!--- Add to temp db --->

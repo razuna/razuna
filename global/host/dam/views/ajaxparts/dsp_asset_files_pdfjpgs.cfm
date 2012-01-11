@@ -40,7 +40,7 @@
 	</tr>
 	<cfif qry_pdfjpgs.qry_pdfjpgs.recordcount NEQ 1>
 		<tr>
-			<td align="center"><cfloop from="1" to="#qry_pdfjpgs.qry_pdfjpgs.recordcount#" index="i"><a href="###i#">#i#</a> | </cfloop></td>
+			<td align="center"><cfloop from="0" to="#qry_pdfjpgs.qry_pdfjpgs.recordcount#" index="i"><a href="###i#">#i#</a> | </cfloop></td>
 		</tr>
 	</cfif>
 	<tr>
