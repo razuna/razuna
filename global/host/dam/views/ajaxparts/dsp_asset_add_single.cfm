@@ -47,7 +47,7 @@
 			<a href="##" onclick="$('##addsingle').load('#theaddurl#');" style="float:right;">
 		</cfif>Restart uploading again</a>
 	</cfif>
-<cfif cgi.http_user_agent DOES NOT CONTAIN "chromeframe" OR cgi.http_user_agent DOES NOT CONTAIN "msie">
+<cfif cgi.http_user_agent DOES NOT CONTAIN "chromeframe" AND cgi.http_user_agent DOES NOT CONTAIN "msie">
 	<br />
 	If the uploader does not perform well then maybe switching to another runtime could help?<br />Switch to: 
 	<cfif structkeyexists(attributes,"_w")>
