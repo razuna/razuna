@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfif cgi.http_user_agent CONTAINS "windows" AND cgi.http_user_agent CONTAINS "msie">
+<cfif cgi.http_user_agent CONTAINS "chromeframe" OR cgi.http_user_agent CONTAINS "msie">
 	<cfset session.pluploadruntimes = "flash">
 <cfelse>
 	<cfset session.pluploadruntimes = "html5,flash,silverlight">
@@ -47,11 +47,13 @@
 			<a href="##" onclick="$('##addsingle').load('#theaddurl#');" style="float:right;">
 		</cfif>Restart uploading again</a>
 	</cfif>
+<cfif !cgi.http_user_agent CONTAINS "chromeframe" OR !cgi.http_user_agent CONTAINS "msie">
 	<br />
 	If the uploader does not perform well then maybe switching to another runtime could help?<br />Switch to: 
-<cfif structkeyexists(attributes,"_w")>
-	<a href="##" onclick="#theaddurl#&pluploadruntimes=html5';">Html5</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=flash';">Flash</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=silverlight';">Silverlight</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=html4';">Html4</a>
-<cfelse>
-	<a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html5');">Html5</a></cfif> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=flash');">Flash</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=silverlight');">Silverlight</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html4');">Html4</a>
+	<cfif structkeyexists(attributes,"_w")>
+		<a href="##" onclick="#theaddurl#&pluploadruntimes=html5';">Html5</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=flash';">Flash</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=silverlight';">Silverlight</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=html4';">Html4</a>
+	<cfelse>
+		<a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html5');">Html5</a></cfif> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=flash');">Flash</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=silverlight');">Silverlight</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html4');">Html4</a>
+</cfif>
 </div>
 </cfoutput>
