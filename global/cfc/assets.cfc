@@ -3036,51 +3036,27 @@ This is the main function called directly by a single upload else from addassets
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.audstruct.dsn#" thestruct="#attributes.audstruct#" assetid="#attributes.audstruct.newid#" category="aud">
 							<!--- Upload file --->
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
-								<!---
-<cfset upa = Replace( Createuuid(), "-", "", "ALL" )>
-								<cfthread name="#upa#" audstruct="#attributes.audstruct#">
---->
-									<cfinvoke component="nirvanix" method="Upload">
-										<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-										<cfinvokeargument name="uploadfile" value="#attributes.audstruct.theorgfile#">
-										<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-									</cfinvoke>
-								<!---
-</cfthread>
-								<cfthread action="join" name="#upa#" />
---->
+								<cfinvoke component="nirvanix" method="Upload">
+									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
+									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.theorgfile#">
+									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
+								</cfinvoke>
 							</cfif>
 							<!--- Upload the WAV --->
 							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.renderingfarm>
-								<!---
-<cfset upw = Replace( Createuuid(), "-", "", "ALL" )>
-								<cfthread name="#upw#" audstruct="#attributes.audstruct#">
---->
-									<cfinvoke component="nirvanix" method="Upload">
-										<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-										<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.wav">
-										<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-									</cfinvoke>
-								<!---
-</cfthread>
-								<cfthread action="join" name="#upw#" />
---->
+								<cfinvoke component="nirvanix" method="Upload">
+									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
+									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.wav">
+									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
+								</cfinvoke>
 							</cfif>
 							<!--- Move the MP3 but only if local asset link --->
 							<cfif attributes.audstruct.qryfile.link_kind EQ "lan">
-								<!---
-<cfset upmp = Replace( Createuuid(), "-", "", "ALL" )>
-								<cfthread name="#upmp#" audstruct="#attributes.audstruct#">
---->
-									<cfinvoke component="nirvanix" method="Upload">
-										<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-										<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
-										<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-									</cfinvoke>
-								<!---
-</cfthread>
-								<cfthread action="join" name="#upmp#" />
---->
+								<cfinvoke component="nirvanix" method="Upload">
+									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
+									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
+									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
+								</cfinvoke>
 							</cfif>
 							<!--- Get signed URLS --->
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">

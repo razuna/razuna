@@ -686,9 +686,15 @@
 		<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
+				<!--- Set Name --->
+				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org>
+				<!--- Download --->
 				<cfhttp url="#arguments.thestruct.qry_detail.detail.cloud_url_org#" file="#arguments.thestruct.qry_detail.detail.aud_name_org#" path="#arguments.thestruct.thisfolder#"></cfhttp>
 			<cfelse>
-				<cfhttp url="#arguments.thestruct.qry_detail.detail.cloud_url_org#" file="#arguments.thestruct.qry_detail.detail.aud_name_org#.wav" path="#arguments.thestruct.thisfolder#"></cfhttp>
+				<!--- Set Name --->
+				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_noext & ".wav">
+				<!--- Download file --->
+				<cfhttp url="#arguments.thestruct.qry_detail.detail.cloud_url_org#" file="#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav" path="#arguments.thestruct.thisfolder#"></cfhttp>
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread name="convert#arguments.thestruct.file_id#" />
@@ -710,12 +716,12 @@
 				</cfthread>
 			<cfelse>
 				<!--- Set Name --->
-				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org & ".wav">
+				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_noext & ".wav">
 				<!--- Download file --->
 				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.detail.path_to_asset#/#attributes.intstruct.thename#">
-						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.thename#">
+						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.qry_detail.detail.aud_name_noext#.wav">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
 				</cfthread>
