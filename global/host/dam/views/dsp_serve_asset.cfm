@@ -50,7 +50,11 @@
 			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="true">
 		<cfelse>
 			<!--- Get file --->
-			<cflocation url="#qry_binary.qfile.cloud_url_org#?disposition=attachment">
+			<cfif application.razuna.storage EQ "nirvanix">
+				<cflocation url="#qry_binary.qfile.cloud_url_org#?disposition=attachment">
+			<cfelse>
+				<cflocation url="#qry_binary.qfile.cloud_url_org#">
+			</cfif>
 		</cfif>
 	<!--- Local --->
 	<cfelse>
