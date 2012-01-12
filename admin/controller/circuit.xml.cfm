@@ -277,7 +277,6 @@
 		<set name="session.firsttime.path_im" value="#attributes.path_imagemagick#" />
 		<set name="session.firsttime.path_ffmpeg" value="#attributes.path_ffmpeg#" />
 		<set name="session.firsttime.path_exiftool" value="#attributes.path_exiftool#" />
-		<set name="session.firsttime.path_wget" value="#attributes.path_wget#" />
 		<!-- Show -->
 		<do action="ajax.first_time_account" />
 	</fuseaction>
@@ -372,7 +371,6 @@
 		<set name="session.firsttime.path_im" value="" />
 		<set name="session.firsttime.path_ffmpeg" value="" />
 		<set name="session.firsttime.path_exiftool" value="" />
-		<set name="session.firsttime.path_wget" value="" />
 		<set name="attributes.user_email" value="" />
 		<set name="attributes.user_pass" value="" />
 		<set name="attributes.user_login_name" value="" />
@@ -395,7 +393,6 @@
 		<set name="session.firsttime.path_im" value="" />
 		<set name="session.firsttime.path_ffmpeg" value="" />
 		<set name="session.firsttime.path_exiftool" value="" />
-		<set name="session.firsttime.path_wget" value="" />
 		<set name="attributes.user_email" value="" />
 		<set name="attributes.user_pass" value="" />
 		<set name="attributes.user_login_name" value="" />
@@ -448,7 +445,6 @@
 		<set name="attributes.imagemagick" value="#session.firsttime.path_im#" />
 		<set name="attributes.ffmpeg" value="#session.firsttime.path_ffmpeg#" />
 		<set name="attributes.exiftool" value="#session.firsttime.path_exiftool#" />
-		<set name="attributes.wget" value="#session.firsttime.path_wget#" />
 		<!-- Update the global config file with the new datasource -->
 		<set name="attributes.conf_database" value="#session.firsttime.database#" />
 		<set name="attributes.conf_schema" value="#session.firsttime.db_schema#" />

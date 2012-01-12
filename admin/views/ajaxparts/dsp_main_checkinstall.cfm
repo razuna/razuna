@@ -46,11 +46,6 @@
 		<td<cfif tools.exiftool EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs_global_main');return false;">#defaultsObj.trans("installation_checklist_exiftool")#</a></td>
 		<td align="center" style="border-left:none;"><cfif tools.exiftool IS NOT ""><img src="images/men_ok.png" border="0"><cfelse><img src="images/men_nope.png" border="0"></cfif></td>
 	</tr>
-	<!--- Wget --->
-	<tr>
-		<td<cfif tools.wget EQ ""> class="alerttext"</cfif> style="border-right:none;"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.prefs_global_main');return false;">#defaultsObj.trans("installation_checklist_wget")#</a></td>
-		<td align="center" style="border-left:none;"><cfif tools.wget IS NOT ""><img src="images/men_ok.png" border="0"><cfelse><img src="images/men_nope.png" border="0"></cfif></td>
-	</tr>
 	<!--- Path to assets --->
 	<cfif application.razuna.thedatabase NEQ "oracle">
 		<tr>

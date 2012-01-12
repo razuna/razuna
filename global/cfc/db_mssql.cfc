@@ -459,7 +459,6 @@
 			rfs_ffmpeg 		varchar(200),
 			rfs_dcraw 		varchar(200),
 			rfs_exiftool 	varchar(200),
-			rfs_wget	 	varchar(200),
 			rfs_location 	varchar(200),
 			rfs_date_add 	datetime,
 			rfs_date_change datetime,

@@ -524,12 +524,6 @@
 			<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 			<!--- Go grab the platform --->
 			<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
-			<!--- Set path for wget --->
-			<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
-			<!--- On Windows a .bat --->
-			<cfif arguments.thestruct.iswindows>
-				<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
-			</cfif>
 			<!--- Loop over records --->
 			<cfloop query="qry">
 				<!--- Params --->
@@ -539,23 +533,8 @@
 					<!--- Feedback --->
 					<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
 					<cfflush>
-					<!--- For wget script --->
-					<cfset wgetscript = replace(createuuid(),"-","","all")>
-					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
-					<!--- On Windows a .bat --->
-					<cfif arguments.thestruct.iswindows>
-						<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
-					</cfif>
-					<!--- Write --->	
-					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.qryfile.path# -O #arguments.thestruct.qryfile.path#/#file_name_org# #cloud_url_org#" mode="777">
 					<!--- Download --->
-					<cfthread name="#wgetscript#" intstruct="#arguments.thestruct#">
-						<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-					</cfthread>
-					<!--- Wait for the thread above until the file is downloaded fully --->
-					<cfthread action="join" name="#wgetscript#" />
-					<!--- Remove the wget script --->
-					<cffile action="delete" file="#arguments.thestruct.thesh#" />
+					<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
 					<!--- If download was successful --->
 					<cfif fileexists("#arguments.thestruct.qryfile.path#/#file_name_org#")>
 						<!--- Call to update asset --->

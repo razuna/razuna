@@ -43,7 +43,7 @@
 		<cfargument name="rfs_id" type="string" required="true">
 		<!--- Query --->
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
-		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_wget, rfs_date_add, rfs_date_change, 
+		SELECT rfs_id, rfs_active, rfs_server_name, rfs_imagemagick, rfs_ffmpeg, rfs_dcraw, rfs_exiftool, rfs_date_add, rfs_date_change, 
 		rfs_location
 		FROM rfs
 		WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.rfs_id#">
@@ -80,7 +80,6 @@
 			rfs_ffmpeg,
 			rfs_dcraw,
 			rfs_exiftool,
-			rfs_wget,
 			rfs_location,
 			rfs_date_add,
 			rfs_date_change
@@ -93,8 +92,7 @@
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_imagemagick#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ffmpeg#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_dcraw#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_exiftool#">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_wget#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_exiftool#">
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_location#">,
 			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
 			<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
@@ -111,7 +109,6 @@
 			rfs_ffmpeg = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_ffmpeg#">,
 			rfs_dcraw = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_dcraw#">,
 			rfs_exiftool = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_exiftool#">,
-			rfs_wget = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_wget#">,
 			rfs_location = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_location#">,
 			rfs_date_change = <cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">
 			WHERE rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_id#">
@@ -197,17 +194,8 @@
 			WHERE rfs_active = <cfqueryparam CFSQLType="CF_SQL_DOUBLE" value="true">
 			AND rfs_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.rfs_id#">
 			</cfquery>
-			<!--- Params --->
-			<cfset var tt = replace(createuuid(),"-","","all")>
 			<!--- Go grab the platform --->
 			<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
-			<!--- Prepare scripts --->
-			<cfset arguments.thestruct.thesh = gettempdirectory() & "/#tt#.sh">
-			<cfset arguments.thestruct.theshz = gettempdirectory() & "/#tt#z.sh">
-			<cfif isWindows>
-				<cfset arguments.thestruct.thesh = gettempdirectory() & "/#tt#.bat">
-				<cfset arguments.thestruct.theshz = gettempdirectory() & "/#tt#z.bat">
-			</cfif>
 			<!--- IMAGES --->
 			<cfif arguments.thestruct.rfs_assettype EQ "img">
 				<cfset var forpath = "img">
@@ -236,43 +224,31 @@
 				<cfset structappend(arguments.thestruct, arguments.thestruct.json)>
 				<!--- Put asset path together --->
 				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.newid>
-				<!--- Write script file --->
-				<cfif forpath EQ "aud">
-					<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #qry.rfs_server_name#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" mode="777">
-				<cfelse>
-					<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #qry.rfs_server_name#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.thumbname# #qry.rfs_server_name#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" mode="777">
+				<!--- Create folder --->
+				<cfif NOT directoryexists(storein)>
+					<cfdirectory action="create" directory="#storein#" mode="775">
 				</cfif>
-			<!--- Pickup the preview asset --->
+				<!--- Download --->
+				<cfif forpath EQ "aud">
+					<cfhttp url="#qry.rfs_server_name#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" file="#arguments.thestruct.convertname#" path="#storein#"></cfhttp>
+				<cfelse>
+					<cfhttp url="#qry.rfs_server_name#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.thumbname#" file="#arguments.thestruct.thumbname#" path="#storein#"></cfhttp>
+					<cfhttp url="#qry.rfs_server_name#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.newid#/#arguments.thestruct.convertname#" file="#arguments.thestruct.convertname#" path="#storein#"></cfhttp>
+				</cfif>
 			<cfelse>
 				<!--- Put asset path together --->
 				<cfset var storein = arguments.thestruct.assetpath & "/" & session.hostid & "/" & arguments.thestruct.rfs_folderid & "/" & forpath & "/" & arguments.thestruct.rfs_assetid>
-				<!--- Write script file --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="wget -P #storein# #qry.rfs_server_name#/incoming/#arguments.thestruct.rfs_path#/#arguments.thestruct.rfs_asset#" mode="777">
+				<!--- Create folder --->
+				<cfif NOT directoryexists(storein)>
+					<cfdirectory action="create" directory="#storein#" mode="775">
+				</cfif>
+				<!--- Download --->
+				<cfhttp url="#qry.rfs_server_name#/incoming/#arguments.thestruct.rfs_path#/#arguments.thestruct.rfs_asset#" file="#arguments.thestruct.rfs_asset#" path="#storein#"></cfhttp>
 			</cfif>				
-			<!--- Create folder --->
-			<cfif NOT directoryexists(storein)>
-				<cfdirectory action="create" directory="#storein#" mode="775">
-			</cfif>						
-			<!--- Get file --->
-			<cfthread name="#tt#" intstruct="#arguments.thestruct#">
-				<cfexecute name="#attributes.intstruct.thesh#" timeout="9000" />
-			</cfthread>
-			<!--- Wait for the thread above until the file is downloaded fully --->
-			<cfthread action="join" name="#tt#" />
-			<!--- Remove script --->
-			<cffile action="delete" file="#arguments.thestruct.thesh#" />
 			<!--- If we are DOC/PDF we need to download the PDF images folder (zip) and extract it --->
 			<cfif forpath EQ "doc">
-				<!--- Write script file --->
-				<cffile action="write" file="#arguments.thestruct.theshz#" output="wget -P #storein# #qry.rfs_server_name#/incoming/#arguments.thestruct.rfs_path#/razuna_pdf_images.zip" mode="777">
 				<!--- Get file --->
-				<cfthread name="z#tt#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.theshz#" timeout="9000" />
-				</cfthread>
-				<!--- Wait for the thread above until the file is downloaded fully --->
-				<cfthread action="join" name="z#tt#" />
-				<!--- Remove script --->
-				<cffile action="delete" file="#arguments.thestruct.theshz#" />
+				<cfhttp url="#qry.rfs_server_name#/incoming/#arguments.thestruct.rfs_path#/razuna_pdf_images.zip" file="razuna_pdf_images.zip" path="#storein#"></cfhttp>
 				<!--- Extract ZIP --->
 				<cfzip action="extract" zipfile="#storein#/razuna_pdf_images.zip" destination="#storein#/razuna_pdf_images" />
 				<!--- Remove the ZIP file --->

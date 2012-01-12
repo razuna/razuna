@@ -182,12 +182,6 @@
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
-	<!--- Set path for wget --->
-	<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
-	<!--- On Windows a .bat --->
-	<cfif arguments.thestruct.iswindows>
-		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
-	</cfif>
 	<cftry>
 		<!--- Set time for remove --->
 		<cfset var removetime = DateAdd("h", -2, "#now()#")>
@@ -300,18 +294,8 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<!--- For wget script --->
-				<cfset wgetscript = replace(createuuid(),"-","","all")>
-				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
-				<!--- On Windows a .bat --->
-				<cfif arguments.thestruct.iswindows>
-					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
-				</cfif>
-				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.newpath# -O #arguments.thestruct.newpath#/#arguments.thestruct.thename# #arguments.thestruct.qry.cloud_url_org#" mode="777">
-				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-				</cfthread>
+				<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thename#" path="#arguments.thestruct.newpath#"></cfhttp>
+				<cfthread name="#ttd#" />
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
@@ -336,10 +320,6 @@
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="#ttd#" />
-			<!--- For nirvanix remove the wget script --->
-			<cfif application.razuna.storage EQ "nirvanix">
-				<cffile action="delete" file="#arguments.thestruct.thesh#" />
-			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- Return --->
@@ -421,19 +401,9 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<!--- For wget script --->
-				<cfset wgetscript = replace(createuuid(),"-","","all")>
-				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
-				<!--- On Windows a .bat --->
-				<cfif arguments.thestruct.iswindows>
-					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
-				</cfif>
-				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart# -O #arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname# #thiscloudurl#" mode="777">
-				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-				</cfthread>
-			<!--- Amazon --->
+				<cfhttp url="#thiscloudurl#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#"></cfhttp>
+				<cfthread name="#thethreadid#" />
+				<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
@@ -460,10 +430,6 @@
 			<!--- Rename the file --->
 			<cfif structkeyexists(arguments.thestruct.qry, "link_kind") AND arguments.thestruct.qry.link_kind NEQ "url">
 				<cffile action="move" source="#arguments.thestruct.newpath#/#thefname#/#theart#/#thefinalname#" destination="#arguments.thestruct.newpath#/#thefname#/#theart#/#thenewname#">
-			</cfif>
-			<!--- For nirvanix remove the wget script --->
-			<cfif application.razuna.storage EQ "nirvanix">
-				<cffile action="delete" file="#arguments.thestruct.thesh#" />
 			</cfif>
 		</cfif>
 	</cfloop>
@@ -537,20 +503,8 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<!--- For wget script --->
-				<cfset wgetscript = replace(createuuid(),"-","","all")>
-				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
-				<!--- On Windows a .bat --->
-				<cfif arguments.thestruct.iswindows>
-					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
-				</cfif>
-				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart# -O #arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thenewname# #arguments.thestruct.qry.cloud_url_org#" mode="777">
-				<!--- Download file --->
-				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-				</cfthread>
-			<!--- Amazon --->
+				<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#"></cfhttp>
+				<cfthread name="#wvt#" />			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<!--- Download file --->
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
@@ -575,10 +529,6 @@
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="#wvt#" />
-			<!--- For nirvanix remove the wget script --->
-			<cfif application.razuna.storage EQ "nirvanix">
-				<cffile action="delete" file="#arguments.thestruct.thesh#" />
-			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- Return --->
@@ -647,19 +597,8 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<!--- For wget script --->
-				<cfset wgetscript = replace(createuuid(),"-","","all")>
-				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
-				<!--- On Windows a .bat --->
-				<cfif arguments.thestruct.iswindows>
-					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
-				</cfif>
-				<!--- Write --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart# -O #arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thenewname# #arguments.thestruct.qry.cloud_url_org#" mode="777">
-				<!--- Download file --->
-				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-				</cfthread>
+				<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thenewname# " path="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#"></cfhttp>
+				<cfthread name="download#theart##theaudid#" />
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<!--- Download file --->
@@ -690,10 +629,6 @@
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="download#theart##theaudid#" />
-			<!--- For nirvanix remove the wget script --->
-			<cfif application.razuna.storage EQ "nirvanix">
-				<cffile action="delete" file="#arguments.thestruct.thesh#" />
-			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- Return --->

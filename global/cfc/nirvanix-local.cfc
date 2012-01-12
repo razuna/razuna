@@ -95,11 +95,11 @@
 			<cfflush>
 			<!--- Get thumb --->
 			<cfif !fileexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/#tname#")>
-				<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset# #cloud_url#" timeout="9999" />
+				<cfhttp url="#cloud_url#" file="#tname#" path="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#"></cfhttp>
 			</cfif>
 			<!--- Get org --->
 			<cfif !fileexists("#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#/#oname#")>
-				<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset# #cloud_url_org#" timeout="9999" />
+				<cfhttp url="#cloud_url_org#" file="#oname#" path="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#path_to_asset#"></cfhttp>
 			</cfif>
 			<!--- If this is a PDF then pull down thumbnail folder also --->
 			<cfif arguments.thestruct.type EQ "files" AND file_extension EQ "pdf">
@@ -163,7 +163,7 @@
 		<cfloop list="#thepdfjpgslist#" delimiters="," index="i">
 			<cfset thenr = replacenocase(i,".jpg","","all")>
 			<cfset thenr = listlast(thenr,"-")>
-			<cfexecute name="/usr/bin/wget" arguments="-P #arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.pathtoasset#/razuna_pdf_images http://services.nirvanix.com/#nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.pathtoasset#/razuna_pdf_images/#i#" timeout="9999" />
+			<cfhttp url="http://services.nirvanix.com/#nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.pathtoasset#/razuna_pdf_images/#i#" file="#i#" path="#arguments.thestruct.qry_setting.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.pathtoasset#/razuna_pdf_images"></cfhttp>
 		</cfloop>
 		<!--- Return --->
 		<cfreturn />

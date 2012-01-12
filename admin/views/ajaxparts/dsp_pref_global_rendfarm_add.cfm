@@ -120,17 +120,6 @@
 				<td nowrap="true">#defaultsObj.trans("header_ffmpeg")#</td>
 				<td><input type="text" name="rfs_ffmpeg" id="rfs_ffmpeg" value="#qry_rfs.rfs_ffmpeg#" style="width:300px;" class="text"></td>
 			</tr>
-			<!--- Wget Paths --->
-			<tr>
-				<th class="textbold" colspan="2">#defaultsObj.trans("header_wget")#</th>
-			</tr>
-			<tr>
-				<td colspan="2">#defaultsObj.trans("header_wget_desc")#</td>
-			</tr>
-			<tr>
-				<td nowrap="true">#defaultsObj.trans("header_wget")#</td>
-				<td><input type="text" name="rfs_wget" id="rfs_wget" value="#qry_rfs.rfs_wget#" style="width:300px;" class="text"></td>
-			</tr>
 		</table>
 	</div>
 	<!--- Encoding Params --->
@@ -162,8 +151,7 @@
 			   	rfs_ffmpeg: "required",
 			   	rfs_dcraw: "required",
 			   	rfs_exiftool: "required",
-			   	rfs_imagemagick: "required",
-			   	rfs_wget: "required"
+			   	rfs_imagemagick: "required"
 			 }
 		});
 	});
