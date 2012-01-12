@@ -770,7 +770,7 @@
 				</cfquery>
 			</cftransaction>
 			<!--- Put together the filenames --->
-			<cfset newname = listfirst(arguments.thestruct.qry_detail.detail.aud_name, ".")>
+			<cfset newname = listfirst(arguments.thestruct.qry_detail.detail.aud_name_org, ".")>
 			<cfset finalaudioname = "#newname#" & "_" & #newid.id# & "." & #theformat#>
 			<!--- If from upload templates we select with and height of image --->
 			<cfif arguments.thestruct.upl_template NEQ 0>
@@ -861,18 +861,12 @@
 					<!--- Set variables for thread --->
 					<cfset arguments.thestruct.newid = newid.id>
 					<cfset arguments.thestruct.finalaudioname = finalaudioname>
-					<!--- <cfthread name="uploadconvert#arguments.thestruct.file_id##theformat#" intstruct="#arguments.thestruct#"> --->
-						<!--- Upload: Audio --->
-						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thisfolder#/#arguments.thestruct.finalaudioname#">
-							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-						</cfinvoke>
-					<!---
-</cfthread>
-					<!--- Wait for this thread to finish --->
-					<cfthread action="join" name="uploadconvert#arguments.thestruct.file_id##theformat#" />
---->
+					<!--- Upload: Audio --->
+					<cfinvoke component="nirvanix" method="Upload">
+						<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#">
+						<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thisfolder#/#arguments.thestruct.finalaudioname#">
+						<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					</cfinvoke>
 					<!--- Get signed URLS --->
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#/#arguments.thestruct.finalaudioname#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Amazon --->

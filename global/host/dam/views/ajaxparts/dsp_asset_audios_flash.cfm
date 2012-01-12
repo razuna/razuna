@@ -93,8 +93,10 @@ div##wrapper {
 		</cfcase>
 		<!--- OGG / HTML5 default player --->
 		<cfcase value="ogg">
-			<audio id="audio" src="#audiopath#" controls autobuffer>
-				Your browser does not support the <code>HTML5 video</code> element. Please download the file!
+			<audio controls="controls">
+				<source src="#audiopath#" type="audio/ogg" />
+			  	<!--- <source src="song.mp3" type="audio/mp3" /> --->
+			  	Your browser does not support the <code>HTML5 video</code> element. Please download the file!
 			</audio>
 		</cfcase>
 		<!--- Quicktime --->
