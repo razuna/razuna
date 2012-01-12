@@ -98,6 +98,8 @@ div##wrapper {
 			  	<!--- <source src="song.mp3" type="audio/mp3" /> --->
 			  	Your browser does not support the <code>HTML5 video</code> element. Please download the file!
 			</audio>
+			<br>
+			If the audio above does not play, you can also <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">get it directly from here.</a>
 		</cfcase>
 		<!--- Quicktime --->
 		<cfcase value="wav,m4a,m4b,m4p,au,amr">
