@@ -437,6 +437,7 @@
 			<!--- Params for resizeimage --->
 			<cfset arguments.thestruct.thesource = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfset arguments.thestruct.destination = "#arguments.thestruct.qryfile.path#/thumb_#arguments.thestruct.qryfile.file_id#.#arguments.thestruct.qrysettings.set2_img_format#">
+			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 			<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
 			<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 			<cfset arguments.thestruct.newid = arguments.thestruct.therandom>

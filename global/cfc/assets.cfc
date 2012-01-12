@@ -1111,24 +1111,33 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 					<!--- Get Metadata for PDF --->
 					<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND attributes.intstruct.qryfile.link_kind NEQ "url">
-						<!--- Script: Exiftool Commands --->
-						<cffile action="write" file="#attributes.intstruct.theshexs#" output="#attributes.intstruct.theexif# -b -subject #attributes.intstruct.theorgfile#" mode="777">
-						<cffile action="write" file="#attributes.intstruct.theshexk#" output="#attributes.intstruct.theexif# -keywords #attributes.intstruct.theorgfile#" mode="777">
-						<cffile action="write" file="#attributes.intstruct.theshexak#" output="#attributes.intstruct.theexif# -applekeywords #attributes.intstruct.theorgfile#" mode="777">
-						<cffile action="write" file="#attributes.intstruct.theshexmeta#" output="#attributes.intstruct.theexif# -a -g #attributes.intstruct.theorgfile#" mode="777">
-						<cffile action="write" file="#attributes.intstruct.theshexmetaxmp#" output="#attributes.intstruct.theexif# -X #attributes.intstruct.theorgfile#" mode="777">
-						<!--- Execute scripts --->
-						<cfexecute name="#attributes.intstruct.theshexs#" timeout="60" variable="thesubject" />
-						<cfexecute name="#attributes.intstruct.theshexk#" timeout="60" variable="thekeywords" />
-						<cfexecute name="#attributes.intstruct.theshexak#" timeout="60" variable="theapplekeywords" />
-						<cfexecute name="#attributes.intstruct.theshexmeta#" timeout="60" variable="file_meta" />
-						<cfexecute name="#attributes.intstruct.theshexmetaxmp#" timeout="60" variable="attributes.intstruct.pdf_xmp" />
-						<!--- Delete scripts --->
-						<cffile action="delete" file="#attributes.intstruct.theshexs#">
-						<cffile action="delete" file="#attributes.intstruct.theshexk#">
-						<cffile action="delete" file="#attributes.intstruct.theshexak#">
-						<cffile action="delete" file="#attributes.intstruct.theshexmeta#">
-						<cffile action="delete" file="#attributes.intstruct.theshexmetaxmp#">
+						<!--- On Windows reparse the metadata again (doesnt work properly with the bat file) --->
+						<cfif attributes.intstruct.isWindows>
+							<cfexecute name="#attributes.intstruct.theexif#" arguments="-b -subject #attributes.intstruct.theorgfile#" timeout="60" variable="thesubject" />
+							<cfexecute name="#attributes.intstruct.theexif#" arguments="-keywords #attributes.intstruct.theorgfile#" timeout="60" variable="thekeywords" />
+							<cfexecute name="#attributes.intstruct.theexif#" arguments="-applekeywords #attributes.intstruct.theorgfile#" timeout="60" variable="theapplekeywords" />
+							<cfexecute name="#attributes.intstruct.theexif#" arguments="-a -g #attributes.intstruct.theorgfile#" timeout="60" variable="file_meta" />
+							<cfexecute name="#attributes.intstruct.theexif#" arguments="-X #attributes.intstruct.theorgfile#" timeout="60" variable="attributes.intstruct.pdf_xmp" />
+						<cfelse>
+							<!--- Script: Exiftool Commands --->
+							<cffile action="write" file="#attributes.intstruct.theshexs#" output="#attributes.intstruct.theexif# -b -subject #attributes.intstruct.theorgfile#" mode="777">
+							<cffile action="write" file="#attributes.intstruct.theshexk#" output="#attributes.intstruct.theexif# -keywords #attributes.intstruct.theorgfile#" mode="777">
+							<cffile action="write" file="#attributes.intstruct.theshexak#" output="#attributes.intstruct.theexif# -applekeywords #attributes.intstruct.theorgfile#" mode="777">
+							<cffile action="write" file="#attributes.intstruct.theshexmeta#" output="#attributes.intstruct.theexif# -a -g #attributes.intstruct.theorgfile#" mode="777">
+							<cffile action="write" file="#attributes.intstruct.theshexmetaxmp#" output="#attributes.intstruct.theexif# -X #attributes.intstruct.theorgfile#" mode="777">
+							<!--- Execute scripts --->
+							<cfexecute name="#attributes.intstruct.theshexs#" timeout="60" variable="thesubject" />
+							<cfexecute name="#attributes.intstruct.theshexk#" timeout="60" variable="thekeywords" />
+							<cfexecute name="#attributes.intstruct.theshexak#" timeout="60" variable="theapplekeywords" />
+							<cfexecute name="#attributes.intstruct.theshexmeta#" timeout="60" variable="file_meta" />
+							<cfexecute name="#attributes.intstruct.theshexmetaxmp#" timeout="60" variable="attributes.intstruct.pdf_xmp" />
+							<!--- Delete scripts --->
+							<cffile action="delete" file="#attributes.intstruct.theshexs#">
+							<cffile action="delete" file="#attributes.intstruct.theshexk#">
+							<cffile action="delete" file="#attributes.intstruct.theshexak#">
+							<cffile action="delete" file="#attributes.intstruct.theshexmeta#">
+							<cffile action="delete" file="#attributes.intstruct.theshexmetaxmp#">							
+						</cfif>
 						<!--- Parse PDF XMP and write to DB --->
 						<cfinvoke component="xmp" method="getpdfxmp" thestruct="#attributes.intstruct#" />
 					</cfif>
@@ -1686,11 +1695,13 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 		<cfset arguments.thestruct.destination = "#arguments.thestruct.thetempdirectory#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
 		<cfif isWindows()>
+			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 			<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
 		<cfelse>
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination," ","\ ","all")>
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"&","\&","all")>
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"'","\'","all")>
+			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 		</cfif>
 		<!--- resize original to thumb --->
 		<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
@@ -1780,9 +1791,9 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 					<!--- Move thumbnail --->
 					<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
-						<cffile action="move" source="#arguments.thestruct.destination#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
+						<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
 					<cfelseif !application.razuna.renderingfarm>
-						<cffile action="move" source="#arguments.thestruct.destination#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
+						<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
 					</cfif>
 					<!--- Get size of original and thumnail --->
 					<cfset orgsize = arguments.thestruct.qryfile.thesize>
@@ -1806,16 +1817,11 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Upload Original Image --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cftry>
-						<!--- <cfthread name="#uplt#o" intstruct="#arguments.thestruct#"> --->
-							<cfinvoke component="nirvanix" method="Upload">
-								<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
-								<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thesource#">
-								<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-							</cfinvoke>
-						<!---
-</cfthread>
-						<cfthread action="join" name="#uplt#o" />
---->
+						<cfinvoke component="nirvanix" method="Upload">
+							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
+							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thesource#">
+							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+						</cfinvoke>
 						<cfcatch type="any">
 							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading original image to Nirvanix" dump="#cfcatch#">
 						</cfcatch>
@@ -1824,16 +1830,11 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Upload Thumbnail --->
 				<cfif !application.razuna.renderingfarm>
 					<cftry>
-						<!--- <cfthread name="#uplt#t" intstruct="#arguments.thestruct#"> --->
-							<cfinvoke component="nirvanix" method="Upload">
-								<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
-								<cfinvokeargument name="uploadfile" value="#arguments.thestruct.destination#">
-								<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-							</cfinvoke>
-						<!---
-</cfthread>
-						<cfthread action="join" name="#uplt#t" />
---->
+						<cfinvoke component="nirvanix" method="Upload">
+							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
+							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.destination#">
+							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+						</cfinvoke>
 						<cfcatch type="any">
 							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
 						</cfcatch>
@@ -1859,7 +1860,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="amazon" method="Upload">
 								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
-								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesource#">
+								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
 								<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 							</cfinvoke>
 						</cfthread>
@@ -1871,7 +1872,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="amazon" method="Upload">
 								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
-								<cfinvokeargument name="theasset" value="#attributes.intstruct.destination#">
+								<cfinvokeargument name="theasset" value="#attributes.intstruct.destinationraw#">
 								<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 							</cfinvoke>
 						</cfthread>
@@ -2082,8 +2083,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Wait until Thumbnail is done --->
 		<cfthread action="join" name="m#arguments.thestruct.newid#" timeout="240000" />
 		<!--- Check if thumbail is here if not copy missing image --->
-		<cfif NOT fileexists("#arguments.thestruct.destination#")>
-			<cffile action="copy" source="#arguments.thestruct.rootpath#global/host/dam/images/icons/image_missing.png" destination="#arguments.thestruct.destination#" mode="775" nameConflict="Skip">
+		<cfif !fileexists(arguments.thestruct.destinationraw)>
+			<cffile action="copy" source="#arguments.thestruct.rootpath#global/host/dam/images/icons/image_missing.png" destination="#arguments.thestruct.destinationraw#" mode="775" nameConflict="Skip">
 		</cfif>
 		<!--- Get thumbnail sizes --->
 		<cffile action="write" file="#arguments.thestruct.theshht#" output="#arguments.thestruct.theexif# -S -s -ImageHeight #arguments.thestruct.destination#" mode="777">
@@ -3393,8 +3394,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfset arguments.thestruct.hostid = session.hostid>
-	<cfset var tt = Replace( Createuuid(), "-", "", "ALL" )>
-	<cfthread name="#tt#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="recreatepreviewimagethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 </cffunction>
@@ -3412,13 +3412,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfset thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
 		<cfset themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
 		<cfset theffmpeg = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
-		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
 	<cfelse>
 		<cfset theexe = "#arguments.thestruct.thetools.imagemagick#/convert">
 		<cfset thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
 		<cfset themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
 		<cfset theffmpeg = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-		<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
 	</cfif>
 	<!--- Loop over file id --->
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
@@ -3493,32 +3491,15 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Write script file --->
 		<cffile action="write" file="#arguments.thestruct.thesh#" output="#theargs#" mode="777">
 		<cffile action="write" file="#arguments.thestruct.theshdc#" output="#theargsdc#" mode="777">
-		<!--- Write Wget script --->
-		<cfif application.razuna.storage NEQ "local">
-			<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.filepath# #arguments.thestruct.qry_existing.cloud_url_org#" mode="777">
-		</cfif>
 		<!--- Local: Delete thumbnail --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- Delete old thumb (if there) --->
-			<cfif fileexists("#arguments.thestruct.thumbpath#")>
+			<cfif fileexists(arguments.thestruct.thumbpath)>
 				<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
 			</cfif>
 		<!--- Amazon: download file --->
-		<cfelseif application.razuna.storage EQ "amazon">
-			<!--- Download original asset to temp dir --->
-			<cfthread name="download#thescript#" intstruct="#arguments.thestruct#">
-				<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
-			</cfthread>
-			<!--- Wait --->
-			<cfthread action="join" name="download#thescript#" />
-		<!--- Nirvanix: download file --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<!--- Download original asset to temp dir --->
-			<cfthread name="download#thescript#" intstruct="#arguments.thestruct#">
-				<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
-			</cfthread>
-			<!--- Wait --->
-			<cfthread action="join" name="download#thescript#" />
+		<cfelseif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+			<cfhttp url="#arguments.thestruct.qry_existing.cloud_url_org#" file="#arguments.thestruct.qry_existing.orgname#" path="#arguments.thestruct.filepath#"></cfhttp>
 		</cfif>
 		<!--- Convert image to thumbnail --->
 		<cfthread name="con#thescript#" intstruct="#arguments.thestruct#">
@@ -3535,9 +3516,6 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Delete scripts --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.theshdc#">
-		<cfif application.razuna.storage NEQ "local">
-			<cffile action="delete" file="#arguments.thestruct.theshw#">
-		</cfif>
 		<!--- Amazon: upload file --->
 		<cfif application.razuna.storage EQ "amazon">
 			<cfthread name="upload#thescript#" intstruct="#arguments.thestruct#">
@@ -3551,7 +3529,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Wait for thread to finish --->
 			<cfthread action="join" name="upload#thescript#" />
 			<!--- Get signed URLS --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Update DB --->
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #thedb#
@@ -3561,8 +3539,13 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Flush Cache --->
 			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#theflush#" />
 			<!--- Remove the original and thumbnail --->
-			<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
-			<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+			<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
+				<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
+			</cfif>
+			<!--- Delete old thumb (if there) --->
+			<cfif fileexists(arguments.thestruct.thumbpath)>
+				<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+			</cfif>
 		<!--- Nirvanix: delete file --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<!--- Delete existing preview --->
@@ -3571,18 +3554,11 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
 			</cfinvoke>
 			<!--- Upload Thumbnail --->
-			<!--- <cfthread name="upload#thescript#" intstruct="#arguments.thestruct#"> --->
-				<!--- Upload Thumbnail --->
-				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_existing.path_to_asset#">
-					<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thumbpath#">
-					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-				</cfinvoke>
-			<!---
-</cfthread>
-			<!--- Wait for thread to finish --->
-			<cfthread action="join" name="upload#thescript#" />
---->
+			<cfinvoke component="nirvanix" method="Upload">
+				<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_existing.path_to_asset#">
+				<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thumbpath#">
+				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+			</cfinvoke>
 			<!--- Get signed URLS --->
 			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" nvxsession="#arguments.thestruct.nvxsession#">
 			<!--- Update DB --->
@@ -3594,8 +3570,13 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Flush Cache --->
 			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#theflush#" />
 			<!--- Remove the original and thumbnail --->
-			<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
-			<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+			<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
+				<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
+			</cfif>
+			<!--- Delete old thumb (if there) --->
+			<cfif fileexists(arguments.thestruct.thumbpath)>
+				<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- Return --->

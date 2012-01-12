@@ -402,10 +402,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<!--- Check the platform and then decide on the Exiftool tag --->
 		<cfif isWindows>
 			<cfset theexe = """#attributes.intstruct.thetools.exiftool#/exiftool.exe""">
-			<cfset thewget = """#attributes.intstruct.thetools.wget#/wget.exe""">
 		<cfelse>
 			<cfset theexe = "#attributes.intstruct.thetools.exiftool#/exiftool">
-			<cfset thewget = "#attributes.intstruct.thetools.wget#/wget">
 			<cfset attributes.intstruct.thesource = replacenocase(attributes.intstruct.thesource," ","\ ","all")>
 		</cfif>
 		<!--- Storage: Local --->
@@ -416,14 +414,16 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 				<cfset thexmpfile = "#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/xmp-#attributes.intstruct.file_id#">
 				<!--- On Windows --->
 				<cfif iswindows>
+					<cfset thexmpfileraw = thexmpfile>
 					<cfset thexmpfile = """#thexmpfile#""">
 				<cfelse>
 					<cfset thexmpfile = replacenocase(thexmpfile," ","\ ","all")>
 					<cfset thexmpfile = replacenocase(thexmpfile,"&","\&","all")>
 					<cfset thexmpfile = replacenocase(thexmpfile,"'","\'","all")>
+					<cfset thexmpfileraw = thexmpfile>
 				</cfif>
 				<!--- Write XMP file to system --->
-				<cffile action="write" file="#thexmpfile#" output="#tostring(thexmp)#" charset="utf-8">
+				<cffile action="write" file="#thexmpfileraw#" output="#tostring(thexmp)#" charset="utf-8">
 				<!--- Write the sh script file --->
 				<cfset thescript = createuuid()>
 				<cfset attributes.intstruct.thesh = GetTempDirectory() & "/#thescript#.sh">
@@ -465,15 +465,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			</cfif>
 			<!--- Write XMP file --->
 			<cffile action="write" file="#thexmpfile#" output="#tostring(thexmp)#" charset="utf-8">
-			<cffile action="write" file="#attributes.intstruct.thesh#" output="#thewget# -P #attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder# http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#" mode="777">
 			<!--- Download image --->
-			<cfthread name="download#attributes.intstruct.file_id#" intstruct="#attributes.intstruct#">
-				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-			</cfthread>
-			<!--- Wait for the thread above until the file is downloaded fully --->
-			<cfthread action="join" name="download#attributes.intstruct.file_id#" />
-			<!--- Remove script file --->
-			<cffile action="delete" file="#attributes.intstruct.thesh#" />
+			<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#" file="#attributes.intstruct.filenameorg#" path="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#"></cfhttp>
 			<!--- Remove file on Nirvanix or else we get errors during uploading --->
 			<cfinvoke component="nirvanix" method="DeleteFiles">
 				<cfinvokeargument name="filePath" value="/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#">
@@ -1184,10 +1177,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<!--- Check the platform and then decide on the Exiftool tag --->
 	<cfif isWindows>
 		<cfset theexe = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
-		<cfset thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
 	<cfelse>
 		<cfset theexe = "#arguments.thestruct.thetools.exiftool#/exiftool">
-		<cfset thewget = "#arguments.thestruct.thetools.wget#/wget">
 		<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.thesource," ","\ ","all")>
 	</cfif>
 	<!--- Storage: Local --->
@@ -1223,18 +1214,9 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#">
 		<!--- Download file --->
 		<cfif application.razuna.storage EQ "nirvanix">
-			<!--- For wget script --->
-			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.tempfolder#.sh">
-			<!--- On Windows a .bat --->
-			<cfif arguments.thestruct.iswindows>
-				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.tempfolder#.bat">
-			</cfif>
-			<!--- Write --->	
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#thewget# -P #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder# #arguments.thestruct.qrydetail.cloud_url_org#" mode="777">
 			<!--- Finally download --->
-			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-			</cfthread>
+			<cfhttp url="#arguments.thestruct.qrydetail.cloud_url_org#" file="#attributes.intstruct.qrydetail.filenameorg#" path="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#"></cfhttp>
+			<cfthread name="download#arguments.thestruct.file_id#" />
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="amazon" method="Download">
@@ -1246,10 +1228,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		</cfif>	
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
-		<!--- For nirvanix remove the wget script --->
-		<cfif application.razuna.storage EQ "nirvanix">
-			<cffile action="delete" file="#arguments.thestruct.thesh#" />
-		</cfif>
 		<!--- Write XMP to image with Exiftool --->
 		<cfexecute name="#theexe#" arguments="-subject='#arguments.thestruct.file_desc#' -keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" timeout="10" />
 		<!--- Upload file again to its original position --->

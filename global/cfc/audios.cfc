@@ -684,40 +684,16 @@
 			<cfthread name="convert#arguments.thestruct.file_id#" />
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.link_kind NEQ "lan">
-			<!--- For wget script --->
-			<cfset var wgetscript = replace(createuuid(),"-","","all")>
-			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#w.sh">
-			<cfset var thewget = "#arguments.thestruct.thetools.wget#/wget">
-			<!--- On Windows a .bat --->
-			<cfif iswindows>
-				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#wgetscript#w.bat">
-				<cfset var thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
-			</cfif>
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
-				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# #arguments.thestruct.qry_detail.detail.cloud_url_org#" mode="777">
-				<!--- Download file --->
-				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
-				</cfthread>
+				<cfhttp url="#arguments.thestruct.qry_detail.detail.cloud_url_org#" file="#arguments.thestruct.qry_detail.detail.aud_name_org#" path="#arguments.thestruct.thisfolder#"></cfhttp>
 			<cfelse>
-				<!--- Set Name --->
-				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org & ".wav">
-				<!--- Write --->	
-				<cffile action="write" file="#arguments.thestruct.theshw#" output="#thewget# -P #arguments.thestruct.thisfolder# -O #arguments.thestruct.thisfolder#/#arguments.thestruct.thename# #arguments.thestruct.qry_detail.detail.cloud_url_org#" mode="777">
-				<!--- Download file --->
-				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
-					<cfexecute name="#attributes.intstruct.theshw#" timeout="600" />
-				</cfthread>
+				<cfhttp url="#arguments.thestruct.qry_detail.detail.cloud_url_org#" file="#arguments.thestruct.qry_detail.detail.aud_name_org#.wav" path="#arguments.thestruct.thisfolder#"></cfhttp>
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
-			<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 			<cfthread name="convert#arguments.thestruct.file_id#" />
 			<!--- Set the input path --->
 			<cfset inputpath = "#arguments.thestruct.thisfolder#/#arguments.thestruct.thename#">
-			<!--- Remove wget script --->
-			<cffile action="delete" file="#arguments.thestruct.theshw#" />
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
@@ -997,12 +973,6 @@
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
-	<!--- Set path for wget --->
-	<cfset arguments.thestruct.thewget = "#arguments.thestruct.thetools.wget#/wget">
-	<!--- On Windows a .bat --->
-	<cfif arguments.thestruct.iswindows>
-		<cfset arguments.thestruct.thewget = """#arguments.thestruct.thetools.wget#/wget.exe""">
-	</cfif>
 	<!--- Start the loop to get the different kinds of audios --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
@@ -1048,19 +1018,8 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND qry.link_kind EQ "">
-			<!--- For wget script --->
-			<cfset wgetscript = replace(createuuid(),"-","","all")>
-			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.sh">
-			<!--- On Windows a .bat --->
-			<cfif arguments.thestruct.iswindows>
-				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#wgetscript#.bat">
-			</cfif>
-			<!--- Write --->	
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.thewget# -P #arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art# #arguments.thestruct.qry.cloud_url_org#" mode="777">
-			<!--- Download file --->
-			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
-				<cfexecute name="#attributes.intstruct.thesh#" timeout="600" />
-			</cfthread>
+			<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art#"></cfhttp>
+			<cfthread name="download#art##theaudioid#" />
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
 			<!--- Download file --->
@@ -1086,10 +1045,6 @@
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#art##theaudioid#" />
-		<!--- For nirvanix remove the wget script --->
-		<cfif application.razuna.storage EQ "nirvanix">
-			<cffile action="delete" file="#arguments.thestruct.thesh#" />
-		</cfif>
 		<!--- Set extension --->
 		<cfset theext = qry.aud_extension>
 		<!--- If the art id not thumb and original we need to get the name from the parent record --->
