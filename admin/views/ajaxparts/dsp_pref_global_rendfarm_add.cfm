@@ -27,7 +27,7 @@
 <form action="#self#" method="post" name="rfsdetail" id="rfsdetail">
 <input type="hidden" name="#theaction#" value="c.prefs_renf_add">
 <input type="hidden" name="rfs_id" value="#attributes.rfs_id#">
-<input type="hidden" name="rfs_add" value="#attributes.rfs_add#">
+<input type="hidden" name="rfs_add" id="rfs_add" value="#attributes.rfs_add#">
 <div id="rfstab">
 	<ul>
 		<li><a href="##serversetup">#defaultsObj.trans("header_server_setup")#</a></li>
@@ -159,6 +159,7 @@
 	function rfs_feedback() {
 		$('##updatetext').css('display','');
 		$('##updatetext').html('#defaultsObj.trans("success")#');
+		$('##rfs_add').val('false');
 		loadcontent('renf', '#myself#c.prefs_renf');
 	}
 	// Validate Server
