@@ -36,7 +36,7 @@
             upload_url: "#myself#c.meta_imp_upload_do&tempid=#attributes.tempid#&thefieldname=filedata&cfid=#cfid#&cftoken=#cftoken#",
             button_image_url: '#dynpath#/global/js/upload/blankButton.png',
             file_size_limit: "2000 MB",
-            file_types: "*.csv;*.xls;*.xlsx;*.xml",
+            file_types: "*.csv;*.xls;*.xlsx",
             file_upload_limit: 100,
 			file_queue_limit: 0,
 			debug: false

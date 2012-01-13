@@ -45,7 +45,6 @@
 				<option value="csv" selected="selected">CSV</option>
 				<option value="xls">XLS</option>
 				<option value="xlsx">XLSX</option>
-				<option value="xml">XML</option>
 			</select>
 		</div>
 		<!--- First Row --->
@@ -58,13 +57,15 @@
 		<!--- Template --->
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<div style="float:left;width:150px;font-weight:bold;">Upload Template</div>
-		<div style="float:left;">
-			<select name="impp_template" id="impp_template" style="width:150px;" disabled="disabled">
+		<div style="float:left;width:300px;">
+			<select name="impp_template" id="impp_template" style="width:150px;"<!---  disabled="disabled" --->>
 				<option value="" selected="selected">No template</option>
 				<cfloop query="qry_imptemp">
 					<option value="#imp_temp_id#">#imp_name#</option>
 				</cfloop>
 			</select>
+			<br />
+			<i>(You only need to select a template if you use custom headers (columns)!)</i>
 		</div>
 		<!--- Add or append --->
 		<div style="clear:both;padding-bottom:10px;"></div>
@@ -82,7 +83,9 @@
 	</form>
 </div>
 	<!--- JS --->
-	<script language="JavaScript" type="text/javascript">
+	<!---
+/*
+<script language="JavaScript" type="text/javascript">
 		// Load the below when this page gets hit
 		// Append to frame url
 		function enabletemplates(){
@@ -96,6 +99,7 @@
 				$('##impp_template').attr('disabled','disabled');
 			}
 		}
-	</script>	
+	</script>
+*/
+--->	
 </cfoutput>
-	

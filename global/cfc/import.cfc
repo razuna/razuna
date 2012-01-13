@@ -176,17 +176,17 @@
 		<cfoutput><strong>Starting the import</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- CSV and XML --->
-		<cfif arguments.thestruct.file_format EQ "csv" OR arguments.thestruct.file_format EQ "xml">
+		<cfif arguments.thestruct.file_format EQ "csv">
 			<!--- Read the file --->
 			<cffile action="read" file="#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#" charset="utf-8" variable="thefile" />
+			<!--- Read CSV --->
+			<cfset arguments.thestruct.theimport = csvread(string=thefile, headerline=true)>
+			<cfdump var="#arguments.thestruct.theimport#"><cfabort>
 		<!--- XLS and XLSX --->
 		<cfelse>
 			
 		</cfif>
-		<!--- Read CSV --->
-		<cfif arguments.thestruct.file_format EQ "csv">
-			<cfset arguments.thestruct.theimport = csvread(string=thefile, headerline=true)>
-		</cfif>
+		
 		<!--- Feedback --->
 		<cfoutput><strong>We could read your file. Continuing...</strong><br><br></cfoutput>
 		<cfflush>
@@ -204,13 +204,19 @@
 	<!---Import: Loop over tables ---------------------------------------------------------------------->
 	<cffunction name="doimporttables" output="false">
 		<cfargument name="thestruct" type="struct">
+		<!--- Params --->
+		<cfset var hastype = 0>
 		<!--- Get the columnlist --->
 		<cfset var thecolumns = arguments.thestruct.theimport.columnlist>
+		<!--- Does the columnlist contain a type column --->
+		<!--- <cfset hastype = listcontains(thecolumns, "type")> --->
+		<cfdump var="#hastype#"><cfabort>
 		<!--- Feedback --->
 		<cfoutput><strong>Import to images...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Loop --->
 		<cfloop query="arguments.thestruct.theimport">
+			
 			<!--- Feedback --->
 			<cfoutput><strong>Importing ID: #id#</strong><br><br></cfoutput>
 			<cfflush>
@@ -222,18 +228,27 @@
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 			</cfquery>
+			<!--- Keywords & Desriptions --->
+			
 			<!--- Images: XMP --->
+			
+			
 			
 		</cfloop>
 		
 		
-		
+		<!--- Custom Fields --->
 		
 		
 		<!--- Labels --->
 		
+		
+		
 		<!--- Flush tables --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
+		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
+		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_files" />
 		
 		<!--- Return --->
 		<cfreturn  />
