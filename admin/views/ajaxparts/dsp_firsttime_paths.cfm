@@ -105,7 +105,7 @@
 		var pathff = $('#path_ffmpeg').val();
 		var pathex = $('#path_exiftool').val();
 		// Check value or else inform user
-		if ((pathim == "") | (pathex == "") | (pathff == "") | (pathwg == "")){
+		if ((pathim == "") | (pathex == "") | (pathff == "")){
 			alert('Please fill in all required form fields!');
 		}
 		else {
