@@ -445,7 +445,7 @@
 	</cfif>
 	<!--- Set rendering setting in application scope --->
 	<cfif StructKeyExists(arguments.thestruct, "conf_rendering_farm")>
-		<cfset application.razuna.renderingfarm = arguments.thestruct.conf_rendering_farm>
+		<cfset application.razuna.rfs = arguments.thestruct.conf_rendering_farm>
 	</cfif>
 	<!--- Save in global setting the rendering farm location --->
 	<cfif StructKeyExists(arguments.thestruct, "rendering_farm_location")>
@@ -1050,7 +1050,7 @@
 	<cfset application.razuna.awslocation = qry.conf_aws_location>
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.firsttime = qry.conf_firsttime>
-	<cfset application.razuna.renderingfarm = qry.conf_rendering_farm>
+	<cfset application.razuna.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 </cffunction>
 
@@ -1073,7 +1073,7 @@
 	<cfset application.razuna.api.awskey = qry.conf_aws_access_key>
 	<cfset application.razuna.api.awskeysecret = qry.conf_aws_secret_access_key>
 	<cfset application.razuna.api.awslocation = qry.conf_aws_location>
-	<cfset application.razuna.api.renderingfarm = qry.conf_rendering_farm>
+	<cfset application.razuna.api.rfs = qry.conf_rendering_farm>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1097,7 +1097,7 @@
 	<cfset application.razuna.awskeysecret = qry.conf_aws_secret_access_key>
 	<cfset application.razuna.awslocation = qry.conf_aws_location>
 	<cfset application.razuna.isp = qry.conf_isp>
-	<cfset application.razuna.renderingfarm = qry.conf_rendering_farm>
+	<cfset application.razuna.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 </cffunction>
 

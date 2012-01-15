@@ -795,6 +795,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif fileType.type_type EQ "vid">
 			<!--- VIDEO UPLOAD (call method to process a vid-file) --->
 			<cfinvoke method="processVidFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
+			
 			<!--- Act on Upload Templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0>
 				<cfset arguments.thestruct.upltemptype = "vid">
@@ -804,6 +805,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif fileType.type_type EQ "aud">
 			<!--- AUDIO UPLOAD (call method to process a aud-file) --->
 			<cfinvoke method="processAudFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
+			
 			<!--- Act on Upload Templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0>
 				<cfset arguments.thestruct.upltemptype = "aud">
@@ -813,6 +815,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfelse>
 			<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
 			<cfinvoke method="processDocFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
+			
 		</cfif>
 	</cfif>
 	<!--- Remove record in DB and file system (when we come from converting we call the function in the loop) --->
@@ -1052,7 +1055,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 					<!--- If we are PDF we create thumbnail and images from the PDF --->
 					<!--- RFS --->
-					<cfif !application.razuna.renderingfarm>
+					<cfif !application.razuna.rfs>
 						<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND attributes.intstruct.qryfile.link_kind NEQ "url">
 							<!--- Create a temp folder to hold the PDF images --->
 							<cfset attributes.intstruct.thepdfdirectory = "#attributes.intstruct.thetempdirectory#/#replace(createuuid(),"-","","all")#/razuna_pdf_images">
@@ -1235,7 +1238,7 @@ This is the main function called directly by a single upload else from addassets
 								<cffile action="copy" source="#attributes.intstruct.theorgfileraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#" mode="775">
 							</cfif>
 							<!--- If we are PDF we need to move the thumbnail and image as well --->
-							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.renderingfarm>
+							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
 								<!--- Move thumbnail --->
 								<cffile action="move" source="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#/#attributes.intstruct.thepdfimage#" mode="775">
 								<!--- Create image folder --->
@@ -1256,7 +1259,7 @@ This is the main function called directly by a single upload else from addassets
 								<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 							</cfinvoke>
 							<!--- If we are PDF we need to upload the thumbnail and image as well --->
-							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.renderingfarm>
+							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
 								<cfinvoke component="nirvanix" method="Upload">
 									<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#">
 									<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#">
@@ -1309,7 +1312,7 @@ This is the main function called directly by a single upload else from addassets
 							</cfthread>
 							<cfthread action="join" name="#upd#" />
 							<!--- If we are PDF we need to upload the thumbnail and image as well --->
-							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.renderingfarm>
+							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
 								<!--- Upload thumbnail --->		
 								<cfset updt = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#updt#" intuptstruct="#attributes.intstruct#">
@@ -1360,7 +1363,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.newid#" category="doc">
 						</cfif>
 						<!--- Update DB to make asset available --->
-						<cfif !application.razuna.renderingfarm>
+						<cfif !application.razuna.rfs>
 							<cfquery datasource="#attributes.intstruct.dsn#">
 							UPDATE #attributes.intstruct.hostdbprefix#files
 							SET is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
@@ -1380,7 +1383,7 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Flush Cache --->
 					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.theuserid#_files" />
 					<!--- RFS --->
-					<cfif application.razuna.renderingfarm>
+					<cfif application.razuna.rfs>
 						<cfset attributes.intstruct.assettype = "doc">	
 						<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
 					</cfif>
@@ -1466,7 +1469,7 @@ This is the main function called directly by a single upload else from addassets
 				link_path_url = <cfqueryparam value="#attributes.intstruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
 				link_kind = <cfqueryparam value="#attributes.intstruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
 				path_to_asset = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#" cfsqltype="cf_sql_varchar">
-				<cfif !application.razuna.renderingfarm>
+				<cfif !application.razuna.rfs>
 					,
 					is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 				</cfif>
@@ -1551,7 +1554,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.hostid#_images" />
 				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.hostid#_share_options" />
 				<!--- RFS --->
-				<cfif application.razuna.renderingfarm>
+				<cfif application.razuna.rfs>
 					<cfset attributes.intstruct.assettype = "img">
 					<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
 				</cfif>
@@ -1782,7 +1785,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 					<!--- Move original image --->
 					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-						<cfif application.razuna.renderingfarm OR arguments.thestruct.importpath>
+						<cfif application.razuna.rfs OR arguments.thestruct.importpath>
 							<cfset var fileaction = "copy">
 						<cfelse>
 							<cfset var fileaction = "move">
@@ -1792,12 +1795,12 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Move thumbnail --->
 					<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 						<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
-					<cfelseif !application.razuna.renderingfarm>
+					<cfelseif !application.razuna.rfs>
 						<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
 					</cfif>
 					<!--- Get size of original and thumnail --->
 					<cfset orgsize = arguments.thestruct.qryfile.thesize>
-					<cfif !application.razuna.renderingfarm>
+					<cfif !application.razuna.rfs>
 						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
 					<cfelse>
 						<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
@@ -1828,7 +1831,7 @@ This is the main function called directly by a single upload else from addassets
 					</cftry>
 				</cfif>
 				<!--- Upload Thumbnail --->
-				<cfif !application.razuna.renderingfarm>
+				<cfif !application.razuna.rfs>
 					<cftry>
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
@@ -1867,7 +1870,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfthread action="join" name="#upt#" />
 					</cfif>
 					<!--- Upload Thumbnail --->
-					<cfif !application.razuna.renderingfarm>
+					<cfif !application.razuna.rfs>
 						<cfset uptn = Replace( Createuuid(), "-", "", "ALL" )>
 						<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="amazon" method="Upload">
@@ -1972,7 +1975,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="resizeImage" returntype="void" access="public" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
 	<!--- RFS --->
-	<cfif !application.razuna.renderingfarm>
+	<cfif !application.razuna.rfs>
 		<!--- ID for thread --->
 		<cfset var tri = replacenocase(createuuid(),"-","","all")>
 		<cfthread name="#tri#" intstruct="#arguments.thestruct#">
@@ -2286,7 +2289,7 @@ This is the main function called directly by a single upload else from addassets
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theexif# -S -s -ImageHeight #arguments.thestruct.theorg#" mode="777">
 			<cffile action="write" file="#arguments.thestruct.theshex#" output="#arguments.thestruct.theexif# -a -g #arguments.thestruct.theasset#" mode="777">
 			<!--- Execute --->
-			<cfif !application.razuna.renderingfarm>
+			<cfif !application.razuna.rfs>
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="orgwidth" />
 				<cfexecute name="#arguments.thestruct.thesht#" timeout="60" variable="orgheight" />
 				<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
@@ -2302,7 +2305,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- NIRVANIX --->
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Upload Movie Image --->
-				<cfif !application.razuna.renderingfarm>
+				<cfif !application.razuna.rfs>
 					<cfset upmi = Replace( Createuuid(), "-", "", "ALL" )>
 					<!--- <cfthread name="#upmi#" intstruct="#arguments.thestruct#"> --->
 						<cfinvoke component="nirvanix" method="Upload">
@@ -2338,7 +2341,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- AMAZON --->
 			<cfelseif application.razuna.storage EQ "amazon">
 				<!--- Upload Movie Image --->
-				<cfif !application.razuna.renderingfarm>
+				<cfif !application.razuna.rfs>
 					<cfset upmi = Replace( Createuuid(), "-", "", "ALL" )>
 					<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="amazon" method="Upload">
@@ -2367,7 +2370,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 			</cfif>
 			<cfset var ts = arguments.thestruct.qryfile.thesize>
-			<cfif !application.razuna.renderingfarm>
+			<cfif !application.razuna.rfs>
 				<cfif isnumeric(orgwidth)>
 					<cfset var tw = orgwidth>
 				<cfelse>
@@ -2407,7 +2410,7 @@ This is the main function called directly by a single upload else from addassets
 		SET
 		vid_name_image = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.theorgimage#">,
 		vid_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#ts#">,
-		<cfif !application.razuna.renderingfarm>
+		<cfif !application.razuna.rfs>
 			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#tw#">,
 			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#th#">,
 		</cfif>
@@ -2434,7 +2437,7 @@ This is the main function called directly by a single upload else from addassets
 		link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
 		vid_meta = <cfqueryparam value="#vid_meta#" cfsqltype="cf_sql_varchar">,
 		hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
-		<cfif !application.razuna.renderingfarm>
+		<cfif !application.razuna.rfs>
 			,
 			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 		</cfif>
@@ -2511,7 +2514,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
 		<!--- RFS --->
-		<cfif application.razuna.renderingfarm>
+		<cfif application.razuna.rfs>
 			<cfset arguments.thestruct.newid = arguments.thestruct.thisvid.newid>
 			<cfset arguments.thestruct.assettype = "vid">
 			<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
@@ -2896,7 +2899,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Delete scripts --->
 						<cffile action="delete" file="#attributes.audstruct.thesh#">
 						<!--- RFS --->
-						<cfif !application.razuna.renderingfarm>
+						<cfif !application.razuna.rfs>
 							<!--- Create Raw file --->
 							<cfif attributes.audstruct.qryfile.extension NEQ "wav">
 								<!--- Write files --->
@@ -3021,7 +3024,7 @@ This is the main function called directly by a single upload else from addassets
 								<cffile action="#theaction#" source="#attributes.audstruct.theorgfileraw#" destination="#attributes.audstruct.qrysettings.set2_path_to_assets#/#attributes.audstruct.hostid#/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filename#" mode="775">
 							</cfif>
 							<!--- Move the WAV --->
-							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.renderingfarm>
+							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
 								<cffile action="move" source="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.filenamenoext4copy#.wav" destination="#attributes.audstruct.qrysettings.set2_path_to_assets#/#attributes.audstruct.hostid#/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.filenamenoext4copy#.wav" mode="775">
 							</cfif>
 							<!--- Move the MP3 but only if local asset link --->
@@ -3043,7 +3046,7 @@ This is the main function called directly by a single upload else from addassets
 								</cfinvoke>
 							</cfif>
 							<!--- Upload the WAV --->
-							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.renderingfarm>
+							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
 								<cfinvoke component="nirvanix" method="Upload">
 									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
 									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.wav">
@@ -3062,7 +3065,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
 								<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filename#" nvxsession="#attributes.audstruct.nvxsession#">
 							</cfif>
-							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.renderingfarm>
+							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
 								<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.wav" nvxsession="#attributes.audstruct.nvxsession#">
 							</cfif>
 							<cfif attributes.audstruct.qryfile.link_kind EQ "lan">
@@ -3096,7 +3099,7 @@ This is the main function called directly by a single upload else from addassets
 								<cfthread action="join" name="#upa#" />
 							</cfif>
 							<!--- Upload the WAV --->
-							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.renderingfarm>
+							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
 								<cfset upw = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upw#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="amazon" method="Upload">
@@ -3123,7 +3126,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
 								<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filename#" awsbucket="#attributes.audstruct.awsbucket#">
 							</cfif>
-							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.renderingfarm>
+							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
 								<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.wav" awsbucket="#attributes.audstruct.awsbucket#">
 							</cfif>
 							<cfif attributes.audstruct.qryfile.link_kind EQ "lan">
@@ -3147,7 +3150,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfinvoke component="lucene" method="index_update" dsn="#attributes.audstruct.dsn#" thestruct="#attributes.audstruct#" assetid="#attributes.audstruct.newid#" category="aud">
 					</cfif>
 					<!--- Update DB to make asset available --->
-					<cfif !application.razuna.renderingfarm>
+					<cfif !application.razuna.rfs>
 						<cfquery datasource="#attributes.audstruct.dsn#">
 						UPDATE #attributes.audstruct.hostdbprefix#audios
 						SET is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
@@ -3192,7 +3195,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.audstruct.theuserid#_audios" />
 					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.audstruct.theuserid#_share_options" />	
 					<!--- RFS --->
-					<cfif application.razuna.renderingfarm AND attributes.audstruct.qryfile.extension NEQ "wav" AND attributes.audstruct.newid NEQ 0>
+					<cfif application.razuna.rfs AND attributes.audstruct.qryfile.extension NEQ "wav" AND attributes.audstruct.newid NEQ 0>
 						<cfset attributes.audstruct.assettype = "aud">
 						<cfinvoke component="rfs" method="notify" thestruct="#attributes.audstruct#" />
 					</cfif>

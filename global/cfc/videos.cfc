@@ -432,7 +432,7 @@
 <cffunction name="create_previews" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- RFS --->
-	<cfif !application.razuna.renderingfarm>
+	<cfif !application.razuna.rfs>
 		<cftry>
 			<!--- Choose platform --->
 			<cfif arguments.thestruct.isWindows>
@@ -877,7 +877,7 @@
 <cffunction name="convertvideothread" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- RFS --->
-	<cfif application.razuna.renderingfarm>
+	<cfif application.razuna.rfs>
 		<cfset arguments.thestruct.convert = true>
 		<cfset arguments.thestruct.assettype = "vid">
 		<cfthread intstruct="#arguments.thestruct#">
@@ -1479,7 +1479,7 @@
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qryintern" cachename="vid#session.hostid#gettext#arguments.qry.id#" cachedomain="#session.theuserid#_videos">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachename="vid#session.hostid#gettext#ValueList(arguments.qry.id)#" cachedomain="#session.theuserid#_videos">
 	SELECT vid_id_r tid, vid_description description, vid_keywords keywords
 	FROM #session.hostdbprefix#videos_text
 	WHERE vid_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)

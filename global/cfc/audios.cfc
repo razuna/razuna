@@ -626,7 +626,7 @@
 <cffunction name="convertaudiothread" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- RFS --->
-	<cfif application.razuna.renderingfarm>
+	<cfif application.razuna.rfs>
 		<cfset arguments.thestruct.convert = true>
 		<cfset arguments.thestruct.assettype = "aud">
 		<cfthread intstruct="#arguments.thestruct#">
@@ -1080,7 +1080,7 @@
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qryintern" cachename="aud#session.hostid#gettext#arguments.qry.id#" cachedomain="#session.theuserid#_audios">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachename="aud#session.hostid#gettext#ValueList(arguments.qry.id)#" cachedomain="#session.theuserid#_audios">
 	SELECT aud_id_r tid, aud_description description, aud_keywords keywords
 	FROM #session.hostdbprefix#audios_text
 	WHERE aud_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)

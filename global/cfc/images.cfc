@@ -599,7 +599,7 @@
 <cffunction name="convertimage" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- RFS --->
-	<cfif application.razuna.renderingfarm>
+	<cfif application.razuna.rfs>
 		<cfset arguments.thestruct.convert = true>
 		<cfset arguments.thestruct.assettype = "img">
 		<cfthread intstruct="#arguments.thestruct#">
@@ -1145,7 +1145,7 @@
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qryintern" cachename="img#session.hostid#gettext#arguments.qry.id#" cachedomain="#session.theuserid#_images">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachename="img#session.hostid#gettext#ValueList(arguments.qry.id)#" cachedomain="#session.theuserid#_images">
 	SELECT img_id_r tid, img_description description, img_keywords keywords
 	FROM #session.hostdbprefix#images_text
 	WHERE img_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
