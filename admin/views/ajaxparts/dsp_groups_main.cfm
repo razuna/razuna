@@ -73,7 +73,7 @@
 	// Add DAM group
 	$("##grpdamadd").submit(function(e){
 		// Get values
-		var g = $("##damgrpnew").val();
+		var g = encodeURIComponent($("##damgrpnew").val());
 		// Submit Form
 		loadcontent('grpdamlist', '#myself#c.groups_add&kind=ecp&loaddiv=grpdamlist&newgrp=' + g);
 		return false;
@@ -81,7 +81,7 @@
 	// Add ADM group
 	$("##grpadmadd").submit(function(e){
 		// Get values
-		var g = $("##admgrpnew").val();
+		var g = encodeURIComponent($("##admgrpnew").val());
 		// Submit Form
 		loadcontent('grpadmlist', '#myself#c.groups_add&kind=adm&loaddiv=grpadmlist&newgrp=' + g);
 		return false;

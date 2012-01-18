@@ -46,7 +46,7 @@
 	<script language="JavaScript" type="text/javascript">
 		$("##grpedit").submit(function(e){
 		// Get values
-		var item = $("##grpname").val();
+		var item = encodeURIComponent($("##grpname").val());
 		// Submit Form
 		loadcontent('#thelist#', '#myself#c.groups_update&grp_id=#attributes.grp_id#&kind=#attributes.kind#&loaddiv=#thelist#&grpname=' + item);
 		return false;
