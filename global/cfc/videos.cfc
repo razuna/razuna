@@ -1341,7 +1341,7 @@
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
 				<!--- Download file --->
-				<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#attributes.intstruct.thefinalname#" path="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art#"></cfhttp>
+				<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art#"></cfhttp>
 				<cfthread name="download#art##thevideoid#" />
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon">
