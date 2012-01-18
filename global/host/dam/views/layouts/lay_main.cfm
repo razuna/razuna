@@ -77,6 +77,7 @@
 <script type="text/javascript" src="#dynpath#/global/js/jqtree/plugins/jquery.tree.cookie.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js"></script>
+<!--- <script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js"></script> --->
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
@@ -85,6 +86,7 @@
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css" />
+<!--- <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css" /> --->
 <!--- Favicon --->
 <link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
 </cfif>
