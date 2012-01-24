@@ -892,6 +892,7 @@
 		<set name="attributes.cache" value="" />
 		<!-- XFA -->
 		<xfa name="fproperties" value="c.folder_edit" />
+		<xfa name="fsharing" value="c.folder_sharing" />
 		<xfa name="fcontent" value="c.folder_content" />
 		<xfa name="ffiles" value="c.folder_files" />
 		<xfa name="fimages" value="c.folder_images" />
@@ -1125,6 +1126,18 @@
 		<!-- Show -->
 		<do action="ajax.datatables_json" />
 	</fuseaction>
+	<!-- Load folder sharing -->
+	<fuseaction name="folder_sharing">
+		<!-- Params -->
+		<xfa name="submitfolderform" value="c.folder_sharing_save" overwrite="false" />
+		<set name="attributes.iscol" value="F" overwrite="false" />
+		<!-- CFC: Load record -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" />
+		<!-- CFC: Get all users -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
+		<!-- Show -->
+		<do action="ajax.folder_sharing" />
+	</fuseaction>
 	<!-- Load Folder window -->
 	<fuseaction name="folder_new">
 		<xfa name="submitfolderform" value="c.folder_add" overwrite="false" />
@@ -1158,8 +1171,6 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroups(attributes.folder_id,qry_groups)" returnvariable="qry_folder_groups" />
 		<!-- CFC: Load Groups of this folder for group 0 -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroupszero(attributes.folder_id)" returnvariable="qry_folder_groups_zero" />
-		<!-- CFC: Get all users -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- Get labels for this record -->
@@ -1168,6 +1179,13 @@
 		<do action="languages" />
 		<!-- Show -->
 		<do action="ajax.folder_new" />
+	</fuseaction>
+	<!-- Save sharing options -->
+	<fuseaction name="folder_sharing_save">
+		<set name="attributes.userid" value="#session.theuserid#" />
+		<set name="attributes.coll_folder" value="F" overwrite="false" />
+		<!-- CFC: save sharing options -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="update_sharing(attributes)" />
 	</fuseaction>
 	<!-- Add Folder -->
 	<fuseaction name="folder_add">
@@ -1179,7 +1197,6 @@
 		<do action="assetpath" />
 		<!-- CFC: Add new folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="add(attributes)" />
-		<!-- CFC: Log -->
 	</fuseaction>
 	<!-- Remove Folder -->
 	<fuseaction name="folder_remove">
@@ -3261,6 +3278,8 @@
 	<fuseaction name="groups_detail">
 		<!-- CFC: Get details -->
 		<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetailedit(attributes)" returnvariable="qry_detail" />
+		<!-- CFC: Get all users -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- Show -->
 		<do action="ajax.groups_detail" />
 	</fuseaction>
@@ -3277,6 +3296,27 @@
 		<invoke object="myFusebox.getApplicationData().groups" methodcall="remove(attributes)" />
 		<!-- Show -->
 		<do action="groups_list" />
+	</fuseaction>
+	<!-- Load list of users of the group -->
+	<fuseaction name="groups_list_users">
+		<!-- CFC: Update -->
+		<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getUsersOfGroup('#attributes.grp_id#')" returnvariable="qry_groupusers" />
+		<!-- Show -->
+		<do action="ajax.groups_list_users" />
+	</fuseaction>
+	<!-- Remove user from group -->
+	<fuseaction name="groups_list_users_remove">
+		<!-- CFC: Update -->
+		<invoke object="myFusebox.getApplicationData().groups_users" methodcall="removeuserfromgroup('#attributes.grp_id#','#attributes.user_id#')" />
+		<!-- Show -->
+		<do action="groups_list_users" />
+	</fuseaction>
+	<!-- Add user to group -->
+	<fuseaction name="groups_list_users_add">
+		<!-- CFC: Update -->
+		<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addusertogroup('#attributes.grp_id#','#attributes.user_id#')" />
+		<!-- Show -->
+		<do action="groups_list_users" />
 	</fuseaction>
 
 	<!--  -->
@@ -3470,7 +3510,46 @@
 		<do action="upl_templates" />
 	</fuseaction>
 	
+	<!--  -->
+	<!-- ADMIN: IMPORT TEMPLATES START -->
+	<!--  -->
 	
+	<!-- Templates List -->
+	<fuseaction name="imp_templates">
+		<!-- CFC: get templates -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="gettemplates()" returnvariable="qry_templates" />
+		<!-- Show -->
+		<do action="ajax.imp_templates" />
+	</fuseaction>
+	<!-- Templates Detail or add -->
+	<fuseaction name="imp_template_detail">
+		<!-- Param -->
+		<set name="attributes.meta_default" value="id,type,filename,labels,keywords,description" />
+		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice" />
+		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
+		<!-- Create new ID -->
+		<if condition="attributes.imp_temp_id EQ 0">
+			<true>
+				<set name="attributes.imp_temp_id" value="#replace(createuuid(),'-','','all')#" />
+			</true>
+		</if>
+		<!-- CFC: get details -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="gettemplatedetail(attributes.imp_temp_id)" returnvariable="qry_detail" />
+		<!-- Show -->
+		<do action="ajax.imp_template_detail" />
+	</fuseaction>
+	<!-- Templates Save -->
+	<fuseaction name="imp_template_save">
+		<!-- CFC: save -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="settemplate(attributes)" />
+	</fuseaction>
+	<!-- Templates Remove -->
+	<fuseaction name="imp_templates_remove">
+		<!-- CFC: save -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="removetemplate(attributes)" />
+		<!-- Show -->
+		<do action="imp_templates" />
+	</fuseaction>
 	
 	<!--  -->
 	<!-- ADMIN: UPLOAD TEMPLATES STOP -->
@@ -5346,5 +5425,64 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().rfs" methodcall="pickup(attributes)" />
 	</fuseaction>
+	
+	<!--  -->
+	<!-- RFS: STOP -->
+	<!--  -->
+	
+	<!--  -->
+	<!-- EXPORT METADATA: START -->
+	<!--  -->
+	
+	<!-- Export -->
+	<fuseaction name="meta_export">
+		<!-- Param -->
+		<set name="attributes.what" value="" overwrite="false" />
+		<set name="attributes.file_id" value="" overwrite="false" />
+		<set name="attributes.folder_id" value="" overwrite="false" />
+		<!-- Show -->
+		<do action="ajax.meta_export" />
+	</fuseaction>
+	<!-- Export DO -->
+	<fuseaction name="meta_export_do">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().xmp" methodcall="meta_export(attributes)" />
+	</fuseaction>
+	
+	<!--  -->
+	<!-- EXPORT METADATA: STOP -->
+	<!--  -->
+	
+	<!--  -->
+	<!-- IMPORT METADATA: START -->
+	<!--  -->
+	
+	<!-- Import show window -->
+	<fuseaction name="meta_imp">
+		<!-- Param -->
+		<set name="attributes.tempid" value="#replace(createuuid(),'-','','all')#" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="getTemplates(false)" returnvariable="qry_imptemp" />
+		<!-- Show -->
+		<do action="ajax.meta_imp" />
+	</fuseaction>
+	<!-- Upload file -->
+	<fuseaction name="meta_imp_upload_do">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="upload(attributes)" />
+	</fuseaction>
+	<!-- Import DO -->
+	<fuseaction name="meta_imp_do">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="doimport(attributes)" />
+	</fuseaction>
+	
+	
+	<!--  -->
+	<!-- IMPORT METADATA: STOP -->
+	<!--  -->
+	
 	
 </circuit>

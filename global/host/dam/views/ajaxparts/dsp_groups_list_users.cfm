@@ -24,19 +24,15 @@
 *
 --->
 <cfoutput>
-<table width="600" border="0" cellspacing="0" cellpadding="0" class="grid">
-	<tr>
-		<th colspan="2">#defaultsObj.trans("group_list")#</th>
-	</tr>
-	<cfloop query="qry_groups">
-		<tr>
-			<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#grp_name#',500,1);return false;">#grp_name#</a></td>
-			<td align="center" valign="top" nowrap width="1%">
-				<cfif attributes.kind EQ "ecp" OR attributes.kind EQ "adm" AND grp_id NEQ 1 AND grp_id NEQ 2>
-					<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=groups&id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a>
-				</cfif>
-			</td>
-		</tr>
+<div style="padding-left:5px;padding-top:10px;">
+	<strong>Existing Users</strong> <br />
+	<div style="clear:both;padding-top:5px;"></div>
+	<cfloop query="qry_groupusers">
+		<div>
+			<div style="float:left;">#user_first_name# #user_last_name# (#user_email#)</div>
+			<div style="float:right;"><a href="##" onclick="loadcontent('listusers','#myself#c.groups_list_users_remove&grp_id=#attributes.grp_id#&user_id=#user_id#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></div>
+		</div>
+		<div style="clear:both;padding-top:3px;"></div>
 	</cfloop>
-</table>
+</div>
 </cfoutput>

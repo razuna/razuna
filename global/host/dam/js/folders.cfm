@@ -1,4 +1,21 @@
 <script language="javascript">
+	// when saving sharing only
+	function savesharing(theid,iscol){
+		var url = formaction("form_folder" + theid);
+		var items = formserialize("form_folder" + theid);
+		// Submit Form
+       	$.ajax({
+			type: "POST",
+			url: url,
+		   	data: items,
+		   	success: function(theid,iscol){
+				// Feedback
+				$('#updatetext').html('<cfoutput>#JSStringFormat(defaultsObj.trans("success"))#</cfoutput>');
+				$("#updatetext").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+		   	}
+		});
+	}
+	// when saving folder
 	function foldersubmit(theid,isdetail,iscol){
 		var url = formaction("form_folder" + theid);
 		var items = formserialize("form_folder" + theid);

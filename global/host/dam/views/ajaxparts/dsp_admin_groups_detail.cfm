@@ -24,17 +24,45 @@
 *
 --->
 <cfoutput>
-	<div style="padding:10px;">
+	<div style="padding:10px;min-height:300px;">
+		<!--- Group --->
 		<form name="grpedit" onsubmit="updategrp(#attributes.grp_id#,'#attributes.kind#','#attributes.loaddiv#');return false;">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-		<tr>
-			<th colspan="2">#defaultsObj.trans("groups_edit")#</th>
-		</tr>
-		<tr>
-			<td width="100%"><input type="text" size="40" name="grpname" id="grpname" value="#qry_detail.grp_name#" /></td>
-			<td width="1%" nowrap="true"><input type="Button" name="Button" value="#defaultsObj.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></td>
-		</tr>
+			<tr>
+				<th colspan="2">#defaultsObj.trans("groups_edit")#</th>
+			</tr>
+			<tr>
+				<td width="100%"><input type="text" size="40" name="grpname" id="grpname" value="#qry_detail.grp_name#" tabindex="1" /></td>
+				<td width="1%" nowrap="true"><input type="Button" name="Button" value="#defaultsObj.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></td>
+			</tr>
 		</table>
 		</form>
+		<!--- Add User --->
+		<div style="padding-left:5px;">
+			<strong>Add Users</strong>
+			<br />
+			<div style="clear:both;padding-top:5px;"></div>
+			<select data-placeholder="Choose a User" class="chzn-select" style="width:350px;" tabindex="2" id="selectuser" onchange="userselected();">
+          		<option value=""></option>
+          		<cfoutput query="qry_users" group="user_id">
+          			<option value="#user_id#">#user_first_name# #user_last_name# (#user_email#)</option>
+          		</cfoutput>
+          	</select>
+		</div>
+		<!--- List Users --->
+		<div id="listusers"></div>
 	</div>
+	<!--- JS --->
+	<script type="text/javascript">
+		// Activate Chosen
+		$(".chzn-select").chosen()
+		// Load existing users
+		loadcontent('listusers','#myself#c.groups_list_users&grp_id=#attributes.grp_id#');
+		// When user is selected
+		function userselected(){
+			$("##selectuser").chosen().change( 
+				loadcontent('listusers','#myself#c.groups_list_users_add&grp_id=#attributes.grp_id#&user_id=' + $('##selectuser option:selected').val())
+			);
+		}
+	</script>
 </cfoutput>

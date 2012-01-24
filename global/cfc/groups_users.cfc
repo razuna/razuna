@@ -208,14 +208,12 @@
 <!--- get users of one or more groups by group-name --->
 <!--- This is called while creating a new host --->
 <cffunction name="searchUsersOfGroups" returntype="query" access="remote" hint="get users of one or more groups by group-name">
-	<cfargument name="func_dsn" type="string" required="yes">
 	<cfargument name="list_grp_id" type="string" required="false">
 	<cfargument name="list_grp_name" type="string" required="false">
 	<cfargument name="list_delim" type="string" required="false" default=",">
 	<cfargument name="host_id" type="numeric" required="false">
 	<cfargument name="mod_id" type="numeric" required="false" hint="modules.mod_id">
 	<cfargument name="orderBy" type="string" required="false" default="u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_id" hint="""ORDER BY #yourtext#""">
-	
 	<cfif structkeyexists(session,"hostid") AND arguments.host_id EQ "">
 		<cfset arguments.host_id = session.hostid>
 	</cfif>
@@ -224,25 +222,25 @@
 	</cfif>
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
-	<cfquery datasource="#arguments.func_dsn#" name="localquery">
-		SELECT u.*
-		FROM users u
-		WHERE EXISTS (
-			SELECT ct.ct_g_u_user_id
-			FROM ct_groups_users ct INNER JOIN groups g ON ct.ct_g_u_grp_id = g.grp_id
-			WHERE g.grp_host_id = <cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric"> OR g.grp_host_id IS NULL
-			<cfif StructKeyExists(Arguments, "mod_id")>
-				AND g.grp_mod_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#Arguments.mod_id#">
-			</cfif>
-			<cfif StructKeyExists(Arguments, "list_grp_id")>
-				AND g.grp_id IN (<cfqueryparam value="#Arguments.list_grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true" separator="#Arguments.list_delim#">)
-			</cfif>
-			<cfif StructKeyExists(Arguments, "list_grp_name")>
-				AND lower(g.grp_name) IN (<cfqueryparam value="#lcase(Arguments.list_grp_name)#" cfsqltype="cf_sql_varchar" list="true" separator="#Arguments.list_delim#">)
-			</cfif>
-			AND ct.ct_g_u_user_id = u.user_id
-		)
-		ORDER BY #Arguments.orderBy#
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	SELECT u.*
+	FROM users u
+	WHERE EXISTS (
+		SELECT ct.ct_g_u_user_id
+		FROM ct_groups_users ct INNER JOIN groups g ON ct.ct_g_u_grp_id = g.grp_id
+		WHERE g.grp_host_id = <cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric"> OR g.grp_host_id IS NULL
+		<cfif StructKeyExists(Arguments, "mod_id")>
+			AND g.grp_mod_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#Arguments.mod_id#">
+		</cfif>
+		<cfif StructKeyExists(Arguments, "list_grp_id")>
+			AND g.grp_id IN (<cfqueryparam value="#Arguments.list_grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true" separator="#Arguments.list_delim#">)
+		</cfif>
+		<cfif StructKeyExists(Arguments, "list_grp_name")>
+			AND lower(g.grp_name) IN (<cfqueryparam value="#lcase(Arguments.list_grp_name)#" cfsqltype="cf_sql_varchar" list="true" separator="#Arguments.list_delim#">)
+		</cfif>
+		AND ct.ct_g_u_user_id = u.user_id
+	)
+	ORDER BY #Arguments.orderBy#
 	</cfquery>
 	<cfreturn localquery />
 </cffunction>
@@ -254,7 +252,7 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#application.razuna.datasource#" name="localquery">
-	SELECT u.user_id
+	SELECT u.user_id, u.user_first_name, u.user_last_name, u.user_email
 	FROM users u, ct_users_hosts ct
 	WHERE EXISTS(
 		SELECT ct_groups_users.ct_g_u_user_id
@@ -286,8 +284,32 @@
 	<cfreturn qry />
 </cffunction>
 
+<!--- remove user from group --->
+<cffunction name="removeuserfromgroup" returntype="void">
+	<cfargument name="grp_id" type="string" required="true">
+	<cfargument name="user_id" type="string" required="true">
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM ct_groups_users
+	WHERE ct_g_u_grp_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.grp_id#">
+	AND ct_g_u_user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.user_id#">
+	</cfquery>
+	<cfreturn />
+</cffunction>
 
-
-
+<!--- remove user from group --->
+<cffunction name="addusertogroup" returntype="void">
+	<cfargument name="grp_id" type="string" required="true">
+	<cfargument name="user_id" type="string" required="true">
+	<cfquery datasource="#application.razuna.datasource#">
+	INSERT INTO ct_groups_users
+	(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+	VALUES(
+		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.grp_id#">,
+		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.user_id#">,
+		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+	)
+	</cfquery>
+	<cfreturn />
+</cffunction>
 
 </cfcomponent>

@@ -170,7 +170,7 @@
 				<cfinvokeargument name="destination" value="#arguments.thestruct.pathoneup#/#arguments.thestruct.host_path#">
 			</cfinvoke>
 			<!--- ADD THE SYSTEMADMIN TO THE CROSS TABLE FOR THE HOSTS --->
-			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" func_dsn="#variables.dsn#" list_grp_name="SystemAdmin">
+			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin">
 			<cfoutput query="theadmins">
 				<cftransaction>
 					<cfquery datasource="#variables.dsn#">

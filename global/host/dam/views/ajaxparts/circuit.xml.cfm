@@ -100,6 +100,10 @@
 	<fuseaction name="folder_new">
   		<include template="dsp_folder_new" />
 	</fuseaction>
+	<!-- Folder: Sharing -->
+	<fuseaction name="folder_sharing">
+  		<include template="dsp_folder_sharing" />
+	</fuseaction>
 	<!-- Folder: Remove Folder -->
 	<fuseaction name="remove_folder">
   		<include template="win_remove_folder" />
@@ -453,6 +457,18 @@
 	<fuseaction name="labels_main_comments">
   		<include template="dsp_labels_main_comments" />
 	</fuseaction>
+	<!-- ADMIN: Import Templates -->
+	<fuseaction name="imp_templates">
+  		<include template="dsp_admin_imp_templates" />
+	</fuseaction>
+	<!-- ADMIN: Import Templates Details -->
+	<fuseaction name="imp_template_detail">
+  		<include template="dsp_admin_imp_template_detail" />
+	</fuseaction>
+	<!-- ADMIN: Show user of groups -->
+	<fuseaction name="groups_list_users">
+  		<include template="dsp_groups_list_users" />
+	</fuseaction>
 	
 	<!-- Gears -->
 	<fuseaction name="gears">
@@ -600,6 +616,20 @@
 	<!-- Edit Additional versions -->
 	<fuseaction name="av_edit">
   		<include template="win_additional_versions_edit" />
+	</fuseaction>
+	
+	<!-- Meta: Export -->
+	<fuseaction name="meta_export">
+  		<include template="dsp_meta_export" />
+	</fuseaction>
+	
+	<!-- Meta: Import -->
+	<fuseaction name="meta_imp">
+  		<include template="dsp_meta_import" />
+	</fuseaction>
+	<!-- Meta: Import Upload window -->
+	<fuseaction name="meta_imp_upload">
+  		<include template="dsp_meta_import_upload" />
 	</fuseaction>
 	
 </circuit>

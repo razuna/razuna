@@ -86,25 +86,30 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#variables.dsn#" name="localquery">
-		SELECT grp_id, grp_name, grp_host_id, grp_mod_id, grp_translation_key
-		FROM groups
-		WHERE (
-			grp_host_id = <cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">
-			OR grp_host_id IS NULL
-			)
-		<cfif StructKeyExists(Arguments, "mod_id")>
-			AND grp_mod_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#Arguments.mod_id#">
-		</cfif>
-		<cfif StructKeyExists(Arguments, "mod_short")>
-			AND
-			EXISTS(
-				SELECT mod_id, mod_name, mod_short, mod_host_id
-				FROM modules
-				WHERE modules.mod_short = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.mod_short#">
-				AND modules.mod_id = groups.grp_mod_id
-			)
-		</cfif>
-		ORDER BY <!--- <cfif variables.database EQ "oracle" OR variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull</cfif>(grp_host_id, 0),  --->#arguments.orderBy#
+	SELECT grp_id, grp_name, grp_host_id, grp_mod_id, grp_translation_key,
+		(
+			SELECT count(*)
+			FROM ct_groups_users
+			WHERE ct_g_u_grp_id = groups.grp_id
+		) AS usercount
+	FROM groups
+	WHERE (
+		grp_host_id = <cfqueryparam value="#arguments.host_id#" cfsqltype="cf_sql_numeric">
+		OR grp_host_id IS NULL
+		)
+	<cfif StructKeyExists(Arguments, "mod_id")>
+		AND grp_mod_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#Arguments.mod_id#">
+	</cfif>
+	<cfif StructKeyExists(Arguments, "mod_short")>
+		AND
+		EXISTS(
+			SELECT mod_id, mod_name, mod_short, mod_host_id
+			FROM modules
+			WHERE modules.mod_short = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.mod_short#">
+			AND modules.mod_id = groups.grp_mod_id
+		)
+	</cfif>
+	ORDER BY <!--- <cfif variables.database EQ "oracle" OR variables.database EQ "h2">NVL<cfelseif variables.database EQ "mysql">ifnull</cfif>(grp_host_id, 0),  --->#arguments.orderBy#
 	</cfquery>
 	<cfreturn localquery>
 </cffunction>
