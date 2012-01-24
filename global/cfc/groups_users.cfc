@@ -115,8 +115,6 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- function internal vars --->
 	<cfset var grp_id = 0>
-	<!--- delete existing
-	<cfinvoke method="deleteUser" thestruct="#arguments.thestruct#"> --->
 	<!--- reinsert new permissions --->
 	<cfif Len(arguments.thestruct.grp_id_assigneds)>
 		<cfinvoke method="insertBulk" thestruct="#arguments.thestruct#">
@@ -132,19 +130,6 @@
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM	ct_groups_users
 	WHERE ct_g_u_user_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-	<!--- 
-	<!--- <cfif StructKeyExists(arguments.thestruct, "grp_id")> --->
-		AND ct_g_u_grp_id IN (<cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="CF_SQL_VARCHAR" list="true">)<!--- = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="cf_sql_numeric"> --->
-	<!--- </cfif> --->
-	<!--- If we are coming from the DAM then only --->
-	<cfif structkeyexists(arguments.thestruct,"dam")>
-		AND ct_g_u_grp_id IN
-			(
-               SELECT grp_id FROM groups
-               WHERE groups.grp_mod_id <!--- <cfif variables.database EQ "oracle" OR variables.database EQ "h2"><><cfelseif variables.database EQ "mysql">!=</cfif> ---> = <cfqueryparam value="2" cfsqltype="cf_sql_numeric">
-               )
-	</cfif>
-	 --->
 	<!--- correct host --->
 	AND
 	EXISTS(
@@ -176,31 +161,48 @@
 		<cfthrow message=" 'list_grp_id' and 'list_user_id' can not be emtpy strings!">
 	</cfif>
 	<!--- insert --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO	ct_groups_users
-	(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
-	SELECT groups.grp_id, users.user_id, '#createuuid()#'
-	FROM groups
-	INNER JOIN users ON	NOT EXISTS(
-								SELECT ct_g_u_grp_id, ct_g_u_user_id
-								FROM ct_groups_users
-								WHERE ct_g_u_grp_id = groups.grp_id
-								AND ct_g_u_user_id = users.user_id
-								)
-	WHERE grp_id IN (<cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-	AND(
-		grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
-		OR grp_host_id IS NULL
-	)
-	AND users.user_id IN (<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR" list="true">)
-	AND
-	EXISTS(
-		SELECT ct_u_h_user_id, ct_u_h_host_id
-		FROM ct_users_hosts
-		WHERE ct_u_h_user_id = users.user_id
-		AND ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+	<cfloop list="#arguments.thestruct.grp_id_assigneds#" delimiters="," index="i">
+		<cftransaction>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO	ct_groups_users
+			(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+			VALUES(
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+			)
+			</cfquery>
+		</cftransaction>
+	</cfloop>
+	<!---
+
+	<cftransaction>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO	ct_groups_users
+		(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+		SELECT g.grp_id, u.user_id, '#createuuid()#'
+		FROM groups g
+		INNER JOIN users u ON NOT EXISTS(
+			SELECT ct_g_u_grp_id, ct_g_u_user_id
+			FROM ct_groups_users
+			WHERE ct_g_u_grp_id = g.grp_id
+			AND ct_g_u_user_id = u.user_id
+			)
+		WHERE grp_id IN (<cfqueryparam value="#arguments.thestruct.grp_id_assigneds#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+		AND(
+			grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+			OR grp_host_id IS NULL
 		)
-	</cfquery>
+		AND u.user_id IN (<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+		AND EXISTS(
+			SELECT ct_u_h_user_id, ct_u_h_host_id
+			FROM ct_users_hosts
+			WHERE ct_u_h_user_id = u.user_id
+			AND ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+		)
+		</cfquery>
+	</cftransaction>
+--->
 	<cfreturn />
 </cffunction>
 
