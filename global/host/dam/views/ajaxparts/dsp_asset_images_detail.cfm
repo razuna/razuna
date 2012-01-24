@@ -41,14 +41,18 @@
 		<!--- Tabs --->
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('relatedimages','#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#defaultsObj.trans("asset_information")#</a></li>
-			<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
+			<!--- Desc & Keys --->
 			<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
+			<!--- Custom fields --->
 			<cfif qry_cf.recordcount NEQ 0>
 				<li><a href="##customfields">#defaultsObj.trans("custom_fields_asset")#</a></li>
 			</cfif>
+			<!--- Convert --->
 			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 				<li><a href="##convert">#defaultsObj.trans("convert")#</a></li>
 			</cfif>
+			<!--- Comments --->
+			<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
 			<!--- (qry_detail.detail.img_extension EQ "jpg" OR qry_detail.detail.img_extension EQ "jpeg") AND  --->
 			<cfif qry_detail.detail.link_kind NEQ "url">
 				<li><a href="##imgmeta">Meta Data</a></li>

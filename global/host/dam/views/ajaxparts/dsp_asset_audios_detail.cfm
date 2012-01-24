@@ -41,19 +41,21 @@
 	<div id="tab_detail#file_id#">
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('relatedaudios','#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#defaultsObj.trans("asset_information")#</a></li>
-			<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
 			<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
-			<cfif qry_detail.detail.link_kind NEQ "url">
-				<li><a href="##audmeta">Meta Data</a></li>
-			</cfif>
 			<cfif qry_cf.recordcount NEQ 0>
 				<li><a href="##customfields">#defaultsObj.trans("custom_fields_asset")#</a></li>
 			</cfif>
 			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+				<!--- Convert --->
 				<li><a href="##convert">#defaultsObj.trans("convert")#</a></li>
 				<cfif qry_detail.detail.link_kind NEQ "lan">
 					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
 				</cfif>
+			</cfif>
+			<!--- Comments --->
+			<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
+			<cfif qry_detail.detail.link_kind NEQ "url">
+				<li><a href="##audmeta">Meta Data</a></li>
 			</cfif>
 			<cfif session.folderaccess NEQ "R">
 				<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
