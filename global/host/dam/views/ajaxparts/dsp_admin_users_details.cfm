@@ -45,7 +45,7 @@
 			</tr>
 			<tr>
 				<td>#defaultsObj.trans("email")#*</td>
-				<td><input type="text" name="user_email" id="user_email" size="45" class="text" value="#qry_detail.user_email#" onkeyup="checkemail();"><div id="checkemaildiv"></div><cfif attributes.add EQ "F"> <a href="##" onClick=""><img src="#dynpath#/global/host/dam/images/mail.png" border="0" name="email_2" align="top"></a></cfif><label for="user_email" class="error">Enter your eMail address!</label></td>
+				<td><input type="text" name="user_email" id="user_email" size="45" class="text" value="#qry_detail.user_email#" onkeyup="checkemail();"><cfif attributes.add EQ "F"> <a href="mailto:#qry_detail.user_email#" title="Opens your email app to send email to user"><img src="#dynpath#/global/host/dam/images/mail.png" border="0" name="email_2" align="top"></a></cfif><div id="checkemaildiv"></div><label for="user_email" class="error">Enter your eMail address!</label></td>
 			</tr>
 			<tr>
 				<td width="180">#defaultsObj.trans("user_name")#*</td>
@@ -56,7 +56,7 @@
 			</tr>
 			<tr>
 				<td>#defaultsObj.trans("password")#*</td>
-				<td><input type="password" name="user_pass" id="user_pass" size="25" class="text" style="float:left;"><a href="##" onclick="loadcontent('randompass','#myself#c.randompass');return false;"><img src="#dynpath#/global/host/dam/images/lock_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; padding-left: 3px; vertical-align: middle; float: left;"></a><div id="randompass" style="float:left;padding-left:3px;"></div></td>
+				<td><input type="password" name="user_pass" id="user_pass" size="25" class="text" style="float:left;"><a href="##" onclick="loadpass();return false;" title="Click here to generate a secure password"><img src="#dynpath#/global/host/dam/images/lock_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; padding-left: 3px; vertical-align: middle; float: left;"></a><div id="randompass" style="float:left;padding-left:3px;"></div></td>
 			</tr>
 			<tr>
 				<td nowrap="nowrap">#defaultsObj.trans("password_confirm")#*</td>
@@ -186,6 +186,14 @@
 			$("##updatetext").html("#JSStringFormat(defaultsObj.trans("success"))#");
 		</cfif>
 		loadcontent('admin_users', '#myself#c.users');
+	}
+	// Load Pass
+	function loadpass(){
+		$("##randompass").load('#myself#c.randompass', function() {
+	  		var thepass = $('##randompass').html();
+	  		$('##user_pass').val(thepass);
+	  		$('##user_pass_confirm').val(thepass);
+		})
 	}
 </script>
 
