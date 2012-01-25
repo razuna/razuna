@@ -114,6 +114,9 @@
 	font-size:13px;
 	color;grey;
 }
+.chzn-container .chzn-drop .chzn-results {
+	height: 150px;
+}
 </style>
 </head>
 <body>

@@ -288,14 +288,28 @@
 						</tr>
 					</cfloop>
 					<!--- Labels --->
-					<tr>
-						<td>#defaultsObj.trans("labels")#</td>
-						<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_col" value="#qry_labels#"></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td colspan="5" style="padding-bottom:10px;"><em>(<cfif settingsobj.get_label_set().set2_labels_users EQ "f">You can only choose from available labels. Simply start typing to select from available labels.<cfelse>Simple start typing to choose from available labels or add a new one by entering above and hit ",".</cfif>)</em></td>
-					</tr>
+					<cfif settingsobj.get_label_set().set2_labels_users EQ "f">
+						<tr>
+							<td>#defaultsObj.trans("labels")#</td>
+							<td width="100%" nowrap="true" colspan="5">
+								<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_col" onchange="razaddlabels('tags_col','#attributes.col_id#','collection');" multiple="multiple">
+									<option value=""></option>
+									<cfloop query="attributes.thelabelsqry">
+										<option value="#label_text#"<cfif ListFindNoCase(qry_labels,'#label_text#') NEQ 0> selected="selected"</cfif>>#label_text#</option>
+									</cfloop>
+								</select>
+							</td>
+						</tr>
+					<cfelse>
+						<tr>
+							<td>#defaultsObj.trans("labels")#</td>
+							<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_col" value="#qry_labels#"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",".)</em></td>
+						</tr>
+					</cfif>
 					<tr>
 						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
 					</tr>
@@ -464,11 +478,13 @@
 			});
 			return false;
 		}
-		// TAG IT
-		var raztags = #attributes.thelabels#;
-		// Global Tagit function
-		// div, fileid, type, tags
-		raztagit('tags_col','#attributes.col_id#','collection',raztags,'#settingsobj.get_label_set().set2_labels_users#');
+		<cfif settingsobj.get_label_set().set2_labels_users EQ "T">
+			// TAG IT
+			var raztags = #attributes.thelabels#;
+			// Global Tagit function
+			// div, fileid, type, tags
+			raztagit('tags_col','#attributes.col_id#','collection',raztags,'#settingsobj.get_label_set().set2_labels_users#');
+		</cfif>
 		// Activate Chosen
 		$(".chzn-select").chosen()
 	</script>

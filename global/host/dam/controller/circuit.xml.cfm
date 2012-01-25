@@ -130,7 +130,8 @@
 		<!-- Get languages -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getalllabels()" returnvariable="qry_labels" />
 		<!-- Set as attributes also -->
-		<set name="attributes.thelabels" value="#qry_labels#" />
+		<set name="attributes.thelabels" value="#qry_labels.l#" />
+		<set name="attributes.thelabelsqry" value="#qry_labels.qryl#" />
 	</fuseaction>
 	
 	<!--
@@ -5359,6 +5360,11 @@
 	<fuseaction name="label_remove">
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="label_remove(attributes)" />
+	</fuseaction>
+	<!-- Update label for all -->
+	<fuseaction name="label_add_all">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="label_add_all(attributes)" />
 	</fuseaction>
 	<!-- Label MAIN (Load Label tabs) -->
 	<fuseaction name="labels_main">

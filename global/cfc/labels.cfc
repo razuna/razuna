@@ -85,6 +85,50 @@
 		<cfreturn />
 	</cffunction>
 	
+	<!--- Add labels from users who can only select --->
+	<cffunction name="label_add_all" output="true" access="public">
+		<cfargument name="thestruct" type="struct">
+		<!--- Remove all labels for this record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM ct_labels
+		WHERE ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
+		AND ct_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />
+		</cfquery>
+		<!--- Loop over fields --->
+		<cfif arguments.thestruct.labels NEQ "null">
+			<cfloop list="#arguments.thestruct.labels#" delimiters="," index="i">
+				<!--- Select from labels to get id --->
+				<cfquery datasource="#application.razuna.datasource#" name="qryid">
+				SELECT label_id
+				FROM #session.hostdbprefix#labels
+				WHERE lower(label_text) = <cfqueryparam value="#lcase(i)#" cfsqltype="cf_sql_varchar" />
+				AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+				</cfquery>
+				<!--- Insert into cross table --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO ct_labels
+				(
+					ct_label_id,
+					ct_id_r,
+					ct_type,
+					rec_uuid
+				)
+				VALUES
+				(
+					<cfqueryparam value="#qryid.label_id#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfloop>
+		</cfif>
+		<!--- Flush --->
+		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+		
 	<!--- Insert Label --->
 	<cffunction name="label_add" output="false" access="public">
 		<cfargument name="thestruct" type="struct">
@@ -139,6 +183,9 @@
 	
 	<!--- Get all labels --->
 	<cffunction name="getalllabels" output="false" access="public">
+		<!--- Params --->
+		<cfset var st = structnew()>
+		<cfset var l = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="lab#session.hostid#" cachedomain="#session.hostid#_labels">
 		SELECT label_text
@@ -146,8 +193,6 @@
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		ORDER BY label_text
 		</cfquery>
-		<!--- Param --->
-		<cfset var l = "">
 		<!--- Put into list --->
 		<cfloop query="qry">
 			<cfset l = l & "," & "'#label_text#'">
@@ -155,17 +200,20 @@
 		<cfif l NEQ "">
 			<cfset l = RemoveChars(l, 1, 1)>
 		</cfif>
-		<cfset l = "[#l#]">
+		<!--- Put result into struct --->
+		<cfset st.l = "[#l#]">
+		<cfset st.qryl = qry>
 		<!--- Return --->
-		<cfreturn l />
+		<cfreturn st />
 	</cffunction>
 	
 	<!--- Get label of record --->
 	<cffunction name="getlabels" output="false" access="public">
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
+		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
 		<!--- Query ct table --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachename="ctlab#session.hostid##arguments.theid#" cachedomain="#session.hostid#_labels">
+		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachename="ctlab#session.hostid##arguments.theid##arguments.thetype#" cachedomain="#session.hostid#_labels">
 		SELECT ct_label_id
 		FROM ct_labels
 		WHERE ct_id_r = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
@@ -173,7 +221,7 @@
 		</cfquery>
 		<!--- Query --->
 		<cfif qryct.recordcount NEQ 0>
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="lab#session.hostid##qryct.ct_label_id#" cachedomain="#session.hostid#_labels">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="lab#session.hostid##qryct.ct_label_id##arguments.theid##arguments.thetype#" cachedomain="#session.hostid#_labels">
 			SELECT label_text
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
@@ -417,7 +465,7 @@
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_folders#session.hostid##arguments.label_id##arguments.label_kind#" cachedomain="#session.hostid#_labels">
-			SELECT f.folder_id, f.folder_name, f.folder_id_r,
+			SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection,
 				<!--- Permission follow but not for sysadmin and admin --->
 				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
 					CASE

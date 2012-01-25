@@ -340,7 +340,7 @@ function raztagit(thediv,fileid,thetype,raztags,perm){
 	tags.tagit({
  		onTagAdded: function(evt, tag) {
 			var v = tags.tagit('tagLabel', tag);
-			loadcontent('div_forall','index.cfm?fa=c.label_update&id=' + fileid + '&type=' + thetype + '&thelab=' + escape(v));
+			loadcontent('div_forall','index.cfm?fa=c.label_update&id=' + fileid + '&type=' + thetype + '&thelab=' + encodeURIComponent(v));
 			if (perm == 't'){
 				$.sticky('<span style="color:green;font-Weight:bold;">The label has been saved!</span>');
 			}
@@ -350,7 +350,7 @@ function raztagit(thediv,fileid,thetype,raztags,perm){
 	tags.tagit({
 		onTagRemoved: function(evt, tag) {
         	var v = tags.tagit('tagLabel', tag);
-        	loadcontent('div_forall','index.cfm?fa=c.label_remove&id=' + fileid + '&type=' + thetype + '&thelab=' + escape(v));
+        	loadcontent('div_forall','index.cfm?fa=c.label_remove&id=' + fileid + '&type=' + thetype + '&thelab=' + encodeURIComponent(v));
 			$.sticky('The label has been removed!');
         }
 	});
@@ -368,3 +368,10 @@ $(document).ready(function()
         	$("#bodyoverlay").remove();
        	});
 	});
+// Adding labels for users who can not edit
+function razaddlabels(thediv,fileid,thetype){
+	$('#' + thediv).chosen().change(
+		loadcontent('div_forall','index.cfm?fa=c.label_add_all&fileid=' + fileid + '&thetype=' + thetype + '&labels=' + encodeURI($('#' + thediv).val()))
+	);
+	$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
+};

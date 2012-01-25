@@ -69,14 +69,28 @@
 				</cfloop>
 				<!--- Labels --->
 				<cfif attributes.isdetail EQ "T">
-					<tr>
-						<td>#defaultsObj.trans("labels")#</td>
-						<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_folder" value="#qry_labels#"></td>
-					</tr>
-					<tr>
-						<td></td>
-						<td colspan="5" style="padding-bottom:10px;"><em>(<cfif settingsobj.get_label_set().set2_labels_users EQ "f">You can only choose from available labels. Simply start typing to select from available labels.<cfelse>Simple start typing to choose from available labels or add a new one by entering above and hit ",".</cfif>)</em></td>
-					</tr>
+					<cfif settingsobj.get_label_set().set2_labels_users EQ "f">
+						<tr>
+							<td>#defaultsObj.trans("labels")#</td>
+							<td width="100%" nowrap="true" colspan="5">
+								<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_folder" onchange="razaddlabels('tags_folder','#attributes.folder_id#','folder');" multiple="multiple">
+									<option value=""></option>
+									<cfloop query="attributes.thelabelsqry">
+										<option value="#label_text#"<cfif ListFindNoCase(qry_labels,'#label_text#') NEQ 0> selected="selected"</cfif>>#label_text#</option>
+									</cfloop>
+								</select>
+							</td>
+						</tr>
+					<cfelse>
+						<tr>
+							<td>#defaultsObj.trans("labels")#</td>
+							<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_folder" value="#qry_labels#"></td>
+						</tr>
+						<tr>
+							<td></td>
+							<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",")</em></td>
+						</tr>
+					</cfif>
 				</cfif>
 				<tr>
 					<td colspan="2" class="list"></td>
@@ -189,12 +203,15 @@
 			loadcontent('updatetext','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
 			$('##reset_dl').html('Reset all individual download setting successfully');
 		}
-		<cfif attributes.isdetail EQ "T">
+		<cfif attributes.isdetail EQ "T" AND settingsobj.get_label_set().set2_labels_users EQ "T">
 			// TAG IT
 			var raztags = #attributes.thelabels#;
 			// Global Tagit function
 			// div, fileid, type, tags
 			raztagit('tags_folder','#attributes.folder_id#','folder',raztags,'#settingsobj.get_label_set().set2_labels_users#');
+		<cfelse>
+			// Activate Chosen
+			$(".chzn-select").chosen();
 		</cfif>
 	</script>
 </cfoutput>
