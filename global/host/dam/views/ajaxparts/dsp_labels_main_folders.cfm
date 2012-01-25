@@ -35,7 +35,12 @@
 					<cfloop query="qry_labels_folders">
 						<div class="assetbox" style="text-align:center;">
 							<cfif perm EQ "unlocked">
-								<a href="##" onclick="$.tree.focused().open_branch('###folder_id_r#');$.tree.focused().select_branch('###folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
+								<cfif folder_is_collection EQ "T">
+									<cfset thef = "c.collections&folder_id=col-#folder_id#">
+								<cfelse>
+									<cfset thef = "c.folder&folder_id=#folder_id#">
+								</cfif>
+								<a href="##" onclick="$.tree.focused().open_branch('###folder_id_r#');$.tree.focused().select_branch('###folder_id#');loadcontent('rightside','index.cfm?fa=#thef#');">
 									<div class="theimg">
 										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 									</div>
