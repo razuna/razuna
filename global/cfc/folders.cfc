@@ -1314,14 +1314,41 @@
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
+<!--- SAVE SHARING PROPERTIES --->
+<cffunction name="update_sharing" output="true" returntype="string">
+	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam name="arguments.thestruct.folder_shared" default="F">
+	<cfparam name="arguments.thestruct.folder_name_shared" default="#arguments.thestruct.theid#">
+	<cfparam name="arguments.thestruct.share_order_user" default="0">
+	<!--- Update Folders DB --->
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE #session.hostdbprefix#folders
+	SET
+	folder_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+	folder_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+	folder_shared = <cfqueryparam value="#arguments.thestruct.folder_shared#" cfsqltype="cf_sql_varchar">,
+	folder_name_shared = <cfqueryparam value="#arguments.thestruct.folder_name_shared#" cfsqltype="cf_sql_varchar">,
+	share_dl_org = <cfqueryparam value="#arguments.thestruct.share_dl_org#" cfsqltype="cf_sql_varchar">,
+	share_upload = <cfqueryparam value="#arguments.thestruct.share_upload#" cfsqltype="cf_sql_varchar">,
+	share_comments = <cfqueryparam value="#arguments.thestruct.share_comments#" cfsqltype="cf_sql_varchar">,
+	share_order = <cfqueryparam value="#arguments.thestruct.share_order#" cfsqltype="cf_sql_varchar">,
+	share_order_user = <cfqueryparam value="#arguments.thestruct.share_order_user#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE folder_id = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Flush Cache --->
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_folders" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- ------------------------------------------------------------------------------------- --->
 <!--- SAVE FOLDER PROPERTIES --->
 <cffunction name="update" output="true" returntype="string">
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfset arguments.thestruct.grpno = "T">
-	<cfparam name="arguments.thestruct.folder_shared" default="F">
-	<cfparam name="arguments.thestruct.folder_name_shared" default="#arguments.thestruct.folder_id#">
-	<cfparam name="arguments.thestruct.share_order_user" default="0">
 	<!--- Check for the same name --->
 	<cfquery datasource="#variables.dsn#" name="samefolder">
 	SELECT folder_name
@@ -1343,20 +1370,7 @@
 		<!--- Update Folders DB --->
 		<cfquery datasource="#variables.dsn#">
 		UPDATE #session.hostdbprefix#folders
-		SET
-		folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="cf_sql_varchar">,
-		folder_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-		folder_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-		folder_shared = <cfqueryparam value="#arguments.thestruct.folder_shared#" cfsqltype="cf_sql_varchar">,
-		folder_name_shared = <cfqueryparam value="#arguments.thestruct.folder_name_shared#" cfsqltype="cf_sql_varchar">
-		<cfif structkeyexists(arguments.thestruct,"share_dl_org")>
-			,
-			share_dl_org = <cfqueryparam value="#arguments.thestruct.share_dl_org#" cfsqltype="cf_sql_varchar">,
-			share_upload = <cfqueryparam value="#arguments.thestruct.share_upload#" cfsqltype="cf_sql_varchar">,
-			share_comments = <cfqueryparam value="#arguments.thestruct.share_comments#" cfsqltype="cf_sql_varchar">,
-			share_order = <cfqueryparam value="#arguments.thestruct.share_order#" cfsqltype="cf_sql_varchar">,
-			share_order_user = <cfqueryparam value="#arguments.thestruct.share_order_user#" cfsqltype="CF_SQL_VARCHAR">
-		</cfif>
+		SET folder_name = <cfqueryparam value="#arguments.thestruct.folder_name#" cfsqltype="cf_sql_varchar">
 		WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -1462,19 +1476,18 @@
 		</cfif>
 		<!--- Log --->
 		<cfset log = #log_folders(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.folder_name# (ID: #arguments.thestruct.folder_id#)')#>
-		<!--- Set the Action2 var --->
-		<cfset this.action2="done">
-		<cfreturn this.action2>
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_folders" />
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_folders_desc" />
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_folders_groups" />
+		<!--- Set the Action2 var --->
+		<cfset this.action2="done">
+		<cfreturn this.action2>
 	<!--- Same Folder exists --->
 	<cfelse>
 		<cfset this.action2="exists">
 		<cfreturn this.action2>
 	</cfif>
-
 </cffunction>
 
 <!--- Change folder permissions inherited --->

@@ -908,7 +908,7 @@
 	<cffunction name="gettext" output="false">
 		<cfargument name="qry" type="query">
 		<!--- Query --->
-		<cfquery datasource="#variables.dsn#" name="qryintern" cachename="doc#session.hostid#gettext#arguments.qry.id#" cachedomain="#session.theuserid#_files">
+		<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachename="doc#session.hostid#gettext#ValueList(arguments.qry.id)#" cachedomain="#session.theuserid#_files">
 		SELECT file_id_r tid, file_desc description, file_keywords keywords
 		FROM #session.hostdbprefix#files_desc
 		WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
@@ -932,6 +932,20 @@
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry>
+	</cffunction>
+	
+	<!--- GET PDF XMP --->
+	<cffunction name="getpdfxmp" output="false">
+		<cfargument name="thestruct" type="struct">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="pdfxmp" cachename="getpdfxmp#session.hostid#xmp#arguments.thestruct.file_id#" cachedomain="#session.theuserid#_files">
+		SELECT author, rights, authorsposition, captionwriter, webstatement, rightsmarked
+		FROM #session.hostdbprefix#files_xmp
+		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn pdfxmp>
 	</cffunction>
 	
 </cfcomponent>

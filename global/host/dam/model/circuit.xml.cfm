@@ -164,6 +164,11 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
+		<!-- RFS -->
+		<instantiate class="import" object="myFusebox.getApplicationData().import" overwrite="true">
+			<argument name="dsn" value="#application.razuna.datasource#" />
+			<argument name="database" value="#application.razuna.thedatabase#" />
+		</instantiate>
 	</fuseaction>
 	
 </circuit>

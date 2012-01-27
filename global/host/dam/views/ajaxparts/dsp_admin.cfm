@@ -32,6 +32,7 @@
 			<li><a href="##admin_labels" onclick="loadcontent('admin_labels','#myself#c.admin_labels');">#defaultsObj.trans("labels")#</a></li>
 			<li><a href="##admin_schedules" onclick="loadcontent('admin_schedules','#myself#c.scheduler_list');">#defaultsObj.trans("scheduled_uploads")#</a></li>
 			<li><a href="##admin_upl_templates" onclick="loadcontent('admin_upl_templates','#myself#c.upl_templates');">#defaultsObj.trans("admin_upload_templates")#</a></li>
+			<li><a href="##admin_imp_templates" onclick="loadcontent('admin_imp_templates','#myself#c.imp_templates');">#defaultsObj.trans("import_templates")#</a></li>
 			<li><a href="##admin_logs_all" onclick="loadcontent('log_show','#myself#c.log_assets');">#defaultsObj.trans("log_search_header")#</a></li>
 			<!--- <li><a href="##admin_logs_users" onclick="loadcontent('log_users_show','#myself#c.log_users');">#defaultsObj.trans("log_users_header")#</a></li> --->
 			<li><a href="##admin_settings" onclick="loadcontent('admin_settings','#myself#c.isp_settings');">#defaultsObj.trans("settings")#</a></li>
@@ -50,6 +51,8 @@
 		<div id="admin_schedules">#defaultsObj.loadinggif("#dynpath#")#</div>
 		<!--- Upload Templates --->
 		<div id="admin_upl_templates">#defaultsObj.loadinggif("#dynpath#")#</div>
+		<!--- Import Templates --->
+		<div id="admin_imp_templates">#defaultsObj.loadinggif("#dynpath#")#</div>
 		<!--- Logs Searches --->
 		<div id="admin_logs_all">
 			<cfif session.hosttype EQ "F">

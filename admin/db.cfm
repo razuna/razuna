@@ -1,3 +1,7 @@
+<cfquery datasource="razuna_default">
+ALTER table razuna_config add conf_aws_location varchar(100)
+</cfquery>
+<cfabort>
 <cfoutput>
 
 

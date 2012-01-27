@@ -93,7 +93,7 @@
 <!--- Get fields for the detail view of assets --->
 <cffunction name="getfields" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#variables.dsn#" name="qry" cachename="f_getfields_#session.hostid##arguments.thestruct.cf_show##session.thelangid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_customfields">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_getfields_#session.hostid##arguments.thestruct.cf_show##session.thelangid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_customfields">
 		SELECT c.cf_id, c.cf_type, c.cf_order, ct.cf_text, cv.cf_value
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
@@ -126,10 +126,26 @@
 	<cfreturn qry>
 </cffunction>
 
+<!--- Get text and values --->
+<cffunction name="gettextvalues" output="false" access="public">
+	<cfargument name="thestruct" type="struct">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT cv.cf_value, ct.cf_text
+		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c, #session.hostdbprefix#custom_fields_values cv
+		WHERE cv.asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+		AND ct.cf_id_r = cv.cf_id_r
+		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
+		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		GROUP BY cv.cf_value, ct.cf_text
+		ORDER BY c.cf_order
+		</cfquery>
+	<cfreturn qry>
+</cffunction>
+
 <!--- Get detail view --->
 <cffunction name="getdetail" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#variables.dsn#" name="qry" cachename="f_getdetail_#session.hostid##arguments.thestruct.cf_id#" cachedomain="#session.theuserid#_customfields">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_getdetail_#session.hostid##arguments.thestruct.cf_id#" cachedomain="#session.theuserid#_customfields">
 		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, ct.cf_text, ct.lang_id_r
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c
 		WHERE c.cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.cf_id#">

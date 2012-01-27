@@ -55,7 +55,7 @@
 	<!--- JS --->
 	<script type="text/javascript">
 		// Activate Chosen
-		$(".chzn-select").chosen()
+		$(".chzn-select").chosen();
 		// Load existing users
 		loadcontent('listusers','#myself#c.groups_list_users&grp_id=#attributes.grp_id#');
 		// When user is selected
