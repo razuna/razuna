@@ -134,6 +134,7 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- ID --->
 		<cfset var theid = replace(createuuid(),"-","","all")>
+		<cfset var thelabel = replace(arguments.thestruct.thelab,"'","","all")>
 		<!--- Insert into Label DB --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#labels
@@ -146,7 +147,7 @@
 		)
 		VALUES(
 			<cfqueryparam value="#theid#" cfsqltype="cf_sql_varchar" />,
-			<cfqueryparam value="#arguments.thestruct.thelab#" cfsqltype="cf_sql_varchar" />,
+			<cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />,
 			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" />,
 			<cfqueryparam value="#session.theuserid#" cfsqltype="cf_sql_varchar" />,
 			<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
@@ -211,7 +212,6 @@
 	<cffunction name="getlabels" output="false" access="public">
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
 		<!--- Query ct table --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachename="ctlab#session.hostid##arguments.theid##arguments.thetype#" cachedomain="#session.hostid#_labels">
 		SELECT ct_label_id
@@ -589,6 +589,8 @@
 	<!--- ADMIN: Update/Add label --->
 	<cffunction name="admin_update" output="false" access="public">
 		<cfargument name="thestruct" type="struct">
+		<!--- Make sure there is no ' in the label text --->
+		<cfset var thelabel = replace(arguments.thestruct.label_text,"'","","all")>
 		<!--- If label_id EQ 0 --->
 		<cfif arguments.thestruct.label_id EQ 0>
 			<cfset arguments.thestruct.label_id = replace(createuuid(),"-","","all")>
@@ -604,7 +606,7 @@
 			)
 			VALUES(
 				<cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />,
-				<cfqueryparam value="#arguments.thestruct.label_text#" cfsqltype="cf_sql_varchar" />,
+				<cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" />,
 				<cfqueryparam value="#session.theuserid#" cfsqltype="cf_sql_varchar" />,
 				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
@@ -614,7 +616,7 @@
 		<cfelse>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#labels
-			SET label_text = <cfqueryparam value="#arguments.thestruct.label_text#" cfsqltype="cf_sql_varchar" />
+			SET label_text = <cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />
 			WHERE label_id = <cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			</cfquery>
