@@ -1637,7 +1637,7 @@
 			asset_dl		varchar(1) DEFAULT '0',
 			asset_order		varchar(1) DEFAULT '0',
 			asset_selected	varchar(1) DEFAULT '0',
-			rec_uuid			VARCHAR(100),
+			rec_uuid		VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
@@ -1699,7 +1699,7 @@
 		  widget_style 			varchar(2),
 		  widget_dl_org 		varchar(2),
 		  widget_uploading 		varchar(2),
-		  host_id 				int,
+		  host_id 				bigint,
 		  PRIMARY KEY (widget_id)
 		)
 		</cfquery>
@@ -1746,6 +1746,33 @@
 		)
 		</cfquery>
 		
+		<!--- Import Templates --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#import_templates (
+		imp_temp_id 		varchar(100),
+  		imp_date_create	 	timestamp,
+  		imp_date_update		timestamp,
+  		imp_who				varchar(100),
+  		imp_active 			varchar(1) DEFAULT '0',
+  		host_id				bigint,
+  		imp_name			varchar(200),
+  		imp_description 	varchar(2000),
+  		PRIMARY KEY (imp_temp_id)
+		)
+		</cfquery>
+		
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#import_templates_val (
+  		imp_temp_id_r		varchar(100),
+  		rec_uuid			varchar(100),
+  		imp_field			varchar(200),
+  		imp_map				varchar(200),
+  		host_id				bigint,
+  		imp_key				bigint,
+  		PRIMARY KEY (rec_uuid)
+		)
+		</cfquery>
+
 	</cffunction>
 	
 	<!--- Create Indexes --->

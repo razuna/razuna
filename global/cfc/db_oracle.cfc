@@ -2064,6 +2064,34 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		)
 		</cfquery>
 		
+		<!--- Import Templates --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#import_templates (
+		imp_temp_id 		varchar2(100 char),
+  		imp_date_create	 	timestamp,
+  		imp_date_update		timestamp,
+  		imp_who				varchar2(100 char),
+  		imp_active 			varchar2(1 char) DEFAULT '0',
+  		host_id				number,
+  		imp_name			varchar2(200 char),
+  		imp_description 	varchar2(2000 char),
+  		PRIMARY KEY (imp_temp_id)
+		)
+		</cfquery>
+		
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#import_templates_val (
+  		imp_temp_id_r		varchar2(100 char),
+  		rec_uuid			varchar2(100 char),
+  		imp_field			varchar2(200 char),
+  		imp_map				varchar2(200 char),
+  		host_id				number,
+  		imp_key				number,
+  		PRIMARY KEY (rec_uuid)
+		)
+		</cfquery>
+
+		
 	</cffunction>
 	
 	

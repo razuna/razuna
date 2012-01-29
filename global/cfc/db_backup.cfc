@@ -1099,8 +1099,7 @@
 		  	upl_active			VARCHAR(1) DEFAULT '0',
 		  	host_id				BIGINT DEFAULT NULL,
 		  	upl_name			varchar(200) DEFAULT NULL,
-		  	upl_description		varchar(2000) DEFAULT NULL,
-		  	PRIMARY KEY (upl_temp_id)
+		  	upl_description		varchar(2000) DEFAULT NULL
 		)
 		</cfquery>
 		
@@ -1132,8 +1131,7 @@
 			widget_style 			varchar(2),
 			widget_dl_org 			varchar(2),
 			widget_uploading 		varchar(2),
-			host_id 				BIGINT,
-			PRIMARY KEY (widget_id)
+			host_id 				BIGINT
 		)
 		</cfquery>
 		
@@ -1147,8 +1145,7 @@
 		  av_link_title			varchar(200) DEFAULT NULL,
 		  av_link_url 			varchar(500) DEFAULT NULL,
 		  host_id 				BIGINT DEFAULT NULL,
-		  av_link 				varchar(2) DEFAULT '1',
-		  PRIMARY KEY (av_id)
+		  av_link 				varchar(2) DEFAULT '1'
 		)
 		</cfquery>
 		
@@ -1162,8 +1159,7 @@
 		  captionwriter 		varchar(300),
 		  webstatement 			varchar(500),
 		  rightsmarked 			varchar(10),
-		  host_id 				BIGINT,
-		  PRIMARY KEY (asset_id_r)
+		  host_id 				BIGINT
 		)
 		</cfquery>
 		
@@ -1174,8 +1170,32 @@
   		label_text 		varchar(200),
   		label_date		timestamp,
   		user_id			varchar(100),
-  		host_id			bigint,
-  		PRIMARY KEY (label_id)
+  		host_id			bigint
+		)
+		</cfquery>
+		
+		<!--- Import Templates --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.tschema#.#arguments.thestruct.host_db_prefix#import_templates (
+		imp_temp_id 		varchar(100),
+  		imp_date_create	 	timestamp,
+  		imp_date_update		timestamp,
+  		imp_who				varchar(100),
+  		imp_active 			varchar(1) DEFAULT '0',
+  		host_id				bigint,
+  		imp_name			varchar(200),
+  		imp_description 	varchar(2000)
+		)
+		</cfquery>
+		
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.tschema#.#arguments.thestruct.host_db_prefix#import_templates_val (
+  		imp_temp_id_r		varchar(100),
+  		rec_uuid			varchar(100),
+  		imp_field			varchar(200),
+  		imp_map				varchar(200),
+  		host_id				bigint,
+  		imp_key				bigint
 		)
 		</cfquery>
 

@@ -2232,6 +2232,36 @@
 		#this.tableoptions#
 		</cfquery>
 		
+		<!--- Import Templates --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#import_templates (
+		imp_temp_id 		varchar(100),
+  		imp_date_create	 	timestamp,
+  		imp_date_update		timestamp,
+  		imp_who				varchar(100),
+  		imp_active 			varchar(1) DEFAULT '0',
+  		host_id				bigint,
+  		imp_name			varchar(200),
+  		imp_description 	varchar(2000),
+  		PRIMARY KEY (imp_temp_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+		
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#import_templates_val (
+  		imp_temp_id_r		varchar(100),
+  		rec_uuid			varchar(100),
+  		imp_field			varchar(200),
+  		imp_map				varchar(200),
+  		host_id				bigint,
+  		imp_key				bigint,
+  		PRIMARY KEY (rec_uuid)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		
 	</cffunction>
 	
 	<!--- Clear database completely --->

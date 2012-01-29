@@ -3525,7 +3525,7 @@
 	<!-- Templates Detail or add -->
 	<fuseaction name="imp_template_detail">
 		<!-- Param -->
-		<set name="attributes.meta_default" value="id,type,filename,labels,keywords,description" />
+		<set name="attributes.meta_default" value="id,filename,labels,keywords,description,type" />
 		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice" />
 		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
 		<!-- Create new ID -->

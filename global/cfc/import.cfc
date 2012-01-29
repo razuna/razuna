@@ -216,13 +216,16 @@
 		<cfflush>
 		<!--- Do the import --->
 		<cfinvoke method="doimporttables" thestruct="#arguments.thestruct#" />
+		<!--- Feedback --->
+		<cfoutput>Cleaning up...<br><br></cfoutput>
+		<cfflush>
 		<!--- Remove the file --->
-		
+		<cffile action="delete" file="#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#" />
 		<!--- Feedback --->
 		<cfoutput><strong style="color:green;">Import successfully done!</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Return --->
-		<cfreturn  />
+		<cfreturn />
 	</cffunction>
 	
 	<!---Import: Loop over tables ---------------------------------------------------------------------->
@@ -250,10 +253,7 @@
 		<!--- Do docs --->
 		<cfinvoke method="doimportdocs" thestruct="#arguments.thestruct#" />
 		<!--- Custom Fields --->
-		
-		<!--- Labels --->
-		
-
+		<!--- (Due to time constraints we do import of custom fields in 1.5.1) --->
 		
 		<!--- Flush tables --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
@@ -269,46 +269,46 @@
 	<cffunction name="doimportimages" output="false">
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
-		<cfset var theid = "img_id" />
-		<cfset var thisid = "id" />
-		<cfset var thefilename = "filename" />
-		<cfset var thekeywords = "keywords" />
-		<cfset var thedescription = "description" />
+		<cfset var c_theid = "img_id" />
+		<cfset var c_thisid = "id" />
+		<cfset var c_thefilename = "filename" />
+		<cfset var c_thekeywords = "keywords" />
+		<cfset var c_thedescription = "description" />
+		<cfset var c_thelabels = "labels" />
 		<!--- Params XMP --->
-		<cfset var theiptcsubjectcode = "iptcsubjectcode" />
-		<cfset var thecreator = "creator" />
-		<cfset var thetitle = "title" />
-		<cfset var theauthorstitle = "authorstitle" />
-		<cfset var thedescwriter = "descwriter" />
-		<cfset var theiptcaddress = "iptcaddress" />
-		<cfset var thecategory = "category" />
-		<cfset var thecategorysub = "categorysub" />
-		<cfset var theurgency = "urgency" />
-		<cfset var thedescription = "description" />
-		<cfset var theiptccity = "iptccity" />
-		<cfset var theiptccountry = "iptccountry" />
-		<cfset var theiptclocation = "iptclocation" />
-		<cfset var theiptczip = "iptczip" />
-		<cfset var theiptcemail = "iptcemail" />
-		<cfset var theiptcwebsite = "iptcwebsite" />
-		<cfset var theiptcphone = "iptcphone" />
-		<cfset var theiptcintelgenre = "iptcintelgenre" />
-		<cfset var theiptcinstructions = "iptcinstructions" />
-		<cfset var theiptcsource = "iptcsource" />
-		<cfset var theiptcusageterms = "iptcusageterms" />
-		<cfset var thecopystatus = "copystatus" />
-		<cfset var theiptcjobidentifier = "iptcjobidentifier" />
-		<cfset var thecopyurl = "copyurl" />
-		<cfset var theiptcheadline = "iptcheadline" />
-		<cfset var theiptcdatecreated = "iptcdatecreated" />
-		<cfset var theiptcimagecity = "iptcimagecity" />
-		<cfset var theiptcimagestate = "iptcimagestate" />
-		<cfset var theiptcimagecountry = "iptcimagecountry" />
-		<cfset var theiptcimagecountrycode = "iptcimagecountrycode" />
-		<cfset var theiptcscene = "iptcscene" />
-		<cfset var theiptcstate = "iptcstate" />
-		<cfset var theiptccredit = "iptccredit" />
-		<cfset var thecopynotice = "copynotice" />
+		<cfset var c_theiptcsubjectcode = "iptcsubjectcode" />
+		<cfset var c_thecreator = "creator" />
+		<cfset var c_thetitle = "title" />
+		<cfset var c_theauthorstitle = "authorstitle" />
+		<cfset var c_thedescwriter = "descwriter" />
+		<cfset var c_theiptcaddress = "iptcaddress" />
+		<cfset var c_thecategory = "category" />
+		<cfset var c_thecategorysub = "categorysub" />
+		<cfset var c_theurgency = "urgency" />
+		<cfset var c_theiptccity = "iptccity" />
+		<cfset var c_theiptccountry = "iptccountry" />
+		<cfset var c_theiptclocation = "iptclocation" />
+		<cfset var c_theiptczip = "iptczip" />
+		<cfset var c_theiptcemail = "iptcemail" />
+		<cfset var c_theiptcwebsite = "iptcwebsite" />
+		<cfset var c_theiptcphone = "iptcphone" />
+		<cfset var c_theiptcintelgenre = "iptcintelgenre" />
+		<cfset var c_theiptcinstructions = "iptcinstructions" />
+		<cfset var c_theiptcsource = "iptcsource" />
+		<cfset var c_theiptcusageterms = "iptcusageterms" />
+		<cfset var c_thecopystatus = "copystatus" />
+		<cfset var c_theiptcjobidentifier = "iptcjobidentifier" />
+		<cfset var c_thecopyurl = "copyurl" />
+		<cfset var c_theiptcheadline = "iptcheadline" />
+		<cfset var c_theiptcdatecreated = "iptcdatecreated" />
+		<cfset var c_theiptcimagecity = "iptcimagecity" />
+		<cfset var c_theiptcimagestate = "iptcimagestate" />
+		<cfset var c_theiptcimagecountry = "iptcimagecountry" />
+		<cfset var c_theiptcimagecountrycode = "iptcimagecountrycode" />
+		<cfset var c_theiptcscene = "iptcscene" />
+		<cfset var c_theiptcstate = "iptcstate" />
+		<cfset var c_theiptccredit = "iptccredit" />
+		<cfset var c_thecopynotice = "copynotice" />
 		<!--- Feedback --->
 		<cfoutput><strong>Import to images...</strong><br><br></cfoutput>
 		<cfflush>
@@ -316,39 +316,50 @@
 		<cfif arguments.thestruct.impp_template NEQ "">
 			<!--- If the imp_map points to the ID --->
 			<cfif arguments.thestruct.template.impkey.imp_map EQ "id">
-				<cfset var theid = "img_id">
+				<cfset var c_theid = "img_id">
 			<cfelse>
-				<cfset var theid = arguments.thestruct.template.impkey.imp_map>
+				<cfset var c_theid = "img_filename">
 			</cfif>
 		</cfif>
 		<!--- Loop --->
 		<cfloop query="arguments.thestruct.theimport">
 			<!--- If template --->
 			<cfif arguments.thestruct.impp_template NEQ "">
-				<cfset thisid = arguments.thestruct.template.impkey.imp_field>
+				<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 			</cfif>
 			<!--- Query for existence of the record --->
 			<cfquery dataSource="#application.razuna.datasource#" name="found">
 			SELECT img_id, path_to_asset, img_filename AS filenameorg, lucene_key, link_path_url
 			FROM #session.hostdbprefix#images
-			WHERE #theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thisid)#">
+			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 			</cfquery>
 			<!--- If record is found continue --->
-			<cfif found.img_id EQ evaluate(thisid)>
+			<cfif found.img_id EQ evaluate(c_thisid)>
 				<!--- Feedback --->
-				<cfoutput>Importing ID: #evaluate(thisid)#<br><br></cfoutput>
+				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
+				<!--- Labels --->
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
+					<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
+				</cfif>
+				<cfif c_thelabels NEQ "">
+					<cfset tlabel = evaluate(c_thelabels)>
+				<cfelse>
+					<cfset tlabel = "">
+				</cfif>
+				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.img_id#" kind="img" />
+				<!--- If template --->
+				<cfif arguments.thestruct.impp_template NEQ "">
+					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 				</cfif>
 				<!--- Images: main table --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#images
-				SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thefilename)#">
-				WHERE #theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thisid)#">
+				SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 				</cfquery>
@@ -362,8 +373,8 @@
 				</cfquery>
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
-					<cfset thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
+					<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
+					<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
 				</cfif>
 				<!--- record not found, so do an insert --->
 				<cfif khere.img_id_r EQ "">
@@ -374,13 +385,13 @@
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.img_id#">,
 						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
-						<cfif thekeywords NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thekeywords)#">,
+						<cfif c_thekeywords NEQ "">
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
 						<cfelse>
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thedescription)#">,
+						<cfif c_thedescription NEQ "">
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
 						<cfelse>
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 						</cfif>
@@ -390,24 +401,24 @@
 				<cfelse>
 					<!--- If append --->
 					<cfif arguments.thestruct.imp_write EQ "add">
-						<cfif thekeywords NEQ "">
-							<cfset tkeywords = khere.img_keywords & " " & evaluate(thekeywords)>
+						<cfif c_thekeywords NEQ "">
+							<cfset tkeywords = khere.img_keywords & " " & evaluate(c_thekeywords)>
 						<cfelse>
 							<cfset tkeywords = khere.img_keywords>
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = khere.img_description & " " & evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = khere.img_description & " " & evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = khere.img_description>
 						</cfif>
 					<cfelse>
-						<cfif thekeywords NEQ "">
-							<cfset tkeywords = evaluate(thekeywords)>
+						<cfif c_thekeywords NEQ "">
+							<cfset tkeywords = evaluate(c_thekeywords)>
 						<cfelse>
 							<cfset tkeywords = "">
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = "">
 						</cfif>
@@ -434,40 +445,40 @@
 				</cfquery>
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset theiptcsubjectcode = gettemplatevalue(arguments.thestruct.impp_template,"iptcsubjectcode")>
-					<cfset thecreator = gettemplatevalue(arguments.thestruct.impp_template,"creator")>
-					<cfset thetitle = gettemplatevalue(arguments.thestruct.impp_template,"title")>
-					<cfset theauthorstitle = gettemplatevalue(arguments.thestruct.impp_template,"authorstitle")>
-					<cfset thedescwriter = gettemplatevalue(arguments.thestruct.impp_template,"descwriter")>
-					<cfset theiptcaddress = gettemplatevalue(arguments.thestruct.impp_template,"iptcaddress")>
-					<cfset thecategory = gettemplatevalue(arguments.thestruct.impp_template,"category")>
-					<cfset thecategorysub = gettemplatevalue(arguments.thestruct.impp_template,"categorysub")>
-					<cfset theurgency = gettemplatevalue(arguments.thestruct.impp_template,"urgency")>
-					<cfset thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
-					<cfset theiptccity = gettemplatevalue(arguments.thestruct.impp_template,"iptccity")>
-					<cfset theiptccountry = gettemplatevalue(arguments.thestruct.impp_template,"iptccountry")>
-					<cfset theiptclocation = gettemplatevalue(arguments.thestruct.impp_template,"iptclocation")>
-					<cfset theiptczip = gettemplatevalue(arguments.thestruct.impp_template,"iptczip")>
-					<cfset theiptcemail = gettemplatevalue(arguments.thestruct.impp_template,"iptcemail")>
-					<cfset theiptcwebsite = gettemplatevalue(arguments.thestruct.impp_template,"iptcwebsite")>
-					<cfset theiptcphone = gettemplatevalue(arguments.thestruct.impp_template,"iptcphone")>
-					<cfset theiptcintelgenre = gettemplatevalue(arguments.thestruct.impp_template,"iptcintelgenre")>
-					<cfset theiptcinstructions = gettemplatevalue(arguments.thestruct.impp_template,"iptcinstructions")>
-					<cfset theiptcsource = gettemplatevalue(arguments.thestruct.impp_template,"iptcsource")>
-					<cfset theiptcusageterms = gettemplatevalue(arguments.thestruct.impp_template,"iptcusageterms")>
-					<cfset thecopystatus = gettemplatevalue(arguments.thestruct.impp_template,"copystatus")>
-					<cfset theiptcjobidentifier = gettemplatevalue(arguments.thestruct.impp_template,"iptcjobidentifier")>
-					<cfset thecopyurl = gettemplatevalue(arguments.thestruct.impp_template,"copyurl")>
-					<cfset theiptcheadline = gettemplatevalue(arguments.thestruct.impp_template,"iptcheadline")>
-					<cfset theiptcdatecreated = gettemplatevalue(arguments.thestruct.impp_template,"iptcdatecreated")>
-					<cfset theiptcimagecity = gettemplatevalue(arguments.thestruct.impp_template,"iptcimagecity")>
-					<cfset theiptcimagestate = gettemplatevalue(arguments.thestruct.impp_template,"iptcimagestate")>
-					<cfset theiptcimagecountry = gettemplatevalue(arguments.thestruct.impp_template,"iptcimagecountry")>
-					<cfset theiptcimagecountrycode = gettemplatevalue(arguments.thestruct.impp_template,"iptcimagecountrycode")>
-					<cfset theiptcscene = gettemplatevalue(arguments.thestruct.impp_template,"iptcscene")>
-					<cfset theiptcstate = gettemplatevalue(arguments.thestruct.impp_template,"iptcstate")>
-					<cfset theiptccredit = gettemplatevalue(arguments.thestruct.impp_template,"iptccredit")>
-					<cfset thecopynotice = gettemplatevalue(arguments.thestruct.impp_template,"copynotice")>
+					<cfset c_theiptcsubjectcode = gettemplatevalue(arguments.thestruct.impp_template,"iptcsubjectcode")>
+					<cfset c_thecreator = gettemplatevalue(arguments.thestruct.impp_template,"creator")>
+					<cfset c_thetitle = gettemplatevalue(arguments.thestruct.impp_template,"title")>
+					<cfset c_theauthorstitle = gettemplatevalue(arguments.thestruct.impp_template,"authorstitle")>
+					<cfset c_thedescwriter = gettemplatevalue(arguments.thestruct.impp_template,"descwriter")>
+					<cfset c_theiptcaddress = gettemplatevalue(arguments.thestruct.impp_template,"iptcaddress")>
+					<cfset c_thecategory = gettemplatevalue(arguments.thestruct.impp_template,"category")>
+					<cfset c_thecategorysub = gettemplatevalue(arguments.thestruct.impp_template,"categorysub")>
+					<cfset c_theurgency = gettemplatevalue(arguments.thestruct.impp_template,"urgency")>
+					<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
+					<cfset c_theiptccity = gettemplatevalue(arguments.thestruct.impp_template,"iptccity")>
+					<cfset c_theiptccountry = gettemplatevalue(arguments.thestruct.impp_template,"iptccountry")>
+					<cfset c_theiptclocation = gettemplatevalue(arguments.thestruct.impp_template,"iptclocation")>
+					<cfset c_theiptczip = gettemplatevalue(arguments.thestruct.impp_template,"iptczip")>
+					<cfset c_theiptcemail = gettemplatevalue(arguments.thestruct.impp_template,"iptcemail")>
+					<cfset c_theiptcwebsite = gettemplatevalue(arguments.thestruct.impp_template,"iptcwebsite")>
+					<cfset c_theiptcphone = gettemplatevalue(arguments.thestruct.impp_template,"iptcphone")>
+					<cfset c_theiptcintelgenre = gettemplatevalue(arguments.thestruct.impp_template,"iptcintelgenre")>
+					<cfset c_theiptcinstructions = gettemplatevalue(arguments.thestruct.impp_template,"iptcinstructions")>
+					<cfset c_theiptcsource = gettemplatevalue(arguments.thestruct.impp_template,"iptcsource")>
+					<cfset c_theiptcusageterms = gettemplatevalue(arguments.thestruct.impp_template,"iptcusageterms")>
+					<cfset c_thecopystatus = gettemplatevalue(arguments.thestruct.impp_template,"copystatus")>
+					<cfset c_theiptcjobidentifier = gettemplatevalue(arguments.thestruct.impp_template,"iptcjobidentifier")>
+					<cfset c_thecopyurl = gettemplatevalue(arguments.thestruct.impp_template,"copyurl")>
+					<cfset c_theiptcheadline = gettemplatevalue(arguments.thestruct.impp_template,"iptcheadline")>
+					<cfset c_theiptcdatecreated = gettemplatevalue(arguments.thestruct.impp_template,"iptcdatecreated")>
+					<cfset c_theiptcimagecity = gettemplatevalue(arguments.thestruct.impp_template,"iptcimagecity")>
+					<cfset c_theiptcimagestate = gettemplatevalue(arguments.thestruct.impp_template,"iptcimagestate")>
+					<cfset c_theiptcimagecountry = gettemplatevalue(arguments.thestruct.impp_template,"iptcimagecountry")>
+					<cfset c_theiptcimagecountrycode = gettemplatevalue(arguments.thestruct.impp_template,"iptcimagecountrycode")>
+					<cfset c_theiptcscene = gettemplatevalue(arguments.thestruct.impp_template,"iptcscene")>
+					<cfset c_theiptcstate = gettemplatevalue(arguments.thestruct.impp_template,"iptcstate")>
+					<cfset c_theiptccredit = gettemplatevalue(arguments.thestruct.impp_template,"iptccredit")>
+					<cfset c_thecopynotice = gettemplatevalue(arguments.thestruct.impp_template,"copynotice")>
 				</cfif>
 				<!--- record not found, so do an insert --->
 				<cfif xmphere.id_r EQ "">
@@ -513,173 +524,173 @@
 					VALUES(
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#found.img_id#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="img">,
-						<cfif theiptcsubjectcode NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcsubjectcode)#">,
+						<cfif c_theiptcsubjectcode NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcsubjectcode)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thecreator NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thecreator)#">,
+						<cfif c_thecreator NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thecreator)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thetitle NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thetitle)#">, 
+						<cfif c_thetitle NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thetitle)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theauthorstitle NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theauthorstitle)#">, 
+						<cfif c_theauthorstitle NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theauthorstitle)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thedescwriter NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thedescwriter)#">, 
+						<cfif c_thedescwriter NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thedescwriter)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcaddress NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcaddress)#">, 
+						<cfif c_theiptcaddress NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcaddress)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thecategory NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thecategory)#">, 
+						<cfif c_thecategory NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thecategory)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thecategorysub NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thecategorysub)#">, 
+						<cfif c_thecategorysub NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thecategorysub)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theurgency NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theurgency)#">, 
+						<cfif c_theurgency NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theurgency)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thedescription)#">, 
+						<cfif c_thedescription NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thedescription)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptccity NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptccity)#">, 
+						<cfif c_theiptccity NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptccity)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptccountry NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptccountry)#">, 
+						<cfif c_theiptccountry NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptccountry)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptclocation NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptclocation)#">, 
+						<cfif c_theiptclocation NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptclocation)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptczip NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptczip)#">, 
+						<cfif c_theiptczip NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptczip)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcemail NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcemail)#">, 
+						<cfif c_theiptcemail NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcemail)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcwebsite NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcwebsite)#">, 
+						<cfif c_theiptcwebsite NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcwebsite)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcphone NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcphone)#">, 
+						<cfif c_theiptcphone NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcphone)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcintelgenre NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcintelgenre)#">, 
+						<cfif c_theiptcintelgenre NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcintelgenre)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcinstructions NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcinstructions)#">, 
+						<cfif c_theiptcinstructions NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcinstructions)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcsource NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcsource)#">, 
+						<cfif c_theiptcsource NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcsource)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcusageterms NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcusageterms)#">, 
+						<cfif c_theiptcusageterms NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcusageterms)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thecopystatus NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thecopystatus)#">, 
+						<cfif c_thecopystatus NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thecopystatus)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcjobidentifier NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcjobidentifier)#">, 
+						<cfif c_theiptcjobidentifier NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcjobidentifier)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thecopyurl NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thecopyurl)#">, 
+						<cfif c_thecopyurl NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thecopyurl)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcheadline NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcheadline)#">, 
+						<cfif c_theiptcheadline NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcheadline)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcdatecreated NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcdatecreated)#">, 
+						<cfif c_theiptcdatecreated NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcdatecreated)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcimagecity NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcimagecity)#">, 
+						<cfif c_theiptcimagecity NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcimagecity)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcimagestate NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcimagestate)#">, 
+						<cfif c_theiptcimagestate NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcimagestate)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcimagecountry NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcimagecountry)#">, 
+						<cfif c_theiptcimagecountry NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcimagecountry)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcimagecountrycode NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcimagecountrycode)#">, 
+						<cfif c_theiptcimagecountrycode NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcimagecountrycode)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcscene NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcscene)#">, 
+						<cfif c_theiptcscene NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcscene)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptcstate NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptcstate)#">, 
+						<cfif c_theiptcstate NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptcstate)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif theiptccredit NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(theiptccredit)#">, 
+						<cfif c_theiptccredit NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_theiptccredit)#">, 
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thecopynotice NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thecopynotice)#">,
+						<cfif c_thecopynotice NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thecopynotice)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
@@ -689,344 +700,344 @@
 				<cfelse>
 					<!--- If append --->
 					<cfif arguments.thestruct.imp_write EQ "add">
-						<cfif theiptcsubjectcode NEQ "">
-							<cfset tiptcsubjectcode = xmphere.subjectcode & " " & evaluate(theiptcsubjectcode)>
+						<cfif c_theiptcsubjectcode NEQ "">
+							<cfset tiptcsubjectcode = xmphere.subjectcode & " " & evaluate(c_theiptcsubjectcode)>
 						<cfelse>
 							<cfset tiptcsubjectcode = xmphere.subjectcode>
 						</cfif>
-						<cfif thecreator NEQ "">
-							<cfset tcreator = xmphere.creator & " " & evaluate(thecreator)>
+						<cfif c_thecreator NEQ "">
+							<cfset tcreator = xmphere.creator & " " & evaluate(c_thecreator)>
 						<cfelse>
 							<cfset tcreator = xmphere.creator>
 						</cfif>
-						<cfif thetitle NEQ "">
-							<cfset ttitle = xmphere.title & " " & evaluate(thetitle)>
+						<cfif c_thetitle NEQ "">
+							<cfset ttitle = xmphere.title & " " & evaluate(c_thetitle)>
 						<cfelse>
 							<cfset ttitle = xmphere.title>
 						</cfif>
-						<cfif theauthorstitle NEQ "">
-							<cfset tauthorstitle = xmphere.authorsposition & " " & evaluate(theauthorstitle)>
+						<cfif c_theauthorstitle NEQ "">
+							<cfset tauthorstitle = xmphere.authorsposition & " " & evaluate(c_theauthorstitle)>
 						<cfelse>
 							<cfset tauthorstitle = xmphere.authorsposition>
 						</cfif>
-						<cfif thedescwriter NEQ "">
-							<cfset tdescwriter = xmphere.captionwriter & " " & evaluate(thedescwriter)>
+						<cfif c_thedescwriter NEQ "">
+							<cfset tdescwriter = xmphere.captionwriter & " " & evaluate(c_thedescwriter)>
 						<cfelse>
 							<cfset tdescwriter = xmphere.captionwriter>
 						</cfif>
-						<cfif theiptcaddress NEQ "">
-							<cfset tiptcaddress = xmphere.ciadrextadr & " " & evaluate(theiptcaddress)>
+						<cfif c_theiptcaddress NEQ "">
+							<cfset tiptcaddress = xmphere.ciadrextadr & " " & evaluate(c_theiptcaddress)>
 						<cfelse>
 							<cfset tiptcaddress = xmphere.ciadrextadr>
 						</cfif>
-						<cfif thecategory NEQ "">
-							<cfset tcategory = xmphere.category & " " & evaluate(thecategory)>
+						<cfif c_thecategory NEQ "">
+							<cfset tcategory = xmphere.category & " " & evaluate(c_thecategory)>
 						<cfelse>
 							<cfset tcategory = xmphere.category>
 						</cfif>
-						<cfif thecategorysub NEQ "">
-							<cfset tcategorysub = xmphere.supplementalcategories & " " & evaluate(thecategorysub)>
+						<cfif c_thecategorysub NEQ "">
+							<cfset tcategorysub = xmphere.supplementalcategories & " " & evaluate(c_thecategorysub)>
 						<cfelse>
 							<cfset tcategorysub = xmphere.supplementalcategories>
 						</cfif>
-						<cfif theurgency NEQ "">
-							<cfset turgency = xmphere.urgency & " " & evaluate(theurgency)>
+						<cfif c_theurgency NEQ "">
+							<cfset turgency = xmphere.urgency & " " & evaluate(c_theurgency)>
 						<cfelse>
 							<cfset turgency = xmphere.urgency>
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = xmphere.description & " " & evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = xmphere.description & " " & evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = xmphere.description>
 						</cfif>
-						<cfif theiptccity NEQ "">
-							<cfset tiptccity = xmphere.ciadrcity & " " & evaluate(theiptccity)>
+						<cfif c_theiptccity NEQ "">
+							<cfset tiptccity = xmphere.ciadrcity & " " & evaluate(c_theiptccity)>
 						<cfelse>
 							<cfset tiptccity = xmphere.ciadrcity>
 						</cfif>
-						<cfif theiptccountry NEQ "">
-							<cfset tiptccountry = xmphere.ciadrctry & " " & evaluate(theiptccountry)>
+						<cfif c_theiptccountry NEQ "">
+							<cfset tiptccountry = xmphere.ciadrctry & " " & evaluate(c_theiptccountry)>
 						<cfelse>
 							<cfset tiptccountry = xmphere.ciadrctry>
 						</cfif>
-						<cfif theiptclocation NEQ "">
-							<cfset tiptclocation = xmphere.location & " " & evaluate(theiptclocation)>
+						<cfif c_theiptclocation NEQ "">
+							<cfset tiptclocation = xmphere.location & " " & evaluate(c_theiptclocation)>
 						<cfelse>
 							<cfset tiptclocation = xmphere.location>
 						</cfif>
-						<cfif theiptczip NEQ "">
-							<cfset tiptczip = xmphere.ciadrpcode & " " & evaluate(theiptczip)>
+						<cfif c_theiptczip NEQ "">
+							<cfset tiptczip = xmphere.ciadrpcode & " " & evaluate(c_theiptczip)>
 						<cfelse>
 							<cfset tiptczip = xmphere.ciadrpcode>
 						</cfif>
-						<cfif theiptcemail NEQ "">
-							<cfset tiptcemail = xmphere.ciemailwork & " " & evaluate(theiptcemail)>
+						<cfif c_theiptcemail NEQ "">
+							<cfset tiptcemail = xmphere.ciemailwork & " " & evaluate(c_theiptcemail)>
 						<cfelse>
 							<cfset tiptcemail = xmphere.ciemailwork>
 						</cfif>
-						<cfif theiptcwebsite NEQ "">
-							<cfset tiptcwebsite = xmphere.ciurlwork & " " & evaluate(theiptcwebsite)>
+						<cfif c_theiptcwebsite NEQ "">
+							<cfset tiptcwebsite = xmphere.ciurlwork & " " & evaluate(c_theiptcwebsite)>
 						<cfelse>
 							<cfset tiptcwebsite = xmphere.ciurlwork>
 						</cfif>
-						<cfif theiptcphone NEQ "">
-							<cfset tiptcphone = xmphere.citelwork & " " & evaluate(theiptcphone)>
+						<cfif c_theiptcphone NEQ "">
+							<cfset tiptcphone = xmphere.citelwork & " " & evaluate(c_theiptcphone)>
 						<cfelse>
 							<cfset tiptcphone = xmphere.citelwork>
 						</cfif>
-						<cfif theiptcintelgenre NEQ "">
-							<cfset tiptcintelgenre = xmphere.intellectualgenre & " " & evaluate(theiptcintelgenre)>
+						<cfif c_theiptcintelgenre NEQ "">
+							<cfset tiptcintelgenre = xmphere.intellectualgenre & " " & evaluate(c_theiptcintelgenre)>
 						<cfelse>
 							<cfset tiptcintelgenre = xmphere.intellectualgenre>
 						</cfif>
-						<cfif theiptcintelgenre NEQ "">
-							<cfset tiptcintelgenre = xmphere.instructions & " " & evaluate(theiptcintelgenre)>
+						<cfif c_theiptcintelgenre NEQ "">
+							<cfset tiptcintelgenre = xmphere.instructions & " " & evaluate(c_theiptcintelgenre)>
 						<cfelse>
 							<cfset tiptcintelgenre = xmphere.instructions>
 						</cfif>
-						<cfif theiptcsource NEQ "">
-							<cfset tiptcsource = xmphere.source & " " & evaluate(theiptcsource)>
+						<cfif c_theiptcsource NEQ "">
+							<cfset tiptcsource = xmphere.source & " " & evaluate(c_theiptcsource)>
 						<cfelse>
 							<cfset tiptcsource = xmphere.source>
 						</cfif>
-						<cfif theiptcusageterms NEQ "">
-							<cfset tiptcusageterms = xmphere.usageterms & " " & evaluate(theiptcusageterms)>
+						<cfif c_theiptcusageterms NEQ "">
+							<cfset tiptcusageterms = xmphere.usageterms & " " & evaluate(c_theiptcusageterms)>
 						<cfelse>
 							<cfset tiptcusageterms = xmphere.usageterms>
 						</cfif>
-						<cfif thecopystatus NEQ "">
-							<cfset tcopystatus = xmphere.copyrightstatus & " " & evaluate(thecopystatus)>
+						<cfif c_thecopystatus NEQ "">
+							<cfset tcopystatus = xmphere.copyrightstatus & " " & evaluate(c_thecopystatus)>
 						<cfelse>
 							<cfset tcopystatus = xmphere.copyrightstatus>
 						</cfif>
-						<cfif theiptcjobidentifier NEQ "">
-							<cfset tiptcjobidentifier = xmphere.transmissionreference & " " & evaluate(theiptcjobidentifier)>
+						<cfif c_theiptcjobidentifier NEQ "">
+							<cfset tiptcjobidentifier = xmphere.transmissionreference & " " & evaluate(c_theiptcjobidentifier)>
 						<cfelse>
 							<cfset tiptcjobidentifier = xmphere.transmissionreference>
 						</cfif>
-						<cfif thecopyurl NEQ "">
-							<cfset tcopyurl = xmphere.webstatement & " " & evaluate(thecopyurl)>
+						<cfif c_thecopyurl NEQ "">
+							<cfset tcopyurl = xmphere.webstatement & " " & evaluate(c_thecopyurl)>
 						<cfelse>
 							<cfset tcopyurl = xmphere.webstatement>
 						</cfif>
-						<cfif theiptcheadline NEQ "">
-							<cfset tiptcheadline = xmphere.headline & " " & evaluate(theiptcheadline)>
+						<cfif c_theiptcheadline NEQ "">
+							<cfset tiptcheadline = xmphere.headline & " " & evaluate(c_theiptcheadline)>
 						<cfelse>
 							<cfset tiptcheadline = xmphere.headline>
 						</cfif>
-						<cfif theiptcdatecreated NEQ "">
-							<cfset tiptcdatecreated = xmphere.datecreated & " " & evaluate(theiptcdatecreated)>
+						<cfif c_theiptcdatecreated NEQ "">
+							<cfset tiptcdatecreated = xmphere.datecreated & " " & evaluate(c_theiptcdatecreated)>
 						<cfelse>
 							<cfset tiptcdatecreated = xmphere.datecreated>
 						</cfif>
-						<cfif theiptcimagecity NEQ "">
-							<cfset tiptcimagecity = xmphere.city & " " & evaluate(theiptcimagecity)>
+						<cfif c_theiptcimagecity NEQ "">
+							<cfset tiptcimagecity = xmphere.city & " " & evaluate(c_theiptcimagecity)>
 						<cfelse>
 							<cfset tiptcimagecity = xmphere.city>
 						</cfif>
-						<cfif theiptcimagestate NEQ "">
-							<cfset tiptcimagestate = xmphere.ciadrregion & " " & evaluate(theiptcimagestate)>
+						<cfif c_theiptcimagestate NEQ "">
+							<cfset tiptcimagestate = xmphere.ciadrregion & " " & evaluate(c_theiptcimagestate)>
 						<cfelse>
 							<cfset tiptcimagestate = xmphere.ciadrregion>
 						</cfif>
-						<cfif theiptcimagecountry NEQ "">
-							<cfset tiptcimagecountry = xmphere.country & " " & evaluate(theiptcimagecountry)>
+						<cfif c_theiptcimagecountry NEQ "">
+							<cfset tiptcimagecountry = xmphere.country & " " & evaluate(c_theiptcimagecountry)>
 						<cfelse>
 							<cfset tiptcimagecountry = xmphere.country>
 						</cfif>
-						<cfif theiptcimagecountrycode NEQ "">
-							<cfset tiptcimagecountrycode = xmphere.countrycode & " " & evaluate(theiptcimagecountrycode)>
+						<cfif c_theiptcimagecountrycode NEQ "">
+							<cfset tiptcimagecountrycode = xmphere.countrycode & " " & evaluate(c_theiptcimagecountrycode)>
 						<cfelse>
 							<cfset tiptcimagecountrycode = xmphere.countrycode>
 						</cfif>
-						<cfif theiptcsubjectcode NEQ "">
-							<cfset tiptcscene = xmphere.scene & " " & evaluate(theiptcscene)>
+						<cfif c_theiptcsubjectcode NEQ "">
+							<cfset tiptcscene = xmphere.scene & " " & evaluate(c_theiptcscene)>
 						<cfelse>
 							<cfset tiptcscene = xmphere.scene>
 						</cfif>
-						<cfif theiptcstate NEQ "">
-							<cfset tiptcstate = xmphere.state & " " & evaluate(theiptcstate)>
+						<cfif c_theiptcstate NEQ "">
+							<cfset tiptcstate = xmphere.state & " " & evaluate(c_theiptcstate)>
 						<cfelse>
 							<cfset tiptcstate = xmphere.state>
 						</cfif>
-						<cfif theiptccredit NEQ "">
-							<cfset tiptccredit = xmphere.credit & " " & evaluate(theiptccredit)>
+						<cfif c_theiptccredit NEQ "">
+							<cfset tiptccredit = xmphere.credit & " " & evaluate(c_theiptccredit)>
 						<cfelse>
 							<cfset tiptccredit = xmphere.credit>
 						</cfif>
-						<cfif thecopynotice NEQ "">
-							<cfset tcopynotice = xmphere.rights & " " & evaluate(thecopynotice)>
+						<cfif c_thecopynotice NEQ "">
+							<cfset tcopynotice = xmphere.rights & " " & evaluate(c_thecopynotice)>
 						<cfelse>
 							<cfset tcopynotice = xmphere.rights>
 						</cfif>
 					<cfelse>
-						<cfif theiptcsubjectcode NEQ "">
-							<cfset tiptcsubjectcode = evaluate(theiptcsubjectcode)>
+						<cfif c_theiptcsubjectcode NEQ "">
+							<cfset tiptcsubjectcode = evaluate(c_theiptcsubjectcode)>
 						<cfelse>
 							<cfset tiptcsubjectcode = "">
 						</cfif>
-						<cfif thecreator NEQ "">
-							<cfset tcreator = evaluate(thecreator)>
+						<cfif c_thecreator NEQ "">
+							<cfset tcreator = evaluate(c_thecreator)>
 						<cfelse>
 							<cfset tcreator = "">
 						</cfif>
-						<cfif thetitle NEQ "">
-							<cfset ttitle = evaluate(thetitle)>
+						<cfif c_thetitle NEQ "">
+							<cfset ttitle = evaluate(c_thetitle)>
 						<cfelse>
 							<cfset ttitle = "">
 						</cfif>
-						<cfif theauthorstitle NEQ "">
-							<cfset tauthorstitle = evaluate(theauthorstitle)>
+						<cfif c_theauthorstitle NEQ "">
+							<cfset tauthorstitle = evaluate(c_theauthorstitle)>
 						<cfelse>
 							<cfset tauthorstitle = "">
 						</cfif>
-						<cfif thedescwriter NEQ "">
-							<cfset tdescwriter = evaluate(thedescwriter)>
+						<cfif c_thedescwriter NEQ "">
+							<cfset tdescwriter = evaluate(c_thedescwriter)>
 						<cfelse>
 							<cfset tdescwriter = "">
 						</cfif>
-						<cfif theiptcaddress NEQ "">
-							<cfset tiptcaddress = evaluate(theiptcaddress)>
+						<cfif c_theiptcaddress NEQ "">
+							<cfset tiptcaddress = evaluate(c_theiptcaddress)>
 						<cfelse>
 							<cfset tiptcaddress = "">
 						</cfif>
-						<cfif thecategory NEQ "">
-							<cfset tcategory = evaluate(thecategory)>
+						<cfif c_thecategory NEQ "">
+							<cfset tcategory = evaluate(c_thecategory)>
 						<cfelse>
 							<cfset tcategory = "">
 						</cfif>
-						<cfif thecategorysub NEQ "">
-							<cfset tcategorysub = evaluate(thecategorysub)>
+						<cfif c_thecategorysub NEQ "">
+							<cfset tcategorysub = evaluate(c_thecategorysub)>
 						<cfelse>
 							<cfset tcategorysub = "">
 						</cfif>
-						<cfif theurgency NEQ "">
-							<cfset turgency = evaluate(theurgency)>
+						<cfif c_theurgency NEQ "">
+							<cfset turgency = evaluate(c_theurgency)>
 						<cfelse>
 							<cfset turgency = "">
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = "">
 						</cfif>
-						<cfif theiptccity NEQ "">
-							<cfset tiptccity = evaluate(theiptccity)>
+						<cfif c_theiptccity NEQ "">
+							<cfset tiptccity = evaluate(c_theiptccity)>
 						<cfelse>
 							<cfset tiptccity = "">
 						</cfif>
-						<cfif theiptccountry NEQ "">
-							<cfset tiptccountry = evaluate(theiptccountry)>
+						<cfif c_theiptccountry NEQ "">
+							<cfset tiptccountry = evaluate(c_theiptccountry)>
 						<cfelse>
 							<cfset tiptccountry = "">
 						</cfif>
-						<cfif theiptclocation NEQ "">
-							<cfset tiptclocation = evaluate(theiptclocation)>
+						<cfif c_theiptclocation NEQ "">
+							<cfset tiptclocation = evaluate(c_theiptclocation)>
 						<cfelse>
 							<cfset tiptclocation = "">
 						</cfif>
-						<cfif theiptczip NEQ "">
-							<cfset tiptczip = evaluate(theiptczip)>
+						<cfif c_theiptczip NEQ "">
+							<cfset tiptczip = evaluate(c_theiptczip)>
 						<cfelse>
 							<cfset tiptczip = "">
 						</cfif>
-						<cfif theiptcemail NEQ "">
-							<cfset tiptcemail = evaluate(theiptcemail)>
+						<cfif c_theiptcemail NEQ "">
+							<cfset tiptcemail = evaluate(c_theiptcemail)>
 						<cfelse>
 							<cfset tiptcemail = "">
 						</cfif>
-						<cfif theiptcwebsite NEQ "">
-							<cfset tiptcwebsite = evaluate(theiptcwebsite)>
+						<cfif c_theiptcwebsite NEQ "">
+							<cfset tiptcwebsite = evaluate(c_theiptcwebsite)>
 						<cfelse>
 							<cfset tiptcwebsite = "">
 						</cfif>
-						<cfif theiptcphone NEQ "">
-							<cfset tiptcphone = evaluate(theiptcphone)>
+						<cfif c_theiptcphone NEQ "">
+							<cfset tiptcphone = evaluate(c_theiptcphone)>
 						<cfelse>
 							<cfset tiptcphone = "">
 						</cfif>
-						<cfif theiptcintelgenre NEQ "">
-							<cfset tiptcintelgenre = evaluate(theiptcintelgenre)>
+						<cfif c_theiptcintelgenre NEQ "">
+							<cfset tiptcintelgenre = evaluate(c_theiptcintelgenre)>
 						<cfelse>
 							<cfset tiptcintelgenre = "">
 						</cfif>
-						<cfif theiptcinstructions NEQ "">
-							<cfset tiptcinstructions = evaluate(theiptcinstructions)>
+						<cfif c_theiptcinstructions NEQ "">
+							<cfset tiptcinstructions = evaluate(c_theiptcinstructions)>
 						<cfelse>
 							<cfset tiptcinstructions = "">
 						</cfif>
-						<cfif theiptcsource NEQ "">
-							<cfset tiptcsource = evaluate(theiptcsource)>
+						<cfif c_theiptcsource NEQ "">
+							<cfset tiptcsource = evaluate(c_theiptcsource)>
 						<cfelse>
 							<cfset tiptcsource = "">
 						</cfif>
-						<cfif theiptcusageterms NEQ "">
-							<cfset tiptcusageterms = evaluate(theiptcusageterms)>
+						<cfif c_theiptcusageterms NEQ "">
+							<cfset tiptcusageterms = evaluate(c_theiptcusageterms)>
 						<cfelse>
 							<cfset tiptcusageterms = "">
 						</cfif>
-						<cfif thecopystatus NEQ "">
-							<cfset tcopystatus = evaluate(thecopystatus)>
+						<cfif c_thecopystatus NEQ "">
+							<cfset tcopystatus = evaluate(c_thecopystatus)>
 						<cfelse>
 							<cfset tcopystatus = "">
 						</cfif>
-						<cfif theiptcjobidentifier NEQ "">
-							<cfset tiptcjobidentifier = evaluate(theiptcjobidentifier)>
+						<cfif c_theiptcjobidentifier NEQ "">
+							<cfset tiptcjobidentifier = evaluate(c_theiptcjobidentifier)>
 						<cfelse>
 							<cfset tiptcjobidentifier = "">
 						</cfif>
-						<cfif thecopyurl NEQ "">
-							<cfset tcopyurl = evaluate(thecopyurl)>
+						<cfif c_thecopyurl NEQ "">
+							<cfset tcopyurl = evaluate(c_thecopyurl)>
 						<cfelse>
 							<cfset tcopyurl = "">
 						</cfif>
-						<cfif theiptcheadline NEQ "">
-							<cfset tiptcheadline = evaluate(theiptcheadline)>
+						<cfif c_theiptcheadline NEQ "">
+							<cfset tiptcheadline = evaluate(c_theiptcheadline)>
 						<cfelse>
 							<cfset tiptcheadline = "">
 						</cfif>
-						<cfif theiptcdatecreated NEQ "">
-							<cfset tiptcdatecreated = evaluate(theiptcdatecreated)>
+						<cfif c_theiptcdatecreated NEQ "">
+							<cfset tiptcdatecreated = evaluate(c_theiptcdatecreated)>
 						<cfelse>
 							<cfset tiptcdatecreated = "">
 						</cfif>
-						<cfif theiptcimagecity NEQ "">
-							<cfset tiptcimagecity = evaluate(theiptcimagecity)>
+						<cfif c_theiptcimagecity NEQ "">
+							<cfset tiptcimagecity = evaluate(c_theiptcimagecity)>
 						<cfelse>
 							<cfset tiptcimagecity = "">
 						</cfif>
-						<cfif theiptcimagestate NEQ "">
-							<cfset tiptcimagestate = evaluate(theiptcimagestate)>
+						<cfif c_theiptcimagestate NEQ "">
+							<cfset tiptcimagestate = evaluate(c_theiptcimagestate)>
 						<cfelse>
 							<cfset tiptcimagestate = "">
 						</cfif>
-						<cfif theiptcimagecountry NEQ "">
-							<cfset tiptcimagecountry = evaluate(theiptcimagecountry)>
+						<cfif c_theiptcimagecountry NEQ "">
+							<cfset tiptcimagecountry = evaluate(c_theiptcimagecountry)>
 						<cfelse>
 							<cfset tiptcimagecountry = "">
 						</cfif>
-						<cfif theiptcimagecountrycode NEQ "">
-							<cfset tiptcimagecountrycode = evaluate(theiptcimagecountrycode)>
+						<cfif c_theiptcimagecountrycode NEQ "">
+							<cfset tiptcimagecountrycode = evaluate(c_theiptcimagecountrycode)>
 						<cfelse>
 							<cfset tiptcimagecountrycode = "">
 						</cfif>
-						<cfif theiptcscene NEQ "">
-							<cfset tiptcscene = evaluate(theiptcscene)>
+						<cfif c_theiptcscene NEQ "">
+							<cfset tiptcscene = evaluate(c_theiptcscene)>
 						<cfelse>
 							<cfset tiptcscene = "">
 						</cfif>
-						<cfif theiptcstate NEQ "">
-							<cfset tiptcstate = evaluate(theiptcstate)>
+						<cfif c_theiptcstate NEQ "">
+							<cfset tiptcstate = evaluate(c_theiptcstate)>
 						<cfelse>
 							<cfset tiptcstate = "">
 						</cfif>
-						<cfif theiptccredit NEQ "">
-							<cfset tiptccredit = evaluate(theiptccredit)>
+						<cfif c_theiptccredit NEQ "">
+							<cfset tiptccredit = evaluate(c_theiptccredit)>
 						<cfelse>
 							<cfset tiptccredit = "">
 						</cfif>
-						<cfif thecopynotice NEQ "">
-							<cfset tcopynotice = evaluate(thecopynotice)>
+						<cfif c_thecopynotice NEQ "">
+							<cfset tcopynotice = evaluate(c_thecopynotice)>
 						<cfelse>
 							<cfset tcopynotice = "">
 						</cfif>
@@ -1092,11 +1103,12 @@
 	<cffunction name="doimportvideos" output="false">
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
-		<cfset var theid = "vid_id" />
-		<cfset var thisid = "id" />
-		<cfset var thefilename = "filename" />
-		<cfset var thekeywords = "keywords" />
-		<cfset var thedescription = "description" />
+		<cfset var c_theid = "vid_id" />
+		<cfset var c_thisid = "id" />
+		<cfset var c_thefilename = "filename" />
+		<cfset var c_thekeywords = "keywords" />
+		<cfset var c_thedescription = "description" />
+		<cfset var c_thelabels = "labels" />
 		<!--- Feedback --->
 		<cfoutput><strong>Import to videos...</strong><br><br></cfoutput>
 		<cfflush>
@@ -1104,39 +1116,50 @@
 		<cfif arguments.thestruct.impp_template NEQ "">
 			<!--- If the imp_map points to the ID --->
 			<cfif arguments.thestruct.template.impkey.imp_map EQ "id">
-				<cfset var theid = "vid_id">
+				<cfset var c_theid = "vid_id">
 			<cfelse>
-				<cfset var theid = arguments.thestruct.template.impkey.imp_map>
+				<cfset var c_theid = "vid_filename">
 			</cfif>
 		</cfif>
 		<!--- Loop --->
 		<cfloop query="arguments.thestruct.theimport">
 			<!--- If template --->
 			<cfif arguments.thestruct.impp_template NEQ "">
-				<cfset thisid = arguments.thestruct.template.impkey.imp_field>
+				<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 			</cfif>
 			<!--- Query for existence of the record --->
 			<cfquery dataSource="#application.razuna.datasource#" name="found">
 			SELECT vid_id, path_to_asset, vid_filename AS filenameorg, lucene_key, link_path_url
 			FROM #session.hostdbprefix#videos
-			WHERE #theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thisid)#">
+			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 			</cfquery>
 			<!--- If record is found continue --->
-			<cfif found.vid_id EQ evaluate(thisid)>
+			<cfif found.vid_id EQ evaluate(c_thisid)>
 				<!--- Feedback --->
-				<cfoutput>Importing ID: #evaluate(thisid)#<br><br></cfoutput>
+				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
+				<!--- Labels --->
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
+					<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
+				</cfif>
+				<cfif c_thelabels NEQ "">
+					<cfset tlabel = evaluate(c_thelabels)>
+				<cfelse>
+					<cfset tlabel = "">
+				</cfif>
+				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.vid_id#" kind="vid" />
+				<!--- If template --->
+				<cfif arguments.thestruct.impp_template NEQ "">
+					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 				</cfif>
 				<!--- Images: main table --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos
-				SET vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thefilename)#">
-				WHERE #theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thisid)#">
+				SET vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 				</cfquery>
@@ -1150,8 +1173,8 @@
 				</cfquery>
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
-					<cfset thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
+					<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
+					<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
 				</cfif>
 				<!--- record not found, so do an insert --->
 				<cfif khere.vid_id_r EQ "">
@@ -1162,13 +1185,13 @@
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.vid_id#">,
 						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
-						<cfif thekeywords NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thekeywords)#">,
+						<cfif c_thekeywords NEQ "">
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
 						<cfelse>
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thedescription)#">,
+						<cfif c_thedescription NEQ "">
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
 						<cfelse>
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 						</cfif>
@@ -1178,24 +1201,24 @@
 				<cfelse>
 					<!--- If append --->
 					<cfif arguments.thestruct.imp_write EQ "add">
-						<cfif thekeywords NEQ "">
-							<cfset tkeywords = khere.vid_keywords & " " & evaluate(thekeywords)>
+						<cfif c_thekeywords NEQ "">
+							<cfset tkeywords = khere.vid_keywords & " " & evaluate(c_thekeywords)>
 						<cfelse>
 							<cfset tkeywords = khere.vid_keywords>
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = khere.vid_description & " " & evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = khere.vid_description & " " & evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = khere.vid_description>
 						</cfif>
 					<cfelse>
-						<cfif thekeywords NEQ "">
-							<cfset tkeywords = evaluate(thekeywords)>
+						<cfif c_thekeywords NEQ "">
+							<cfset tkeywords = evaluate(c_thekeywords)>
 						<cfelse>
 							<cfset tkeywords = "">
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = "">
 						</cfif>
@@ -1228,11 +1251,12 @@
 	<cffunction name="doimportaudios" output="false">
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
-		<cfset var theid = "aud_id" />
-		<cfset var thisid = "id" />
-		<cfset var thefilename = "filename" />
-		<cfset var thekeywords = "keywords" />
-		<cfset var thedescription = "description" />
+		<cfset var c_theid = "aud_id" />
+		<cfset var c_thisid = "id" />
+		<cfset var c_thefilename = "filename" />
+		<cfset var c_thekeywords = "keywords" />
+		<cfset var c_thedescription = "description" />
+		<cfset var c_thelabels = "labels" />
 		<!--- Feedback --->
 		<cfoutput><strong>Import to audios...</strong><br><br></cfoutput>
 		<cfflush>
@@ -1240,39 +1264,50 @@
 		<cfif arguments.thestruct.impp_template NEQ "">
 			<!--- If the imp_map points to the ID --->
 			<cfif arguments.thestruct.template.impkey.imp_map EQ "id">
-				<cfset var theid = "aud_id">
+				<cfset var c_theid = "aud_id">
 			<cfelse>
-				<cfset var theid = arguments.thestruct.template.impkey.imp_map>
+				<cfset var c_theid = "aud_name">
 			</cfif>
 		</cfif>
 		<!--- Loop --->
 		<cfloop query="arguments.thestruct.theimport">
 			<!--- If template --->
 			<cfif arguments.thestruct.impp_template NEQ "">
-				<cfset thisid = arguments.thestruct.template.impkey.imp_field>
+				<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 			</cfif>
 			<!--- Query for existence of the record --->
 			<cfquery dataSource="#application.razuna.datasource#" name="found">
 			SELECT aud_id, path_to_asset, aud_name AS filenameorg, lucene_key, link_path_url
 			FROM #session.hostdbprefix#audios
-			WHERE #theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thisid)#">
+			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 			</cfquery>
 			<!--- If record is found continue --->
-			<cfif found.aud_id EQ evaluate(thisid)>
+			<cfif found.aud_id EQ evaluate(c_thisid)>
 				<!--- Feedback --->
-				<cfoutput>Importing ID: #evaluate(thisid)#<br><br></cfoutput>
+				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
+				<!--- Labels --->
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
+					<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
+				</cfif>
+				<cfif c_thelabels NEQ "">
+					<cfset tlabel = evaluate(c_thelabels)>
+				<cfelse>
+					<cfset tlabel = "">
+				</cfif>
+				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.aud_id#" kind="aud" />
+				<!--- If template --->
+				<cfif arguments.thestruct.impp_template NEQ "">
+					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 				</cfif>
 				<!--- Images: main table --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
-				SET aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thefilename)#">
-				WHERE #theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thisid)#">
+				SET aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 				</cfquery>
@@ -1286,8 +1321,8 @@
 				</cfquery>
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
-					<cfset thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
+					<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
+					<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
 				</cfif>
 				<!--- record not found, so do an insert --->
 				<cfif khere.aud_id_r EQ "">
@@ -1298,13 +1333,13 @@
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.aud_id#">,
 						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
-						<cfif thekeywords NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thekeywords)#">,
+						<cfif c_thekeywords NEQ "">
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
 						<cfelse>
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thedescription)#">,
+						<cfif c_thedescription NEQ "">
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
 						<cfelse>
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 						</cfif>
@@ -1314,24 +1349,24 @@
 				<cfelse>
 					<!--- If append --->
 					<cfif arguments.thestruct.imp_write EQ "add">
-						<cfif thekeywords NEQ "">
-							<cfset tkeywords = khere.aud_keywords & " " & evaluate(thekeywords)>
+						<cfif c_thekeywords NEQ "">
+							<cfset tkeywords = khere.aud_keywords & " " & evaluate(c_thekeywords)>
 						<cfelse>
 							<cfset tkeywords = khere.aud_keywords>
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = khere.aud_description & " " & evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = khere.aud_description & " " & evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = khere.aud_description>
 						</cfif>
 					<cfelse>
-						<cfif thekeywords NEQ "">
-							<cfset tkeywords = evaluate(thekeywords)>
+						<cfif c_thekeywords NEQ "">
+							<cfset tkeywords = evaluate(c_thekeywords)>
 						<cfelse>
 							<cfset tkeywords = "">
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = "">
 						</cfif>
@@ -1364,18 +1399,19 @@
 	<cffunction name="doimportdocs" output="false">
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
-		<cfset var theid = "file_id" />
-		<cfset var thisid = "id" />
-		<cfset var thefilename = "filename" />
-		<cfset var thekeywords = "keywords" />
-		<cfset var thedescription = "description" />
+		<cfset var c_theid = "file_id" />
+		<cfset var c_thisid = "id" />
+		<cfset var c_thefilename = "filename" />
+		<cfset var c_thekeywords = "keywords" />
+		<cfset var c_thedescription = "description" />
+		<cfset var c_thelabels = "labels" />
 		<!--- Params XMP --->
-		<cfset var thepdf_author = "pdf_author" />
-		<cfset var thepdf_rights = "pdf_rights" />
-		<cfset var thepdf_authorsposition = "pdf_authorsposition" />
-		<cfset var thepdf_captionwriter = "pdf_captionwriter" />
-		<cfset var thepdf_webstatement = "pdf_webstatement" />
-		<cfset var thepdf_rightsmarked = "pdf_rightsmarked" />	
+		<cfset var c_thepdf_author = "pdf_author" />
+		<cfset var c_thepdf_rights = "pdf_rights" />
+		<cfset var c_thepdf_authorsposition = "pdf_authorsposition" />
+		<cfset var c_thepdf_captionwriter = "pdf_captionwriter" />
+		<cfset var c_thepdf_webstatement = "pdf_webstatement" />
+		<cfset var c_thepdf_rightsmarked = "pdf_rightsmarked" />	
 		<!--- Feedback --->
 		<cfoutput><strong>Import to documents...</strong><br><br></cfoutput>
 		<cfflush>
@@ -1383,39 +1419,50 @@
 		<cfif arguments.thestruct.impp_template NEQ "">
 			<!--- If the imp_map points to the ID --->
 			<cfif arguments.thestruct.template.impkey.imp_map EQ "id">
-				<cfset var theid = "file_id">
+				<cfset var c_theid = "file_id">
 			<cfelse>
-				<cfset var theid = arguments.thestruct.template.impkey.imp_map>
+				<cfset var c_theid = "file_name">
 			</cfif>
 		</cfif>
 		<!--- Loop --->
 		<cfloop query="arguments.thestruct.theimport">
 			<!--- If template --->
 			<cfif arguments.thestruct.impp_template NEQ "">
-				<cfset thisid = arguments.thestruct.template.impkey.imp_field>
+				<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 			</cfif>
 			<!--- Query for existence of the record --->
 			<cfquery dataSource="#application.razuna.datasource#" name="found">
 			SELECT file_id, path_to_asset, file_name AS filenameorg, lucene_key, link_path_url
 			FROM #session.hostdbprefix#files
-			WHERE #theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thisid)#">
+			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 			</cfquery>
 			<!--- If record is found continue --->
-			<cfif found.file_id EQ evaluate(thisid)>
+			<cfif found.file_id EQ evaluate(c_thisid)>
 				<!--- Feedback --->
-				<cfoutput>Importing ID: #evaluate(thisid)#<br><br></cfoutput>
+				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
+				<!--- Labels --->
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
+					<cfset c_thelabels = gettemplatevalue(arguments.thestruct.impp_template,"labels")>
+				</cfif>
+				<cfif c_thelabels NEQ "">
+					<cfset tlabel = evaluate(c_thelabels)>
+				<cfelse>
+					<cfset tlabel = "">
+				</cfif>
+				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.file_id#" kind="doc" />
+				<!--- If template --->
+				<cfif arguments.thestruct.impp_template NEQ "">
+					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 				</cfif>
 				<!--- Images: main table --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#files
-				SET file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thefilename)#">
-				WHERE #theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thisid)#">
+				SET file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 				</cfquery>
@@ -1429,8 +1476,8 @@
 				</cfquery>
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
-					<cfset thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
+					<cfset c_thekeywords = gettemplatevalue(arguments.thestruct.impp_template,"keywords")>
+					<cfset c_thedescription = gettemplatevalue(arguments.thestruct.impp_template,"description")>
 				</cfif>
 				<!--- record not found, so do an insert --->
 				<cfif khere.file_id_r EQ "">
@@ -1441,13 +1488,13 @@
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">,
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.file_id#">,
 						<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">,
-						<cfif thekeywords NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thekeywords)#">,
+						<cfif c_thekeywords NEQ "">
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thekeywords)#">,
 						<cfelse>
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(thedescription)#">,
+						<cfif c_thedescription NEQ "">
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thedescription)#">,
 						<cfelse>
 							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">,
 						</cfif>
@@ -1457,24 +1504,24 @@
 				<cfelse>
 					<!--- If append --->
 					<cfif arguments.thestruct.imp_write EQ "add">
-						<cfif thekeywords NEQ "">
-							<cfset tkeywords = khere.file_keywords & " " & evaluate(thekeywords)>
+						<cfif c_thekeywords NEQ "">
+							<cfset tkeywords = khere.file_keywords & " " & evaluate(c_thekeywords)>
 						<cfelse>
 							<cfset tkeywords = khere.file_keywords>
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = khere.file_desc & " " & evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = khere.file_desc & " " & evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = khere.file_desc>
 						</cfif>
 					<cfelse>
-						<cfif thekeywords NEQ "">
-							<cfset tkeywords = evaluate(thekeywords)>
+						<cfif c_thekeywords NEQ "">
+							<cfset tkeywords = evaluate(c_thekeywords)>
 						<cfelse>
 							<cfset tkeywords = "">
 						</cfif>
-						<cfif thedescription NEQ "">
-							<cfset tdescription = evaluate(thedescription)>
+						<cfif c_thedescription NEQ "">
+							<cfset tdescription = evaluate(c_thedescription)>
 						<cfelse>
 							<cfset tdescription = "">
 						</cfif>
@@ -1498,12 +1545,12 @@
 				</cfquery>
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
-					<cfset thepdf_author = gettemplatevalue(arguments.thestruct.impp_template,"pdf_author")>
-					<cfset thepdf_rights = gettemplatevalue(arguments.thestruct.impp_template,"pdf_rights")>
-					<cfset thepdf_authorsposition = gettemplatevalue(arguments.thestruct.impp_template,"pdf_authorsposition")>
-					<cfset thepdf_captionwriter = gettemplatevalue(arguments.thestruct.impp_template,"pdf_captionwriter")>
-					<cfset thepdf_webstatement = gettemplatevalue(arguments.thestruct.impp_template,"pdf_webstatement")>
-					<cfset thepdf_rightsmarked = gettemplatevalue(arguments.thestruct.impp_template,"pdf_rightsmarked")>
+					<cfset c_thepdf_author = gettemplatevalue(arguments.thestruct.impp_template,"pdf_author")>
+					<cfset c_thepdf_rights = gettemplatevalue(arguments.thestruct.impp_template,"pdf_rights")>
+					<cfset c_thepdf_authorsposition = gettemplatevalue(arguments.thestruct.impp_template,"pdf_authorsposition")>
+					<cfset c_thepdf_captionwriter = gettemplatevalue(arguments.thestruct.impp_template,"pdf_captionwriter")>
+					<cfset c_thepdf_webstatement = gettemplatevalue(arguments.thestruct.impp_template,"pdf_webstatement")>
+					<cfset c_thepdf_rightsmarked = gettemplatevalue(arguments.thestruct.impp_template,"pdf_rightsmarked")>
 				</cfif>
 				<!--- record not found, so do an insert --->
 				<cfif xmphere.asset_id_r EQ "">
@@ -1511,33 +1558,33 @@
 					INSERT INTO #session.hostdbprefix#files_xmp
 					(author, rights, authorsposition, captionwriter, webstatement, rightsmarked, asset_id_r, host_id)
 					VALUES(
-						<cfif thepdf_author NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thepdf_author)#">,
+						<cfif c_thepdf_author NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_author)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thepdf_rights NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thepdf_rights)#">,
+						<cfif c_thepdf_rights NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_rights)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-						<cfif thepdf_authorsposition NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thepdf_authorsposition)#">,
+						<cfif c_thepdf_authorsposition NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_authorsposition)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-				  	  	<cfif thepdf_captionwriter NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thepdf_captionwriter)#">,
+				  	  	<cfif c_thepdf_captionwriter NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_captionwriter)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-				  	  	<cfif thepdf_webstatement NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thepdf_webstatement)#">,
+				  	  	<cfif c_thepdf_webstatement NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_webstatement)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
-				  	  	<cfif thepdf_rightsmarked NEQ "">
-							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(thepdf_rightsmarked)#">,
+				  	  	<cfif c_thepdf_rightsmarked NEQ "">
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#evaluate(c_thepdf_rightsmarked)#">,
 						<cfelse>
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
 						</cfif>
@@ -1548,64 +1595,64 @@
 				<cfelse>
 					<!--- If append --->
 					<cfif arguments.thestruct.imp_write EQ "add">	
-						<cfif thepdf_author NEQ "">
-							<cfset tpdf_author = xmphere.author & " " & evaluate(thepdf_author)>
+						<cfif c_thepdf_author NEQ "">
+							<cfset tpdf_author = xmphere.author & " " & evaluate(c_thepdf_author)>
 						<cfelse>
 							<cfset tpdf_author = xmphere.author>
 						</cfif>
-						<cfif thepdf_rights NEQ "">
-							<cfset tpdf_rights = xmphere.rights & " " & evaluate(thepdf_rights)>
+						<cfif c_thepdf_rights NEQ "">
+							<cfset tpdf_rights = xmphere.rights & " " & evaluate(c_thepdf_rights)>
 						<cfelse>
 							<cfset tpdf_rights = xmphere.rights>
 						</cfif>
-						<cfif thepdf_authorsposition NEQ "">
-							<cfset tpdf_authorsposition = xmphere.authorsposition & " " & evaluate(thepdf_authorsposition)>
+						<cfif c_thepdf_authorsposition NEQ "">
+							<cfset tpdf_authorsposition = xmphere.authorsposition & " " & evaluate(c_thepdf_authorsposition)>
 						<cfelse>
 							<cfset tpdf_authorsposition = xmphere.authorsposition>
 						</cfif>
-						<cfif thepdf_captionwriter NEQ "">
-							<cfset tpdf_captionwriter = xmphere.captionwriter & " " & evaluate(thepdf_captionwriter)>
+						<cfif c_thepdf_captionwriter NEQ "">
+							<cfset tpdf_captionwriter = xmphere.captionwriter & " " & evaluate(c_thepdf_captionwriter)>
 						<cfelse>
 							<cfset tpdf_captionwriter = xmphere.captionwriter>
 						</cfif>
-						<cfif thepdf_webstatement NEQ "">
-							<cfset tpdf_webstatement = xmphere.webstatement & " " & evaluate(thepdf_webstatement)>
+						<cfif c_thepdf_webstatement NEQ "">
+							<cfset tpdf_webstatement = xmphere.webstatement & " " & evaluate(c_thepdf_webstatement)>
 						<cfelse>
 							<cfset tpdf_webstatement = xmphere.webstatement>
 						</cfif>
-						<cfif thepdf_rightsmarked NEQ "">
-							<cfset tpdf_rightsmarked = xmphere.rightsmarked & " " & evaluate(thepdf_rightsmarked)>
+						<cfif c_thepdf_rightsmarked NEQ "">
+							<cfset tpdf_rightsmarked = xmphere.rightsmarked & " " & evaluate(c_thepdf_rightsmarked)>
 						<cfelse>
 							<cfset tpdf_rightsmarked = xmphere.rightsmarked>
 						</cfif>
 					<cfelse>
-						<cfif thepdf_author NEQ "">
-							<cfset tpdf_author = evaluate(thepdf_author)>
+						<cfif c_thepdf_author NEQ "">
+							<cfset tpdf_author = evaluate(c_thepdf_author)>
 						<cfelse>
 							<cfset tpdf_author = "">
 						</cfif>
-						<cfif thepdf_rights NEQ "">
-							<cfset tpdf_rights = evaluate(thepdf_rights)>
+						<cfif c_thepdf_rights NEQ "">
+							<cfset tpdf_rights = evaluate(c_thepdf_rights)>
 						<cfelse>
 							<cfset tpdf_rights = "">
 						</cfif>
-						<cfif thepdf_authorsposition NEQ "">
-							<cfset tpdf_authorsposition = evaluate(thepdf_authorsposition)>
+						<cfif c_thepdf_authorsposition NEQ "">
+							<cfset tpdf_authorsposition = evaluate(c_thepdf_authorsposition)>
 						<cfelse>
 							<cfset tpdf_authorsposition = "">
 						</cfif>
-						<cfif thepdf_captionwriter NEQ "">
-							<cfset tpdf_captionwriter = evaluate(thepdf_captionwriter)>
+						<cfif c_thepdf_captionwriter NEQ "">
+							<cfset tpdf_captionwriter = evaluate(c_thepdf_captionwriter)>
 						<cfelse>
 							<cfset tpdf_captionwriter = "">
 						</cfif>
-						<cfif thepdf_webstatement NEQ "">
-							<cfset tpdf_webstatement = evaluate(thepdf_webstatement)>
+						<cfif c_thepdf_webstatement NEQ "">
+							<cfset tpdf_webstatement = evaluate(c_thepdf_webstatement)>
 						<cfelse>
 							<cfset tpdf_webstatement = "">
 						</cfif>
-						<cfif thepdf_rightsmarked NEQ "">
-							<cfset tpdf_rightsmarked = evaluate(thepdf_rightsmarked)>
+						<cfif c_thepdf_rightsmarked NEQ "">
+							<cfset tpdf_rightsmarked = evaluate(c_thepdf_rightsmarked)>
 						<cfelse>
 							<cfset tpdf_rightsmarked = "">
 						</cfif>
@@ -1638,4 +1685,72 @@
 		<cfreturn  />
 	</cffunction>
 	
+	<!---Import: Labels ---------------------------------------------------------------------->
+	<cffunction name="doimportlabels" output="false">
+		<cfargument name="labels" type="string">
+		<cfargument name="assetid" type="string">
+		<cfargument name="kind" type="string">
+		<!--- Label is usually a list, thus loop it --->
+		<cfloop list="#arguments.labels#" delimiters="," index="i">
+			<!--- Check if label is in the label db --->
+			<cfquery dataSource="#application.razuna.datasource#" name="labhere">
+			SELECT label_id
+			FROM #session.hostdbprefix#labels
+			WHERE lower(label_text) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(i)#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- If not we add it or else we simply update the ct db --->
+			<cfif labhere.recordcount EQ 0>
+				<!--- Create uuid --->
+				<cfset theid = replace(createuuid(),"-","","all")>
+				<!--- Insert --->
+				<cfquery dataSource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#labels
+				(label_id, label_text, label_date, user_id, host_id)
+				VALUES(
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
+					<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#session.theuserid#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
+				<!--- Insert into CT --->
+				<cfquery dataSource="#application.razuna.datasource#">
+				INSERT INTO ct_labels
+				(ct_label_id, ct_id_r, ct_type, rec_uuid)
+				VALUES(
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+				)
+				</cfquery>
+			<!--- Label is here --->
+			<cfelse>
+				<!--- Remove it first for this record, just so we don't get any errors --->
+				<cfquery dataSource="#application.razuna.datasource#">
+				DELETE FROM ct_labels
+				WHERE ct_label_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#labhere.label_id#">
+				AND ct_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND ct_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">
+				</cfquery>
+				<!--- Insert into CT --->
+				<cfquery dataSource="#application.razuna.datasource#">
+				INSERT INTO ct_labels
+				(ct_label_id, ct_id_r, ct_type, rec_uuid)
+				VALUES(
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#labhere.label_id#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+				)
+				</cfquery>
+			</cfif>
+		</cfloop>
+		
+		<!--- Return --->
+		<cfreturn  />
+	</cffunction>
+		
 </cfcomponent>
