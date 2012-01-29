@@ -744,6 +744,8 @@
 					<cfdirectory action="delete" directory="#arguments.thestruct.pathoneup#/#qry_rhost.host_path#" mode="775" recurse="yes">
 				</cfif>
 			</cfif>
+			<!--- Remove the Collection --->
+			<cfset CollectionDelete(arguments.thestruct.id)>
 			<!--- Remove the Host entry --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			DELETE FROM hosts
