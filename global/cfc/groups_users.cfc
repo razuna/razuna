@@ -282,6 +282,7 @@
 	AND u.user_id = ctg.CT_G_U_USER_ID
 	AND ctg.CT_G_U_USER_ID = cth.CT_U_H_USER_ID
 	AND cth.CT_U_H_HOST_ID = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+	GROUP BY u.user_email
 	</cfquery>
 	<cfreturn qry />
 </cffunction>

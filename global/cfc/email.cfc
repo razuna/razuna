@@ -82,51 +82,51 @@
 	<cfargument name="hostdbprefix" default="" required="no" type="string">
 	<cfargument name="userid" default="" required="no" type="string">
 	<cfargument name="hostid" default="" required="no" type="string">
-	<!--- Set data source since this call could also come from RFS --->
-	<cfif arguments.dsn EQ "">
-		<cfset var thedsn = application.razuna.datasource>
-	<cfelse>
-		<cfset var thedsn = arguments.dsn>
-	</cfif>
-	<!--- Set data source since this call could also come from RFS --->
-	<cfif arguments.hostdbprefix EQ "" OR !structkeyexists(arguments,"hostdbprefix")>
-		<cfset var thehostdbprefix = session.hostdbprefix>
-	<cfelse>
-		<cfset var thehostdbprefix = arguments.hostdbprefix>
-	</cfif>
-	<!--- Set data source since this call could also come from RFS --->
-	<cfif arguments.hostid EQ "" OR !structkeyexists(arguments,"hostid")>
-		<cfset var thehostid = session.hostid>
-	<cfelse>
-		<cfset var thehostid = arguments.hostid>
-	</cfif>
-	<!--- Set data source since this call could also come from RFS --->
-	<cfif arguments.userid EQ "" OR !structkeyexists(arguments,"userid")>
-		<cfset var theuserid = session.theuserid>
-	<cfelse>
-		<cfset var theuserid = arguments.userid>
-	</cfif>
-	<!--- Query email settings --->
-	<cfquery datasource="#thedsn#" name="emaildata">
-	SELECT set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, set2_email_server_port, set2_intranet_reg_emails, set2_intranet_reg_emails_sub
-	FROM #thehostdbprefix#settings_2
-	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thehostid#">
-	</cfquery>
-	<!--- If the to is empty --->
-	<cfif arguments.to EQ "">
-		<cfquery datasource="#thedsn#" name="qryuser">
-		SELECT user_email
-		FROM users
-		WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">
-		</cfquery>
-		<cfset arguments.to = qryuser.user_email>
-	</cfif>
-	<!--- Always take the email address from the settings --->
-	<cfset var thefrom = emaildata.set2_email_from>
-	<!--- send message if mail server setting is empty thus take the CF admin settings--->
 	<cftry>
+		<!--- Set data source since this call could also come from RFS --->
+		<cfif arguments.dsn EQ "">
+			<cfset var thedsn = application.razuna.datasource>
+		<cfelse>
+			<cfset var thedsn = arguments.dsn>
+		</cfif>
+		<!--- Set data source since this call could also come from RFS --->
+		<cfif arguments.hostdbprefix EQ "">
+			<cfset var thehostdbprefix = session.hostdbprefix>
+		<cfelse>
+			<cfset var thehostdbprefix = arguments.hostdbprefix>
+		</cfif>
+		<!--- Set data source since this call could also come from RFS --->
+		<cfif arguments.hostid EQ "">
+			<cfset var thehostid = session.hostid>
+		<cfelse>
+			<cfset var thehostid = arguments.hostid>
+		</cfif>
+		<!--- Set data source since this call could also come from RFS --->
+		<cfif arguments.userid EQ "">
+			<cfset var theuserid = session.theuserid>
+		<cfelse>
+			<cfset var theuserid = arguments.userid>
+		</cfif>
+		<!--- Query email settings --->
+		<cfquery datasource="#thedsn#" name="emaildata">
+		SELECT set2_email_server, set2_email_from, set2_email_smtp_user, set2_email_smtp_password, set2_email_server_port, set2_intranet_reg_emails, set2_intranet_reg_emails_sub
+		FROM #thehostdbprefix#settings_2
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#thehostid#">
+		</cfquery>
+		<!--- If the to is empty --->
+		<cfif arguments.to EQ "">
+			<cfquery datasource="#thedsn#" name="qryuser">
+			SELECT user_email
+			FROM users
+			WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">
+			</cfquery>
+			<cfset arguments.to = qryuser.user_email>
+		</cfif>
+		<!--- Always take the email address from the settings --->
+		<cfset var thefrom = emaildata.set2_email_from>			
+		<!--- send message if mail server setting is empty thus take the CF admin settings--->
 		<cfif emaildata.set2_email_server EQ "">
-			<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" replyto="#qryuser.user_email#" subject="#arguments.subject#" type="text/html"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
+			<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" replyto="#arguments.to#" subject="#arguments.subject#" type="text/html"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
 				<cfif arguments.sendaszip EQ "T">
 					<!--- Check the attachment (zip or normal files) --->
 					<cfif right("#arguments.attach#", 4) EQ ".zip">
@@ -151,7 +151,7 @@
 			</cfmail>
 		<cfelse>
 			<!--- send message if there is a mail server set for this host --->
-			<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" replyto="#qryuser.user_email#" subject="#arguments.subject#" username="#emaildata.SET2_EMAIL_SMTP_USER#" password="#emaildata.SET2_EMAIL_SMTP_PASSWORD#" server="#emaildata.SET2_EMAIL_SERVER#" port="#emaildata.SET2_EMAIL_SERVER_PORT#" type="text/html" timeout="900"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
+			<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" replyto="#arguments.to#" subject="#arguments.subject#" username="#emaildata.SET2_EMAIL_SMTP_USER#" password="#emaildata.SET2_EMAIL_SMTP_PASSWORD#" server="#emaildata.SET2_EMAIL_SERVER#" port="#emaildata.SET2_EMAIL_SERVER_PORT#" type="text/html" timeout="900"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
 				<cfif arguments.sendaszip EQ "T">
 					<!--- Check the attachment (zip or normal files) --->
 					<cfif right("#arguments.attach#", 4) EQ ".zip">
@@ -175,7 +175,9 @@
 				</cfif>
 			</cfmail>
 		</cfif>
-		<cfcatch type="any"></cfcatch>
+		<cfcatch type="any">
+			<cfmail from="server@razuna.com" to="support@razuna.com" subject="error in sending eMail" type="html"><cfdump var="#cfcatch#"></cfmail>
+		</cfcatch>
 	</cftry>
 </cffunction>
 
