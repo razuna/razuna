@@ -593,8 +593,9 @@
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
+			<cfset mtt = replace(createuuid(),"-","","all")>
 			<!--- Move the file to the versions directory --->
-			<cfthread name="m#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
+			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->
 				<cfinvoke component="nirvanix" method="MoveFolders">
 					<cfinvokeargument name="srcFolderPath" value="/#attributes.intstruct.qryfilelocal.path_to_asset#">
@@ -609,7 +610,7 @@
 				</cfinvoke>
 			</cfthread>
 			<!--- Wait for the move thread to finish --->
-			<cfthread action="join" name="m#arguments.thestruct.therandom#" />
+			<cfthread action="join" name="#mtt#" />
 			<!--- Upload the new version to the old directory --->
 			<!--- <cfthread name="u#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#"> --->
 				<!--- Upload Original --->
@@ -642,8 +643,9 @@
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
+			<cfset mtt = replace(createuuid(),"-","","all")>
 			<!--- Move the file to the versions directory --->
-			<cfthread name="m#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
+			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->
 				<cfinvoke component="amazon" method="movefolder">
 					<cfinvokeargument name="folderpath" value="#attributes.intstruct.qryfilelocal.path_to_asset#">
@@ -652,7 +654,7 @@
 				</cfinvoke>
 			</cfthread>
 			<!--- Wait for the move thread to finish --->
-			<cfthread action="join" name="m#arguments.thestruct.therandom#" />
+			<cfthread action="join" name="#mtt#" />
 			<!--- Upload the new version to the old directory --->
 			<cfthread name="u#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
 				<!--- Upload Original --->
