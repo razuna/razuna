@@ -65,6 +65,8 @@
 		        <input type="text" name="field_#currentRow#" id="field_#currentRow#" style="width:250px;" value="#imp_field#" />
 		        <select id="select_#currentRow#" name="select_#currentRow#" style="width:250px;">
 		        	<option selected="selected">Map to ...</option>
+		        	<option>--- Key fields ---</option>
+		        	<cfloop list="#attributes.meta_keys#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
 		        	<option>--- Default ---</option>
 		        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#"<cfif i EQ imp_map> selected="selected"</cfif>>#i#</option></cfloop>
 		        	<option>--- For Images ---</option>
