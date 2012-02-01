@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<div style="padding-top:5px;">
-		<a href="##" onclick="loadcontent('thedroporders','#myself#c.orders');">Refresh</a> |Ê<a href="##" onclick="loadcontent('thedroporders','#myself#c.orders_reset');">Reset CartID</a>
+		<a href="##" onclick="loadcontent('thedroporders','#myself#c.orders');">Refresh</a> | <a href="##" onclick="loadcontent('thedroporders','#myself#c.orders_reset');">Reset CartID</a>
 	</div>
 	<div style="overflow:auto;font-weight:normal;">
 		<table border="0">

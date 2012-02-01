@@ -36,7 +36,15 @@
 	<div>
 		<div style="float:left;width:150px;font-weight:bold;">Apply to...</div>
 		<div style="float:left;">
-			<cfif structkeyexists(attributes,"isfolder")>to all assets in the folder<cfelse>count selected assets</cfif>
+			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+				Please select <select name="expwhat" id="expwhat">
+					<option value="folder" selected="selected">all assets in THIS folder</option>
+					<option value="all">all assets in Razuna</option>
+				</select>
+			<cfelse>
+				<input type="hidden" name="expwhat" id="expwhat" value="" />
+				to all assets in the folder
+			</cfif>
 		</div>
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<div style="float:left;width:150px;font-weight:bold;">File Format</div>

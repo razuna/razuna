@@ -26,7 +26,18 @@
 <cfoutput>
 #defaultsObj.trans("header_export_metadata_desc")# <br /><br />
 <div>
-	<div style="float:left;padding-top:7px;"></div> 
+	<div style="float:left;padding-top:7px;">
+		<cfif attributes.what EQ "folder">
+			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+				Please select <select name="expwhat" id="expwhat">
+					<option value="folder" selected="selected">Export this folder</option>
+					<option value="all">Export ALL assets in Razuna</option>
+				</select>
+			</cfif>
+		<cfelse>
+			<input type="hidden" name="expwhat" id="expwhat" value="" />
+		</cfif>
+	</div> 
 	<div style="float:right;"><select id="export_format"><option value="">#defaultsObj.trans("choose_format")#</option><option value="csv" selected="selected">CSV</option><option value="xls">XLS</option><option value="xlsx">XLSX</option></select><span style="padding-right:7px;"></span><input type="button" value="#defaultsObj.trans("export")#" onclick="exportfile()" />
 	</div>
 </div>
@@ -34,9 +45,11 @@
 	function exportfile(){
 		//Get export format
 		var format = $('##export_format option:selected').val();
+		// what to export
+		var exp = $('##expwhat option:selected').val();
 		// Only if select is a format
 		if (format != ''){
-			window.open('#myself#c.meta_export_do&what=#attributes.what#&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&format=' + format)
+			window.open('#myself#c.meta_export_do&what=#attributes.what#&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&format=' + format + '&expwhat=' + exp)
 		}
 	}
 </script>

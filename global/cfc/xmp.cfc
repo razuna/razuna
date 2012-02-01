@@ -1369,19 +1369,30 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT img_id AS theid, 'img' AS thetype
 		FROM #session.hostdbprefix#images
-		WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
+		<cfif arguments.thestruct.expwhat NEQ "all">
+			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		</cfif>
 		UNION ALL
 		SELECT vid_id AS theid, 'vid' AS thetype
 		FROM #session.hostdbprefix#videos
-		WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
+		<cfif arguments.thestruct.expwhat NEQ "all">
+			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		</cfif>
 		UNION ALL
 		SELECT aud_id AS theid, 'aud' AS thetype
 		FROM #session.hostdbprefix#audios
-		WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
+		<cfif arguments.thestruct.expwhat NEQ "all">
+			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		</cfif>
 		UNION ALL
 		SELECT file_id AS theid, 'doc' AS thetype
 		FROM #session.hostdbprefix#files
-		WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		<cfif arguments.thestruct.expwhat NEQ "all">
+			WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+		</cfif>
 		</cfquery>
 		<!--- Loop over items in basket --->
 		<cfloop query="qry">

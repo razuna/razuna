@@ -59,7 +59,7 @@
 		FROM #session.hostdbprefix#import_templates_val
 		WHERE imp_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.imp_temp_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		ORDER BY imp_field
+		ORDER BY imp_key DESC, imp_field
 		</cfquery>
 		<!--- Query key record --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.impkey">
@@ -333,10 +333,12 @@
 			FROM #session.hostdbprefix#images
 			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			<cfif arguments.thestruct.expwhat NEQ "all">
+				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			</cfif>
 			</cfquery>
 			<!--- If record is found continue --->
-			<cfif found.img_id EQ evaluate(c_thisid)>
+			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
 				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
@@ -361,7 +363,9 @@
 				SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cfif arguments.thestruct.expwhat NEQ "all">
+					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				</cfif>
 				</cfquery>
 				<!--- Keywords & Descriptions --->
 				<!--- Check if record is here --->
@@ -1133,10 +1137,12 @@
 			FROM #session.hostdbprefix#videos
 			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			<cfif arguments.thestruct.expwhat NEQ "all">
+				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			</cfif>
 			</cfquery>
 			<!--- If record is found continue --->
-			<cfif found.vid_id EQ evaluate(c_thisid)>
+			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
 				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
@@ -1161,7 +1167,9 @@
 				SET vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cfif arguments.thestruct.expwhat NEQ "all">
+					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				</cfif>
 				</cfquery>
 				<!--- Keywords & Descriptions --->
 				<!--- Check if record is here --->
@@ -1281,10 +1289,12 @@
 			FROM #session.hostdbprefix#audios
 			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			<cfif arguments.thestruct.expwhat NEQ "all">
+				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			</cfif>
 			</cfquery>
 			<!--- If record is found continue --->
-			<cfif found.aud_id EQ evaluate(c_thisid)>
+			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
 				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
@@ -1309,7 +1319,9 @@
 				SET aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cfif arguments.thestruct.expwhat NEQ "all">
+					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				</cfif>
 				</cfquery>
 				<!--- Keywords & Descriptions --->
 				<!--- Check if record is here --->
@@ -1436,10 +1448,12 @@
 			FROM #session.hostdbprefix#files
 			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			<cfif arguments.thestruct.expwhat NEQ "all">
+				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			</cfif>
 			</cfquery>
 			<!--- If record is found continue --->
-			<cfif found.file_id EQ evaluate(c_thisid)>
+			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
 				<cfoutput>Importing ID: #evaluate(c_thisid)#<br><br></cfoutput>
 				<cfflush>
@@ -1464,7 +1478,9 @@
 				SET file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				<cfif arguments.thestruct.expwhat NEQ "all">
+					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				</cfif>
 				</cfquery>
 				<!--- Keywords & Descriptions --->
 				<!--- Check if record is here --->
@@ -1748,7 +1764,6 @@
 				</cfquery>
 			</cfif>
 		</cfloop>
-		
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
