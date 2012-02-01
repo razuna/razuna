@@ -171,15 +171,25 @@
 	LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
 	WHERE a.aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
+	</cfquery>	
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachename="aud#session.hostid#detaildesc#arguments.thestruct.file_id#" cachedomain="#session.theuserid#_audios">
 	SELECT aud_description, aud_keywords, lang_id_r
 	FROM #session.hostdbprefix#audios_text
 	WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
-	<!--- Convert the size --->
-	<cfinvoke component="global" method="converttomb" returnvariable="thesize" thesize="#details.aud_size#">
+	<cftry>
+		<cfif details.recordcount NEQ 0>
+			<!--- Convert the size --->
+			<cfinvoke component="global" method="converttomb" returnvariable="thesize" thesize="#details.aud_size#">
+		<cfelse>
+			<cfset thesize = 0>
+		</cfif>
+		<cfcatch type="any">
+			<cfdump var="#details#"><cfabort>
+			<cfdump var="#cfcatch#"><cfdump var="#isnumeric(details.aud_size)#"><cfabort>
+		</cfcatch>
+	</cftry>
 	<!--- Put into struct --->
 	<cfset qry.detail = details>
 	<cfset qry.desc = desc>
