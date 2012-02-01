@@ -253,12 +253,7 @@
 	<cfset var thehost = listlast(arguments.thestruct.pathoneup,"/\")>
 	<!--- Send the user an email that his basket is ready --->
 	<cfif NOT structkeyexists(arguments.thestruct,"fromzip")>
-		<cfquery datasource="#variables.dsn#" name="qryuser">
-		SELECT user_email
-		FROM users
-		WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
-		</cfquery>
-		<cfinvoke component="email" method="send_email" to="#qryuser.user_email#" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#</a>">
+		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->
 	<cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput>
