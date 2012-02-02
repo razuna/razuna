@@ -2240,7 +2240,7 @@
   		imp_date_update		timestamp,
   		imp_who				varchar(100),
   		imp_active 			varchar(1) DEFAULT '0',
-  		host_id				bigint,
+  		host_id				int,
   		imp_name			varchar(200),
   		imp_description 	varchar(2000),
   		PRIMARY KEY (imp_temp_id)
@@ -2254,8 +2254,8 @@
   		rec_uuid			varchar(100),
   		imp_field			varchar(200),
   		imp_map				varchar(200),
-  		host_id				bigint,
-  		imp_key				bigint,
+  		host_id				int,
+  		imp_key				int,
   		PRIMARY KEY (rec_uuid)
 		)
 		#this.tableoptions#
