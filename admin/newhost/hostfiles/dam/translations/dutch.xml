@@ -1180,7 +1180,7 @@
 		<transtext>Pas aan</transtext>
 	</transid>
 	<transid name="custom_fields_asset">
-		<transtext>Extra informatie</transtext>
+		<transtext>Extra metadata</transtext>
 	</transid>
 	<transid name="show_only_for">
 		<transtext>Laat zien in</transtext>
@@ -1809,9 +1809,6 @@
 	<transid name="mapping">
 		<transtext>Mapping</transtext>
 	</transid>
-	<transid name="mapping_key_desc">
-		<transtext>Select the field that is the "key" to match the record.</transtext>
-	</transid>
 	<transid name="header_import_metadata">
 		<transtext>Import metadata</transtext>
 	</transid>
@@ -1819,7 +1816,7 @@
 		<transtext><![CDATA[Import metadata from an external file to all assets in this folder (if you want to apply this to only selected assets then use the select drop-down menu).]]></transtext>
 	</transid>
 	<transid name="import_metadata_desc">
-		<transtext><![CDATA[Upload your CSV, XML or XLS(x) file here in order to apply the metadata to all assets in this folder or only to the selected assets. If you have a custom metadata file then make sure to define the file format and the import template below.<br /><br /><strong>For CSV and Excel files:</strong><br />Make sure that first row contains the header columns with the columns you want to import. Only the available columns will be imported!<br /><br /><strong>For XML files:</strong><br />Choose the proper import template in order for Razuna to match the XML with the database!]]></transtext>
+		<transtext><![CDATA[Upload your CSV or XLS(x) file here in order to apply the metadata to all assets in this folder or only to the selected assets. If you have a custom metadata file then make sure to define the file format and the import template below.<br /><br /><strong>For CSV and Excel files:</strong><br />Make sure that first row contains the header columns with the columns you want to import. Only the available columns will be imported!<br />]]></transtext>
 	</transid>
 	<transid name="tooltip_export_metadata_desc">
 		<transtext><![CDATA[Export metadata from all assets in this folder or only from the selected assets (if you want to export only from selected assets then use the select drop-down menu).]]></transtext>
@@ -1841,5 +1838,8 @@
 	</transid>
 	<transid name="import_from_folder_foreign">
 		<transtext><![CDATA[Caution: Make sure your folders and files do not contain foreign characters!]]></transtext>
+	</transid>
+	<transid name="admin_import_templates_desc">
+		<transtext><![CDATA[Define below the header column of the file and map each field to a column in the Razuna database. Note: Map each available column in your file in order to successfully import the file. <br /><br />The <strong>FIRST FIELD</strong> is the "key" and will be used to match the record. You can ONLY use the "ID" or "FILENAME" as the key!]]></transtext>
 	</transid>
 </translations>
