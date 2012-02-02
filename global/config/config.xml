@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
 	<configid name="version">
-		<thetext>1.4.8</thetext>
+		<thetext>1.5</thetext>
 	</configid>
 	<configid name="prerelease">
 		<thetext>false</thetext>
