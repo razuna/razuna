@@ -31,5 +31,4 @@
 >
 <cferror type="exception" template="error.cfm">
 <cferror type="request" template="error_request.cfm">
-<!--- <cfset FUSEBOX_PARAMETERS.mode = "development-circuit-load" /> --->
 <cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
