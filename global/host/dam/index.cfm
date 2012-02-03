@@ -31,8 +31,5 @@
 >
 <cferror type="exception" template="error.cfm">
 <cferror type="request" template="error_request.cfm">
-<!--- <cflock name="#attributes.cfapplicationname#" type="exclusive" timeout="30"> --->
-<cflock scope="Application" type="exclusive" timeout="300">
-	<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
-</cflock>
-
+<!--- <cfset FUSEBOX_PARAMETERS.mode = "development-circuit-load" /> --->
+<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
