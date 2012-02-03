@@ -30,6 +30,4 @@
 	sessiontimeout="#CreateTimeSpan(0,3,0,0)#"
 	setClientCookies="yes"
 >
-<cflock name="#thecfapp#" type="exclusive" timeout="10" throwontimeout="no">
-	<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
-</cflock>
+<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
