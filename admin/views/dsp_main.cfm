@@ -118,6 +118,10 @@
 										<td width="100%">#defaultsObj.trans("server_url")#</td>
 										<td width="1%" nowrap>#cgi.HTTP_HOST#</td>
 									</tr>
+									<tr>
+										<td width="100%">Server ID</td>
+										<td width="1%" nowrap>#application.razuna.serverid#</td>
+									</tr>
 								</table>
 								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
  									<cfset variables.mem = systemmemory()>

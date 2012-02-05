@@ -926,7 +926,8 @@
 	<cftry>
 		<cfquery datasource="razuna_default" name="qry">
 		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
+		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
+		conf_rendering_farm, conf_serverid
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
@@ -968,14 +969,15 @@
 				conf_nirvanix_url_services	VARCHAR(100),
 				conf_isp					VARCHAR(100),
 				conf_firsttime				BOOLEAN,
-				conf_rendering_farm			BOOLEAN
+				conf_rendering_farm			BOOLEAN,
+				conf_serverid				VARCHAR(100)
 			)
 			</cfquery>
 			<!--- Insert values --->
 			<cfquery datasource="razuna_default">
 			INSERT INTO razuna_config
 			(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, 
-			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_rendering_farm)
+			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_rendering_farm, conf_serverid)
 			VALUES(
 			'h2',
 			'razuna',
@@ -985,13 +987,15 @@
 			'http://services.nirvanix.com',
 			'false',
 			true,
-			false
+			false,
+			'#createuuid#'
 			)
 			</cfquery>
 			<!--- Query again --->
 			<cfquery datasource="razuna_default" name="qry">
 			SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
+			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
+			conf_aws_location, conf_rendering_farm, conf_serverid
 			FROM razuna_config
 			</cfquery>
 		</cfcatch>
@@ -1051,6 +1055,7 @@
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.firsttime = qry.conf_firsttime>
 	<cfset application.razuna.rfs = qry.conf_rendering_farm>
+	<cfset application.razuna.serverid = qry.conf_serverid>
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 </cffunction>
 
