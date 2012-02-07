@@ -31,7 +31,7 @@
 				<div style="width:260px;">
 					<i>#user_login_name# #defaultsObj.trans("wrote_on")# #dateformat(com_date,"mmmm dd yyyy")# #timeformat(com_date,"hh:mm:ss")#</i><br />
 					#com_text#<br />
-					<a href="##" onclick="showwindow('#myself#c.share_comments_edit&com_id=#com_id#&file_id=#attributes.file_id#&type=#attributes.type#','#defaultsObj.trans("edit")#',400,2);return false;">#defaultsObj.trans("edit")#</a> | <a href="##" onclick="showwindow('#myself#ajax.share_remove_record&id=#com_id#&what=share_comments_remove&loaddiv=div#attributes.file_id#&file_id=#attributes.file_id#&type=#attributes.type#','#defaultsObj.trans("remove")#',400,2);return false;">#defaultsObj.trans("remove")#</a>
+					<a href="##" onclick="showwindow('#myself#c.share_comments_edit&com_id=#com_id#&file_id=#attributes.file_id#&type=#attributes.type#','#defaultsObj.trans("edit")#',450,2);return false;">#defaultsObj.trans("edit")#</a> | <a href="##" onclick="showwindow('#myself#ajax.share_remove_record&id=#com_id#&what=share_comments_remove&loaddiv=div#attributes.file_id#&file_id=#attributes.file_id#&type=#attributes.type#','#defaultsObj.trans("remove")#',400,2);return false;">#defaultsObj.trans("remove")#</a>
 				</div>
 			</td>
 		</tr>

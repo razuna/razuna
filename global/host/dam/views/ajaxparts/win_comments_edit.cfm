@@ -1,4 +1,4 @@
-<!---
+	<!---
 *
 * Copyright (C) 2005-2008 Razuna
 *
@@ -30,11 +30,13 @@
 				<div style="width:400px;">
 				#defaultsObj.trans("comment")#
 				<textarea id="commentup" name="commentup" style="width:400px;height:50px;">#qry_comment.com_text#</textarea>
-				#defaultsObj.trans("labels")#
-				<input name="tags" id="tags_com_edit" value="#qry_labels#">
-				<br />
-				(<cfif settingsobj.get_label_set().set2_labels_users EQ "f">You can only choose from available labels. Simply start typing to select from available labels.<cfelse>Simple start typing to choose from available labels or add a new one by entering above and hit ",".</cfif>)</em>
-				<br />
+				<cfif !attributes.fa CONTAINS "share_">
+					#defaultsObj.trans("labels")#
+					<input name="tags" id="tags_com_edit" value="#qry_labels#">
+					<br />
+					(<cfif settingsobj.get_label_set().set2_labels_users EQ "f">You can only choose from available labels. Simply start typing to select from available labels.<cfelse>Simple start typing to choose from available labels or add a new one by entering above and hit ",".</cfif>)</em>
+					<br />
+				</cfif>
 				<div style="float:right;"><input type="button" value="#defaultsObj.trans("button_update")#" name="savecomment" class="button" onclick="updatecomment<cfif attributes.fa CONTAINS "share_">share</cfif>('#attributes.file_id#','#attributes.com_id#','#attributes.type#');"></div>
 				</div>
 			</td>
@@ -48,10 +50,12 @@ function updatecommentshare(fileid,comid,type){
 	// Hide Window
 	destroywindow(2);
 }
+<cfif !attributes.fa CONTAINS "share_">
 // TAG IT
 var raztags = #attributes.thelabels#;
 // Global Tagit function
 // div, fileid, type, tags
 raztagit('tags_com_edit','#attributes.com_id#','comment',raztags,'#settingsobj.get_label_set().set2_labels_users#');
+</cfif>
 </script>
 </cfoutput>

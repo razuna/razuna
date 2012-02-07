@@ -4416,6 +4416,9 @@
 	</fuseaction>
 	<!-- Edit Comment -->
 	<fuseaction name="share_comments_edit">
+		<!-- Param -->
+		<set name="qry_labels" value="" />
+		<set name="attributes.thelabels" value="" />
 		<!-- CFC: Add Comment -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="edit(attributes)" returnvariable="qry_comment" />
 		<!-- Show -->
