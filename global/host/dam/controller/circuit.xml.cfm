@@ -4400,6 +4400,8 @@
 	<fuseaction name="share_comments_add">
 		<!-- Param -->
 		<set name="session.theuserid" value="1" />
+		<!-- Session for the new comment id -->
+		<set name="session.newcommentid" value="#replace(createuuid(),'-','','all')#" />
 		<!-- CFC: Add Comment -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="add(attributes)" />
 		<!-- Show -->
