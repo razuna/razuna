@@ -10,8 +10,8 @@
 		   	data: items,
 		   	success: function(theid,iscol){
 				// Feedback
-				$('#updatetext').html('<cfoutput>#JSStringFormat(defaultsObj.trans("success"))#</cfoutput>');
-				$("#updatetext").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+				$('#updatetextshare').html('<cfoutput>#JSStringFormat(defaultsObj.trans("success"))#</cfoutput>');
+				$("#updatetextshare").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 		   	}
 		});
 	}

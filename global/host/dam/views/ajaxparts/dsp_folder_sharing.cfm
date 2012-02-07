@@ -127,7 +127,7 @@
 		
 		<div style="float:right;padding-top:10px;padding-bottom:10px;">
 			<input type="submit" name="submit" value="#defaultsObj.trans("button_update")#" class="button">
-			<div id="updatetext" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
+			<div id="updatetextshare" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 		</div>
 	</div>
 	</form>
@@ -143,7 +143,7 @@
 			else{
 				thevalue = 0;
 			}
-			loadcontent('updatetext','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
+			loadcontent('updatetextshare','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
 			$('##reset_dl').html('Reset all individual download setting successfully');
 		}
 		// Activate Chosen
