@@ -51,8 +51,7 @@
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/js/tag-it.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js" type="text/javascript"></script>
-<!--- /* <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js" type="text/javascript"></script> */ --->
-<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.jquery.min.js" type="text/javascript"></script>
 <!--- CSS --->
