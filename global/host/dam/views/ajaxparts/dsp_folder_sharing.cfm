@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<form name="form_folder#attributes.theid#" action="#self#" method="post" id="form_folder#attributes.theid#" onsubmit="savesharing('#attributes.theid#','<cfif qry_folder.folder_is_collection EQ "T" OR attributes.iscol EQ "T">T<cfelse>F</cfif>');return false;">
+	<form name="form_folder_share#attributes.theid#" action="#self#" method="post" id="form_folder_share#attributes.theid#" onsubmit="savesharing('#attributes.theid#','<cfif qry_folder.folder_is_collection EQ "T" OR attributes.iscol EQ "T">T<cfelse>F</cfif>');return false;">
 	<input type="hidden" name="#theaction#" value="#xfa.submitfolderform#">
 	<input type="hidden" name="theid" value="#attributes.theid#">
 	<cfif qry_folder.folder_is_collection EQ "T" OR attributes.iscol EQ "T">

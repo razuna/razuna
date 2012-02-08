@@ -1,8 +1,8 @@
 <script language="javascript">
 	// when saving sharing only
 	function savesharing(theid,iscol){
-		var url = formaction("form_folder" + theid);
-		var items = formserialize("form_folder" + theid);
+		var url = formaction("form_folder_share" + theid);
+		var items = formserialize("form_folder_share" + theid);
 		// Submit Form
        	$.ajax({
 			type: "POST",
