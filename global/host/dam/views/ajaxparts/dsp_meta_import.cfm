@@ -64,7 +64,7 @@
 --->
 		<!--- Template --->
 		<div style="clear:both;padding-bottom:10px;"></div>
-		<div style="float:left;width:150px;font-weight:bold;">Upload Template</div>
+		<div style="float:left;width:150px;font-weight:bold;">Choose Template</div>
 		<div style="float:left;width:300px;">
 			<select name="impp_template" id="impp_template" style="width:150px;"<!---  disabled="disabled" --->>
 				<option value="" selected="selected">No template</option>
