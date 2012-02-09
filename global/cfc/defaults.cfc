@@ -47,7 +47,7 @@
 		<!--- If no record is found then insert the default English one --->
 		<cfif thelangs.recordcount EQ 0>
 			<!--- Check if english is here or not --->
-			<cfif thelangs.lang_name EQ "english">
+			<cfif thelangs.lang_id EQ 1>
 				<cfquery datasource="#Variables.dsn#">
 				UPDATE #session.hostdbprefix#languages
 				SET lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
