@@ -46,17 +46,27 @@
 		</cfquery>
 		<!--- If no record is found then insert the default English one --->
 		<cfif thelangs.recordcount EQ 0>
-			<cfquery datasource="#Variables.dsn#">
-			INSERT INTO #session.hostdbprefix#languages
-			(lang_id, lang_name, lang_active, host_id, rec_uuid)
-			VALUES(
-			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam value="English" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-			)
-			</cfquery>
+			<!--- Check if english is here or not --->
+			<cfif thelangs.lang_name EQ "english">
+				<cfquery datasource="#Variables.dsn#">
+				UPDATE #session.hostdbprefix#languages
+				SET lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+				WHERE lang_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#Variables.dsn#">
+				INSERT INTO #session.hostdbprefix#languages
+				(lang_id, lang_name, lang_active, host_id, rec_uuid)
+				VALUES(
+				<cfqueryparam value="1" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="English" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfif>
 			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_lang" />
 		</cfif>
 		<!--- Return --->
