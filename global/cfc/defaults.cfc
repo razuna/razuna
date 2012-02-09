@@ -36,7 +36,7 @@
 <cffunction name="getlangs" output="false">
 	<cftry>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="thelangs">
+		<cfquery datasource="#Variables.dsn#" name="thelangs" cachename="getlang#session.hostid#" cachedomain="#session.hostid#_lang">
 		SELECT lang_id, lang_name
 		FROM #session.hostdbprefix#languages
 		WHERE lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
@@ -46,7 +46,7 @@
 		<!--- If no record is found then insert the default English one --->
 		<cfif thelangs.recordcount EQ 0>
 			<!--- Check if english is here or not --->
-			<cfquery datasource="#Variables.dsn#" name="thelangseng">
+			<cfquery datasource="#Variables.dsn#" name="thelangseng" cachename="getlangeng#session.hostid#" cachedomain="#session.hostid#_lang">
 			SELECT lang_id
 			FROM #session.hostdbprefix#languages
 			WHERE lang_active = <cfqueryparam value="f" cfsqltype="cf_sql_varchar">
