@@ -49,8 +49,7 @@
 			<cfquery datasource="#Variables.dsn#" name="thelangseng" cachename="getlangeng#session.hostid#" cachedomain="#session.hostid#_lang">
 			SELECT lang_id
 			FROM #session.hostdbprefix#languages
-			WHERE lang_active = <cfqueryparam value="f" cfsqltype="cf_sql_varchar">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND lang_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">
 			</cfquery>
 			<cfif thelangseng.recordcount EQ 0>
@@ -73,7 +72,16 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			</cfif>
+			<!--- Reset Cache --->
 			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_lang" />
+			<!--- Query again --->
+			<cfquery datasource="#Variables.dsn#" name="thelangs" cachename="getlang#session.hostid#" cachedomain="#session.hostid#_lang">
+			SELECT lang_id, lang_name
+			FROM #session.hostdbprefix#languages
+			WHERE lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			ORDER BY lang_id
+			</cfquery>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thelangs>
