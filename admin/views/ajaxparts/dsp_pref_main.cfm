@@ -31,7 +31,7 @@
 		<div id="tabs_prefs">
 			<ul>
 				<li><a href="##pglobal" onclick="savesettings();">#defaultsObj.trans("settings_global")#</a></li>
-				<li><a href="##pmeta" onclick="savesettings();loadcontent('pmeta','#myself#c.prefs_meta');">#defaultsObj.trans("header_title_meta")#</a></li>
+				<li><a href="##pmeta" onclick="loadcontent('pmeta','#myself#c.prefs_meta');savesettings();">#defaultsObj.trans("header_title_meta")#</a></li>
 				<li><a href="##pdam" onclick="savesettings();loadcontent('pdam','#myself#c.prefs_dam');">#defaultsObj.trans("settings_intra")#</a></li>
 				<li><a href="##pimage" onclick="savesettings();loadcontent('pimage','#myself#c.prefs_image');">#defaultsObj.trans("image_settings")#</a></li>
 				<li><a href="##pvideo" onclick="savesettings();loadcontent('pvideo','#myself#c.prefs_video');">#defaultsObj.trans("video_settings_global")#</a></li>
