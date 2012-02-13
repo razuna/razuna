@@ -180,6 +180,9 @@
 	</cfquery>
 	<cftry>
 		<cfif details.recordcount NEQ 0>
+			<cfif details.aud_size EQ "">
+				<cfset details.aud_size = 1>
+			</cfif>
 			<!--- Convert the size --->
 			<cfinvoke component="global" method="converttomb" returnvariable="thesize" thesize="#details.aud_size#">
 		<cfelse>
