@@ -988,7 +988,7 @@
 			'false',
 			true,
 			false,
-			'#createuuid#'
+			'#createuuid()#'
 			)
 			</cfquery>
 			<!--- Query again --->
