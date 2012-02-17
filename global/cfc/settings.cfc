@@ -877,7 +877,9 @@
 	SELECT set_pref
 	FROM #session.hostdbprefix#settings
 	WHERE lower(set_id) = <cfqueryparam value="#lcase(arguments.thefield)#" cfsqltype="cf_sql_varchar">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfif arguments.thefield NEQ "rendering_farm_server">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfif>
 	</cfquery>
 	<cfreturn trim(sett.set_pref)>
 </cffunction>
