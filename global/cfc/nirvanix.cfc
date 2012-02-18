@@ -553,7 +553,7 @@
 			<!--- Add bandwidth together --->
 			<cfset x.band = x.DBU + x.UBU>
 			<!--- According to host type set the alert --->
-			<cfif session.hosttype EQ "F">
+			<cfif session.hosttype NEQ 149>
 				<cfset var storage = 536870912>
 				<cfset var bandud = 268435456>
 				<cfif x.tsu GTE storage OR x.band GTE bandud>

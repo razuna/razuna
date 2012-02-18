@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<cfif session.hosttype EQ "F">
+	<cfif session.hosttype EQ 0>
 		#defaultsObj.trans("custom_fields_desc")#<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>

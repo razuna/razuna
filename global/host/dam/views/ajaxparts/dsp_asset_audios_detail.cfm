@@ -255,7 +255,7 @@
 		<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 			<!--- Convert Audios --->
 			<div id="convert">
-				<cfif session.hosttype EQ "F">
+				<cfif session.hosttype EQ 0>
 					<cfinclude template="dsp_host_upgrade.cfm">
 				<cfelse>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">

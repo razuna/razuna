@@ -55,7 +55,7 @@
 		<div id="admin_imp_templates">#defaultsObj.loadinggif("#dynpath#")#</div>
 		<!--- Logs Searches --->
 		<div id="admin_logs_all">
-			<cfif session.hosttype EQ "F">
+			<cfif session.hosttype EQ 0>
 				<cfinclude template="dsp_host_upgrade.cfm">
 			<cfelse>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">

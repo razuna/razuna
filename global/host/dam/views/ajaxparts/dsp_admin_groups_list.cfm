@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-<cfif session.hosttype EQ "F">
+<cfif session.hosttype EQ 0>
 	<cfinclude template="dsp_host_upgrade.cfm">
 <cfelse>
 	<form name="grpdamadd" onsubmit="addgrp();return false;">

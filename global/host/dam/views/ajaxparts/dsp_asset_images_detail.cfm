@@ -287,7 +287,7 @@
 		<!--- Convert Image --->
 		<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 			<div id="convert">
-				<cfif session.hosttype EQ "F">
+				<cfif session.hosttype EQ 0>
 					<cfinclude template="dsp_host_upgrade.cfm">
 				<cfelse>
 					<cfinclude template="dsp_asset_images_convert.cfm">
