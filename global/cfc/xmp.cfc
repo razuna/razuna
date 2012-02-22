@@ -1337,8 +1337,11 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 </cffunction>
 
 <!--- Export metadata --->
-<cffunction name="meta_export" output="false">
+<cffunction name="meta_export" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are starting to export your data. Please wait.</strong></cfoutput>
+	<cfflush>
 	<!--- Param --->
 	<cfset arguments.thestruct.meta_fields = "id,type,filename,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	<!--- Set for custom fields --->
@@ -1433,7 +1436,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 </cffunction>
 
 <!--- Loop to get files --->
-<cffunction name="loopfiles" output="false">
+<cffunction name="loopfiles" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get the files according to the extension --->
 	<cfswitch expression="#arguments.thestruct.filetype#">
@@ -1508,6 +1511,9 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
 		</cfdefaultcase>
 	</cfswitch>
+	<!--- Feedback --->
+	<cfoutput><strong> .</strong></cfoutput>
+	<cfflush>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
