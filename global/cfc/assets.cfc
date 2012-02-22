@@ -2041,13 +2041,13 @@ This is the main function called directly by a single upload else from addassets
 		<cfset orgwh.thewidth = trim(listlast(orgwh.thewidth," "))>
 		<!--- Set correct width or heigth --->
 		<cfif orgwh.thewidth EQ "" OR orgwh.theheight EQ "">
-			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
+			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
 		<cfelseif orgwh.theheight LTE arguments.thestruct.height AND orgwh.thewidth LTE arguments.thestruct.width>
-			<cfset theImgConvertParams = "-strip -colorspace RGB">
+			<cfset theImgConvertParams = "-strip -colorspace RGB -flatten">
 		<cfelseif orgwh.thewidth GT arguments.thestruct.width>
-			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
+			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
 		<cfelseif orgwh.theheight GT arguments.thestruct.height>
-			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# -strip -colorspace RGB">
+			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# -strip -colorspace RGB -flatten">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
@@ -3454,16 +3454,16 @@ This is the main function called directly by a single upload else from addassets
 			<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
 				<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 				<cfcase value="psd,eps,ai">
-					<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
+					<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB -flatten #arguments.thestruct.thumbpath#">
 				</cfcase>
 				<!--- For RAW images we take dcraw --->
 				<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
 					<cfset theargs = "#thedcraw# -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
-					<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
+					<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB -flatten #arguments.thestruct.thumbpath#">
 				</cfcase>
 				<!--- For everything else --->
 				<cfdefaultcase>
-					<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
+					<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB -flatten #arguments.thestruct.thumbpath#">
 				</cfdefaultcase>
 			</cfswitch>
 		</cfif>
