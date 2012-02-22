@@ -1992,7 +1992,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
 		<cfset var theimconvert = "">
-		<cfset var theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
+		<cfset var theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
 		<cfset var orgwh = structnew()>
 		<cfset orgwh.thewidth = "">
 		<cfset orgwh.theheight = "">
