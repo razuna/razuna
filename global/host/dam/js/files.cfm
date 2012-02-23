@@ -65,8 +65,24 @@ function sendtobasket(theform){
       	}
    	}
    	// Send it to the basket
-   	loadcontent('thedropbasket','<cfoutput>#myself#</cfoutput>c.basket_put&file_id=' + fileids + '&thetype=' + filetypes);
-   	flash_footer();
+   	// Get values
+	var url = '<cfoutput>#myself#</cfoutput>c.basket_put_include';
+	var items = '&file_id=' + fileids + '&thetype=' + filetypes;
+	// Submit Form
+	$.ajax({
+		type: "POST",
+		url: url,
+	   	data: items,
+	   	success: sendtobasket_feedback
+	});
+}
+
+// Feedback on putting assets in basket
+function sendtobasket_feedback(){
+	// Flash the Basket
+	flash_footer();
+	// Reload Basket
+	loadcontent('thedropbasket','<cfoutput>#myself#</cfoutput>c.basket');
 }
 
 // Selected to Collection
