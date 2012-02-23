@@ -30,9 +30,14 @@
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <cfoutput>
 <!--- Control the cache --->
+<!---
 <cfheader name="Expires" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
-<meta http-equiv="X-UA-Compatible" content="chrome=1">
+--->
+<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
+<cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
+<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <!--- According to widget style we decide here what to load --->
