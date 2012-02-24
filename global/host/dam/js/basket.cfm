@@ -9,33 +9,54 @@
 	}
 	// Popup windows for email
 	function basketemail(email){
-		// Get the selections
-		var artimage = getimageselection();
-		var artvideo = getvideoselection();
-		var artaudio = getaudioselection();
-		var artfile = getfileselection();
 		// Open email Window
-		showwindow('<cfoutput>#myself#c.basket_email_form&artofimage=' + artimage + '&artofvideo=' + artvideo + '&artofaudio=' + artaudio + '&artoffile=' + artfile + '&email=' + email,'#JSStringFormat(defaultsObj.trans("send_with_email"))#</cfoutput>',600,1);
+		showwindow('<cfoutput>#myself#c.basket_email_form&email=' + email,'#JSStringFormat(defaultsObj.trans("send_with_email"))#</cfoutput>',600,1);
+		// Now populate the form fields
+		setTimeout("loadform('sendemailform')", 1000);
 	}
 	// Popup windows for FTP
 	function basketftp(){
-		// Get the selections
-		var artimage = getimageselection();
-		var artvideo = getvideoselection();
-		var artaudio = getaudioselection();
-		var artfile = getfileselection();
 		// Open email Window
-		showwindow('<cfoutput>#myself#c.basket_ftp_form&artofimage=' + artimage + '&artofvideo=' + artvideo + '&artofaudio=' + artaudio + '&artoffile=' + artfile,'#JSStringFormat(defaultsObj.trans("send_basket_ftp"))#</cfoutput>',600,1);
+		showwindow('<cfoutput>#myself#c.basket_ftp_form','#JSStringFormat(defaultsObj.trans("send_basket_ftp"))#</cfoutput>',600,1);
+		// Now populate the form fields
+		setTimeout("loadform('sendftpform')", 1000);
 	}
 	// Popup windows for Saving Basket
 	function basketsave(){
+		// Open email Window
+		showwindow('<cfoutput>#myself#ajax.basket_save','#JSStringFormat(defaultsObj.trans("save_basket"))#</cfoutput>',600,1);
+		// Submit art values
+		storevalues();
+	}
+	// Populate form fields
+	function loadform(theform){
 		// Get the selections
 		var artimage = getimageselection();
 		var artvideo = getvideoselection();
 		var artaudio = getaudioselection();
 		var artfile = getfileselection();
-		// Open email Window
-		showwindow('<cfoutput>#myself#ajax.basket_save&artofimage=' + artimage + '&artofvideo=' + artvideo + '&artofaudio=' + artaudio + '&artoffile=' + artfile,'#JSStringFormat(defaultsObj.trans("save_basket"))#</cfoutput>',600,1);
+		// Fill form fields
+		$('#' + theform + '_artofimage').val(artimage);
+		$('#' + theform + '_artvideo').val(artimage);
+		$('#' + theform + '_artaudio').val(artimage);
+		$('#' + theform + '_artfile').val(artimage);
+	}
+	// Store art values
+	function storevalues(){
+		// Get the selections
+		var artimage = getimageselection();
+		var artvideo = getvideoselection();
+		var artaudio = getaudioselection();
+		var artfile = getfileselection();
+		// Submit the values so we put them into sessions
+		var url = 'index.cfm?fa=c.store_art_values';
+		var items = '&artofimage=' + artimage + '&artofvideo=' + artvideo + '&artofaudio=' + artaudio + '&artoffile=' + artfile;
+		// Submit Form
+		$.ajax({
+			type: "POST",
+			url: url,
+		   	data: items
+		});
 	}
 	// Get Image Selection
 	function getimageselection(){

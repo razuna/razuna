@@ -30,10 +30,10 @@
 <input type="hidden" name="thepath" value="#thisPath#">
 <input type="hidden" name="frombasket" value="#attributes.frombasket#">
 <cfif attributes.frombasket EQ "T">
-<input type="hidden" name="artofimage" value="#attributes.artofimage#">
-<input type="hidden" name="artofvideo" value="#attributes.artofvideo#">
-<input type="hidden" name="artofaudio" value="#attributes.artofaudio#">
-<input type="hidden" name="artoffile" value="#attributes.artoffile#">
+<input type="hidden" name="artofimage" id="sendftpform_artofimage" value="">
+<input type="hidden" name="artofvideo" id="sendftpform_artofvideo" value="">
+<input type="hidden" name="artofaudio" id="sendftpform_artofaudio" value="">
+<input type="hidden" name="artoffile" id="sendftpform_artoffile" value="">
 </cfif>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<cfif attributes.frombasket EQ "T">
@@ -157,7 +157,7 @@
 	</tr>
 </table>
 </form>
-<script>
+<script type="text/javascript">
 	function loadftpsite(){
 		// Submit Form
 		if (($("##ftp_server").val() != "") && ($("##ftp_user").val() != "")){
@@ -170,23 +170,50 @@
 	        	}
 	    	}
 	    	// Get the checked values (file id's)
-			var artofimage = '';
+			var artimg = '';
+			var artvid = '';
+			var artaud = '';
+			var artdoc = '';
 			<cfif attributes.frombasket NEQ "T">
-			for (var i = 0; i<document.sendftpform.elements.length; i++) {
-		       if ((document.sendftpform.elements[i].name.indexOf('artofimage') > -1)) {
-		           if (document.sendftpform.elements[i].checked) {
-		           	artofimage += document.sendftpform.elements[i].value + ',';
-		           	}
-		      	}
-		   	}
+				for (var i = 0; i<document.sendftpform.elements.length; i++) {
+			       if ((document.sendftpform.elements[i].name.indexOf('artofimage') > -1)) {
+			           if (document.sendftpform.elements[i].checked) {
+			           	artimg += document.sendftpform.elements[i].value + ',';
+			           	}
+			      	}
+			   	}
 		   	</cfif>
 		   	// Change Button
 		   	document.getElementById('submitbutton').value='#defaultsObj.trans("please_wait")#...(sometime minutes)';
 	    	// Load the FTP site
 			<cfif attributes.frombasket NEQ "T">
-			loadcontent('thewindowcontent2','<cfoutput>#myself#</cfoutput>c.ftp_gologin&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + document.sendftpform.ftp_user.value + '&ftp_pass=' + document.sendftpform.ftp_pass.value + '&ftp_passive=' + passive + '&thetype=' + document.sendftpform.thetype.value + '&thepath=' + document.sendftpform.thepath.value + '&zipname=' + document.sendftpform.zipname.value + '&sendaszip=' + document.sendftpform.sendaszip.value + '&artofimage=' + artofimage);
+				// Submit the values so we put them into sessions
+				var url = '<cfoutput>#myself#</cfoutput>c.store_art_values';
+				var items = '&artofimage=' + artimg + '&artofvideo=' + artvid + '&artofaudio=' + artaud + '&artoffile=' + artdoc;
+				// Submit Form
+				$.ajax({
+					type: "POST",
+					url: url,
+				   	data: items
+				});
+				loadcontent('thewindowcontent2','<cfoutput>#myself#</cfoutput>c.ftp_gologin&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + document.sendftpform.ftp_user.value + '&ftp_pass=' + document.sendftpform.ftp_pass.value + '&ftp_passive=' + passive + '&thetype=' + document.sendftpform.thetype.value + '&thepath=' + document.sendftpform.thepath.value + '&zipname=' + document.sendftpform.zipname.value + '&sendaszip=' + document.sendftpform.sendaszip.value);
 			<cfelse>
-			loadcontent('thewindowcontent1','<cfoutput>#myself#</cfoutput>c.ftp_gologin&sendaszip=T&thetype=&frombasket=T&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + document.sendftpform.ftp_user.value + '&ftp_pass=' + document.sendftpform.ftp_pass.value + '&ftp_passive=' + passive + '&thepath=' + document.sendftpform.thepath.value + '&artofimage=' + document.sendftpform.artofimage.value + '&artofvideo=' + document.sendftpform.artofvideo.value + '&artofaudio=' + document.sendftpform.artofaudio.value + '&artoffile=' + document.sendftpform.artoffile.value);
+				// Grab values from fields
+				var artimg = document.sendftpform.artofimage.value;
+				var artvid = document.sendftpform.artofvideo.value;
+				var artaud = document.sendftpform.artofaudio.value;
+				var artdoc = document.sendftpform.artoffile.value;
+				// Submit the values so we put them into sessions
+				var url = '<cfoutput>#myself#</cfoutput>c.store_art_values';
+				var items = '&artofimage=' + artimg + '&artofvideo=' + artvid + '&artofaudio=' + artaud + '&artoffile=' + artdoc;
+				// Submit Form
+				$.ajax({
+					type: "POST",
+					url: url,
+				   	data: items
+				});
+				// Load the FTP window
+				loadcontent('thewindowcontent1','<cfoutput>#myself#</cfoutput>c.ftp_gologin&sendaszip=T&thetype=&frombasket=T&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + document.sendftpform.ftp_user.value + '&ftp_pass=' + document.sendftpform.ftp_pass.value + '&ftp_passive=' + passive + '&thepath=' + document.sendftpform.thepath.value);
 			</cfif>
 		}
 		return false;

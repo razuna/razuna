@@ -33,7 +33,7 @@
 			<td>#defaultsObj.trans("basket_save_as_zip_desc")#</td>
 		</tr>
 		<tr>
-			<td align="right"><input type="button" name="saveaszip" value="#defaultsObj.trans("basket_save_as_zip_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_zip&artofimage=#attributes.artofimage#&artofvideo=#attributes.artofvideo#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#','#defaultsObj.trans("basket_save_as_zip_button")#',600,1);" /></td>
+			<td align="right"><input type="button" name="saveaszip" value="#defaultsObj.trans("basket_save_as_zip_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_zip','#defaultsObj.trans("basket_save_as_zip_button")#',600,1);" /></td>
 		</tr>
 	</table>
 	<hr class="theline" />
@@ -46,7 +46,7 @@
 			<td>#defaultsObj.trans("basket_save_as_collection_desc")#</td>
 		</tr>
 		<tr>
-			<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_collection&artofimage=#attributes.artofimage#&artofvideo=#attributes.artofvideo#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
+			<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_collection','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
 		</tr>
 	</table>
 	<hr class="theline" />
@@ -59,7 +59,7 @@
 			<td>#defaultsObj.trans("basket_save_as_ext_collection_desc")#</td>
 		</tr>
 			<tr>
-				<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_ext_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_choose_collection&artofimage=#attributes.artofimage#&artofvideo=#attributes.artofvideo#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
+				<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_ext_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_choose_collection','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
 			</tr>
 	</table>
 </cfoutput>

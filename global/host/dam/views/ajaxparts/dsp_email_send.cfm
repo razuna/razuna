@@ -29,12 +29,10 @@
 <input type="hidden" name="file_id" value="#attributes.file_id#">
 <input type="hidden" name="thetype" value="#attributes.thetype#">
 <input type="hidden" name="thepath" value="#thisPath#">
-<!--- <cfif attributes.frombasket EQ "T"> --->
-<input type="hidden" name="artofimage" value="#attributes.artofimage#">
-<input type="hidden" name="artofvideo" value="#attributes.artofvideo#">
-<input type="hidden" name="artofaudio" value="#attributes.artofaudio#">
-<input type="hidden" name="artoffile" value="#attributes.artoffile#">
-<!--- </cfif> --->
+<input type="hidden" name="artofimage" id="sendemailform_artofimage" value="">
+<input type="hidden" name="artofvideo" id="sendemailform_artofvideo" value="">
+<input type="hidden" name="artofaudio" id="sendemailform_artofaudio" value="">
+<input type="hidden" name="artoffile" id="sendemailform_artoffile" value="">
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<cfif attributes.frombasket EQ "T">
 		<tr>

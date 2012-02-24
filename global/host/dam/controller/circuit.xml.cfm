@@ -608,11 +608,6 @@
 	<fuseaction name="basket_saveas_zip">
 		<!-- Param -->
 		<set name="session.type" value="saveaszip" />
-		<!-- Put art into sessions -->
-		<set name="session.artofimage" value="#attributes.artofimage#" />
-		<set name="session.artofvideo" value="#attributes.artofvideo#" />
-		<set name="session.artofaudio" value="#attributes.artofaudio#" />
-		<set name="session.artoffile" value="#attributes.artoffile#" />
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
@@ -643,11 +638,6 @@
 		<!-- Param -->
 		<set name="session.type" value="saveascollection" />
 		<set name="attributes.iscol" value="T" />
-		<!-- Put art into sessions -->
-		<set name="session.artofimage" value="#attributes.artofimage#" />
-		<set name="session.artofvideo" value="#attributes.artofvideo#" />
-		<set name="session.artofaudio" value="#attributes.artofaudio#" />
-		<set name="session.artoffile" value="#attributes.artoffile#" />
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
@@ -674,11 +664,6 @@
 		<!-- Param -->
 		<set name="session.type" value="choosecollection" />
 		<set name="attributes.iscol" value="T" />
-		<!-- Put art into sessions -->
-		<set name="session.artofimage" value="#attributes.artofimage#" />
-		<set name="session.artofvideo" value="#attributes.artofvideo#" />
-		<set name="session.artofaudio" value="#attributes.artofaudio#" />
-		<set name="session.artoffile" value="#attributes.artoffile#" />
 		<set name="session.file_id" value="" />
 		<set name="session.thetype" value="" />
 		<!-- Show the choose folder -->
@@ -2454,10 +2439,6 @@
 		<if condition="attributes.frombasket EQ 'T'">
 			<true>
 				<set name="session.frombasket" value="T" />
-				<set name="session.artofimage" value="#attributes.artofimage#" />
-				<set name="session.artofvideo" value="#attributes.artofvideo#" />
-				<set name="session.artofaudio" value="#attributes.artofaudio#" />
-				<set name="session.artoffile" value="#attributes.artoffile#" />
 			</true>
 		</if>
 		<!-- Get settings -->
@@ -5495,6 +5476,14 @@
 	<!--  -->
 	<!-- IMPORT METADATA: STOP -->
 	<!--  -->
+	
+	<!-- Store Art values -->
+	<fuseaction name="store_art_values">
+		<set name="session.artofimage" value="#attributes.artofimage#" />
+		<set name="session.artofvideo" value="#attributes.artofvideo#" />
+		<set name="session.artofaudio" value="#attributes.artofaudio#" />
+		<set name="session.artoffile" value="#attributes.artoffile#" />
+	</fuseaction>
 	
 	
 </circuit>
