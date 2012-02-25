@@ -71,12 +71,12 @@
 	Calculate the offset .Show the limit only if pages is null or current (from print) 
 	--->
 	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-		<cfif arguments.offset EQ 0>
+		<cfif session.offset EQ 0>
 			<cfset var min = 0>
-			<cfset var max = arguments.rowmaxpage>
+			<cfset var max = session.rowmaxpage>
 		<cfelse>
-			<cfset var min = arguments.offset * arguments.rowmaxpage>
-			<cfset var max = (arguments.offset + 1) * arguments.rowmaxpage>
+			<cfset var min = session.offset * session.rowmaxpage>
+			<cfset var max = (session.offset + 1) * session.rowmaxpage>
 			<cfif variables.database EQ "db2">
 				<cfset min = min + 1>
 			</cfif>
@@ -90,13 +90,13 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"i.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="img#session.hostid#getFolderAssets#Arguments.folder_id##Arguments.file_extension##Arguments.offset##arguments.thestruct.thisview##arguments.thestruct.view##thecolumnlist##max#" cachedomain="#session.theuserid#_images">
-		SELECT rn, #thecolumnlist#<!--- If we have the combined view ---><cfif arguments.thestruct.view EQ "combined">,keywords, description</cfif>
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="img#session.hostid#getFolderAssets#Arguments.folder_id##Arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_images">
+		SELECT rn, #thecolumnlist#<!--- If we have the combined view ---><cfif session.view EQ "combined">,keywords, description</cfif>
 		FROM (
-			SELECT ROWNUM AS rn, #thecolumnlist#<!--- If we have the combined view ---><cfif arguments.thestruct.view EQ "combined">,keywords, description</cfif>
+			SELECT ROWNUM AS rn, #thecolumnlist#<!--- If we have the combined view ---><cfif session.view EQ "combined">,keywords, description</cfif>
 			FROM (
-				SELECT #Arguments.ColumnList#<!--- If we have the combined view ---><cfif arguments.thestruct.view EQ "combined">,it.img_keywords keywords, it.img_description description</cfif>
-				FROM #session.hostdbprefix#images i<cfif arguments.thestruct.view EQ "combined"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
+				SELECT #Arguments.ColumnList#<!--- If we have the combined view ---><cfif session.view EQ "combined">,it.img_keywords keywords, it.img_description description</cfif>
+				FROM #session.hostdbprefix#images i<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -111,11 +111,11 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"i.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="img#session.hostid#getFolderAssets#Arguments.folder_id##Arguments.file_extension##Arguments.offset##arguments.thestruct.thisview##arguments.thestruct.view##thecolumnlist##max#" cachedomain="#session.theuserid#_images">
-		SELECT #thecolumnlist#<!--- If we have the combined view ---><cfif arguments.thestruct.view EQ "combined">,it.img_keywords keywords, it.img_description description</cfif>
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="img#session.hostid#getFolderAssets#Arguments.folder_id##Arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_images">
+		SELECT #thecolumnlist#<!--- If we have the combined view ---><cfif session.view EQ "combined">,it.img_keywords keywords, it.img_description description</cfif>
 		FROM (
-			SELECT row_number() over() as rownr, i.*<cfif arguments.thestruct.view EQ "combined">, it.*</cfif>
-			FROM #session.hostdbprefix#images i<cfif arguments.thestruct.view EQ "combined"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
+			SELECT row_number() over() as rownr, i.*<cfif session.view EQ "combined">, it.*</cfif>
+			FROM #session.hostdbprefix#images i<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
 			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -129,11 +129,11 @@
 	<!--- Other DB's --->
 	<cfelse>
 		<!--- Calculate the offset --->
-		<cfset var theoffset = arguments.offset * arguments.rowmaxpage>
+		<cfset var theoffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="img#session.hostid#getFolderAssets#Arguments.folder_id##Arguments.file_extension##Arguments.offset##arguments.thestruct.thisview##arguments.thestruct.view##Arguments.ColumnList##max#" cachedomain="#session.theuserid#_images">
-		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<!--- If we have the combined view ---><cfif arguments.thestruct.view EQ "combined">,it.img_keywords keywords, it.img_description description</cfif>
-		FROM #session.hostdbprefix#images i<cfif arguments.thestruct.view EQ "combined"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="img#session.hostid#getFolderAssets#Arguments.folder_id##Arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##Arguments.ColumnList##max#" cachedomain="#session.theuserid#_images">
+		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<!--- If we have the combined view ---><cfif session.view EQ "combined">,it.img_keywords keywords, it.img_description description</cfif>
+		FROM #session.hostdbprefix#images i<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -151,7 +151,7 @@
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
 				ORDER BY LOWER(i.img_filename) ASC
-				LIMIT #theoffset#, #arguments.rowmaxpage#
+				LIMIT #theoffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>
@@ -172,7 +172,7 @@
 	<cfif NOT isstruct(arguments.thestruct)>
 		<cfset arguments.thestruct = structnew()>
 	</cfif>
-	<cfreturn getFolderAssets(folder_id=Arguments.folder_id, ColumnList=Arguments.ColumnList, file_extension=Arguments.file_extension, offset=Arguments.offset, rowmaxpage=Arguments.rowmaxpage, thestruct=arguments.thestruct)>
+	<cfreturn getFolderAssets(folder_id=Arguments.folder_id, ColumnList=Arguments.ColumnList, file_extension=Arguments.file_extension, offset=session.offset, rowmaxpage=session.rowmaxpage, thestruct=arguments.thestruct)>
 </cffunction>
 
 <!--- GET DETAILS OF ONE RECORD --->

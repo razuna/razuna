@@ -84,12 +84,12 @@
 		Calculate the offset .Show the limit only if pages is null or current (from print) 
 		--->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-			<cfif arguments.offset EQ 0>
+			<cfif session.offset EQ 0>
 				<cfset var min = 0>
-				<cfset var max = arguments.rowmaxpage>
+				<cfset var max = session.rowmaxpage>
 			<cfelse>
-				<cfset var min = arguments.offset * arguments.rowmaxpage>
-				<cfset var max = (arguments.offset + 1) * arguments.rowmaxpage>
+				<cfset var min = session.offset * session.rowmaxpage>
+				<cfset var max = (session.offset + 1) * session.rowmaxpage>
 				<cfif variables.database EQ "db2">
 					<cfset min = min + 1>
 				</cfif>
@@ -103,13 +103,13 @@
 			<!--- Clean columnlist --->
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
-			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##arguments.offset##arguments.thestruct.thisview##arguments.thestruct.view##thecolumnlist##max#" cachedomain="#session.theuserid#_files">
-			SELECT rn, #thecolumnlist#<cfif arguments.thestruct.view EQ "combined">,keywords, description</cfif>
+			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_files">
+			SELECT rn, #thecolumnlist#<cfif session.view EQ "combined">,keywords, description</cfif>
 			FROM (
-				SELECT ROWNUM AS rn, #thecolumnlist#<cfif arguments.thestruct.view EQ "combined">,keywords, description</cfif>
+				SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined">,keywords, description</cfif>
 				FROM (
-					SELECT #Arguments.ColumnList#<cfif arguments.thestruct.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
-					FROM #session.hostdbprefix#files<cfif arguments.thestruct.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+					SELECT #Arguments.ColumnList#<cfif session.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
+					FROM #session.hostdbprefix#files<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					<cfif Len(Arguments.file_extension)>
 						AND
@@ -142,11 +142,11 @@
 			<!--- Clean columnlist --->
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
-			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##arguments.offset##arguments.thestruct.thisview##arguments.thestruct.view##thecolumnlist##max#" cachedomain="#session.theuserid#_files">
-			SELECT #thecolumnlist#<cfif arguments.thestruct.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
+			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_files">
+			SELECT #thecolumnlist#<cfif session.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
 			FROM (
-				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*<cfif arguments.thestruct.view EQ "combined">, ft.*</cfif>
-				FROM #session.hostdbprefix#files<cfif arguments.thestruct.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*<cfif session.view EQ "combined">, ft.*</cfif>
+				FROM #session.hostdbprefix#files<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				<cfif Len(Arguments.file_extension)>
 					AND
@@ -178,11 +178,11 @@
 		<!--- Other DB's --->
 		<cfelse>
 			<!--- Calculate the offset --->
-			<cfset var theoffset = arguments.offset * arguments.rowmaxpage>
+			<cfset var theoffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
-			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##arguments.offset##arguments.thestruct.thisview##arguments.thestruct.view##Arguments.ColumnList##max#" cachedomain="#session.theuserid#_files">
-			SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif arguments.thestruct.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
-			FROM #session.hostdbprefix#files<cfif arguments.thestruct.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##Arguments.ColumnList##max#" cachedomain="#session.theuserid#_files">
+			SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
+			FROM #session.hostdbprefix#files<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			<cfif Len(Arguments.file_extension)>
 				AND
@@ -209,7 +209,7 @@
 				ORDER BY LOWER(file_name) ASC
 				<!--- Show the limit only if pages is null or current (from print) --->
 				<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-					LIMIT #theoffset#, #arguments.rowmaxpage#
+					LIMIT #theoffset#, #session.rowmaxpage#
 				</cfif>
 			<!--- MSSQL --->
 			<cfelseif variables.database EQ "mssql">
@@ -258,7 +258,7 @@
 		<cfif NOT isstruct(arguments.thestruct)>
 			<cfset arguments.thestruct = structnew()>
 		</cfif>
-		<cfreturn getFolderAssets(folder_id=arguments.folder_id, columnlist=arguments.columnlist, file_extension=arguments.file_extension, offset=arguments.offset, rowmaxpage=arguments.rowmaxpage, thestruct=arguments.thestruct)>
+		<cfreturn getFolderAssets(folder_id=arguments.folder_id, columnlist=arguments.columnlist, file_extension=arguments.file_extension, offset=session.offset, rowmaxpage=session.rowmaxpage, thestruct=arguments.thestruct)>
 	</cffunction>
 	
 	<!--- REMOVE THE FILE --->

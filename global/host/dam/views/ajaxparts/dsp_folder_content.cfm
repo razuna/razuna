@@ -29,7 +29,7 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>
-					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, exept #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif session.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a></cfif><cfif session.folderaccess NEQ "R"> or <a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(defaultsObj.trans("folder_new"))#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">create a sub folder</a>.</cfif> If you are looking for assets, try to <a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#Jsstringformat(defaultsObj.trans("folder_search"))#',500,1);" title="#defaultsObj.trans("folder_search")#">search for assets here</a>.
+					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, except #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif session.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a></cfif><cfif session.folderaccess NEQ "R"> or <a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(defaultsObj.trans("folder_new"))#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">create a sub folder</a>.</cfif> If you are looking for assets, try to <a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#Jsstringformat(defaultsObj.trans("folder_search"))#',500,1);" title="#defaultsObj.trans("folder_search")#">search for assets here</a>.
 				</td>
 			</tr>
 			<tr>
@@ -74,7 +74,7 @@
 			<td colspan="6" style="border:0px;"><cfinclude template="dsp_icon_bar.cfm"></td>
 		</tr>
 		<!--- Thumbnail --->
-		<cfif attributes.view EQ "">
+		<cfif session.view EQ "">
 			<tr>
 				<td style="border:0px;">
 				<!--- Show Subfolders --->
@@ -106,7 +106,7 @@
 									
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 									<div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg">
 									<!--- Show assets --->
 									<cfif link_kind NEQ "url">
@@ -129,18 +129,18 @@
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-img');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									<cfif session.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 								<br>
-								<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
+								<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br>
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- Videos --->
@@ -168,7 +168,7 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
+								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
 							<!--- <br><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#attributes.folder_id#','#filename#',800,600);return false;">#defaultsObj.trans("file_detail")#</a> --->
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');">
@@ -179,18 +179,18 @@
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-vid');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									<cfif session.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 								<br /><br />
-								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
+								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
 							<cfelse>					
 								We are still working on the asset "#filename#"...
 								<br /><br>
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- Audios --->
@@ -218,7 +218,7 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
+								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('allform');">
 								</div>
@@ -228,18 +228,18 @@
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-aud');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									<cfif session.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 								<br>
-								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
+								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br>
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- All other files --->
@@ -267,7 +267,7 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable#id#-doc" type="#id#-doc-all" class="theimg">
 								<!--- If it is a PDF we show the thumbnail --->
 								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
@@ -293,18 +293,18 @@
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-doc');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									<cfif session.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 								</cfif>
 								</div>
 								<br>
-								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
+								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br>
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					</cfif>
@@ -312,7 +312,7 @@
 			</td>
 		</tr>
 		<!--- Combined View --->
-		<cfelseif attributes.view EQ "combined">
+		<cfelseif session.view EQ "combined">
 			<cfif session.folderaccess NEQ "R">
 				<tr>
 					<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
@@ -345,7 +345,7 @@
 					<tr class="list thumbview">
 						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-img" onclick="enablesub('allform');"></td>
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 							<!--- Show assets --->
 							<div id="draggable#id#-#kind#" type="#id#-#kind#-all">
 								<cfif link_kind NEQ "url">
@@ -378,7 +378,7 @@
 						</td>
 						<cfif session.folderaccess EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -408,7 +408,7 @@
 					<tr class="list">
 						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');"></td>
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable#id#-#kind#" type="#id#-#kind#-all">
 									<cfif link_kind NEQ "url">
 										<img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160">
@@ -437,7 +437,7 @@
 						</td>
 						<cfif session.folderaccess EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -467,7 +467,7 @@
 					<tr class="list">
 						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('allform');"></td>
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable#id#-#kind#" type="#id#-#kind#-all">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 								</div>
@@ -492,7 +492,7 @@
 						</td>
 						<cfif session.folderaccess EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -522,7 +522,7 @@
 					<tr class="list">
 						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-doc" onclick="enablesub('allform');"></td>
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable#id#-doc" type="#id#-doc-all">
 									<!--- If it is a PDF we show the thumbnail --->
 									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
@@ -559,7 +559,7 @@
 						</td>
 						<cfif session.folderaccess EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -571,7 +571,7 @@
 				</tr>
 			</cfif>
 		<!--- List view --->
-		<cfelse>
+		<cfelseif session.view EQ "list">
 			<!---
 			<div id="listview" style="padding-top:15px;"></div>
 			<script language="JavaScript" type="text/javascript">
@@ -595,48 +595,48 @@
 				<cfif kind EQ "img">
 					<tr class="list">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-img" onclick="enablesub('allform');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<td nowrap="true" width="1%" align="center">Image</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#defaultsObj.getdateformat()#")#</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#defaultsObj.getdateformat()#")#</td>
 						<cfif session.folderaccess EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- Videos --->
 				<cfelseif kind EQ "vid">
 					<tr class="list">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<td nowrap="true" width="1%" align="center">Video</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#defaultsObj.getdateformat()#")#</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#defaultsObj.getdateformat()#")#</td>
 						<cfif session.folderaccess EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- Audios --->
 				<cfelseif kind EQ "aud">
 					<tr class="list">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('allform');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<td nowrap="true" width="1%" align="center">Audio</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#defaultsObj.getdateformat()#")#</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#defaultsObj.getdateformat()#")#</td>
 						<cfif session.folderaccess EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- All other files --->
 				<cfelse>
 					<tr class="list">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-doc" onclick="enablesub('allform');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<td nowrap="true" width="1%" align="center">Document</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#defaultsObj.getdateformat()#")#</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#defaultsObj.getdateformat()#")#</td>
 						<cfif session.folderaccess EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				</cfif>

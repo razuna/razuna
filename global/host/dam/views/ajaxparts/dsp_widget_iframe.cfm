@@ -90,30 +90,30 @@
 						| <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&fid=#attributes.fid#">#ListGetAt(i,1,"|")#</a> </cfloop>
 					</cfif>
 					<div style="padding-left:50px;float:right;">
-						<cfif attributes.offset GTE 1>
+						<cfif session.offset GTE 1>
 							<!--- For Back --->
-							<cfset newoffset = attributes.offset - 1>
-							<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#&rowmaxpage=#attributes.rowmaxpage#');"><<< #defaultsObj.trans("back")#</a> |
+							<cfset newoffset = session.offset - 1>
+							<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');"><<< #defaultsObj.trans("back")#</a> |
 						</cfif>
-						<cfset showoffset = attributes.offset * attributes.rowmaxpage>
-						<cfset shownextrecord = (attributes.offset + 1) * attributes.rowmaxpage>
-						<cfif qry.qry_filecount.thetotal GT attributes.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
-						<cfif qry.qry_filecount.thetotal GT attributes.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
+						<cfset showoffset = session.offset * session.rowmaxpage>
+						<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
+						<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+						<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
 							<!--- For Next --->
-							<cfset newoffset = attributes.offset + 1>
-							<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#&rowmaxpage=#attributes.rowmaxpage#');">#defaultsObj.trans("next")# >>></a>
+							<cfset newoffset = session.offset + 1>
+							<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">#defaultsObj.trans("next")# >>></a>
 						</cfif>
 					</div>
 					<!--- Pages --->
 					<div style="float:right;">
-						<cfif qry.qry_filecount.thetotal GT attributes.rowmaxpage>
+						<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
 							<span style="padding-left:30px;">
-							<cfset thepage = ceiling(qry.qry_filecount.thetotal / attributes.rowmaxpage)>
+							<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
 							Pages: 
 								<select id="thepagelist" onChange="loadcontent('rightside', $('##thepagelist').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>
-									<option value="#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#&rowmaxpage=#attributes.rowmaxpage#"<cfif (attributes.offset + 1) EQ i> selected</cfif>>#i#</option>
+									<option value="#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
 								</cfloop>
 								</select>
 						</span>

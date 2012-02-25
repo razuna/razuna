@@ -914,10 +914,8 @@
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
-		<set name="attributes.view" value="" overwrite="false" />
-		<!-- Action: Check storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
+		<!-- Action: Set view -->
+		<do action="set_view" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -931,8 +929,8 @@
 			<argument name="folder_id" value="#attributes.folder_id#" />
 			<argument name="columnlist" value="file_id, file_extension, file_type, file_create_date, file_change_date, file_owner, file_name, file_name_org, folder_id_r, path_to_asset, is_available, cloud_url" />
 			<argument name="file_extension" value="#attributes.kind#" />
-			<argument name="offset" value="#attributes.offset#" />
-			<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+			<argument name="offset" value="#session.offset#" />
+			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
 		<!-- Show -->
@@ -948,7 +946,8 @@
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
 		<set name="attributes.cache" value="" />
-		<set name="attributes.view" value="" overwrite="false" />
+		<!-- Action: Set view -->
+		<do action="set_view" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -961,15 +960,10 @@
 		<invoke object="myFusebox.getApplicationData().images" method="getFolderAssetDetails" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
 			<argument name="columnlist" value="i.img_id, i.img_filename, i.img_custom_id, i.img_create_date, i.img_change_date, i.folder_id_r, i.thumb_extension, i.link_kind, i.link_path_url, i.path_to_asset, i.is_available, i.cloud_url" />
-			<argument name="offset" value="#attributes.offset#" />
-			<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+			<argument name="offset" value="#session.offset#" />
+			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
-		<!-- Action: Get asset path
-		<do action="assetpath" /> -->
-		<!-- Action: Check storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
 		<!-- Show -->
 		<do action="ajax.folder_images" />
 	</fuseaction>
@@ -983,7 +977,8 @@
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
-		<set name="attributes.view" value="" overwrite="false" />
+		<!-- Action: Set view -->
+		<do action="set_view" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -998,13 +993,10 @@
 		<invoke object="myFusebox.getApplicationData().videos" method="getFolderAssetDetails" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
 			<argument name="columnlist" value="v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_create_date, v.vid_change_date, v.vid_name_image, v.vid_extension, v.link_kind, v.path_to_asset, v.is_available, v.cloud_url" />
-			<argument name="offset" value="#attributes.offset#" />
-			<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+			<argument name="offset" value="#session.offset#" />
+			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
-		<!-- Action: Check storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
 		<!-- Show -->
 		<do action="ajax.folder_videos" />
 	</fuseaction>
@@ -1034,10 +1026,8 @@
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
-		<set name="attributes.view" value="" overwrite="false" />
-		<!-- Action: Check storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
+		<!-- Action: Set view -->
+		<do action="set_view" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -1049,8 +1039,8 @@
 		<!-- CFC: Get files -->
 		<invoke object="myFusebox.getApplicationData().audios" method="getFolderAssets" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
-			<argument name="offset" value="#attributes.offset#" />
-			<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+			<argument name="offset" value="#session.offset#" />
+			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
 		<!-- Show -->
@@ -1074,15 +1064,11 @@
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
 		<set name="attributes.cache" value="" />
-		<set name="attributes.view" value="" overwrite="false" />
 		<set name="attributes.json" value="f" overwrite="false" />
+		<!-- Action: Set view -->
+		<do action="set_view" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- Action: Storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
-		<!-- CFC: Load record
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.folder_id)" returnvariable="qry_folder" /> -->
 		<!-- CFC: Set Access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get the total file count -->
@@ -1094,8 +1080,6 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
 		<!-- CFC: Get user name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
-		<!-- CFC: Get the total of files count and kind of files
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="fileTotalAllTypes(attributes.folder_id)" returnvariable="qry_fileTotalAllTypes" /> -->
 	</fuseaction>
 	<!-- Load Folder Content -->
 	<fuseaction name="folder_content">
@@ -1541,6 +1525,8 @@
 	
 	<!-- Load history asset log -->
 	<fuseaction name="log_history">
+		<!-- Set offset for logs -->
+		<do action="set_offset_admin" />
 		<!-- Params -->
 		<set name="attributes.logswhat" value="log_assets" />
 		<!-- CFC -->
@@ -2524,9 +2510,6 @@
 		<xfa name="folder" value="c.folder" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- Action: Storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
 		<!-- If we got a folder_id then we search from this folder on -->
 		<if condition="attributes.folder_id NEQ '' OR attributes.folder_id NEQ 0">
 			<true>
@@ -2593,9 +2576,6 @@
 		<do action="search_files" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- Action: Storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -2617,9 +2597,6 @@
 		<do action="search_images" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- Action: Storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -2641,9 +2618,6 @@
 		<do action="search_videos" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- Action: Storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -2665,9 +2639,6 @@
 		<do action="search_audios" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- Action: Storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -3555,6 +3526,8 @@
 	
 	<!-- Get Log files -->
 	<fuseaction name="log_users">
+		<!-- Set offset for logs -->
+		<do action="set_offset_admin" />
 		<!-- Params -->
 		<set name="attributes.logsection" value="dam" />
 		<set name="attributes.logswhat" value="log_users" />
@@ -3581,6 +3554,8 @@
 	
 	<!-- Get Log files -->
 	<fuseaction name="log_assets">
+		<!-- Set offset for logs -->
+		<do action="set_offset_admin" />
 		<!-- Params -->
 		<set name="attributes.logswhat" value="log_assets" />
 		<!-- CFC: Get log -->
@@ -3606,6 +3581,8 @@
 	
 	<!-- Get Log files -->
 	<fuseaction name="log_folders">
+		<!-- Set offset for logs -->
+		<do action="set_offset_admin" />
 		<!-- Params -->
 		<set name="attributes.logswhat" value="log_folders" />
 		<!-- CFC: Get log -->
@@ -3631,6 +3608,8 @@
 	
 	<!-- Get Log files -->
 	<fuseaction name="log_searches">
+		<!-- Set offset for logs -->
+		<do action="set_offset_admin" />
 		<!-- Params -->
 		<set name="attributes.logswhat" value="log_searches" />
 		<!-- CFC: Get log -->
@@ -3663,6 +3642,8 @@
 	
 	<!-- Get Log files -->
 	<fuseaction name="log_errors">
+		<!-- Set offset for logs -->
+		<do action="set_offset_admin" />
 		<!-- Params -->
 		<set name="attributes.logswhat" value="log_errors" />
 		<!-- CFC: Get log -->
@@ -4029,8 +4010,8 @@
 				<invoke object="myFusebox.getApplicationData().images" method="getFolderAssetDetails" returnvariable="qry_files">
 					<argument name="folder_id" value="#attributes.folder_id#" />
 					<argument name="columnlist" value="i.img_id id, i.img_filename filename, i.img_custom_id, i.img_create_date, i.img_change_date, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, i.path_to_asset, i.is_available, i.cloud_url" />
-					<argument name="offset" value="#attributes.offset#" />
-					<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+					<argument name="offset" value="#session.offset#" />
+					<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 					<argument name="thestruct" value="#attributes#" />
 				</invoke>
 				<!-- If this is a list we need to get description and keywords as well -->
@@ -4047,8 +4028,8 @@
 				<invoke object="myFusebox.getApplicationData().videos" method="getFolderAssetDetails" returnvariable="qry_files">
 					<argument name="folder_id" value="#attributes.folder_id#" />
 					<argument name="columnlist" value="v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_custom_id, v.vid_create_date, v.vid_change_date, v.vid_name_image, v.vid_extension ext, v.vid_name_image filename_org, v.path_to_asset, v.is_available, v.cloud_url" />
-					<argument name="offset" value="#attributes.offset#" />
-					<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+					<argument name="offset" value="#session.offset#" />
+					<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 					<argument name="thestruct" value="#attributes#" />
 				</invoke>
 				<!-- If this is a list we need to get description and keywords as well -->
@@ -4067,8 +4048,8 @@
 				<!-- CFC -->
 				<invoke object="myFusebox.getApplicationData().audios" method="getFolderAssets" returnvariable="qry_files">
 					<argument name="folder_id" value="#attributes.folder_id#" />
-					<argument name="offset" value="#attributes.offset#" />
-					<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+					<argument name="offset" value="#session.offset#" />
+					<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 					<argument name="thestruct" value="#attributes#" />
 				</invoke>
 				<!-- If this is a list we need to get description and keywords as well -->
@@ -4086,8 +4067,8 @@
 					<argument name="folder_id" value="#attributes.folder_id#" />
 					<argument name="columnlist" value="file_id id, file_extension ext, file_type, file_create_date, file_change_date, file_owner, file_name filename, file_name_org filename_org, folder_id_r, path_to_asset, is_available, cloud_url, cloud_url_org" />
 					<argument name="file_extension" value="#attributes.kind#" />
-					<argument name="offset" value="#attributes.offset#" />
-					<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+					<argument name="offset" value="#session.offset#" />
+					<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 					<argument name="thestruct" value="#attributes#" />
 				</invoke>
 				<!-- If this is a list we need to get description and keywords as well -->
@@ -4332,9 +4313,8 @@
 		<do action="assetpath" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
-		<!-- Action: Storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
+		<!-- Action: Set view -->
+		<do action="set_view" />
 		<!-- Get assets from folder or from collection -->
 		<if condition="#session.iscol# EQ 'F'">
 			<true>
@@ -4997,7 +4977,7 @@
 				<relocate url="#variables.thehttp##cgi.http_host##myself#v.share_login&amp;shared=F" />
 			</true>
 		</if>
-<!-- set host again with real value -->
+		<!-- set host again with real value -->
 		<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,0,'adm')" returnvariable="Request.securityobj" />
 		<!-- Params -->
 		<set name="attributes.external" value="t" />
@@ -5007,6 +4987,8 @@
 		<do action="assetpath" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
+		<!-- Action: Set view -->
+		<do action="set_view" />
 		<!-- CFC: Query Widget -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<set name="attributes.folder_id" value="#qry_widget.folder_id_r#" />
@@ -5485,5 +5467,54 @@
 		<set name="session.artoffile" value="#attributes.artoffile#" />
 	</fuseaction>
 	
+	<!-- Set view and maxpage and offset -->
+	<fuseaction name="set_view">
+		<!-- Set the rowmaxpage -->
+		<if condition="structkeyexists(attributes,'rowmaxpage')">
+			<true>
+				<set name="session.rowmaxpage" value="#attributes.rowmaxpage#" />
+			</true>
+		</if>
+		<!-- Set the offset -->
+		<if condition="structkeyexists(attributes,'offset')">
+			<true>
+				<set name="session.offset" value="#attributes.offset#" />
+			</true>
+		</if>
+		<!-- Set the view -->
+		<if condition="structkeyexists(attributes,'view')">
+			<true>
+				<if condition="#attributes.view# EQ ''">
+					<true>
+						<set name="session.view" value="" />
+						<set name="attributes.view" value="" />
+					</true>
+				</if>
+				<if condition="#attributes.view# EQ 'list'">
+					<true>
+						<set name="session.view" value="list" />
+						<set name="attributes.view" value="list" />
+					</true>
+				</if>
+				<if condition="#attributes.view# EQ 'combined'">
+					<true>
+						<set name="session.view" value="combined" />
+						<set name="attributes.view" value="combined" />
+					</true>
+				</if>
+			</true>
+		</if>
+	</fuseaction>
+	
+	<!-- Set offset for log -->
+	<fuseaction name="set_offset_admin">
+		<!-- Set the offset -->
+		<if condition="structkeyexists(attributes,'offset_log')">
+			<true>
+				<set name="session.offset_log" value="#attributes.offset_log#" />
+			</true>
+		</if>
+		
+	</fuseaction>
 	
 </circuit>

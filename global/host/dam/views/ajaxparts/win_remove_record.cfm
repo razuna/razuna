@@ -32,7 +32,6 @@
 <cfparam name="attributes.file_id" default="0">
 <cfparam name="attributes.col_id" default="0">
 <cfparam name="attributes.type" default="">
-<cfparam name="attributes.offset" default="">
 <cfparam name="attributes.rowmaxpage" default="">
 <cfparam name="attributes.showsubfolders" default="F">
 <cfoutput>
@@ -41,7 +40,7 @@
 			<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#defaultsObj.trans("delete_record_desc")#<cfelse>#defaultsObj.trans("delete_record_desc_many")#</cfif></td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("remove")#" onclick="<cfif attributes.what EQ "files" OR attributes.what EQ "images" OR attributes.what EQ "videos" OR attributes.what EQ "audios" OR attributes.what EQ "doc" OR attributes.what EQ "img" OR attributes.what EQ "vid" OR attributes.what EQ "aud" OR attributes.what EQ "all">loadinggif('feedback_delete_<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>');</cfif><cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#');" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("remove")#" onclick="<cfif attributes.what EQ "files" OR attributes.what EQ "images" OR attributes.what EQ "videos" OR attributes.what EQ "audios" OR attributes.what EQ "doc" OR attributes.what EQ "img" OR attributes.what EQ "vid" OR attributes.what EQ "aud" OR attributes.what EQ "all">loadinggif('feedback_delete_<cfif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>');</cfif><cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#');" class="button"></td>
 		</tr>
 	</table>
 </cfoutput>

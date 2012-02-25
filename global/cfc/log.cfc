@@ -68,16 +68,16 @@
 <cffunction name="get_log_users" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
-	<cfif arguments.thestruct.offset EQ 0>
+	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
-		<cfset var max = arguments.thestruct.rowmaxpage>
+		<cfset var max = session.rowmaxpage_log>
 	<cfelse>
-		<cfset var min = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
-		<cfset var max = (arguments.thestruct.offset + 1) * arguments.thestruct.rowmaxpage>
+		<cfset var min = session.offset_log * session.rowmaxpage_log>
+		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
 	<!--- Calculate the offset --->
 	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
+		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
 	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_users#session.hostid##arguments.thestruct.logsection##arguments.thestruct.logaction##theoffset#" cachedomain="#session.theuserid#_log">
@@ -139,7 +139,7 @@
 			GROUP BY l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, l.log_ip, l.log_id, l.log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #arguments.thestruct.rowmaxpage#
+				LIMIT #theoffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -161,23 +161,23 @@
 <cffunction name="get_log_assets" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
-	<cfif arguments.thestruct.offset EQ 0>
+	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
-		<cfset var max = arguments.thestruct.rowmaxpage>
+		<cfset var max = session.rowmaxpage_log>
 	<cfelse>
-		<cfset var min = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
-		<cfset var max = (arguments.thestruct.offset + 1) * arguments.thestruct.rowmaxpage>
+		<cfset var min = session.offset_log * session.rowmaxpage_log>
+		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
 	<!--- Calculate the offset --->
 	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
+		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
 	</cfif>
 	<!--- this is also called from individual asset log entries thus we have a id in the struct --->
 	<cfif !structkeyexists(arguments.thestruct,"id")>
 		<cfset arguments.thestruct.id = 0>
 	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_assets#session.hostid##arguments.thestruct.logaction##arguments.thestruct.offset##arguments.thestruct.id#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_assets#session.hostid##arguments.thestruct.logaction##session.offset_log##arguments.thestruct.id#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
 			SELECT rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_file_type, 
@@ -255,7 +255,7 @@
 			user_first_name, user_last_name
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #arguments.thestruct.rowmaxpage#
+				LIMIT #theoffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -281,16 +281,16 @@
 <cffunction name="get_log_folders" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
-	<cfif arguments.thestruct.offset EQ 0>
+	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
-		<cfset var max = arguments.thestruct.rowmaxpage>
+		<cfset var max = session.rowmaxpage_log>
 	<cfelse>
-		<cfset var min = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
-		<cfset var max = (arguments.thestruct.offset + 1) * arguments.thestruct.rowmaxpage>
+		<cfset var min = session.offset_log * session.rowmaxpage_log>
+		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
 	<!--- Calculate the offset --->
 	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
+		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
 	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_folders#session.hostid##arguments.thestruct.logaction##theoffset#" cachedomain="#session.theuserid#_log">
@@ -355,7 +355,7 @@
 			l.log_id, l.log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #arguments.thestruct.rowmaxpage#
+				LIMIT #theoffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -376,16 +376,16 @@
 <!--- GET LOG SEARCHES --->
 <cffunction name="get_log_searches" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
-	<cfif arguments.thestruct.offset EQ 0>
+	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
-		<cfset var max = arguments.thestruct.rowmaxpage>
+		<cfset var max = session.rowmaxpage_log>
 	<cfelse>
-		<cfset var min = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
-		<cfset var max = (arguments.thestruct.offset + 1) * arguments.thestruct.rowmaxpage>
+		<cfset var min = session.offset_log * session.rowmaxpage_log>
+		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
 	<!--- Calculate the offset --->
 	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
+		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
 	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_searches#session.hostid##theoffset#" cachedomain="#session.theuserid#_log">
@@ -435,7 +435,7 @@
 			log_id, log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #arguments.thestruct.rowmaxpage#
+				LIMIT #theoffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -466,7 +466,7 @@
 		AND lower(log_search_from) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.what#">
 	</cfif>
 	GROUP BY log_search_for
-	order by count_words DESC, found DESC
+	order by found DESC, count_words DESC
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
@@ -475,16 +475,16 @@
 <!--- GET LOG SEARCHES --->
 <cffunction name="get_log_errors" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
-	<cfif arguments.thestruct.offset EQ 0>
+	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
-		<cfset var max = arguments.thestruct.rowmaxpage>
+		<cfset var max = session.rowmaxpage_log>
 	<cfelse>
-		<cfset var min = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
-		<cfset var max = (arguments.thestruct.offset + 1) * arguments.thestruct.rowmaxpage>
+		<cfset var min = session.offset_log * session.rowmaxpage_log>
+		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
 	<!--- Calculate the offset --->
 	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
+		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
 	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_errors#session.hostid##theoffset#" cachedomain="#session.theuserid#_log">
@@ -529,7 +529,7 @@
 			GROUP BY id, err_date, host_id
 			ORDER BY err_date DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #arguments.thestruct.rowmaxpage#
+				LIMIT #theoffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>

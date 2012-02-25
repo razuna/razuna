@@ -22,16 +22,16 @@
 
 <!--- Set global params --->
 <cfparam name="fa" default="">
-<cfparam name="attributes.offset" default="0">
-<cfparam name="attributes.rowmaxpage" default="25">
+<cfparam name="session.offset" default="0">
+<cfparam name="session.rowmaxpage" default="25">
+<cfparam name="session.offset_log" default="0">
+<cfparam name="session.rowmaxpage_log" default="25">
 <cfparam name="session.showsubfolders" default="F">
-<cfparam name="session.theuserid" default="0">
 <cfparam name="nohost" default="F">
 <cfparam name="cookie.loginname" default="">
 <cfparam name="cookie.loginpass" default="">
-
-<!--- Set global params --->
-<cfparam name="attributes.to" default="">
+<cfparam name="session.theuserid" default="0">
+<cfparam name="session.view" default="">
 
 <!--- Set the session for the language --->
 <cfparam name="session.thelang" default="english">

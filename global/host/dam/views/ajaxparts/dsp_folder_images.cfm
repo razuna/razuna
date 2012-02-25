@@ -46,7 +46,7 @@
 			<td colspan="6" class="gridno"><cfinclude template="dsp_icon_bar.cfm"></td>
 		</tr>
 		<!--- Thubmail view --->
-		<cfif attributes.view EQ "">
+		<cfif session.view EQ "">
 			<tr>
 				<td>
 					<!--- Show Subfolders --->
@@ -75,7 +75,7 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
 									<div id="draggable#img_id#" type="#img_id#-img" class="theimg">
 										<!--- Show assets --->
 										<cfif link_kind EQ "">
@@ -98,25 +98,25 @@
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#img_id#&thetype=#img_id#-img');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									<cfif #session.folderaccess# EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 								<br>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#img_filename#</strong></a>
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#img_filename#</strong></a>
 							<cfelse>
 								We are still working on the asset "#img_filename#"...
 								<br /><br>
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(img_create_date, "#defaultsObj.getdateformat()#")# #timeformat(img_create_date, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					</cfloop>
 				</td>
 			</tr>
 		<!--- View: Combined --->
-		<cfelseif attributes.view EQ "combined">
+		<cfelseif session.view EQ "combined">
 			<cfif #session.folderaccess# NEQ "R">
 				<tr>
 					<td colspan="4" align="right"><div id="updatestatusimg" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsaveimg();return false;" class="button"></td>
@@ -147,7 +147,7 @@
 				<tr class="thumbview">
 					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#img_id#-img" onclick="enablesub('#kind#form');"></td>
 					<td valign="top" width="1%" nowrap="true">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
+						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
 							<div id="draggable#img_id#" type="#img_id#-img">
 								<!--- Show assets --->
 								<cfif link_kind EQ "">
@@ -180,7 +180,7 @@
 					</td>
 					<cfif #session.folderaccess# EQ "X">
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 						</td>
 					</cfif>
 				</tr>
@@ -191,7 +191,7 @@
 				</tr>
 			</cfif>
 		<!--- List view --->
-		<cfelse>
+		<cfelseif session.view EQ "list">
 			<tr>
 				<td></td>
 				<td width="100%"><b>#defaultsObj.trans("file_name")#</b></td>
@@ -206,11 +206,11 @@
 			<cfloop query="qry_files">
 				<tr class="list">
 					<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#img_id#-img" onclick="enablesub('#kind#form');"></td>
-					<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#img_filename#</strong></a></td>
+					<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#img_filename#</strong></a></td>
 					<td nowrap="true" width="1%" align="center">#dateformat(img_create_date, "#defaultsObj.getdateformat()#")#</td>
 					<td nowrap="true" width="1%" align="center">#dateformat(img_change_date, "#defaultsObj.getdateformat()#")#</td>
 					<cfif #session.folderaccess# EQ "X">
-						<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+						<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 					</cfif>
 				</tr>
 			</cfloop>

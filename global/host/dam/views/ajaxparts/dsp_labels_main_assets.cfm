@@ -59,7 +59,7 @@
 										
 									});
 									</script>
-									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;">
 										<div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg">
 										<!--- Show assets --->
 										<cfif link_kind NEQ "url">
@@ -80,7 +80,7 @@
 										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-img');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									</div>
 									<br /><br />
-									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
+									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
 								<cfelse>
 									<div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg">
 									<!--- Show assets --->
@@ -105,7 +105,7 @@
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- Videos --->
@@ -134,14 +134,14 @@
 										});
 									});
 									</script>
-									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>								<div style="float:right;padding:6px 0px 0px 0px;">
+									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>								<div style="float:right;padding:6px 0px 0px 0px;">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" width="16" height="16" border="0" />
 										<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=vid','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-vid');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									</div>
 									<br /><br />
-									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
+									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
 								<cfelse>
 									<!--- Show assets --->
 									<div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg">
@@ -158,7 +158,7 @@
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>							
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>							
 							</cfif>
 						</div>
 					<!--- Audios --->
@@ -187,7 +187,7 @@
 										});
 									});
 									</script>
-									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
+									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_aud.png" width="16" height="16" border="0" />
 										<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=aud','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
@@ -195,7 +195,7 @@
 										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-aud');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									</div>
 									<br /><br />
-									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
+									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
 								<cfelse>
 									<!--- Show assets --->
 									<div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg">
@@ -212,7 +212,7 @@
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- All other files --->
@@ -241,7 +241,7 @@
 										});
 									});
 									</script>
-									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;">
 									<div id="draggable#id#-doc" type="#id#-doc-all" class="theimg">
 									<!--- If it is a PDF we show the thumbnail --->
 									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
@@ -265,7 +265,7 @@
 										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-doc');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									</div>
 									<br /><br />
-									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
+									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
 								<cfelse>
 									<!--- Show assets --->
 									<div id="draggable#id#-doc" type="#id#-doc-all" class="theimg">
@@ -294,7 +294,7 @@
 								#defaultsObj.trans("date_created")#:<br>
 								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br /><br />
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#&offset=#attributes.offset#&rowmaxpage=#attributes.rowmaxpage#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					</cfif>

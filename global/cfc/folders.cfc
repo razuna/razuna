@@ -2039,12 +2039,12 @@
 	Calculate the offset .Show the limit only if pages is null or current (from print) 
 	--->
 	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-		<cfif arguments.thestruct.offset EQ 0>
+		<cfif session.offset EQ 0>
 			<cfset var min = 0>
-			<cfset var max = arguments.thestruct.rowmaxpage>
+			<cfset var max = session.rowmaxpage>
 		<cfelse>
-			<cfset var min = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
-			<cfset var max = (arguments.thestruct.offset + 1) * arguments.thestruct.rowmaxpage>
+			<cfset var min = session.offset * session.rowmaxpage>
+			<cfset var max = (session.offset + 1) * session.rowmaxpage>
 			<cfif variables.database EQ "db2">
 				<cfset min = min + 1>
 			</cfif>
@@ -2200,7 +2200,7 @@
 	<!--- Other DB's --->
 	<cfelse>
 		<!--- Calculate the offset --->
-		<cfset var theoffset = arguments.thestruct.offset * arguments.thestruct.rowmaxpage>
+		<cfset var theoffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid#getallassets#arguments.thestruct.folder_id##theoffset##max##arguments.thestruct.thisview#" cachedomain="#session.theuserid#_assets">
 		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>i.img_id id, i.img_filename filename, 
@@ -2305,57 +2305,11 @@
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<!--- MySQL / H2 --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#,#arguments.thestruct.rowmaxpage#
+				LIMIT #theoffset#,#session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>
 	</cfif>
-	<!--- JSON Response for datatables
-	<cfif arguments.thestruct.json EQ "t">
-		<!--- Put columns into var --->
-		<cfset thecols = arguments.thestruct.scolumns>
-		<!--- If the first char in the scolumns is a coma --->
-		<cfset thecolumns = findoneof(arguments.thestruct.scolumns,",")>
-		<cfif thecolumns EQ 1>
-			<cfset thecols = mid(arguments.thestruct.scolumns, 2, 1000)>
-			<!---
-<cfset thecolumns = findoneof(thecols,",")>
-			<cfif thecolumns EQ 1>
-				<cfset thecols = mid(thecols, 2, 1000)>
-			</cfif>
---->
-		</cfif>
-		<!--- list of database columns which should be read and sent back to DataTables --->
-		<cfset listColumns = thecols />
-		<!--- <cfdump var="#arguments.thestruct#"><cfabort> --->
-		<!--- Select again. We do this for sorting and searching --->
-		<cfquery dbtype="query" name="qry">
-		    Select #listColumns#
-		    FROM qry
-		    <cfif arguments.thestruct.ssearch NEQ "">
-		    	WHERE lower(filename) LIKE '%#lcase(arguments.thestruct.ssearch)#%'
-		    </cfif>
-		    <cfif structkeyexists(arguments.thestruct,"iSortCol_0")>
-			    ORDER BY
-				<cfloop from="0" to="#arguments.thestruct.iSortingCols-1#" index="i">
-				    #listGetAt(listColumns,arguments.thestruct["iSortCol_#i#"])# #arguments.thestruct["sSortDir_#i#"]# 
-				    <cfif i is not arguments.thestruct.iSortingCols-1>, </cfif>
-				</cfloop>
-			</cfif>
-		</cfquery>
-		<!--- create the JSON response --->
-		<cfsavecontent variable="qry"><cfoutput>{
-		    "sEcho": #val(arguments.thestruct.sEcho)#,
-		    "iTotalRecords": #arguments.thestruct.qry_filecount#,
-		    "iTotalDisplayRecords": #qry.recordcount#,
-		    "aaData": [ 
-			<cfoutput query="qry" startrow="#val(arguments.thestruct.iDisplayStart+1)#" maxrows="#val(arguments.thestruct.iDisplayLength)#">
-				<cfif currentRow gt (arguments.thestruct.iDisplayStart+1)>,</cfif>
-				["<img src=\"http://datatables.net/examples/examples_support/details_open.png\">",<cfloop list="#listColumns#" index="thisColumn"><cfif thisColumn neq listFirst(listColumns)>,</cfif>"<cfif qry[thisColumn][qry.currentRow] EQ "img">image<cfelseif qry[thisColumn][qry.currentRow] EQ "vid">Video<cfelseif qry[thisColumn][qry.currentRow] EQ "aud">Audio<cfelseif qry[thisColumn][qry.currentRow] EQ "aud">Document<cfelse>#jsStringFormat(qry[thisColumn][qry.currentRow])#</cfif>"</cfloop>]
-			</cfoutput> ]
-		}</cfoutput></cfsavecontent>
-	</cfif>
-	 --->
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>
