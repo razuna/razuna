@@ -1339,6 +1339,14 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 <!--- Export metadata --->
 <cffunction name="meta_export" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- CVS --->
+	<cfif arguments.thestruct.format EQ "csv">
+		<!--- Default file name when prompted to download --->
+		<cfheader name="content-disposition" value="attachment; filename=razuna-metadata-export.csv" />
+	<cfelse>
+		<!--- Default file name when prompted to download --->
+		<cfheader name="content-disposition" value="attachment; filename=export.#arguments.thestruct.format#" />
+	</cfif>
 	<!--- Feedback --->
 	<cfoutput><strong>We are starting to export your data. Please wait.</strong></cfoutput>
 	<cfflush>
@@ -1523,9 +1531,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<cfargument name="thestruct" type="struct">
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
-	<!--- Stream to browser --->
-	<!--- Default file name when prompted to download --->
-	<cfheader name="content-disposition" value="attachment; filename=razuna-metadata-export.csv" />
 	<!--- Serve the file --->
 	<cfcontent type="application/force-download" variable="#csv#">
 	<!--- Return --->
@@ -1549,9 +1554,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<!--- Add orders from query --->
 	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)> 
 	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
-	<!--- Stream to browser --->
-	<!--- Default file name when prompted to download --->
-	<cfheader name="content-disposition" value="attachment; filename=export.#arguments.thestruct.format#" />
 	<!--- Serve the file --->
 	<cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#">
 	<cfabort>
