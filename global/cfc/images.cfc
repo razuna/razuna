@@ -653,7 +653,7 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
-			<cfhttp url="#arguments.thestruct.qry_detail.cloud_url_org#" file="#attributes.intstruct.thename#" path="#arguments.thestruct.thisfolder#"></cfhttp>
+			<cfhttp url="#arguments.thestruct.qry_detail.cloud_url_org#" file="#arguments.thestruct.thename#" path="#arguments.thestruct.thisfolder#"></cfhttp>
 			<cfthread name="convert#arguments.thestruct.file_id#" />
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
