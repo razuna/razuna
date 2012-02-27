@@ -822,7 +822,7 @@
 				<!--- Upload Original Image --->
 				<cfinvoke component="nirvanix" method="Upload">
 					<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#">
-					<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thisfolder#/#arguments.thestruct.thenamenoext#.#attributes.intstruct.theformat#">
+					<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thisfolder#/#arguments.thestruct.thenamenoext#.#arguments.thestruct.theformat#">
 					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
 				</cfinvoke>
 				<!--- Upload Thumbnail --->
