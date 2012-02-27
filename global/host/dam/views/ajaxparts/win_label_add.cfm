@@ -37,7 +37,7 @@
 <script>
 // Update Comment
 function updatelabel(){
-	var thelab = escape($("##label_text_edit").val());
+	var thelab = encodeURIComponent($("##label_text_edit").val());
 	if (thelab != "") {
 		loadcontent('admin_labels','#myself#c.admin_labels_update&label_id=#attributes.label_id#&label_text=' + thelab);
 		// Hide Window

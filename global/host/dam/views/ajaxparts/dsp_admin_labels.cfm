@@ -50,7 +50,7 @@
 <script>
 // Update Comment
 function addlabel(){
-	var thelab = escape($("##label_text").val());
+	var thelab = encodeURIComponent($("##label_text").val());
 	if (thelab != "") {
 		loadcontent('admin_labels','#myself#c.admin_labels_update&label_id=0&label_text=' + thelab);
 	}
