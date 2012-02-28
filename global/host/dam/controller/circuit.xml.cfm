@@ -5420,6 +5420,8 @@
 	</fuseaction>
 	<!-- Export DO -->
 	<fuseaction name="meta_export_do">
+		<!-- Param -->
+		<set name="attributes.thepath" value="#thispath#" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().xmp" methodcall="meta_export(attributes)" />
 	</fuseaction>
