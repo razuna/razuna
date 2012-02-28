@@ -697,7 +697,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<cfset xmp.categorysub = "">
 	<cfset var thecoma = "">
 	<cfset var themeta = "">
-	<!--- <cftry> --->
+	<cftry>
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 		<!--- Check the platform and then decide on the Exiftool tag --->
@@ -1050,15 +1050,13 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			<cfset xmp.iptcimagecountrycode = trim(#thexml[1]["XMP-iptcCore:CountryCode"].xmltext#)>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
-		<!---
-<cfcatch type="any">
+		<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in xmpparse">
 				<cfdump var="#cfcatch#" />
 				<cfdump var="#arguments.thestruct#">
 			</cfmail>
 		</cfcatch>
 	</cftry>
---->
 <!--- Return variable --->
 	<cfreturn xmp>
 </cffunction>
@@ -1339,16 +1337,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 <!--- Export metadata --->
 <cffunction name="meta_export" output="true">
 	<cfargument name="thestruct" type="struct">
-	<!--- CVS --->
-	<cfif arguments.thestruct.format EQ "csv">
-		<!--- Default file name when prompted to download --->
-		<cfheader name="content-disposition" value="attachment; filename=razuna-metadata-export.csv" />
-	<cfelse>
-		<!--- Default file name when prompted to download --->
-		<cfheader name="content-disposition" value="attachment; filename=export.#arguments.thestruct.format#" />
-	</cfif>
 	<!--- Feedback --->
-	<cfoutput><strong>We are starting to export your data. Please wait.</strong></cfoutput>
+	<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Param --->
 	<cfset arguments.thestruct.meta_fields = "id,type,filename,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
@@ -1531,8 +1521,13 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<cfargument name="thestruct" type="struct">
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
+	<!--- Write file to file system --->
+	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export.csv" output="#csv#" charset="utf-8" nameConflict="MakeUnique">
 	<!--- Serve the file --->
-	<cfcontent type="application/force-download" variable="#csv#">
+	<!--- <cfcontent type="application/force-download" variable="#csv#"> --->
+	<!--- Feedback --->
+	<cfoutput><p><a href="outgoing/razuna-metadata-export.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<cfflush>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1554,9 +1549,13 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<!--- Add orders from query --->
 	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)> 
 	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
+	<!--- Write file to file system --->
+	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/razuna-metadata-export.#arguments.thestruct.format#",true)>
 	<!--- Serve the file --->
-	<cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#">
-	<cfabort>
+    <!--- <cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#"> --->
+	<!--- Feedback --->
+	<cfoutput><p><a href="outgoing/razuna-metadata-export.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<cfflush>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
