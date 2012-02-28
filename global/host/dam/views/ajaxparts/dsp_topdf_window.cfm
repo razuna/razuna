@@ -29,8 +29,8 @@
 	<input type="hidden" name="#theaction#" value="c.topdf">
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 	<input type="hidden" name="kind" value="#attributes.kind#">
-	<input type="hidden" name="offset" value="#attributes.offset#">
-	<input type="hidden" name="rowmaxpage" value="#attributes.rowmaxpage#">
+	<input type="hidden" name="offset" value="#session.offset#">
+	<input type="hidden" name="rowmaxpage" value="#session.rowmaxpage#">
 	<!--- For details --->
 	<cfif attributes.kind EQ "detail">
 		<input type="hidden" name="thetype" value="#attributes.thetype#">
