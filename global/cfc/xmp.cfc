@@ -1589,6 +1589,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<cfset qhas = ListContainsNoCase(qcf.columnlist, cfcolumn)>
 		<!--- This will either return a 0 (for not found) --->
 		<cfif qhas EQ 0>
+			<cfmail from="server@razuna.com" to="support@razuna.com" subject="cfcolumn" type="html"><cfdump var="#cfcolumn#"></cfmail>
 			<!--- Add new column with value --->
 			<cfset MyArray = ArrayNew(1)>
 			<cfset MyArray[1] = "">
