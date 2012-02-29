@@ -196,7 +196,7 @@
 					url: url,
 				   	data: items
 				});
-				loadcontent('thewindowcontent2','<cfoutput>#myself#</cfoutput>c.ftp_gologin&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + document.sendftpform.ftp_user.value + '&ftp_pass=' + document.sendftpform.ftp_pass.value + '&ftp_passive=' + passive + '&thetype=' + document.sendftpform.thetype.value + '&thepath=' + document.sendftpform.thepath.value + '&zipname=' + document.sendftpform.zipname.value + '&sendaszip=' + document.sendftpform.sendaszip.value);
+				loadcontent('thewindowcontent2','<cfoutput>#myself#</cfoutput>c.ftp_gologin&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + escape(document.sendftpform.ftp_user.value) + '&ftp_pass=' + escape(document.sendftpform.ftp_pass.value) + '&ftp_passive=' + passive + '&thetype=' + document.sendftpform.thetype.value + '&thepath=' + document.sendftpform.thepath.value + '&zipname=' + document.sendftpform.zipname.value + '&sendaszip=' + document.sendftpform.sendaszip.value);
 			<cfelse>
 				// Grab values from fields
 				var artimg = document.sendftpform.artofimage.value;
@@ -213,7 +213,7 @@
 				   	data: items
 				});
 				// Load the FTP window
-				loadcontent('thewindowcontent1','<cfoutput>#myself#</cfoutput>c.ftp_gologin&sendaszip=T&thetype=&frombasket=T&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + document.sendftpform.ftp_user.value + '&ftp_pass=' + document.sendftpform.ftp_pass.value + '&ftp_passive=' + passive + '&thepath=' + document.sendftpform.thepath.value);
+				loadcontent('thewindowcontent1','<cfoutput>#myself#</cfoutput>c.ftp_gologin&sendaszip=T&thetype=&frombasket=T&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + escape(document.sendftpform.ftp_user.value) + '&ftp_pass=' + escape(document.sendftpform.ftp_pass.value) + '&ftp_passive=' + passive + '&thepath=' + document.sendftpform.thepath.value);
 			</cfif>
 		}
 		return false;

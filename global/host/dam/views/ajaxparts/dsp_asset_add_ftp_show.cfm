@@ -64,7 +64,7 @@
 				</tr>
 			</cfloop>
 				<tr>
-					<td colspan="3"><input type="button" name="back" value="#defaultsObj.trans("back")#" onclick="loadcontent('addftp','#myself#c.asset_add_ftp&folder_id=#attributes.folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&ftp_server=#session.ftp_server#&ftp_user=#session.ftp_user#&ftp_pass=#session.ftp_pass#&ftp_passive=#session.ftp_passive#<cfif structkeyexists(attributes,'folderpath')>&folderpath=#URLEncodedFormat(attributes.folderpath)#</cfif>');"> <input type="submit" name="submit" value="#defaultsObj.trans("button_add_selected")#" class="button"> <div id="uploadstatus" style="background-color:##FFFFE0;display:none;"></div></td>
+					<td colspan="3"><input type="button" name="back" value="#defaultsObj.trans("back")#" onclick="loadcontent('addftp','#myself#c.asset_add_ftp&folder_id=#attributes.folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&ftp_server=#session.ftp_server#&ftp_user=#session.ftp_user#&ftp_pass=#URLEncodedFormat(session.ftp_pass)#&ftp_passive=#session.ftp_passive#<cfif structkeyexists(attributes,'folderpath')>&folderpath=#URLEncodedFormat(attributes.folderpath)#</cfif>');"> <input type="submit" name="submit" value="#defaultsObj.trans("button_add_selected")#" class="button"> <div id="uploadstatus" style="background-color:##FFFFE0;display:none;"></div></td>
 				</tr>
 			</table>
 			<br>

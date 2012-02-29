@@ -155,22 +155,14 @@ function hidewinscheduler(){
 	loadcontent('admin_schedules','<cfoutput>#myself#</cfoutput>c.scheduler_list');
 }
 
-
-
-
-
-
-
-
-
 <!--- Open FTP connection and show its folder structure -------------------------------------- --->
 function openFtp(kind) {
 	if (kind == "Upd") var nr = 1; 
 	else var nr = 0;
 
 	var ftpServer = document.getElementsByName("ftpServer")[nr].value;
-	var ftpUser   = document.getElementsByName("ftpUser")[nr].value;
-	var ftpPass   = document.getElementsByName("ftpPass")[nr].value;
+	var ftpUser   = escape(document.getElementsByName("ftpUser")[nr].value);
+	var ftpPass   = escape(document.getElementsByName("ftpPass")[nr].value);
 	var ftpPath   = document.getElementsByName("ftpFolder")[nr].value;
 	var ftppassive   = document.getElementsByName("ftpPassive")[nr].value;
 	if (ftpServer == "" || ftpUser == "" || ftpPass == "") {
@@ -187,7 +179,7 @@ function openMail(kind) {
 
 	var mailPop  = document.getElementsByName("mailPop")[nr].value;
 	var mailUser = document.getElementsByName("mailUser")[nr].value;
-	var mailPass = document.getElementsByName("mailPass")[nr].value;
+	var mailPass = escape(document.getElementsByName("mailPass")[nr].value);
 	var mailSubj = document.getElementsByName("mailSubject")[nr].value;
 	if (mailPop == "" || mailUser == "" || mailPass == "") {
 		alert("Please enter the required fields POP Server, User and Password!");
