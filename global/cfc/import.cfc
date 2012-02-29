@@ -253,7 +253,7 @@
 		<!--- Do docs --->
 		<cfinvoke method="doimportdocs" thestruct="#arguments.thestruct#" />
 		<!--- Custom Fields --->
-		<!--- (Due to time constraints we do import of custom fields in 1.5.1) --->
+		<!--- (import of custom fields in 1.5.1) --->
 		
 		<!--- Flush tables --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
@@ -1093,10 +1093,13 @@
 				<cfset arguments.thestruct.filenameorg = found.filenameorg>
 				<cfset arguments.thestruct.qrydetail.lucene_key = found.lucene_key>
 				<cfset arguments.thestruct.qrydetail.link_path_url = found.link_path_url>
-				<!--- Lucene: Delete Records --->
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#found.img_id#" category="img">
-				<!--- Lucene: Update Records --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#found.img_id#" category="img">
+				<cfset arguments.thestruct.id = found.img_id>
+				<cfthread intstruct="#arguments.thestruct#">
+					<!--- Lucene: Delete Records --->
+					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="img">
+					<!--- Lucene: Update Records --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="img">
+				</cfthread>
 			</cfif>
 		</cfloop>
 		<!--- Return --->
@@ -1245,10 +1248,13 @@
 				<cfset arguments.thestruct.filenameorg = found.filenameorg>
 				<cfset arguments.thestruct.qrydetail.lucene_key = found.lucene_key>
 				<cfset arguments.thestruct.qrydetail.link_path_url = found.link_path_url>
-				<!--- Lucene: Delete Records --->
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#found.vid_id#" category="vid">
-				<!--- Lucene: Update Records --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#found.vid_id#" category="vid">
+				<cfset arguments.thestruct.id = found.vid_id>
+				<cfthread intstruct="#arguments.thestruct#">
+					<!--- Lucene: Delete Records --->
+					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="vid">
+					<!--- Lucene: Update Records --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="vid">
+				</cfthread>
 			</cfif>
 		</cfloop>
 		<!--- Return --->
@@ -1397,10 +1403,13 @@
 				<cfset arguments.thestruct.filenameorg = found.filenameorg>
 				<cfset arguments.thestruct.qrydetail.lucene_key = found.lucene_key>
 				<cfset arguments.thestruct.qrydetail.link_path_url = found.link_path_url>
-				<!--- Lucene: Delete Records --->
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#found.aud_id#" category="aud">
-				<!--- Lucene: Update Records --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#found.aud_id#" category="aud">
+				<cfset arguments.thestruct.id = found.aud_id>
+				<cfthread intstruct="#arguments.thestruct#">
+					<!--- Lucene: Delete Records --->
+					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="aud">
+					<!--- Lucene: Update Records --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="aud">
+				</cfthread>
 			</cfif>
 		</cfloop>
 		<!--- Return --->
@@ -1691,10 +1700,13 @@
 				<cfset arguments.thestruct.filenameorg = found.filenameorg>
 				<cfset arguments.thestruct.qrydetail.lucene_key = found.lucene_key>
 				<cfset arguments.thestruct.qrydetail.link_path_url = found.link_path_url>
-				<!--- Lucene: Delete Records --->
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#found.file_id#" category="doc">
-				<!--- Lucene: Update Records --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#found.file_id#" category="doc">
+				<cfset arguments.thestruct.id = found.file_id>
+				<cfthread intstruct="#arguments.thestruct#">
+					<!--- Lucene: Delete Records --->
+					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="doc">
+					<!--- Lucene: Update Records --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="doc">
+				</cfthread>
 			</cfif>
 		</cfloop>
 		<!--- Return --->
