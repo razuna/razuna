@@ -1526,11 +1526,11 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
 	<!--- Write file to file system --->
-	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export.csv" output="#csv#" charset="utf-8" nameConflict="MakeUnique">
+	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameConflict="MakeUnique">
 	<!--- Serve the file --->
 	<!--- <cfcontent type="application/force-download" variable="#csv#"> --->
 	<!--- Feedback --->
-	<cfoutput><p><a href="outgoing/razuna-metadata-export.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	<cfflush>
 	<!--- Return --->
 	<cfreturn />
@@ -1554,11 +1554,11 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<cfset SpreadsheetAddRows(sxls, arguments.thestruct.tq, 2)> 
 	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
 	<!--- Write file to file system --->
-	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/razuna-metadata-export.#arguments.thestruct.format#",true)>
+	<cfset SpreadsheetWrite(sxls,"#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#",true)>
 	<!--- Serve the file --->
     <!--- <cfcontent type="application/force-download" variable="#SpreadsheetReadbinary(sxls)#"> --->
 	<!--- Feedback --->
-	<cfoutput><p><a href="outgoing/razuna-metadata-export.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	<cfflush>
 	<!--- Return --->
 	<cfreturn />
