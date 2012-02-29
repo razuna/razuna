@@ -1374,6 +1374,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT vid_id AS theid, 'vid' AS thetype
 		FROM #session.hostdbprefix#videos
@@ -1381,6 +1382,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT aud_id AS theid, 'aud' AS thetype
 		FROM #session.hostdbprefix#audios
@@ -1388,11 +1390,13 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT file_id AS theid, 'doc' AS thetype
 		FROM #session.hostdbprefix#files
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.thestruct.expwhat NEQ "all">
-			WHERE folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		</cfquery>
 		<!--- Loop over items in basket --->
