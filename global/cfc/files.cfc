@@ -752,7 +752,7 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND getbin.link_kind EQ "">
-			<cfhttp url="#arguments.thestruct.getbin.cloud_url_org#" file="#attributes.intstruct.getbin.file_name_org#" path="#arguments.thestruct.thepath#/outgoing"></cfhttp>
+			<cfhttp url="#arguments.thestruct.getbin.cloud_url_org#" file="#arguments.thestruct.getbin.file_name_org#" path="#arguments.thestruct.thepath#/outgoing"></cfhttp>
 			<cfthread name="download#arguments.thestruct.file_id#" />
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND getbin.link_kind EQ "">
