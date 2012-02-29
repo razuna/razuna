@@ -640,6 +640,18 @@
 			48, 'Make peace with your past so it will not destroy your present.', 'Paulo Coelho');
 			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
 			49, 'Obstacles are those frightful things you see when you take your eyes off your goal.', 'Henry Ford');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			50, 'I feel like I can not feel.', 'Salvador Dali');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			51, 'To avoid criticism, do nothing, say nothing, and be nothing.', 'Elbert Hubbard');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			52, 'I am not upset that you lied to me, I am upset that from now on I can not believe you anymore.', 'Friedrich Nietzsche');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			53, 'Successful and great people are ordinary people with extraordinary determination.', 'Robert Schuller');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			54, 'Everything has beauty, but not everyone sees it.', 'Confucius');
+			INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+			55, 'Wanting to be someone else is a waste of the person you are.', 'Kurt Cobain');
 			</cfquery>
 			<!--- FILE TYPES --->
 			<cfquery datasource="#arguments.thestruct.dsn#">

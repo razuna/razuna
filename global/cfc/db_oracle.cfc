@@ -748,6 +748,30 @@
 		INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
 		49, 'Obstacles are those frightful things you see when you take your eyes off your goal.', 'Henry Ford')
 		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		50, 'I feel like I can not feel.', 'Salvador Dali')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		51, 'To avoid criticism, do nothing, say nothing, and be nothing.', 'Elbert Hubbard')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		52, 'I am not upset that you lied to me, I am upset that from now on I can not believe you anymore.', 'Friedrich Nietzsche')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		53, 'Successful and great people are ordinary people with extraordinary determination.', 'Robert Schuller')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		54, 'Everything has beauty, but not everyone sees it.', 'Confucius')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO wisdom ( WIS_ID, WIS_TEXT, WIS_AUTHOR ) VALUES ( 
+		55, 'Wanting to be someone else is a waste of the person you are.', 'Kurt Cobain')
+		</cfquery>
 		<!--- FILE TYPES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO file_types VALUES ('doc', 'doc', 'application', 'vnd.ms-word')
