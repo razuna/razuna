@@ -1532,6 +1532,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<!--- Feedback --->
 	<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	<cfflush>
+	<!--- Call function to remove older files --->
+	<cfinvoke method="remove_files" thestruct="#arguments.thestruct#" />
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1560,8 +1562,28 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<!--- Feedback --->
 	<cfoutput><p><a href="outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.#arguments.thestruct.format#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
 	<cfflush>
+	<!--- Call function to remove older files --->
+	<cfinvoke method="remove_files" thestruct="#arguments.thestruct#" />
 	<!--- Return --->
 	<cfreturn />
+</cffunction>
+
+<!--- Remove old export files --->
+<cffunction name="remove_files" output="no">
+	<cfargument name="thestruct" type="struct">
+	<cftry>
+		<!--- Set time for remove --->
+		<cfset removetime = DateAdd("h", -6, "#now()#")>
+		<!--- Now check directory on the hard drive. This will fix issue with files that were not successfully uploaded thus missing in the temp db --->
+		<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing" name="thefiles" type="file">
+		<!--- Loop over dirs --->
+		<cfloop query="thefiles">
+			<cfif datelastmodified LT removetime AND FileExists("#arguments.thestruct.thepath#/outgoing/#name#")>
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#name#">
+			</cfif>
+		</cfloop>
+		<cfcatch type="any"></cfcatch>
+	</cftry>
 </cffunction>
 
 <!--- Add to query --->
