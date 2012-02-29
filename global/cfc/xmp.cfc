@@ -1211,7 +1211,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<!--- Download file --->
 		<cfif application.razuna.storage EQ "nirvanix">
 			<!--- Finally download --->
-			<cfhttp url="#arguments.thestruct.qrydetail.cloud_url_org#" file="#attributes.intstruct.qrydetail.filenameorg#" path="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#"></cfhttp>
+			<cfhttp url="#arguments.thestruct.qrydetail.cloud_url_org#" file="#arguments.thestruct.qrydetail.filenameorg#" path="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#"></cfhttp>
 			<cfthread name="download#arguments.thestruct.file_id#" />
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
