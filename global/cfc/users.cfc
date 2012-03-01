@@ -32,16 +32,28 @@
 	<cfset var localquery = 0>
 	<!--- function body --->
 	<cfquery datasource="#variables.dsn#" name="localquery">
-		SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_company, u.user_active, count(*)<cfif variables.database EQ "oracle"> over()</cfif> total
+		SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_company, u.user_active, count(*)<cfif variables.database EQ "oracle"> over()</cfif> total,
+		(
+		SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>min(ct_g_u_grp_id)
+		FROM ct_groups_users
+		WHERE ct_g_u_user_id = u.user_id
+		<cfif variables.database EQ "oracle">
+			AND ROWNUM = 1
+		<cfelseif variables.database EQ "db2">
+			FETCH FIRST 1 ROWS ONLY
+		<cfelseif variables.database EQ "mysql" OR variables.database EQ "h2">
+			LIMIT 1
+		</cfif>
+		) AS ct_g_u_grp_id
 		FROM ct_users_hosts ct, users u
 		WHERE ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- user not "admin"
 		AND u.user_login_name <> <cfqueryparam cfsqltype="cf_sql_varchar" value="admin"> --->
 		AND ct.ct_u_h_user_id = u.user_id
-		<cfif #arguments.thestruct.user_email# IS NOT "">
+		<cfif arguments.thestruct.user_email IS NOT "">
 			AND lower(u.user_email) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.thestruct.user_email)#%">
 		</cfif>
-		<cfif #arguments.thestruct.user_login_name# IS NOT "">
+		<cfif arguments.thestruct.user_login_name IS NOT "">
 			AND
 			(
 			lower(u.user_login_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.thestruct.user_login_name)#%">
@@ -51,7 +63,7 @@
 			lower(u.user_last_name) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.thestruct.user_login_name)#%">
 			)
 		</cfif>
-		<cfif #arguments.thestruct.user_company# IS NOT "">
+		<cfif arguments.thestruct.user_company IS NOT "">
 			AND lower(u.user_company) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.thestruct.user_company)#%">
 		</cfif>
 		<cfif structkeyexists(arguments.thestruct,"dam")>
@@ -60,6 +72,14 @@
 		GROUP BY u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company
 		ORDER BY u.user_first_name, u.user_last_name
 	</cfquery>
+	<!--- If we come from DAM we don't show System Admins --->
+	<cfif structkeyexists(arguments.thestruct,"dam")>
+		<cfquery dbtype="query" name="localquery">
+		SELECT *
+		FROM localquery
+		WHERE ct_g_u_grp_id <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		</cfquery>
+	</cfif>
 	<cfreturn localquery>
 </cffunction>
 
