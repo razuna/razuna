@@ -1412,7 +1412,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<!--- This is coming from a file list --->
 	<cfelse>
 		<!--- Loop over filelist --->
-		<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
+		<cfloop list="#session.file_id#" delimiters="," index="i">
 			<!--- The first part is the ID the last the type --->
 			<cfset arguments.thestruct.file_id = listfirst(i, "-")>
 			<cfset arguments.thestruct.filetype = listlast(i, "-")>
@@ -1424,7 +1424,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		</cfloop>
 	</cfif>
 	<!--- We got the query ready, continue export --->
-
 	<!--- CVS --->
 	<cfif arguments.thestruct.format EQ "csv">
 		<cfinvoke method="export_csv" thestruct="#arguments.thestruct#" />

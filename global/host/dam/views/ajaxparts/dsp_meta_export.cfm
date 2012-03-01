@@ -49,7 +49,7 @@
 		var exp = $('##expwhat option:selected').val();
 		// Only if select is a format
 		if (format != ''){
-			window.open('#myself#c.meta_export_do&what=#attributes.what#&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&format=' + format + '&expwhat=' + exp)
+			window.open('#myself#c.meta_export_do&what=#attributes.what#&folder_id=#attributes.folder_id#&format=' + format + '&expwhat=' + exp)
 		}
 	}
 </script>

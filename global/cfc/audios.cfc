@@ -408,6 +408,7 @@
 	<cfset session.theuserid = arguments.thestruct.theuserid>
 	<!--- Loop --->
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
 		<cfquery datasource="#application.razuna.datasource#" name="thedetail">
 		SELECT aud_name, folder_id_r, aud_name_org, aud_name_org filenameorg, link_kind, link_path_url, path_to_asset, lucene_key

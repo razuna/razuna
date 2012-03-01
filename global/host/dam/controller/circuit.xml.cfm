@@ -698,9 +698,6 @@
 		<!-- Param -->
 		<set name="session.type" value="choosecollection" />
 		<set name="attributes.iscol" value="T" />
-		<!-- Put sessions -->
-		<set name="session.file_id" value="#attributes.file_id#" />
-		<set name="session.thetype" value="#attributes.thetype#" />
 		<!-- Put art into sessions -->
 		<set name="session.artofimage" value="#attributes.artofimage#" />
 		<set name="session.artofvideo" value="#attributes.artofvideo#" />
@@ -1669,6 +1666,12 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<!-- If we dont come fromall then assign session to id -->
+    	<if condition="#attributes.kind# NEQ 'all'">
+    		<true>
+    			<set name="attributes.id" value="#session.file_id#" />
+    		</true>
+    	</if> 
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1688,6 +1691,12 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<!-- If we dont come fromall then assign session to id -->
+    	<if condition="#attributes.kind# NEQ 'all'">
+    		<true>
+    			<set name="attributes.id" value="#session.file_id#" />
+    		</true>
+    	</if> 
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1707,6 +1716,12 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<!-- If we dont come fromall then assign session to id -->
+    	<if condition="#attributes.kind# NEQ 'all'">
+    		<true>
+    			<set name="attributes.id" value="#session.file_id#" />
+    		</true>
+    	</if> 
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1726,6 +1741,12 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<!-- If we dont come fromall then assign session to id -->
+    	<if condition="#attributes.kind# NEQ 'all'">
+    		<true>
+    			<set name="attributes.id" value="#session.file_id#" />
+    		</true>
+    	</if> 
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -1745,6 +1766,7 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<set name="attributes.id" value="#session.file_id#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -2791,12 +2813,14 @@
 	<fuseaction name="move_file">
 		<!-- Param -->
 		<set name="session.type" value="#attributes.type#" />
-		<!-- Put file id into session -->
-		<set name="session.thefileid" value="#attributes.file_id#" />
-		<!-- Put file type into session -->
 		<set name="session.thetype" value="#attributes.thetype#" />
-		<!-- Put original folder into session -->
 		<set name="session.thefolderorg" value="#attributes.folder_id#" />
+		<!-- Put file id into session if the attribute exsists -->
+		<if condition="structkeyexists(attributes,'file_id')">
+			<true>
+				<set name="session.thefileid" value="#attributes.file_id#" />
+			</true>
+		</if>
 		<!-- If we move a folder -->
 		<if condition="attributes.type EQ 'movefolder'">
 			<true>
@@ -2881,7 +2905,7 @@
 		<!-- CFC: Get languages -->
 		<do action="languages" />
 		<!-- If we are images -->
-		<if condition="attributes.what EQ 'img' OR attributes.file_ids CONTAINS '-img'">
+		<if condition="attributes.what EQ 'img' OR session.thefileid CONTAINS '-img'">
 			<true>
 				<!-- CFC: Get XMP value -->
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="readxmpdb(attributes)" returnvariable="qry_xmp" />
@@ -4658,6 +4682,11 @@
 	</fuseaction>
 	<!-- Recreate preview image -->
 	<fuseaction name="recreatepreview">
+		<if condition="!structkeyexists(attributes,'file_id')">
+			<true>
+				<set name="attributes.file_id" value="#session.file_id#" />
+			</true>
+		</if>
 		<!-- Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
@@ -5414,7 +5443,6 @@
 	<fuseaction name="meta_export">
 		<!-- Param -->
 		<set name="attributes.what" value="" overwrite="false" />
-		<set name="attributes.file_id" value="" overwrite="false" />
 		<set name="attributes.folder_id" value="" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.meta_export" />
@@ -5468,6 +5496,17 @@
 		<set name="session.artofvideo" value="#attributes.artofvideo#" />
 		<set name="session.artofaudio" value="#attributes.artofaudio#" />
 		<set name="session.artoffile" value="#attributes.artoffile#" />
+	</fuseaction>
+	
+	<!-- Store fileids and filetypes in session (takes care for more then 75 assets at once -->
+	<fuseaction name="store_file_values">
+		<!-- Params -->
+		<set name="attributes.file_id" value="" overwrite="false" />
+		<set name="attributes.thetype" value="" overwrite="false" />
+		<!-- Set session -->
+		<set name="session.file_id" value="#attributes.file_id#" />
+		<set name="session.thefileid" value="#attributes.file_id#" />
+		<set name="session.thetype" value="#attributes.thetype#" />
 	</fuseaction>
 	
 	<!-- Set view and maxpage and offset -->

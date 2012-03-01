@@ -36,7 +36,7 @@
 	<div id="previewimagesstatus" style="display:none;"></div>
 	<script type="text/javascript">
 		function recreatepreviews(){
-			loadcontent('previewimagesstatus','#myself#c.recreatepreview&file_id=#attributes.file_id#&thetype=#attributes.thetype#');
+			loadcontent('previewimagesstatus','#myself#c.recreatepreview&thetype=#attributes.thetype#');
 			$('##previewimages').html('<div style="color:green;font-weight:bold;">#defaultsObj.trans("header_preview_image_recreate_status")#</div>');
 		}
 	</script>

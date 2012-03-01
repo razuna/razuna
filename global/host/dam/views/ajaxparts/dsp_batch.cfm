@@ -30,12 +30,12 @@
 	<input type="hidden" name="thepath" value="#thisPath#">
 	<input type="hidden" name="what" value="#attributes.what#">
 	<input type="hidden" name="file_id" value="#attributes.file_id#">
-	<input type="hidden" name="file_ids" value="#attributes.file_ids#">
+	<input type="hidden" name="file_ids" value="#session.thefileid#">
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 	<div id="tabs_batch">
 		<ul>
 			<li tabindex="0"><a href="##batch_desc">#defaultsObj.trans("asset_desc")#</a></li>
-			<cfif attributes.what EQ "img" OR attributes.file_ids CONTAINS "-img">
+			<cfif attributes.what EQ "img" OR session.thefileid CONTAINS "-img">
 				<li tabindex="1"><a href="##batch_xmp">XMP Description</a></li>
 				<li tabindex="2"><a href="##iptc_contact">IPTC Contact</a></li>
 				<li tabindex="3"><a href="##iptc_image">IPTC Image</a></li>
@@ -59,7 +59,7 @@
 				</cfloop>
 			</table>
 		</div>
-		<cfif attributes.what EQ "img" OR attributes.file_ids CONTAINS "-img">
+		<cfif attributes.what EQ "img" OR session.thefileid CONTAINS "-img">
 			<!--- XMP Description --->
 			<div id="batch_xmp">
 				<cfinclude template="dsp_asset_images_xmp.cfm">

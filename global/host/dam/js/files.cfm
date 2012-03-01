@@ -98,8 +98,17 @@ function sendtocol(theform){
            	}
       	}
    	}
+   	// Store values in sessions
+	var url = '<cfoutput>#myself#</cfoutput>c.store_file_values';
+	var items = '&file_id=' + fileids + '&thetype=' + filetypes;
+	// Submit Form
+	$.ajax({
+		type: "POST",
+		url: url,
+	   	data: items
+	});
    	// Send to Collection
-   	showwindow('<cfoutput>#myself#</cfoutput>c.choose_collection&artofimage=list&artofvideo=&artofaudio=&artoffile=&file_id=' + fileids + '&thetype=' + filetypes, '<cfoutput>#defaultsObj.trans("add_to_collection")#</cfoutput>', 550, 1);
+   	showwindow('<cfoutput>#myself#</cfoutput>c.choose_collection&artofimage=list&artofvideo=&artofaudio=&artoffile=', '<cfoutput>#defaultsObj.trans("add_to_collection")#</cfoutput>', 550, 1);
 }
 
 // General Batch Actions
@@ -111,12 +120,20 @@ function batchaction(theform, what, kind, folder_id, theid){
        if ((document.forms[theform].elements[i].name.indexOf('file_id') > -1)) {
            if (document.forms[theform].elements[i].checked) {
            	fileids += document.forms[theform].elements[i].value + ',';
-           	filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
            	}
       	}
    	}
    	// Only continue if there is something selected
    	if (fileids != ''){
+   		// Store values in sessions
+		var url = '<cfoutput>#myself#</cfoutput>c.store_file_values';
+		var items = '&file_id=' + fileids;
+		// Submit Form
+		$.ajax({
+			type: "POST",
+			url: url,
+		   	data: items
+		});
    		// Decide the what
    		if(what == 'files')what = 'doc';
 		if(what == 'images')what = 'img';
@@ -128,20 +145,20 @@ function batchaction(theform, what, kind, folder_id, theid){
 		// Get to work
 		switch (theaction){
 			case "move":
-				showwindow('<cfoutput>#myself#</cfoutput>c.move_file&type=movefile&file_id=' + fileids + '&thetype=' + what + '&folder_id=' + folder_id, '<cfoutput>#defaultsObj.trans("move_file")#</cfoutput>', 550, 1);
+				showwindow('<cfoutput>#myself#</cfoutput>c.move_file&type=movefile&thetype=' + what + '&folder_id=' + folder_id, '<cfoutput>#defaultsObj.trans("move_file")#</cfoutput>', 550, 1);
 				break;
 			case "batch":
-				showwindow('<cfoutput>#myself#</cfoutput>c.batch_form&file_id=0&file_ids=' + fileids + '&what=' + what + '&folder_id=' + folder_id, '<cfoutput>#defaultsObj.trans("batch_selected_header")#</cfoutput>', 650, 1);
+				showwindow('<cfoutput>#myself#</cfoutput>c.batch_form&file_id=0&what=' + what + '&folder_id=' + folder_id, '<cfoutput>#defaultsObj.trans("batch_selected_header")#</cfoutput>', 650, 1);
 			  	break;
 			case "delete":
 				//alert('delete');
-				showwindow('<cfoutput>#myself#</cfoutput>ajax.remove_record&many=T&id=' + fileids + '&what=' + what + '&loaddiv=' + kind + '&folder_id=' + folder_id, '<cfoutput>#defaultsObj.trans("remove")#</cfoutput>', 400, 1);
+				showwindow('<cfoutput>#myself#</cfoutput>ajax.remove_record&many=T&what=' + what + '&loaddiv=' + kind + '&folder_id=' + folder_id, '<cfoutput>#defaultsObj.trans("remove")#</cfoutput>', 400, 1);
 				break;
 			case "chcoll":
-				showwindow('<cfoutput>#myself#</cfoutput>c.choose_collection&artofimage=list&artofvideo=&artofaudio=&artoffile=&file_id=' + fileids + '&thetype=' + what, '<cfoutput>#defaultsObj.trans("add_to_collection")#</cfoutput>', 550, 1);
+				showwindow('<cfoutput>#myself#</cfoutput>c.choose_collection&artofimage=list&artofvideo=&artofaudio=&artoffile=&thetype=' + what, '<cfoutput>#defaultsObj.trans("add_to_collection")#</cfoutput>', 550, 1);
 				break;
 			case "exportmeta":
-				showwindow('<cfoutput>#myself#</cfoutput>c.meta_export&what=&file_id=' + fileids + '&thetype=' + what, '<cfoutput>#defaultsObj.trans("header_export_metadata")#</cfoutput>', 600, 1);
+				showwindow('<cfoutput>#myself#</cfoutput>c.meta_export&what=&thetype=' + what, '<cfoutput>#defaultsObj.trans("header_export_metadata")#</cfoutput>', 600, 1);
 				break;
 			case "shareon":
 				// Show loading gif
@@ -160,7 +177,7 @@ function batchaction(theform, what, kind, folder_id, theid){
 				$("#feedback_delete_" + kind).html('<div style="width:200px;">Sharing disabled</div>');
 				break;
 			case "prev":
-				showwindow('<cfoutput>#myself#</cfoutput>ajax.recreate_previews&file_id=' + fileids + '&thetype=' + what, '<cfoutput>#defaultsObj.trans("batch_recreate_preview")#</cfoutput>', 550, 1);
+				showwindow('<cfoutput>#myself#</cfoutput>ajax.recreate_previews&thetype=' + what, '<cfoutput>#defaultsObj.trans("batch_recreate_preview")#</cfoutput>', 550, 1);
 				break;
 		}
 		// Reset Selection
