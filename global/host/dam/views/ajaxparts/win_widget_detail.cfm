@@ -109,8 +109,8 @@
 					<td nowrap="nowrap" valign="top">#defaultsObj.trans("share_allow_download_original")#</td>
 					<td ><input type="radio" value="t" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_dl_org EQ "t"> checked="checked"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="f" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_org EQ "f"> checked="checked"</cfif>>#defaultsObj.trans("no")#
 					<br><br>
-					<a href="##" onclick="resetdl();return false;">#defaultsObj.trans("share_folder_download_reset")#</a>
-					<div id="reset_dl" style="color:green;font-weight:bold;padding-top:5px;"></div>
+					<a href="##" onclick="resetdlw();return false;">#defaultsObj.trans("share_folder_download_reset")#</a>
+					<div id="reset_dl_w" style="color:green;font-weight:bold;padding-top:5px;"></div>
 					</td>
 				</tr>
 				<!--- Upload --->
@@ -176,6 +176,18 @@
 			$('##widget_id').val(trimmed);
 			// Update background widget list
 			loadcontent('widgets','#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');
+		}
+		// Reset DL
+		function resetdlw(){
+			var thevalue = $('##widget_dl_org:checked').val();
+			if (thevalue == 't'){
+				thevalue = 1;
+			}
+			else{
+				thevalue = 0;
+			}
+			loadcontent('widgetstatus','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
+			$('##reset_dl_w').html('Reset all individual download setting successfully');
 		}
 	</script>	
 </cfoutput>

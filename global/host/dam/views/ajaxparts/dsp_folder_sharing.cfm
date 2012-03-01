@@ -137,7 +137,7 @@
 		// Reset DL
 		function resetdl(){
 			var thevalue = $('##share_dl_org:checked').val();
-			if (thevalue){
+			if (thevalue == 'T'){
 				thevalue = 1;
 			}
 			else{
