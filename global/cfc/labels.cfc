@@ -218,6 +218,7 @@
 		FROM ct_labels
 		WHERE ct_id_r = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
 		AND ct_type = <cfqueryparam value="#arguments.thetype#" cfsqltype="cf_sql_varchar" />
+		AND ct_label_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
 		</cfquery>
 		<!--- Query --->
 		<cfif qryct.recordcount NEQ 0>
