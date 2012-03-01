@@ -376,7 +376,7 @@
 		</cfif>
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#arguments.thestruct.link_path#" name="arguments.thestruct.thefiles" type="file">
-		<!--- Filter out hidden dirs --->
+		<!--- Filter out hidden files --->
 		<cfquery dbtype="query" name="arguments.thestruct.thefiles">
 		SELECT *
 		FROM arguments.thestruct.thefiles
@@ -446,6 +446,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
@@ -512,6 +518,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
@@ -578,6 +590,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
@@ -644,6 +662,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
@@ -710,6 +734,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
@@ -776,6 +806,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
@@ -842,6 +878,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
@@ -908,6 +950,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
@@ -974,6 +1022,12 @@
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+		<!--- Filter out hidden files --->
+		<cfquery dbtype="query" name="thefiles">
+		SELECT *
+		FROM thefiles
+		WHERE attributes != 'H'
+		</cfquery>
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Params --->
