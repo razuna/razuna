@@ -40,14 +40,14 @@
 			</tr>
 			<!--- Back --->
 			<cfif structkeyexists(attributes,"folderpath")>
-			<tr>
-				<td colspan="3"><a href="##" onclick="loadcontent('addftp','#myself##xfa.reloadftp#&folderpath=#URLEncodedFormat(qry_ftp.backpath)#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("back")#</a></td>
-			</tr>
+				<tr>
+					<td colspan="3"><a href="##" onclick="loadcontent('addftp','#myself##xfa.reloadftp#&folderpath=#URLEncodedFormat(qry_ftp.backpath)#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("back")#</a></td>
+				</tr>
 			</cfif>
 			<!--- output directory name --->
 			<tr>
 				<td width="1%" nowrap="true" class="td2"><img src="#dynpath#/global/host/dam/images/folder_open.png" width="16" height="16" border="0"></td>
-				<td colspan="2" width="100%" nowrap="true" class="td2">#qry_ftp.dirname#</td>
+				<td colspan="2" width="100%" nowrap="true" class="td2">#qry_ftp.dirname# - <a href="##" onClick="CheckAll('assetftpform');" title="#defaultsObj.trans("tooltip_select_desc")#">#defaultsObj.trans("tooltip_select")#</a></td>
 			</tr>
 			<!--- list the files --->
 			<cfloop query="qry_ftp.ftplist">
