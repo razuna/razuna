@@ -191,6 +191,8 @@
 		</script>
 	</cfif>
 	<script language="JavaScript" type="text/javascript">
+		// Focus on the folder_name
+		$('##folder_name').focus();
 		// Reset DL
 		function resetdl(){
 			var thevalue = $('##share_dl_org:checked').val();
