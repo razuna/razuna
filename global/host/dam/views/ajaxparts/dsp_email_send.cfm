@@ -45,7 +45,7 @@
 	</tr>
 	<tr>
 		<td>#defaultsObj.trans("to")#</td>
-		<td><input type="text" name="to" size="60" value="#attributes.email#"></td>
+		<td><input type="text" name="to" id="to" size="60" value="#attributes.email#"></td>
 	</tr>
 	<tr>
 		<td>Cc</td>
@@ -57,7 +57,7 @@
 	</tr>
 	<tr>
 		<td>#defaultsObj.trans("email_subject")#</td>
-		<td><input type="text" name="subject" size="60"></td>
+		<td><input type="text" name="subject" id="subject" size="60"></td>
 	</tr>
 	<cfif attributes.frombasket EQ "F">
 		<!--- Get related videos --->
@@ -236,7 +236,34 @@
 	</tr>
 </table>
 </form>
-<script>
+<script type="text/javascript">
+
+$("##sendemailform").validate({
+	// When the form is being submited
+	submitHandler: function(form) {
+		// Get values
+		var url = formaction("sendemailform");
+		var items = formserialize("sendemailform");
+		// Submit Form
+		$.ajax({
+			type: "POST",
+			url: url,
+		   	data: items,
+		   	success: function(){
+		   		$("##successemail").css("display","");
+		   		$("##successemail").html('#JSStringFormat(defaultsObj.trans("message_sent"))#');
+		   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+		   	}
+		});
+		return false;
+	},
+	rules: {
+		to: "required",
+		subject: "required"
+	 }
+})
+
+/*
 $("##sendemailform").submit(function(e){
 	$("##successemail").css("display","");
 	loadinggif('successemail');
@@ -256,5 +283,6 @@ $("##sendemailform").submit(function(e){
 	});
 	return false;
 })
+*/
 </script>
 </cfoutput>
