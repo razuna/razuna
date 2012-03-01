@@ -48,7 +48,7 @@
 			<!--- Back --->
 			<cfif structkeyexists(attributes,"folderpath")>
 				<tr>
-					<td colspan="2"><a href="##" onclick="loadcontent('thewindowcontent<cfif session.frombasket EQ "F">2<cfelseif session.frombasket EQ "S">3</cfif>','#myself##xfa.reloadftp#&folderpath=#qry_ftp.backpath#&foldername=#attributes.foldername#');">#defaultsObj.trans("back")#</a></td>
+					<td colspan="2"><a href="##" onclick="loadcontent('thewindowcontent<cfif session.frombasket EQ "F">2<cfelseif session.frombasket EQ "S">3<cfelse>1</cfif>','#myself##xfa.reloadftp#&folderpath=#qry_ftp.backpath#&foldername=#attributes.foldername#');">#defaultsObj.trans("back")#</a></td>
 				</tr>
 			</cfif>
 			<!--- output directory name --->
@@ -65,8 +65,8 @@
 						<cfelse>
 							<cfset thepath = path>
 						</cfif>
-						<td width="1%" nowrap class="td2" style="padding-left:10px;padding-right:2px;"><a href="##" onclick="loadcontent('thewindowcontent<cfif session.frombasket EQ "F">2<cfelseif session.frombasket EQ "S">3</cfif>','#myself##xfa.reloadftp#&folderpath=#thepath#&foldername=#name#');"><img src="#dynpath#/global/host/dam/images/folder.png" width="16" height="16" border="0"></a></td>
-						<td width="100%" nowrap class="td2" style="padding-left:2px;"><a href="##" onclick="loadcontent('thewindowcontent<cfif session.frombasket EQ "F">2<cfelseif session.frombasket EQ "S">3</cfif>','#myself##xfa.reloadftp#&folderpath=#thepath#&foldername=#name#');">#name#</a></td>
+						<td width="1%" nowrap class="td2" style="padding-left:10px;padding-right:2px;"><a href="##" onclick="loadcontent('thewindowcontent<cfif session.frombasket EQ "F">2<cfelseif session.frombasket EQ "S">3<cfelse>1</cfif>','#myself##xfa.reloadftp#&folderpath=#thepath#&foldername=#name#');"><img src="#dynpath#/global/host/dam/images/folder.png" width="16" height="16" border="0"></a></td>
+						<td width="100%" nowrap class="td2" style="padding-left:2px;"><a href="##" onclick="loadcontent('thewindowcontent<cfif session.frombasket EQ "F">2<cfelseif session.frombasket EQ "S">3<cfelse>1</cfif>','#myself##xfa.reloadftp#&folderpath=#thepath#&foldername=#name#');">#name#</a></td>
 					</cfif>
 					<cfif NOT isdirectory AND session.frombasket NEQ "S">
 						<td class="td2"></td>

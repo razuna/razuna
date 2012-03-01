@@ -2399,6 +2399,7 @@
 		<set name="attributes.file_id" value="" overwrite="false" />
 		<set name="attributes.foldername" value="" overwrite="false" />
 		<set name="attributes.folderpath" value="" overwrite="false" />
+		<set name="attributes.artofimage" value="" overwrite="false" />
 		<!-- Store values in session since we need them later on some more -->
 		<set name="session.ftp_server" value="#attributes.ftp_server#" />
 		<set name="session.ftp_user" value="#attributes.ftp_user#" />
