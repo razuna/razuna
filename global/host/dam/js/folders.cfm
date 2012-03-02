@@ -215,6 +215,7 @@
 		var filename = escape(document.forms[theform].filename.value);
 		var extension = escape(document.forms[theform].extension.value);
 		var rawmetadata = escape(document.forms[theform].rawmetadata.value);
+		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			var value_#cfid# = escape(document.forms[theform].cf#cfid#.value);
 		</cfoutput></cfloop>
@@ -226,8 +227,9 @@
 		if (filename != '') var filename = 'filename:' + filename;
 		if (extension != '') var extension = 'extension:' + extension;
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:' + rawmetadata;
+		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
-			if (value_#cfid# != '') var value_#cfid# = 'cf_text:#cf_id# AND cf_value:' + value_#cfid#;
+			if (value_#cfid# != '') var value_#cfid# = '(cf_text:#cf_id# AND cf_value:' + value_#cfid# + ')';
 		</cfoutput></cfloop>
 		// Create the searchtext
 		var searchtext = searchfor;
@@ -261,6 +263,7 @@
 		else {
 			var searchtext = searchtext + rawmetadata;
 		}
+		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			if (searchtext != '' && value_#cfid# != '') {
 				var searchtext = searchtext + ' ' + andor + ' ' + value_#cfid#;

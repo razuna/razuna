@@ -62,168 +62,174 @@
 			<!--- FOR FILES --->
 			<cfif arguments.category EQ "doc">
 				<!--- Query Record --->
-				<cfquery name="qry" datasource="#arguments.dsn#" cachename="lucdoc#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_files">
+				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucdoc#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_files">
 			    SELECT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, 
 			    ct.file_desc description, ct.file_keywords keywords, 
-			    file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext
+			    f.file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext,
+			    x.author, x.rights, x.authorsposition, x.captionwriter, x.webstatement, x.rightsmarked,
+			    v.cf_value, ft.cf_id_r
 				FROM #session.hostdbprefix#files f 
 				LEFT JOIN #session.hostdbprefix#files_desc ct ON f.file_id = ct.file_id_r
-				<!--- LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.asset_id_r = f.file_id --->
+				LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON f.file_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id  AND ft.lang_id_r = 1
 				WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Index PDF XMP also --->
-				<cfquery name="qryxmpdoc" datasource="#arguments.dsn#" cachename="lucxmpdoc#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_files">
-				SELECT asset_id_r, author, rights, authorsposition, captionwriter, webstatement, rightsmarked, 'doc' as doc, 'xmp_#arguments.assetid#' as xmp
-				FROM #session.hostdbprefix#files_xmp
-				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- Index: Update query --->
+				<!--- Indexing --->
 				<cfscript>
-					// Index XMP
-					argsxmpdoc = {
+					args = {
 					collection : session.hostid,
-					query : qryxmpdoc,
-					category : "doc",
-					categoryTree : "asset_id_r",
-					key : "xmp",
-					title : "xmp",
-					body : "xmp",
+					query : qry_all,
+					category : "thecategory",
+					categoryTree : "id",
+					key : "id",
+					title : "id",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value",
 					custommap :{
-							author : "author",
-							rights : "rights",
-							authorsposition : "authorsposition", 
-							captionwriter : "captionwriter", 
-							webstatement : "webstatement", 
-							rightsmarked : "rightsmarked"
+						id : "id",
+						filename : "filename",
+						filenameorg : "filenameorg",
+						keywords : "keywords",
+						description : "description",
+						rawmetadata : "rawmetadata",
+						extension : "theext",
+						author : "author",
+						rights : "rights",
+						authorsposition : "authorsposition", 
+						captionwriter : "captionwriter", 
+						webstatement : "webstatement", 
+						rightsmarked : "rightsmarked",
+						cf_text : "cf_id_r",
+						cf_value : "cf_value"
 						}
 					};
-					resultsxmpdoc = CollectionIndexCustom( argumentCollection=argsxmpdoc );
+					results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
 			<!--- FOR IMAGES --->
 			<cfelseif arguments.category EQ "img">
 				<!--- Query Record --->
-				<cfquery name="qry" datasource="#arguments.dsn#" cachename="lucimg#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_images">
+				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucimg#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_images">
 			    SELECT f.img_id id, f.folder_id_r folder, f.img_filename filename, f.img_filename_org filenameorg,
 			    ct.img_description description, ct.img_keywords keywords, 
-				f.img_extension theext, img_meta as rawmetadata, '#arguments.category#' as thecategory
+				f.img_extension theext, img_meta as rawmetadata, '#arguments.category#' as thecategory,
+				x.subjectcode, x.creator, x.title, x.authorsposition, x.captionwriter, x.ciadrextadr, x.category,
+				x.supplementalcategories, x.urgency, x.description, x.ciadrcity, 
+				x.ciadrctry, x.location, x.ciadrpcode, x.ciemailwork, x.ciurlwork, x.citelwork, x.intellectualgenre, x.instructions, x.source,
+				x.usageterms, x.copyrightstatus, x.transmissionreference, x.webstatement, x.headline, x.datecreated, x.city, x.ciadrregion, 
+				x.country, x.countrycode, x.scene, x.state, x.credit, x.rights,
+				v.cf_value, ft.cf_id_r
 				FROM #session.hostdbprefix#images f 
 				LEFT JOIN #session.hostdbprefix#images_text ct ON f.img_id = ct.img_id_r
+				LEFT JOIN #session.hostdbprefix#xmp x ON f.img_id = x.id_r AND x.asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON f.img_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id  AND ft.lang_id_r = 1
 				WHERE f.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Query XMP --->
-				<cfquery name="qryxmp" datasource="#arguments.dsn#" cachename="lucxmpimg#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_images">
-				SELECT id_r, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category,
-				supplementalcategories, urgency, description, ciadrcity, 
-				ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, intellectualgenre, instructions, source,
-				usageterms, copyrightstatus, transmissionreference, webstatement, headline, datecreated, city, ciadrregion, 
-				country, countrycode, scene, state, credit, rights, 'img' as img, 'xmp_#arguments.assetid#' as xmp
-				FROM #session.hostdbprefix#xmp
-				WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- Index: Update query --->
-				<!--- <cfindex action="update" type="custom" query="qry" collection="#session.hostid#" key="id" body="id,filename,filenameorg,keywords,description,title,customvalues,rawmetadata" category="img" categoryTree="id" custommap="id,filename,filenameorg,keywords,description,title,customvalues,rawmetadata"> --->
+				<!--- Indexing --->
 				<cfscript>
-					// Index XMP
-					argsxmp = {
+					args = {
 					collection : session.hostid,
-					query : qryxmp,
-					category : "img",
-					categoryTree : "id_r",
-					key : "xmp",
-					title : "xmp",
-					body : "xmp",
+					query : qry_all,
+					category : "thecategory",
+					categoryTree : "id",
+					key : "id",
+					title : "id",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value",
 					custommap :{
-							subjectcode : "subjectcode",
-							creator : "creator",
-							title : "title", 
-							authorsposition : "authorsposition", 
-							captionwriter : "captionwriter", 
-							ciadrextadr : "ciadrextadr", 
-							category : "category",
-							supplementalcategories : "supplementalcategories", 
-							urgency : "urgency", 
-							description : "description", 
-							ciadrcity : "ciadrcity", 
-							ciadrctry : "ciadrctry", 
-							location : "location", 
-							ciadrpcode : "ciadrpcode", 
-							ciemailwork : "ciemailwork", 
-							ciurlwork : "ciurlwork", 
-							citelwork : "citelwork", 
-							intellectualgenre : "intellectualgenre", 
-							instructions : "instructions", 
-							source : "source",
-							usageterms : "usageterms", 
-							copyrightstatus : "copyrightstatus", 
-							transmissionreference : "transmissionreference", 
-							webstatement : "webstatement", 
-							headline : "headline", 
-							datecreated : "datecreated", 
-							city : "city", 
-							ciadrregion : "ciadrregion", 
-							country : "country", 
-							countrycode : "countrycode", 
-							scene : "scene", 
-							state : "state", 
-							credit : "credit", 
-							rights : "rights"
+						id : "id",
+						filename : "filename",
+						filenameorg : "filenameorg",
+						keywords : "keywords",
+						description : "description",
+						rawmetadata : "rawmetadata",
+						extension : "theext",
+						subjectcode : "subjectcode",
+						creator : "creator",
+						title : "title", 
+						authorsposition : "authorsposition", 
+						captionwriter : "captionwriter", 
+						ciadrextadr : "ciadrextadr", 
+						category : "category",
+						supplementalcategories : "supplementalcategories", 
+						urgency : "urgency", 
+						description : "description", 
+						ciadrcity : "ciadrcity", 
+						ciadrctry : "ciadrctry", 
+						location : "location", 
+						ciadrpcode : "ciadrpcode", 
+						ciemailwork : "ciemailwork", 
+						ciurlwork : "ciurlwork", 
+						citelwork : "citelwork", 
+						intellectualgenre : "intellectualgenre", 
+						instructions : "instructions", 
+						source : "source",
+						usageterms : "usageterms", 
+						copyrightstatus : "copyrightstatus", 
+						transmissionreference : "transmissionreference", 
+						webstatement : "webstatement", 
+						headline : "headline", 
+						datecreated : "datecreated", 
+						city : "city", 
+						ciadrregion : "ciadrregion", 
+						country : "country", 
+						countrycode : "countrycode", 
+						scene : "scene", 
+						state : "state", 
+						credit : "credit", 
+						rights : "rights",
+						cf_text : "cf_id_r",
+						cf_value : "cf_value"
 						}
 					};
-					resultsxmp = CollectionIndexCustom( argumentCollection=argsxmp );
+					results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
 			<!--- FOR VIDEOS --->
 			<cfelseif arguments.category EQ "vid">
 				<!--- Query Record --->
-				<cfquery name="qry" datasource="#arguments.dsn#" cachename="lucvid#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_videos">
+				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucvid#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_videos">
 			    SELECT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, 
 			    ct.vid_description description, ct.vid_keywords keywords, 
 				vid_meta as rawmetadata, '#arguments.category#' as thecategory,
-				f.vid_extension theext
+				f.vid_extension theext,
+				v.cf_value, ft.cf_id_r
 				FROM #session.hostdbprefix#videos f 
 				LEFT JOIN #session.hostdbprefix#videos_text ct ON f.vid_id = ct.vid_id_r
+				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON f.vid_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id  AND ft.lang_id_r = 1
 				WHERE f.vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			<!--- FOR AUDIOS --->
 			<cfelseif arguments.category EQ "aud">
 				<!--- Query Record --->
-				<cfquery name="qry" datasource="#arguments.dsn#" cachename="lucaud#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_audios">
+				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucaud#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_audios">
 			    SELECT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, 
 			    aut.aud_description description, aut.aud_keywords keywords, 
 				a.aud_meta as rawmetadata, '#arguments.category#' as thecategory,
-				a.aud_extension theext
+				a.aud_extension theext,
+				v.cf_value, ft.cf_id_r
 				FROM #session.hostdbprefix#audios a
 				LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r
+				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON a.aud_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id  AND ft.lang_id_r = 1
 				WHERE a.aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			</cfif>
-			<!--- Get Custom Values --->
-			<cfquery name="qry_custom" datasource="#arguments.dsn#" cachename="luccustomfields#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_customfields">
-			SELECT v.cf_value, f.cf_id_r, '#arguments.category#' as thecategory, v.asset_id_r as id, 'cf_#arguments.assetid#' as cid
-			FROM #session.hostdbprefix#custom_fields_values v
-			LEFT JOIN #session.hostdbprefix#custom_fields_text f ON v.cf_id_r = f.cf_id_r AND f.lang_id_r = 1
-			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			AND v.host_id = f.host_id
-			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-			</cfquery>
-			<!--- Index now the general query from above --->
-			<cfscript>
-				// Indexing a query; each field is a pointer to the column name in the query to pick up the data
+			<!--- Only for video and audio files --->
+			<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
+				<!--- Indexing --->
+				<cfscript>
 				args = {
 				collection : session.hostid,
-				query : qry,
+				query : qry_all,
 				category : "thecategory",
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id,filename,filenameorg,keywords,description",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -231,30 +237,13 @@
 					keywords : "keywords",
 					description : "description",
 					rawmetadata : "rawmetadata",
-					extension : "theext"
+					extension : "theext",
+					cf_text : "cf_id_r",
+					cf_value : "cf_value"
 					}
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
 			</cfscript>
-			<!--- Index custom values --->
-			<cfif qry_custom.recordcount NEQ 0>
-				<cfscript>
-					// Indexing a query; each field is a pointer to the column name in the query to pick up the data
-					argscustom = {
-					collection : session.hostid,
-					query : qry_custom,
-					category : "thecategory",
-					categoryTree : "id",
-					key : "cid",
-					title : "id",
-					body : "id",
-					custommap :{
-						cf_text : "cf_id_r",
-						cf_value : "cf_value"
-						}
-					};
-					results = CollectionIndexCustom( argumentCollection=argscustom );
-				</cfscript>
 			</cfif>
 			<!--- Index the file itself, but not video (since video throws an error) --->
 			<cfif arguments.thestruct.link_kind NEQ "url" AND arguments.category NEQ "vid">
@@ -262,19 +251,37 @@
 					<!--- Nirvanix or Amazon --->
 					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND arguments.notfile EQ "F">
 						<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#/#qry.filenameorg#" category="#arguments.category#" categoryTree="#qry.id#">
+						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					<!--- Local Storage --->
-					<cfelseif arguments.thestruct.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry.folder#/#arguments.category#/#qry.id#/#qry.filenameorg#")>
+					<cfelseif arguments.thestruct.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 						<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry.folder#/#arguments.category#/#qry.id#/#qry.filenameorg#" category="#arguments.category#" categoryTree="#qry.id#" status="lucstatus">
+						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#" status="lucstatus">
 					<!--- Linked file --->
 					<cfelseif arguments.thestruct.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 						<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry.id#">
+						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cfif>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
+	</cffunction>
+	
+	<!--- Get custom values --->
+	<cffunction name="getcustomfields" access="private">
+		<cfargument name="assetid" type="string" required="false">
+		<cfargument name="dsn" type="string" required="true">
+		<!--- Get Custom Values --->
+		<cfquery name="qry_custom" datasource="#arguments.dsn#" cachename="luccustomfields#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_customfields">
+		SELECT v.cf_value, f.cf_id_r, asset_id_r
+		FROM #session.hostdbprefix#custom_fields_values v
+		LEFT JOIN #session.hostdbprefix#custom_fields_text f ON v.cf_id_r = f.cf_id_r AND f.lang_id_r = 1
+		WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND v.host_id = f.host_id
+		AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry_custom>
 	</cffunction>
 	
 	<!--- INDEX: Delete --->
@@ -454,7 +461,9 @@
 		<cfoutput><strong>Removing current index...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Remove the index --->
-		<!--- <cfindex action="purge" collection="#session.hostid#"> --->
+		<cfif application.razuna.storage EQ "local">
+			<cfindex action="purge" collection="#session.hostid#">
+		</cfif>
 		<!--- Feedback --->
 		<cfoutput><strong>Let's see how many documents we have to re-index...</strong><br><br></cfoutput>
 		<cfflush>
@@ -571,7 +580,7 @@
 		<cfelse>
 			<cfloop query="qry">
 				<!--- Check if file exists if not don't index --->
-				<cfif fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#file_name_org#")>
+				<!--- <cfif fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#file_name_org#")> --->
 					<!--- Feedback --->
 					<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)...</strong><br></cfoutput>
 					<cfflush>
@@ -585,10 +594,12 @@
 						<cfinvokeargument name="category" value="#cat#">
 						<cfinvokeargument name="dsn" value="#variables.dsn#">
 					</cfinvoke>
-				<!--- <cfelse>
+				<!---
+<cfelse>
 					<cfoutput><strong>NOT: #arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#file_name_org#...</strong><br></cfoutput>
-					<cfflush> --->
+					<cfflush>
 				</cfif>
+--->
 			</cfloop>
 		</cfif>
 		<!--- Feedback --->
