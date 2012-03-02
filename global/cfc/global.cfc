@@ -153,19 +153,21 @@
 		<cfinvoke component="assets" method="getFileExtension" theFileName="#thename#" returnvariable="fileNameExt">
 		<cfset thefilename = "#fileNameExt.theName#">
 		<!--- All foreign chars are now converted, except the - --->
-		<cfset thefilename = REReplace(thefilename, "[^[:word:]^-]", "_", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "[^[:word:]^-]", "_", "ALL")>
 		<!--- Danish Chars --->
-		<cfset thefilename = REReplace(thefilename, "([å]+)", "aa", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([æ]+)", "ae", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([ø]+)", "o", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([å]+)", "aa", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([æ]+)", "ae", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([ø]+)", "o", "ALL")>
 		<!--- German Chars --->
-		<cfset thefilename = REReplace(thefilename, "([ü]+)", "ue", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([ä]+)", "ae", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([ö]+)", "oe", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([ü]+)", "ue", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([ä]+)", "ae", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([ö]+)", "oe", "ALL")>
 		<!--- French Chars --->
-		<cfset thefilename = REReplace(thefilename, "([è]+)", "e", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([à]+)", "a", "ALL")>
-		<cfset thefilename = REReplace(thefilename, "([é]+)", "e", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([è]+)", "e", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([à]+)", "a", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "([é]+)", "e", "ALL")>
+		<!--- If all fails then --->
+		<cfset thefilename = REReplaceNoCase(thefilename, "[^a-zA-Z0-9\s]", "_", "ALL")>
 		<!--- Re-add the extension to the name --->
 		<cfif fileNameExt.theExt NEQ "">
 			<cfset thefilename = "#thefilename#.#fileNameExt.theExt#">

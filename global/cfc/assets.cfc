@@ -85,7 +85,7 @@
 <cffunction name="addassetserver" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Thread --->
-	<cfthread name="#createuuid()#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="addassetserverthread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 	<!--- Return --->
@@ -245,7 +245,7 @@
 	<cfset arguments.thestruct.ftp_pass = session.ftp_pass>
 	<!--- <cfinvoke method="addassetftp" thestruct="#arguments.thestruct#" /> --->
 	<!--- Start the thread for adding --->
-	<cfthread name="addftp#createuuid()#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="addassetftp" thestruct="#attributes.intstruct#" />
 	</cfthread>
 </cffunction>
@@ -1062,7 +1062,7 @@ This is the main function called directly by a single upload else from addassets
 							<!--- Create folder to hold the images --->
 							<cfdirectory action="create" directory="#attributes.intstruct.thepdfdirectory#" mode="775">
 							<!--- Script: Create thumbnail --->
-							<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfileflat# -thumbnail 128x -strip -colorspace RGB #attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
+							<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfileflat# -thumbnail 128x -strip -colorspace RGB -flatten #attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 							<!--- Script: Create images --->
 							<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thepdfdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 							<!--- Execute --->
@@ -2529,7 +2529,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">	
 	<cftry>
 		<cfparam default="0" name="arguments.thestruct.upl_template">
-		<cfzip action="extract" zipfile="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.qryfile.path#" timeout="900">
+		<cfzip action="extract" zipfile="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.qryfile.path#" timeout="900" charset="utf-8">
 		<!--- Get folder level of the folder we are in to create new folder --->
 		<cfquery datasource="#variables.dsn#" name="folders">
 		SELECT folder_level, folder_main_id_r
@@ -2730,15 +2730,22 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Get folders within the unzip NOT recursive --->
 	<cfdirectory action="list" directory="#arguments.thedirectory#" name="thedir" recurse="true" type="dir">
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
+	<!--- <cfset consoleout=true> --->
 	<cfloop query="thedir">
-		<cftry>
-			<cfif name CONTAINS " ">
-				<cfset thedirnospaces = REReplace(name, "([^[:word:]^-]+)", "_", "ALL")>
-				<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#thedirnospaces#" mode="775">
-				<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thedirectory#" />
-			</cfif>
-			<cfcatch type="any"></cfcatch>
+		<!--- <cftry> --->
+			<!--- <cfif name CONTAINS " "> --->
+				<cfset thedirnospaces = REReplaceNoCase(name, "[^a-zA-Z0-9\s]", "_", "ALL")>				
+				<cfset thedirnospaces = REReplaceNoCase(thedirnospaces, "[^[:word:]^-]", "_", "ALL")>
+				<!--- <cfset console(thedirnospaces)> --->
+				<cfif name NEQ "#thedirnospaces#">
+					<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#thedirnospaces#">
+				</cfif>
+				<!--- <cfinvoke method="rec_renamefolders" thedirectory="#directory#/#thedirnospaces#" /> --->
+			<!--- </cfif> --->
+			<!---
+<cfcatch type="any"></cfcatch>
 		</cftry>
+--->
 	</cfloop>
 	<cfreturn />
 </cffunction>
@@ -3399,9 +3406,11 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- Loop over file id --->
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
-		<cfif arguments.thestruct.thetype NEQ "all">
+		<!---
+<cfif arguments.thestruct.thetype NEQ "all">
 			<cfset i = i & "-" & arguments.thestruct.thetype>
 		</cfif>
+--->
 		<!--- Get the ID and the type --->
 		<cfset theid = listfirst(i,"-")>
 		<cfset thetype = listlast(i,"-")>
