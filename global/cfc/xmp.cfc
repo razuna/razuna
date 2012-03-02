@@ -557,7 +557,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 				<cffile action="delete" file="#thesh#">
 			</cfif>
 			<!--- Parse Metadata which is now XML --->
-			<cfset var thexml = xmlparse(themeta)>
+			<cfset var thexml = xmlparse(ToString(themeta.getBytes(),'utf-8'))>
 			<!--- Description from XMP --->
 			<cfset x = xmlSearch(thexml, "//*/*/*[name()='XMP-dc:Description']")>
 			<cfset y = xmlSearch(thexml, "//*/*/*[name()='IPTC:Caption-Abstract']")>
@@ -723,7 +723,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			<cffile action="delete" file="#thesh#">
 		</cfif>
 		<!--- Parse Metadata which is now XML --->
-		<cfset var thexml = xmlparse(themeta)>
+		<cfset var thexml = xmlparse(ToString(themeta.getBytes(),'utf-8'))>
 		<cfset thexml = xmlSearch(thexml, "//rdf:Description/")>
 		<!--- iptcsubjectcode --->
 		<cftry>
@@ -1274,7 +1274,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 <cffunction name="getpdfxmp" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Parse Metadata which is now XML --->
-	<cfset var thexml = xmlparse(arguments.thestruct.pdf_xmp)>
+	<cfset var thexml = xmlparse(ToString(arguments.thestruct.pdf_xmp.getBytes(),'utf-8'))>
 	<cfset thexml = xmlSearch(thexml, "//rdf:Description/")>
 	<!--- Params --->
 	<cfset var thexmp = structnew()>
