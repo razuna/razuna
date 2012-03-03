@@ -2830,7 +2830,7 @@
 		<transtext>Führen Sie eine angepasste Installation aus. Wählen Sie diese Option, wenn Sie eine externe Datenbank verwenden wollen, oder von einem Backup Razuna wieder herstellen.</transtext>
 	</transid>
 	<transid name="application_paths_desc">
-		<transtext>Geben Sie die Pfade zu den nötigen Application an die Razuna verwendet.</transtext>
+		<transtext>Geben Sie die Pfade zu den nötigen Application an die Razuna verwendet. Hinweis: Die Pfade können Sie auch später noch in Razuna anpassen.</transtext>
 	</transid>
 	<transid name="header_first_time_account">
 		<transtext>System Administration Account</transtext>
@@ -2972,5 +2972,14 @@
 	</transid>
 	<transid name="header_root_server_desc">
 		<transtext><![CDATA[Enter the public facing address of <strong>this server</strong> in the field below. This should most likely be the same address as you are using in this browser, but under some circumstances it could be a different IP address. Enter the <strong>full address</strong>!]]></transtext>
+	</transid>
+	<transid name="header_mp4box">
+		<transtext>MP4Box Pfad</transtext>
+	</transid>
+	<transid name="header_mp4box_desc">
+		<transtext><![CDATA[Geben Sie den absoluten Pad zu MP4Box an. MP4Box wird benötigt um Ihre MP4 videos für das streamen zu optimieren. Geben Sie den Pfad OHNE ein abschliessendes "\", sprich "/", an!]]></transtext>
+	</transid>
+	<transid name="installation_checklist_mp4box">
+		<transtext>Pfad zu MP4Box gesetzt</transtext>
 	</transid>
 </translations>

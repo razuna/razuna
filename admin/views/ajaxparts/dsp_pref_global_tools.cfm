@@ -44,6 +44,18 @@
 			<td><input type="text" name="imagemagick" id="imagemagick" value="#thetools.imagemagick#" size="60" class="text" onkeyup="checkpath('imagemagick');">
 			<div id="checkimagemagick" style="display:none;"></div></td>
 		</tr>
+		<!--- FFmpeg Paths --->
+		<tr>
+			<th class="textbold" colspan="2">#defaultsObj.trans("header_ffmpeg")#</th>
+		</tr>
+		<tr>
+			<td colspan="2">#defaultsObj.trans("header_ffmpeg_desc")#</td>
+		</tr>
+		<tr>
+			<td nowrap="true">#defaultsObj.trans("header_ffmpeg")#</td>
+			<td><input type="text" name="ffmpeg" id="ffmpeg" value="#thetools.ffmpeg#" size="60" class="text" onkeyup="checkpath('ffmpeg');">
+			<div id="checkffmpeg" style="display:none;"></div></td>
+		</tr>
 		<!--- Exiftool Path --->
 		<tr>
 			<th class="textbold" colspan="2">#defaultsObj.trans("header_exiftool")#</th>
@@ -58,7 +70,7 @@
 		</tr>
 		<!--- DCRAW Paths --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_dcraw")#</th>
+			<th class="textbold" colspan="2">#defaultsObj.trans("header_dcraw")# (optional)</th>
 		</tr>
 		<tr>
 			<td colspan="2">#defaultsObj.trans("header_dcraw_desc")#</td>
@@ -68,17 +80,17 @@
 			<td><input type="text" name="dcraw" id="dcraw" value="#thetools.dcraw#" size="60" class="text" onkeyup="checkpath('dcraw');">
 			<div id="checkdcraw" style="display:none;"></div></td>
 		</tr>
-		<!--- FFmpeg Paths --->
+		<!--- MP4Box Paths --->
 		<tr>
-			<th class="textbold" colspan="2">#defaultsObj.trans("header_ffmpeg")#</th>
+			<th class="textbold" colspan="2">#defaultsObj.trans("header_mp4box")# (optional)</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("header_ffmpeg_desc")#</td>
+			<td colspan="2">#defaultsObj.trans("header_mp4box_desc")#</td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("header_ffmpeg")#</td>
-			<td><input type="text" name="ffmpeg" id="ffmpeg" value="#thetools.ffmpeg#" size="60" class="text" onkeyup="checkpath('ffmpeg');">
-			<div id="checkffmpeg" style="display:none;"></div></td>
+			<td nowrap="true">#defaultsObj.trans("header_mp4box")#</td>
+			<td><input type="text" name="mp4box" id="MP4Box" value="#thetools.mp4box#" size="60" class="text" onkeyup="checkpath('MP4Box');">
+			<div id="checkMP4Box" style="display:none;"></div></td>
 		</tr>
 	</table>
 </cfoutput>

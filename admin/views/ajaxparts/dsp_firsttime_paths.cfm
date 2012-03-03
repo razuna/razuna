@@ -25,17 +25,23 @@
 --->
 <!--- Application Paths --->
 <cfif server.os.name CONTAINS "Mac">
-	<cfset im = "/opt/local/bin">
-	<cfset ff = "/opt/local/bin">
+	<cfset im = "/usr/local/bin">
+	<cfset ff = "/usr/local/bin">
+	<cfset dc = "/usr/local/bin">
+	<cfset mp = "/usr/local/bin">
 	<cfset ex = "/usr/bin">
 <cfelseif server.os.name CONTAINS "Windows">
 	<cfset im = "C:\ImageMagick">
 	<cfset ff = "C:\FFMpeg\bin">
 	<cfset ex = "C:\Exiftool">
+	<cfset dc = "C:\dcraw">
+	<cfset mp = "C:\MP4Box">
 <cfelse>
 	<cfset im = "/usr/bin">
-	<cfset ff = "/usr/bin">
-	<cfset ex = "/usr/bin">
+	<cfset ff = "/usr/local/bin">
+	<cfset ex = "/usr/local/bin">
+	<cfset dc = "/usr/local/bin">
+	<cfset mp = "/usr/local/bin">
 </cfif>
 <!--- If sessions exists then use the session values --->
 <cfif structkeyexists(session.firsttime,"path_im") AND session.firsttime.path_im NEQ "">
@@ -46,6 +52,12 @@
 </cfif>
 <cfif structkeyexists(session.firsttime,"path_exiftool") AND session.firsttime.path_exiftool NEQ "">
 	<cfset ex = session.firsttime.path_exiftool>
+</cfif>
+<cfif structkeyexists(session.firsttime,"path_dcraw") AND session.firsttime.path_dcraw NEQ "">
+	<cfset dc = session.firsttime.path_dcraw>
+</cfif>
+<cfif structkeyexists(session.firsttime,"path_mp4box") AND session.firsttime.path_mp4box NEQ "">
+	<cfset mp = session.firsttime.path_mp4box>
 </cfif>
 <cfoutput>
 	<form id="form_paths">
@@ -77,6 +89,22 @@
 		<input type="text" name="path_exiftool" id="path_exiftool" size="60" class="text" value="#ex#" onkeyup="checkpath('exiftool');">
 		<br />
 		<div id="checkexiftool" style="display:none;"></div>
+		<br />
+		<span class="loginform_header">#defaultsObj.trans("header_dcraw")# (optional)</span>
+		<br />
+		#defaultsObj.trans("header_dcraw_desc")#
+		<br />
+		<input type="text" name="path_dcraw" id="path_dcraw" size="60" class="text" value="#dc#" onkeyup="checkpath('dcraw');">
+		<br />
+		<div id="checkdcraw" style="display:none;"></div>
+		<br />
+		<span class="loginform_header">#defaultsObj.trans("header_mp4box")# (optional)</span>
+		<br />
+		#defaultsObj.trans("header_mp4box_desc")#
+		<br />
+		<input type="text" name="path_mp4box" id="path_MP4Box" size="60" class="text" value="#mp#" onkeyup="checkpath('MP4Box');">
+		<br />
+		<div id="checkMP4Box" style="display:none;"></div>
 		<br />
 		<div>
 			<div style="float:left;padding:20px 0px 0px 0px;">

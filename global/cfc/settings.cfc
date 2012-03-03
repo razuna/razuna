@@ -367,6 +367,7 @@
 	<cfparam default="" name="qry.exiftool">
 	<cfparam default="" name="qry.ffmpeg">
 	<cfparam default="" name="qry.dcraw">
+	<cfparam default="" name="qry.mp4box">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qrypaths">
 	SELECT thetool, thepath
@@ -490,7 +491,7 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- Update Tools --->
 	<cfloop collection="#arguments.thestruct#" item="myform">
-		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw">
+		<cfif myform CONTAINS "imagemagick" OR myform CONTAINS "exiftool" OR myform CONTAINS "ffmpeg" OR myform CONTAINS "dcraw" OR myform CONTAINS "mp4box">
 			<!--- Select --->
 			<cfquery datasource="#application.razuna.datasource#" name="x">
 			SELECT thetool

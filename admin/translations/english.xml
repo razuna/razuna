@@ -2830,7 +2830,7 @@
 		<transtext>Perform a customized setup. Select this option if you want to configure Razuna with an external database, or restore from a backup.</transtext>
 	</transid>
 	<transid name="application_paths_desc">
-		<transtext>Enter below the paths to required third party applications. These applications are needed by Razuna in order to process assets successfully.</transtext>
+		<transtext>Enter below the paths to required third party applications. These applications are needed by Razuna in order to process assets successfully. Note: You can also enter these paths later on in Razuna!</transtext>
 	</transid>
 	<transid name="header_first_time_account">
 		<transtext>System Administration Account</transtext>
@@ -2972,5 +2972,14 @@
 	</transid>
 	<transid name="header_root_server_desc">
 		<transtext><![CDATA[Enter the public facing address of <strong>this server</strong> in the field below. This should most likely be the same address as you are using in this browser, but under some circumstances it could be a different IP address. Enter the <strong>full address</strong>!]]></transtext>
+	</transid>
+	<transid name="header_mp4box">
+		<transtext>MP4Box Path</transtext>
+	</transid>
+	<transid name="header_mp4box_desc">
+		<transtext><![CDATA[Enter here the absolute path to the MP4Box executable. MP4Box is being used by Razuna to encode mp4 video for streaming properly. DO NOT enter a trailingslash at the end!]]></transtext>
+	</transid>
+	<transid name="installation_checklist_mp4box">
+		<transtext>Set path to MP4Box</transtext>
 	</transid>
 </translations>
