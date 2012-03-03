@@ -36,7 +36,7 @@
 
 <!--- Get all hosts --->
 	<cffunction hint="Give back all hosts" name="allhosts">
-		<cfquery datasource="#variables.dsn#" name="hostslist">
+		<cfquery datasource="#application.razuna.datasource#" name="hostslist">
 		SELECT host_id, host_name, host_path, host_create_date, host_db_prefix, host_lang
 		FROM hosts
 		ORDER BY lower(host_name)
@@ -58,9 +58,9 @@
 
 <!--- GET THE WISDOM TEXT --->
 	<cffunction hint="GET THE WISDOM TEXT" name="wisdom" output="false">
-		<cfquery datasource="#variables.dsn#" name="wis" cachename="#session.hostid#wisdom" cachedomain="global">
+		<cfquery datasource="#application.razuna.datasource#" name="wis" cachename="#session.hostid#wisdom" cachedomain="global">
 			<!--- Oracle --->
-			<cfif variables.database EQ "oracle">
+			<cfif application.razuna.thedatabase EQ "oracle">
 				SELECT wis_text, wis_author
 				FROM (
 					SELECT wis_text, wis_author FROM wisdom
@@ -68,18 +68,18 @@
 					)
 				WHERE ROWNUM = 1
 			<!--- H2 / MySQL --->
-			<cfelseif variables.database EQ "mysql" OR  variables.database EQ "h2">
+			<cfelseif application.razuna.thedatabase EQ "mysql" OR  application.razuna.thedatabase EQ "h2">
 				SELECT wis_text, wis_author
 				FROM wisdom
 				ORDER BY rand()
 				LIMIT 1
 			<!--- MSSQL --->
-			<cfelseif variables.database EQ "mssql">
+			<cfelseif application.razuna.thedatabase EQ "mssql">
 				SELECT TOP 1 wis_text, wis_author
 				FROM wisdom
 				ORDER BY NEWID()
 			<!--- DB2 --->
-			<cfelseif variables.database EQ "db2">
+			<cfelseif application.razuna.thedatabase EQ "db2">
 				SELECT wis_text, wis_author, rand()
 				FROM wisdom
 				ORDER BY 3
@@ -177,7 +177,7 @@
 
 <!--- GET ALL ALLOWED FILE TYPES ---------------------------------------------------------------------->
 	<cffunction name="filetypes" output="false">
-		<cfquery datasource="#variables.dsn#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT type_id
 			FROM file_types
 		</cfquery>
@@ -745,7 +745,7 @@ Comment:<br>
 			folder_id_r, path_to_asset, cloud_url, cloud_url_org, link_kind, link_path_url, 
 			path_to_asset, lucene_key, thumb_extension, img_id id, img_filename filename, img_filename_org filenameorg
 			FROM #session.hostdbprefix#images
-			WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> '')
+			WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		<cfelseif arguments.thestruct.thetype EQ "vid">
@@ -754,7 +754,7 @@ Comment:<br>
 			folder_id_r, path_to_asset, cloud_url, cloud_url_org, link_kind, link_path_url, 
 			path_to_asset, lucene_key, vid_name_image, vid_id id, vid_filename filename, vid_name_org filenameorg
 			FROM #session.hostdbprefix#videos
-			WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> '')
+			WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		<cfelseif arguments.thestruct.thetype EQ "aud">
@@ -763,7 +763,7 @@ Comment:<br>
 			folder_id_r, path_to_asset, cloud_url, cloud_url_org, link_kind, link_path_url, 
 			path_to_asset, lucene_key, aud_id id, aud_name filename, aud_name_org filenameorg
 			FROM #session.hostdbprefix#audios
-			WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> '')
+			WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		<cfelseif arguments.thestruct.thetype EQ "doc">
@@ -772,7 +772,7 @@ Comment:<br>
 			folder_id_r, path_to_asset, cloud_url, cloud_url_org, link_kind, link_path_url, 
 			path_to_asset, lucene_key, file_id id, file_name filename, file_name_org filenameorg
 			FROM #session.hostdbprefix#files
-			WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> '')
+			WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
