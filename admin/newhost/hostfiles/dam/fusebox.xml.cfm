@@ -65,7 +65,7 @@
 		<!-- you may want to change this to: 
 		development-circuit-load, development-full-load, production -->
 		<parameter name="mode" value="production" />
-		<parameter name="conditionalParse" value="true" />
+		<parameter name="conditionalParse" value="false" />
 		<!-- change this to something more secure: -->
 		<parameter name="password" value="razfbreload" />
 		<!-- strict-mode prohibits url-params in xfa-definitions -->
