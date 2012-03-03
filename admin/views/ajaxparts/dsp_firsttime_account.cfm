@@ -66,6 +66,7 @@
 			</div>
 		</div>
 	</form>
+	<div id="ft_dummy" style="display:none;"></div>
 </cfoutput>
 
 <script language="javascript">
@@ -89,9 +90,11 @@
 			// Get values
 			var items = formserialize("form_account");
 			// Status Message
-			$('#firsttimestatus').html('Setting up your server. <img src="images/ajax-loading.gif" border="0" align="right" />');
+			$('#firsttimestatus').html('<img src="images/loading-bars.gif" border="0" align="right" />');
 			// Submit Form
-			loadcontent('ft','<cfoutput>#myself#</cfoutput>c.first_time_final&' + items);
+			$('#ft_dummy').load('refresh.cfm?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true', function(){
+				loadcontent('ft','index.cfm?fa=c.first_time_final&' + items);
+			});	
 		}
 	}
 </script>
