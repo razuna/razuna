@@ -2839,10 +2839,10 @@
 		<transtext>Please enter the required information for your System Administration Account. This user is the System Administrator and has access to all settings.</transtext>
 	</transid>
 	<transid name="header_first_time_done">
-		<transtext>The tenant has been setup successfully</transtext>
+		<transtext>Razuna has been setup successfully</transtext>
 	</transid>
 	<transid name="header_first_time_done_desc">
-		<transtext><![CDATA[We are now directing you to the general Administration of Razuna. Within you are able to add additional tenants or simply navigate to your Digital Asset Management System.<br /><br />Have fun and enjoy working with Razuna.]]></transtext>
+		<transtext><![CDATA[We are now directing you to the Administration of Razuna. Within you are able to add additional tenants or simply navigate to your Digital Asset Management System.<br /><br />Have fun and enjoy working with Razuna.]]></transtext>
 	</transid>
 	<transid name="header_first_time_database">
 		<transtext>Choose a database configuration</transtext>
