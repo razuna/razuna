@@ -89,7 +89,7 @@
 			// Get values
 			var items = formserialize("form_account");
 			// Status Message
-			$('#firsttimestatus').html('Setting up your server. Please wait...');
+			$('#firsttimestatus').html('Setting up your server. <img src="images/ajax-loading.gif" border="0" align="right" />');
 			// Submit Form
 			loadcontent('ft','<cfoutput>#myself#</cfoutput>c.first_time_final&' + items);
 		}
