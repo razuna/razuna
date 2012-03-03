@@ -40,8 +40,8 @@
 	<cfset im = "/usr/bin">
 	<cfset ff = "/usr/local/bin">
 	<cfset ex = "/usr/local/bin">
-	<cfset dc = "/usr/local/bin">
-	<cfset mp = "/usr/local/bin">
+	<cfset dc = "/usr/bin">
+	<cfset mp = "/usr/bin">
 </cfif>
 <!--- If sessions exists then use the session values --->
 <cfif structkeyexists(session.firsttime,"path_im") AND session.firsttime.path_im NEQ "">
