@@ -31,17 +31,17 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#variables.dsn#" name="localquery">
-		SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_company, u.user_active, count(*)<cfif variables.database EQ "oracle"> over()</cfif> total,
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+		SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_company, u.user_active, count(*)<cfif application.razuna.thedatabase EQ "oracle"> over()</cfif> total,
 		(
-		SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>min(ct_g_u_grp_id)
+		SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>min(ct_g_u_grp_id)
 		FROM ct_groups_users
 		WHERE ct_g_u_user_id = u.user_id
-		<cfif variables.database EQ "oracle">
+		<cfif application.razuna.thedatabase EQ "oracle">
 			AND ROWNUM = 1
-		<cfelseif variables.database EQ "db2">
+		<cfelseif application.razuna.thedatabase EQ "db2">
 			FETCH FIRST 1 ROWS ONLY
-		<cfelseif variables.database EQ "mysql" OR variables.database EQ "h2">
+		<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			LIMIT 1
 		</cfif>
 		) AS ct_g_u_grp_id
@@ -77,7 +77,7 @@
 		<cfquery dbtype="query" name="localquery">
 		SELECT *
 		FROM localquery
-		WHERE ct_g_u_grp_id <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
 	</cfif>
 	<cfreturn localquery>
@@ -87,12 +87,12 @@
 <cffunction name="check">
 	<cfargument name="thestruct" type="Struct">
 	<!--- function body --->
-	<cfquery datasource="#variables.dsn#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT u.user_id
 	FROM ct_users_hosts ct, users u
 	WHERE ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND ct.ct_u_h_user_id = u.user_id
-	AND u.user_id <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 	<cfif structkeyexists(arguments.thestruct,"user_login_name")>
 		AND lower(u.user_login_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.user_login_name)#">
 	<cfelseif structkeyexists(arguments.thestruct,"user_email")>
@@ -107,17 +107,17 @@
 <cffunction name="getall">
 	<cfargument name="thestruct" type="Struct">
 	<cfset var localquery = 0>
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
 	SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
 		(
-		SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>min(ct_g_u_grp_id)
+		SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>min(ct_g_u_grp_id)
 		FROM ct_groups_users
 		WHERE ct_g_u_user_id = u.user_id
-		<cfif variables.database EQ "oracle">
+		<cfif application.razuna.thedatabase EQ "oracle">
 			AND ROWNUM = 1
-		<cfelseif variables.database EQ "db2">
+		<cfelseif application.razuna.thedatabase EQ "db2">
 			FETCH FIRST 1 ROWS ONLY
-		<cfelseif variables.database EQ "mysql" OR variables.database EQ "h2">
+		<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			LIMIT 1
 		</cfif>
 		) AS ct_g_u_grp_id
@@ -126,7 +126,7 @@
 		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 		AND uh.ct_u_h_user_id = u.user_id
 		)
-	AND u.user_id <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 	GROUP BY user_id, user_login_name, user_first_name, user_last_name, user_email, user_active, user_company
 	</cfquery>
 	<!--- If we come from DAM we don't show System Admins --->
@@ -134,7 +134,7 @@
 		<cfquery dbtype="query" name="localquery">
 		SELECT *
 		FROM localquery
-		WHERE ct_g_u_grp_id <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
 	</cfif>
 	<!--- Return --->
@@ -144,7 +144,7 @@
 <!--- Get Details from this User --->
 <cffunction name="details">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="details#arguments.thestruct.user_id##session.hostid#" cachedomain="#session.hostid#_users">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="details#arguments.thestruct.user_id##session.hostid#" cachedomain="#session.hostid#_users">
 	select user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin, user_create_date,
 	user_active,USER_COMPANY,USER_PHONE,USER_MOBILE,USER_FAX,user_in_dam, user_salutation
 	from users
@@ -155,7 +155,7 @@
 
 <!--- GET EMAIL FROM THIS USER --->
 <cffunction name="user_email">
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="emails#session.theuserid##session.hostid#" cachedomain="#session.hostid#_users">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="emails#session.theuserid##session.hostid#" cachedomain="#session.hostid#_users">
 	SELECT user_email
 	FROM users
 	WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
@@ -166,7 +166,7 @@
 <!--- Get hosts of this user --->
 <cffunction name="userhosts">
 	<cfargument name="thestruct" type="Struct">
-		<cfquery datasource="#variables.dsn#" name="qry" cachename="hosts#arguments.thestruct.user_id##session.hostid#" cachedomain="#session.hostid#_users">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="hosts#arguments.thestruct.user_id##session.hostid#" cachedomain="#session.hostid#_users">
 		SELECT h.host_id, h.host_name, h.host_db_prefix, h.host_shard_group, h.host_path
 		FROM ct_users_hosts ct, hosts h
 		WHERE ct.ct_u_h_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
@@ -183,7 +183,7 @@
 	<cfparam default="F" name="arguments.thestruct.intrauser">
 	<cfparam default="F" name="arguments.thestruct.vpuser">
 	<!--- Check that there is no user already with the same email address --->
-	<cfquery datasource="#variables.dsn#" name="qry_sameuser">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 	SELECT u.user_email, u.user_login_name
 	FROM users u, ct_users_hosts ct
 	WHERE (
@@ -197,13 +197,13 @@
 	<cfif qry_sameuser.RecordCount EQ 0>
 		<cfset newid = 0>
 		<!--- Create new ID --->
-		<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#variables.database#" dsn="#variables.dsn#" thetable="users" theid="user_id"> --->
+		<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#application.razuna.thedatabase#" dsn="#application.razuna.datasource#" thetable="users" theid="user_id"> --->
 		<!--- Hash Password --->
 		<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
 		<!--- Insert the User into the DB --->
 		<cftransaction>
 			<cfset newid = createuuid()>
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO users
 			(user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin,
 			user_create_date, user_active, user_company, user_phone, user_mobile, user_fax, user_in_dam, user_salutation, user_in_vp)
@@ -230,7 +230,7 @@
 		<!--- Insert the user to the user host cross table --->
 		<cfloop delimiters="," index="thehostid" list="#arguments.thestruct.hostid#">
 			<cftransaction>
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO ct_users_hosts
 				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 				VALUES(
@@ -262,43 +262,43 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- remove all cross-table entries first -------------------------------------------- --->
 	<!--- Remove from the host table --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM ct_users_hosts
 	WHERE ct_u_h_user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Remove Intra/extranet carts  --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#cart
 	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Remove lightbox carts  --->
-	<!--- <cfquery datasource="#variables.dsn#">
+	<!--- <cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#cart_lb
 	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
 	</cfquery> --->
 	<!--- Remove lightbox carts items  --->
-	<!--- <cfquery datasource="#variables.dsn#">
+	<!--- <cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#cart_lb_items
 	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
 	</cfquery> --->
 	<!--- Remove web carts  --->
-	<!--- <cfquery datasource="#variables.dsn#">
+	<!--- <cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#cart_web
 	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
 	</cfquery> --->
 	<!--- Remove lightbox carts items  --->
-	<!--- <cfquery datasource="#variables.dsn#">
+	<!--- <cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#cart_web_items
 	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
 	</cfquery> --->
 	<!--- Remove user comments  --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM users_comments
 	WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Remove from mailinglist member table
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#mailinglists_mem
 	WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
 	</cfquery>  --->
@@ -312,7 +312,7 @@
 	</cfif>
 	<cfset log = #log_users(theuserid=arguments.thestruct.id,logaction='Delete',logsection='#arguments.thestruct.logsection#',logdesc='Deleted: UserID: #arguments.thestruct.id# eMail: #theuser.user_email# First Name: #theuser.user_first_name# Last Name: #theuser.user_last_name#')#>
 	<!--- Remove from the User Table --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM users
 	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
@@ -329,19 +329,19 @@
 	<cfparam default="F" name="arguments.thestruct.adminuser">
 	<cfparam default="F" name="arguments.thestruct.intrauser">
 	<!--- Check that there is no user already with the same email address. Since this is the detail we already have a user with the same email address so we exclude this user from the search --->
-	<cfquery datasource="#variables.dsn#" name="qry_sameuser">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 	SELECT u.user_email, u.user_id
 	FROM users u, ct_users_hosts ct
 	WHERE lower(u.user_email) = <cfqueryparam value="#lcase(arguments.thestruct.user_email)#" cfsqltype="cf_sql_varchar">
 	AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 	AND ct.ct_u_h_user_id = u.user_id
-	AND u.user_id <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- There is no user with the same name thus continue --->
 	<cfif qry_sameuser.RecordCount EQ 0>
 		<!--- First remove the admin user value --->
 		<cfif NOT structkeyexists(arguments.thestruct,"dam")>
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE users
 			SET user_in_admin = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
 			user_in_dam = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">
@@ -351,7 +351,7 @@
 		<!--- Hash Password --->
 		<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
 		<!--- Update the User in the DB --->
-		<cfquery datasource="#variables.dsn#">
+		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE users
 		SET
 		user_login_name=<cfqueryparam value="#arguments.thestruct.user_login_name#" cfsqltype="cf_sql_varchar">,
@@ -377,13 +377,13 @@
 		</cfquery>
 		<!--- Insert the user to the user host cross table --->
 		<!--- First remove all value for this user --->
-		<cfquery datasource="#variables.dsn#">
+		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM ct_users_hosts
 		WHERE ct_u_h_user_id = <cfqueryparam value="#arguments.thestruct.user_id#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<!--- Insert the user to the user host cross table --->
 		<cfloop delimiters="," index="thehostid" list="#arguments.thestruct.hostid#">
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			insert into ct_users_hosts
 			(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 			values(
@@ -412,7 +412,7 @@
 	<cfargument name="thestruct" type="Struct">
 	<cfparam default="0" name="arguments.thestruct.id">
 	<!--- Check that there is a user with this id --->
-	<cfquery datasource="#variables.dsn#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT u.user_id
 	FROM users u, ct_users_hosts ct
 	WHERE u.user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
@@ -421,7 +421,7 @@
 	</cfquery>
 	<!--- There is a user thus continue --->
 	<cfif qry.RecordCount EQ 1>
-		<cfquery datasource="#variables.dsn#">
+		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE users
 		SET user_active = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">
 		WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
