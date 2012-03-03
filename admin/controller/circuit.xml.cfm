@@ -123,7 +123,7 @@
 	 	<!-- Get the host settings
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="allsettings_2()" returnvariable="thisurl" /> -->
 		<!-- Get Wisdom phrases -->
-		<invoke object="myFusebox.getApplicationData().Global" methodcall="wisdom()" returnvariable="wisdom" />
+		<invoke object="myFusebox.getApplicationData().global" methodcall="wisdom()" returnvariable="wisdom" />
 		<!-- Get all hosts -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
 		<!-- CFC: Check for application setup -->
