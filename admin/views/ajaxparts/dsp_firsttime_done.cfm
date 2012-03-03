@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<a href="##" onclick="location.href='#self#?v=#createuuid()#';" class="first_time_hoover">
+	<a href="##" onclick="location.href='refresh.cfm?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&v=#createuuid()#';" class="first_time_hoover">
 		<span class="loginform_header">#defaultsObj.trans("header_first_time_done")#</span>
 		<br>
 		#defaultsObj.trans("header_first_time_done_desc")#
