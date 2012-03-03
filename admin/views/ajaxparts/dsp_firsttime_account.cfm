@@ -91,7 +91,7 @@
 			// Status Message
 			$('#firsttimestatus').html('Setting up your server. Please wait...');
 			// Submit Form
-			loadcontent('ft','<cfoutput>#myself#</cfoutput>c.first_time_final&fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&' + items);
+			loadcontent('ft','<cfoutput>#myself#</cfoutput>c.first_time_final' + items);
 		}
 	}
 </script>
