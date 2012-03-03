@@ -37,11 +37,11 @@ limitations under the License.
 			</cfloop>
 		</cfif>
 		<cfif not structKeyExists(application,FUSEBOX_APPLICATION_KEY)>
-			<cflock name="#application.ApplicationName#_fusebox_#FUSEBOX_APPLICATION_KEY#" type="exclusive" timeout="300">
+<!--- 			<cflock name="#application.ApplicationName#_fusebox_#FUSEBOX_APPLICATION_KEY#" type="exclusive" timeout="300"> --->
 				<cfif not structKeyExists(application,FUSEBOX_APPLICATION_KEY)>
 					<cfset __fuseboxAppCfc.onApplicationStart() />
 				</cfif>
-			</cflock>
+<!--- 			</cflock> --->
 		</cfif>
 		<cfset __fuseboxAppCfc.onRequestStart(CGI.SCRIPT_NAME) />
 	</cfsilent>

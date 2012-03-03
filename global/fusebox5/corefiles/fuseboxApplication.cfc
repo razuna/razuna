@@ -471,7 +471,7 @@ limitations under the License.
 		</cfif>
 
 		<cfif not fileExists(fullParsedFile) or arguments.myFusebox.parameters.parse>
-			<cflock name="#fullParsedFile#" type="exclusive" timeout="300">
+<!--- 			<cflock name="#fullParsedFile#" type="exclusive" timeout="300"> --->
 				<cfif not fileExists(fullParsedFile) or arguments.myFusebox.parameters.parse>
 					<cfset request.__fusebox.SuppressPlugins = false />
 					<cfset writer = createObject("component","fuseboxWriter").init(this,arguments.myFusebox) />
@@ -485,13 +485,13 @@ limitations under the License.
 						<cfset writer.setPhase("appinit") />
 						<cfset writer.println("<cfif myFusebox.applicationStart or") />
 						<cfset writer.println('		not myFusebox.getApplication().applicationStarted>') />
-						<cfset writer.println('	<cflock name="##application.ApplicationName##_fusebox_##FUSEBOX_APPLICATION_KEY##_appinit" type="exclusive" timeout="30">') />
+<!--- 						<cfset writer.println('	<cflock name="##application.ApplicationName##_fusebox_##FUSEBOX_APPLICATION_KEY##_appinit" type="exclusive" timeout="30">') /> --->
 						<cfset writer.println('		<cfif not myFusebox.getApplication().applicationStarted>') />
 						<cfset request.__fusebox.SuppressPlugins = true />
 						<cfset variables.process["appinit"].compile(writer) />
 						<cfset writer.println('			<cfset myFusebox.getApplication().applicationStarted = true />') />
 						<cfset writer.println('		</cfif>') />
-						<cfset writer.println('	</cflock>') />
+<!--- 						<cfset writer.println('	</cflock>') /> --->
 						<cfset writer.println('</cfif>') />
 					</cfif>
 					<cfset request.__fusebox.SuppressPlugins = false />
@@ -556,7 +556,7 @@ limitations under the License.
 					<cfset writer.rawPrintln("</cftry>") />
 					<cfset writer.close(variables.parsedFileCache) />
 				</cfif>
-			</cflock>
+<!--- 			</cflock> --->
 		</cfif>
 		
 		<cfset result.parsedName = parsedName />
@@ -656,7 +656,7 @@ limitations under the License.
 		<cfset circuit = left(arguments.circuitFuseaction,len(arguments.circuitFuseaction)-len(fuseaction)-1) />
 
 		<cfif not fileExists(fullParsedFile) or arguments.myFusebox.parameters.parse>
-			<cflock name="#fullParsedFile#" type="exclusive" timeout="300">
+<!--- 			<cflock name="#fullParsedFile#" type="exclusive" timeout="300"> --->
 				<cfif not fileExists(fullParsedFile) or arguments.myFusebox.parameters.parse>
 					<cfset writer = createObject("component","fuseboxWriter").init(this,arguments.myFusebox) />
 					<cfset writer.open(parsedName) />
@@ -693,7 +693,7 @@ limitations under the License.
 					</cfif>
 					<cfset writer.close(variables.parsedFileCache) />
 				</cfif>
-			</cflock>
+<!--- 			</cflock> --->
 		</cfif>
 		
 		<cfset result.parsedName = parsedName />

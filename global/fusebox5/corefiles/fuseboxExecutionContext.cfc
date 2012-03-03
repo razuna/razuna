@@ -39,13 +39,13 @@ limitations under the License.
 			readonly lock protects against including the parsed file while
 			another threading is writing it...
 		--->
-		<cflock name="#arguments.parsedFileInfo.lockName#" type="readonly" timeout="30">
+<!--- 		<cflock name="#arguments.parsedFileInfo.lockName#" type="readonly" timeout="30"> --->
 			<cfif arguments.returnOutput>
 				<cfsavecontent variable="output"><cfinclude template="#arguments.parsedFileInfo.parsedFile#" /></cfsavecontent>
 			<cfelse>
 				<cfinclude template="#arguments.parsedFileInfo.parsedFile#" />
 			</cfif>
-		</cflock>
+<!--- 		</cflock> --->
 		
 		<cfset structAppend(myFusebox.variables(),variables,true) />
 		

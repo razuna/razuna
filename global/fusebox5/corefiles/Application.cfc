@@ -114,7 +114,7 @@ limitations under the License.
 		<cfset variables.exposed.event = variables.event />
 		
 		<cfif variables.myFusebox.parameters.load>
-			<cflock name="#application.ApplicationName#_fusebox_#variables.FUSEBOX_APPLICATION_KEY#" type="exclusive" timeout="300">
+			<!--- <cflock name="#application.ApplicationName#_fusebox_#variables.FUSEBOX_APPLICATION_KEY#" type="exclusive" timeout="300"> --->
 				<cfif variables.myFusebox.parameters.load>
 					<cfset loadFusebox() />
 				<cfelse>
@@ -131,7 +131,7 @@ limitations under the License.
 					<cfset variables.attributes[_fba.fuseactionVariable] = trim(variables.attributes[_fba.fuseactionVariable]) />
 					<cfset variables.attributes.fuseaction = variables.attributes[_fba.fuseactionVariable] />
 				</cfif>
-			</cflock>
+			<!--- </cflock> --->
 		<cfelse>
 			<cfset _fba = application[variables.FUSEBOX_APPLICATION_KEY] />
 			<!--- fix attributes precedence --->
@@ -198,13 +198,13 @@ limitations under the License.
 			</cfif>
 			<!--- _parsedFileData should *not* be exposed --->
 			<cfif _fba.mode is "development-circuit-load">
-				<cflock name="#application.ApplicationName#_fusebox_#variables.FUSEBOX_APPLICATION_KEY#" type="exclusive" timeout="300">
+				<!--- <cflock name="#application.ApplicationName#_fusebox_#variables.FUSEBOX_APPLICATION_KEY#" type="exclusive" timeout="300"> --->
 					<cfset _parsedFileData = _fba.compileRequest(attributes.fuseaction,myFusebox) />
-				</cflock>
+				<!--- </cflock> --->
 			<cfelse>
-				<cflock name="#application.ApplicationName#_fusebox_#variables.FUSEBOX_APPLICATION_KEY#" type="readonly" timeout="300">
+				<!--- <cflock name="#application.ApplicationName#_fusebox_#variables.FUSEBOX_APPLICATION_KEY#" type="readonly" timeout="300"> --->
 					<cfset _parsedFileData = _fba.compileRequest(attributes.fuseaction,myFusebox) />
-				</cflock>
+				<!--- </cflock> --->
 			</cfif>
 		</cfif>
 		
@@ -224,9 +224,9 @@ limitations under the License.
 					readonly lock protects against including the parsed file while
 					another threading is writing it...
 				--->
-				<cflock name="#_parsedFileData.lockName#" type="readonly" timeout="30">
+				<!--- <cflock name="#_parsedFileData.lockName#" type="readonly" timeout="30"> --->
 					<cfinclude template="#_parsedFileData.parsedFile#" />
-				</cflock>
+				<!--- </cflock> --->
 			<cfcatch type="missinginclude">
 				<cfif right(cfcatch.missingFileName, len(_parsedFileData.parsedName)) is _parsedFileData.parsedName>
 					<cfthrow type="fusebox.missingParsedFile" 
