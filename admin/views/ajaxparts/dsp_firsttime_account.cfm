@@ -92,9 +92,7 @@
 			// Status Message
 			$('#firsttimestatus').html('<img src="images/loading-bars.gif" border="0" align="right" />');
 			// Submit Form
-			$('#ft_dummy').load('refresh.cfm?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true', function(){
-				loadcontent('ft','index.cfm?fa=c.first_time_final&' + items);
-			});	
+			loadcontent('ft','index.cfm?fa=c.first_time_final&' + items);
 		}
 	}
 </script>

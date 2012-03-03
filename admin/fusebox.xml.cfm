@@ -40,7 +40,7 @@
 		<parameter name="defaultFuseaction" value="c.login" />
 		<!-- you may want to change this to:
 		development-circuit-load, development-full-load, production -->
-		<parameter name="mode" value="development-circuit-load" />
+		<parameter name="mode" value="production" />
 		<parameter name="conditionalParse" value="true" />
 		<!-- change this to something more secure: -->
 		<parameter name="password" value="razfbreload" />
