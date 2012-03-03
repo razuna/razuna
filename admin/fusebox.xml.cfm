@@ -41,11 +41,11 @@
 		<!-- you may want to change this to:
 		development-circuit-load, development-full-load, production -->
 		<parameter name="mode" value="development-full-load" />
-		<parameter name="conditionalParse" value="true" />
+		<parameter name="conditionalParse" value="false" />
 		<!-- change this to something more secure: -->
 		<parameter name="password" value="razfbreload" />
 		<!-- strict-mode prohibits url-params in xfa-definitions -->
-		<parameter name="strictMode" value="false" />
+		<parameter name="strictMode" value="true" />
 		<parameter name="errortemplatesPath" value="/fusebox5/errortemplates/" />
 		<parameter name="characterEncoding" value="utf-8" />
 

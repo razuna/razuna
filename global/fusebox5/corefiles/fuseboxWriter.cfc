@@ -31,7 +31,7 @@ limitations under the License.
 		<cfset variables.newline = chr(13) & chr(10) />
 		
 		<cfif not directoryExists(variables.parsedDir)>
-<!--- 			<cflock name="#variables.parsedDir#" type="exclusive" timeout="30"> --->
+			<cflock name="#variables.parsedDir#" type="exclusive" timeout="30">
 				<cfif not directoryExists(variables.parsedDir)>
 					<cftry>
 						<cfdirectory action="create" directory="#variables.parsedDir#" mode="777" />
@@ -43,7 +43,7 @@ limitations under the License.
 					</cfcatch>
 					</cftry>
 				</cfif>
-<!--- 			</cflock> --->
+			</cflock>
 		</cfif>
 
 		<cfset reset() />
