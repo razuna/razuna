@@ -698,6 +698,11 @@
 		<!-- Param -->
 		<set name="session.type" value="choosecollection" />
 		<set name="attributes.iscol" value="T" />
+		<if condition="structkeyexists(attributes,'file_id')">
+			<true>
+				<set name="session.file_id" value="#attributes.file_id#" />
+			</true>
+		</if>
 		<!-- Put art into sessions -->
 		<set name="session.artofimage" value="#attributes.artofimage#" />
 		<set name="session.artofvideo" value="#attributes.artofvideo#" />
