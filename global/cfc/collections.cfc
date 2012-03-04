@@ -690,14 +690,6 @@
 	AND ct.file_id_r = f.file_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="doc">
 	ORDER BY theorder
-	<!--- Show the limit only if pages is null or current (from print)
-	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-		<cfif variables.database EQ "oracle">
-		
-		<cfelseif variables.database EQ "mysql">
-		LIMIT #theoffset#,#arguments.thestruct.rowmaxpage#
-		</cfif>
-	</cfif> --->
 	</cfquery>
 	<!--- Get the total --->
 	<cfquery dbtype="query" name="qry.qry_filecount">

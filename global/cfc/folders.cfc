@@ -1683,7 +1683,7 @@
 	<cfargument name="host_id" default="" required="yes" type="numeric">
 	<!--- Set Values --->
 	<cfset session.showsubfolders = "F">
-	<cfset variables.dsn = arguments.apidsn>
+	<cfset application.razuna.datasource = arguments.apidsn>
 	<cfset session.hostdbprefix = arguments.apiprefix>
 	<cfset application.razuna.thedatabase = arguments.apidatabase>
 	<cfset session.hostid = arguments.host_id>
@@ -1719,13 +1719,13 @@
 	<cfargument name="theoverall" default="F" required="no" type="string">
 	<!--- Show assets from subfolders or not --->
 	<cfif session.showsubfolders EQ "T">
-		<cfinvoke method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.folder_id#" database="#variables.database#" hostid="#session.hostid#" returnvariable="thefolders">
+		<cfinvoke method="getfoldersinlist" dsn="#application.razuna.datasource#" folder_id="#arguments.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
 		<cfset thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
 		<cfset thefolderlist = arguments.folder_id & ",">
 	</cfif>
 	<!--- Query --->	
-	<cfquery datasource="#variables.dsn#" name="total" cachename="#session.hostdbprefix##session.hostid#filetotalcount#arguments.folder_id#" cachedomain="#session.theuserid#_folders">
+	<cfquery datasource="#application.razuna.datasource#" name="total" cachename="#session.hostdbprefix##session.hostid#filetotalcount#arguments.folder_id#" cachedomain="#session.theuserid#_folders">
 	SELECT
 		(
 		SELECT count(fi.file_id)
@@ -2088,6 +2088,10 @@
 	<cfelse>
 		<cfset thefolderlist = arguments.thestruct.folder_id & ",">
 	</cfif>
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
+		<cfset session.offset = 0>
+	</cfif>
 	<!--- 
 	This is for Oracle and MSQL
 	Calculate the offset .Show the limit only if pages is null or current (from print) 
@@ -2110,7 +2114,7 @@
 	<!--- Oracle --->
 	<cfif variables.database EQ "oracle">
 		<!--- Query --->
-		<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid#getallassets#arguments.thestruct.folder_id##theoffset##max##arguments.thestruct.thisview#" cachedomain="#session.theuserid#_assets">
+		<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid#getallassets#arguments.thestruct.folder_id##session.offset##max##arguments.thestruct.thisview#" cachedomain="#session.theuserid#_assets">
 		SELECT rn, id, filename, folder_id_r, ext, filename_org, kind, date_create, date_change, link_kind, link_path_url,
 		path_to_asset, cloud_url, cloud_url_org, description, keywords
 		FROM (
@@ -2182,7 +2186,7 @@
 	<!--- DB2 --->
 	<cfelseif variables.database EQ "db2">
 		<!--- Query --->
-		<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid#getallassets#arguments.thestruct.folder_id##theoffset##max##arguments.thestruct.thisview#" cachedomain="#session.theuserid#_assets">
+		<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid#getallassets#arguments.thestruct.folder_id##session.offset##max##arguments.thestruct.thisview#" cachedomain="#session.theuserid#_assets">
 		SELECT id, filename, folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
 		path_to_asset, cloud_url, cloud_url_org, description, keywords
 		FROM (
@@ -2253,10 +2257,8 @@
 		</cfquery>
 	<!--- Other DB's --->
 	<cfelse>
-		<!--- Calculate the offset --->
-		<cfset var theoffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
-		<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid#getallassets#arguments.thestruct.folder_id##theoffset##max##arguments.thestruct.thisview#" cachedomain="#session.theuserid#_assets">
+		<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid#getallassets#arguments.thestruct.folder_id##session.offset##max##arguments.thestruct.thisview#" cachedomain="#session.theuserid#_assets">
 		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>i.img_id id, i.img_filename filename, 
 		i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 		i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
@@ -2359,7 +2361,7 @@
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<!--- MySQL / H2 --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#,#session.rowmaxpage#
+				LIMIT #session.offset#,#session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>

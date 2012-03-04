@@ -68,6 +68,15 @@
 <cffunction name="get_log_users" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
+	<!--- Get all log entries --->
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="userstotal#session.hostid##arguments.thestruct.logaction#" cachedomain="#session.theuserid#_log">
+	SELECT log_id
+	FROM #session.hostdbprefix#log_users
+	</cfquery>
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
+		<cfset session.offset_log = 0>
+	</cfif>
 	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
 		<cfset var max = session.rowmaxpage_log>
@@ -75,12 +84,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
-	<!--- Calculate the offset --->
-	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
-	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_users#session.hostid##arguments.thestruct.logsection##arguments.thestruct.logaction##theoffset#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_users#session.hostid##arguments.thestruct.logsection##arguments.thestruct.logaction##session.offset_log#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
 			SELECT rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_timestamp, thetotal
@@ -139,7 +144,7 @@
 			GROUP BY l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, l.log_ip, l.log_id, l.log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #session.rowmaxpage_log#
+				LIMIT #session.offset_log#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -161,16 +166,21 @@
 <cffunction name="get_log_assets" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
+	<!--- Get all log entries --->
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="assetstotal#session.hostid##arguments.thestruct.logaction#" cachedomain="#session.theuserid#_log">
+	SELECT log_id
+	FROM #session.hostdbprefix#log_assets
+	</cfquery>
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
+		<cfset session.offset_log = 0>
+	</cfif>
 	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
 		<cfset var max = session.rowmaxpage_log>
 	<cfelse>
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
-	</cfif>
-	<!--- Calculate the offset --->
-	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
 	</cfif>
 	<!--- this is also called from individual asset log entries thus we have a id in the struct --->
 	<cfif !structkeyexists(arguments.thestruct,"id")>
@@ -255,7 +265,7 @@
 			user_first_name, user_last_name
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #session.rowmaxpage_log#
+				LIMIT #session.offset_log#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -281,6 +291,15 @@
 <cffunction name="get_log_folders" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
+	<!--- Get all log entries --->
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="folderstotal#session.hostid##arguments.thestruct.logaction#" cachedomain="#session.theuserid#_log">
+	SELECT log_id
+	FROM #session.hostdbprefix#log_folders
+	</cfquery>
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
+		<cfset session.offset_log = 0>
+	</cfif>
 	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
 		<cfset var max = session.rowmaxpage_log>
@@ -288,12 +307,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
-	<!--- Calculate the offset --->
-	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
-	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_folders#session.hostid##arguments.thestruct.logaction##theoffset#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_folders#session.hostid##arguments.thestruct.logaction##session.offset_log#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
 			SELECT rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_timestamp, 
@@ -355,7 +370,7 @@
 			l.log_id, l.log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #session.rowmaxpage_log#
+				LIMIT #session.offset_log#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -376,6 +391,15 @@
 <!--- GET LOG SEARCHES --->
 <cffunction name="get_log_searches" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
+	<!--- Get all log entries --->
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="searchestotal#session.hostid#" cachedomain="#session.theuserid#_log">
+	SELECT log_id
+	FROM #session.hostdbprefix#log_search
+	</cfquery>
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
+		<cfset session.offset_log = 0>
+	</cfif>
 	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
 		<cfset var max = session.rowmaxpage_log>
@@ -383,12 +407,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
-	<!--- Calculate the offset --->
-	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
-	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_searches#session.hostid##theoffset#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_searches#session.hostid##session.offset_log#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
 			SELECT rn, log_user, log_date, log_time, log_search_for, log_search_from, log_founditems, log_browser, log_ip, log_timestamp, 
@@ -435,7 +455,7 @@
 			log_id, log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #session.rowmaxpage_log#
+				LIMIT #session.offset_log#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -475,6 +495,15 @@
 <!--- GET LOG SEARCHES --->
 <cffunction name="get_log_errors" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
+	<!--- Get all log entries --->
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="errorstotal#session.hostid#" cachedomain="#session.theuserid#_log">
+	SELECT id
+	FROM #session.hostdbprefix#errors
+	</cfquery>
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif thetotal.recordcount LTE session.rowmaxpage_log>
+		<cfset session.offset_log = 0>
+	</cfif>
 	<cfif session.offset_log EQ 0>
 		<cfset var min = 0>
 		<cfset var max = session.rowmaxpage_log>
@@ -482,12 +511,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
-	<!--- Calculate the offset --->
-	<cfif variables.database NEQ "oracle">
-		<cfset var theoffset = session.offset_log * session.rowmaxpage_log>
-	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_errors#session.hostid##theoffset#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_errors#session.hostid##session.offset_log#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
 			SELECT rn, id, err_date, thetotal
@@ -529,7 +554,7 @@
 			GROUP BY id, err_date, host_id
 			ORDER BY err_date DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #theoffset#, #session.rowmaxpage_log#
+				LIMIT #session.offset_log#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>

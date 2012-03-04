@@ -47,6 +47,10 @@
 	<cfelse>
 		<cfset thefolderlist = arguments.folder_id & ",">
 	</cfif>
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
+		<cfset session.offset = 0>
+	</cfif>
 	<!--- This is for Oracle and MSQL. Calculate the offset .Show the limit only if pages is null or current (from print) --->
 	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 		<cfif session.offset EQ 0>
@@ -116,8 +120,6 @@
 		</cfquery>
 	<!--- Other DB's --->
 	<cfelse>
-		<!--- Calculate the offset --->
-		<cfset var theoffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumns##max#" cachedomain="#session.theuserid#_audios">
 		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>
@@ -144,7 +146,7 @@
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
 				ORDER BY LOWER(a.aud_name) ASC
-				LIMIT #theoffset#, #session.rowmaxpage#
+				LIMIT #session.offset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>
