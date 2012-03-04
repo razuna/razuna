@@ -87,6 +87,17 @@
 				<td nowrap="nowrap">#defaultsObj.trans("imagemagick_path")#</td>
 				<td><input type="text" name="rfs_imagemagick" id="rfs_imagemagick" value="#qry_rfs.rfs_imagemagick#" class="text" style="width:300px;"></td>
 			</tr>
+			<!--- FFmpeg Paths --->
+			<tr>
+				<th class="textbold" colspan="2">#defaultsObj.trans("header_ffmpeg")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">#defaultsObj.trans("header_ffmpeg_desc")#</td>
+			</tr>
+			<tr>
+				<td nowrap="true">#defaultsObj.trans("header_ffmpeg")#</td>
+				<td><input type="text" name="rfs_ffmpeg" id="rfs_ffmpeg" value="#qry_rfs.rfs_ffmpeg#" style="width:300px;" class="text"></td>
+			</tr>
 			<!--- Exiftool Path --->
 			<tr>
 				<th class="textbold" colspan="2">#defaultsObj.trans("header_exiftool")#</th>
@@ -109,16 +120,16 @@
 				<td nowrap="true">#defaultsObj.trans("header_dcraw")#</td>
 				<td><input type="text" name="rfs_dcraw" id="rfs_dcraw" value="#qry_rfs.rfs_dcraw#" style="width:300px;" class="text"></td>
 			</tr>
-			<!--- FFmpeg Paths --->
+			<!--- MP4Box Paths --->
 			<tr>
-				<th class="textbold" colspan="2">#defaultsObj.trans("header_ffmpeg")#</th>
+				<th class="textbold" colspan="2">#defaultsObj.trans("header_mp4box")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("header_ffmpeg_desc")#</td>
+				<td colspan="2">#defaultsObj.trans("header_mp4box_desc")#</td>
 			</tr>
 			<tr>
-				<td nowrap="true">#defaultsObj.trans("header_ffmpeg")#</td>
-				<td><input type="text" name="rfs_ffmpeg" id="rfs_ffmpeg" value="#qry_rfs.rfs_ffmpeg#" style="width:300px;" class="text"></td>
+				<td nowrap="true">#defaultsObj.trans("header_mp4box")#</td>
+				<td><input type="text" name="rfs_mp4box" id="rfs_mp4box" value="#qry_rfs.rfs_mp4box#" style="width:300px;" class="text"></td>
 			</tr>
 		</table>
 	</div>

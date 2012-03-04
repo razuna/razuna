@@ -247,7 +247,7 @@
 				flowplayer("a.flowplayerdetail", "#arguments.thestruct.dynpath#/global/videoplayer/flowplayer-3.2.7.swf", { 
 				    clip: {
 				    	autoBuffering: true, 
-				    	autoplay: false, 
+				    	autoplay: true, 
 				    plugins: { 
 				        controls: { 
 				            all: false,  
@@ -313,9 +313,12 @@
 		</cfcase>
 		<!--- MP4 / HTML5 --->
 		<cfcase value="ogv,webm,mp4">
-			<cfsavecontent variable="thevideo"><cfoutput><div style="height:auto;width:auto;padding-top:50px;">
+			<cfsavecontent variable="thevideo"><cfoutput>
+			<cfif cgi.HTTP_USER_AGENT CONTAINS "Firefox">
+				<cflocation url="#thevideo#" />
+			<cfelse>
 			If the video does not play properly try to <a href="#thevideo#">watch it directly</a>.<br>
-			<video poster="#theimage#" controls="true">
+			<video autoplay="true" controls="true" style="margin: auto; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" name="media">
 				<cfif theextension EQ "ogv">
 					<source src="#thevideo#" type="video/ogg" />
 				<cfelseif theextension EQ "webm">
@@ -324,8 +327,8 @@
 					<source src="#thevideo#" type="video/mp4" />
 				</cfif>
 			<video>
-			<br>
-			</div></cfoutput>
+			</cfif>
+			</cfoutput>
 			</cfsavecontent>
 		</cfcase>
 		<!--- WMV --->
@@ -984,9 +987,11 @@
 			<cfset theimexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
 			<cfset inputpath = """#inputpath#""">
 			<cfset inputpathimage = """#inputpathimage#""">
+			<cfset themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box.exe">
 		<cfelse>
 			<cfset theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
 			<cfset theimexe = "#arguments.thestruct.thetools.imagemagick#/convert">
+			<cfset themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box">
 		</cfif>
 		<!--- Now, loop over the selected extensions and convert and store video --->
 		<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
@@ -1121,6 +1126,17 @@
 				</cfquery>
 				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on converting your video" themessage="Your Video could not be converted to the format #ucase(theformat)#. This can happen when the source video is rendered with codecs that our conversion engine can not read/write.">
 			<cfelse>
+				<!--- If we are MP4 run it trough MP4Box --->
+				<cfif theformat EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">
+					<cfset ttmp4 = replace(createuuid(),"-","","all")>
+					<cfset arguments.thestruct.thispreviewvideo = thispreviewvideo>
+					<cfset arguments.thestruct.themp4 = themp4>
+					<cfthread name="#ttmp4#" intstruct="#arguments.thestruct#">
+						<cfexecute name="#attributes.intstruct.themp4#" arguments="#attributes.intstruct.thispreviewvideo#" timeout="9999" />
+					</cfthread>
+					<!--- Wait for the thread above until the file is fully converted --->
+					<cfthread action="join" name="#ttmp4#" />
+				</cfif>
 				<!--- Get size of original --->
 				<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.thisfolder#/#previewvideo#" returnvariable="orgsize">
 				<!--- Storage: Local --->

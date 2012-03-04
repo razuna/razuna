@@ -294,6 +294,7 @@
 			rfs_ffmpeg 		varchar2(200 char),
 			rfs_dcraw 		varchar2(200 char),
 			rfs_exiftool 	varchar2(200 char),
+			rfs_mp4box	 	varchar2(200 char),
 			rfs_location 	varchar2(200 char),
 			rfs_date_add 	timestamp,
 			rfs_date_change timestamp,
