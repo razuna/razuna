@@ -63,7 +63,11 @@
 		scene iptcscene, 
 		state iptcstate, 
 		credit iptccredit, 
-		rights copynotice
+		rights copynotice,
+		colorspace,
+		xres,
+		yres,
+		resunit
 		FROM #session.hostdbprefix#xmp
 		WHERE id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
@@ -695,6 +699,13 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<cfset xmp.copyurl = "">
 	<cfset xmp.category = "">
 	<cfset xmp.categorysub = "">
+	<cfset xmp.orgwidth = "">
+	<cfset xmp.orgheight = "">
+	<cfset xmp.colorspace = "">
+	<cfset xmp.xres = "">
+	<cfset xmp.yres = "">
+	<cfset xmp.resunit = "">
+	<cfset xmp.filetype = "">
 	<cfset var thecoma = "">
 	<cfset var themeta = "">
 	<cftry>
@@ -1050,6 +1061,120 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			<cfset xmp.iptcimagecountrycode = trim(#thexml[1]["XMP-iptcCore:CountryCode"].xmltext#)>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
+		
+		<!--- Get fileType --->
+		<cftry>
+			<cfset xmp.filetype = trim(#thexml[1]["File:FileType"].xmltext#)>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
+		<!--- Get information according to filetype --->
+		<cfif xmp.filetype EQ "psd">
+			<cfset xmp.orgwidth = trim(#thexml[1]["Photoshop:ImageWidth"].xmltext#)>
+			<cfset xmp.orgheight = trim(#thexml[1]["Photoshop:ImageHeight"].xmltext#)>
+			<cfset xmp.colorspace = trim(#thexml[1]["Photoshop:ColorMode"].xmltext#)>
+			<cfset xmp.xres = trim(#thexml[1]["Photoshop:XResolution"].xmltext#)>
+			<cfset xmp.yres = trim(#thexml[1]["Photoshop:YResolution"].xmltext#)>
+			<cfset xmp.resunit = trim(#thexml[1]["Photoshop:DisplayedUnitsX"].xmltext#)>
+		<cfelseif xmp.filetype EQ "png">
+			<cfset xmp.orgwidth = trim(#thexml[1]["PNG:ImageWidth"].xmltext#)>
+			<cfset xmp.orgheight = trim(#thexml[1]["PNG:ImageHeight"].xmltext#)>
+			<cfset xmp.colorspace = trim(#thexml[1]["PNG:ColorType"].xmltext#)>
+			<cfset xmp.xres = trim(#thexml[1]["PNG:PixelsPerUnitX"].xmltext#)>
+			<cfset xmp.yres = trim(#thexml[1]["PNG:PixelsPerUnitY"].xmltext#)>
+			<cfset xmp.resunit = trim(#thexml[1]["PNG:PixelUnits"].xmltext#)>
+		<cfelse>
+			<!--- Width --->
+			<cftry>
+				<cfset xmp.orgwidth = trim(#thexml[1]["File:ImageWidth"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cfif xmp.orgwidth EQ "">
+				<cftry>
+					<cfset xmp.orgwidth = trim(#thexml[1]["SubIFD1:ImageWidth"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<cfif xmp.orgwidth EQ "">
+				<cftry>
+					<cfset xmp.orgwidth = trim(#thexml[1]["ExifIFD:ExifImageWidth"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<cfif xmp.orgwidth EQ "">
+				<cftry>
+					<cfset xmp.orgwidth = trim(#thexml[1]["IFD0:ImageWidth"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<!--- Height --->
+			<cftry>
+				<cfset xmp.orgheight = trim(#thexml[1]["File:ImageHeight"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cfif xmp.orgheight EQ "">
+				<cftry>
+					<cfset xmp.orgheight = trim(#thexml[1]["SubIFD1:ImageHeight"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<cfif xmp.orgheight EQ "">
+				<cftry>
+					<cfset xmp.orgheight = trim(#thexml[1]["ExifIFD:ExifImageHeight"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<cfif xmp.orgheight EQ "">
+				<cftry>
+					<cfset xmp.orgheight = trim(#thexml[1]["IFD0:ImageHeight"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<!--- ColorSpace --->
+			<cftry>
+				<cfset xmp.colorspace = trim(#thexml[1]["ICC-header:ColorSpaceData"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cfif xmp.colorspace EQ "">
+				<cftry>
+					<cfset xmp.colorspace = trim(#thexml[1]["ExifIFD:ColorSpace"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<!--- Xresolution --->
+			<cftry>
+				<cfset xmp.xres = trim(#thexml[1]["IFD0:XResolution"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cfif xmp.xres EQ "">
+				<cftry>
+					<cfset xmp.xres = trim(#thexml[1]["JFIF:XResolution"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<!--- Yresolution --->
+			<cftry>
+				<cfset xmp.yres = trim(#thexml[1]["IFD0:YResolution"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cfif xmp.yres EQ "">
+				<cftry>
+					<cfset xmp.yres = trim(#thexml[1]["JFIF:YResolution"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<!--- Resolution Unit --->
+			<cftry>
+				<cfset xmp.resunit = trim(#thexml[1]["IFD0:ResolutionUnit"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cfif xmp.resunit EQ "">
+				<cftry>
+					<cfset xmp.resunit = trim(#thexml[1]["JFIF:ResolutionUnit"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+		</cfif>
+		<!--- Catch the error --->
 		<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in xmpparse">
 				<cfdump var="#cfcatch#" />

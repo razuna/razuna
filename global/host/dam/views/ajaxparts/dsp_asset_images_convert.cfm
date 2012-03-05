@@ -48,6 +48,22 @@
 		<td width="100%" colspan="2">#qry_detail.thesize# MB</td>
 	</tr>
 	<tr>
+		<td width="1%" nowrap="true">ColorSpace</td>
+		<td width="100%" colspan="2">#qry_xmp.colorspace#</td>
+	</tr>
+	<tr>
+		<td width="1%" nowrap="true">X Resolution</td>
+		<td width="100%" colspan="2">#qry_xmp.xres#</td>
+	</tr>
+	<tr>
+		<td width="1%" nowrap="true">Y Resolution</td>
+		<td width="100%" colspan="2">#qry_xmp.yres#</td>
+	</tr>
+	<tr>
+		<td width="1%" nowrap="true">Resolution Unit</td>
+		<td width="100%" colspan="2">#qry_xmp.resunit#</td>
+	</tr>
+	<tr>
 		<th colspan="2">#defaultsObj.trans("video_convert_to")#</th>
 		<th>#defaultsObj.trans("size")#</th>
 	</tr>

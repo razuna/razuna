@@ -857,6 +857,10 @@
 			state					varchar(300),
 			credit					varchar(300),
 			rights					VARCHAR(4000),
+			colorspace				varchar(50),
+			xres					varchar(10),
+			yres					varchar(10),
+			resunit					varchar(20),
 			HOST_ID					BIGINT
 		)  
 		</cfquery>

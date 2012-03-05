@@ -1706,6 +1706,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"'","\'","all")>
 			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 		</cfif>
+		<!--- Parse the Metadata from the image --->
+		<cfinvoke component="xmp" method="xmpparse" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.thexmp" />
 		<!--- resize original to thumb --->
 		<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
 		<!--- storing assets on file system --->
@@ -1723,49 +1725,55 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Set Variable --->
 					<cfset arguments.thestruct.assetpath = arguments.thestruct.qrysettings.set2_path_to_assets>
 					<!--- Invoke XMP Methods --->
-					<cfinvoke component="xmp" method="xmpparse" thestruct="#arguments.thestruct#" returnvariable="thexmp" />
 					<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
 					<!--- Store XMP values in DB --->
 					<cfquery datasource="#arguments.thestruct.dsn#">
 					INSERT INTO #session.hostdbprefix#xmp
-					(id_r, asset_type, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, supplementalcategories, urgency, description, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, intellectualgenre, instructions, source, usageterms, copyrightstatus, transmissionreference, webstatement, headline, datecreated, city, ciadrregion, country, countrycode, scene, state, credit, rights, host_id)
+					(id_r, asset_type, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, supplementalcategories, urgency,
+					description, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, intellectualgenre, instructions, source, 
+					usageterms, copyrightstatus, transmissionreference, webstatement, headline, datecreated, city, ciadrregion, country, countrycode, 
+					scene, state, credit, rights, colorspace, xres, yres, resunit, host_id)
 					VALUES(
 					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="img">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcsubjectcode#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.creator#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.title#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.authorstitle#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.descwriter#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcaddress#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.category#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.categorysub#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.urgency#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.description#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccity#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccountry#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptclocation#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptczip#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcemail#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcwebsite#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcphone#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcintelgenre#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcinstructions#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcsource#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcusageterms#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copystatus#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcjobidentifier#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copyurl#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcheadline#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcdatecreated#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecity#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagestate#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecountry#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcimagecountrycode#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcscene#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptcstate#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.iptccredit#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thexmp.copynotice#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsubjectcode#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.creator#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.title#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.authorstitle#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.descwriter#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcaddress#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.category#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.categorysub#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.urgency#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.description#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccity#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccountry#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptclocation#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptczip#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcemail#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcwebsite#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcphone#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcintelgenre#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcinstructions#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsource#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcusageterms#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copystatus#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcjobidentifier#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copyurl#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcheadline#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcdatecreated#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecity#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagestate#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecountry#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecountrycode#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcscene#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcstate#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccredit#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copynotice#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.colorspace#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.xres#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.yres#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.resunit#">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					)
 					</cfquery>
@@ -1986,16 +1994,13 @@ This is the main function called directly by a single upload else from addassets
 </cffunction>
 
 <!--- RESIZE IMAGE ------------------------------------------------------------------------------->
-<cffunction name="resizeImagethread" returntype="struct" access="public" output="false">
+<cffunction name="resizeImagethread" returntype="void" access="public" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
 	<cftry>
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
 		<cfset var theimconvert = "">
 		<cfset var theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
-		<cfset var orgwh = structnew()>
-		<cfset orgwh.thewidth = "">
-		<cfset orgwh.theheight = "">
 		<!--- validate input --->
 		<cfif FileExists(arguments.thestruct.destination)>
 			<!--- <cfthrow message="Destination-file already exists!"> --->
@@ -2017,36 +2022,23 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Write the sh script files --->
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#reimtt#.sh">
 		<cfset arguments.thestruct.theshm = GetTempDirectory() & "/#reimtt#m.sh">
-		<cfset arguments.thestruct.theshh = GetTempDirectory() & "/#reimtt#h.sh">
-		<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#reimtt#w.sh">
 		<cfset arguments.thestruct.theshht = GetTempDirectory() & "/#reimtt#ht.sh">
 		<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#reimtt#wt.sh">
 		<!--- On Windows a .bat --->
 		<cfif iswindows()>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#reimtt#.bat">
 			<cfset arguments.thestruct.theshm = GetTempDirectory() & "/#reimtt#m.bat">
-			<cfset arguments.thestruct.theshh = GetTempDirectory() & "/#reimtt#h.bat">
-			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#reimtt#w.bat">
 			<cfset arguments.thestruct.theshht = GetTempDirectory() & "/#reimtt#ht.bat">
 			<cfset arguments.thestruct.theshwt = GetTempDirectory() & "/#reimtt#wt.bat">
 		</cfif>
-		<!--- Write script for getting height and weight --->
-		<cffile action="write" file="#arguments.thestruct.theshh#" output="#arguments.thestruct.theexif# -S -s -ImageHeight #arguments.thestruct.thesource#" mode="777">
-		<cffile action="write" file="#arguments.thestruct.theshw#" output="#arguments.thestruct.theexif# -S -s -ImageWidth #arguments.thestruct.thesource#" mode="777">
-		<!--- Get height and width --->
-		<cfexecute name="#arguments.thestruct.theshh#" timeout="60" variable="orgwh.theheight" ERRORVARIABLE="y" />
-		<cfexecute name="#arguments.thestruct.theshw#" timeout="60" variable="orgwh.thewidth" />
-		<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
-		<cfset orgwh.theheight = trim(listlast(orgwh.theheight," "))>
-		<cfset orgwh.thewidth = trim(listlast(orgwh.thewidth," "))>
 		<!--- Set correct width or heigth --->
-		<cfif orgwh.thewidth EQ "" OR orgwh.theheight EQ "">
+		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR arguments.thestruct.thexmp.orgheight EQ "">
 			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
-		<cfelseif orgwh.theheight LTE arguments.thestruct.height AND orgwh.thewidth LTE arguments.thestruct.width>
+		<cfelseif arguments.thestruct.thexmp.orgheight LTE arguments.thestruct.height AND arguments.thestruct.thexmp.orgwidth LTE arguments.thestruct.width>
 			<cfset theImgConvertParams = "-strip -colorspace RGB -flatten">
-		<cfelseif orgwh.thewidth GT arguments.thestruct.width>
+		<cfelseif arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
 			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
-		<cfelseif orgwh.theheight GT arguments.thestruct.height>
+		<cfelseif arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
 			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# -strip -colorspace RGB -flatten">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
@@ -2093,41 +2085,33 @@ This is the main function called directly by a single upload else from addassets
 		<cffile action="write" file="#arguments.thestruct.theshht#" output="#arguments.thestruct.theexif# -S -s -ImageHeight #arguments.thestruct.destination#" mode="777">
 		<cffile action="write" file="#arguments.thestruct.theshwt#" output="#arguments.thestruct.theexif# -S -s -ImageWidth #arguments.thestruct.destination#" mode="777">
 		<!--- Get height and width --->
-		<cfexecute name="#arguments.thestruct.theshht#" timeout="60" variable="orgwh.thumbheight" />
-		<cfexecute name="#arguments.thestruct.theshwt#" timeout="60" variable="orgwh.thumbwidth" />
+		<cfexecute name="#arguments.thestruct.theshht#" timeout="60" variable="thumbheight" />
+		<cfexecute name="#arguments.thestruct.theshwt#" timeout="60" variable="thumbwidth" />
 		<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
-		<cfset orgwh.thumbheight = trim(listlast(orgwh.thumbheight," "))>
-		<cfset orgwh.thumbwidth = trim(listlast(orgwh.thumbwidth," "))>
+		<cfset thumbheight = trim(listlast(thumbheight," "))>
+		<cfset thumbwidth = trim(listlast(thumbwidth," "))>
 		<!--- Remove the temp file sh --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.theshm#">
-		<cffile action="delete" file="#arguments.thestruct.theshh#">
-		<cffile action="delete" file="#arguments.thestruct.theshw#">
 		<cffile action="delete" file="#arguments.thestruct.theshht#">
 		<cffile action="delete" file="#arguments.thestruct.theshwt#">
 		<!--- Sometimes identify does not get height and width thus we set it here --->
-		<cfif orgwh.thewidth EQ "">
-			<cfset orgwh.thewidth = 0>
-			<cfset orgwh.thumbwidth = 0>
+		<cfif arguments.thestruct.thexmp.orgwidth EQ "">
+			<cfset arguments.thestruct.thexmp.orgwidth = 0>
+			<cfset thumbwidth = 0>
 		</cfif>
-		<cfif orgwh.theheight EQ "">
-			<cfset orgwh.theheight = 0>
-			<cfset orgwh.thumbheight = 0>
+		<cfif arguments.thestruct.thexmp.orgheight EQ "">
+			<cfset arguments.thestruct.thexmp.orgheight = 0>
+			<cfset thumbheight = 0>
 		</cfif>
-		<!--- Sometimes thumbnails can not be done, thus we assume the image is corrupted --->
-		<!---
-<cfif NOT fileexists("#arguments.thestruct.destination#")>
-			<cfset orgwh.thewidth = "">
-		</cfif>
---->
 		<!--- Set original and thumbnail width and height --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#images
 		SET
-		thumb_width = <cfqueryparam value="#orgwh.thumbwidth#" cfsqltype="cf_sql_numeric">, 
-		thumb_height = <cfqueryparam value="#orgwh.thumbheight#" cfsqltype="cf_sql_numeric">, 
-		img_width = <cfqueryparam value="#orgwh.thewidth#" cfsqltype="cf_sql_numeric">, 
-		img_height = <cfqueryparam value="#orgwh.theheight#" cfsqltype="cf_sql_numeric">
+		thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">, 
+		thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">, 
+		img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">, 
+		img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 		</cfquery>
 		<cfcatch type="any">
@@ -2137,7 +2121,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
-	<cfreturn orgwh />
+	<cfreturn />
 </cffunction>
 
 <!--- Check for plattform --->
