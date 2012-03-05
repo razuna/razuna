@@ -39,43 +39,44 @@
 			<form action="#self#" method="post" id="form_searchsearch">
 			<input type="hidden" name="#theaction#" value="c.search_simple">
 			<input type="hidden" name="folder_id" value="#attributes.folder_id#">
-			<input type="hidden" name="searchtext" value="">
+			<input type="hidden" name="searchtext" id="s_searchtext" value="">
 			<cfif structkeyexists(variables,"qry_results_files")>
 				<cfset docrec = qry_results_files.recordcount>
-				<input type="hidden" name="listdocid" value="#valuelist(qry_results_files.file_id)#">
+				<input type="hidden" name="listdocid" id="s_listdocid" value="#valuelist(qry_results_files.file_id)#">
 			<cfelse>
 				<cfset docrec = 0>
-				<input type="hidden" name="listdocid" value="">
+				<input type="hidden" name="listdocid" id="s_listdocid" value="">
 			</cfif>
 			<cfif structkeyexists(variables,"qry_results_images")>
 				<cfset imgrec = qry_results_images.recordcount>
-				<input type="hidden" name="listimgid" value="#valuelist(qry_results_images.img_id)#">
+				<input type="hidden" name="listimgid" id="s_listimgid" value="#valuelist(qry_results_images.img_id)#">
 			<cfelse>
 				<cfset imgrec = 0>
-				<input type="hidden" name="listimgid" value="">
+				<input type="hidden" name="listimgid" id="s_listimgid" value="">
 			</cfif>
 			<cfif structkeyexists(variables,"qry_results_videos")>
 				<cfset vidrec = qry_results_videos.recordcount>
-				<input type="hidden" name="listvidid" value="#valuelist(qry_results_videos.vid_id)#">
+				<input type="hidden" name="listvidid" id="s_listvidid" value="#valuelist(qry_results_videos.vid_id)#">
 			<cfelse>
 				<cfset vidrec = 0>
-				<input type="hidden" name="listvidid" value="">
+				<input type="hidden" name="listvidid" id="s_listvidid" value="">
 			</cfif>
 			<cfif structkeyexists(variables,"qry_results_audios")>
 				<cfset audrec = qry_results_audios.recordcount>
-				<input type="hidden" name="listaudid" value="#valuelist(qry_results_audios.aud_id)#">
+				<input type="hidden" name="listaudid" id="s_listaudid" value="#valuelist(qry_results_audios.aud_id)#">
 			<cfelse>
 				<cfset audrec = 0>
-				<input type="hidden" name="listaudid" value="">
+				<input type="hidden" name="listaudid" id="s_listaudid" value="">
 			</cfif>
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
 				<tr>
 					<th>#defaultsObj.trans("refine_search")#</th>
 				</tr>
 				<tr>
-					<td colspan="4" style="padding:5px 2px 5px 5px;"><input type="radio" name="newsearch" value="f" checked="true"> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',0)" style="text-decoration:none;">#defaultsObj.trans("search_within")#</a>
+					<td colspan="4" style="padding:5px 2px 5px 5px;">
+					<input type="radio" id="s_newsearch" name="newsearch" value="t" checked="true"> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',1)" style="text-decoration:none;">#defaultsObj.trans("new_search")#</a>
 					<br />
-					<input type="radio" name="newsearch" value="t"> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',1)" style="text-decoration:none;">#defaultsObj.trans("new_search")#</a></td>
+					<input type="radio" name="newsearch" id="s_newsearch" value="f"> <a href="##" onclick="clickcbk('form_searchsearch','newsearch',0)" style="text-decoration:none;">#defaultsObj.trans("search_within")#</a></td>
 				</tr>
 				<tr>
 					<td style="padding-bottom:0px;">#defaultsObj.trans("search_term")# (<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank">Help</a>)
@@ -113,7 +114,7 @@
 					<td>
 						#defaultsObj.trans("search_for_type")#
 						<br />
-						<select name="thetype">
+						<select name="thetype" id="s_type">
 							<option value="all"<cfif attributes.thetype EQ "all"> selected="true"</cfif>>#defaultsObj.trans("search_for_allassets")#</option>
 							<option value="img"<cfif attributes.thetype EQ "img"> selected="true"</cfif>>#defaultsObj.trans("search_for_images")#</option>
 							<option value="doc"<cfif attributes.thetype EQ "doc"> selected="true"</cfif>>#defaultsObj.trans("search_for_documents")#</option>
@@ -127,7 +128,7 @@
 						<br />
 						<cfset lastyear = #year(now())# - 10>
 						<cfset newyear = #year(now())# + 3>
-						<select name="on_day" class="text"><option value="">#defaultsObj.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#defaultsObj.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#defaultsObj.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('form_searchsearch');">#defaultsObj.trans("today")#</a>
+						<select name="on_day" id="s_on_day" class="text"><option value="">#defaultsObj.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" id="s_on_month" class="text"><option value="">#defaultsObj.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" id="s_on_year" class="text"><option value="">#defaultsObj.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('form_searchsearch');">#defaultsObj.trans("today")#</a>
 				</tr>
 				<tr>
 					<td>And/Or
@@ -492,17 +493,46 @@
 			alert('Please enter a search term!');
 		}
 		else {
-			// Put the searchtext value into hiddenform
-			document.forms['form_searchsearch'].searchtext.value = searchtext;
 			// Get values
-			var url = formaction("form_searchsearch");
-			var items = formserialize("form_searchsearch");
-			// Submit Form
+			var newsearch = $('#s_newsearch:checked').val();
+			var thetype = $('#s_type option:selected').val();
+			var listaudid = $('#s_listaudid').val();
+			var listvidid = $('#s_listvidid').val();
+			var listimgid = $('#s_listimgid').val();
+			var listdocid = $('#s_listdocid').val();
+			var on_day = $('#s_on_day option:selected').val();
+			var on_month = $('#s_on_month option:selected').val();
+			var on_year = $('#s_on_year option:selected').val();
+			var andor = $('#andor option:selected').val();
+			// some design stuff
 			$('#submitrefinesearch').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" style="padding:0px;">');
-			loadcontent('rightside','<cfoutput>#self#</cfoutput>?' + items);
+			// Post the search
+			$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year} );
 		}
 		return false;
 	});
+	
+	// Function can be called with: var query = JSON.stringify($('#form_searchsearch').serializeObject());
+	
+/*
+	$.fn.serializeObject = function()
+	{
+	    var o = {};
+	    var a = this.serializeArray();
+	    $.each(a, function() {
+	        if (o[this.name] !== undefined) {
+	            if (!o[this.name].push) {
+	                o[this.name] = [o[this.name]];
+	            }
+	            o[this.name].push(this.value);
+	        } else {
+	            o[this.name] = this.value;
+	        }
+	    });
+	    return o;
+	};
+*/
+	
 	// Show Subsearch
 	function showsubsearch(){
 		$('#searchsearch').toggle('blind','slow');

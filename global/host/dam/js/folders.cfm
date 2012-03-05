@@ -102,7 +102,7 @@
 			// Fire search
 			$('#loading_searchadv').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 			$('#loading_searchadv2').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa + '&searchtype=adv&folder_id=' + folderid + '&searchtext=' + escape(searchtext) + '&doctype=' + document.forms[theform].doctype.options[document.forms[theform].doctype.selectedIndex].value + '&on_day=' + document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value + '&on_month=' + document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value + '&on_year=' + document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, function(){
+			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa, { searchtype: "adv", folder_id: folderid, searchtext: searchtext, doctype: document.forms[theform].doctype.options[document.forms[theform].doctype.selectedIndex].value, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year:  document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
 				// Hide Window
 				destroywindow(1);
 			});
@@ -124,7 +124,7 @@
 			// Fire search
 			$('#loading_searchadv').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 			$('#loading_searchadv2').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa + '&searchtype=adv&folder_id=' + folderid + '&searchtext=' + escape(searchtext) + '&on_day=' + document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value + '&on_month=' + document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value + '&on_year=' + document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, function(){
+			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa, { searchtype: "adv", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
 				// Hide Window
 				destroywindow(1);
 			});
@@ -148,7 +148,7 @@
 			// Fire search
 			$('#loading_searchadv').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 			$('#loading_searchadv2').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa + '&searchtype=adv&folder_id=' + folderid + '&searchtext=' + escape(searchtext) + '&on_day=' + document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value + '&on_month=' + document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value + '&on_year=' + document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, function(){
+			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa, { searchtype: "adv", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
 				// Hide Window
 				destroywindow(1);
 			});
@@ -170,7 +170,7 @@
 			// Fire search
 			$('#loading_searchadv').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 			$('#loading_searchadv2').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa + '&searchtype=aud&folder_id=' + folderid + '&searchtext=' + escape(searchtext) + '&on_day=' + document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value + '&on_month=' + document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value + '&on_year=' + document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, function(){
+			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa, { searchtype: "adv", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
 				// Hide Window
 				destroywindow(1);
 			});
@@ -192,7 +192,7 @@
 			// Fire search
 			$('#loading_searchadv').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 			$('#loading_searchadv2').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa + '&thetype=all&folder_id=' + folderid + '&searchtext=' + escape(searchtext) + '&on_day=' + document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value + '&on_month=' + document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value + '&on_year=' + document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, function(){
+			$('#rightside').load('<cfoutput>#myself#</cfoutput>' + thefa, { thetype: "all", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
 				// Hide Window
 				destroywindow(1);
 			});
@@ -209,15 +209,15 @@
 	function subadvfields(theform){
 		// Get values
 		var searchtext = '';
-		var searchfor = escape(document.forms[theform].searchfor.value);
-		var keywords = escape(document.forms[theform].keywords.value);
-		var description = escape(document.forms[theform].description.value);
-		var filename = escape(document.forms[theform].filename.value);
-		var extension = escape(document.forms[theform].extension.value);
-		var rawmetadata = escape(document.forms[theform].rawmetadata.value);
+		var searchfor = document.forms[theform].searchfor.value;
+		var keywords = document.forms[theform].keywords.value;
+		var description = document.forms[theform].description.value;
+		var filename = document.forms[theform].filename.value;
+		var extension = document.forms[theform].extension.value;
+		var rawmetadata = document.forms[theform].rawmetadata.value;
 		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
-			var value_#cfid# = escape(document.forms[theform].cf#cfid#.value);
+			var value_#cfid# = document.forms[theform].cf#cfid#.value;
 		</cfoutput></cfloop>
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Put together the search
@@ -276,12 +276,12 @@
 	}
 	function subadvfieldsdoc(theform,searchtext){
 		// Get values
-		var author = escape(document.forms[theform].author.value);
-		var authorsposition = escape(document.forms[theform].authorsposition.value);
-		var captionwriter = escape(document.forms[theform].captionwriter.value);
-		var webstatement = escape(document.forms[theform].webstatement.value);
-		var rights = escape(document.forms[theform].rights.value);
-		var rightsmarked = escape(document.forms[theform].rightsmarked.value);
+		var author = document.forms[theform].author.value;
+		var authorsposition = document.forms[theform].authorsposition.value;
+		var captionwriter = document.forms[theform].captionwriter.value;
+		var webstatement = document.forms[theform].webstatement.value;
+		var rights = document.forms[theform].rights.value;
+		var rightsmarked = document.forms[theform].rightsmarked.value;
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Put together the search
 		if (author != '') var author = 'author:' + author;
@@ -331,39 +331,39 @@
 	}
 	function subadvfieldsimg(theform,searchtext){
 		// Get values
-		var subjectcode = escape(document.forms[theform].subjectcode.value);
-		var creator = escape(document.forms[theform].creator.value);
-		var title = escape(document.forms[theform].title.value);
-		var authorsposition = escape(document.forms[theform].authorsposition.value);
-		var captionwriter = escape(document.forms[theform].captionwriter.value);
-		var ciadrextadr = escape(document.forms[theform].ciadrextadr.value);
-		var category = escape(document.forms[theform].category.value);
-		var supplementalcategories = escape(document.forms[theform].supplementalcategories.value);
-		var urgency = escape(document.forms[theform].urgency.value);
-		var ciadrcity = escape(document.forms[theform].ciadrcity.value);
-		var ciadrctry = escape(document.forms[theform].ciadrctry.value);
-		var location = escape(document.forms[theform].location.value);
-		var ciadrpcode = escape(document.forms[theform].ciadrpcode.value);
-		var ciemailwork = escape(document.forms[theform].ciemailwork.value);
-		var ciurlwork = escape(document.forms[theform].ciurlwork.value);
-		var citelwork = escape(document.forms[theform].citelwork.value);
-		var intellectualgenre = escape(document.forms[theform].intellectualgenre.value);
-		var instructions = escape(document.forms[theform].instructions.value);
-		var source = escape(document.forms[theform].source.value);
-		var usageterms = escape(document.forms[theform].usageterms.value);
-		var copyrightstatus = escape(document.forms[theform].copyrightstatus.value);
-		var transmissionreference = escape(document.forms[theform].transmissionreference.value);
-		var webstatement = escape(document.forms[theform].webstatement.value);
-		var headline = escape(document.forms[theform].headline.value);
-		var datecreated = escape(document.forms[theform].datecreated.value);
-		var city = escape(document.forms[theform].city.value);
-		var ciadrregion = escape(document.forms[theform].ciadrregion.value);
-		var country = escape(document.forms[theform].country.value);
-		var countrycode = escape(document.forms[theform].countrycode.value);
-		var scene = escape(document.forms[theform].scene.value);
-		var state = escape(document.forms[theform].state.value);
-		var credit = escape(document.forms[theform].credit.value);
-		var rights = escape(document.forms[theform].rights.value);
+		var subjectcode = document.forms[theform].subjectcode.value;
+		var creator = document.forms[theform].creator.value;
+		var title = document.forms[theform].title.value;
+		var authorsposition = document.forms[theform].authorsposition.value;
+		var captionwriter = document.forms[theform].captionwriter.value;
+		var ciadrextadr = document.forms[theform].ciadrextadr.value;
+		var category = document.forms[theform].category.value;
+		var supplementalcategories = document.forms[theform].supplementalcategories.value;
+		var urgency = document.forms[theform].urgency.value;
+		var ciadrcity = document.forms[theform].ciadrcity.value;
+		var ciadrctry = document.forms[theform].ciadrctry.value;
+		var location = document.forms[theform].location.value;
+		var ciadrpcode = document.forms[theform].ciadrpcode.value;
+		var ciemailwork = document.forms[theform].ciemailwork.value;
+		var ciurlwork = document.forms[theform].ciurlwork.value;
+		var citelwork = document.forms[theform].citelwork.value;
+		var intellectualgenre = document.forms[theform].intellectualgenre.value;
+		var instructions = document.forms[theform].instructions.value;
+		var source = document.forms[theform].source.value;
+		var usageterms = document.forms[theform].usageterms.value;
+		var copyrightstatus = document.forms[theform].copyrightstatus.value;
+		var transmissionreference = document.forms[theform].transmissionreference.value;
+		var webstatement = document.forms[theform].webstatement.value;
+		var headline = document.forms[theform].headline.value;
+		var datecreated = document.forms[theform].datecreated.value;
+		var city = document.forms[theform].city.value;
+		var ciadrregion = document.forms[theform].ciadrregion.value;
+		var country = document.forms[theform].country.value;
+		var countrycode = document.forms[theform].countrycode.value;
+		var scene = document.forms[theform].scene.value;
+		var state = document.forms[theform].state.value;
+		var credit = document.forms[theform].credit.value;
+		var rights = document.forms[theform].rights.value;
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Put together the search
 		if (subjectcode != '') var subjectcode = 'subjectcode:' + subjectcode;

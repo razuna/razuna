@@ -126,7 +126,7 @@
 			}
 			else {
 				$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" style="padding:0px;">');
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.share_search&searchtext=' + escape(theentry) + '&thetype=' + thetype + '&fid=' + thefid, function(){
+				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.share_search', {searchtext: theentry, thetype: thetype, fid: thefid}, function(){
 					$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/search_16.png" border="0" onclick="checkentry();" class="ddicon">');
 				});
 			}

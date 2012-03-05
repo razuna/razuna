@@ -158,7 +158,8 @@
 			else {
 				$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" style="padding:0px;">');
 				//loadcontent('rightside','<cfoutput>#myself#</cfoutput>c.search_simple&folder_id=0&searchtext=' + escape(theentry) + '&thetype=' + thetype);
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple&folder_id=0&searchtext=' + escape(theentry) + '&thetype=' + thetype, function(){
+				// We are now using POST for the search field (much more compatible then a simple laod for foreign chars)
+				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', { searchtext: theentry, folder_id: 0, thetype: thetype }, function(){
 					$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/search_16.png" border="0" onclick="checkentry();" class="ddicon">');
 				});
 			}
