@@ -120,6 +120,8 @@
 		</cfquery>
 	<!--- Other DB's --->
 	<cfelse>
+		<!--- MySQL Offset --->
+		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumns##max#" cachedomain="#session.theuserid#_audios">
 		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>
@@ -146,7 +148,7 @@
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
 				ORDER BY LOWER(a.aud_name) ASC
-				LIMIT #session.offset#, #session.rowmaxpage#
+				LIMIT #mysqloffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>

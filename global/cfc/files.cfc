@@ -181,6 +181,8 @@
 			</cfquery>
 		<!--- Other DB's --->
 		<cfelse>
+			<!--- MySQL Offset --->
+			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##Arguments.ColumnList##max#" cachedomain="#session.theuserid#_files">
 			SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
@@ -211,7 +213,7 @@
 				ORDER BY LOWER(file_name) ASC
 				<!--- Show the limit only if pages is null or current (from print) --->
 				<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
-					LIMIT #session.offset#, #session.rowmaxpage#
+					LIMIT #mysqloffset#, #session.rowmaxpage#
 				</cfif>
 			<!--- MSSQL --->
 			<cfelseif variables.database EQ "mssql">

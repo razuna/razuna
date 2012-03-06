@@ -84,6 +84,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
+	<!--- MySQL Offset --->
+	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_users#session.hostid##arguments.thestruct.logsection##arguments.thestruct.logaction##session.offset_log#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
@@ -144,7 +146,7 @@
 			GROUP BY l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, l.log_ip, l.log_id, l.log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #session.offset_log#, #session.rowmaxpage_log#
+				LIMIT #mysqloffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -182,6 +184,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
+	<!--- MySQL Offset --->
+	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- this is also called from individual asset log entries thus we have a id in the struct --->
 	<cfif !structkeyexists(arguments.thestruct,"id")>
 		<cfset arguments.thestruct.id = 0>
@@ -265,7 +269,7 @@
 			user_first_name, user_last_name
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #session.offset_log#, #session.rowmaxpage_log#
+				LIMIT #mysqloffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -307,6 +311,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
+	<!--- MySQL Offset --->
+	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_folders#session.hostid##arguments.thestruct.logaction##session.offset_log#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
@@ -370,7 +376,7 @@
 			l.log_id, l.log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #session.offset_log#, #session.rowmaxpage_log#
+				LIMIT #mysqloffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -407,6 +413,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
+	<!--- MySQL Offset --->
+	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_searches#session.hostid##session.offset_log#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
@@ -455,7 +463,7 @@
 			log_id, log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #session.offset_log#, #session.rowmaxpage_log#
+				LIMIT #mysqloffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
@@ -511,6 +519,8 @@
 		<cfset var min = session.offset_log * session.rowmaxpage_log>
 		<cfset var max = (session.offset_log + 1) * session.rowmaxpage_log>
 	</cfif>
+	<!--- MySQL Offset --->
+	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_errors#session.hostid##session.offset_log#" cachedomain="#session.theuserid#_log">
 		<!--- Oracle --->
@@ -554,7 +564,7 @@
 			GROUP BY id, err_date, host_id
 			ORDER BY err_date DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #session.offset_log#, #session.rowmaxpage_log#
+				LIMIT #mysqloffset#, #session.rowmaxpage_log#
 			</cfif>
 		</cfif>
 	</cfquery>
