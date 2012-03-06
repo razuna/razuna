@@ -2257,6 +2257,8 @@
 		</cfquery>
 	<!--- Other DB's --->
 	<cfelse>
+		<!--- MySQL Offset --->
+		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid#getallassets#arguments.thestruct.folder_id##session.offset##max##arguments.thestruct.thisview#" cachedomain="#session.theuserid#_assets">
 		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>i.img_id id, i.img_filename filename, 
@@ -2361,7 +2363,7 @@
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<!--- MySQL / H2 --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #session.offset#,#session.rowmaxpage#
+				LIMIT #mysqloffset#,#session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>
