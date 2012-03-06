@@ -89,7 +89,7 @@
 				<span style="padding-left:30px;">
 					<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
 					Pages: 
-						<select id="thepagelist" onChange="showloadinggif();loadcontent('#thediv#', $('##thepagelist').val());">
+						<select id="thepagelist#kind#" onChange="showloadinggif();loadcontent('#thediv#', $('##thepagelist#kind# :selected').val());">
 						<cfloop from="1" to="#thepage#" index="i">
 							<cfset loopoffset = i - 1>
 							<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&offset=#loopoffset#&showsubfolders=#attributes.showsubfolders#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
