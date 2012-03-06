@@ -350,7 +350,7 @@
 <!--- GET GLOBAL Settings --->
 <cffunction name="get_global" access="remote" returnType="query">
 	<!--- Select --->
-	<cfquery datasource="razuna_default" name="qry" cachename="razconfig">
+	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, 
 	conf_nirvanix_master_pass, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
@@ -484,8 +484,6 @@
 		)
 		</cfquery>
 	</cfif>
-	<!--- Flush Cache --->
-	<cfquery datasource="razuna_default" action="flushall" cachename="razconfig" />
 </cffunction>
 
 <!--- Update TOOLS --->
@@ -929,7 +927,7 @@
 	<cfargument name="pathoneup" default="" required="yes" type="string">
 	<!--- Check DB --->
 	<cftry>
-		<cfquery datasource="razuna_default" name="qry" cachename="razconfig">
+		<cfquery datasource="razuna_default" name="qry">
 		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
 		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
 		conf_rendering_farm, conf_serverid
@@ -996,10 +994,8 @@
 			'#createuuid()#'
 			)
 			</cfquery>
-			<!--- Flush Cache --->
-			<cfquery datasource="razuna_default" action="flushall" cachename="razconfig" />
 			<!--- Query again --->
-			<cfquery datasource="razuna_default" name="qry" cachename="razconfig">
+			<cfquery datasource="razuna_default" name="qry">
 			SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
 			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
 			conf_aws_location, conf_rendering_farm, conf_serverid
@@ -1056,8 +1052,6 @@
 		UPDATE razuna_config
 		SET conf_serverid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 		</cfquery>
-		<!--- Flush Cache --->
-		<cfquery datasource="razuna_default" action="flushall" cachename="razconfig" />
 		<!--- Set the ID into application scope --->
 		<cfset application.razuna.serverid = theid>
 	<cfelse>
@@ -1084,7 +1078,7 @@
 <!--- PARSE THE DEFAULT CONFIGURATION --->
 <cffunction name="getconfigdefaultapi" output="false">
 	<!--- Query --->
-	<cfquery datasource="razuna_default" name="qry" cachename="razconfig">
+	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_nirvanix_url_services,
 	conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
@@ -1106,7 +1100,7 @@
 <!--- PARSE THE DEFAULT CONFIGURATION --->
 <cffunction name="getconfigdefault" output="false">
 	<!--- Query --->
-	<cfquery datasource="razuna_default" name="qry" cachename="razconfig">
+	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
 	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
@@ -1466,8 +1460,6 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	UPDATE razuna_config
 	SET conf_firsttime = #arguments.theboolean#
 	</cfquery>
-	<!--- Flush Cache --->
-	<cfquery datasource="razuna_default" action="flushall" cachename="razconfig" />
 	<cfreturn />
 </cffunction>
 
