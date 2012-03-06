@@ -26,6 +26,8 @@
 <cfoutput>
 	<form name="assetemail" id="assetemail">
 	<table border="0" cellpadding="0" cellspacing="0" width="600">
+		<input type="hidden" name="fa" value="c.asset_add_email_show">
+		<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 		<tr>
 			<td colspan="2">#defaultsObj.trans("email_desc")#</td>
 		</tr>
@@ -34,19 +36,19 @@
 		</tr>
 		<tr>
 			<td nowrap="true" width="120">#defaultsObj.trans("email_mail_server")#</td>
-			<td width="480"><input name="email_server" type="text" size="40" tabindex="1" value="<cfif structkeyexists(session,"email_server")>#session.email_server#</cfif>"></td>
+			<td width="480"><input name="email_server" id="email_server" type="text" size="40" tabindex="1" value="<cfif structkeyexists(session,"email_server")>#session.email_server#</cfif>"></td>
 		</tr>
 		<tr>
 			<td nowrap="true">#defaultsObj.trans("email_address")#</td>
-			<td><input name="email_address" type="text" size="40" tabindex="2" value="<cfif structkeyexists(session,"email_address")>#session.email_address#</cfif>"></td>
+			<td><input name="email_address" id="email_address" type="text" size="40" tabindex="2" value="<cfif structkeyexists(session,"email_address")>#session.email_address#</cfif>"></td>
 		</tr>
 		<tr>
 			<td nowrap="true">#defaultsObj.trans("password")#</td>
-			<td><input name="email_pass" type="password" size="40" tabindex="3"></td>
+			<td><input name="email_pass" id="email_pass" type="password" size="40" tabindex="3"></td>
 		</tr>
 		<tr>
 			<td nowrap="true" style="padding-bottom:15px;">#defaultsObj.trans("email_subject")#</td>
-			<td style="padding-bottom:15px;"><input name="email_subject" type="text" size="40" tabindex="4" value="<cfif structkeyexists(session,"email_subject")>#session.email_subject#</cfif>"></td>
+			<td style="padding-bottom:15px;"><input name="email_subject" id="email_subject" type="text" size="40" tabindex="4" value="<cfif structkeyexists(session,"email_subject")>#session.email_subject#</cfif>"></td>
 		</tr>
 		<tr>
 			<td colspan="2"><div style="float:left;"><input type="button" name="cancel" value="#defaultsObj.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><input type="button" name="submit" value="#defaultsObj.trans("button_show_emails")#" class="button" onclick="submitassetemailshow();"></div></td>
@@ -56,8 +58,14 @@
 	<!--- JS for form --->
 	<script language="javascript">
 		function submitassetemailshow() {
-			var items = formserialize("assetemail");
-			loadcontent('addemail','#myself#c.asset_add_email_show&folder_id=#attributes.folder_id#&' + items);
+			var server = $('##email_server').val();
+			var email = $('##email_address').val();
+			var pass = $('##email_pass').val();
+			var sub = $('##email_subject').val();
+			//$('##addemail').load('#myself#c.asset_add_email_show', { folder_id: "#attributes.folder_id#", email_server: server, email_address: email, email_pass: pass, email_subject: sub });
+			var params = $('##assetemail').formParams();
+			$('##addemail').load('#self#', params );
+			
 		}
 	</script>
 </cfoutput>

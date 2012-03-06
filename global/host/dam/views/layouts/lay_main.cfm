@@ -80,6 +80,7 @@
 <script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js"></script>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
