@@ -110,7 +110,7 @@
 							<span style="padding-left:30px;">
 							<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
 							Pages: 
-								<select id="thepagelist" onChange="loadcontent('rightside', $('##thepagelist').val());">
+								<select id="thepagelistw" onChange="loadcontent('rightside', $('##thepagelistw :selected').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>
 									<option value="#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
