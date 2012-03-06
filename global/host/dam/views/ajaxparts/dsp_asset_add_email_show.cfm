@@ -34,22 +34,22 @@
 		<tr>
 			<th colspan="5">eMail Messages</th>
 		</tr>
-		<cfif qry_emails.error EQ "T">
+		<cfif qry_emails.error NEQ "F">
 			<tr>
-				<td>#defaultsObj.trans("email_error")#</td>
+				<td>#defaultsObj.trans("email_error")#<br /><br /><span style="color:red;font-weight:bold;">#qry_emails.error#</span></td>
 			</tr>
 			<tr>
 				<td><a href="##" onclick="loadcontent('addemail','#myself#c.asset_add_email&folder_id=#folder_id#');return false;">#defaultsObj.trans("back")#</a></td>
 			</tr>
 		<cfelse>
 			<cfloop query="qry_emails.qryheaders">
-			<tr>
-				<td width="1%" nowrap><input type="checkbox" name="emailid" value="#messagenumber#"></td>
-				<td width="100%" nowrap><a href="##" onClick="showwindow('#myself#c.asset_add_email_show_mail&mailid=#messagenumber#&pathhere=#urlencodedformat(thispath)#','#defaultsObj.trans("header_add_asset_server")#',800,2);"><b><u>#subject#</u></b></a></td>
-				<td width="1%" nowrap>#from#</td>
-				<td width="1%" nowrap>#date#</td>
-				<td width="1%" nowrap><a href="##" onClick="showwindow('#myself#ajax.remove_email&mailid=#messagenumber#&folder_id=#attributes.folder_id#','#defaultsObj.trans("header_add_asset_server")#',400,2);"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
-			</tr>
+				<tr>
+					<td width="1%" nowrap><input type="checkbox" name="emailid" value="#messagenumber#"></td>
+					<td width="100%" nowrap><a href="##" onClick="showwindow('#myself#c.asset_add_email_show_mail&mailid=#messagenumber#&pathhere=#urlencodedformat(thispath)#','#defaultsObj.trans("header_add_asset_server")#',800,2);"><b><u>#subject#</u></b></a></td>
+					<td width="1%" nowrap>#from#</td>
+					<td width="1%" nowrap>#date#</td>
+					<td width="1%" nowrap><a href="##" onClick="showwindow('#myself#ajax.remove_email&mailid=#messagenumber#&folder_id=#attributes.folder_id#','#defaultsObj.trans("header_add_asset_server")#',400,2);"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
+				</tr>
 			</cfloop>
 			<tr>
 				<td colspan="5"><input type="button" name="back" value="#defaultsObj.trans("back")#" onclick="loadcontent('addemail','#myself#c.asset_add_email&folder_id=#folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addemail','#myself#c.asset_add_email_show&folder_id=#attributes.folder_id#&email_server=#attributes.email_server#&email_address=#attributes.email_address#&email_pass=#attributes.email_pass#&email_subject=#attributes.email_subject#');"> <input type="submit" name="submit" value="#defaultsObj.trans("button_add_email_attachment")#" class="button"></td>

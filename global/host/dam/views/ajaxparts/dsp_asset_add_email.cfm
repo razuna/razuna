@@ -51,19 +51,18 @@
 			<td style="padding-bottom:15px;"><input name="email_subject" id="email_subject" type="text" size="40" tabindex="4" value="<cfif structkeyexists(session,"email_subject")>#session.email_subject#</cfif>"></td>
 		</tr>
 		<tr>
-			<td colspan="2"><div style="float:left;"><input type="button" name="cancel" value="#defaultsObj.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><input type="button" name="submit" value="#defaultsObj.trans("button_show_emails")#" class="button" onclick="submitassetemailshow();"></div></td>
+			<td colspan="2"><div style="float:left;"><input type="button" name="cancel" value="#defaultsObj.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div id="subemail" style="float:right;"><input type="button" name="submit" value="#defaultsObj.trans("button_show_emails")#" class="button" onclick="submitassetemailshow();"></div></td>
 		</tr>
 	</table>
 	</form>
 	<!--- JS for form --->
 	<script language="javascript">
 		function submitassetemailshow() {
-			var server = $('##email_server').val();
-			var email = $('##email_address').val();
-			var pass = $('##email_pass').val();
-			var sub = $('##email_subject').val();
-			//$('##addemail').load('#myself#c.asset_add_email_show', { folder_id: "#attributes.folder_id#", email_server: server, email_address: email, email_pass: pass, email_subject: sub });
+			// Waiting gif
+			$('##subemail').html('<img src="#dynpath#/global/host/dam/images/loading-bars.gif" alt="loading-bars" width="128" height="15" />');
+			// Get values
 			var params = $('##assetemail').formParams();
+			// send it off
 			$('##addemail').load('#self#', params );
 			
 		}

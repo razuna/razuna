@@ -174,7 +174,7 @@
 			<!--- Check that there is an attachment. If so loop over it --->
 			<cfset numattachments = listlen(attachments)>
 			<!--- If the number of attachments is greater then 0 continue --->
-			<cfif #numattachments# GT 0>
+			<cfif numattachments GT 0>
 				<!--- Loop over the attachments and get one by one --->
 				<cfloop list="#attachmentfiles#" delimiters="," index="at">
 					<!--- Sometimes attachments contain unwanted file --->
@@ -196,7 +196,7 @@
 						<!--- Copy the file into the temp dir --->
 						<cffile action="copy" source="#arguments.thestruct.thepath#/incoming/emails/#arguments.thestruct.thefilename#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" mode="775">
 						<!--- Get the filesize --->
-						<cfinvoke component="global" method="resizeImage" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
+						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 						<!--- MD5 Hash --->
 						<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						<!--- Add to temp db --->
@@ -225,8 +225,8 @@
 					</cfif>
 					<!--- Remove the attachment from the email folder. This is on purpose outside of the if so that we remove unwanted attachments as well --->
 					<cftry>
-					<cffile action="delete" file="#arguments.thestruct.thepath#/incoming/emails/#arguments.thestruct.thefilename#">
-					<cfcatch type="any"></cfcatch>
+						<cffile action="delete" file="#arguments.thestruct.thepath#/incoming/emails/#arguments.thestruct.thefilename#">
+						<cfcatch type="any"></cfcatch>
 					</cftry>
 				</cfloop>
 			</cfif>

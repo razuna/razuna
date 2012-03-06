@@ -54,6 +54,7 @@
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.jquery.min.js" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.formparams.js" type="text/javascript"></script>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css" />

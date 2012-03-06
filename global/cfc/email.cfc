@@ -46,7 +46,7 @@
 		<cfset qry.qryheaders = qryheaders>
 		<cfset qry.error = "F">
 	<cfcatch type="any">
-		<cfset qry.error = "T">
+		<cfset qry.error = cfcatch.detail>
 	</cfcatch>
 	</cftry>
 	<cfreturn qry>
