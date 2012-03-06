@@ -1069,19 +1069,55 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		</cftry>
 		<!--- Get information according to filetype --->
 		<cfif xmp.filetype EQ "psd">
-			<cfset xmp.orgwidth = trim(#thexml[1]["Photoshop:ImageWidth"].xmltext#)>
-			<cfset xmp.orgheight = trim(#thexml[1]["Photoshop:ImageHeight"].xmltext#)>
-			<cfset xmp.colorspace = trim(#thexml[1]["Photoshop:ColorMode"].xmltext#)>
-			<cfset xmp.xres = trim(#thexml[1]["Photoshop:XResolution"].xmltext#)>
-			<cfset xmp.yres = trim(#thexml[1]["Photoshop:YResolution"].xmltext#)>
-			<cfset xmp.resunit = trim(#thexml[1]["Photoshop:DisplayedUnitsX"].xmltext#)>
+			<cftry>
+				<cfset xmp.orgwidth = trim(#thexml[1]["Photoshop:ImageWidth"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.orgheight = trim(#thexml[1]["Photoshop:ImageHeight"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.colorspace = trim(#thexml[1]["Photoshop:ColorMode"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.xres = trim(#thexml[1]["Photoshop:XResolution"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.yres = trim(#thexml[1]["Photoshop:YResolution"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.resunit = trim(#thexml[1]["Photoshop:DisplayedUnitsX"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		<cfelseif xmp.filetype EQ "png">
-			<cfset xmp.orgwidth = trim(#thexml[1]["PNG:ImageWidth"].xmltext#)>
-			<cfset xmp.orgheight = trim(#thexml[1]["PNG:ImageHeight"].xmltext#)>
-			<cfset xmp.colorspace = trim(#thexml[1]["PNG:ColorType"].xmltext#)>
-			<cfset xmp.xres = trim(#thexml[1]["PNG:PixelsPerUnitX"].xmltext#)>
-			<cfset xmp.yres = trim(#thexml[1]["PNG:PixelsPerUnitY"].xmltext#)>
-			<cfset xmp.resunit = trim(#thexml[1]["PNG:PixelUnits"].xmltext#)>
+			<cftry>
+				<cfset xmp.orgwidth = trim(#thexml[1]["PNG:ImageWidth"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.orgheight = trim(#thexml[1]["PNG:ImageHeight"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.colorspace = trim(#thexml[1]["PNG:ColorType"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.xres = trim(#thexml[1]["PNG:PixelsPerUnitX"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.yres = trim(#thexml[1]["PNG:PixelsPerUnitY"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+			<cftry>
+				<cfset xmp.resunit = trim(#thexml[1]["PNG:PixelUnits"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		<cfelse>
 			<!--- Width --->
 			<cftry>
