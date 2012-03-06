@@ -438,18 +438,33 @@
 <!--- THREAD: CREATE THE PREVIEW IMAGE AND VIDEO --------------------------------------------------------->
 <cffunction name="create_previews" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- If we are MP4 run it trough MP4Box --->
+	<cfif arguments.thestruct.qryfile.extension EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">
+		<cfset var ttmp4 = replace(createuuid(),"-","","all")>
+		<cfif arguments.thestruct.isWindows>
+			<cfset arguments.thestruct.themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box.exe">
+		<cfelse>
+			<cfset arguments.thestruct.themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box">
+		</cfif>
+		<cfthread name="#ttmp4#" intstruct="#arguments.thestruct#">
+			<cfexecute name="#attributes.intstruct.themp4#" arguments="-inter 500 #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.qryfile.filename#" timeout="9999" />
+		</cfthread>
+		<!--- Wait for the thread above until the file is fully converted --->
+		<cfthread action="join" name="#ttmp4#" />
+	</cfif>
 	<!--- RFS --->
 	<cfif !application.razuna.rfs>
 		<cftry>
 			<!--- Choose platform --->
 			<cfif arguments.thestruct.isWindows>
-				<cfset theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
-				<cfset theasset = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#""">
-				<cfset theorg = """#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#""">
+				<cfset var theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+				<cfset var theasset = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#""">
+				<cfset var theorg = """#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#""">
 			<cfelse>
-				<cfset theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-				<cfset theasset = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#">
-				<cfset theorg = "#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#">
+				<cfset var theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+				<cfset var themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box">
+				<cfset var theasset = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#">
+				<cfset var theorg = "#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#">
 				<cfset theorg = replace(theorg," ","\ ","all")>
 				<cfset theorg = replace(theorg,"&","\&","all")>
 				<cfset theorg = replace(theorg,"'","\'","all")>
@@ -489,6 +504,7 @@
 			<cfif arguments.thestruct.importpath AND application.razuna.storage EQ "local">
 				<cffile action="move" source="#theorg#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#" mode="775" />
 			</cfif>
+			<!--- cfcatch --->
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
 			</cfcatch>
@@ -1136,7 +1152,7 @@
 					<cfset arguments.thestruct.thispreviewvideo = thispreviewvideo>
 					<cfset arguments.thestruct.themp4 = themp4>
 					<cfthread name="#ttmp4#" intstruct="#arguments.thestruct#">
-						<cfexecute name="#attributes.intstruct.themp4#" arguments="#attributes.intstruct.thispreviewvideo#" timeout="9999" />
+						<cfexecute name="#attributes.intstruct.themp4#" arguments="-inter 500 #attributes.intstruct.thispreviewvideo#" timeout="9999" />
 					</cfthread>
 					<!--- Wait for the thread above until the file is fully converted --->
 					<cfthread action="join" name="#ttmp4#" />
