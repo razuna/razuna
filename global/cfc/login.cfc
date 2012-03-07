@@ -294,6 +294,7 @@ Password: #randompassword#
 	<!--- FUNCTION: RazunaUpload SessionToken --->
 	<cffunction name="razunauploadsession" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
+		<!--- Create token --->
 		<cfset var thetoken = replace(createuuid(),"-","","ALL")>
 		<!--- Append to DB --->
 		<cfquery datasource="#variables.dsn#">
@@ -311,6 +312,13 @@ Password: #randompassword#
 		FROM hosts
 		WHERE host_id = <cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
+		<!--- Remove old entries --->
+		<cfthread>
+			<cfquery datasource="#application.razuna.api.dsn#">
+			DELETE FROM webservices
+			WHERE timeout < <cfqueryparam value="#DateAdd("h", -6, now())#" cfsqltype="cf_sql_timestamp">
+			</cfquery>
+		</cfthread>
 		<!--- Return --->
 		<cfreturn thetoken>
 	</cffunction>

@@ -895,8 +895,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset ts.assetpath = arguments.thestruct.assetpath>
 	<cfset ts.database = arguments.thestruct.database>
 	<cfset ts.dsn = application.razuna.datasource>
-	<cfset var tt = Createuuid()>
-	<cfthread name="#tt#" intvars="#ts#">
+	<cfthread intvars="#ts#">
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -6, "#now()#")>
 		<!--- Select temp assets which are older then 6 hours --->
@@ -904,8 +903,8 @@ This is the main function called directly by a single upload else from addassets
 		SELECT path, tempid
 		FROM #session.hostdbprefix#assets_temp
 		WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-		<!--- AND link_kind <cfif attributes.intvars.database EQ "oracle" OR attributes.intvars.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="lan"> --->
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<!--- AND link_kind <cfif attributes.intvars.database EQ "oracle" OR attributes.intvars.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="lan">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->
 		</cfquery>
 		<!--- Loop trough the found records --->
 		<cfloop query="qry">
@@ -913,7 +912,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfquery datasource="#attributes.intvars.dsn#">
 			DELETE FROM #session.hostdbprefix#assets_temp
 			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->
 			</cfquery>
 			<!--- Delete on the file system --->
 			<cfif DirectoryExists(path)>
