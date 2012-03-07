@@ -31,16 +31,16 @@
 	<cfloop index="thenr" delimiters="," list="#arguments.thestruct.favid#">
 		<!--- If we come from a overview we have numbers with the type --->
 		<cfif thenr CONTAINS "-">
-			<cfset arguments.thestruct.favid = listfirst(thenr,"-")>
-			<cfset arguments.thestruct.favkind = listlast(thenr,"-")>
+			<cfset favid = listfirst(thenr,"-")>
+			<cfset favkind = listlast(thenr,"-")>
 		</cfif>
 		<!--- Add the favorites to the user table but first check that the same one does not exist --->
 		<cfquery datasource="#variables.dsn#" name="here">
 		SELECT fav_id
 		FROM #session.hostdbprefix#users_favorites
-		WHERE fav_id = <cfqueryparam value="#arguments.thestruct.favid#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE fav_id = <cfqueryparam value="#favid#" cfsqltype="CF_SQL_VARCHAR">
 		AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-		AND fav_type = <cfqueryparam value="#arguments.thestruct.favkind#" cfsqltype="cf_sql_varchar">
+		AND fav_kind = <cfqueryparam value="#favkind#" cfsqltype="cf_sql_varchar">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- no record found insert the fav id --->
@@ -64,8 +64,8 @@
 			VALUES(
 			<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#arguments.thestruct.favtype#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.favid#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.thestruct.favkind#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#favid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#favkind#" cfsqltype="cf_sql_varchar">,
 			<cfqueryparam value="#neworder#" cfsqltype="cf_sql_numeric">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
