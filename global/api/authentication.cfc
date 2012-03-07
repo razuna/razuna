@@ -134,10 +134,12 @@
 			<!--- Set --->
 			<cfset var status = false>
 			<!--- Remove DB --->
-			<cfquery datasource="#application.razuna.api.dsn#">
-			DELETE FROM webservices
-			WHERE sessiontoken = <cfqueryparam value="#arguments.sessiontoken#" cfsqltype="cf_sql_varchar">
-			</cfquery>
+			<cfthread>
+				<cfquery datasource="#application.razuna.api.dsn#">
+				DELETE FROM webservices
+				WHERE timeout < <cfqueryparam value="#DateAdd("n", -31, now())#" cfsqltype="cf_sql_timestamp">
+				</cfquery>
+			</cfthread>
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>
@@ -164,10 +166,12 @@
 		<cfargument name="passhashed" type="numeric">
 		<cftry>
 			<!--- Remove records which are older then now minus 40 minutes --->
-			<cfquery datasource="#application.razuna.api.dsn#">
-			DELETE FROM webservices
-			WHERE timeout < <cfqueryparam value="#DateAdd("n", -40, now())#" cfsqltype="cf_sql_timestamp">
-			</cfquery>
+			<cfthread>
+				<cfquery datasource="#application.razuna.api.dsn#">
+				DELETE FROM webservices
+				WHERE timeout < <cfqueryparam value="#DateAdd("n", -40, now())#" cfsqltype="cf_sql_timestamp">
+				</cfquery>
+			</cfthread>
 			<!--- Query for the hostname --->
 			<cfset thecount = findoneof(".",arguments.hostname) - 1>
 			<cfset thesubdomain = mid(arguments.hostname,1,thecount)>
