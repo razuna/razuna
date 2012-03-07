@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
-	<cfset thestorageurl = "#cgi.context_path#/assets/#session.hostid#/">
+	<cfset thestorageurl = "//#cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
 <!--- Decide on extensions --->
 <cfif attributes.v EQ "o">
 	<cfset theext = qry_detail.img_extension>

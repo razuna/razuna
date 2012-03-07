@@ -95,7 +95,7 @@
 									</cfif>
 								</div>
 								<br>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;"><strong>#aud_name#</strong></a>
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;"><strong>#left(aud_name,50)#</strong></a>
 							<cfelse>
 								We are still working on the asset "#aud_name#"...
 								<br /><br>
