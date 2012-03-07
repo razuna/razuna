@@ -179,7 +179,10 @@
 			</cfif>
 		</cfif>
 		<cfcatch type="any">
-			<cfmail from="server@razuna.com" to="support@razuna.com" subject="error in sending eMail" type="html"><cfdump var="#cfcatch#"></cfmail>
+			<cfmail from="server@razuna.com" to="support@razuna.com" subject="error in sending eMail" type="html">
+				<cfdump var="#arguments#">
+				<cfdump var="#cfcatch#">
+			</cfmail>
 		</cfcatch>
 	</cftry>
 </cffunction>
