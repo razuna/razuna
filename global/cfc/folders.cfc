@@ -1796,14 +1796,14 @@
 	<cfargument name="thestruct" required="yes" type="struct">
 	<!--- Show assets from subfolders or not --->
 	<cfif session.showsubfolders EQ "T">
-		<cfinvoke method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.thestruct.folder_id#" database="#variables.database#" hostid="#session.hostid#" returnvariable="thefolders">
+		<cfinvoke method="getfoldersinlist" dsn="#application.razuna.datasource#" folder_id="#arguments.thestruct.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
 		<cfset thefolderlist = arguments.thestruct.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
 		<cfset thefolderlist = arguments.thestruct.folder_id & ",">
 	</cfif>
 	<!--- Images --->
 	<cfif arguments.thestruct.kind EQ "img">
-		<cfquery datasource="#variables.dsn#" name="total" cachename="img#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_images">
+		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="img#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_images">
 		SELECT count(img_id) as thetotal
 		FROM #session.hostdbprefix#images
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -1812,7 +1812,7 @@
 		</cfquery>
 	<!--- Videos --->
 	<cfelseif arguments.thestruct.kind EQ "vid">
-		<cfquery datasource="#variables.dsn#" name="total" cachename="vid#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_videos">
+		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="vid#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_videos">
 		SELECT count(vid_id) as thetotal
 		FROM #session.hostdbprefix#videos
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -1821,7 +1821,7 @@
 		</cfquery>
 	<!--- Audios --->
 	<cfelseif arguments.thestruct.kind EQ "aud">
-		<cfquery datasource="#variables.dsn#" name="total" cachename="aud#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_audios">
+		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="aud#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_audios">
 		SELECT count(aud_id) as thetotal
 		FROM #session.hostdbprefix#audios
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -1830,7 +1830,7 @@
 		</cfquery>
 	<!--- All Docs in this folder --->
 	<cfelseif arguments.thestruct.kind EQ "doc">
-		<cfquery datasource="#variables.dsn#" name="total" cachename="doc#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_files">
+		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="doc#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_files">
 		SELECT count(file_id) as thetotal
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -1838,7 +1838,7 @@
 		</cfquery>
 	<!--- Files --->
 	<cfelse>
-		<cfquery datasource="#variables.dsn#" name="total" cachename="doc#session.hostid##session.hostdbprefix#filetotaltype#arguments.thestruct.folder_id##arguments.thestruct.kind#" cachedomain="#session.theuserid#_files">
+		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="doc#session.hostid##session.hostdbprefix#filetotaltype#arguments.thestruct.folder_id##arguments.thestruct.kind#" cachedomain="#session.theuserid#_files">
 		SELECT count(file_id) as thetotal
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
