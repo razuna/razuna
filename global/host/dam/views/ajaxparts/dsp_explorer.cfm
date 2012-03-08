@@ -37,6 +37,7 @@
 			</cfif>
 			<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer');return false;" title="#defaultsObj.trans("tooltip_refresh_tree")#">#defaultsObj.trans("reload")#</a></p>
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+				<p><hr></p>
 				<cfif session.showmyfolder EQ "F">
 					<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">Show folders from all users</a></p>
 				<cfelse>
@@ -53,9 +54,9 @@
 	<div style="clear:both;"></div>
 	<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 		<cfif session.showmyfolder EQ "F">
-			<p style="padding-left:10px;">You only see your folders now. As an Administrator you have to option to see all folders from users. <a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">Click here to show all folders.</a></p>
+			<p style="padding-left:10px;"><strong>You only see your folders now.</strong><br /><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">Click here to show all folders.</a></p>
 		<cfelse>
-			<p style="padding-left:10px;">As an Administrator you can see all folders in the system. <a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=F');return false;" title="Click here to hide the personal folders of your users">Click here to only show your folders.</a></p>
+			<p style="padding-left:10px;"><strong>You see ALL folders now.</strong><br /><em>Tip: Roll over the folder to see who owns the folder.</em><br /><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=F');return false;" title="Click here to hide the personal folders of your users">Click here to show your folders only.</a></p>
 		</cfif>
 	</cfif>
 	
