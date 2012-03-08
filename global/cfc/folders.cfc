@@ -1663,11 +1663,11 @@
 	<cfargument name="host_id" default="" required="yes" type="numeric">
 	<!--- Set Values --->
 	<cfset session.showsubfolders = "F">
-	<cfset variables.dsn = arguments.apidsn>
 	<cfset session.hostdbprefix = arguments.apiprefix>
-	<cfset application.razuna.thedatabase = arguments.apidatabase>
 	<cfset session.hostid = arguments.host_id>
 	<cfset session.theuserid = arguments.host_id>
+	<cfset application.razuna.datasource = arguments.apidsn>
+	<cfset application.razuna.thedatabase = arguments.apidatabase>
 	<!--- Call function --->
 	<cfinvoke method="filetotalcount" folder_id="#arguments.folder_id#" theoverall="F" returnvariable="total">
 	<!--- Return --->
@@ -1683,11 +1683,11 @@
 	<cfargument name="host_id" default="" required="yes" type="numeric">
 	<!--- Set Values --->
 	<cfset session.showsubfolders = "F">
-	<cfset application.razuna.datasource = arguments.apidsn>
 	<cfset session.hostdbprefix = arguments.apiprefix>
-	<cfset application.razuna.thedatabase = arguments.apidatabase>
 	<cfset session.hostid = arguments.host_id>
 	<cfset session.theuserid = arguments.host_id>
+	<cfset application.razuna.datasource = arguments.apidsn>
+	<cfset application.razuna.thedatabase = arguments.apidatabase>
 	<!--- Set struct --->
 	<cfset totaltypes = structnew()>
 	<cfset arguments.thestruct = structnew()>
@@ -2592,8 +2592,8 @@
 	<!--- Tree for the Explorer --->
 	<cfif arguments.thestruct.actionismove EQ "F">
 		<cfoutput query="qRet">
-		<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>><a href="##" onclick="$('##rightside').load('index.cfm?fa=<cfif iscol EQ "T">c.collections<cfelse>c.folder</cfif>&col=F&folder_id=<cfif iscol EQ "T">col-</cfif>#folder_id#');" rel="prefetch"><ins>&nbsp;</ins>#folder_name#
-		<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif></cfif></a></li>
+		<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>><a href="##" onclick="$('##rightside').load('index.cfm?fa=<cfif iscol EQ "T">c.collections<cfelse>c.folder</cfif>&col=F&folder_id=<cfif iscol EQ "T">col-</cfif>#folder_id#');" rel="prefetch" title="<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">Folder of (#username#)</cfif></cfif></cfif>"><ins>&nbsp;</ins>#left(folder_name,40)#<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">*</cfif></cfif></cfif>
+		</a></li>
 		</cfoutput>
 	<!--- If we come from a move action --->
 	<cfelse>
