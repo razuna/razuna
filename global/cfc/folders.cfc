@@ -1735,7 +1735,7 @@
 		AND fi.folder_id_r IS NOT NULL
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND fi.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif arguments.theoverall EQ "F">
+		<cfif arguments.theoverall NEQ "F" AND arguments.folder_id NEQ "">
 			AND fi.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		)
@@ -1749,7 +1749,7 @@
 		AND i.folder_id_r IS NOT NULL
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif arguments.theoverall EQ "F">
+		<cfif arguments.theoverall NEQ "F" AND arguments.folder_id NEQ "">
 			AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		)
@@ -1763,7 +1763,7 @@
 		AND v.folder_id_r IS NOT NULL
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif arguments.theoverall EQ "F">
+		<cfif arguments.theoverall NEQ "F" AND arguments.folder_id NEQ "">
 			AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		) 
@@ -1777,14 +1777,14 @@
 		AND a.folder_id_r IS NOT NULL
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif arguments.theoverall EQ "F">
+		<cfif arguments.theoverall NEQ "F" AND arguments.folder_id NEQ "">
 			AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		) as
 		thetotal
 		<cfif application.razuna.thedatabase EQ "db2">
 			FROM sysibm.sysdummy1
-		<cfelseif application.razuna.thedatabase NEQ "mssql">
+		<cfelseif application.razuna.thedatabase EQ "oracle">
 			FROM dual
 		</cfif>
 	</cfquery>
@@ -1795,54 +1795,66 @@
 <cffunction name="filetotaltype" output="false">
 	<cfargument name="thestruct" required="yes" type="struct">
 	<!--- Show assets from subfolders or not --->
-	<cfif session.showsubfolders EQ "T">
-		<cfinvoke method="getfoldersinlist" dsn="#application.razuna.datasource#" folder_id="#arguments.thestruct.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
-		<cfset thefolderlist = arguments.thestruct.folder_id & "," & ValueList(thefolders.folder_id)>
-	<cfelse>
-		<cfset thefolderlist = arguments.thestruct.folder_id & ",">
+	<cfif arguments.thestruct.folder_id NEQ "">
+		<cfif session.showsubfolders EQ "T">
+			<cfinvoke method="getfoldersinlist" dsn="#application.razuna.datasource#" folder_id="#arguments.thestruct.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
+			<cfset thefolderlist = arguments.thestruct.folder_id & "," & ValueList(thefolders.folder_id)>
+		<cfelse>
+			<cfset thefolderlist = arguments.thestruct.folder_id & ",">
+		</cfif>
 	</cfif>
 	<!--- Images --->
 	<cfif arguments.thestruct.kind EQ "img">
 		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="img#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_images">
 		SELECT count(img_id) as thetotal
 		FROM #session.hostdbprefix#images
-		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (img_group IS NULL OR img_group = '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folder_id NEQ "">
+			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
 		</cfquery>
 	<!--- Videos --->
 	<cfelseif arguments.thestruct.kind EQ "vid">
 		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="vid#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_videos">
 		SELECT count(vid_id) as thetotal
 		FROM #session.hostdbprefix#videos
-		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (vid_group IS NULL OR vid_group = '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folder_id NEQ "">
+			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
 		</cfquery>
 	<!--- Audios --->
 	<cfelseif arguments.thestruct.kind EQ "aud">
 		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="aud#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_audios">
 		SELECT count(aud_id) as thetotal
 		FROM #session.hostdbprefix#audios
-		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (aud_group IS NULL OR aud_group = '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folder_id NEQ "">
+			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
 		</cfquery>
 	<!--- All Docs in this folder --->
 	<cfelseif arguments.thestruct.kind EQ "doc">
 		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="doc#session.hostdbprefix##session.hostid#filetotaltype#arguments.thestruct.folder_id#" cachedomain="#session.theuserid#_files">
 		SELECT count(file_id) as thetotal
 		FROM #session.hostdbprefix#files
-		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folder_id NEQ "">
+			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
 		</cfquery>
 	<!--- Files --->
 	<cfelse>
 		<cfquery datasource="#application.razuna.datasource#" name="total" cachename="doc#session.hostid##session.hostdbprefix#filetotaltype#arguments.thestruct.folder_id##arguments.thestruct.kind#" cachedomain="#session.theuserid#_files">
 		SELECT count(file_id) as thetotal
 		FROM #session.hostdbprefix#files
-		WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.thestruct.folder_id NEQ "">
+			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
 		AND 
 		<cfif arguments.thestruct.kind NEQ "other">
 			(
