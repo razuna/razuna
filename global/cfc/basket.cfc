@@ -396,7 +396,12 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<cfhttp url="#thiscloudurl#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#"></cfhttp>
+				<cftry>
+					<cfhttp url="#thiscloudurl#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#"></cfhttp>
+					<cfcatch type="any">
+						<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix error on download in basket" type="html"><cfdump var="#cfcatch#"></cfmail>
+					</cfcatch>
+				</cftry>
 				<cfthread name="#thethreadid#" />
 				<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
