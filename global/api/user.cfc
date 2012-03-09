@@ -24,7 +24,8 @@
 *
 --->
 <cfcomponent output="false" namespace="user">
-
+	
+	<!--- Add the user --->
 	<cffunction name="add" access="remote" output="false" returntype="string">
 		<cfargument name="sessiontoken" required="true">
 		<cfargument name="user_first_name" type="string">
@@ -131,30 +132,31 @@
 </Response></cfoutput>
 			</cfsavecontent>
 		</cfif>
-	<!--- No session found --->
-	<cfelse>
-		<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
-	</cfif>
-	<!--- Return --->
-	<cfreturn thexml>
-</cffunction>
+		<!--- No session found --->
+		<cfelse>
+			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
 
-<cffunction name="getuser" access="remote" output="false" returntype="string">
-	<cfargument name="sessiontoken" required="true">
-	<!--- Check sessiontoken --->
-	<cfinvoke component="authentication" method="checkdb" sessiontoken="#arguments.sessiontoken#" returnvariable="thesession">
-	<!--- Check to see if session is valid --->
-	<cfif thesession>
-		<!--- Query the user --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-		SELECT user_login_name, user_email, user_first_name, user_last_name
-		FROM users
-		WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.sessiontoken#"]#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
-		<!--- If user does not exist do the insert --->
-		<cfif qry.recordcount NEQ 0>
-			<!--- Create the XML --->
-			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+	<!--- Get this user information --->
+	<cffunction name="getuser" access="remote" output="false" returntype="string">
+		<cfargument name="sessiontoken" required="true">
+		<!--- Check sessiontoken --->
+		<cfinvoke component="authentication" method="checkdb" sessiontoken="#arguments.sessiontoken#" returnvariable="thesession">
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Query the user --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			SELECT user_login_name, user_email, user_first_name, user_last_name
+			FROM users
+			WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.sessiontoken#"]#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<!--- If user does not exist do the insert --->
+			<cfif qry.recordcount NEQ 0>
+				<!--- Create the XML --->
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 <Response>
 <responsecode>0</responsecode>
 <userid>#application.razuna.api.userid["#arguments.sessiontoken#"]#</userid>
@@ -163,10 +165,10 @@
 <firstname>#xmlformat(qry.user_first_name)#</firstname>
 <lastname>#xmlformat(qry.user_last_name)#</lastname>
 </Response></cfoutput>
-			</cfsavecontent>
-		<!--- User not found --->
-		<cfelse>
-			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+				</cfsavecontent>
+			<!--- User not found --->
+			<cfelse>
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 <Response>
 <responsecode>1</responsecode>
 <message>User with the ID could not be found</message>
@@ -174,11 +176,102 @@
 				</cfsavecontent>
 			</cfif>
 		<!--- No session found --->
-	<cfelse>
-		<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
-	</cfif>
-	<!--- Return --->
-	<cfreturn thexml>
-</cffunction>
-
+		<cfelse>
+			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+	
+	<!--- Update user --->
+	<cffunction name="update" access="remote" output="false" returntype="string">
+		<cfargument name="sessiontoken" required="true">
+		<cfargument name="userid" required="true">
+		<cfargument name="userloginname" required="true">
+		<cfargument name="useremail" required="true">
+		<cfargument name="userdata" required="true" hint="JSON with fields to update">
+		<!--- Check sessiontoken --->
+		<cfinvoke component="authentication" method="checkdb" sessiontoken="#arguments.sessiontoken#" returnvariable="thesession">
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Query the user --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			SELECT user_id
+			FROM users
+			<cfif arguments.userid NEQ "">
+				WHERE user_id = <cfqueryparam value="#arguments.userid#" cfsqltype="CF_SQL_VARCHAR">
+			<cfelseif arguments.userloginname NEQ "">
+				WHERE lower(user_login_name) = <cfqueryparam value="#lcase(arguments.userloginname)#" cfsqltype="CF_SQL_VARCHAR">
+			<cfelseif arguments.useremail NEQ "">
+				WHERE lower(user_email) = <cfqueryparam value="#lcase(arguments.useremail)#" cfsqltype="CF_SQL_VARCHAR">
+			<cfelse>
+				WHERE user_email = <cfqueryparam value="nada" cfsqltype="CF_SQL_VARCHAR">
+			</cfif>
+			</cfquery>
+			<!--- User found --->
+			<cfif qry.recordcount EQ 1>
+				<!--- deserializeJSON back into array --->
+				<cfset var thejson = DeserializeJSON(arguments.userdata)>
+				<cfset var l = "">
+				<!--- Loop over JSON and update data --->
+				<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+					<cfset l = l & "," & #thejson[x][1]#>
+					<!--- Just user fields --->
+					<cfif #thejson[x][1]# CONTAINS "user_">
+						<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE users
+						SET #thejson[x][1]# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thejson[x][2]#">
+						WHERE user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.user_id#">
+						</cfquery>
+					</cfif>
+				</cfloop>
+				<!--- Do the group update --->
+				<!--- Does a key exists --->
+				<cfif listcontains(l,"group_id") NEQ 0>
+					<!--- There is a group_id remove all existing groups --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+					DELETE FROM ct_groups_users
+					WHERE ct_g_u_user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.user_id#">
+					</cfquery>
+					<!--- Loop over json and insert group --->
+					<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+						<!--- Just user fields --->
+						<cfif #thejson[x][1]# CONTAINS "group_id">
+							<cfquery datasource="#application.razuna.api.dsn#">
+							INSERT INTO ct_groups_users
+							(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+							VALUES(
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thejson[x][2]#">,
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.user_id#">,
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+							)
+							</cfquery>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<!--- Create the XML --->
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<responsecode>0</responsecode>
+<message>User has been updated successfully</message>
+<userid>#xmlformat(qry.user_id)#</userid>
+</Response></cfoutput>
+				</cfsavecontent>
+			<!--- NOT found --->
+			<cfelse>
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<responsecode>1</responsecode>
+<message>User with the ID could not be found</message>
+</Response></cfoutput>
+				</cfsavecontent>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+	
 </cfcomponent>
