@@ -204,7 +204,11 @@
 									<cfif session.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&folder_id=#folder_id_r#&loaddiv=all','#Jsstringformat(file_name)#',1000,1);return false;"></cfif>
 									<!--- If it is a PDF we show the thumbnail --->
 									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
-										<img src="#cloud_url#" border="0">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
 									<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
 										<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
 										<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
@@ -287,7 +291,11 @@
 									</cfif>
 									<cfif link_kind NEQ "url">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-											<img src="#cloud_url#" border="0">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif>
 										<cfelse>
 											<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
 										</cfif>
@@ -365,7 +373,11 @@
 										</cfif>
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-												<img src="#cloud_url#" border="0">
+												<cfif cloud_url NEQ "">
+													<img src="#cloud_url#" border="0">
+												<cfelse>
+													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+												</cfif>
 											<cfelse>
 												<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
 											</cfif>

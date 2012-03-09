@@ -172,7 +172,11 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
+								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
 							<!--- <br><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#attributes.folder_id#','#filename#',800,600);return false;">#defaultsObj.trans("file_detail")#</a> --->
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');">
@@ -275,7 +279,11 @@
 								<div id="draggable#id#-doc" type="#id#-doc-all" class="theimg">
 								<!--- If it is a PDF we show the thumbnail --->
 								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
-									<img src="#cloud_url#" width="120" height="120" border="0">
+									<cfif cloud_url NEQ "">
+										<img src="#cloud_url#" border="0">
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+									</cfif>
 								<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
 									<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
 									<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
@@ -354,7 +362,11 @@
 							<div id="draggable#id#-#kind#" type="#id#-#kind#-all">
 								<cfif link_kind NEQ "url">
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-										<img src="#cloud_url#" border="0">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
 									<cfelse>
 										<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#" border="0">
 									</cfif>
@@ -530,7 +542,11 @@
 								<div id="draggable#id#-doc" type="#id#-doc-all">
 									<!--- If it is a PDF we show the thumbnail --->
 									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
-										<img src="#cloud_url#" width="128" height="128" border="0">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
 									<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
 										<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
 										<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">

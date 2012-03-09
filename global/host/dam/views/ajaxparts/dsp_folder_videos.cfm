@@ -80,7 +80,11 @@
 								<div id="draggable#vid_id#" type="#vid_id#-vid" class="theimg">
 								<cfif link_kind NEQ "url">
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-										<img src="#cloud_url#" border="0">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
 									<cfelse>
 										<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
 									</cfif>
@@ -134,7 +138,11 @@
 									<cfcase value="wmv,avi,mpeg,mpg,rm">
 										<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#','#vid_filename#',800,600);return false;">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-											<img src="#cloud_url#" border="0">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif>
 										<cfelse>
 											<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
 										</cfif>

@@ -80,7 +80,11 @@
 								<div id="draggable#file_id#" type="#file_id#-doc" class="theimg">
 								<!--- If it is a PDF we show the thumbnail --->
 								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
-									<img src="#cloud_url#" border="0">
+									<cfif cloud_url NEQ "">
+										<img src="#cloud_url#" border="0">
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+									</cfif>
 								<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
 									<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
 									<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
@@ -155,7 +159,11 @@
 							<div id="draggable#file_id#" type="#file_id#-doc">
 								<!--- If it is a PDF we show the thumbnail --->
 								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
-									<img src="#cloud_url#" width="128" height="128" border="0">
+									<cfif cloud_url NEQ "">
+										<img src="#cloud_url#" border="0">
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+									</cfif>
 								<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
 									<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
 									<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
