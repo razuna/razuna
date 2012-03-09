@@ -272,36 +272,11 @@
 	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<!--- Remove lightbox carts  --->
-	<!--- <cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#cart_lb
-	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
-	</cfquery> --->
-	<!--- Remove lightbox carts items  --->
-	<!--- <cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#cart_lb_items
-	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
-	</cfquery> --->
-	<!--- Remove web carts  --->
-	<!--- <cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#cart_web
-	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
-	</cfquery> --->
-	<!--- Remove lightbox carts items  --->
-	<!--- <cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#cart_web_items
-	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
-	</cfquery> --->
 	<!--- Remove user comments  --->
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM users_comments
 	WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
-	<!--- Remove from mailinglist member table
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#mailinglists_mem
-	WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_numeric">
-	</cfquery>  --->
 	<!--- att ct-entries removed, now remove the record itself -------------------------------------------- --->
 	<!--- Get detail of user first --->
 	<cfset arguments.thestruct.user_id = arguments.thestruct.id>

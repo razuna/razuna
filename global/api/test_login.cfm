@@ -6,6 +6,7 @@
 <select name="thehost">
 	<option value="local" selected="selected">Local</option>
 	<option value="remote">Razuna.com</option>
+	<option value="jedi">jedi</option>
 </select>
 <br>
 <label>Hostname/HostID</label>
@@ -23,8 +24,12 @@
 
 <cfif structkeyexists(form,"passhashed")>
 
-	<cfif thehost EQ "local">
-		<cfset thehttp = "http://razunabd.local:8080">
+	<cfif thehost EQ "local" OR thehost EQ "jedi">
+		<cfif thehost EQ "local">
+			<cfset thehttp = "http://razunabd.local:8080">
+		<cfelse>
+			<cfset thehttp = "http://jedi.razuna.org/razuna">
+		</cfif>
 		<cfinvoke webservice="#thehttp#/global/api/authentication.cfc?wsdl" 
 			method="login"
 			hostid="#form.hostname#" 
@@ -32,7 +37,7 @@
 			pass="#form.pass#"  
 			passhashed="0"
 			returnVariable="xml">
-	<cfelse>
+	<cfelseif thehost EQ "remote">
 		<cfset thehttp = "http://api.razuna.com">
 		<cfinvoke webservice="#thehttp#/global/api/authentication.cfc?wsdl" 
 			method="loginhost"
@@ -46,6 +51,42 @@
 	<cfset thexml = xmlparse(xml)>
 	<cfset thesearch = xmlsearch(thexml,"//sessiontoken")>
 	<cfset thesessiontoken = thesearch[1].xmltext>
+
+
+<!--- Update a user --->
+<!---
+<cfset u = arraynew(2)>
+<cfset u[1][1] = "user_login_name">
+<cfset u[1][2] = "updateduser">
+<cfset u[2][1] = "user_first_name">
+<cfset u[2][2] = "Update">
+<cfset u[3][1] = "group_id">
+<cfset u[3][2] = "FB78A863-27D7-4E06-A92CFF0696BB27A1">
+
+<cfset thejson = SerializeJSON(u)>
+
+<cfhttp url="#thehttp#/global/api/user.cfc">
+    <cfhttpparam name="method" type="URL" value="update">
+    <cfhttpparam name="sessiontoken" type="URL" value="#thesessiontoken#">
+    <cfhttpparam name="userid" type="URL" value="">
+    <cfhttpparam name="userloginname" type="URL" value="">
+    <cfhttpparam name="useremail" type="URL" value="blog@razuna.com">
+	<cfhttpparam name="userdata" type="URL" value="#thejson#">
+</cfhttp>
+<cfoutput>#cfhttp.filecontent#</cfoutput>
+--->
+
+<!--- Delete user --->
+<cfhttp url="#thehttp#/global/api/user.cfc">
+    <cfhttpparam name="method" type="URL" value="delete">
+    <cfhttpparam name="sessiontoken" type="URL" value="#thesessiontoken#">
+    <cfhttpparam name="userid" type="URL" value="">
+    <cfhttpparam name="userloginname" type="URL" value="">
+    <cfhttpparam name="useremail" type="URL" value="blog@razuna.com">
+</cfhttp>
+<cfoutput>#cfhttp.filecontent#</cfoutput>
+
+<!---
 
 <cfset myar = arraynew(2)>
 <cfset myar[1][1] = "img_keywords">
@@ -74,6 +115,7 @@
 		<cfhttpparam name="assetmetadata" type="URL" value="#thejson#">
 	</cfhttp>
 <cfoutput>#cfhttp.filecontent#</cfoutput>
+--->
 
 
 	<!---
@@ -87,20 +129,30 @@
 		<cfhttpparam name="show" value="all" type="url">
 	</cfhttp>
 --->
-<!---
 
+<!---
+Get one Folder
 <cfhttp url="#thehttp#/global/api/folder.cfc">
-    <cfhttpparam name="method" type="URL" value="getassets">
-        <cfhttpparam name="sessiontoken" type="URL" value="#thesessiontoken#">
-        <cfhttpparam name="folderid" type="URL" value="1">
-		<cfhttpparam name="showsubfolders" type="URL" value="0">
-		<cfhttpparam name="offset" type="URL" value="0">
-		<cfhttpparam name="maxrows" type="URL" value="0">
-		<cfhttpparam name="show" type="URL" value="all">
-	</cfhttp>
-<cfoutput>#cfhttp.filecontent#</cfoutput>
+    <cfhttpparam name="method" type="URL" value="getfolders">
+    <cfhttpparam name="sessiontoken" type="URL" value="#thesessiontoken#">
+    <cfhttpparam name="folderid" type="URL" value="0">
+</cfhttp>
 --->
-<!---	
+
+
+<!---
+<cfhttp url="#thehttp#/global/api/folder.cfc">
+    <cfhttpparam name="method" type="URL" value="getfolderstree">
+    <cfhttpparam name="sessiontoken" type="URL" value="#thesessiontoken#">
+    <cfhttpparam name="e4x" type="URL" value="0">
+</cfhttp>
+
+
+
+<cfdump var="#cfhttp#"><cfabort>
+--->
+<!---
+	
 	<cfinvoke webservice="#thehttp#/global/api/folder.cfc?wsdl" 
 	method="getassets" 
 	sessiontoken="#thesessiontoken#"

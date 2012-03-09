@@ -274,4 +274,75 @@
 		<cfreturn thexml>
 	</cffunction>
 	
+	<!--- Delete user --->
+	<cffunction name="delete" access="remote" output="false" returntype="string">
+		<cfargument name="sessiontoken" required="true">
+		<cfargument name="userid" required="true">
+		<cfargument name="userloginname" required="true">
+		<cfargument name="useremail" required="true">
+		<!--- Check sessiontoken --->
+		<cfinvoke component="authentication" method="checkdb" sessiontoken="#arguments.sessiontoken#" returnvariable="thesession">
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Query the user --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			SELECT user_id
+			FROM users
+			<cfif arguments.userid NEQ "">
+				WHERE user_id = <cfqueryparam value="#arguments.userid#" cfsqltype="CF_SQL_VARCHAR">
+			<cfelseif arguments.userloginname NEQ "">
+				WHERE lower(user_login_name) = <cfqueryparam value="#lcase(arguments.userloginname)#" cfsqltype="CF_SQL_VARCHAR">
+			<cfelseif arguments.useremail NEQ "">
+				WHERE lower(user_email) = <cfqueryparam value="#lcase(arguments.useremail)#" cfsqltype="CF_SQL_VARCHAR">
+			<cfelse>
+				WHERE user_email = <cfqueryparam value="nada" cfsqltype="CF_SQL_VARCHAR">
+			</cfif>
+			</cfquery>
+			<!--- User found --->
+			<cfif qry.recordcount EQ 1>
+				<cfquery datasource="#application.razuna.api.dsn#">
+				DELETE FROM ct_users_hosts
+				WHERE ct_u_h_user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
+				</cfquery>
+				<!--- Remove Intra/extranet carts  --->
+				<cfquery datasource="#application.razuna.api.dsn#">
+				DELETE FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#cart
+				WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+				</cfquery>
+				<!--- Remove user comments  --->
+				<cfquery datasource="#application.razuna.api.dsn#">
+				DELETE FROM users_comments
+				WHERE user_id_r = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
+				</cfquery>
+				<!--- Remove from the User Table --->
+				<cfquery datasource="#application.razuna.api.dsn#">
+				DELETE FROM users
+				WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
+				</cfquery>
+				<!--- Create the XML --->
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<responsecode>0</responsecode>
+<message>User has been removed successfully</message>
+<userid>#xmlformat(qry.user_id)#</userid>
+</Response></cfoutput>
+				</cfsavecontent>
+			<!--- NOT found --->
+			<cfelse>
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<responsecode>1</responsecode>
+<message>User with the ID could not be found</message>
+</Response></cfoutput>
+				</cfsavecontent>
+			</cfif>
+			<!--- No session found --->
+		<cfelse>
+			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+		
 </cfcomponent>
