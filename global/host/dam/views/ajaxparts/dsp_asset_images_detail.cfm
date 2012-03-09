@@ -99,6 +99,12 @@
 						<td colspan="2"><strong>#defaultsObj.trans("link_url_desc")#</strong></td>
 					</tr>
 				</cfif>
+				<!--- If cloud url is empty --->
+				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix" AND qry_detail.detail.cloud_url_org EQ "">
+					<tr>
+						<td colspan="2"><strong style="color:red;">It looks like this file could not be added to the system properly. Please delete it and add it again!</strong></td>
+					</tr>
+				</cfif>
 				<!--- URL to files --->
 				<tr>
 					<td width="1%" nowrap="true" valign="top" style="padding-top:20px;">
@@ -156,7 +162,11 @@
 								<a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" target="_blank">
 							</cfif>
 							<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-								<img src="#qry_detail.detail.cloud_url#" border="0">
+								<cfif qry_detail.detail.cloud_url_org NEQ "">
+									<img src="#qry_detail.detail.cloud_url#" border="0">
+								<cfelse>
+									<h2 style="color:red;">It looks like this file could not be added to the system properly. Please delete it and add it again!</h2>
+								</cfif>
 							<cfelse>
 								<img src="#thestorage##qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" border="0">
 							</cfif>

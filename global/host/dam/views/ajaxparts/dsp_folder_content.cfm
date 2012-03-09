@@ -111,7 +111,11 @@
 									<!--- Show assets --->
 									<cfif link_kind NEQ "url">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-											<img src="#cloud_url#" border="0">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif>
 										<cfelse>
 											<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0">
 										</cfif>
