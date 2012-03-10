@@ -250,10 +250,11 @@
 		<cffile action="move" source="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.zipname#" destination="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.zipname#">
 	</cfif>
 	<!--- Get correct path for eMail --->
+	<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
 	<cfset var thehost = listlast(arguments.thestruct.pathoneup,"/\")>
 	<!--- Send the user an email that his basket is ready --->
 	<cfif NOT structkeyexists(arguments.thestruct,"fromzip")>
-		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##arguments.thestruct.dynpath#/#thehost#/dam/outgoing/#arguments.thestruct.zipname#</a>">
+		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->
 	<cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput>
