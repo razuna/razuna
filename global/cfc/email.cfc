@@ -123,12 +123,12 @@
 			<cfset arguments.to = qryuser.user_email>
 		</cfif>
 		<!--- The to is empty, so simply skip sending the eMail --->
-		<cfif arguments.to EQ "">
+		<cfif arguments.to NEQ "">
 			<!--- Always take the email address from the settings --->
 			<cfset var thefrom = emaildata.set2_email_from>			
 			<!--- send message if mail server setting is empty thus take the CF admin settings--->
 			<cfif emaildata.set2_email_server EQ "">
-				<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" replyto="#arguments.to#" subject="#arguments.subject#" type="text/html"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
+				<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" subject="#arguments.subject#" type="text/html"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
 					<cfif arguments.sendaszip EQ "T">
 						<!--- Check the attachment (zip or normal files) --->
 						<cfif right("#arguments.attach#", 4) EQ ".zip">
@@ -153,7 +153,7 @@
 				</cfmail>
 			<cfelse>
 				<!--- send message if there is a mail server set for this host --->
-				<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" replyto="#arguments.to#" subject="#arguments.subject#" username="#emaildata.SET2_EMAIL_SMTP_USER#" password="#emaildata.SET2_EMAIL_SMTP_PASSWORD#" server="#emaildata.SET2_EMAIL_SERVER#" port="#emaildata.SET2_EMAIL_SERVER_PORT#" type="text/html" timeout="900"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
+				<cfmail to="#arguments.to#" cc="#arguments.cc#" bcc="#arguments.bcc#" from="#thefrom#" subject="#arguments.subject#" username="#emaildata.SET2_EMAIL_SMTP_USER#" password="#emaildata.SET2_EMAIL_SMTP_PASSWORD#" server="#emaildata.SET2_EMAIL_SERVER#" port="#emaildata.SET2_EMAIL_SERVER_PORT#" type="text/html" timeout="900"><cfif #arguments.themessage# IS NOT "">#arguments.themessage#</cfif>
 					<cfif arguments.sendaszip EQ "T">
 						<!--- Check the attachment (zip or normal files) --->
 						<cfif right("#arguments.attach#", 4) EQ ".zip">
