@@ -57,7 +57,7 @@
 				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" />
 				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(logindone.qryuser.user_id)" />
 				<!-- CFC: Check for collection -->
-				<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
+				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
 				<!-- set host again with real value -->
 				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
 				<!-- TL = Transparent login. In other words this action is called directly -->
@@ -151,13 +151,7 @@
 					</true>
 				</if>
 				<!-- For Nirvanix get usage count -->
-				<if condition="application.razuna.storage EQ 'nirvanix' OR session.hosttype EQ 'f'">
-					<true>
-						<!-- Action: Check storage -->
-						<do action="storage" />
-						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
-					</true>
-				</if>
+				
 				<!-- CFC: Custom fields -->
 				<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 				<!-- CFC: Get Wisdom phrases -->
