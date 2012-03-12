@@ -79,12 +79,12 @@
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_audios">
-		SELECT rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined">,keywords, description</cfif>
+		SELECT rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
 		FROM (
-			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined">,keywords, description</cfif>
+			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
 			FROM (
-				SELECT #thecolumns#<cfif session.view EQ "combined">,att.aud_keywords keywords, att.aud_description description</cfif>
-				FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
+				SELECT #thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>
+				FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (a.aud_group IS NULL OR a.aud_group = '')
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -100,10 +100,10 @@
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_audios">
-		SELECT #thecolumnlist#<cfif session.view EQ "combined">,att.aud_keywords keywords, att.aud_description description</cfif>
+		SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>
 		FROM (
-			SELECT row_number() over() as rownr, a.*<cfif session.view EQ "combined">, att.*</cfif>
-			FROM audios a<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
+			SELECT row_number() over() as rownr, a.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, att.*</cfif>
+			FROM audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (a.aud_group IS NULL OR a.aud_group = '')
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -125,8 +125,8 @@
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumns##max#" cachedomain="#session.theuserid#_audios">
 		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>
-		#thecolumns#<cfif session.view EQ "combined">,att.aud_keywords keywords, att.aud_description description</cfif>
-		FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
+		#thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>
+		FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
 		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

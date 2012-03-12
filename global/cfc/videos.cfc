@@ -95,12 +95,12 @@
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="vid#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_videos">
-		SELECT rn, #thecolumnlist#<cfif session.view EQ "combined">,keywords, description</cfif>
+		SELECT rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
 		FROM (
-			SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined">,keywords, description</cfif>
+			SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
 			FROM (
-				SELECT #Arguments.ColumnList#<cfif session.view EQ "combined">,vt.vid_keywords keywords, vt.vid_description description</cfif>
-				FROM #session.hostdbprefix#videos v<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1</cfif>
+				SELECT #Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,vt.vid_keywords keywords, vt.vid_description description</cfif>
+				FROM #session.hostdbprefix#videos v<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1</cfif>
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -116,10 +116,10 @@
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="vid#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_videos">
-		SELECT #thecolumnlist#<cfif session.view EQ "combined">,vt.vid_keywords keywords, vt.vid_description description</cfif>
+		SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,vt.vid_keywords keywords, vt.vid_description description</cfif>
 		FROM (
-			SELECT row_number() over() as rownr, v.*<cfif session.view EQ "combined">, vt.*</cfif>
-			FROM #session.hostdbprefix#videos v<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1</cfif>
+			SELECT row_number() over() as rownr, v.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, vt.*</cfif>
+			FROM #session.hostdbprefix#videos v<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1</cfif>
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -140,8 +140,8 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="vid#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##Arguments.ColumnList##max#" cachedomain="#session.theuserid#_videos">
-		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined">,vt.vid_keywords keywords, vt.vid_description description</cfif>
-		FROM #session.hostdbprefix#videos v<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1</cfif>
+		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,vt.vid_keywords keywords, vt.vid_description description</cfif>
+		FROM #session.hostdbprefix#videos v<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1</cfif>
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

@@ -108,12 +108,12 @@
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_files">
-			SELECT rn, #thecolumnlist#<cfif session.view EQ "combined">,keywords, description</cfif>
+			SELECT rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
 			FROM (
-				SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined">,keywords, description</cfif>
+				SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
 				FROM (
-					SELECT #Arguments.ColumnList#<cfif session.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
-					FROM #session.hostdbprefix#files<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+					SELECT #Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>
+					FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					<cfif Len(Arguments.file_extension)>
 						AND
@@ -147,10 +147,10 @@
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_files">
-			SELECT #thecolumnlist#<cfif session.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
+			SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>
 			FROM (
-				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*<cfif session.view EQ "combined">, ft.*</cfif>
-				FROM #session.hostdbprefix#files<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, ft.*</cfif>
+				FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				<cfif Len(Arguments.file_extension)>
 					AND
@@ -185,8 +185,8 @@
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##Arguments.ColumnList##max#" cachedomain="#session.theuserid#_files">
-			SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined">,ft.file_keywords keywords, ft.file_desc description</cfif>
-			FROM #session.hostdbprefix#files<cfif session.view EQ "combined"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+			SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>
+			FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			<cfif Len(Arguments.file_extension)>
 				AND
