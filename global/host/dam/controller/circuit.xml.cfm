@@ -155,11 +155,11 @@
 					<true>
 						<!-- Action: Check storage -->
 						<do action="storage" />
-						<!-- <invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" /> -->
+						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
 				</if>
 				<!-- CFC: Custom fields -->
-				<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
+				<!-- <invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" /> -->
 				<!-- CFC: Get Wisdom phrases -->
 				<invoke object="myFusebox.getApplicationData().Global" methodcall="wisdom()" returnvariable="wisdom" />
 				<!-- CFC: Get Orders of this user -->
