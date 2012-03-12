@@ -4028,14 +4028,15 @@
 	<fuseaction name="topdf">
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- CFC: Get total file count -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry_filecount" />
+		<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
 		<!-- Action: Storage -->
 		<!-- <set name="attributes.isbrowser" value="#session.isbrowser#" />
 		<do action="storage" /> -->
 		<!-- If we need to show all -->
 		<if condition="#attributes.kind# EQ 'all'">
 			<true>
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry_filecount" />
-				<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
 			</true>
 		</if>
@@ -5499,9 +5500,33 @@
 		<invoke object="myFusebox.getApplicationData().import" methodcall="doimport(attributes)" />
 	</fuseaction>
 	
-	
 	<!--  -->
 	<!-- IMPORT METADATA: STOP -->
+	<!--  -->
+	
+	<!--  -->
+	<!-- DOWNLOAD FOLDER: START -->
+	<!--  -->
+	
+	<!-- Download Folder -->
+	<fuseaction name="download_folder_do">
+		<!-- Param -->
+		<set name="attributes.pages" value="download" />
+		<set name="attributes.download_thumbnails" value="false" overwrite="false" />
+		<set name="attributes.download_originals" value="false" overwrite="false" />
+		<set name="attributes.download_renditions" value="false" overwrite="false" />
+		<set name="attributes.download_subfolders" value="false" overwrite="false" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC: Get all assets -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
+		
+		<!-- CFC: Show the progress download -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="download_folder(attributes)" />
+	</fuseaction>
+	
+	<!--  -->
+	<!-- DOWNLOAD FOLDER: STOP -->
 	<!--  -->
 	
 	<!-- Store Art values -->
