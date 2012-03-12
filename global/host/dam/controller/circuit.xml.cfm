@@ -151,7 +151,13 @@
 					</true>
 				</if>
 				<!-- For Nirvanix get usage count -->
-				
+				<if condition="application.razuna.storage EQ 'nirvanix' OR session.hosttype NEQ 0">
+					<true>
+						<!-- Action: Check storage -->
+						<do action="storage" />
+						<!-- <invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" /> -->
+					</true>
+				</if>
 				<!-- CFC: Custom fields -->
 				<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 				<!-- CFC: Get Wisdom phrases -->
