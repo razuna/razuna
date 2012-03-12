@@ -57,16 +57,15 @@
 				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" />
 				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(logindone.qryuser.user_id)" />
 				<!-- CFC: Check for collection -->
-				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
+				<!-- <invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" /> -->
 				<!-- set host again with real value -->
 				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
-				<!-- TL = Transparent login. In other words this action is called directly
+				<!-- TL = Transparent login. In other words this action is called directly -->
 				<if condition="structkeyexists(attributes,'tl')">
 					<true>
 						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
 					</true>
-				</if> -->
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
+				</if>
 			</true>
 			<false>
 				<!-- Log -->
