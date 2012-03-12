@@ -61,14 +61,18 @@
 <cfset thename = cgi.http_host>
 <cfset thecount = findoneof(".",thename) - 1>
 <cfset thesubdomain = mid(cgi.HTTP_HOST,1,thecount)>
-<cfquery datasource="##application.razuna.datasource##" name="thehost" cachename="##thesubdomain##" cachedomain="hosts">
-SELECT host_id, host_name, host_type, host_shard_group, host_name_custom
+<cfquery datasource="##application.razuna.datasource##" name="thehost" cachename="d##thename##" cachedomain="hosts">
+SELECT host_id, host_name, host_type, host_shard_group
 FROM hosts
-WHERE (
-lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase(thesubdomain)##">
-OR lower(host_name_custom) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase(thename)##">
-)
+WHERE lower(host_name_custom) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase(thename)##">
 </cfquery>
+<cfif thehost.recordcount EQ 0>
+<cfquery datasource="##application.razuna.datasource##" name="thehost" cachename="##thename##" cachedomain="hosts">
+SELECT host_id, host_name, host_type, host_shard_group
+FROM hosts
+WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase(thesubdomain)##">
+</cfquery>
+</cfif>
 <cfif thehost.recordcount EQ 0>
 <cfset nohost = "T">
 </cfif>
