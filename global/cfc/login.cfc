@@ -296,7 +296,7 @@ Password: #randompassword#
 		<!--- Create token --->
 		<cfset var thetoken = replace(createuuid(),"-","","ALL")>
 		<!--- Append to DB --->
-		<cfquery datasource="#variables.dsn#">
+		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO webservices
 		(sessiontoken, timeout, userid)
 		VALUES(
@@ -306,14 +306,14 @@ Password: #randompassword#
 		)
 		</cfquery>
 		<!--- Get Host prefix --->
-		<cfquery datasource="#variables.dsn#" name="pre">
+		<cfquery datasource="#application.razuna.datasource#" name="pre">
 		SELECT host_db_prefix
 		FROM hosts
 		WHERE host_id = <cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
 		<!--- Remove old entries --->
 		<cfthread>
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM webservices
 			WHERE timeout < <cfqueryparam value="#DateAdd("h", -6, now())#" cfsqltype="cf_sql_timestamp">
 			</cfquery>

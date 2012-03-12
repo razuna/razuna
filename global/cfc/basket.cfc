@@ -404,7 +404,7 @@
 					</cfcatch>
 				</cftry>
 				<cfthread name="#thethreadid#" />
-				<!--- Amazon --->
+			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
