@@ -53,19 +53,20 @@
     				<argument name="logdesc" value="Login: User-ID: #logindone.qryuser.user_id# eMail: #logindone.qryuser.user_email# First Name: #logindone.qryuser.user_first_name#  Last Name: #logindone.qryuser.user_last_name#" />
 				</invoke>
 				<!-- check groups -->
-				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" returnvariable="qry_sysadmingrp" />
-				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" returnvariable="qry_admingrp" />
-				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(logindone.qryuser.user_id)" returnvariable="qry_groups_user" />
+				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" />
+				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" />
+				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(logindone.qryuser.user_id)" />
 				<!-- CFC: Check for collection -->
 				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
 				<!-- set host again with real value -->
 				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
-				<!-- TL = Transparent login. In other words this action is called directly -->
+				<!-- TL = Transparent login. In other words this action is called directly
 				<if condition="structkeyexists(attributes,'tl')">
 					<true>
 						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
 					</true>
-				</if>
+				</if> -->
+				<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
 			</true>
 			<false>
 				<!-- Log -->

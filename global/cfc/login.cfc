@@ -125,8 +125,7 @@
 				<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
 				<cfset arguments.thestruct.database = application.razuna.thedatabase>
 				<cfset arguments.thestruct.qryuser = qryuser>
-				<cfset tt = CreateUUid()>
-				<cfthread name="#tt#" intstruct="#arguments.thestruct#">
+				<cfthread intstruct="#arguments.thestruct#">
 					<cfquery datasource="#attributes.intstruct.dsn#" name="myfolder">
 					SELECT folder_of_user
 					FROM #attributes.intstruct.hostdbprefix#folders
@@ -314,7 +313,7 @@ Password: #randompassword#
 		</cfquery>
 		<!--- Remove old entries --->
 		<cfthread>
-			<cfquery datasource="#application.razuna.api.dsn#">
+			<cfquery datasource="#variables.dsn#">
 			DELETE FROM webservices
 			WHERE timeout < <cfqueryparam value="#DateAdd("h", -6, now())#" cfsqltype="cf_sql_timestamp">
 			</cfquery>
