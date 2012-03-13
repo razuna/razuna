@@ -125,7 +125,7 @@
 			</div>
 		</td>
 		<!--- Change the amount of images shown --->
-		<td align="right" width="1%" nowrap="true"><cfif qry_filecount.thetotal GT session.rowmaxpage OR session.rowmaxpage GT 25> <select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
+		<td align="right" width="1%" nowrap="true"><cfif qry_filecount.thetotal GT session.rowmaxpage> <select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="showloadinggif();changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
 			<option value="javascript:return false;" selected="true">Show how many...</option>
 			<option value="javascript:return false;">---</option>
 			<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=25">25</option>
