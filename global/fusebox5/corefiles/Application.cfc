@@ -197,12 +197,7 @@ limitations under the License.
 				<cfset variables.myFusebox.trace("Fusebox","Compiling requested fuseaction '#variables.attributes.fuseaction#'") />
 			</cfif>
 			<!--- _parsedFileData should *not* be exposed --->
-			
-			<!--- Changed this have no locks --->
-			<cfset _parsedFileData = _fba.compileRequest(attributes.fuseaction,myFusebox) />
-			
-			<!---
-<cfif _fba.mode is "development-circuit-load">
+			<cfif _fba.mode is "development-circuit-load">
 				<cflock name="#application.ApplicationName#_fusebox_#variables.FUSEBOX_APPLICATION_KEY#" type="exclusive" timeout="300">
 					<cfset _parsedFileData = _fba.compileRequest(attributes.fuseaction,myFusebox) />
 				</cflock>
@@ -211,7 +206,6 @@ limitations under the License.
 					<cfset _parsedFileData = _fba.compileRequest(attributes.fuseaction,myFusebox) />
 				</cflock>
 			</cfif>
---->
 		</cfif>
 		
 	</cffunction>
