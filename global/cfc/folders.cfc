@@ -1355,7 +1355,7 @@
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/#arguments.thefolderid#">
 		<cfelseif application.razuna.storage EQ "amazon">
-			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thefolderid#" awsbucket="#arguments.thestruct.awsbucket#" />
+			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thefolderid#" awsbucket="#arguments.awsbucket#" />
 		</cfif>
 	</cfif>
 	<!--- Flush Cache --->
@@ -2100,15 +2100,15 @@
 	<cfelse>
 		<cfset thefolderlist = arguments.thestruct.folder_id & ",">
 	</cfif>
-	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
-	<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
-		<cfset session.offset = 0>
-	</cfif>
-	<!--- 
-	This is for Oracle and MSQL
-	Calculate the offset .Show the limit only if pages is null or current (from print) 
-	--->
 	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
+		<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+		<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
+			<cfset session.offset = 0>
+		</cfif>
+		<!--- 
+		This is for Oracle and MSQL
+		Calculate the offset .Show the limit only if pages is null or current (from print) 
+		--->	
 		<cfif session.offset EQ 0>
 			<cfset var min = 0>
 			<cfset var max = session.rowmaxpage>
@@ -3280,6 +3280,177 @@
 	</cfif>
 	<!--- Return --->	
 	<cfreturn flist>
+</cffunction>
+
+<!--- Download Folder --->
+<cffunction name="download_folder" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are starting to prepare the folder. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfflush>
+	<!--- Params --->
+	<cfset var thisstruct = structnew()>
+	<cfparam name="arguments.thestruct.awsbucket" default="" />
+	<!--- Go grab the platform --->
+	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<cftry>
+		<!--- Set time for remove --->
+		<cfset var removetime = DateAdd("h", -2, "#now()#")>
+		<!--- Remove old directories --->
+		<cfdirectory action="list" directory="#arguments.thestruct.thepath#/outgoing" name="thedirs">
+		<!--- Loop over dirs --->
+		<cfloop query="thedirs">
+			<!--- If a directory --->
+			<cfif type EQ "dir" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#name#" recurse="true" mode="775">
+			<cfelseif type EQ "file" AND thedirs.attributes NEQ "H" AND datelastmodified LT removetime>
+				<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#name#">
+			</cfif>
+		</cfloop>
+		<cfcatch type="any">
+			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in removing outgoing folders" dump="#cfcatch#">
+		</cfcatch>
+	</cftry>
+	<!--- Create directory --->
+	<cfset var basketname = replace(createuuid(),"-","","ALL")>
+	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
+	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
+	<!--- Create folders according to selection and download --->
+	<!--- Thumbnails --->
+	<cfif arguments.thestruct.download_thumbnails>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the thumbnails<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/thumbnails" mode="775">
+		<!--- Download thumbnails --->
+		<cfinvoke method="download_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/thumbnails" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" />
+	</cfif>
+	<!--- Originals --->
+	<cfif arguments.thestruct.download_originals>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the originals<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
+		<!--- Download originals --->
+		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/originals" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" />
+	</cfif>
+	<!--- Renditions --->
+	<cfif arguments.thestruct.download_renditions>
+		<!--- Feedback --->
+		<cfoutput>Grabbing all the renditions<br /></cfoutput>
+		<cfflush>
+		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
+		<!--- Download renditions --->
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" />
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
+	<cfflush>
+	<!--- All done. ZIP and finish --->
+	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/folder_#arguments.thestruct.folder_id#.zip" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />
+	<!--- Zip path for download --->
+	<cfoutput><p><a href="outgoing/folder_#arguments.thestruct.folder_id#.zip"><strong style="color:green;">All done. Here is your downloadable folder</strong></a></p></cfoutput>
+	<cfflush>
+	<!--- Remove the temp folder --->
+	<cfdirectory action="delete" directory="#arguments.thestruct.newpath#" recurse="yes" />
+</cffunction>
+
+<!--- Select and download --->
+<cffunction name="download_selected" output="false">
+	<cfargument name="dl_thumbnails" default="false" required="false">
+	<cfargument name="dl_originals" default="false" required="false">
+	<cfargument name="dl_renditions" default="false" required="false">
+	<cfargument name="dl_query" required="true" type="query">
+	<cfargument name="dl_folder" required="true" type="string">
+	<cfargument name="assetpath" required="true" type="string">
+	<cfargument name="awsbucket" required="false" type="string">
+	<!--- If we are renditions we query again and set some variables --->
+	<cfif arguments.dl_renditions>
+		<!--- Set original --->
+		<cfset arguments.dl_originals = true>
+		<!--- Query with group values --->
+		<cfquery name="arguments.dl_query" datasource="#application.razuna.datasource#">
+		SELECT img_filename filename, img_filename_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'img' as kind
+		FROM #session.hostdbprefix#images
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND img_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+		UNION ALL
+		SELECT vid_filename filename, vid_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'vid' as kind
+		FROM #session.hostdbprefix#videos
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND vid_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+		UNION ALL
+		SELECT aud_name filename, aud_name_org filename_org, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, 'aud' as kind
+		FROM #session.hostdbprefix#audios
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND aud_group IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(arguments.dl_query.id)#" list="Yes">)
+		</cfquery>
+	</cfif>
+	<!--- Loop over records --->
+	<cfloop query="arguments.dl_query">
+		<!--- Feedback --->
+		<cfoutput>. </cfoutput>
+		<cfflush>
+		<!--- If we have to get thumbnails then the name is different --->
+		<cfif arguments.dl_thumbnails AND kind EQ "img">
+			<cfset theorgname = "thumb_#id#.#ext#">
+			<cfset thefinalname = filename>
+			<cfset thiscloudurl = cloud_url>
+			<cfset theorgext = ext>
+		<cfelseif arguments.dl_originals>
+			<cfset theorgname = filename_org>
+			<cfset thefinalname = filename>
+			<cfset thiscloudurl = cloud_url_org>
+			<cfset theorgext = listlast(filename_org,".")>
+			<!--- If rendition we append the currentrow number in order to have same renditions formats still work --->
+			<cfif arguments.dl_renditions>
+				<cfset tn = listfirst(filename,".")>
+				<cfset te = listlast(filename_org,".")>
+				<cfset thefinalname = tn & "_" & currentRow & "." & te>
+			</cfif>
+		</cfif>
+		<!--- Start download but only if theorgname is not empty --->
+		<cfif structkeyexists(variables,"theorgname") AND theorgname NEQ "">
+			<!--- Check if thefinalname has an extension. If not add the original one --->
+			<cfif listlast(thefinalname,".") NEQ theorgext>
+				<cfset thefinalname = filename & "." & theorgext>
+			</cfif>
+			<!--- Local --->
+			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
+				<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+			<!--- Nirvanix --->
+			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
+				<cftry>
+					<cfhttp url="#thiscloudurl#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
+					<cfcatch type="any">
+						<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix error on download in folder download" type="html"><cfdump var="#cfcatch#"></cfmail>
+					</cfcatch>
+				</cftry>
+			<!--- Amazon --->
+			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
+				<cfinvoke component="amazon" method="Download">
+					<cfinvokeargument name="key" value="/#path_to_asset#/#theorgname#">
+					<cfinvokeargument name="theasset" value="#arguments.dl_folder#/#thefinalname#">
+					<cfinvokeargument name="awsbucket" value="#arguments.awsbucket#">
+				</cfinvoke>
+			<!--- If this is a URL we write a file in the directory with the PATH --->
+			<cfelseif link_kind EQ "url">
+				<cffile action="write" file="#arguments.dl_folder#/#thefinalname#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
+							
+#link_path_url#" mode="775">
+			<!--- If this is a linked asset --->
+			<cfelseif link_kind EQ "lan">
+				<cffile action="copy" source="#link_path_url#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+			</cfif>
+		</cfif>
+		<!--- Reset variables --->
+		<cfset theorgname = "">
+		<cfset thefinalname = "">
+		<cfset thiscloudurl = "">
+	</cfloop>
+	<!--- Feedback --->
+	<cfoutput><br /></cfoutput>
+	<cfflush>
 </cffunction>
 
 </cfcomponent>

@@ -632,4 +632,9 @@
   		<include template="dsp_meta_import_upload" />
 	</fuseaction>
 	
+	<!-- Download Folder -->
+	<fuseaction name="download_folder">
+  		<include template="dsp_download_folder" />
+	</fuseaction>
+	
 </circuit>

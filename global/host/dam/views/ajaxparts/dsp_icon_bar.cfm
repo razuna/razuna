@@ -66,6 +66,10 @@
 				</cfif>
 				<!--- Export Metadata --->
 				<a href="##" onclick="showwindow('#myself#c.meta_export&folder_id=#url.folder_id#&what=folder','#defaultsObj.trans("header_export_metadata")#',500,1);return false;" title="#defaultsObj.trans("tooltip_export_metadata_desc")#"><img src="#dynpath#/global/host/dam/images/document-export-4.png" hspace="5" border="0" style="margin-left:7px;" width="16" height="16" /></a>
+				<!--- Download Folder --->
+				<cfif session.folderaccess NEQ "R">
+					<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=#url.folder_id#','#defaultsObj.trans("header_download_folder")#',500,1);return false;" title="#defaultsObj.trans("header_download_folder_desc")#"><img src="#dynpath#/global/host/dam/images/folder-download.png" border="0" style="margin-left:7px;" width="18" /></a>
+				</cfif>
 			</div>
 		</td>
 		<div id="feedback_delete_#kind#" style="white-space:no-wrap;"></div><div id="dummy_#kind#" style="display:none;"></div>
