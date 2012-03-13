@@ -1842,4 +1842,13 @@
 	<transid name="admin_import_templates_desc">
 		<transtext><![CDATA[Define below the header column of the file and map each field to a column in the Razuna database. Note: Map each available column in your file in order to successfully import the file. <br /><br />The <strong>FIRST FIELD</strong> is the "key" and will be used to match the record. You can ONLY use the "ID" or "FILENAME" as the key!]]></transtext>
 	</transid>
+	<transid name="header_download_folder">
+		<transtext>Download it all</transtext>
+	</transid>
+	<transid name="header_download_folder_desc">
+		<transtext><![CDATA[Download all assets in this folder in one go!]]></transtext>
+	</transid>
+	<transid name="download_folder_what">
+		<transtext><![CDATA[Please select what you want to download by checking each box below.]]></transtext>
+	</transid>
 </translations>
