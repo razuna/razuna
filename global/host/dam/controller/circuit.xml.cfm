@@ -1078,7 +1078,7 @@
 		<!-- CFC: Set Access -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get the total file count -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry_filecount" />
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id,'t')" returnvariable="qry_filecount" />
 		<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
 		<!-- CFC: Get subfolders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
@@ -3965,6 +3965,16 @@
 			</true>
 		</if>
 	</fuseaction>
+	
+	<!-- Flush database cache -->
+	<fuseaction name="admin_flush_db">
+		<invoke object="myFusebox.getApplicationData().global" method="clearcache">
+			<argument name="theaction" value="nuclear" />
+			<argument name="thedomain" value="x" />
+		</invoke>
+	</fuseaction>
+	
+	
 	<!--  -->
 	<!-- ADMIN: MAINTENANCE END -->
 	<!--  -->
@@ -5598,7 +5608,6 @@
 				<set name="session.offset_log" value="#attributes.offset_log#" />
 			</true>
 		</if>
-		
 	</fuseaction>
 	
 </circuit>

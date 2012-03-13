@@ -46,7 +46,7 @@
 			<!--- Clear Cache --->
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr>
-					<th>Host Cache Cleaner</th>
+					<th>Flush Host Cache</th>
 				</tr>
 				<tr class="list">
 					<td>
@@ -57,6 +57,24 @@
 				</tr>
 			</table>
 		</cfif>
+		<!--- Database Cache --->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+			<tr>
+				<th>Flush Database Cache</th>
+			</tr>
+			<tr class="list">
+				<td>
+				Razuna keeps an internal cache for accessing the database. If you feel that there is an error or have been instructed by us to do so, you can flush the cache for all the database caches with the button below.<br /><br />
+				<!---
+Please choose the database cache to flush:<br />
+				<input type="checkbox" name="images" id="dbf_img" value="images" /> Images <input type="checkbox" name="videos" id="dbf_vid" value="videos" /> Videos <input type="checkbox" name="audios" id="dbf_aud" value="audios" /> Audios <input type="checkbox" name="files"  id="dbf_doc" value="files" /> Documents <input type="checkbox" name="folders" id="dbf_fol" value="folders" /> Folders <input type="checkbox" name="users" id="dbf_users" value="users" /> Users <input type="checkbox" name="logs" id="dbf_logs" value="logs" /> Logs <br />
+--->
+				<input type="button" name="flushdb" value="Flush database caches now" onclick="dodbflush();" class="button" />
+				<br /><br />
+				<div id="flush_db_feedback" style="display_none;"></div>
+				</td>
+			</tr>
+		</table>
 		<!--- Database Cleaner --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
@@ -84,6 +102,23 @@
 		<div id="dummy_maintenance"></div>
 		<!--- Load Progress --->
 		<script type="text/javascript">
+			// Do flush db cache
+			function dodbflush(){
+				/*
+var img = $('##dbf_img:checked').val();
+				var vid = $('##dbf_vid:checked').val();
+				var aud = $('##dbf_aud:checked').val();
+				var doc = $('##dbf_doc:checked').val();
+				var fol = $('##dbf_fol:checked').val();
+				var use = $('##dbf_users:checked').val();
+				var log = $('##dbf_logs:checked').val();
+*/
+				// Load action
+				loadcontent('dummy_maintenance','#myself#c.admin_flush_db');
+				// Load in status
+				$('##flush_db_feedback').css('display','');
+				$('##flush_db_feedback').html('<span class="color:green;">Selected database cache has been flushed!</span>');
+			}
 			// Do Re-Index
 			function doreindexassets(){
 				window.open('#myself#c.admin_rebuild_do&v=#createuuid()#', 'winreindex', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=500,height=500');

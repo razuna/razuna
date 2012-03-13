@@ -1724,7 +1724,7 @@
 	<cfelse>
 		<cfset thefolderlist = arguments.folder_id & ",">
 	</cfif>
-	<!--- Query --->	
+	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="total" cachename="#session.hostdbprefix##session.hostid#filetotalcount#arguments.folder_id#" cachedomain="#session.theuserid#_folders">
 	SELECT
 		(

@@ -494,8 +494,17 @@ Comment:<br>
 		<cfelseif arguments.theaction EQ "nuclear">
 			<cfquery datasource="#application.razuna.datasource#" action="flushall" />
 		</cfif>
-		
 		<cfreturn />
+	</cffunction>
+
+<!--- Flush db cache from admin ---------------------------------------------------------------------->
+	<cffunction name="flushcache" output="false" access="public" returnType="void">
+		<cfargument name="tbl" type="string" required="true">
+		<cfloop list="#arguments.tbl#" delimiters="," index="i">
+			<cfif i NEQ "undefined">
+				<cfquery datasource="#application.razuna.datasource#" action="flushall" cachedomain="_#i#" />
+			</cfif>
+		</cfloop>
 	</cffunction>
 
 <!--- Get ALL Upload Templates ---------------------------------------------------------------------->
