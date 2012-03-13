@@ -151,7 +151,7 @@
 					</true>
 				</if>
 				<!-- For Nirvanix get usage count -->
-				<if condition="application.razuna.storage EQ 'nirvanix' AND session.hosttype NEQ 0">
+				<if condition="application.razuna.storage EQ 'nirvanix' AND session.hosttype NEQ 149">
 					<true>
 						<!-- Action: Check storage -->
 						<do action="storage" />
@@ -5511,6 +5511,7 @@
 	<!-- Download Folder -->
 	<fuseaction name="download_folder_do">
 		<!-- Param -->
+		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.pages" value="download" />
 		<set name="attributes.download_thumbnails" value="false" overwrite="false" />
 		<set name="attributes.download_originals" value="false" overwrite="false" />
@@ -5518,6 +5519,8 @@
 		<set name="attributes.download_subfolders" value="false" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
 		<!-- CFC: Get all assets -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="attributes.qry_files" />
 		
