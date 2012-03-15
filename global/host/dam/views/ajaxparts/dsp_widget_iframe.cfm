@@ -141,7 +141,7 @@
 						<!--- Images --->
 						<cfif kind EQ "img">
 							<cfif is_available>
-								<div class="themg">
+								<div class="theimg">
 									<!--- Show assets --->
 									<cfif link_kind NEQ "url">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">

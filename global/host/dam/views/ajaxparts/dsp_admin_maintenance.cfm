@@ -117,7 +117,7 @@ var img = $('##dbf_img:checked').val();
 				loadcontent('dummy_maintenance','#myself#c.admin_flush_db');
 				// Load in status
 				$('##flush_db_feedback').css('display','');
-				$('##flush_db_feedback').html('<span class="color:green;">Selected database cache has been flushed!</span>');
+				$('##flush_db_feedback').html('<span style="color:green;font-weight:bold;">Database caches have been flushed!</span>');
 			}
 			// Do Re-Index
 			function doreindexassets(){
