@@ -151,7 +151,7 @@
 					</true>
 				</if>
 				<!-- For Nirvanix get usage count -->
-				<if condition="application.razuna.storage EQ 'nirvanix' AND session.hosttype NEQ 149">
+				<if condition="application.razuna.storage EQ 'nirvanix'">
 					<true>
 						<!-- Action: Check storage -->
 						<do action="storage" />
