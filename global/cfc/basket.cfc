@@ -33,10 +33,8 @@
 	<cfparam name="arguments.thestruct.fromshare" default="F">
 	<cfloop index="thenr" delimiters="," list="#arguments.thestruct.file_id#">
 		<!--- If we come from a overview we have numbers with the type --->
-		<cfif thenr CONTAINS "-">
-			<cfset arguments.thestruct.thetype = thenr>
-			<cfset thenr = listfirst(thenr,"-")>
-		</cfif>
+		<cfset thetype = listlast(arguments.thestruct.thetype,"-")>
+		<cfset thenr = listfirst(thenr,"-")>
 		<!--- First check if the product is not already in this basket --->
 		<cfquery datasource="#variables.dsn#" name="here">
 		SELECT user_id
@@ -47,14 +45,14 @@
 		</cfif>
 		AND cart_product_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND cart_file_type = <cfqueryparam value="#listlast(thenr,"-")#" cfsqltype="cf_sql_varchar">
+		AND cart_file_type = <cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		<!--- If no record has been found continue --->
 		<cfif here.recordcount EQ 0>
 			<!--- Is this file a doc or a img --->
-			<cfloop delimiters="," index="newtype" list="#arguments.thestruct.thetype#">
-				<cfif (#newtype# EQ "#thenr#-img") OR (#newtype# EQ "#thenr#-doc") OR (#newtype# EQ "#thenr#-vid") OR (#newtype# EQ "#thenr#-aud")>
-					<cfset newtype = #replace("#newtype#", "#thenr#-", "", "ALL")#>
+			<cfloop delimiters="," index="i" list="#arguments.thestruct.thetype#">
+				<cfif (i EQ "#thenr#-img") OR (i EQ "#thenr#-doc") OR (i EQ "#thenr#-vid") OR (i EQ "#thenr#-aud")>
+					<cfset newtype = replace(i, "#thenr#-", "", "ALL")>
 					<!--- insert the prodcut to the cart --->
 					<cfquery datasource="#variables.dsn#">
 					INSERT INTO #session.hostdbprefix#cart
@@ -77,7 +75,6 @@
 			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_cart" />
 		</cfif>
 	</cfloop>
-	
 	<cfreturn />
 </cffunction>
 
@@ -430,7 +427,7 @@
 			<cfthread action="join" name="#thethreadid#" />
 			<!--- Rename the file --->
 			<cfif structkeyexists(arguments.thestruct.qry, "link_kind") AND arguments.thestruct.qry.link_kind NEQ "url">
-				<cffile action="move" source="#arguments.thestruct.newpath#/#thefname#/#theart#/#thefinalname#" destination="#arguments.thestruct.newpath#/#thefname#/#theart#/#thenewname#">
+				<cffile action="move" source="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#" destination="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thenewname#">
 			</cfif>
 		</cfif>
 	</cfloop>
