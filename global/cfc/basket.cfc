@@ -482,7 +482,7 @@
 				<!--- The filename for the folder --->
 				<cfset rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
 				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & theext>
+				<cfset thenewname = rep & "." & qry.vid_extension>
 			</cfif>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
@@ -580,7 +580,7 @@
 			<cfelse>
 				<cfset rep = replacenocase(qry.aud_name,".#qry.aud_extension#","","one")>
 				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & theext>
+				<cfset thenewname = rep & "." & qry.aud_extension>
 			</cfif>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
