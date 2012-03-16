@@ -353,25 +353,28 @@
 				<cfset theimgname = qry.img_filename_org>
 				<cfset thefinalname = qry.img_filename_org>
 				<cfset theext = qry.img_extension>
-				<cfset theart = theext & "_" & theimgid>
+				<cfset theart = theext>
 				<cfset thiscloudurl = qry.cloud_url_org>
 			</cfif>
 			<!--- If the art id not thumb and original we need to get the name from the parent record --->
 			<cfif qry.img_group NEQ "">
 				<cfquery name="qrysub" datasource="#variables.dsn#">
-				SELECT img_filename
+				SELECT img_id, img_filename, img_extension
 				FROM #session.hostdbprefix#images
 				WHERE img_id = <cfqueryparam value="#qry.img_group#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- The filename for the folder --->
-				<cfset thefname = listfirst(qrysub.img_filename, ".")>
-				<cfset thenewname = listfirst(qrysub.img_filename, ".") & "." & theext>
+				<cfset rep = replacenocase(qrysub.img_filename,".#qrysub.img_extension#","","one")>
+				<cfset thefname = replace(rep,".","-","all")>
+				<cfset thenewname = rep & "." & qrysub.img_extension>
 				<cfset thefinalname = thenewname>
+				<cfset theart = qrysub.img_extension & "_" & qrysub.img_id>
 			<cfelse>
 				<!--- The filename for the folder --->
-				<cfset thefname = listfirst(qry.img_filename, ".")>
-				<cfset thenewname = listfirst(qry.img_filename, ".") & "." & theext>
+				<cfset rep = replacenocase(qry.img_filename,".#qry.img_extension#","","one")>
+				<cfset thefname = replace(rep,".","-","all")>
+				<cfset thenewname = rep & "." & theext>
 			</cfif>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
@@ -427,7 +430,7 @@
 			<cfthread action="join" name="#thethreadid#" />
 			<!--- Rename the file --->
 			<cfif structkeyexists(arguments.thestruct.qry, "link_kind") AND arguments.thestruct.qry.link_kind NEQ "url">
-				<cffile action="move" source="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#" destination="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thenewname#">
+				<cffile action="move" source="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#" destination="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#thenewname#">
 			</cfif>
 		</cfif>
 	</cfloop>
@@ -466,18 +469,20 @@
 			</cfquery>
 			<cfif qry.vid_group NEQ "">
 				<cfquery name="qrysub" datasource="#variables.dsn#">
-				SELECT vid_filename
+				SELECT vid_id, vid_filename, vid_extension
 				FROM #session.hostdbprefix#videos
 				WHERE vid_id = <cfqueryparam value="#qry.vid_group#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- The filename for the folder --->
-				<cfset thefname = qrysub.vid_filename>
-				<cfset thenewname = listfirst(qrysub.vid_filename, ".") & "." & qry.vid_extension>
+				<cfset rep = replacenocase(qrysub.vid_filename,".#qrysub.vid_extension#","","one")>
+				<cfset thefname = replace(rep,".","-","all")>
+				<cfset thenewname = rep & "." & qrysub.vid_extension>
 			<cfelse>
 				<!--- The filename for the folder --->
-				<cfset thefname = qry.vid_filename>
-				<cfset thenewname = listfirst(qry.vid_filename, ".") & "." & qry.vid_extension>
+				<cfset rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
+				<cfset thefname = replace(rep,".","-","all")>
+				<cfset thenewname = rep & "." & theext>
 			</cfif>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
@@ -564,16 +569,18 @@
 			</cfquery>
 			<cfif qry.aud_group NEQ "">
 				<cfquery name="qrysub" datasource="#variables.dsn#">
-				SELECT aud_name
+				SELECT aud_id, aud_name, aud_extension
 				FROM #session.hostdbprefix#audios
 				WHERE aud_id = <cfqueryparam value="#qry.aud_group#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<cfset thefname = listfirst(qrysub.aud_name, ".")>
-				<cfset thenewname = listfirst(qrysub.aud_name, ".") & "." & qry.aud_extension>
+				<cfset rep = replacenocase(qrysub.aud_name,".#qrysub.aud_extension#","","one")>
+				<cfset thefname = replace(rep,".","-","all")>
+				<cfset thenewname = rep & "." & qrysub.aud_extension>
 			<cfelse>
-				<cfset thefname = listfirst(qry.aud_name, ".")>
-				<cfset thenewname = listfirst(qry.aud_name, ".") & "." & qry.aud_extension>
+				<cfset rep = replacenocase(qry.aud_name,".#qry.aud_extension#","","one")>
+				<cfset thefname = replace(rep,".","-","all")>
+				<cfset thenewname = rep & "." & theext>
 			</cfif>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
