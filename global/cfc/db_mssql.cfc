@@ -1198,8 +1198,8 @@
 			credit					varchar(300),
 			rights					NVARCHAR(max),
 			colorspace				varchar(50),
-			xres					varchar(10),
-			yres					varchar(10),
+			xres					varchar(30),
+			yres					varchar(30),
 			resunit					varchar(20),
 			host_id					INT
 		)  

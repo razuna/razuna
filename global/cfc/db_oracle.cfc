@@ -1167,8 +1167,8 @@
 			credit					VARCHAR2(300 CHAR),
 			rights					CLOB,
 			colorspace				varchar2(50 char),
-			xres					varchar2(10 char),
-			yres					varchar2(10 char),
+			xres					varchar2(30 char),
+			yres					varchar2(30 char),
 			resunit					varchar2(20 char),
 			HOST_ID					NUMBER
 		)  
