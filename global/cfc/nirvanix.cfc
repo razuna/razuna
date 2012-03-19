@@ -626,8 +626,29 @@
 			<cfset x.theurl = xmlfound[1].xmlText> --->
 			<!--- Parse XML --->
 			<cfset var d = xmlparse(cfhttp.filecontent)>
-			<!--- Get Downloadtoken --->
-			<cfset x.theurl = d.Response.Download.DownloadURL[1].XmlText>
+			<!--- Get ResponseCode --->
+			<cfset var respcode = d.Response.Responsecode[1].XmlText>
+			<!--- If response is 0 then ok, else let us know --->
+			<cfif respcode EQ 0>
+				<!--- Get Downloadtoken --->
+				<cfset x.theurl = d.Response.Download.DownloadURL[1].XmlText>
+			<cfelse>
+				<!--- Set Downloadtoken --->
+				<cfset x.theurl = respcode>
+				<!--- Send us eMail --->
+				<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix signedurl reponsecode" type="html">
+					<cfdump var="#respcode#">
+					<p>
+					100	Missing required parameters	Occurs when one or more required parameters is missing.<br />
+					70005	Invalid path	Occurs if any of the files do not exist or a if a folder was passed in.<br />
+					70009	Path too long	Occurs when the total length of a relative path exceeds the maximum length of 512 characters.<br />
+					70010	File/Folder name too long	Occurs when a file or folder name exceeds the maximum length of 256 characters.<br />
+					70102	Invalid path character	Occurs when any path contains illegal characters.<br />
+					80006	Session not found	Occurs when the session cannot be found. This may happen after the session has been ended with an explicit log out or the session has expired due to inactivity.<br />
+					80101	Invalid session token	Occurs when the session token is malformed.<br />
+					</p>
+				</cfmail>
+			</cfif>
 			<!--- Set download url --->
 <!--- 			<cfset x.theurl = "http://services.nirvanix.com/" & dtoken & "/razuna/#session.hostid#/#arguments.theasset#"> --->
 			<cfcatch type="any">
