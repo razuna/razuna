@@ -277,7 +277,8 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Check that the filename has an extension --->
-			<cfset thename = listfirst(arguments.thestruct.qry.file_name,".")>
+			<cfset rep = replacenocase(arguments.thestruct.qry.file_name,".#arguments.thestruct.qry.file_extension#","","one")>
+			<cfset thename = replace(rep,".","-","all")>
 			<cfset arguments.thestruct.thename = thename & ".#arguments.thestruct.qry.file_extension#">
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
@@ -359,17 +360,17 @@
 			<!--- If the art id not thumb and original we need to get the name from the parent record --->
 			<cfif qry.img_group NEQ "">
 				<cfquery name="qrysub" datasource="#variables.dsn#">
-				SELECT img_id, img_filename, img_extension
+				SELECT img_filename
 				FROM #session.hostdbprefix#images
 				WHERE img_id = <cfqueryparam value="#qry.img_group#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- The filename for the folder --->
-				<cfset rep = replacenocase(qrysub.img_filename,".#qrysub.img_extension#","","one")>
+				<cfset rep = replacenocase(qrysub.img_filename,".#theext#","","one")>
 				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & qrysub.img_extension>
+				<cfset thenewname = rep & "." & theext>
 				<cfset thefinalname = thenewname>
-				<cfset theart = qrysub.img_extension & "_" & qrysub.img_id>
+				<cfset theart = theext & "_" & theimgid>
 			<cfelse>
 				<!--- The filename for the folder --->
 				<cfset rep = replacenocase(qry.img_filename,".#qry.img_extension#","","one")>
@@ -469,15 +470,14 @@
 			</cfquery>
 			<cfif qry.vid_group NEQ "">
 				<cfquery name="qrysub" datasource="#variables.dsn#">
-				SELECT vid_id, vid_filename, vid_extension
+				SELECT vid_filename
 				FROM #session.hostdbprefix#videos
 				WHERE vid_id = <cfqueryparam value="#qry.vid_group#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- The filename for the folder --->
-				<cfset rep = replacenocase(qrysub.vid_filename,".#qrysub.vid_extension#","","one")>
-				<cfset thefname = replace(rep,".","-","all")>
-				<cfset thenewname = rep & "." & qrysub.vid_extension>
+				<cfset thefname = listfirst(qrysub.vid_filename,".")>
+				<cfset thenewname = qrysub.vid_filename>
 			<cfelse>
 				<!--- The filename for the folder --->
 				<cfset rep = replacenocase(qry.vid_filename,".#qry.vid_extension#","","one")>
