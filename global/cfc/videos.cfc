@@ -874,6 +874,7 @@
 		<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
 			<cfset arguments.thestruct.qrydetail.filenameorg = qryorg.vid_name_org>
 			<cfset arguments.thestruct.file_name = qryorg.vid_filename>
+			<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 		<cfelse>
 			<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 		</cfif>

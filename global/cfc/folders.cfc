@@ -3421,9 +3421,14 @@
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND link_kind EQ "">
 				<cftry>
-					<cfhttp url="#thiscloudurl#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
+					<cfif thiscloudurl CONTAINS "http">
+						<cfhttp url="#thiscloudurl#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
+					</cfif>
 					<cfcatch type="any">
-						<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix error on download in folder download" type="html"><cfdump var="#cfcatch#"></cfmail>
+						<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix error on download in folder download" type="html">
+							<cfdump var="#cfcatch#">
+							<cfdump var="#session#">
+						</cfmail>
 					</cfcatch>
 				</cftry>
 			<!--- Amazon --->

@@ -920,7 +920,9 @@
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.newid#')#>
 	</cfloop>
 	<!--- Remove folder --->
-	<cfdirectory action="delete" directory="#thisfolder#" recurse="true">
+	<cfif directoryexists(thisfolder)>
+		<cfdirectory action="delete" directory="#thisfolder#" recurse="true">
+	</cfif>
 	<!--- Flush Cache --->
 	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
 	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
