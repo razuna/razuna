@@ -198,7 +198,7 @@
 		</cfcatch>
 	</cftry>
 	<!--- Create directory --->
-	<cfset basketname = replace(createuuid(),"-","","ALL")>
+	<cfset basketname = createuuid("")>
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
 	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
 	<!--- Read Basket --->
@@ -233,7 +233,7 @@
 	</cfloop>
 	<!--- All done. Now zip up the folder --->
 	<cfif NOT structkeyexists(arguments.thestruct,"zipname")>
-		<cfset arguments.thestruct.zipname = "basket-" & replace(createuuid(),"-","","ALL") & ".zip">
+		<cfset arguments.thestruct.zipname = "basket-" & createuuid("") & ".zip">
 	<cfelse>
 		<cfset arguments.thestruct.zipname = replacenocase(arguments.thestruct.zipname, " ", "_", "ALL")>
 		<cfset arguments.thestruct.zipname = arguments.thestruct.zipname & ".zip">
@@ -326,7 +326,7 @@
 	<!--- Start the loop to get the different kinds of images --->
 	<cfloop delimiters="," list="#arguments.thestruct.artofimage#" index="art">
 		<!--- Create uuid for thread --->
-		<cfset thethreadid = replace(createuuid(),"-","","all")>
+		<cfset thethreadid = createuuid("")>
 		<!--- Put image id and art into variables --->
 		<cfset theimgid = listfirst(art, "-")>
 		<cfset theart = listlast(art, "-")>
@@ -498,7 +498,7 @@
 			<cfset arguments.thestruct.thenewname = thenewname>
 			<cfset arguments.thestruct.thefname = thefname>
 			<!--- Create uuid for thread --->
-			<cfset wvt = replace(createuuid(),"-","","ALL")>
+			<cfset wvt = createuuid("")>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">

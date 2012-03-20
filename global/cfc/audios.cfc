@@ -679,7 +679,7 @@
 		<!--- Get details --->
 		<cfinvoke method="detail" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.qry_detail">
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
-		<cfset tempfolder = "aud#replace(createuuid(),"-","","all")#">
+		<cfset tempfolder = "aud#createuuid('')#">
 		<!--- set the folder path in a var --->
 		<cfset thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
 		<!--- Create the temp folder in the incoming dir --->
@@ -777,7 +777,7 @@
 			<!--- Create a new ID for the audio --->
 			<cftransaction>
 				<cfset newid = structnew()>
-				<cfset newid.id = replace(createuuid(),"-","","ALL")>
+				<cfset newid.id = createuuid("")>
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#audios
 				(aud_id, host_id)
@@ -983,7 +983,7 @@
 	<cfargument name="thestruct" type="struct">
 	<cfparam name="arguments.thestruct.zipit" default="T">
 	<!--- Create a temp folder --->
-	<cfset tempfolder = replace(createuuid(),"-","","ALL")>
+	<cfset tempfolder = createuuid("")>
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
 	<!--- Put the audio id into a variable --->
 	<cfset theaudioid = #arguments.thestruct.file_id#>

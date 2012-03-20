@@ -32,7 +32,7 @@
 		<cfset arguments.thestruct = structnew()>
 		<cfset arguments.thestruct.dsn = "razuna_backup_export">
 		<cfset arguments.thestruct.fromimport = "T">
-		<cfset arguments.thestruct.tschema = "B" & replace(createuuid(),"-","","all")>
+		<cfset arguments.thestruct.tschema = "B" & createuuid("")>
 		<!--- Feedback --->
 		<cfoutput><strong>Starting the Backup. Churning on some internal stuff...</strong><br><br></cfoutput>
 		<cfflush>

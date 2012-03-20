@@ -158,7 +158,7 @@
 		<cfif fileexists(arguments.uploadfile)>
 			<cftry>
 				<!--- Params --->
-				<cfset var tt = replace(createuuid(),"-","","all")>
+				<cfset var tt = createuuid("")>
 				<!--- Get session --->
 				<cfset var nvxsession = login()>
 				<!--- Get Storage Node Stuff --->

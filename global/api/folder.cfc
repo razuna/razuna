@@ -639,7 +639,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Create a new ID --->
-			<cfset var newfolderid = replace(createuuid(),"-","","ALL")>
+			<cfset var newfolderid = createuuid("")>
 			<!--- If this is on level 1 then have the main id inserted else query for it --->
 			<cfif arguments.folder_related EQ "">
 				<cfset var themainidr = newfolderid>

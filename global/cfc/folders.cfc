@@ -1074,7 +1074,7 @@
 	<cfparam name="arguments.thestruct.langcount" default="1" />
 	<cfparam name="arguments.thestruct.folder_desc_1" default="" />
 	<!--- Create a new ID --->
-	<cfset var newfolderid = replace(createuuid(),"-","","ALL")>
+	<cfset var newfolderid = createuuid("")>
 	<!--- Insert --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#folders
@@ -2933,7 +2933,7 @@
 					INSERT INTO #session.hostdbprefix#images_text
 					(id_inc, img_description, img_keywords, img_id_r, lang_id_r, host_id)
 					VALUES(
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#replace(createuuid(),"-","","all")#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid('')#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fdesc#"]#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fkeys#"]#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
@@ -2997,7 +2997,7 @@
 					INSERT INTO #session.hostdbprefix#videos_text
 					(id_inc, vid_description, vid_keywords, vid_id_r, lang_id_r, host_id)
 					VALUES(
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#replace(createuuid(),"-","","all")#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid('')#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fdesc#"]#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fkeys#"]#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
@@ -3060,7 +3060,7 @@
 					INSERT INTO #session.hostdbprefix#audios_text
 					(id_inc, aud_description, aud_keywords, aud_id_r, lang_id_r, host_id)
 					VALUES(
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#replace(createuuid(),"-","","all")#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid('')#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fdesc#"]#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fkeys#"]#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
@@ -3128,7 +3128,7 @@
 					INSERT INTO #session.hostdbprefix#files_desc
 					(id_inc, file_desc, file_keywords, file_id_r, lang_id_r, host_id)
 					VALUES(
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#replace(createuuid(),"-","","all")#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid('')#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fdesc#"]#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fkeys#"]#">,
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
@@ -3312,7 +3312,7 @@
 		</cfcatch>
 	</cftry>
 	<!--- Create directory --->
-	<cfset var basketname = replace(createuuid(),"-","","ALL")>
+	<cfset var basketname = createuuid("")>
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
 	<cfdirectory action="create" directory="#arguments.thestruct.newpath#" mode="775">
 	<!--- Create folders according to selection and download --->

@@ -635,7 +635,7 @@
 	<!--- Get details of image --->
 	<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_id,folder_id_r,img_filename_org,img_extension,img_filename,path_to_asset,img_width,img_height,cloud_url_org" returnvariable="arguments.thestruct.qry_detail">
 	<!--- Create a temp directory to hold the image file (needed because we are doing other files from it as well) --->
-	<cfset tempfolder = "img#replace(createuuid(),"-","","all")#">
+	<cfset tempfolder = "img#createuuid('')#">
 	<!--- set the folder path in a var --->
 	<cfset thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
 	<!--- Create the temp folder in the incoming dir --->
@@ -708,7 +708,7 @@
 	<!--- Now, loop over the selected extensions and convert and store image --->
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
 		<!--- Create tempid --->
-		<cfset tempid = replace(createuuid(),"-","","ALL")>
+		<cfset tempid = createuuid("")>
 		<!--- If from upload templates we select with and height of image --->
 		<cfif arguments.thestruct.upl_template NEQ 0>
 			<cfquery datasource="#application.razuna.datasource#" name="qry_w">

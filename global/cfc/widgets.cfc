@@ -68,7 +68,7 @@
 		<!--- If this is a new widget insert else update --->
 		<cfif arguments.thestruct.widget_id EQ 0>
 			<!--- Create new ID --->
-			<cfset var newid = replace(createuuid(),"-","","ALL")>
+			<cfset var newid = createuuid("")>
 			<!--- Insert --->
 			<cfquery dataSource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#widgets

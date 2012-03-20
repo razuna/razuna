@@ -4,9 +4,13 @@ QuickServer.jar
 activation.jar
 antlr-runtime-3.1.3.jar
 aw20org.jar
+bcmail-jdk16-146.jar
+bcprov-jdk16-146.jar
+bctsp-jdk16-146.jar
 commons-beanutils-1.8.3.jar
 commons-codec-1.4.jar
 commons-collections-3.2.1.jar
+commons-compress-1.3.jar
 commons-discovery.jar
 commons-fileupload-1.2.1.jar
 commons-httpclient-3.1bd.jar
@@ -54,6 +58,7 @@ rome-1.0RC1.jar
 saaj.jar
 serializer.jar
 shiro-core-1.1.0.jar
+slf4j-api-1.6.1.jar
 sqljdbc4.jar
 webservices.jar
 ws-commons-util-1.0.2.jar

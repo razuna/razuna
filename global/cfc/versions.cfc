@@ -411,7 +411,7 @@
 	<cfset cloud_url_version.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset thumbnailname = "">
-	<cfset arguments.thestruct.therandom = replace(createuuid(),"-","","ALL")>
+	<cfset arguments.thestruct.therandom = createuuid("")>
 	<!--- Get windows or not --->
 	<cfinvoke component="global" method="iswindows" returnVariable="iswindows" />
 	<!--- Set Exiftool --->
@@ -593,7 +593,7 @@
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
-			<cfset mtt = replace(createuuid(),"-","","all")>
+			<cfset mtt = createuuid("")>
 			<!--- Move the file to the versions directory --->
 			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->
@@ -643,7 +643,7 @@
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
-			<cfset mtt = replace(createuuid(),"-","","all")>
+			<cfset mtt = createuuid("")>
 			<!--- Move the file to the versions directory --->
 			<cfthread name="#mtt#" intstruct="#arguments.thestruct#">
 				<!--- Move --->

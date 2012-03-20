@@ -440,7 +440,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- If we are MP4 run it trough MP4Box --->
 	<cfif arguments.thestruct.qryfile.extension EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">
-		<cfset var ttmp4 = replace(createuuid(),"-","","all")>
+		<cfset var ttmp4 = createuuid("")>
 		<cfif arguments.thestruct.isWindows>
 			<cfset arguments.thestruct.themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box.exe">
 		<cfelse>
@@ -936,7 +936,7 @@
 		<!--- Get details --->
 		<cfinvoke method="getdetails" vid_id="#arguments.thestruct.file_id#" returnvariable="arguments.thestruct.qry_detail">
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
-		<cfset tempfolder = "vid#replace(createuuid(),"-","","ALL")#">
+		<cfset tempfolder = "vid#createuuid('')#">
 		<!--- set the folder path in a var --->
 		<cfset arguments.thestruct.thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
 		<!--- Create the temp folder in the incoming dir --->
@@ -1017,7 +1017,7 @@
 		<!--- Now, loop over the selected extensions and convert and store video --->
 		<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
 			<!--- create new id --->
-			<cfset arguments.thestruct.newid = replace(createuuid(),"-","","ALL")>
+			<cfset arguments.thestruct.newid = createuuid("")>
 			<!--- Insert record --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#videos
@@ -1129,7 +1129,7 @@
 			<!--- Write files --->
 			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# #arguments.thestruct.theargument#" mode="777">
 			<!--- Convert video --->
-			<cfset ttexe = replace(createuuid(),"-","","all")>
+			<cfset ttexe = createuuid("")>
 			<cfthread name="#ttexe#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="24000" />
 			</cfthread>
@@ -1149,7 +1149,7 @@
 			<cfelse>
 				<!--- If we are MP4 run it trough MP4Box --->
 				<cfif theformat EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">
-					<cfset ttmp4 = replace(createuuid(),"-","","all")>
+					<cfset ttmp4 = createuuid("")>
 					<cfset arguments.thestruct.thispreviewvideo = thispreviewvideo>
 					<cfset arguments.thestruct.themp4 = themp4>
 					<cfthread name="#ttmp4#" intstruct="#arguments.thestruct#">

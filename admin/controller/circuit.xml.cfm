@@ -1211,7 +1211,7 @@
 		<!-- If new then create id -->
 		<if condition="attributes.rfs_id EQ 0">
 			<true>
-				<set name="attributes.rfs_id" value="#replace(createuuid(),'-','','all')#" />
+				<set name="attributes.rfs_id" value="#createuuid('')#" />
 			</true>
 		</if>
 		<!-- CFC: Check if there is an update for this DB -->

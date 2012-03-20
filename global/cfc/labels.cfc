@@ -133,7 +133,7 @@
 	<cffunction name="label_add" output="false" access="public">
 		<cfargument name="thestruct" type="struct">
 		<!--- ID --->
-		<cfset var theid = replace(createuuid(),"-","","all")>
+		<cfset var theid = createuuid("")>
 		<cfset var thelabel = replace(arguments.thestruct.thelab,"'","","all")>
 		<!--- Insert into Label DB --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -594,7 +594,7 @@
 		<cfset var thelabel = replace(arguments.thestruct.label_text,"'","","all")>
 		<!--- If label_id EQ 0 --->
 		<cfif arguments.thestruct.label_id EQ 0>
-			<cfset arguments.thestruct.label_id = replace(createuuid(),"-","","all")>
+			<cfset arguments.thestruct.label_id = createuuid("")>
 			<!--- Insert --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#labels

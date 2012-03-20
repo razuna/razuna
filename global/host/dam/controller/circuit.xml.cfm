@@ -3476,7 +3476,7 @@
 	<fuseaction name="upl_template_detail">
 		<if condition="attributes.upl_temp_id EQ 0">
 			<true>
-				<set name="attributes.upl_temp_id" value="#replace(createuuid(),'-','','all')#" />
+				<set name="attributes.upl_temp_id" value="#createuuid('')#" />
 			</true>
 		</if>
 		<!-- CFC: get details -->
@@ -3518,7 +3518,7 @@
 		<!-- Create new ID -->
 		<if condition="attributes.imp_temp_id EQ 0">
 			<true>
-				<set name="attributes.imp_temp_id" value="#replace(createuuid(),'-','','all')#" />
+				<set name="attributes.imp_temp_id" value="#createuuid('')#" />
 			</true>
 		</if>
 		<!-- CFC: get details -->
@@ -4171,7 +4171,7 @@
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- Session for the new comment id -->
-		<set name="session.newcommentid" value="#replace(createuuid(),'-','','all')#" />
+		<set name="session.newcommentid" value="#createuuid('')#" />
 		<!-- Show -->
 		<do action="ajax.comments" />
 	</fuseaction>
@@ -4410,7 +4410,7 @@
 		<!-- Param -->
 		<set name="session.theuserid" value="1" />
 		<!-- Session for the new comment id -->
-		<set name="session.newcommentid" value="#replace(createuuid(),'-','','all')#" />
+		<set name="session.newcommentid" value="#createuuid('')#" />
 		<!-- CFC: Add Comment -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="add(attributes)" />
 		<!-- Show -->
@@ -5491,7 +5491,7 @@
 	<!-- Import show window -->
 	<fuseaction name="meta_imp">
 		<!-- Param -->
-		<set name="attributes.tempid" value="#replace(createuuid(),'-','','all')#" />
+		<set name="attributes.tempid" value="#createuuid('')#" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().import" methodcall="getTemplates(false)" returnvariable="qry_imptemp" />
 		<!-- Show -->

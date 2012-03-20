@@ -87,7 +87,7 @@
 	<!--- Collection not here thus continue --->
 	<cfif here.recordcount EQ 0>
 		<!--- Create a new ID --->
-		<cfset newcolid = replace(createuuid(),"-","","ALL")>
+		<cfset newcolid = createuuid("")>
 		<!--- Add to main table --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#collections

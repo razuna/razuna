@@ -1730,7 +1730,7 @@
 			<!--- If not we add it or else we simply update the ct db --->
 			<cfif labhere.recordcount EQ 0>
 				<!--- Create uuid --->
-				<cfset theid = replace(createuuid(),"-","","all")>
+				<cfset theid = createuuid("")>
 				<!--- Insert --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#labels

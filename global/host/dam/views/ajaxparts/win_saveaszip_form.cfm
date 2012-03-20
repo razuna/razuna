@@ -34,7 +34,7 @@
 		</tr>
 		<tr>
 			<td>#defaultsObj.trans("name_of_zip")#</td>
-			<td><input type="text" name="zipname" size="40" value="basket-#replace(createuuid(),"-","","ALL")#">.zip</td>
+			<td><input type="text" name="zipname" size="40" value="basket-#createuuid('')#">.zip</td>
 		</tr>
 		<tr>
 			<td>#defaultsObj.trans("save_in_this_folder")#</td>

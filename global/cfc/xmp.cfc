@@ -454,7 +454,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		<!--- Storage: Nirvanix --->
 		<cfelseif attributes.intstruct.storage EQ "nirvanix">
 			<!--- Create temp directory --->
-			<cfset attributes.intstruct.tempfolder = replace(createuuid(),"-","","ALL")>
+			<cfset attributes.intstruct.tempfolder = createuuid("")>
 			<cfdirectory action="create" directory="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#" mode="775">
 			<cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#">
 			<!--- LOCATION OF XMP FILE --->
@@ -1366,7 +1366,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 	<!--- Storage: Nirvanix --->
 	<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 		<!--- Create temp directory --->
-		<cfset arguments.thestruct.tempfolder = replace(createuuid(),"-","","ALL")>
+		<cfset arguments.thestruct.tempfolder = createuuid("")>
 		<cfdirectory action="create" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" mode="775">
 		<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#">
 		<!--- Download file --->

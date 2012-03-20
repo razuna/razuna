@@ -415,7 +415,7 @@
 		</cfquery>
 		--->
 		<!--- Create a new ID --->
-		<cfset var newfolderid = replace(createuuid(),"-","","ALL")>
+		<cfset var newfolderid = createuuid("")>
 		<!--- Create the default Collections Folder --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		Insert into #arguments.thestruct.host_db_prefix#folders

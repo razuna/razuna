@@ -108,7 +108,7 @@
 	FROM arguments.thestruct.qry_files
 	</cfquery>
 	<!--- Write temp filename --->
-	<cfset var view = replace(createuuid(),"-","","ALL") & ".xls">
+	<cfset var view = createuuid("") & ".xls">
 	<!--- Write the XLS to the temp dir --->
 	<cfspreadsheet action="write" filename="#GetTempDirectory()#/#view#" overwrite="true" query="#qry#" sheetname="text" >
 	<!--- Return --->

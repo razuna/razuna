@@ -31,7 +31,7 @@
 		<!--- Params --->
 		<cfset arguments.thestruct.dsn = "razuna_backup">
 		<cfset arguments.thestruct.fromimport = "T">
-		<cfset arguments.thestruct.tschema = "B" & replace(createuuid(),"-","","all")>
+		<cfset arguments.thestruct.tschema = "B" & createuuid("")>
 		<cfparam name="arguments.thestruct.admin" default="F">
 		<!--- Feedback --->
 		<cfoutput><strong>Starting the Backup</strong><br><br></cfoutput>
@@ -1831,7 +1831,7 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Param --->
 		<cfset var mystruct = structnew()>
-		<cfset var foldername = replace(createuuid(),"-","","ALL")>
+		<cfset var foldername = createuuid("")>
 		<cftry>
 			<!--- Create folder --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thepath#/incoming/#foldername#" mode="775">

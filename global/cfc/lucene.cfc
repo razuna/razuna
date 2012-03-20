@@ -448,7 +448,7 @@
 		<cfoutput><strong>Starting the Re-Indexing process...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Param --->
-		<cfset application.razuna.processid = replacenocase(createuuid(),"-","","all")>
+		<cfset application.razuna.processid = createuuid("")>
 		<cfset arguments.thestruct.rebuild = 1>
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -24, "#now()#")>

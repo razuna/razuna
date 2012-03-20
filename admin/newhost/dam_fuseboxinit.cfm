@@ -96,7 +96,7 @@ WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase
 <cfset session.imgtable="#arguments.host_db_prefix_replace#images">
 </cfif>
 <!--- Cart Session --->
-<cfparam name="session.thecart" default="##createuuid()##">
+<cfparam name="session.thecart" default="##createuuid('')##">
 
 <!--- Call the default components which we need on every page. To do this the FB way is quite cubersome --->
 <cfinvoke component="global.cfc.defaults" method="init" returnvariable="defaultsObj">

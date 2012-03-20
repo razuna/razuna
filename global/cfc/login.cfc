@@ -138,7 +138,7 @@
 						<!--- Create ID --->
 						<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#attributes.intstruct.database#" dsn="#attributes.intstruct.dsn#" thetable="#session.hostdbprefix#folders" theid="folder_id"> --->
 						<!--- Insert --->						
-						<cfset newfolderid = replace(createuuid(),"-","","ALL")>
+						<cfset newfolderid = createuuid("")>
 						<cfquery datasource="#attributes.intstruct.dsn#">
 						INSERT INTO #attributes.intstruct.hostdbprefix#folders
 						(folder_id, folder_name, folder_level, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, folder_of_user, folder_id_r, folder_main_id_r, host_id)
@@ -294,7 +294,7 @@ Password: #randompassword#
 	<cffunction name="razunauploadsession" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
 		<!--- Create token --->
-		<cfset var thetoken = replace(createuuid(),"-","","ALL")>
+		<cfset var thetoken = createuuid("")>
 		<!--- Append to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO webservices

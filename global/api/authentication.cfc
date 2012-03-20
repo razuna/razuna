@@ -66,7 +66,7 @@
 			<!--- If we find the user we create the sessiontoken --->
 			<cfif qry.recordcount NEQ 0>
 				<cfset var response = 0>
-				<cfset var thetoken = replace(createuuid(),"-","","ALL")>
+				<cfset var thetoken = createuuid("")>
 				<!--- Append to DB --->
 				<cfquery datasource="#application.razuna.api.dsn#">
 				INSERT INTO webservices
@@ -214,7 +214,7 @@
 			<!--- If we find the user we create the sessiontoken --->
 			<cfif qry.recordcount NEQ 0>
 				<cfset var response = 0>
-				<cfset var thetoken = replace(createuuid(),"-","","ALL")>
+				<cfset var thetoken = createuuid("")>
 				<!--- Append to DB --->
 				<cfquery datasource="#application.razuna.api.dsn#">
 				INSERT INTO webservices

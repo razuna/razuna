@@ -314,7 +314,7 @@
 				WHERE #theidr# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
 				</cfquery>
 				<!--- the id --->
-				<cfset theid = replace(createuuid(),"-","","all")>
+				<cfset theid = createuuid("")>
 				<!--- Create record --->
 				<cfquery datasource="#application.razuna.api.dsn#">
 				INSERT INTO #application.razuna.api.prefix["#arguments.sessiontoken#"]##thedb#

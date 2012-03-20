@@ -669,7 +669,7 @@ Comment:<br>
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.av_link" default="1">
 		<!--- New id --->
-		<cfset var newid = replacenocase(createuuid(),"-","","ALL")>
+		<cfset var newid = createuuid("")>
 		<!--- Save --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#additional_versions
