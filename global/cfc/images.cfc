@@ -700,8 +700,10 @@
 	<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 	<cfif arguments.thestruct.qry_detail.img_extension EQ "psd" OR arguments.thestruct.qry_detail.img_extension EQ "eps" OR arguments.thestruct.qry_detail.img_extension EQ "ai">
 		<cfset theargument = "#arguments.thestruct.thesource#[0]">
+		<cfset theflatten = "-flatten ">
 	<cfelse>
 		<cfset theargument = "#arguments.thestruct.thesource#">
+		<cfset theflatten = "-flatten ">
 	</cfif>
 	<!--- Now, loop over the selected extensions and convert and store image --->
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
@@ -752,8 +754,8 @@
 			<cfset thethumbtconv = "#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
 		</cfif>
 		<!--- IM commands --->
-		<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -strip -colorspace RGB #theformatconv#">
-		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# -strip -colorspace RGB -flatten #thethumbtconv#">
+		<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -strip -colorspace RGB #theflatten##theformatconv#">
+		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# -strip -colorspace RGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
 		<cfset thescript = createuuid()>
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
