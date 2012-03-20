@@ -49,12 +49,15 @@
 	</cfif>
 	<!--- Put the rest into a thread --->
 	<cfthread name="#arguments.thestruct.tempid#" intstruct="#arguments.thestruct#">
+		<cfset md5hash = "">
 		<!--- Rename the file so that we can remove any spaces --->
 		<cfinvoke component="global" method="convertname" returnvariable="thefilename" thename="#attributes.intstruct.thefile.serverFile#">
 		<cfinvoke component="global" method="convertname" returnvariable="thefilenamenoext" thename="#attributes.intstruct.thefile.serverFileName#">
 		<cffile action="rename" source="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefile.serverFile#" destination="#attributes.intstruct.theincomingtemppath#/#thefilename#">
 		<!--- MD5 Hash --->
-		<cfset md5hash = hashbinary("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
+		<cfif FileExists("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
+			<cfset md5hash = hashbinary("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
+		</cfif>
 		<!--- Add to temp db --->
 		<cfquery datasource="#attributes.intstruct.dsn#" name="qry">
 		INSERT INTO #session.hostdbprefix#assets_temp
@@ -97,6 +100,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
+		<cfset md5hash = "">
 		<!--- If we are coming from a scheduled task then... --->
 		<cfif structkeyexists(arguments.thestruct,"sched")>
 			<cfset x = i>
@@ -130,7 +134,9 @@
 		<!--- Get the filesize --->
 		<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 		<!--- MD5 Hash --->
-		<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+		<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+			<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+		</cfif>
 		<!--- Add to temp db --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#assets_temp
@@ -179,6 +185,7 @@
 				<cfloop list="#attachmentfiles#" delimiters="," index="at">
 					<!--- Sometimes attachments contain unwanted file --->
 					<cfif NOT at CONTAINS "smime">
+						<cfset md5hash = "">
 						<!--- Set names --->
 						<cfset arguments.thestruct.thefilename = listlast(#at#, "/\")>
 						<cfset theextension = listlast("#arguments.thestruct.thefilename#",".")>
@@ -198,7 +205,9 @@
 						<!--- Get the filesize --->
 						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 						<!--- MD5 Hash --->
-						<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+						<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+							<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+						</cfif>
 						<!--- Add to temp db --->
 						<cfquery datasource="#variables.dsn#">
 						INSERT INTO #session.hostdbprefix#assets_temp
@@ -256,6 +265,7 @@
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i">
 		<cftry>
+			<cfset md5hash = "">
 			<!--- Create a unique name for the temp directory to hold the file --->
 			<cfset arguments.thestruct.tempid = replace(createuuid(),"-","","ALL")>
 			<cfset arguments.thestruct.thetempfolder = "ftp#arguments.thestruct.tempid#">
@@ -298,7 +308,9 @@
 			<!--- Get the filesize --->
 			<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 			<!--- MD5 Hash --->
-			<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+			<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+				<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+			</cfif>
 			<!--- Add to temp db --->
 			<cfquery datasource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#assets_temp
@@ -340,6 +352,7 @@
 	<cfparam name="arguments.thestruct.upl_template" default="0">
 	<cfparam name="arguments.thestruct.metadata" default="0">
 	<cfparam name="arguments.thestruct.av" default="0">
+	<cfset var md5hash = "">
 	<!--- If developer wants to debug  --->
 	<cfif arguments.thestruct.debug>
 		<cfinvoke component="debugme" method="email_dump" emailto="#arguments.thestruct.emailto#" emailfrom="server@razuna.com" emailsubject="debug apiupload" dump="#arguments.thestruct#">
@@ -434,7 +447,9 @@
 			<cfinvoke component="global.cfc.global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#thefile.serverFileName#">
 			<cffile action="rename" source="#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 			<!--- MD5 Hash --->
-			<cfset var md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+			<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+				<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+			</cfif>
 			<!--- If we only have the folder_id as variable --->
 			<cfif structkeyexists(arguments.thestruct,"folder_id")>
 				<cfset arguments.thestruct.destfolderid = arguments.thestruct.folder_id>
@@ -583,7 +598,9 @@
 			</cfif>
 			<cfset arguments.thestruct.lanorgname = listlast(arguments.thestruct.link_path_url,"/\")>
 			<!--- MD5 Hash --->
-			<cfset md5hash = hashbinary("#arguments.thestruct.link_path_url#")>
+			<cfif FileExists("#arguments.thestruct.link_path_url#")>
+				<cfset md5hash = hashbinary("#arguments.thestruct.link_path_url#")>
+			</cfif>
 		<!--- If a URL --->
 		<cfelse>
 			<cfset var orgsize = 0>
@@ -1999,7 +2016,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
 		<cfset var theimconvert = "">
-		<cfset var theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
+		<cfset var theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
 		<!--- validate input --->
 		<cfif FileExists(arguments.thestruct.destination)>
 			<!--- <cfthrow message="Destination-file already exists!"> --->
@@ -2032,13 +2049,13 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Set correct width or heigth --->
 		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
+			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
 		<cfelseif arguments.thestruct.thexmp.orgheight LTE arguments.thestruct.height AND arguments.thestruct.thexmp.orgwidth LTE arguments.thestruct.width>
-			<cfset theImgConvertParams = "-strip -colorspace RGB -flatten">
+			<cfset theImgConvertParams = "-strip -colorspace RGB">
 		<cfelseif arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
-			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB -flatten">
+			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace RGB">
 		<cfelseif arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
-			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# -strip -colorspace RGB -flatten">
+			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# -strip -colorspace RGB">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
@@ -2049,7 +2066,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfswitch expression="#arguments.thestruct.qryfile.extension#">
 			<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 			<cfcase value="psd,eps,ai">
-				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.theimconvert# #arguments.thestruct.thesource#[0] #theImgConvertParams# #Arguments.thestruct.destination#">
+				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.theimconvert# #arguments.thestruct.thesource#[0] #theImgConvertParams# -flatten #Arguments.thestruct.destination#">
 			</cfcase>
 			<!--- For RAW images we take dcraw --->
 			<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
@@ -2578,6 +2595,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirrecurse">
 			<cfif type EQ "file" AND size NEQ 0 AND fileexists("#directory#/#name#") AND NOT directory CONTAINS "__MACOSX" AND attributes NEQ "H" AND name NEQ "thumbs.db">
+				<cfset md5hash = "">
 				<!--- Set Original FileName --->
 				<cfset arguments.thestruct.theoriginalfilename = name>
 				<!--- Rename the file so that we can remove any spaces --->
@@ -2610,7 +2628,9 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.thefilenamenoext = replacenocase("#newFileName#", ".#fileNameExt.theext#", "", "ALL")>
 				<cfset arguments.thestruct.theincomingtemppath = directory>
 				<!--- MD5 Hash --->
-				<cfset md5hash = hashbinary("#directory#/#newfilename#")>
+				<cfif FileExists("#directory#/#newfilename#")>
+					<cfset md5hash = hashbinary("#directory#/#newfilename#")>
+				</cfif>
 				<!--- Get folder id with the name of the folder --->
 				<cfquery datasource="#variables.dsn#" name="qryfolderid">
 				SELECT folder_id, folder_name
@@ -3451,11 +3471,11 @@ This is the main function called directly by a single upload else from addassets
 				<!--- For RAW images we take dcraw --->
 				<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
 					<cfset theargs = "#thedcraw# -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
-					<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB -flatten #arguments.thestruct.thumbpath#">
+					<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
 				</cfcase>
 				<!--- For everything else --->
 				<cfdefaultcase>
-					<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB -flatten #arguments.thestruct.thumbpath#">
+					<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
 				</cfdefaultcase>
 			</cfswitch>
 		</cfif>
@@ -4397,6 +4417,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="addassetpathfiles" output="true">
 	<cfargument name="thestruct" type="struct">	
 	<cftry>
+		<cfset var md5hash = "">
 		<!--- Throttle engine a bit --->
 		<cfpause interval="2" />
 		<!--- Create a unique name for the temp directory to hold the file --->
@@ -4417,7 +4438,9 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Store the original filename --->
 		<cfset arguments.thestruct.thefilenameoriginal = arguments.thestruct.filename>
 		<!--- MD5 Hash --->
-		<cfset var md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
+		<cfif FileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
+			<cfset md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
+		</cfif>
 		<!--- Add to temp db --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#assets_temp
