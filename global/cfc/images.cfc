@@ -703,7 +703,7 @@
 		<cfset theflatten = "-flatten ">
 	<cfelse>
 		<cfset theargument = "#arguments.thestruct.thesource#">
-		<cfset theflatten = "-flatten ">
+		<cfset theflatten = "">
 	</cfif>
 	<!--- Now, loop over the selected extensions and convert and store image --->
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
