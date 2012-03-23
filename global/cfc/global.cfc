@@ -374,7 +374,7 @@ Comment:<br>
 				</cfloop>
 			</cfloop>
 		<!--- Check if this is for the widget download --->
-		<cfelseif structkeyexists(arguments.thestruct,"widget_download")>
+		<cfelseif structkeyexists(arguments.thestruct,"widget_download") AND structkeyexists(arguments.thestruct,"wid")>
 			<!--- Put together the value lists for quering --->
 			<cfif arguments.thestruct.kind EQ "img">
 				<cfset var thelist = valuelist(arguments.thestruct.qry_detail.detail.img_id) & "," & valuelist(arguments.thestruct.qry_related.img_id)>
@@ -393,7 +393,7 @@ Comment:<br>
 		<cfelse>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="gs#session.hostid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_share_options">
-			SELECT asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
+			SELECT asset_id_r, group_asset_id, asset_format, '1' AS asset_dl, asset_order, asset_selected
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
