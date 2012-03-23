@@ -73,6 +73,9 @@
 	</cfif>
 	ORDER BY <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(groups.grp_host_id, 0), #Arguments.orderBy#
 	</cfquery>
+	<!--- Put result into session --->
+	<cfset session.thegroupofuser = valuelist(localquery.grp_id)>
+	<!--- Return --->
 	<cfreturn localquery />
 </cffunction>
 
