@@ -91,6 +91,11 @@
 							<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",")</em></td>
 						</tr>
 					</cfif>
+					<!--- Show folderid --->
+					<tr>
+						<td>ID</td>
+						<td>#attributes.folder_id#</td>
+					</tr>
 				</cfif>
 				<tr>
 					<td colspan="2" class="list"></td>
