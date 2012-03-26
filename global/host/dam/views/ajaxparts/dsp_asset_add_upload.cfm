@@ -62,7 +62,7 @@ $(function() {
 	$("##uploader").pluploadQueue({
 		// General settings
 		runtimes : '#session.pluploadruntimes#',
-		url : '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&sessiontoken=#attributes.sessiontoken#&nopreview=#attributes.nopreview#&av=#attributes.av#',
+		url : '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#',
 		max_file_size : '2000mb',
 		unique_names : false,
 		multipart : true,

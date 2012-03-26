@@ -23,22 +23,14 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfoutput>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="en-US">
 <head>
-<title>Uploading from WP Plugin</title>
+<title>Razuna - Enterprise Digital Asset Management</title>
+<meta http-equiv="content-type" content="text/html;charset=utf-8" />
 </head>
 <body>
-<cfparam name="redirectto" default="">
-<form action="http://#hostname#/index.cfm" name="up" method="post" enctype="multipart/form-data">
-<input type="hidden" name="fa" value="c.apiupload">
-<input type="hidden" name="sessiontoken" value="#thesessiontoken#">
-<input type="hidden" name="destfolderid" value="#thefolderid#">
-<input type="hidden" name="redirectto" value="#redirectto#">
-<input type="file" id="filedata" name="filedata">
-<input type="submit" value="send it">
-</form>
+<h1>Developer API</h1>
+<p>You arrived at the root page of the Razuna Developer API. If you wish to access the Razuna API please read up on the <a href="http://wiki.razuna.com/display/ecp/API+Developer+Guide">Razuna API Developer Guide.</a></p>
 </body>
 </html>
-</cfoutput>

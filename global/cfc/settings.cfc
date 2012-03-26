@@ -870,6 +870,25 @@
 	<cfreturn this />
 </cffunction>
 
+<!--- Get API key --->
+<cffunction name="getapikey" output="false" returntype="string">
+	<cfargument name="reset" required="false" default="false">
+	<!--- If we need to reset the key then save first --->
+	<cfif arguments.reset EQ "true">
+		<cfset var tkey = createuuid("")>
+		<cfinvoke method="savesetting" thefield="api_key" thevalue="#tkey#" />
+	</cfif>
+	<!--- See if value is there --->
+	<cfinvoke method="thissetting" thefield="api_key" returnVariable="key" />
+	<!--- If key is empty --->
+	<cfif key EQ "">
+		<cfset var key = createuuid("")>
+		<cfinvoke method="savesetting" thefield="api_key" thevalue="#key#" />
+	</cfif>
+	<!--- Return --->
+	<cfreturn key />
+</cffunction>
+
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get specific setting --->
 <cffunction hint="Get specific setting" name="thissetting" output="false" returntype="string">
@@ -1476,6 +1495,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfquery>
 	<cfreturn qry />
 </cffunction>
+
+
 
 <!--- Drop Backup Schema --->
 <cffunction name="drop_backup" output="false">

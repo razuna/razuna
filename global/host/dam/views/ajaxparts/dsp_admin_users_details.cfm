@@ -31,6 +31,9 @@
 	<ul>
 		<li><a href="##tab_user">#defaultsObj.trans("user_edit")#</a></li>
 		<li><a href="##tab_groups">#defaultsObj.trans("groups")#</a></li>
+		<cfif attributes.add EQ "f" AND grpnrlist EQ 2>
+			<li><a href="##tab_api" onclick="loadcontent('tab_api','#myself#c.admin_user_api&user_id=#attributes.user_id#');">API Key</a></li>
+		</cfif>
 	</ul>
 	<!--- User --->
 	<div id="tab_user">
@@ -137,6 +140,10 @@
 			</tr>
 		</table>
 	</div>
+	<!--- API --->
+	<cfif attributes.add EQ "f" AND grpnrlist EQ 2>
+		<div id="tab_api"></div>
+	</cfif>
 </div>
 <div id="submit" style="float:right;padding:10px;"><div id="updatetext" style="color:green;padding:10px;display:none;float:left;"></div><input type="submit" name="SubmitUser" value="#defaultsObj.trans("button_save")#" class="button"></div>
 

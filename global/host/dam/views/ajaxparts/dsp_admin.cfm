@@ -37,6 +37,7 @@
 			<!--- <li><a href="##admin_logs_users" onclick="loadcontent('log_users_show','#myself#c.log_users');">#defaultsObj.trans("log_users_header")#</a></li> --->
 			<li><a href="##admin_settings" onclick="loadcontent('admin_settings','#myself#c.isp_settings');">#defaultsObj.trans("settings")#</a></li>
 			<li><a href="##admin_maintenance" onclick="loadcontent('admin_maintenance','#myself#c.admin_maintenance');">#defaultsObj.trans("admin_maintenance")#</a></li>
+			<!--- <li><a href="##admin_api" onclick="loadcontent('admin_api','#myself#c.admin_api');">API</a></li> --->
 			<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">System Information</a></li>
 		</ul>
 		<!--- Users --->
@@ -66,34 +67,12 @@
 				<div id="log_show">#defaultsObj.loadinggif("#dynpath#")#</div>
 			</cfif>
 		</div>
-		<!--- Logs Users
-		<div id="admin_logs_users">
-			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-				<tr>
-					<td colspan="2">
-						<div style="float:left;padding-top:3px;">
-							#defaultsObj.trans("show_only")#
-							<select id="showthis" onchange="loadcontent('log_users_show','#myself#c.log_users&logaction=' + document.getElementById('showthis').options[document.getElementById('showthis').selectedIndex].value);">
-								<option selected="true" value="0">#defaultsObj.trans("please_select")#</option>
-								<option value="0">-------</option>
-								<option value="login">Login</option>
-								<option value="error">Error</option>
-								<option value="logout">Logout</option>
-								<option value="delete">Delete</option>
-								<option value="add">Add</option>
-								<option value="update">Update</option>
-							</select>
-							<a href="##" onclick="loadcontent('log_users_show','#myself#c.log_users');">#defaultsObj.trans("reset")#</a>
-						</div>
-						<div style="float:right;"><input type="button" name="button" value="#defaultsObj.trans("delete_log")#" onclick="loadcontent('log_users_show','#myself#c.log_users_remove');" class="button"></div></td>
-				</tr>
-			</table>
-			<div id="log_users_show">#defaultsObj.loadinggif("#dynpath#")#</div>
-		</div> --->
 		<!--- Settings --->
 		<div id="admin_settings">#defaultsObj.loadinggif("#dynpath#")#</div>
 		<!--- Maintenance --->
 		<div id="admin_maintenance">#defaultsObj.loadinggif("#dynpath#")#</div>
+		<!--- API --->
+		<!--- <div id="admin_api">#defaultsObj.loadinggif("#dynpath#")#</div> --->
 		<!--- System Information --->
 		<div id="admin_system">#defaultsObj.loadinggif("#dynpath#")#</div>
 	</div>

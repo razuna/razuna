@@ -1,4 +1,3 @@
-
 <form action="<cfoutput>#cgi.SCRIPT_NAME#</cfoutput>" method="post">
 <input type="hidden" name="passhashed" value="0">
 
@@ -30,13 +29,23 @@
 		<cfelse>
 			<cfset thehttp = "http://jedi.razuna.org/razuna">
 		</cfif>
-		<cfinvoke webservice="#thehttp#/global/api/authentication.cfc?wsdl" 
+		<cfhttp url="#thehttp#/global/api/authentication.cfc?callback=">
+		    <cfhttpparam name="method" type="URL" value="login">
+		    <cfhttpparam name="hostid" type="URL" value="#form.hostname#">
+		    <cfhttpparam name="user" type="URL" value="#form.user#">
+		    <cfhttpparam name="pass" type="URL" value="#form.pass#">
+		    <cfhttpparam name="passhashed" type="URL" value="0">
+		    <cfhttpparam name="__BDRETURNFORMAT" type="URL" value="jsonp">
+		</cfhttp>
+		<!---
+<cfinvoke webservice="#thehttp#/global/api/authentication.cfc?wsdl" 
 			method="login"
 			hostid="#form.hostname#" 
 			user="#form.user#" 
 			pass="#form.pass#"  
 			passhashed="0"
 			returnVariable="xml">
+--->
 	<cfelseif thehost EQ "remote">
 		<cfset thehttp = "http://api.razuna.com">
 		<cfinvoke webservice="#thehttp#/global/api/authentication.cfc?wsdl" 
@@ -48,10 +57,15 @@
 			returnVariable="xml">
 	</cfif>
 
-	<cfset thexml = xmlparse(xml)>
+	<!---
+<cfset thexml = xmlparse(xml)>
 	<cfset thesearch = xmlsearch(thexml,"//sessiontoken")>
 	<cfset thesessiontoken = thesearch[1].xmltext>
+--->
 
+<cfdump var="#cfhttp#">
+
+<cfabort>
 
 <!--- Update a user --->
 <!---

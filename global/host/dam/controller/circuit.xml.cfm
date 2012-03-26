@@ -1426,12 +1426,6 @@
 				<set name="session.pluploadruntimes" value="html5,flash,silverlight" overwrite="false" />
 			</false>
 		</if>
-		<!-- Set params for function call in API -->
-		<set name="attributes.theuserid" value="#session.theuserid#" />
-		<set name="attributes.hostid" value="#session.hostid#" />
-		<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
-		<!-- CFC: Create sessiontoken -->
-		<invoke object="myFusebox.getApplicationData().login" methodcall="razunauploadsession(attributes)" returnvariable="attributes.sessiontoken" />
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- Show -->
@@ -3235,6 +3229,15 @@
 		<!-- Show -->
 		<do action="ajax.users_check" />
 	</fuseaction>
+	<!-- Loading API page -->
+	<fuseaction name="admin_user_api">
+		<!-- Param -->
+		<set name="attributes.reset" value="false" overwrite="false" />
+		<!-- CFC: Check API key -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id,attributes.reset)" returnvariable="qry_api_key" />
+		<!-- Show -->
+		<do action="ajax.admin_user_api" />
+	</fuseaction>
 	
 	<!--  -->
 	<!-- ADMIN: USERS END -->
@@ -3968,7 +3971,6 @@
 			</true>
 		</if>
 	</fuseaction>
-	
 	<!-- Flush database cache -->
 	<fuseaction name="admin_flush_db">
 		<invoke object="myFusebox.getApplicationData().global" method="clearcache">

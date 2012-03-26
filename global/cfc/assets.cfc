@@ -352,18 +352,66 @@
 	<cfparam name="arguments.thestruct.upl_template" default="0">
 	<cfparam name="arguments.thestruct.metadata" default="0">
 	<cfparam name="arguments.thestruct.av" default="0">
+	<cfparam name="arguments.thestruct.dam" default="false">
 	<cfset var md5hash = "">
 	<!--- If developer wants to debug  --->
 	<cfif arguments.thestruct.debug>
 		<cfinvoke component="debugme" method="email_dump" emailto="#arguments.thestruct.emailto#" emailfrom="server@razuna.com" emailsubject="debug apiupload" dump="#arguments.thestruct#">
 	</cfif>
 	<cftry>
-		<!--- Set application variables. Needed for the checkdb method in API --->
-		<cfset application.razuna.api.dsn = variables.dsn>
-		<cfset application.razuna.api.prefix[#arguments.thestruct.sessiontoken#] = session.hostdbprefix>
-		<cfset application.razuna.api.hostid[#arguments.thestruct.sessiontoken#] = session.hostid>
-		<!--- Check sessiontoken --->
-		<cfinvoke component="global.api.authentication" method="checkdb" sessiontoken="#arguments.thestruct.sessiontoken#" returnvariable="thesession">
+		<cfif arguments.thestruct.plupload>
+			<cfset var thesession = true>
+			<cfset var theuserid = session.theuserid>
+		<cfelse>
+			<!--- Check if this API is still called with the old method if so, use the old authentication --->
+			<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
+				<!--- Set application variables. Needed for the checkdb method in API --->
+				<cfset application.razuna.api.dsn = variables.dsn>
+				<cfset application.razuna.api.prefix[#arguments.thestruct.sessiontoken#] = session.hostdbprefix>
+				<cfset application.razuna.api.hostid[#arguments.thestruct.sessiontoken#] = session.hostid>
+				<!--- Check sessiontoken --->
+				<cfinvoke component="global.api.authentication" method="checkdb" sessiontoken="#arguments.thestruct.sessiontoken#" returnvariable="thesession">
+				<!--- Get the user id --->
+				<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+				SELECT userid
+				FROM webservices
+				WHERE sessiontoken = <cfqueryparam value="#arguments.thestruct.sessiontoken#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+				<cfset var theuserid = qryuser.userid>
+			<!--- This is the new one with api_key --->
+			<cfelse>		
+				<cfparam name="thehostid" default="" />
+				<!--- Check to see if api key has a hostid --->
+				<cfif arguments.thestruct.api_key contains "-">
+					<cfset var thehostid = listfirst(arguments.thestruct.api_key,"-")>
+					<cfset var theapikey = listlast(arguments.thestruct.api_key,"-")>
+				<cfelse>
+					<cfset var theapikey = arguments.thestruct.api_key>
+				</cfif>
+				<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="user_#theapikey#" cachedomain="#session.hostid#_users">
+				SELECT u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
+				FROM users u, ct_users_hosts ct, ct_groups_users gu
+				WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
+				AND u.user_id = ct.ct_u_h_user_id
+				<cfif thehostid NEQ "">
+					AND ct.ct_u_h_host_id = <cfqueryparam value="#thehostid#" cfsqltype="cf_sql_numeric">
+				</cfif>
+				AND gu.ct_g_u_user_id = u.user_id
+				AND (
+					gu.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">
+					OR
+					gu.ct_g_u_grp_id = <cfqueryparam value="2" cfsqltype="CF_SQL_VARCHAR">
+				)
+				GROUP BY user_id, ct_g_u_grp_id
+				</cfquery>
+				<cfif qry.recordcount EQ 0>
+					<cfset var thesession = false>
+				<cfelse>
+					<cfset var thesession = true>
+					<cfset var theuserid = qry.user_id>
+				</cfif>
+			</cfif>
+		</cfif>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- If user wants to add metadata fields then collect them here --->
@@ -423,11 +471,6 @@
 				<cfset thefile.contentType = qry_mime.type_mimecontent>
 				<cfset thefile.contentSubType = qry_mime.type_mimesubcontent>
 			<cfelse>
-				<!---
-<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload arguments">
-								<cfdump var="#arguments#" />
-							</cfmail>
---->
 				<!--- If plupload --->
 				<cfif arguments.thestruct.plupload>
 					<cfset thefilefield = "file">
@@ -454,12 +497,6 @@
 			<cfif structkeyexists(arguments.thestruct,"folder_id")>
 				<cfset arguments.thestruct.destfolderid = arguments.thestruct.folder_id>
 			</cfif>
-			<!--- Get the user id from the webservices table --->
-			<cfquery datasource="#variables.dsn#" name="ws">
-			SELECT userid
-			FROM webservices
-			WHERE sessiontoken = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sessiontoken#">
-			</cfquery>
 			<!--- Add to temp db --->
 			<cfquery datasource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#assets_temp
@@ -470,7 +507,7 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.serverFileExt#">,
 			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.destfolderid#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ws.userid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">,
@@ -481,7 +518,7 @@
 			)
 			</cfquery>
 			<!--- Put user id into session for later on --->
-			<cfset session.theuserid = ws.userid>
+			<cfset session.theuserid = theuserid>
 			<!--- We don't need to send an email --->
 			<cfset arguments.thestruct.sendemail = false>
 			<!--- Add the original file name in a session since it is stored as lower case in the temp DB --->
@@ -526,7 +563,7 @@
 			<cfif structkeyexists(arguments.thestruct,"redirectto")>
 				<cflocation url="#arguments.thestruct.redirectto#?responsecode=1&message=nosession" addToken="yes">
 			<cfelse>
-				<cfinvoke component="global.api.authentication" method="timeout" returnvariable="thexml">
+				<cfinvoke component="global.api.authentication" method="timeout" type="s" returnvariable="thexml">
 			</cfif>
 		</cfif>
 		<!--- Catch --->

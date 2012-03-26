@@ -313,6 +313,10 @@
 	<fuseaction name="users_check">
   		<include template="dsp_users_check" />
 	</fuseaction>
+	<!-- ADMIN: User API -->
+	<fuseaction name="admin_user_api">
+  		<include template="dsp_admin_users_api" />
+	</fuseaction>
 	<!-- ADMIN: Groups List -->
 	<fuseaction name="groups_list">
   		<include template="dsp_admin_groups_list" />

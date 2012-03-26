@@ -413,5 +413,36 @@
 	<cfreturn arguments.thestruct.id>
 </cffunction>
 
+<!--- Get API key --->
+<cffunction name="getapikey" output="false" returntype="string">
+	<cfargument name="user_id" required="true">
+	<cfargument name="reset" required="false" default="false">
+	<!--- If we need to reset the key then save first --->
+	<cfif arguments.reset EQ "true">
+		<cfset key.user_api_key = createuuid("")>
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE users
+		SET user_api_key = <cfqueryparam value="#key.user_api_key#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+	</cfif>
+	<!--- See if value is there --->
+	<cfquery datasource="#application.razuna.datasource#" name="key">
+	SELECT user_api_key
+	FROM users
+	WHERE user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
+	<!--- If key is empty --->
+	<cfif key.user_api_key EQ "">
+		<cfset key.user_api_key = createuuid("")>
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE users
+		SET user_api_key = <cfqueryparam value="#key.user_api_key#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE user_id = <cfqueryparam value="#arguments.user_id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+	</cfif>
+	<!--- Return --->
+	<cfreturn key.user_api_key />
+</cffunction>
 
 </cfcomponent>
