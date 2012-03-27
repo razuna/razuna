@@ -1101,7 +1101,7 @@
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_nirvanix_url_services,
-	conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
+	conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_isp
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -1115,6 +1115,7 @@
 	<cfset application.razuna.api.awskeysecret = qry.conf_aws_secret_access_key>
 	<cfset application.razuna.api.awslocation = qry.conf_aws_location>
 	<cfset application.razuna.api.rfs = qry.conf_rendering_farm>
+	<cfset application.razuna.api.isp = qry.conf_isp>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
