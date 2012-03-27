@@ -83,7 +83,7 @@
 					</tr>
 				</cfif>
 				<!--- If cloud url is empty --->
-				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix" AND qry_detail.detail.cloud_url_org EQ "">
+				<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND qry_detail.detail.cloud_url_org EQ "">
 					<tr>
 						<td colspan="2"><h2 style="color:red;">It looks like this file could not be added to the system properly. Please delete it and add it again!</h2></td>
 					</tr>
