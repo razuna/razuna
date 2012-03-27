@@ -125,9 +125,8 @@
 					i.img_height AS height,
 					it.img_description description, 
 					it.img_keywords keywords,
-					count(i.img_id) AS rowtotal,
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
-				concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb
+					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 					WHERE i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreeimg.categorytree)#" list="Yes"></cfif>)
@@ -156,7 +155,6 @@
 					v.vid_height AS height,
 					vt.vid_description description, 
 					vt.vid_keywords keywords,
-					count(v.vid_id) AS rowtotal,
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
 				concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_preview
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
@@ -187,7 +185,6 @@
 					0 AS height,
 					aut.aud_description description, 
 					aut.aud_keywords keywords,
-					count(a.aud_id) AS rowtotal,
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
 					'0' as local_url_thumb
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
@@ -218,7 +215,6 @@
 					0 AS height,
 					ft.file_desc description, 
 					ft.file_keywords keywords,
-					count(f.file_id) AS rowtotal,
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
 					'0' as local_url_thumb
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
@@ -254,13 +250,8 @@
 				</cfswitch>
 				</cfquery>
 			</cfif>
-			<!--- Count the total records --->
-			<cfquery dbtype="query" name="qrytotal">
-			SELECT sum(rowtotal) as thetotal
-			FROM qry
-			</cfquery>
 			<!--- Set responsecode --->
-			<cfif qrytotal.thetotal NEQ 0>
+			<cfif qry.recordcount NEQ 0>
 				<cfset rescode = 0>
 			<cfelse>
 				<cfset rescode = 1>
@@ -269,7 +260,7 @@
 			<cfset q = querynew("responsecode,totalassetscount,calledwith")>
 			<cfset queryaddrow(q,1)>
 			<cfset querysetcell(q,"responsecode",rescode)>
-			<cfset querysetcell(q,"totalassetscount",qrytotal.thetotal)>
+			<cfset querysetcell(q,"totalassetscount",qry.recordcount)>
 			<cfset querysetcell(q,"calledwith",arguments.searchfor)>
 			<!--- Put the 2 queries together --->
 			<cfquery dbtype="query" name="thexml">

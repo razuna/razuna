@@ -33,7 +33,7 @@
 		<cfargument name="user_email" type="string" required="true">
 		<cfargument name="user_name" type="string" required="true">
 		<cfargument name="user_pass" type="string" required="true">
-		<cfargument name="user_active" type="string" required="true">
+		<cfargument name="user_active" type="string" required="false" default="f">
 		<cfargument name="groupid" type="string" required="false" default="0">
 		<!--- Check key --->
 		<cfset thesession = checkdb(arguments.api_key)>
@@ -157,9 +157,9 @@
 	<!--- Update user --->
 	<cffunction name="update" access="remote" output="false" returntype="string" returnformat="json">
 		<cfargument name="sessiontoken" required="true" type="string">
-		<cfargument name="userid" required="true" type="string">
-		<cfargument name="userloginname" required="true" type="string">
-		<cfargument name="useremail" required="true" type="string">
+		<cfargument name="userid" required="false" type="string" default="">
+		<cfargument name="userloginname" required="false" type="string" default="">
+		<cfargument name="useremail" required="false" type="string" default="">
 		<cfargument name="userdata" required="true" type="string" hint="JSON with fields to update">
 		<!--- Check key --->
 		<cfset thesession = checkdb(arguments.api_key)>
@@ -239,9 +239,9 @@
 	<!--- Delete user --->
 	<cffunction name="delete" access="remote" output="false" returntype="string" returnformat="json">
 		<cfargument name="sessiontoken" required="true" type="string">
-		<cfargument name="userid" required="true" type="string">
-		<cfargument name="userloginname" required="true" type="string">
-		<cfargument name="useremail" required="true" type="string">
+		<cfargument name="userid" required="false" type="string" default="">
+		<cfargument name="userloginname" required="false" type="string" default="">
+		<cfargument name="useremail" required="false" type="string" default="">
 		<!--- Check key --->
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
