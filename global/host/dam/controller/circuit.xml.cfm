@@ -1148,6 +1148,13 @@
 			<argument name="mod_id" value="1" />
 			<argument name="host_id" value="#session.hostid#" />
 		</invoke>
+		<!-- If this is for a new sub folder then query for the permissions of the parent folder. Set the folder id to the parent one  -->
+		<if condition="attributes.folder_id EQ 0 AND attributes.rid NEQ 0">
+			<true>
+				<set name="attributes.folder_id_org" value="#attributes.folder_id#" />
+				<set name="attributes.folder_id" value="#attributes.rid#" />
+			</true>
+		</if> 
 		<!-- CFC: Load Groups of this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroups(attributes.folder_id,qry_groups)" returnvariable="qry_folder_groups" />
 		<!-- CFC: Load Groups of this folder for group 0 -->
@@ -1158,6 +1165,12 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.folder_id,'folder')" returnvariable="qry_labels" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
+		<!-- Reset folder id again  -->
+		<if condition="attributes.folder_id EQ 0 AND attributes.rid NEQ 0">
+			<true>
+				<set name="attributes.folder_id" value="#attributes.folder_id_org#" />
+			</true>
+		</if>
 		<!-- Show -->
 		<do action="ajax.folder_new" />
 	</fuseaction>

@@ -129,13 +129,21 @@
 									<td align="center" style="padding:4px;"><input type="radio" value="X" name="per_#grpidnodash#"<cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "X"> checked</cfif></cfloop>></td>
 								</tr>
 							</cfloop>
+							<cfif attributes.rid NEQ 0>
+								<tr>
+									<td colspan="5"><em>Sub-Folders automatically inherit permissions for their parents folder. Change them if you like.</em></td>
+								</tr>
+							</cfif>
 						</table>
 					</td>
 				</tr>
-				<tr>
-					<td width="1%" nowrap="true" class="td2" style="padding-bottom:7px;">#defaultsObj.trans("group_inherit")#</td>
-					<td width="100%" class="td2" style="padding-bottom:7px;"><input type="checkbox" name="perm_inherit" value="T"></td>
-				</tr>
+				<!--- Hide inherit permission for new folders --->
+				<cfif attributes.isdetail EQ "T">
+					<tr>
+						<td></td>
+						<td style="padding-bottom:7px;"><input type="checkbox" name="perm_inherit" value="T"> #defaultsObj.trans("group_inherit")#</td>
+					</tr>
+				</cfif>
 			</table>
 		</div>
 		<!--- Link to Folder --->
