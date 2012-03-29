@@ -35,7 +35,7 @@
 			</tr>
 			<cfoutput query="qry_fields" group="cf_id">
 				<tr class="list">
-					<td width="100%"><a href="##" onclick="showwindow('#myself#c.custom_fields_detail&cf_id=#cf_id#','#cf_text#',680,1);return false">#cf_text#</a></td>
+					<td width="100%"><a href="##" onclick="showwindow('#myself#c.custom_fields_detail&cf_id=#cf_id#','#cf_text#',680,1);return false">#cf_text#</a> <em>(ID: #cf_id#)</em></td>
 					<td width="1%" nowrap="true">#cf_type#</td>
 					<td width="1%" nowrap="true">
 						<cfif cf_show EQ "vid">

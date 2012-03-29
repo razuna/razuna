@@ -39,7 +39,7 @@
 					</tr>
 					<!--- The text in the languages --->					
 					<cfloop query="qry_langs">
-					<cfset thisid = lang_id>
+						<cfset thisid = lang_id>
 						<tr>
 							<td valign="top" width="1%" nowrap="true">#lang_name#</td>
 							<td>
@@ -83,6 +83,9 @@
 					</tr>
 				</table>
 			</td>
+		</tr>
+		<tr>
+			<td colspan="2">ID: #attributes.cf_id#</td>
 		</tr>
 	</table>
 	<div style="float:right;padding-top:10px;">
