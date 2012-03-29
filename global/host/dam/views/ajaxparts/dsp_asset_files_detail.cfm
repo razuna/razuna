@@ -37,37 +37,60 @@
 	<div id="tab_detail#file_id#">
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#defaultsObj.trans("asset_information")#</a></li>
-			<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
-			<cfif qry_cf.recordcount NEQ 0>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_description_keywords)>
+				<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
+			</cfif>
+			<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
 				<li><a href="##customfields">#defaultsObj.trans("custom_fields_asset")#</a></li>
 			</cfif>
 			<!--- Comments --->
-			<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
-			<cfif qry_detail.detail.link_kind NEQ "url">
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_comments)>
+				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
+			</cfif>
+			<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_metadata)>
 				<li><a href="##filemeta">Meta Data</a></li>
 			</cfif>
 			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind EQ "">
-				<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_versions)>
+					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
+				</cfif>
 			</cfif>
 			<cfif session.folderaccess NEQ "R">
-				<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
-				<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
-				<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_sharing_options)>
+					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_additional_renditions)>
+					<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_history)>
+					<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
+				</cfif>
 			</cfif>
 		</ul>
 		<div class="TabbedPanelsContent" id="detailinfo">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<tr>
 					<td colspan="2">
-						<input type="button" name="sendemail" value="#defaultsObj.trans("send_with_email")#" class="button" onclick="showwindow('#myself##xfa.sendemail#&file_id=#file_id#&thetype=doc','#defaultsObj.trans("send_with_email")#',600,2);return false;">
-						<cfif qry_detail.detail.link_kind NEQ "url"><input type="button" name="sendftp" value="#defaultsObj.trans("send_with_ftp")#" class="button" onclick="showwindow('#myself##xfa.sendftp#&file_id=#file_id#&thetype=doc','#defaultsObj.trans("send_with_ftp")#',600,2);return false;"></cfif>
-						<input type="button" name="inbasket" value="#defaultsObj.trans("put_in_basket")#" class="button" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#&thetype=#attributes.file_id#-doc');flash_footer();"> 
-						<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-doc&thetype=doc&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_send_email)>	
+							<input type="button" name="sendemail" value="#defaultsObj.trans("send_with_email")#" class="button" onclick="showwindow('#myself##xfa.sendemail#&file_id=#file_id#&thetype=doc','#defaultsObj.trans("send_with_email")#',600,2);return false;">
+						</cfif>
+						<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_send_ftp)>
+							<input type="button" name="sendftp" value="#defaultsObj.trans("send_with_ftp")#" class="button" onclick="showwindow('#myself##xfa.sendftp#&file_id=#file_id#&thetype=doc','#defaultsObj.trans("send_with_ftp")#',600,2);return false;">
+						</cfif>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_basket)>
+							<input type="button" name="inbasket" value="#defaultsObj.trans("put_in_basket")#" class="button" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#&thetype=#attributes.file_id#-doc');flash_footer();">
+						</cfif>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_add_to_collection)>
+							<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-doc&thetype=doc&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
+						</cfif>
 						<cfif #session.folderaccess# EQ "X">
 							<input type="button" name="move" value="#defaultsObj.trans("move_file")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=#attributes.file_id#&type=movefile&thetype=doc&folder_id=#folder_id#','#defaultsObj.trans("move_file")#',600,2);">
 							<input type="button" name="remove" value="#defaultsObj.trans("delete_asset")#" class="button" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#loaddiv#&folder_id=#folder_id#&showsubfolders=#session.showsubfolders#','#defaultsObj.trans("remove")#',400,2);return false;">
 						</cfif>
-						<input type="button" name="print" value="#defaultsObj.trans("tooltip_print")#" class="button" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#qry_detail.detail.folder_id_r#&kind=detail&thetype=doc&file_id=#attributes.file_id#','#defaultsObj.trans("pdf_window_title")#',500,2);return false;"></td>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_print)>
+							<input type="button" name="print" value="#defaultsObj.trans("tooltip_print")#" class="button" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#qry_detail.detail.folder_id_r#&kind=detail&thetype=doc&file_id=#attributes.file_id#','#defaultsObj.trans("pdf_window_title")#',500,2);return false;">
+						</cfif>
+					</td>
 				</tr>
 				<cfif qry_detail.detail.link_kind NEQ "">
 					<tr>
@@ -136,27 +159,29 @@
 				<tr>
 					<td width="1%" nowrap="true" valign="top" colspan="2" style="padding-top:20px;">
 						<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
-							<cfif settingsobj.get_label_set().set2_labels_users EQ "f">
-								<tr>
-									<td>#defaultsObj.trans("labels")#</td>
-									<td width="100%" nowrap="true" colspan="5">
-										<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_doc" onchange="razaddlabels('tags_doc','#attributes.file_id#','doc');" multiple="multiple">
-											<option value=""></option>
-											<cfloop query="attributes.thelabelsqry">
-												<option value="#label_text#"<cfif ListFindNoCase(qry_labels,'#label_text#') NEQ 0> selected="selected"</cfif>>#label_text#</option>
-											</cfloop>
-										</select>
-									</td>
-								</tr>
-							<cfelse>
-								<tr>
-									<td>#defaultsObj.trans("labels")#</td>
-									<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_doc" value="#qry_labels#"></td>
-								</tr>
-								<tr>
-									<td></td>
-									<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",".)</em></td>
-								</tr>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)>
+								<cfif settingsobj.get_label_set().set2_labels_users EQ "f">
+									<tr>
+										<td>#defaultsObj.trans("labels")#</td>
+										<td width="100%" nowrap="true" colspan="5">
+											<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_doc" onchange="razaddlabels('tags_doc','#attributes.file_id#','doc');" multiple="multiple">
+												<option value=""></option>
+												<cfloop query="attributes.thelabelsqry">
+													<option value="#label_text#"<cfif ListFindNoCase(qry_labels,'#label_text#') NEQ 0> selected="selected"</cfif>>#label_text#</option>
+												</cfloop>
+											</select>
+										</td>
+									</tr>
+								<cfelse>
+									<tr>
+										<td>#defaultsObj.trans("labels")#</td>
+										<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_doc" value="#qry_labels#"></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",".)</em></td>
+									</tr>
+								</cfif>
 							</cfif>
 							<tr>
 								<td width="1%" nowrap="true">#defaultsObj.trans("file_name")#</td>
@@ -206,68 +231,70 @@
 		<!--- Comments --->
 		<div id="divcomments"></div>
 		<!--- Description & Keywords --->
-		<div id="detaildesc">
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-				<tr>
-					<td>
-						<div style="float:left;">
-							<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-								<cfloop query="qry_langs">
-									<cfset thisid = lang_id>
-									<tr>
-										<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
-										<td class="td2" width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:300px;height:40px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
-									</tr>
-									<tr>
-										<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
-										<td class="td2" width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:300px;height:40px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
-									</tr>
-								</cfloop>
-							</table>
-						</div>
-						<!--- If we are a PDF we show additional XMP fields --->
-						<cfif qry_detail.detail.file_extension EQ "PDF">
-							<div style="float:right;">
+		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_description_keywords)>
+			<div id="detaildesc">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+					<tr>
+						<td>
+							<div style="float:left;">
 								<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-									<tr>
-										<td><strong>Author</strong></td>
-										<td><input type="text" style="width:330px;" name="author" value="#qry_detail.pdfxmp.author#"></td>
-									</tr>
-									<tr>
-										<td><strong>Author Title</strong></td>
-										<td><input type="text" style="width:330px;" name="authorsposition" value="#qry_detail.pdfxmp.authorsposition#"></td>
-									</tr>
-									<tr>
-										<td nowrap="nowrap"><strong>Description Writer</strong></td>
-										<td><input type="text" style="width:330px;" name="captionwriter" value="#qry_detail.pdfxmp.captionwriter#"></td>
-									</tr>
-									<tr>
-										<td nowrap="nowrap"><strong>Copyright Status</strong></td>
-										<td>
-										<select name="rightsmarked">
-											<option value=""<cfif qry_detail.pdfxmp.rightsmarked EQ ""> selected="selected"</cfif>>Unknown</option>
-											<option value="true"<cfif qry_detail.pdfxmp.rightsmarked EQ "true"> selected="selected"</cfif>>Copyrighted</option>
-											<option value="false"<cfif qry_detail.pdfxmp.rightsmarked EQ "false"> selected="selected"</cfif>>Public Domain</option>
-										</select>
-										</td>
-									</tr>
-									<tr>
-										<td nowrap="nowrap" valign="top"><strong>Copyright Notice</strong></td>
-										<td><textarea name="rights" class="text" style="width:330px;height:40px;">#qry_detail.pdfxmp.rights#</textarea></td>
-									</tr>
-									<tr>
-										<td nowrap="nowrap"><strong>Copyright URL</strong></td>
-										<td><input type="text" style="width:330px;" name="webstatement" value="#qry_detail.pdfxmp.webstatement#"></td>
-									</tr>
+									<cfloop query="qry_langs">
+										<cfset thisid = lang_id>
+										<tr>
+											<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
+											<td class="td2" width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:300px;height:40px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
+										</tr>
+										<tr>
+											<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
+											<td class="td2" width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:300px;height:40px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
+										</tr>
+									</cfloop>
 								</table>
 							</div>
-						</cfif>
-					</td>
-				</tr>
-			</table>
-		</div>
+							<!--- If we are a PDF we show additional XMP fields --->
+							<cfif qry_detail.detail.file_extension EQ "PDF">
+								<div style="float:right;">
+									<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+										<tr>
+											<td><strong>Author</strong></td>
+											<td><input type="text" style="width:330px;" name="author" value="#qry_detail.pdfxmp.author#"></td>
+										</tr>
+										<tr>
+											<td><strong>Author Title</strong></td>
+											<td><input type="text" style="width:330px;" name="authorsposition" value="#qry_detail.pdfxmp.authorsposition#"></td>
+										</tr>
+										<tr>
+											<td nowrap="nowrap"><strong>Description Writer</strong></td>
+											<td><input type="text" style="width:330px;" name="captionwriter" value="#qry_detail.pdfxmp.captionwriter#"></td>
+										</tr>
+										<tr>
+											<td nowrap="nowrap"><strong>Copyright Status</strong></td>
+											<td>
+											<select name="rightsmarked">
+												<option value=""<cfif qry_detail.pdfxmp.rightsmarked EQ ""> selected="selected"</cfif>>Unknown</option>
+												<option value="true"<cfif qry_detail.pdfxmp.rightsmarked EQ "true"> selected="selected"</cfif>>Copyrighted</option>
+												<option value="false"<cfif qry_detail.pdfxmp.rightsmarked EQ "false"> selected="selected"</cfif>>Public Domain</option>
+											</select>
+											</td>
+										</tr>
+										<tr>
+											<td nowrap="nowrap" valign="top"><strong>Copyright Notice</strong></td>
+											<td><textarea name="rights" class="text" style="width:330px;height:40px;">#qry_detail.pdfxmp.rights#</textarea></td>
+										</tr>
+										<tr>
+											<td nowrap="nowrap"><strong>Copyright URL</strong></td>
+											<td><input type="text" style="width:330px;" name="webstatement" value="#qry_detail.pdfxmp.webstatement#"></td>
+										</tr>
+									</table>
+								</div>
+							</cfif>
+						</td>
+					</tr>
+				</table>
+			</div>
+		</cfif>
 		<!--- CUSTOM FIELDS --->
-		<cfif qry_cf.recordcount NEQ 0>
+		<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
 			<div id="customfields">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<cfloop query="qry_cf">
@@ -289,7 +316,7 @@
 			</div>
 		</cfif>
 		<!--- Meta Data --->
-		<cfif qry_detail.detail.link_kind NEQ "url">
+		<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_metadata)>
 			<div id="filemeta">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>

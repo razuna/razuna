@@ -161,6 +161,8 @@
 						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
 				</if>
+				<!-- CFC: Get languages -->
+				<do action="languages" />
 				<!-- CFC: Custom fields -->
 				<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 				<!-- CFC: Get Wisdom phrases -->

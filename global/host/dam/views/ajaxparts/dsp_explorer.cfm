@@ -52,6 +52,7 @@
 	<!--- Load folders --->
 	<div id="treeBox" style="width:200;height:200;float:left;"></div>
 	<div style="clear:both;"></div>
+	<!--- Show folder selection --->
 	<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 		<cfif session.showmyfolder EQ "F">
 			<p style="padding-left:10px;"><strong>You only see your folders now.</strong><br /><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">Click here to show all folders.</a></p>
@@ -59,7 +60,12 @@
 			<p style="padding-left:10px;"><strong>You see ALL folders now.</strong><br /><em>Tip: Roll over the folder to see who owns the folder.</em><br /><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=F');return false;" title="Click here to hide the personal folders of your users">Click here to show your folders only.</a></p>
 		</cfif>
 	</cfif>
-	
+	<!--- Show link back to main page --->
+	<cfif application.razuna.custom.enabled AND !application.razuna.custom.show_top_part>
+		<div style="clear:both;"></div>
+		<p style="padding-left:10px;"><a href="#myself#c.main" title="Click here to get to the main page">Go to main page</p>
+	</cfif>
+		
 <script language="javascript" type="text/javascript">
 	// Load our tooltips
 	//mytooltip();

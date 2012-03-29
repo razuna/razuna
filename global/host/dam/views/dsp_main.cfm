@@ -112,6 +112,61 @@
 					</div>
 				</td>
 				<td width="50%" valign="top" style="padding-left:10px;">
+					<!--- If the top part is hidden then admin functions are here and the search also --->
+					<cfif application.razuna.custom.enabled AND !application.razuna.custom.show_top_part>
+						<!--- If SystemAdmin or Admininstrator --->
+						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+							<div id="tab_admin">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablepanel">
+									<tr>
+										<th>Administrator Panel</th>
+									</tr>
+									<tr>
+										<td><a href="##" onclick="loadcontent('rightside','#myself#ajax.admin');$('##userselection').toggle();return false;" style="width:100%;">Go to Administration</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a> | </cfloop> </cfif> <a href="http://getsatisfaction.razuna" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&c=#createuuid()#">#defaultsObj.trans("logoff")#</a></td>
+									</tr>
+								</table>
+							</div>
+							<br>
+						</cfif>
+						<!--- Search here --->
+						<div id="tab_search">
+							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablepanel">
+								<tr>
+									<th>Search Panel</th>
+								</tr>
+								<tr>
+									<td>
+										<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
+										<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all">
+										<div style="float:left;padding-top:4px;">
+											<img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" border="0" class="ddicon" onclick="$('##searchselection').toggle();">
+										</div>
+										<div id="searchselection" class="ddselection_header">
+											<p><a href="##" onclick="selectsearchtype('all');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" border="0"></div>#defaultsObj.trans("search_for_allassets")#</a></p>
+											<p><a href="##" onclick="selectsearchtype('img');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_images")#</a></p>
+											<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_documents")#</a></p>
+											<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_videos")#</a></p>
+											<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_audios")#</a></p>
+											<p><hr></p>
+											<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">Help with Search</a></p>
+										</div>
+										<div style="float:left;">
+											<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:300px;" value="Quick Search">
+										</div>
+										<div style="float:left;padding-left:2px;padding-top:4px;" id="searchicon">
+											<img src="#dynpath#/global/host/dam/images/search_16.png" border="0" onclick="checkentry();" class="ddicon">
+										</div>
+										<div style="float:right;padding-left:20px;padding-top:4px;">
+											<a href="##" onclick="showwindow('#myself#c.search_advanced','#defaultsObj.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#defaultsObj.trans("link_adv_search")#</a>
+										</div>
+										</form>
+									
+									</td>
+								</tr>
+							</table>
+						</div>
+						<br>
+					</cfif>
 					<div id="tab_wisdom">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablepanel">
 						<tr>
@@ -130,10 +185,10 @@
 						<!-- the tabs -->
 						<ul class="tabs">
 							<li><a href="##raztools">Razuna Tools</a></li>
-							<li><a href="##support">Support for Razuna</a></li>
-							<li><a href="##twitter" onclick="window.open('http://twitter.com/razunahq');">Twitter</a></li>
-							<li><a href="##facebook" onclick="window.open('http://facebook.com/razunahq');">Facebook</a></li>
-							<li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Razuna Blog</a></li>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_razuna_support)><li><a href="##support">Support for Razuna</a></li></cfif>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_twitter)><li><a href="##twitter" onclick="window.open('http://twitter.com/razunahq');">Twitter</a></li></a></cfif>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_facebook)><li><a href="##facebook" onclick="window.open('http://facebook.com/razunahq');">Facebook</a></li></cfif>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_razuna_blog)><li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Razuna Blog</a></li></cfif>
 						</ul>
 						<!-- tab "panes" -->
 						<div class="pane" id="raztools">
@@ -166,25 +221,31 @@
 									<td>Razuna features a extensive API for you to expand on and access your assets Head over to our <a href="http://razuna.org/getinvolved/developers" target="_blank">Developer section</a> or directly to the <a href="http://wiki.razuna.com/display/ecp/API+Developer+Guide" target="_blank">API guide</a>. </a></td>
 								</tr>
 								<tr>
-									<th style="padding-top:15px;"><u>Connect with Razuna</u></th>
+									<td>
+										<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_twitter)>
+											<a href="http://twitter.com/razunahq" class="twitter-follow-button">Follow @razunahq</a>
+										</cfif>
+									</td>
 								</tr>
 								<tr>
-									<td><a href="http://twitter.com/razunahq" class="twitter-follow-button">Follow @razunahq</a></td>
-								</tr>
-								<tr>
-									<td><script>(function(d){
+									<td>
+										<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_facebook)>
+											<script>(function(d){
   var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
   js = d.createElement('script'); js.id = id; js.async = true;
   js.src = "//connect.facebook.net/en_US/all.js##appId=207944582601260&xfbml=1";
   d.getElementsByTagName('head')[0].appendChild(js);
 }(document));</script>
-<div class="fb-like" data-href="https://www.facebook.com/razunahq" data-send="true" data-width="350" data-show-faces="true"></div></td>
+<div class="fb-like" data-href="https://www.facebook.com/razunahq" data-send="true" data-width="350" data-show-faces="true"></div>
+										</cfif>
+									</td>
 								</tr>
 							</table>
 						</div>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_razuna_support)>
 						<div class="pane" id="support">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-								<cfif NOT application.razuna.isp>
+								<cfif !application.razuna.isp>
 									<tr>
 										<th>Razuna Support</th>
 									</tr>
@@ -209,7 +270,10 @@
 								</tr>
 							</table>
 						</div>
+						</cfif>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_razuna_blog)>
 						<div class="pane" id="blog">#defaultsObj.loadinggif("#dynpath#")#</div>
+						</cfif>
 						<div class="pane" id="twitter"></div>
 						<div class="pane" id="facebook">
 							<div id="fb-root"></div>

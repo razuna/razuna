@@ -131,7 +131,7 @@
 									<img src="#dynpath#/global/host/dam/images/icons/icon_tiff.png" width="16" height="16" border="0" />
 									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=img','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-img');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+									<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_bottom_part)><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-img');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif session.folderaccess EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
@@ -185,7 +185,7 @@
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" width="16" height="16" border="0" />
 									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=vid','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-vid');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+									<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_bottom_part)><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-vid');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif session.folderaccess EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
@@ -234,7 +234,7 @@
 									<img src="#dynpath#/global/host/dam/images/icons/icon_aud.png" width="16" height="16" border="0" />
 									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=aud','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-aud');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+									<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_bottom_part)><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-aud');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif session.folderaccess EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
@@ -303,7 +303,7 @@
 									<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="16" height="16" border="0" />
 									<a href="#myself#c.serve_file&file_id=#id#&type=doc"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-doc');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+									<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_bottom_part)><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#&thetype=#id#-doc');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif session.folderaccess EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 								</cfif>

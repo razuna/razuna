@@ -56,41 +56,68 @@
 	<div id="tab_detail#file_id#">
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('relatedvideos','#myself#c.videos_detail_related&file_id=#attributes.file_id#&what=videos&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#defaultsObj.trans("asset_information")#</a></li>
-			<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
-			<cfif qry_cf.recordcount NEQ 0>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_description_keywords)>
+				<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
+			</cfif>
+			<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
 				<li><a href="##customfields">#defaultsObj.trans("custom_fields_asset")#</a></li>
 			</cfif>
 			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
-				<li><a href="##convert">#defaultsObj.trans("convert")#</a></li>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_convert_files)>
+					<li><a href="##convert">#defaultsObj.trans("convert")#</a></li>
+				</cfif>
 				<cfif qry_detail.detail.link_kind NEQ "lan">
-					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
+					<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_versions)>
+						<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
+					</cfif>
 				</cfif>
 			</cfif>
 			<!--- Comments --->
-			<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
-			<cfif qry_detail.detail.link_kind NEQ "url">
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_comments)>
+				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
+			</cfif>
+			<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_metadata)>
 				<li><a href="##vidmeta">Meta Data</a></li>
 			</cfif>
 			<cfif session.folderaccess NEQ "R">
-				<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
-				<li><a href="##previewimage" onclick="loadcontent('previewimage','#myself#c.previewimage&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("header_preview_image")#</a></li>
-				<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
-				<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_sharing_options)>
+					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_preview_images)>
+					<li><a href="##previewimage" onclick="loadcontent('previewimage','#myself#c.previewimage&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("header_preview_image")#</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_additional_renditions)>
+					<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_history)>
+					<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
+				</cfif>
 			</cfif>
 		</ul>
 		<div id="detailinfo">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<tr>
 					<td width="100%" nowrap="true" colspan="2">
-						<input type="button" name="sendemail" value="#defaultsObj.trans("send_with_email")#" class="button" onclick="showwindow('#myself##xfa.sendemail#&file_id=#attributes.file_id#&thetype=vid','#defaultsObj.trans("send_with_email")#',600,2);return false;"> 
-						<cfif qry_detail.detail.link_kind NEQ "url"><input type="button" name="sendftp" value="#defaultsObj.trans("send_with_ftp")#" class="button" onclick="showwindow('#myself##xfa.sendftp#&file_id=#attributes.file_id#&thetype=vid','#defaultsObj.trans("send_with_ftp")#',600,2);return false;"></cfif>
-						<input type="button" name="inbasket" value="#defaultsObj.trans("put_in_basket")#" class="button" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#&thetype=#attributes.file_id#-vid');flash_footer();"> 
-						<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-vid&thetype=vid&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_send_email)>	
+							<input type="button" name="sendemail" value="#defaultsObj.trans("send_with_email")#" class="button" onclick="showwindow('#myself##xfa.sendemail#&file_id=#attributes.file_id#&thetype=vid','#defaultsObj.trans("send_with_email")#',600,2);return false;"> 
+						</cfif>
+						<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_send_ftp)>
+							<input type="button" name="sendftp" value="#defaultsObj.trans("send_with_ftp")#" class="button" onclick="showwindow('#myself##xfa.sendftp#&file_id=#attributes.file_id#&thetype=vid','#defaultsObj.trans("send_with_ftp")#',600,2);return false;">
+						</cfif>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_basket)>
+							<input type="button" name="inbasket" value="#defaultsObj.trans("put_in_basket")#" class="button" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#&thetype=#attributes.file_id#-vid');flash_footer();"> 
+						</cfif>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_add_to_collection)>
+							<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-vid&thetype=vid&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
+						</cfif>
 						<cfif #session.folderaccess# EQ "X">
 							<input type="button" name="move" value="#defaultsObj.trans("move_file")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=#attributes.file_id#&type=movefile&thetype=vid&folder_id=#folder_id#','#defaultsObj.trans("move_file")#',600,2);"> 
 							<input type="button" name="remove" value="#defaultsObj.trans("delete_asset")#" class="button" onclick="showwindow('#myself#ajax.remove_record&id=#attributes.file_id#&what=videos&loaddiv=#loaddiv#&folder_id=#folder_id#&showsubfolders=#session.showsubfolders#','#defaultsObj.trans("remove")#',400,2);return false;"> 
 						</cfif>
-						<input type="button" name="print" value="#defaultsObj.trans("tooltip_print")#" class="button" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#qry_detail.detail.folder_id_r#&kind=detail&thetype=vid&file_id=#attributes.file_id#','#defaultsObj.trans("pdf_window_title")#',500,2);return false;"></td>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_print)>
+							<input type="button" name="print" value="#defaultsObj.trans("tooltip_print")#" class="button" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#qry_detail.detail.folder_id_r#&kind=detail&thetype=vid&file_id=#attributes.file_id#','#defaultsObj.trans("pdf_window_title")#',500,2);return false;">
+						</cfif>
+					</td>
 				</tr>
 				<cfif qry_detail.detail.link_kind NEQ "">
 					<tr>
@@ -148,7 +175,7 @@
 					</td>
 					<td width="100%" nowrap="true" valign="top" align="center" style="padding-top:20px;">
 						<cfif qry_detail.detail.link_kind NEQ "lan">
-							<div id="thevideodetail"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a><cfif qry_detail.detail.link_kind EQ "url">#qry_detail.detail.link_path_url#</cfif></div>
+							<div id="thevideodetail"><cfif qry_detail.detail.link_kind EQ "url">#qry_detail.detail.link_path_url#<cfelse><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a></cfif></div>
 						<cfelse>
 							<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#" border="0" width="420" height="230"><br />
 							#qry_detail.detail.link_path_url#<br />
@@ -159,27 +186,29 @@
 				<tr>
 					<td colspan="2" style="padding-top:20px;">
 						<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
-							<cfif settingsobj.get_label_set().set2_labels_users EQ "f">
-								<tr>
-									<td>#defaultsObj.trans("labels")#</td>
-									<td width="100%" nowrap="true" colspan="5">
-										<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_vid" onchange="razaddlabels('tags_vid','#attributes.file_id#','vid');" multiple="multiple">
-											<option value=""></option>
-											<cfloop query="attributes.thelabelsqry">
-												<option value="#label_text#"<cfif ListFindNoCase(qry_labels,'#label_text#') NEQ 0> selected="selected"</cfif>>#label_text#</option>
-											</cfloop>
-										</select>
-									</td>
-								</tr>
-							<cfelse>
-								<tr>
-									<td>#defaultsObj.trans("labels")#</td>
-									<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_vid" value="#qry_labels#"></td>
-								</tr>
-								<tr>
-									<td></td>
-									<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",".)</em></td>
-								</tr>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)>
+								<cfif settingsobj.get_label_set().set2_labels_users EQ "f">
+									<tr>
+										<td>#defaultsObj.trans("labels")#</td>
+										<td width="100%" nowrap="true" colspan="5">
+											<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_vid" onchange="razaddlabels('tags_vid','#attributes.file_id#','vid');" multiple="multiple">
+												<option value=""></option>
+												<cfloop query="attributes.thelabelsqry">
+													<option value="#label_text#"<cfif ListFindNoCase(qry_labels,'#label_text#') NEQ 0> selected="selected"</cfif>>#label_text#</option>
+												</cfloop>
+											</select>
+										</td>
+									</tr>
+								<cfelse>
+									<tr>
+										<td>#defaultsObj.trans("labels")#</td>
+										<td width="100%" nowrap="true" colspan="5"><input name="tags" id="tags_vid" value="#qry_labels#"></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",".)</em></td>
+									</tr>
+								</cfif>
 							</cfif>
 							<tr>
 								<td width="1%" nowrap="true">#defaultsObj.trans("file_name")#</td>
@@ -235,23 +264,25 @@
 		<!--- Comments --->
 		<div id="divcomments"></div>
 		<!--- Description & Keywords --->
-		<div id="detaildesc">
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-				<cfloop query="qry_langs">
-					<cfset thisid = lang_id>
-					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
-						<td class="td2" width="100%"><textarea name="vid_desc_#thisid#" class="text" rows="2" cols="50"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_description#</cfif></cfloop></textarea></td>
-					</tr>
-					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
-						<td class="td2" width="100%"><textarea name="vid_keywords_#thisid#" class="text" rows="2" cols="50"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_keywords#</cfif></cfloop></textarea></td>
-					</tr>
-				</cfloop>
-			</table>
-		</div>
+		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_description_keywords)>
+			<div id="detaildesc">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+					<cfloop query="qry_langs">
+						<cfset thisid = lang_id>
+						<tr>
+							<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
+							<td class="td2" width="100%"><textarea name="vid_desc_#thisid#" class="text" rows="2" cols="50"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_description#</cfif></cfloop></textarea></td>
+						</tr>
+						<tr>
+							<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
+							<td class="td2" width="100%"><textarea name="vid_keywords_#thisid#" class="text" rows="2" cols="50"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_keywords#</cfif></cfloop></textarea></td>
+						</tr>
+					</cfloop>
+				</table>
+			</div>
+		</cfif>
 		<!--- CUSTOM FIELDS --->
-		<cfif qry_cf.recordcount NEQ 0>
+		<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
 			<div id="customfields">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<cfloop query="qry_cf">
@@ -273,7 +304,7 @@
 			</div>
 		</cfif>
 		<!--- Meta Data --->
-		<cfif qry_detail.detail.link_kind NEQ "url">
+		<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_metadata)>
 			<div id="vidmeta">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
@@ -284,130 +315,132 @@
 		</cfif>
 		<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 			<!--- Convert Videos --->
-			<div id="convert">
-				<cfif session.hosttype EQ 0>
-					<cfinclude template="dsp_host_upgrade.cfm">
-				<cfelse>
-					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-						<tr>
-							<td colspan="4">#defaultsObj.trans("videos_conversion_desc")#</td>
-						</tr>
-						<tr>
-							<th colspan="4">#defaultsObj.trans("video_original")#</th>
-						</tr>
-						<tr>
-							<td width="1%" nowrap="true">#defaultsObj.trans("file_name")#</td>
-							<td width="100%" colspan="3">#qry_detail.detail.vid_filename#</td>
-						</tr>
-						<tr>
-							<td width="1%" nowrap="true">#defaultsObj.trans("format")#</td>
-							<td width="100%" colspan="3">#ucase(qry_detail.detail.vid_extension)#</td>
-						</tr>
-						<tr>
-							<td width="1%" nowrap="true">#defaultsObj.trans("size")#</td>
-							<td width="100%" colspan="3">#qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel</td>
-						</tr>
-						<tr>
-							<td width="1%" nowrap="true">#defaultsObj.trans("data_size")#</td>
-							<td width="100%" colspan="3">#qry_detail.thesize# MB</td>
-						</tr>
-						<!--- <cfif server.os.name CONTAINS "Mac">
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_convert_files)>
+				<div id="convert">
+					<cfif session.hosttype EQ 0>
+						<cfinclude template="dsp_host_upgrade.cfm">
+					<cfelse>
+						<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 							<tr>
-								<td colspan="4" style="color:##FF0000;">#defaultsObj.trans("videos_conversion_mac")#</td>
+								<td colspan="4">#defaultsObj.trans("videos_conversion_desc")#</td>
 							</tr>
-						</cfif> --->
-						<tr>
-							<th colspan="2">#defaultsObj.trans("video_convert_to")#</th>
-							<th>#defaultsObj.trans("size")#</th>
-							<!--- <th>BitRate</th> --->
-						</tr>
-						<cfset theaspectratio = #qry_detail.detail.vwidth# / #qry_detail.detail.vheight#>
-						<!--- OGV --->
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="ogv"></td>
-							<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',0);return false;" style="text-decoration:none;">OGG (OGV)*</a></td>
-							<td><input type="text" size="3" name="convert_width_ogv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_ogv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_ogv" value="600">kb/s</td> --->
-						</tr>
-						<!--- WebM --->
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="webm"></td>
-							<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',1);return false;" style="text-decoration:none;">WebM (WebM)*</a></td>
-							<td><input type="text" size="3" name="convert_width_webm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_webm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_webm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_webm','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_webm" value="600">kb/s</td> --->
-						</tr>
-						<!--- Flash --->
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="flv"></td>
-							<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',2);return false;" style="text-decoration:none;">Flash (FLV)</a></td>
-							<td><input type="text" size="3" name="convert_width_flv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_flv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_flv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_flv','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_flv" value="600">kb/s</td> --->
-						</tr>
-						<!--- MP4 --->
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="mp4"></td>
-							<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',3);return false;" style="text-decoration:none;">Mpeg4 (MP4)</a></td>
-							<td><input type="text" size="3" name="convert_width_mp4" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mp4','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mp4" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mp4','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mp4" value="600">kb/s</td> --->
-						</tr>
-						<tr class="list">
-							<td width="1%" nowrap="true" align="center"><input type="checkbox" name="convert_to" value="wmv"></td>
-							<td width="1%" nowrap="true"><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',4);return false;" style="text-decoration:none;">Windows Media Video (WMV)</a></td>
-							<td width="1%" nowrap="true"><input type="text" size="3" name="convert_width_wmv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_wmv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_wmv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_wmv','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td width="100%" nowrap="true"><input type="text" size="4" name="convert_bitrate_wmv" value="600">kb/s</td> --->
-						</tr>
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="avi"></td>
-							<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',5);return false;" style="text-decoration:none;">Audio Video Interlaced (AVI)</a></td>
-							<td><input type="text" size="3" name="convert_width_avi" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_avi','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_avi" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_avi','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_avi" value="600">kb/s</td> --->
-						</tr>
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="mov"></td>
-							<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',6);return false;" style="text-decoration:none;">Quicktime (MOV)</a></td>
-							<td><input type="text" size="3" name="convert_width_mov" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mov','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mov" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mov','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="600">kb/s</td> --->
-						</tr>
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="mpg"></td>
-							<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',7)" style="text-decoration:none;">Mpeg1 Mpeg2 (MPG)</a></td>
-							<td><input type="text" size="3" name="convert_width_mpg" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mpg','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mpg" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mpg','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mpg" value="600">kb/s</td> --->
-						</tr>
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="3gp" onclick="clickset3gp('form#attributes.file_id#');"></td>
-							<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',8);clickset3gp('form#attributes.file_id#');return false;" style="text-decoration:none;">3GP (3GP)</a></td>
-							<td nowrap="true">
-							<select name="convert_wh_3gp" onChange="javascript:set3gp('form#attributes.file_id#');">
-							<option value="0"></option>
-							<option value="1" selected="true">128x96 (MMS 64K)</option>
-							<option value="2">128x96 (MMS 95K)</option>
-							<option value="3">176x144 (MMS 95K)</option>
-							<option value="4">128x96 (200K)</option>
-							<option value="5">176x144 (200K)</option>
-							<option value="6">128x96 (300K)</option>
-							<option value="7">176x144 (300K)</option>
-							<option value="8">128x96 (No size limit)</option>
-							<option value="9">176x144 (No size limit)</option>
-							<option value="10">352x288 (No size limit)</option>
-							<option value="11">704x576 (No size limit)</option>
-							<option value="12">1408x1152 (No size limit)</option>
-							</select>
-							</td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_3gp" value="64">kb/s</td> --->
-						</tr>
-						<tr class="list">
-							<td align="center"><input type="checkbox" name="convert_to" value="rm"></td>
-							<td nowrap="true"><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',9);return false;" style="text-decoration:none;">RealNetwork Video Data (RM)</a></td>
-							<td><input type="text" size="3" name="convert_width_rm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_rm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_rm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_rm','form#attributes.file_id#',#theaspectratio#);"></td>
-							<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_rm" value="600">kb/s</td> --->
-						</tr>
-						<tr>
-							<td colspan="4"><input type="button" name="convertbutton" value="#defaultsObj.trans("convert_button")#" class="button" onclick="convertvideos('form#attributes.file_id#');"> <div id="statusconvert" style="padding:10px;color:green;background-color:##FFFFE0;visibility:hidden;"></div><div id="statusconvertdummy"></div></td>
-						</tr>
-					</table>
-				</cfif>
-			</div>
+							<tr>
+								<th colspan="4">#defaultsObj.trans("video_original")#</th>
+							</tr>
+							<tr>
+								<td width="1%" nowrap="true">#defaultsObj.trans("file_name")#</td>
+								<td width="100%" colspan="3">#qry_detail.detail.vid_filename#</td>
+							</tr>
+							<tr>
+								<td width="1%" nowrap="true">#defaultsObj.trans("format")#</td>
+								<td width="100%" colspan="3">#ucase(qry_detail.detail.vid_extension)#</td>
+							</tr>
+							<tr>
+								<td width="1%" nowrap="true">#defaultsObj.trans("size")#</td>
+								<td width="100%" colspan="3">#qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel</td>
+							</tr>
+							<tr>
+								<td width="1%" nowrap="true">#defaultsObj.trans("data_size")#</td>
+								<td width="100%" colspan="3">#qry_detail.thesize# MB</td>
+							</tr>
+							<!--- <cfif server.os.name CONTAINS "Mac">
+								<tr>
+									<td colspan="4" style="color:##FF0000;">#defaultsObj.trans("videos_conversion_mac")#</td>
+								</tr>
+							</cfif> --->
+							<tr>
+								<th colspan="2">#defaultsObj.trans("video_convert_to")#</th>
+								<th>#defaultsObj.trans("size")#</th>
+								<!--- <th>BitRate</th> --->
+							</tr>
+							<cfset theaspectratio = #qry_detail.detail.vwidth# / #qry_detail.detail.vheight#>
+							<!--- OGV --->
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="ogv"></td>
+								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',0);return false;" style="text-decoration:none;">OGG (OGV)*</a></td>
+								<td><input type="text" size="3" name="convert_width_ogv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_ogv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_ogv" value="600">kb/s</td> --->
+							</tr>
+							<!--- WebM --->
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="webm"></td>
+								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',1);return false;" style="text-decoration:none;">WebM (WebM)*</a></td>
+								<td><input type="text" size="3" name="convert_width_webm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_webm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_webm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_webm','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_webm" value="600">kb/s</td> --->
+							</tr>
+							<!--- Flash --->
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="flv"></td>
+								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',2);return false;" style="text-decoration:none;">Flash (FLV)</a></td>
+								<td><input type="text" size="3" name="convert_width_flv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_flv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_flv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_flv','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_flv" value="600">kb/s</td> --->
+							</tr>
+							<!--- MP4 --->
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="mp4"></td>
+								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',3);return false;" style="text-decoration:none;">Mpeg4 (MP4)</a></td>
+								<td><input type="text" size="3" name="convert_width_mp4" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mp4','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mp4" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mp4','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mp4" value="600">kb/s</td> --->
+							</tr>
+							<tr class="list">
+								<td width="1%" nowrap="true" align="center"><input type="checkbox" name="convert_to" value="wmv"></td>
+								<td width="1%" nowrap="true"><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',4);return false;" style="text-decoration:none;">Windows Media Video (WMV)</a></td>
+								<td width="1%" nowrap="true"><input type="text" size="3" name="convert_width_wmv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_wmv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_wmv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_wmv','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td width="100%" nowrap="true"><input type="text" size="4" name="convert_bitrate_wmv" value="600">kb/s</td> --->
+							</tr>
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="avi"></td>
+								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',5);return false;" style="text-decoration:none;">Audio Video Interlaced (AVI)</a></td>
+								<td><input type="text" size="3" name="convert_width_avi" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_avi','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_avi" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_avi','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_avi" value="600">kb/s</td> --->
+							</tr>
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="mov"></td>
+								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',6);return false;" style="text-decoration:none;">Quicktime (MOV)</a></td>
+								<td><input type="text" size="3" name="convert_width_mov" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mov','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mov" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mov','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="600">kb/s</td> --->
+							</tr>
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="mpg"></td>
+								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',7)" style="text-decoration:none;">Mpeg1 Mpeg2 (MPG)</a></td>
+								<td><input type="text" size="3" name="convert_width_mpg" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mpg','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mpg" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mpg','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mpg" value="600">kb/s</td> --->
+							</tr>
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="3gp" onclick="clickset3gp('form#attributes.file_id#');"></td>
+								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',8);clickset3gp('form#attributes.file_id#');return false;" style="text-decoration:none;">3GP (3GP)</a></td>
+								<td nowrap="true">
+								<select name="convert_wh_3gp" onChange="javascript:set3gp('form#attributes.file_id#');">
+								<option value="0"></option>
+								<option value="1" selected="true">128x96 (MMS 64K)</option>
+								<option value="2">128x96 (MMS 95K)</option>
+								<option value="3">176x144 (MMS 95K)</option>
+								<option value="4">128x96 (200K)</option>
+								<option value="5">176x144 (200K)</option>
+								<option value="6">128x96 (300K)</option>
+								<option value="7">176x144 (300K)</option>
+								<option value="8">128x96 (No size limit)</option>
+								<option value="9">176x144 (No size limit)</option>
+								<option value="10">352x288 (No size limit)</option>
+								<option value="11">704x576 (No size limit)</option>
+								<option value="12">1408x1152 (No size limit)</option>
+								</select>
+								</td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_3gp" value="64">kb/s</td> --->
+							</tr>
+							<tr class="list">
+								<td align="center"><input type="checkbox" name="convert_to" value="rm"></td>
+								<td nowrap="true"><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',9);return false;" style="text-decoration:none;">RealNetwork Video Data (RM)</a></td>
+								<td><input type="text" size="3" name="convert_width_rm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_rm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_rm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_rm','form#attributes.file_id#',#theaspectratio#);"></td>
+								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_rm" value="600">kb/s</td> --->
+							</tr>
+							<tr>
+								<td colspan="4"><input type="button" name="convertbutton" value="#defaultsObj.trans("convert_button")#" class="button" onclick="convertvideos('form#attributes.file_id#');"> <div id="statusconvert" style="padding:10px;color:green;background-color:##FFFFE0;visibility:hidden;"></div><div id="statusconvertdummy"></div></td>
+							</tr>
+						</table>
+					</cfif>
+				</div>
+			</cfif>
 				<!--- VERSIONS --->
 				<cfif qry_detail.detail.link_kind NEQ "lan">
 					<div id="divversions"></div>

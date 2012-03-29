@@ -36,30 +36,32 @@
 			<td align="right"><input type="button" name="saveaszip" value="#defaultsObj.trans("basket_save_as_zip_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_zip','#defaultsObj.trans("basket_save_as_zip_button")#',600,1);" /></td>
 		</tr>
 	</table>
-	<hr class="theline" />
 	<!--- Save as a Collection --->
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-		<tr>
-			<th>#defaultsObj.trans("basket_save_as_collection")#</th>
-		</tr>
-		<tr>
-			<td>#defaultsObj.trans("basket_save_as_collection_desc")#</td>
-		</tr>
-		<tr>
-			<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_collection','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
-		</tr>
-	</table>
-	<hr class="theline" />
-	<!--- Save into existing Collection --->
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-		<tr>
-			<th>#defaultsObj.trans("basket_save_as_ext_collection")#</th>
-		</tr>
-		<tr>
-			<td>#defaultsObj.trans("basket_save_as_ext_collection_desc")#</td>
-		</tr>
+	<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_collections)>
+		<hr class="theline" />
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_ext_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_choose_collection','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
+				<th>#defaultsObj.trans("basket_save_as_collection")#</th>
 			</tr>
-	</table>
+			<tr>
+				<td>#defaultsObj.trans("basket_save_as_collection_desc")#</td>
+			</tr>
+			<tr>
+				<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_collection','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
+			</tr>
+		</table>
+		<hr class="theline" />
+		<!--- Save into existing Collection --->
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+			<tr>
+				<th>#defaultsObj.trans("basket_save_as_ext_collection")#</th>
+			</tr>
+			<tr>
+				<td>#defaultsObj.trans("basket_save_as_ext_collection_desc")#</td>
+			</tr>
+				<tr>
+					<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_ext_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_choose_collection','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
+				</tr>
+		</table>
+	</cfif>
 </cfoutput>

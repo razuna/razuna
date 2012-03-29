@@ -33,7 +33,7 @@
 		<div style="float:left;width:290px;">
 			<a href="#myself#c.main">
 				<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
-					<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
+					<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" width="200" height="29" border="0" style="padding:3px 0px 0px 15px;">
 				<cfelse>
 					<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 15px;">
 				</cfif>
@@ -106,7 +106,9 @@
 				</div>
 			</cfif>
 			<!--- Feedback --->
-			<div style="float:left;"><a href="##" onClick="feedback_widget.show();">Feedback</a></div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_feedback)>
+				<div style="float:left;"><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></div>
+			</cfif>
 		</div>	
 	</div>
 </cfoutput>
@@ -117,73 +119,5 @@
 		document.form_account.target='myWin';
 		document.form_account.submit();
 	}
-	// For the Quick Search
-	$(document).ready(function() {
-		// Store the value of the input field
-		var theval = $('#simplesearchtext').val();
-		// If user click on the quick search field we hide the text
-		$('#simplesearchtext').click(function(){
-			// Get the value of the entry field
-			var theentrynow = $('#simplesearchtext').val();
-			if (theentrynow == 'Quick Search'){
-				$('#simplesearchtext').val('');
-			}
-		})
-		// If the value field is empty restore the value field
-		$('#simplesearchtext').blur(function(){
-			// Get the current value of the field
-			var thevalnow = $('#simplesearchtext').val();
-			// If the current value is empty then restore it with the default value
-			if ( thevalnow == ''){
-				$('#simplesearchtext').val(theval);
-			}
-		})
-	})
-	function checkentry(){
-		// Only allow chars
-		var illegalChars = /(\*|\?)/;
-		// Parse the entry
-		var theentry = $('#simplesearchtext').val();
-		var thetype = $('#simplesearchthetype').val();
-		if (theentry == "" | theentry == "Quick Search"){
-			return false;
-		}
-		else {
-			// get the first position
-			var p1 = theentry.substr(theentry,1);
-			// Now check
-			if (illegalChars.test(p1)){
-				alert('The first character of your search string is an illegal one. Please remove it!');
-			}
-			else {
-				$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" style="padding:0px;">');
-				//loadcontent('rightside','<cfoutput>#myself#</cfoutput>c.search_simple&folder_id=0&searchtext=' + escape(theentry) + '&thetype=' + thetype);
-				// We are now using POST for the search field (much more compatible then a simple laod for foreign chars)
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', { searchtext: theentry, folder_id: 0, thetype: thetype }, function(){
-					$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/search_16.png" border="0" onclick="checkentry();" class="ddicon">');
-				});
-			}
-			return false;
-		}
-	}
-	// When a search selection is clicked
-	function selectsearchtype(thetype){
-		$('#simplesearchthetype').val(thetype);
-		$('#searchselection').toggle();
-		// Remove the image in all marks
-		$('#markall').html('&nbsp;');
-		$('#markimg').html('&nbsp;');
-		$('#markvid').html('&nbsp;');
-		$('#markaud').html('&nbsp;');
-		$('#markdoc').html('&nbsp;');
-		// Now set the correct CSS
-		$('#markall').css({'float':'left','padding-right':'14px'});
-		$('#markimg').css({'float':'left','padding-right':'14px'});
-		$('#markvid').css({'float':'left','padding-right':'14px'});
-		$('#markaud').css({'float':'left','padding-right':'14px'});
-		$('#markdoc').css({'float':'left','padding-right':'14px'});
-		// Now mark the div
-		$('#mark' + thetype).css({'float':'left','padding-right':'3px'});
-		$('#mark' + thetype).html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/arrow_selected.jpg" border="0">');
-	}
+	
 </script>

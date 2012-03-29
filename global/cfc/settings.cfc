@@ -1497,8 +1497,6 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn qry />
 </cffunction>
 
-
-
 <!--- Drop Backup Schema --->
 <cffunction name="drop_backup" output="false">
 	<cfargument name="thestruct" type="struct">
@@ -1513,5 +1511,59 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfquery>
 	<cfreturn />
 </cffunction>
+
+<!--- Read custom file and store in application scope --->
+<cffunction name="readcustom" output="false">
+	<!--- Set the application custom scope so it exists --->
+	<cfset application.razuna.custom.enabled = false>
+	<!--- path to file --->
+	<cfset var conffile = expandpath("../..") & "global/config/customization.cfm">
+	<!--- Check if a file exsists --->
+	<cfif fileexists(conffile)>
+		<!--- Params --->
+		<cfset var data = structNew()>
+		<!--- get sections --->
+		<cfset var sections = getProfileSections(conffile)>
+		<!--- Parse each section and add to application scope --->
+		<cfif structKeyExists(sections, "folderview")>
+			<cfloop index="key" list="#sections.folderview#">
+		    	<cfset data[key] = getProfileString(conffile, "folderview", key)>
+		  	</cfloop>
+		  	<cfset application.razuna.custom = data>
+		</cfif>
+		<cfif structKeyExists(sections, "assetview")>
+			<cfloop index="key" list="#sections.assetview#">
+		    	<cfset data[key] = getProfileString(conffile, "assetview", key)>
+		  	</cfloop>
+		  	<cfset application.razuna.custom = data>
+		</cfif>
+		<cfif structKeyExists(sections, "explorer")>
+			<cfloop index="key" list="#sections.explorer#">
+		    	<cfset data[key] = getProfileString(conffile, "explorer", key)>
+		  	</cfloop>
+		  	<cfset application.razuna.custom = data>
+		</cfif>
+		<cfif structKeyExists(sections, "upload")>
+			<cfloop index="key" list="#sections.upload#">
+		    	<cfset data[key] = getProfileString(conffile, "upload", key)>
+		  	</cfloop>
+		  	<cfset application.razuna.custom = data>
+		</cfif>
+		<cfif structKeyExists(sections, "design")>
+			<cfloop index="key" list="#sections.design#">
+		    	<cfset data[key] = getProfileString(conffile, "design", key)>
+		  	</cfloop>
+		  	<cfset application.razuna.custom = data>
+		</cfif>
+		<cfif structKeyExists(sections, "general")>
+			<cfloop index="key" list="#sections.general#">
+		    	<cfset data[key] = getProfileString(conffile, "general", key)>
+		  	</cfloop>
+		  	<cfset application.razuna.custom = data>
+		</cfif>
+		<cfset application.razuna.custom.enabled = true>
+	</cfif>
+</cffunction>
+
 
 </cfcomponent>

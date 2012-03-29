@@ -32,25 +32,39 @@
 				<cfloop query="qry_fileTotalAllTypes">
 					<cfif qry_fileTotalAllTypes.cnt GT 0>
 						<cfif ext EQ "img">
-							<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img');" rel="prefetch prerender">#defaultsObj.trans("folder_images")#</a></li>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_images)>
+								<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img');" rel="prefetch prerender">#defaultsObj.trans("folder_images")#</a></li>
+							</cfif>
 						</cfif>
 						<cfif ext EQ "vid">
-							<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid');" rel="prefetch">#defaultsObj.trans("folder_videos")#</a></li>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_videos)>
+								<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid');" rel="prefetch">#defaultsObj.trans("folder_videos")#</a></li>
+							</cfif>
 						</cfif>
 						<cfif ext EQ "aud">
-							<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud');" rel="prefetch">#defaultsObj.trans("folder_audios")#</a></li>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_audios)>
+								<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud');" rel="prefetch">#defaultsObj.trans("folder_audios")#</a></li>
+							</cfif>
 						</cfif>
 						<cfif ext EQ "doc">
-							<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc');" rel="prefetch">#defaultsObj.trans("folder_word")#</a></li>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_doc)>
+								<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc');" rel="prefetch">#defaultsObj.trans("folder_word")#</a></li>
+							</cfif>
 						</cfif>
 						<cfif ext EQ "xls">
-							<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls');" rel="prefetch">#defaultsObj.trans("folder_excel")#</a></li>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_xls)>
+								<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls');" rel="prefetch">#defaultsObj.trans("folder_excel")#</a></li>
+							</cfif>
 						</cfif>
 						<cfif ext EQ "pdf">
-							<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf');" rel="prefetch">#defaultsObj.trans("folder_pdf")#</a></li>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_pdf)>
+								<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf');" rel="prefetch">#defaultsObj.trans("folder_pdf")#</a></li>
+							</cfif>
 						</cfif>
 						<cfif ext EQ "other">
-							<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other');" rel="prefetch">#defaultsObj.trans("folder_others")#</a></li>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_other)>
+								<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other');" rel="prefetch">#defaultsObj.trans("folder_others")#</a></li>
+							</cfif>
 						</cfif>
 					</cfif>
 				</cfloop>
@@ -75,25 +89,25 @@
 			<cfloop query="qry_fileTotalAllTypes">
 				<cfif qry_fileTotalAllTypes.cnt GT 0>
 					<cfif ext EQ "img">
-						<div id="img">#defaultsObj.loadinggif("#dynpath#")#</div>
+						<div id="img"></div>
 					</cfif>
 					<cfif ext EQ "vid">
-						<div id="vid">#defaultsObj.loadinggif("#dynpath#")#</div>
+						<div id="vid"></div>
 					</cfif>
 					<cfif ext EQ "aud">
-						<div id="aud">#defaultsObj.loadinggif("#dynpath#")#</div>
+						<div id="aud"></div>
 					</cfif>
 					<cfif ext EQ "doc">
-						<div id="doc">#defaultsObj.loadinggif("#dynpath#")#</div>
+						<div id="doc"></div>
 					</cfif>
 					<cfif ext EQ "xls">
-						<div id="xls">#defaultsObj.loadinggif("#dynpath#")#</div>
+						<div id="xls"></div>
 					</cfif>
 					<cfif ext EQ "pdf">
-						<div id="pdf">#defaultsObj.loadinggif("#dynpath#")#</div>
+						<div id="pdf"></div>
 					</cfif>
 					<cfif ext EQ "other">
-						<div id="other">#defaultsObj.loadinggif("#dynpath#")#</div>
+						<div id="other"></div>
 					</cfif>
 				</cfif>
 			</cfloop>

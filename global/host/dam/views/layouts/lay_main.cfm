@@ -120,6 +120,11 @@
 .chzn-container .chzn-drop .chzn-results {
 	height: 150px;
 }
+<cfif application.razuna.custom.enabled AND !application.razuna.custom.show_top_part>
+##apDiv3, ##apDiv4 {
+	top: 0px;
+}
+</cfif>
 </style>
 </head>
 <body>
@@ -144,12 +149,12 @@
 			</div>
 		</div>
 	<cfelse>
-		<div id="apDiv1">#trim( headercontent )#</div>
+		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_top_part)><div id="apDiv1">#trim( headercontent )#</div></cfif>
 		<div id="apDiv3">#trim( leftcontent )#</div>
 		<div id="apDiv4">#trim( maincontent )#</div>
 		<!--- <div id="apDiv5">#trim( showcontent )#</div> --->
 	</div>
-	<div id="footer_drop">#trim( footerdrop )#</div>
+	<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_bottom_part)><div id="footer_drop">#trim( footerdrop )#</div></cfif>
 </cfif>
 <!--- <div id="footer">#trim( footercontent )#</div> --->
 <!--- Window Div --->

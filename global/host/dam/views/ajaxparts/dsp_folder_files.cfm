@@ -104,7 +104,7 @@
 									<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="16" height="16" border="0" />
 									<a href="#myself#c.serve_file&file_id=#file_id#&type=doc"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-									<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#file_id#&thetype=#file_id#-doc');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+									<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_bottom_part)><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#file_id#&thetype=#file_id#-doc');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif #session.folderaccess# EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>

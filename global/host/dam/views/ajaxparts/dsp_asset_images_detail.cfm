@@ -42,35 +42,65 @@
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('relatedimages','#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#defaultsObj.trans("asset_information")#</a></li>
 			<!--- Desc & Keys --->
-			<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_description_keywords)>
+				<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
+			</cfif>
 			<!--- Custom fields --->
-			<cfif qry_cf.recordcount NEQ 0>
+			<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
 				<li><a href="##customfields">#defaultsObj.trans("custom_fields_asset")#</a></li>
 			</cfif>
 			<!--- Convert --->
 			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
-				<li><a href="##convert">#defaultsObj.trans("convert")#</a></li>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_convert_files)>
+					<li><a href="##convert">#defaultsObj.trans("convert")#</a></li>
+				</cfif>
 			</cfif>
 			<!--- Comments --->
-			<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
-			<!--- (qry_detail.detail.img_extension EQ "jpg" OR qry_detail.detail.img_extension EQ "jpeg") AND  --->
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_comments)>
+				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
+			</cfif>
+			<!--- Metadata tabs  --->
 			<cfif qry_detail.detail.link_kind NEQ "url">
-				<li><a href="##imgmeta">Meta Data</a></li>
-				<li><a href="##xmpdesc">XMP Description</a></li>
-				<li><a href="##iptccontact">IPTC Contact</a></li>
-				<li><a href="##iptcimage">IPTC Image</a></li>
-				<li><a href="##iptccontent">IPTC Content</a></li>
-				<li><a href="##iptcstatus">IPTC Status</a></li>
-				<li><a href="##origin">Origin</a></li>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_metadata)>
+					<li><a href="##imgmeta">Meta Data</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_xmp_description)>
+					<li><a href="##xmpdesc">XMP Description</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_iptc_contact)>
+					<li><a href="##iptccontact">IPTC Contact</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_iptc_image)>
+					<li><a href="##iptcimage">IPTC Image</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_iptc_content)>
+					<li><a href="##iptccontent">IPTC Content</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_iptc_status)>
+					<li><a href="##iptcstatus">IPTC Status</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_origin)>
+					<li><a href="##origin">Origin</a></li>
+				</cfif>
 			</cfif>
 			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind EQ "">
-				<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_versions)>
+					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
+				</cfif>
 			</cfif>
 			<cfif session.folderaccess NEQ "R">
-				<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
-				<li><a href="##previewimage" onclick="loadcontent('previewimage','#myself#c.previewimage&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("header_preview_image")#</a></li>
-				<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
-				<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_sharing_options)>
+					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_preview_images)>
+					<li><a href="##previewimage" onclick="loadcontent('previewimage','#myself#c.previewimage&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("header_preview_image")#</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_additional_renditions)>
+					<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
+				</cfif>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_history)>
+					<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
+				</cfif>
 			</cfif>
 		</ul>
 		<!--- Content Starts here --->
@@ -79,18 +109,26 @@
 				<!--- The Buttons --->
 				<tr>
 					<td colspan="2">
-						<input type="button" name="sendemail" value="#defaultsObj.trans("send_with_email")#" class="button" onclick="showwindow('#myself##xfa.sendemail#&file_id=#attributes.file_id#&thetype=img','#defaultsObj.trans("send_with_email")#',600,2);return false;">
-						<cfif qry_detail.detail.link_path_url NEQ "url">
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_send_email)>
+							<input type="button" name="sendemail" value="#defaultsObj.trans("send_with_email")#" class="button" onclick="showwindow('#myself##xfa.sendemail#&file_id=#attributes.file_id#&thetype=img','#defaultsObj.trans("send_with_email")#',600,2);return false;">
+						</cfif>
+						<cfif qry_detail.detail.link_path_url NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_send_ftp)>
 							<input type="button" name="sendftp" value="#defaultsObj.trans("send_with_ftp")#" class="button" onclick="showwindow('#myself##xfa.sendftp#&file_id=#attributes.file_id#&thetype=img','#defaultsObj.trans("send_with_ftp")#',600,2);return false;">
 						</cfif>
-						<input type="button" name="inbasket" value="#defaultsObj.trans("put_in_basket")#" class="button" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#&thetype=#attributes.file_id#-img');flash_footer();"> 
-						<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-img&thetype=img&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_basket)>
+							<input type="button" name="inbasket" value="#defaultsObj.trans("put_in_basket")#" class="button" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#&thetype=#attributes.file_id#-img');flash_footer();">
+						</cfif>
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_add_to_collection)>
+							<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-img&thetype=img&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
+						</cfif>
 						<!--- Only users with full access can do the following --->
-						<cfif #session.folderaccess# EQ "X">
+						<cfif session.folderaccess EQ "X">
 							<input type="button" name="move" value="#defaultsObj.trans("move_file")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=#attributes.file_id#&type=movefile&thetype=img&folder_id=#qry_detail.detail.folder_id_r#','#defaultsObj.trans("move_file")#',600,2);"> 
 							<input type="button" name="remove" value="#defaultsObj.trans("delete_asset")#" class="button" onclick="showwindow('#myself#ajax.remove_record&id=#attributes.file_id#&what=images&loaddiv=#loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&showsubfolders=#session.showsubfolders#','#defaultsObj.trans("remove")#',400,2);return false;"> 
 						</cfif>
-						<input type="button" name="print" value="#defaultsObj.trans("tooltip_print")#" class="button" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#qry_detail.detail.folder_id_r#&kind=detail&thetype=img&file_id=#attributes.file_id#','#defaultsObj.trans("pdf_window_title")#',500,2);return false;">
+						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_print)>
+							<input type="button" name="print" value="#defaultsObj.trans("tooltip_print")#" class="button" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#qry_detail.detail.folder_id_r#&kind=detail&thetype=img&file_id=#attributes.file_id#','#defaultsObj.trans("pdf_window_title")#',500,2);return false;">
+						</cfif>
 					</td>
 				</tr>
 				<!--- Description when url is a link --->
@@ -179,27 +217,29 @@
 				<tr>
 					<td width="100%" valign="top" colspan="2" style="padding-top:20px;">
 						<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
-							<cfif settingsobj.get_label_set().set2_labels_users EQ "f">
-								<tr>
-									<td>#defaultsObj.trans("labels")#</td>
-									<td width="100%" nowrap="true" colspan="5">
-										<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_img" onchange="razaddlabels('tags_img','#attributes.file_id#','img');" multiple="multiple">
-											<option value=""></option>
-											<cfloop query="attributes.thelabelsqry">
-												<option value="#label_text#"<cfif ListFindNoCase(qry_labels,'#label_text#') NEQ 0> selected="selected"</cfif>>#label_text#</option>
-											</cfloop>
-										</select>
-									</td>
-								</tr>
-							<cfelse>
-								<tr>
-									<td valign="top">#defaultsObj.trans("labels")#</td>
-									<td width="100%" nowrap="true" colspan="5" valign="top"><input name="tags" id="tags_img" value="#qry_labels#"></td>
-								</tr>
-								<tr>
-									<td></td>
-									<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",".)</em></td>
-								</tr>
+							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)>
+								<cfif settingsobj.get_label_set().set2_labels_users EQ "f">
+									<tr>
+										<td>#defaultsObj.trans("labels")#</td>
+										<td width="100%" nowrap="true" colspan="5">
+											<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_img" onchange="razaddlabels('tags_img','#attributes.file_id#','img');" multiple="multiple">
+												<option value=""></option>
+												<cfloop query="attributes.thelabelsqry">
+													<option value="#label_text#"<cfif ListFindNoCase(qry_labels,'#label_text#') NEQ 0> selected="selected"</cfif>>#label_text#</option>
+												</cfloop>
+											</select>
+										</td>
+									</tr>
+								<cfelse>
+									<tr>
+										<td valign="top">#defaultsObj.trans("labels")#</td>
+										<td width="100%" nowrap="true" colspan="5" valign="top"><input name="tags" id="tags_img" value="#qry_labels#"></td>
+									</tr>
+									<tr>
+										<td></td>
+										<td colspan="5" style="padding-bottom:10px;"><em>(Simple start typing to choose from available labels or add a new one by entering above and hit ",".)</em></td>
+									</tr>
+								</cfif>
 							</cfif>
 							<tr>
 								<td width="1%" nowrap="true">#defaultsObj.trans("file_name")#</td>
@@ -249,27 +289,29 @@
 		<!--- Comments --->
 		<div id="divcomments"></div>
 		<!--- Description & Keywords --->
-		<div id="detaildesc">
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-				<cfloop query="qry_langs">
-				<cfset thisid = lang_id>
+		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_description_keywords)>
+			<div id="detaildesc">
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+					<cfloop query="qry_langs">
+					<cfset thisid = lang_id>
+						<tr>
+							<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
+							<td class="td2" width="100%"><textarea name="img_desc_#thisid#" class="text" rows="2" cols="50" onchange="javascript:document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
+						</tr>
+						<tr>
+							<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
+							<td class="td2" width="100%"><textarea name="img_keywords_#thisid#" class="text" rows="2" cols="50" onchange="javascript:document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
+						</tr>
+					</cfloop>
 					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
-						<td class="td2" width="100%"><textarea name="img_desc_#thisid#" class="text" rows="2" cols="50" onchange="javascript:document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
+						<td class="td2"></td>
+						<td class="td2">#defaultsObj.trans("comma_seperated")#</td>
 					</tr>
-					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
-						<td class="td2" width="100%"><textarea name="img_keywords_#thisid#" class="text" rows="2" cols="50" onchange="javascript:document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
-					</tr>
-				</cfloop>
-				<tr>
-					<td class="td2"></td>
-					<td class="td2">#defaultsObj.trans("comma_seperated")#</td>
-				</tr>
-			</table>
-		</div>
+				</table>
+			</div>
+		</cfif>
 		<!--- CUSTOM FIELDS --->
-		<cfif qry_cf.recordcount NEQ 0>
+		<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
 			<div id="customfields">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<cfloop query="qry_cf">
@@ -292,47 +334,63 @@
 		</cfif>
 		<!--- Convert Image --->
 		<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
-			<div id="convert">
-				<cfif session.hosttype EQ 0>
-					<cfinclude template="dsp_host_upgrade.cfm">
-				<cfelse>
-					<cfinclude template="dsp_asset_images_convert.cfm">
-				</cfif>
-			</div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_convert_files)>
+				<div id="convert">
+					<cfif session.hosttype EQ 0>
+						<cfinclude template="dsp_host_upgrade.cfm">
+					<cfelse>
+						<cfinclude template="dsp_asset_images_convert.cfm">
+					</cfif>
+				</div>
+			</cfif>
 		</cfif>
 		<cfif qry_detail.detail.link_kind NEQ "url">
 			<!--- Meta Data --->
-			<div id="imgmeta">
-				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-					<tr>
-						<td class="td2" width="100%"><textarea class="text" style="width:700px;height:400px;">#qry_detail.detail.img_meta#</textarea></td>
-					</tr>
-				</table>
-			</div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_metadata)>
+				<div id="imgmeta">
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+						<tr>
+							<td class="td2" width="100%"><textarea class="text" style="width:700px;height:400px;">#qry_detail.detail.img_meta#</textarea></td>
+						</tr>
+					</table>
+				</div>
+			</cfif>
 			<!--- XMP Description --->
-			<div id="xmpdesc">
-				<cfinclude template="dsp_asset_images_xmp.cfm">
-			</div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_xmp_description)>
+				<div id="xmpdesc">
+					<cfinclude template="dsp_asset_images_xmp.cfm">
+				</div>
+			</cfif>
 			<!--- IPTC Contact --->
-			<div id="iptccontact">
-				<cfinclude template="dsp_asset_images_iptc_contact.cfm">
-			</div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_iptc_contact)>
+				<div id="iptccontact">
+					<cfinclude template="dsp_asset_images_iptc_contact.cfm">
+				</div>
+			</cfif>
 			<!--- IPTC Image --->
-			<div id="iptcimage">
-				<cfinclude template="dsp_asset_images_iptc_image.cfm">
-			</div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_iptc_image)>
+				<div id="iptcimage">
+					<cfinclude template="dsp_asset_images_iptc_image.cfm">
+				</div>
+			</cfif>
 			<!--- IPTC Content --->
-			<div id="iptccontent">
-				<cfinclude template="dsp_asset_images_iptc_content.cfm">
-			</div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_iptc_content)>
+				<div id="iptccontent">
+					<cfinclude template="dsp_asset_images_iptc_content.cfm">
+				</div>
+			</cfif>
 			<!--- IPTC Status --->
-			<div id="iptcstatus">
-				<cfinclude template="dsp_asset_images_iptc_status.cfm">
-			</div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_iptc_status)>
+				<div id="iptcstatus">
+					<cfinclude template="dsp_asset_images_iptc_status.cfm">
+				</div>
+			</cfif>
 			<!--- Origin --->
-			<div id="origin">
-				<cfinclude template="dsp_asset_images_origin.cfm">
-			</div>
+			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_origin)>
+				<div id="origin">
+					<cfinclude template="dsp_asset_images_origin.cfm">
+				</div>
+			</cfif>
 		</cfif>
 		<!--- VERSIONS --->
 		<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
