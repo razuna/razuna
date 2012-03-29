@@ -407,7 +407,7 @@
 			<cfset thexml.message = "Asset(s) have been removed successfully">
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
 		</cfif>
     	<!--- Return --->
 		<cfreturn thexml>
