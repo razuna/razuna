@@ -107,7 +107,7 @@
 								});
 								</script>
 								<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-									<div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg">
+									<div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg">
 									<!--- Show assets --->
 									<cfif link_kind NEQ "url">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
@@ -172,7 +172,7 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><cfif cloud_url NEQ "">
+								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><cfif cloud_url NEQ "">
 												<img src="#cloud_url#" border="0">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
@@ -226,7 +226,7 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
+								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('allform');">
 								</div>
@@ -276,7 +276,7 @@
 								});
 								</script>
 								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								<div id="draggable#id#-doc" type="#id#-doc-all" class="theimg">
+								<div id="draggable#id#-doc" type="#id#-doc" class="theimg">
 								<!--- If it is a PDF we show the thumbnail --->
 								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
 									<cfif cloud_url NEQ "">
@@ -359,7 +359,7 @@
 						<td valign="top" width="1%" nowrap="true">
 							<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 							<!--- Show assets --->
-							<div id="draggable#id#-#kind#" type="#id#-#kind#-all">
+							<div id="draggable#id#-#kind#" type="#id#-#kind#">
 								<cfif link_kind NEQ "url">
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 										<cfif cloud_url NEQ "">
@@ -425,7 +425,7 @@
 						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');"></td>
 						<td valign="top" width="1%" nowrap="true">
 							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								<div id="draggable#id#-#kind#" type="#id#-#kind#-all">
+								<div id="draggable#id#-#kind#" type="#id#-#kind#">
 									<cfif link_kind NEQ "url">
 										<img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160">
 									<cfelse>
@@ -484,7 +484,7 @@
 						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('allform');"></td>
 						<td valign="top" width="1%" nowrap="true">
 							<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								<div id="draggable#id#-#kind#" type="#id#-#kind#-all">
+								<div id="draggable#id#-#kind#" type="#id#-#kind#">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 								</div>
 							</a>
@@ -539,7 +539,7 @@
 						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-doc" onclick="enablesub('allform');"></td>
 						<td valign="top" width="1%" nowrap="true">
 							<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								<div id="draggable#id#-doc" type="#id#-doc-all">
+								<div id="draggable#id#-doc" type="#id#-doc">
 									<!--- If it is a PDF we show the thumbnail --->
 									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
 										<cfif cloud_url NEQ "">

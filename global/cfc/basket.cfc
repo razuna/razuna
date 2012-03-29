@@ -33,7 +33,7 @@
 	<cfparam name="arguments.thestruct.fromshare" default="F">
 	<cfloop index="thenr" delimiters="," list="#arguments.thestruct.file_id#">
 		<!--- If we come from a overview we have numbers with the type --->
-		<cfset thetype = listlast(arguments.thestruct.thetype,"-")>
+		<cfset thetype = listlast(thenr,"-")>
 		<cfset thenr = listfirst(thenr,"-")>
 		<!--- First check if the product is not already in this basket --->
 		<cfquery datasource="#variables.dsn#" name="here">
@@ -50,9 +50,11 @@
 		<!--- If no record has been found continue --->
 		<cfif here.recordcount EQ 0>
 			<!--- Is this file a doc or a img --->
-			<cfloop delimiters="," index="i" list="#arguments.thestruct.thetype#">
+			<!---
+<cfloop delimiters="," index="i" list="#arguments.thestruct.thetype#">
 				<cfif (i EQ "#thenr#-img") OR (i EQ "#thenr#-doc") OR (i EQ "#thenr#-vid") OR (i EQ "#thenr#-aud")>
-					<cfset newtype = replace(i, "#thenr#-", "", "ALL")>
+--->
+					<!--- <cfset newtype = replace(i, "#thenr#-", "", "ALL")> --->
 					<!--- insert the prodcut to the cart --->
 					<cfquery datasource="#variables.dsn#">
 					INSERT INTO #session.hostdbprefix#cart
@@ -65,12 +67,14 @@
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
 					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-					<cfqueryparam value="#newtype#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#thetype#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					)
 					</cfquery>
-				</cfif>
+				<!---
+</cfif>
 			</cfloop>
+--->
 			<!--- Flush Cache --->
 			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_cart" />
 		</cfif>
