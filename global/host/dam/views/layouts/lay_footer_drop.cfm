@@ -125,7 +125,7 @@ $(function() {
 			var thisid = $(ui.draggable).attr("id");
 			var thistype = $(ui.draggable).attr("type");
 			thisid = thisid.replace('draggable','');
-			loadcontent('thedropbasket','#myself#c.basket_put&file_id=' + thisid + '&thetype=' + thistype);
+			loadcontent('thedropbasket','#myself#c.basket_put&file_id=' + thistype + '&thetype=' + thistype);
 			loadcontent('thedropbasket','#myself#c.basket');
 		}
 	});
