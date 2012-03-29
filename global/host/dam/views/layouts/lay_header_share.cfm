@@ -27,7 +27,7 @@
 	<div style="float:left;">
 		<a href="#myself#c.sharep">
 			<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
-				<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
+				<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;" />
 			<cfelse>
 				<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
 			</cfif>
