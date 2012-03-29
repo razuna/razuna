@@ -457,7 +457,7 @@
 		<transtext><![CDATA[Do you really want to remove all the selected records?<br><br>Caution: The record will be deleted and is not recoverable!]]></transtext>
 	</transid>
 	<transid name="convert">
-		<transtext>Convert File</transtext>
+		<transtext><![CDATA[Create Rendition(s)]]></transtext>
 	</transid>
 	<transid name="click_for_preview">
 		<transtext>Click on the image to see the preview movie</transtext>
