@@ -1355,7 +1355,7 @@
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/#arguments.thefolderid#">
 		<cfelseif application.razuna.storage EQ "amazon">
-			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thefolderid#" awsbucket="#arguments.awsbucket#" />
+			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thefolderid#" awsbucket="#arguments.thestruct.awsbucket#" />
 		</cfif>
 	</cfif>
 	<!--- Flush Cache --->
