@@ -39,15 +39,6 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-		<!--- Query for the sysadmingroup --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qryuser">
-		SELECT groupofuser
-		FROM webservices
-		WHERE sessiontoken = <cfqueryparam value="#arguments.sessiontoken#" cfsqltype="cf_sql_varchar">
-		AND groupofuser IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="1,2" list="true">)
-		</cfquery>
-		<!--- If user is in sysadmin --->
-		<cfif qryuser.recordcount NEQ 0>
 			<!--- Check that we don't have the same user --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry_sameuser">
 			SELECT users.user_email, users.user_login_name, user_id
@@ -56,7 +47,7 @@
 				lower(users.user_email) = <cfqueryparam value="#lcase(arguments.user_email)#" cfsqltype="cf_sql_varchar">
 				OR lower(users.user_login_name) = <cfqueryparam value="#lcase(arguments.user_name)#" cfsqltype="cf_sql_varchar">
 				)
-			AND ct_users_hosts.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.sessiontoken#"]#
+			AND ct_users_hosts.ct_u_h_host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
 			</cfquery>
 			<!--- If user does not exist do the insert --->
 			<cfif qry_sameuser.recordcount EQ 0>
@@ -88,7 +79,7 @@
 				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
 				VALUES(
 				<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">,
-				#application.razuna.api.hostid["#arguments.sessiontoken#"]#,
+				#application.razuna.api.hostid["#arguments.api_key#"]#,
 				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
@@ -113,11 +104,6 @@
 				<cfset thexml.message = "User already exists">
 				<cfset thexml.userid = qry_sameuser.user_id>
 			</cfif>
-		<!--- User not systemadmin --->
-		<cfelse>
-			<cfset thexml.responsecode = 1>
-			<cfset thexml.message = "User is not a System Administrator">
-		</cfif>
 		<!--- No session found --->
 		<cfelse>
 			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
@@ -156,7 +142,7 @@
 	
 	<!--- Update user --->
 	<cffunction name="update" access="remote" output="false" returntype="string" returnformat="json">
-		<cfargument name="sessiontoken" required="true" type="string">
+		<cfargument name="api_key" required="true" type="string">
 		<cfargument name="userid" required="false" type="string" default="">
 		<cfargument name="userloginname" required="false" type="string" default="">
 		<cfargument name="useremail" required="false" type="string" default="">
@@ -238,7 +224,7 @@
 	
 	<!--- Delete user --->
 	<cffunction name="delete" access="remote" output="false" returntype="string" returnformat="json">
-		<cfargument name="sessiontoken" required="true" type="string">
+		<cfargument name="api_key" required="true" type="string">
 		<cfargument name="userid" required="false" type="string" default="">
 		<cfargument name="userloginname" required="false" type="string" default="">
 		<cfargument name="useremail" required="false" type="string" default="">
@@ -268,9 +254,9 @@
 				</cfquery>
 				<!--- Remove Intra/extranet carts  --->
 				<cfquery datasource="#application.razuna.api.dsn#">
-				DELETE FROM #application.razuna.api.prefix["#arguments.sessiontoken#"]#cart
+				DELETE FROM #application.razuna.api.prefix["#arguments.api_key#"]#cart
 				WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.sessiontoken#"]#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				</cfquery>
 				<!--- Remove user comments  --->
 				<cfquery datasource="#application.razuna.api.dsn#">
