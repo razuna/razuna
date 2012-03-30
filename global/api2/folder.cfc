@@ -353,7 +353,7 @@
 	<cffunction name="setfolder" output="false" access="remote" returnType="struct" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
 		<cfargument name="folder_name" type="string" required="true">
-		<cfargument name="folder_owner" type="string" required="false" default="#application.razuna.api.userid["#arguments.api_key#"]#">
+		<cfargument name="folder_owner" type="string" required="false" default="">
 		<cfargument name="folder_related" type="string" required="false" default="">
 		<cfargument name="folder_collection" type="string" required="false" default="false">
 		<cfargument name="folder_description" type="string" required="false" default="">
