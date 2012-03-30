@@ -941,6 +941,8 @@
 			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
+		<!-- CFC: Get breadcrumb -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- Show -->
 		<do action="ajax.folder_files" />
 	</fuseaction>
@@ -973,6 +975,8 @@
 			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
+		<!-- CFC: Get breadcrumb -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- Show -->
 		<do action="ajax.folder_images" />
 	</fuseaction>
@@ -1007,6 +1011,8 @@
 			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
+		<!-- CFC: Get breadcrumb -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- Show -->
 		<do action="ajax.folder_videos" />
 	</fuseaction>
@@ -1054,6 +1060,8 @@
 			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
+		<!-- CFC: Get breadcrumb -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- Show -->
 		<do action="ajax.folder_audios" />
 	</fuseaction>
@@ -1091,6 +1099,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
 		<!-- CFC: Get user name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
+		<!-- CFC: Get breadcrumb -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 	</fuseaction>
 	<!-- Load Folder Content -->
 	<fuseaction name="folder_content">

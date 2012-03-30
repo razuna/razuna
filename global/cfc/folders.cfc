@@ -3273,7 +3273,7 @@
 	<cfparam name="arguments.folderlist" default="">
 	<cfparam name="flist" default="">
 	<!--- Query: Get current folder_id_r --->
-	<cfquery datasource="#variables.dsn#" name="qry">
+	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostdbprefix##session.hostid##arguments.folder_id_r##arguments.folderlist#" cachedomain="#session.theuserid#_folders">
 	SELECT folder_name, folder_id_r, folder_id
 	FROM #session.hostdbprefix#folders
 	WHERE folder_id = <cfqueryparam value="#arguments.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">

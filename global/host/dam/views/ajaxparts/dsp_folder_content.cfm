@@ -59,7 +59,6 @@
 			<th colspan="6">
 				<!--- Show notification of folder is being shared --->
 				<cfinclude template="inc_folder_header.cfm">
-				<div style="float:left;padding-left:2px;padding-top:5px;">#qry_foldername#: #defaultsObj.trans("folder_content")# (#qry_filecount.thetotal#)</div>
 				<div style="float:right;">
 					<!--- Folder Navigation (add file/tools/view) --->
 					<cfset thetype = "all">

@@ -28,4 +28,5 @@
 	<div style="font-weight:normal;font-style:italic;padding-left:2px">The user "#qry_user.user#" shared this folder with you. Your permission is: <cfif session.folderaccess EQ "R">Read only<cfelseif session.folderaccess EQ "W">Read & Write<cfelse>No Restrictions</cfif></div>
 	<br />
 </cfif>
+<div style="float:left;padding-left:2px;padding-top:5px;">#qry_filecount.thetotal# file(s) in here | <cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/<a href="##" onclick="$.tree.focused().open_branch('###ListGetAt(i,3,"|")#');$.tree.focused().select_branch('###ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a></cfloop></div>
 </cfoutput>
