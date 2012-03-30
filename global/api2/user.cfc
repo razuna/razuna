@@ -26,7 +26,7 @@
 <cfcomponent output="false" namespace="user" extends="authentication">
 	
 	<!--- Add the user --->
-	<cffunction name="add" access="remote" output="false" returntype="string" returnformat="json">
+	<cffunction name="add" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<cfargument name="user_first_name" type="string" required="true">
 		<cfargument name="user_last_name" type="string" required="true">
@@ -141,7 +141,7 @@
 	</cffunction>
 	
 	<!--- Update user --->
-	<cffunction name="update" access="remote" output="false" returntype="string" returnformat="json">
+	<cffunction name="update" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
 		<cfargument name="userid" required="false" type="string" default="">
 		<cfargument name="userloginname" required="false" type="string" default="">
@@ -223,7 +223,7 @@
 	</cffunction>
 	
 	<!--- Delete user --->
-	<cffunction name="delete" access="remote" output="false" returntype="string" returnformat="json">
+	<cffunction name="delete" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
 		<cfargument name="userid" required="false" type="string" default="">
 		<cfargument name="userloginname" required="false" type="string" default="">
