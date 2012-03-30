@@ -58,17 +58,18 @@
 			<!--- Hash password --->
 			<cfset var thepass = hash(arguments.pass, "MD5", "UTF-8")>
 		</cfif>
-		<!--- Check for the user --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachename="login#session.hostid##arguments.name##thepass#" cachedomain="#session.hostid#_users">
+		<!--- Check for the user cachename="login#session.hostid##arguments.name##thepass#" cachedomain="#session.hostid#_users" --->
+		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 		SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
-		FROM users u<cfif arguments.loginto NEQ "admin">, ct_users_hosts ct</cfif>
+		FROM users u<cfif arguments.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
 			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.name)#" cfsqltype="cf_sql_varchar"> 
 			OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.name)#" cfsqltype="cf_sql_varchar">
 			)
 		AND u.user_pass = <cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">
 		<cfif arguments.loginto EQ "admin">
-			AND lower(u.user_in_admin) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+			AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+			AND ctg.ct_g_u_user_id = u.user_id
 		<cfelseif arguments.loginto EQ "dam">
 			AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 		</cfif>
