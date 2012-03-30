@@ -164,8 +164,6 @@
 	<!--- Tenants --->
 	<div id="user_hosts">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-		<!--- Select Hosts for this user, but only if systemadmin --->
-		<cfif Request.securityobj.CheckSystemAdminUser()>
 			<tr>
 				<th colspan="2">#defaultsObj.trans("hosts")#</th>
 			</tr>
@@ -174,7 +172,6 @@
 					<td width="1%" nowrap="nowrap"><input type="checkbox" value="#host_id#" name="hostid"<cfif listfind(hostlist, #host_id#, ",") OR qry_allhosts.recordcount EQ 1> checked<cfelseif session.hostid EQ host_id> checked</cfif>> #host_name#</td>
 				</tr>
 			</cfloop>
-		</cfif>
 		</table>
 	</div>
 	<div id="submit" style="float:right;padding:10px;"><div id="updatetext" style="color:green;padding:10px;display:none;float:left;"></div><input type="submit" name="Submit" value="#defaultsObj.trans("save")#" class="button" tabindex="13"></div>

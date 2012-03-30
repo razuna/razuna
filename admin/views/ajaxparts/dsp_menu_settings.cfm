@@ -40,18 +40,6 @@
 				<tr>
 					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.prefs_global_main');return false;">&raquo; #defaultsObj.trans("settings_global")#</a></td>
 				</tr>
-			<!--- <tr>
-			<td valign="top"><a href="##" onclick="javascript:loadcontent('rightside','#myself#c.translations');return false;">&raquo; #defaultsObj.trans("translations_global")#</a></td>
-			</tr> --->
-			<!--- <tr>
-			<td valign="top" style="padding-top:10px;"><a href="dsp_frame_main.cfm?show=tmp_list" target="mainFrame">&raquo; #defaultsObj.trans("templates")#</a></td>
-			</tr>
-			<!--- SystemAdmin only ! --->
-			<cfif Request.securityobj.CheckSystemAdminUser()>
-				<tr>
-					<td valign="top"><a href="dsp_frame_main.cfm?show=versions_list" target="mainFrame">&raquo; #defaultsObj.trans("versions")#</a></td>
-				</tr>
-			</cfif> --->
 			</table>
 			<!--- Users --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
@@ -70,7 +58,6 @@
 			</tr>
 			</table>
 			<!--- Hosts --->
-			<cfif Request.securityobj.CheckSystemAdminUser()>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
 			<tr>
 			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_61"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/go-home-7.png" alt="" width="24" height="24" border="0" align="left" style="padding-left:10px;"></td><td width="212" class="textbold" style="padding-left:5px;"><strong>#defaultsObj.trans("hosts")#</strong></td></tr></table></td>
@@ -81,7 +68,6 @@
 			<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself#c.hosts');return false;">&raquo; #defaultsObj.trans("host_menue")#</a></td>
 			</tr>
 			</table>
-			</cfif>
 		</td>
 	</tr>
 </table>

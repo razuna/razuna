@@ -23,7 +23,7 @@ Ext.onReady(function(){
                 autoLoad: {url: '<cfoutput>#myself#</cfoutput>ajax.menu_dam'}
             },{
                 title: 'Setup',
-				<cfif Request.securityobj.CheckSystemAdminUser() or Request.securityobj.CheckAdministratorUser()>disabled:false,<cfelse>disabled:true,</cfif>
+				disabled:false,
                 autoLoad: {url: '<cfoutput>#myself#</cfoutput>ajax.menu_settings'}
             }
         ]
