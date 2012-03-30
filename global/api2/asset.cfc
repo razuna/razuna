@@ -244,6 +244,7 @@
 			<!--- Set application scopes for calls into the Razuna methods --->
 			<cfset application.razuna.datasource = application.razuna.api.dsn>
 			<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
+			<cfset application.razuna.storage = application.razuna.api.storage>
 			<!--- Set db and id --->
 			<cfif arguments.assettype EQ "img">
 				<cfset var thedb = "images_text">
