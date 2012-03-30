@@ -618,7 +618,7 @@
 		<cfargument name="hostid" type="numeric" required="true">
 		<cfargument name="userid" type="string" required="true">
 		<!--- Param --->
-		<cfset session.userid = arguments.userid>
+		<cfset session.theuserid = arguments.userid>
 		<cfset session.hostid = arguments.hostid>
 		<cfset session.hostdbprefix = arguments.prefix>
 		<!--- Call to update asset --->
