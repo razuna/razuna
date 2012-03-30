@@ -702,6 +702,9 @@
 			INSERT INTO file_types VALUES ('vob', 'vid', 'video', 'mpeg');
 			INSERT INTO file_types VALUES ('ogv', 'vid', 'video', 'ogv');
 			INSERT INTO file_types VALUES ('webm', 'vid', 'video', 'webm');
+			INSERT INTO file_types VALUES ('mts', 'vid', 'video', 'mts');
+			INSERT INTO file_types VALUES ('m2ts', 'vid', 'video', 'm2ts');
+			INSERT INTO file_types VALUES ('m2t', 'vid', 'video', 'm2t');
 			INSERT INTO file_types VALUES ('aff', 'aud', null, null);
 			INSERT INTO file_types VALUES ('aft', 'aud', null, null);
 			INSERT INTO file_types VALUES ('au', 'aud', 'audio', 'basic');

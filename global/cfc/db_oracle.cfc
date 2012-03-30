@@ -911,6 +911,15 @@
 		INSERT INTO file_types VALUES ('webm', 'vid', 'video', 'webm')
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO file_types VALUES ('mts', 'vid', 'video', 'mts')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO file_types VALUES ('m2ts', 'vid', 'video', 'm2ts')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO file_types VALUES ('m2t', 'vid', 'video', 'm2t')
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO file_types VALUES ('aff', 'aud', null, null)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
