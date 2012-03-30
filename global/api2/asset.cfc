@@ -331,7 +331,7 @@
 					</cfloop>
 				</cfif>
 				<!--- Initiate the index --->
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" dsn="#application.razuna.api.dsn#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" assetid="#i#" assetcategory="#lucenecategory#">
+				<cfinvoke component="global.cfc.lucene" method="index_update_api" dsn="#application.razuna.api.dsn#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" assetid="#i#" assetcategory="#lucenecategory#" userid="#application.razuna.api.userid["#arguments.api_key#"]#">
 			</cfloop>
 			<!--- Flush cache --->
 			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_#thedb#" />
