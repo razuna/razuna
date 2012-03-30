@@ -29,7 +29,7 @@
 	<div id="tabs_groups">
 		<ul>
 			<li><a href="##grpdam">#defaultsObj.trans("groups_link")# (DAM)</a></li>
-			<li><a href="##grpcms">#defaultsObj.trans("groups_link")# (Administration)</a></li>
+			<!--- <li><a href="##grpcms">#defaultsObj.trans("groups_link")# (Administration)</a></li> --->
 		</ul>
 		<!--- This is DAM Groups Tab --->
 		<div id="grpdam">
@@ -48,7 +48,8 @@
 			<div id="grpdamlist"></div>
 		</div>
 		<!--- This is Administration Groups Tab --->
-		<div id="grpcms">
+		<!---
+<div id="grpcms">
 			<form name="grpadmadd" id="grpadmadd">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
@@ -63,13 +64,14 @@
 			<!--- Load list of groups here --->
 			<div id="grpadmlist"></div>
 		</div>
+--->
 	</div>
 
 <!--- Activate the Tabs --->
 <script language="JavaScript" type="text/javascript">
 	jqtabs("tabs_groups");
 	loadcontent('grpdamlist', '#myself#c.groups_list&kind=ecp&loaddiv=grpdamlist');
-	loadcontent('grpadmlist', '#myself#c.groups_list&kind=adm&loaddiv=grpadmlist');
+	/* loadcontent('grpadmlist', '#myself#c.groups_list&kind=adm&loaddiv=grpadmlist'); */
 	// Add DAM group
 	$("##grpdamadd").submit(function(e){
 		// Get values
@@ -79,13 +81,15 @@
 		return false;
 	});
 	// Add ADM group
-	$("##grpadmadd").submit(function(e){
+	/*
+$("##grpadmadd").submit(function(e){
 		// Get values
 		var g = encodeURIComponent($("##admgrpnew").val());
 		// Submit Form
 		loadcontent('grpadmlist', '#myself#c.groups_add&kind=adm&loaddiv=grpadmlist&newgrp=' + g);
 		return false;
 	});
+*/
 </script>
 
 </cfoutput>
