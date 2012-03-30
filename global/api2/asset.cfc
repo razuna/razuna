@@ -232,7 +232,7 @@
 	</cffunction>
 	
 	<!--- Metadata: Add --->
-	<cffunction name="setmetadata" access="remote" output="false" returntype="string" returnformat="json">
+	<cffunction name="setmetadata" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<cfargument name="assetid" required="true">
 		<cfargument name="assettype" required="true">
@@ -241,6 +241,9 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Set application scopes for calls into the Razuna methods --->
+			<cfset application.razuna.datasource = application.razuna.api.dsn>
+			<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
 			<!--- Set db and id --->
 			<cfif arguments.assettype EQ "img">
 				<cfset var thedb = "images_text">
@@ -305,7 +308,7 @@
 					AND id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
 					</cfquery>
 					<!--- If record is not here then do insert --->
-					<cfif ishere.recordcount EQ 0>				
+					<cfif ishere.recordcount EQ 0>	
 						<cfquery datasource="#application.razuna.api.dsn#">
 						INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#xmp
 						(id_r, asset_type, host_id)
@@ -331,7 +334,6 @@
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" dsn="#application.razuna.api.dsn#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" assetid="#i#" assetcategory="#lucenecategory#">
 			</cfloop>
 			<!--- Flush cache --->
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
 			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_#thedb#" />
 			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_xmp" />
 			<!--- Feedback --->
@@ -346,7 +348,7 @@
 	</cffunction>	
 	
     <!--- Delete --->
-	<cffunction name="remove" access="remote" output="false" returntype="string" returnformat="json">
+	<cffunction name="remove" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<cfargument name="assetid" required="true">
     	<!--- Check key --->
