@@ -167,9 +167,20 @@
 						<div style="float:left;">#defaultsObj.trans("results_files")# (#qry_results_files.howmany#)</div>
 						<div style="float:right;">
 							<cfif session.fromshare EQ "F">
-								<cfif qry_results_files.howmany GT 10 AND fa NEQ "c.search_files_do"><a href="##" onclick="loadcontent('rightside','#myself#c.search_files_do&searchtext=#URLEncodedFormat(attributes.searchtext)#&rowmax=#qry_results_files.howmany#&thetype=#attributes.thetype#');return false;">#defaultsObj.trans("show_remaining")# >>></a></cfif><cfif fa EQ "c.search_files_do" AND attributes.searchtype NEQ "adv" AND attributes.folder_id EQ 0><a href="##" onclick="loadcontent('rightside','#myself#c.search_simple&searchtext=#URLEncodedFormat(attributes.searchtext)#&thetype=#attributes.thetype#');return false;"><<< #defaultsObj.trans("back")#</a></cfif><cfif attributes.folder_id NEQ 0><a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back_to_folder")#</a></cfif>
+								<cfif qry_results_files.howmany GT 10 AND fa NEQ "c.search_files_do">
+									<a href="##" onclick="$('##rightside').load('#myself#c.search_files_do', { searchtext: '#attributes.searchtext#', rowmax: '#qry_results_files.howmany#', thetype: '#attributes.thetype#' });return false;">#defaultsObj.trans("show_remaining")# >>></a>
+								</cfif>
+								<cfif fa EQ "c.search_files_do" AND attributes.searchtype NEQ "adv" AND attributes.folder_id EQ 0>
+									<a href="##" onclick="$('##rightside').load('#myself#c.search_simple', { searchtext: '#attributes.searchtext#', thetype: '#attributes.thetype#' });return false;"><<< #defaultsObj.trans("back")#</a>
+								</cfif>
+								<cfif attributes.folder_id NEQ 0>
+									<a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back_to_folder")#</a>
+								</cfif>
 							<cfelse>
-								<cfif qry_results_files.howmany GT 10><a href="##" onclick="loadcontent('rightside','#myself#c.share_search&searchtext=#URLEncodedFormat(attributes.searchtext)#&rowmax=#qry_results_files.howmany#&thetype=#attributes.thetype#');return false;">#defaultsObj.trans("show_remaining")# >>></a> | </cfif><a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back")#</a>
+								<cfif qry_results_files.howmany GT 10>
+									<a href="##" onclick="$('##rightside').load('#myself#c.share_search', { searchtext: '#attributes.searchtext#', rowmax: '#qry_results_files.howmany#', thetype: '#attributes.thetype#' });return false;">#defaultsObj.trans("show_remaining")# >>></a> | 
+								</cfif>
+								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back")#</a>
 							</cfif>
 						</div>
 					</th>
@@ -233,7 +244,7 @@
 									</cfif>
 									<!--- Show Keywords --->
 									<cfif keywords NEQ "">
-										<br>Keywords:<br /><cfloop list="#keywords#" delimiter="," index="i"><a href="##" onclick="searchkeywords('#attributes.folder_id#','#URLEncodedFormat(trim(i))#','#attributes.thetype#');">#trim(i)#</a> </cfloop>
+										<br>Keywords:<br /><cfloop list="#keywords#" delimiter="," index="i"><a href="##" onclick="searchkeywords('#attributes.folder_id#','#i#','#attributes.thetype#');">#trim(i)#</a> </cfloop>
 									</cfif>
 								</cfif>
 							</div>
@@ -252,9 +263,19 @@
 						<div style="float:left;">#defaultsObj.trans("results_images")# (#qry_results_images.howmany#)</div>
 						<div style="float:right;">
 							<cfif session.fromshare EQ "F">
-								<cfif qry_results_images.howmany GT 10 AND fa NEQ "c.search_images_do"><a href="##" onclick="loadcontent('rightside','#myself#c.search_images_do&searchtext=#URLEncodedFormat(attributes.searchtext)#&rowmax=#qry_results_images.howmany#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#');return false;">#defaultsObj.trans("show_remaining")# >>></a></cfif><cfif fa EQ "c.search_images_do" AND attributes.folder_id EQ 0><a href="##" onclick="loadcontent('rightside','#myself#c.search_simple&searchtext=#URLEncodedFormat(attributes.searchtext)#&thetype=#attributes.thetype#');return false;"><<< #defaultsObj.trans("back")#</a></cfif><cfif attributes.folder_id NEQ 0><a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back_to_folder")#</a></cfif>
+								<cfif qry_results_images.howmany GT 10 AND fa NEQ "c.search_images_do">
+									<a href="##" onclick="$('##rightside').load('#myself#c.search_images_do', { searchtext: '#attributes.searchtext#', folder_id: '#attributes.folder_id#', rowmax: '#qry_results_images.howmany#', thetype: '#attributes.thetype#' });return false;">#defaultsObj.trans("show_remaining")# >>></a></cfif>
+								<cfif fa EQ "c.search_images_do" AND attributes.folder_id EQ 0>
+									<a href="##" onclick="$('##rightside').load('#myself#c.search_simple', { searchtext: '#attributes.searchtext#', thetype: '#attributes.thetype#' });return false;"><<< #defaultsObj.trans("back")#</a>
+								</cfif>
+								<cfif attributes.folder_id NEQ 0>
+									<a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back_to_folder")#</a>
+								</cfif>
 							<cfelse>
-								<cfif qry_results_images.howmany GT 10><a href="##" onclick="loadcontent('rightside','#myself#c.share_search&searchtext=#URLEncodedFormat(attributes.searchtext)#&rowmax=#qry_results_images.howmany#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#');return false;">#defaultsObj.trans("show_remaining")# >>></a> |Ê</cfif><a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back")#</a>
+								<cfif qry_results_images.howmany GT 10>
+									<a href="##" onclick="$('##rightside').load('#myself#c.share_search', { searchtext: '#attributes.searchtext#', folder_id: '#attributes.folder_id#', rowmax: '#qry_results_images.howmany#', thetype: '#attributes.thetype#' });return false;">#defaultsObj.trans("show_remaining")# >>></a> | 
+								</cfif>
+								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back")#</a>
 							</cfif>
 						</div>
 					</th>
@@ -314,7 +335,7 @@
 									</cfif>
 									<!--- Show Keywords --->
 									<cfif keywords NEQ "">
-										<br>Keywords:<br /><cfloop list="#keywords#" delimiter="," index="i"><a href="##" onclick="searchkeywords('#attributes.folder_id#','#URLEncodedFormat(trim(i))#','#attributes.thetype#');">#trim(i)#</a> </cfloop>
+										<br>Keywords:<br /><cfloop list="#keywords#" delimiter="," index="i"><a href="##" onclick="searchkeywords('#attributes.folder_id#','#i#','#attributes.thetype#');">#trim(i)#</a> </cfloop>
 									</cfif>
 								</cfif>
 							</div>
@@ -333,9 +354,20 @@
 							<div style="float:left;">#defaultsObj.trans("results_videos")# (#qry_results_videos.howmany#)</div>
 							<div style="float:right;">
 								<cfif session.fromshare EQ "F">
-									<cfif qry_results_videos.howmany GT 10 AND fa NEQ "c.search_videos_do"><a href="##" onclick="loadcontent('rightside','#myself#c.search_videos_do&searchtext=#URLEncodedFormat(attributes.searchtext)#&rowmax=#qry_results_videos.howmany#&thetype=#attributes.thetype#');return false;">#defaultsObj.trans("show_remaining")# >>></a></cfif><cfif fa EQ "c.search_videos_do" AND attributes.folder_id EQ 0><a href="##" onclick="loadcontent('rightside','#myself#c.search_simple&searchtext=#URLEncodedFormat(attributes.searchtext)#&thetype=#attributes.thetype#');return false;"><<< #defaultsObj.trans("back")#</a></cfif><cfif attributes.folder_id NEQ 0><a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back_to_folder")#</a></cfif>
+									<cfif qry_results_videos.howmany GT 10 AND fa NEQ "c.search_videos_do">
+										<a href="##" onclick="$('##rightside').load('#myself#c.search_videos_do', { searchtext: '#attributes.searchtext#', rowmax: '#qry_results_videos.howmany#', thetype: '#attributes.thetype#' });return false;">#defaultsObj.trans("show_remaining")# >>></a>
+									</cfif>
+									<cfif fa EQ "c.search_videos_do" AND attributes.folder_id EQ 0>
+										<a href="##" onclick="$('##rightside').load('#myself#c.search_simple', { searchtext: '#attributes.searchtext#', thetype: '#attributes.thetype#' });return false;"><<< #defaultsObj.trans("back")#</a>
+									</cfif>
+									<cfif attributes.folder_id NEQ 0>
+										<a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back_to_folder")#</a>
+									</cfif>
 								<cfelse>
-									<cfif qry_results_videos.howmany GT 10><a href="##" onclick="loadcontent('rightside','#myself#c.share_search&searchtext=#URLEncodedFormat(attributes.searchtext)#&rowmax=#qry_results_videos.howmany#&thetype=#attributes.thetype#');return false;">#defaultsObj.trans("show_remaining")# >>></a> | </cfif><a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back")#</a>
+									<cfif qry_results_videos.howmany GT 10>
+										<a href="##" onclick="$('##rightside').load('#myself#c.share_search', { searchtext: '#attributes.searchtext#', rowmax: '#qry_results_videos.howmany#', thetype: '#attributes.thetype#' });return false;">#defaultsObj.trans("show_remaining")# >>></a> | 
+									</cfif>
+									<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back")#</a>
 								</cfif>
 							</div>
 						</th>
@@ -396,7 +428,7 @@
 										</cfif>
 										<!--- Show Keywords --->
 										<cfif keywords NEQ "">
-											<br>Keywords:<br /><cfloop list="#keywords#" delimiter="," index="i"><a href="##" onclick="searchkeywords('#attributes.folder_id#','#URLEncodedFormat(trim(i))#','#attributes.thetype#');">#trim(i)#</a> </cfloop>
+											<br>Keywords:<br /><cfloop list="#keywords#" delimiter="," index="i"><a href="##" onclick="searchkeywords('#attributes.folder_id#','#i#','#attributes.thetype#');">#trim(i)#</a> </cfloop>
 										</cfif>
 									</cfif>
 								</div>
@@ -415,9 +447,20 @@
 							<div style="float:left;">#defaultsObj.trans("results_audios")# (#qry_results_audios.howmany#)</div>
 							<div style="float:right;">
 								<cfif session.fromshare EQ "F">
-									<cfif qry_results_audios.howmany GT 10 AND fa NEQ "c.search_audios_do"><a href="##" onclick="loadcontent('rightside','#myself#c.search_audios_do&searchtext=#URLEncodedFormat(attributes.searchtext)#&rowmax=#qry_results_audios.howmany#&thetype=#attributes.thetype#');return false;">#defaultsObj.trans("show_remaining")# >>></a></cfif><cfif fa EQ "c.search_audios_do" AND attributes.folder_id EQ 0><a href="##" onclick="loadcontent('rightside','#myself#c.search_simple&searchtext=#URLEncodedFormat(attributes.searchtext)#&thetype=#attributes.thetype#');return false;"><<< #defaultsObj.trans("back")#</a></cfif><cfif attributes.folder_id NEQ 0><a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back_to_folder")#</a></cfif>
+									<cfif qry_results_audios.howmany GT 10 AND fa NEQ "c.search_audios_do">
+										<a href="##" onclick="$('##rightside').load('#myself#c.search_audios_do', { searchtext: '#attributes.searchtext#', rowmax: '#qry_results_audios.howmany#', thetype: '#attributes.thetype#' });return false;">#defaultsObj.trans("show_remaining")# >>></a>
+									</cfif>
+									<cfif fa EQ "c.search_audios_do" AND attributes.folder_id EQ 0>
+										<a href="##" onclick="$('##rightside').load('#myself#c.search_simple', { searchtext: '#attributes.searchtext#', thetype: '#attributes.thetype#' });return false;"><<< #defaultsObj.trans("back")#</a>
+									</cfif>
+									<cfif attributes.folder_id NEQ 0>
+										<a href="##" onclick="loadcontent('rightside','#myself##xfa.folder#&folder_id=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back_to_folder")#</a>
+									</cfif>
 								<cfelse>
-									<cfif qry_results_audios.howmany GT 10><a href="##" onclick="loadcontent('rightside','#myself#c.share_search&searchtext=#URLEncodedFormat(attributes.searchtext)#&rowmax=#qry_results_audios.howmany#&thetype=#attributes.thetype#');return false;">#defaultsObj.trans("show_remaining")# >>></a> | </cfif><a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back")#</a>
+									<cfif qry_results_audios.howmany GT 10>
+										<a href="##" onclick="$('##rightside').load('#myself#c.share_search', { searchtext: '#attributes.searchtext#', rowmax: '#qry_results_audios.howmany#', thetype: '#attributes.thetype#' });return false;">#defaultsObj.trans("show_remaining")# >>></a> | 
+									</cfif>
+									<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#attributes.folder_id#');return false;"><<< #defaultsObj.trans("back")#</a>
 								</cfif>
 							</div>
 						</th>
@@ -462,7 +505,7 @@
 										</cfif>
 										<!--- Show Keywords --->
 										<cfif keywords NEQ "">
-											<br>Keywords:<br /><cfloop list="#keywords#" delimiter="," index="i"><a href="##" onclick="searchkeywords('#attributes.folder_id#','#URLEncodedFormat(trim(i))#','#attributes.thetype#');">#trim(i)#</a> </cfloop>
+											<br>Keywords:<br /><cfloop list="#keywords#" delimiter="," index="i"><a href="##" onclick="searchkeywords('#attributes.folder_id#','#i#','#attributes.thetype#');">#trim(i)#</a> </cfloop>
 										</cfif>
 									</cfif>
 								</div>
@@ -523,28 +566,6 @@
 		}
 		return false;
 	});
-	
-	// Function can be called with: var query = JSON.stringify($('#form_searchsearch').serializeObject());
-	
-/*
-	$.fn.serializeObject = function()
-	{
-	    var o = {};
-	    var a = this.serializeArray();
-	    $.each(a, function() {
-	        if (o[this.name] !== undefined) {
-	            if (!o[this.name].push) {
-	                o[this.name] = [o[this.name]];
-	            }
-	            o[this.name].push(this.value);
-	        } else {
-	            o[this.name] = this.value;
-	        }
-	    });
-	    return o;
-	};
-*/
-	
 	// Show Subsearch
 	function showsubsearch(){
 		$('#searchsearch').toggle('blind','slow');
@@ -552,6 +573,6 @@
 	// Search for keywords
 	function searchkeywords(folderid,searchtext,thetype){
 		$('#loading_searchagain').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		loadcontent('rightside','<cfoutput>#myself#</cfoutput>c.search_simple&folder_id=' + folderid + '&searchtext=keywords:' + searchtext + '&thetype=' + thetype);
+		$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: 'keywords:' + searchtext, thetype: thetype, folder_id: folderid });
 	}
 </script>
