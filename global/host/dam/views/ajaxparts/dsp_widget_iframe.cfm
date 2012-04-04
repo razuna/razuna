@@ -30,39 +30,42 @@
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
 <cfoutput>
 <!--- Control the cache --->
-<!---
-<cfheader name="Expires" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(DateAdd('d', 1, Now()))#">
---->
-<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
-<cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<cfset cacheTimeSeconds = 60*60*24>
+<cfheader name="Expires" value="#GetHttpTimeString(DateAdd('s', cacheTimeSeconds, Now()))#">
+<cfheader name="CACHE-CONTROL" value="max-age=#cacheTimeSeconds#">
+<cfheader name="PRAGMA" value="public">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <!--- According to widget style we decide here what to load --->
 <cfif qry_widget.widget_style EQ "d">
 	<cfif application.razuna.isp>
+		<!--- CSS --->
+		<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css" />
+		<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" />
+		<!--- <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" /> --->
+		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/widget/overlay.css"></script>
 		<!--- JS --->
+		<!---
 		<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js" type="text/javascript"></script>
 		<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script>
+		--->
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
 		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js"></script>
 		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js"></script>
 		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js"></script>
-		<!--- CSS --->
-		<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css" />
-		<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/widget/overlay.css"></script>
 	<cfelse>
+		<!--- CSS --->
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css"/>
+		<!--- JS --->
 		<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
 		<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
 		<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js"></script>
 		<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js"></script>
 		<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>
-		<!--- CSS --->
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css"/>
 	</cfif>
 	<!--[if lt IE 7]>
 	<style> 

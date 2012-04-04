@@ -4395,6 +4395,7 @@
 		<set name="attributes.showsubfolders" value="F" overwrite="false" />
 		<set name="session.showsubfolders" value="F" />
 		<set name="attributes.pages" value="" />
+		<set name="session.offset" value="0" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Get languages -->
@@ -5005,6 +5006,7 @@
 		<set name="attributes.qry_news.news_title" value="" overwrite="false" />
 		<set name="attributes.qry_news.news_text" value="" overwrite="false" />
 		<set name="session.widget_login" value="F" />
+		<set name="session.offset" value="0" />
 		<!-- XFA -->
 		<xfa name="switchlang" value="c.switchlang" />
 		<!-- CFC: Get languages -->
