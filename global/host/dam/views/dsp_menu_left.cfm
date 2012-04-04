@@ -35,7 +35,7 @@
 	<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_collections)><div id="explorer_col" style="margin-left:0;padding-left:0;">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
 	<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)><div id="labels" style="margin-left:0;padding-left:0;">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
 </div>
-<div id="apMiddle"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0"></a></div></div>
+<div id="apMiddle"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div>
 <script language="JavaScript" type="text/javascript">
 	jqtabs("tabs_left");
 	loadcontent('explorer','#myself#c.explorer');

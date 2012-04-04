@@ -164,7 +164,7 @@
 <!--- Get the loading gif images --->
 <cffunction name="loadinggif" output="false" returntype="string">
 	<cfargument name="dynpath" type="string" required="false" default="">
-	<cfreturn '<img src="#arguments.dynpath#/global/host/dam/images/loading.gif" border="0" style="padding:10px;">'>
+	<cfreturn '<img src="#arguments.dynpath#/global/host/dam/images/loading.gif" width="16" height="16" border="0" style="padding:10px;">'>
 </cffunction>
 
 <!--- GET HOW MANY LANGUAGES THIS HOST IS ALLOWED --->

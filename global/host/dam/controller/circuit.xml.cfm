@@ -4049,6 +4049,15 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="set_label_set(attributes.label_users)" />
 	</fuseaction>
 	
+	<!-- We moved labels for 1.5 to user view now -->
+	
+	<!-- Add or Update Label -->
+	<fuseaction name="labels_add">
+		<!-- CFC: Get label -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="admin_update(attributes)" />
+		<!-- Show -->
+		<do action="labels_list" />
+	</fuseaction>
 	
 	<!--  -->
 	<!-- ADMIN: LABELS STOP -->
@@ -5400,10 +5409,17 @@
 	
 	<!-- Load the label explorer -->
 	<fuseaction name="labels_list">
+		<!-- Params -->
+		<set name="attributes.id" value="0" overwrite="false" />
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels(attributes)" returnvariable="qry_labels" />
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="list_labels_dropdown" />
 		<!-- Show -->
 		<do action="ajax.labels" />
+	</fuseaction>
+	<!-- Load the label explorer -->
+	<fuseaction name="labels_tree">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels(attributes, attributes.id)" returnvariable="qry_labels" />
 	</fuseaction>
 	<!-- Update labels of the item -->
 	<fuseaction name="label_update">
@@ -5468,6 +5484,15 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_assets(attributes.label_id, attributes.label_kind)" returnvariable="qry_labels_collections" />
 		<!-- Show -->
 		<do action="ajax.labels_main_collections" />
+	</fuseaction>
+	<!-- Label MAIN: Get properties -->
+	<fuseaction name="labels_main_properties">
+		<!-- CFC: get label text -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="admin_get_one(attributes.label_id)" returnvariable="qry_label" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="list_labels_dropdown" />
+		<!-- Show -->
+		<do action="ajax.labels_main_properties" />
 	</fuseaction>
 	
 	<!--  -->

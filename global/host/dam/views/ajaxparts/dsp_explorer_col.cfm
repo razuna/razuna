@@ -28,7 +28,7 @@
 	<div style="padding-left:10px;font-weight:bold;float:left;">Collections</div>
 	<div style="width:60px;float:right;left:190px;position:absolute;">
 		<div style="float:left;"><a href="##" onclick="$('##collectiontools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
-		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" border="0" onclick="$('##collectiontools').toggle();" class="ddicon"></div>
+		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##collectiontools').toggle();" class="ddicon"></div>
 		<div id="collectiontools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 				<p><a href="##" onclick="showwindow('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=T','#defaultsObj.trans("folder_new")#',750,1);$('##explorertools').toggle();return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">Add Collection Folder</a></p>
@@ -46,7 +46,7 @@
 	$(function () { 
 		$("##colBox").tree({
 			plugins : {
-				cookie : { prefix : "colbox_" }
+				cookie : { prefix : "cookiecolbox_" }
 			},
 			types : {
 				"default"  : {
@@ -60,10 +60,7 @@
 				opts : {
 					url : "#myself#c.getfolderfortree&col=T"
 				}
-			}/* ,
-			ui : {
-				theme_name : "apple"
-			} */
+			}
 		});
 	});
 </script>

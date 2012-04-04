@@ -97,7 +97,7 @@
 		$("##form0").submit(function(e){
 			// Show
 			$("##updatebatch").css("display","");
-			$("##updatebatch").html('<img src="#dynpath#/global/host/dam/images/loading.gif" border="0" style="padding:10px;">');
+			$("##updatebatch").html('<img src="#dynpath#/global/host/dam/images/loading.gif" border="0" style="padding:10px;" width="16" height="16">');
 			// Get values
 			var url = formaction("form0");
 			var items = formserialize("form0");

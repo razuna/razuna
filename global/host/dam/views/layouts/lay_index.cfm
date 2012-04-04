@@ -41,23 +41,23 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfif application.razuna.isp>
+<!--- CSS --->
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/login.css" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css" />
 <!--- JS --->
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/login.js"></script>
-<!--- CSS --->
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/login.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css" />
 <cfelse>
+<!--- CSS --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css" />
 <!--- JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/login.js"></script>
-<!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css" />
 </cfif>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 </head>

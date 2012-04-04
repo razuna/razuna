@@ -104,7 +104,7 @@
 				var url = formaction("form_search");
 				var items = formserialize("form_search");
 				// Submit Form
-				$('##submitsearch').html('<img src="#dynpath#/global/host/dam/images/loading.gif" border="0" style="padding:0px;">');
+				$('##submitsearch').html('<img src="#dynpath#/global/host/dam/images/loading.gif" width="16" height="16" border="0" style="padding:0px;">');
 				loadcontent('log_show','#self#?' + items);
 			}
 			return false;

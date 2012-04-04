@@ -458,8 +458,8 @@
   		<include template="dsp_labels_main_collections" />
 	</fuseaction>
 	<!-- Labels Main Comments -->
-	<fuseaction name="labels_main_comments">
-  		<include template="dsp_labels_main_comments" />
+	<fuseaction name="labels_main_properties">
+  		<include template="dsp_labels_main_properties" />
 	</fuseaction>
 	<!-- ADMIN: Import Templates -->
 	<fuseaction name="imp_templates">

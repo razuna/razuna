@@ -13,7 +13,7 @@ $(document).ready(function(){
 			// Hide alert
 			$("#alertbox").css("display","none");
 			// Show loading message in upload window
-			$("#login_loading").html('<div style="padding:10px"><img src="' + dynpath + '/global/host/dam/images/loading.gif" border="0"> Loading Razuna</div>');
+			$("#login_loading").html('<div style="padding:10px"><img src="' + dynpath + '/global/host/dam/images/loading.gif" width="16" height="16" border="0"> Loading Razuna</div>');
 			// Submit
 			form.submit();
 		},

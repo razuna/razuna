@@ -29,7 +29,7 @@
 	<!--- Drop down menu --->
 	<div style="width:60px;float:right;position:absolute;left:190px;">
 		<div style="float:left;"><a href="##" onclick="$('##explorertools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
-		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" border="0" onclick="$('##explorertools').toggle();" class="ddicon"></div>
+		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##explorertools').toggle();" class="ddicon"></div>
 		<div id="explorertools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 				<p><a href="##" onclick="showwindow('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=F','#defaultsObj.trans("folder_new")#',750,1);$('##explorertools').toggle();return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">#defaultsObj.trans("folder_new")# (on root level)</a></p>
@@ -73,7 +73,7 @@
 	$(function () { 
 		$("##treeBox").tree({
 			plugins : {
-				cookie : { prefix : "treebox_" }
+				cookie : { prefix : "cookietreebox_" }
 			},
 			types : {
 				"default"  : {

@@ -560,7 +560,7 @@
 			var on_year = $('#s_on_year option:selected').val();
 			var andor = $('#andor option:selected').val();
 			// some design stuff
-			$('#submitrefinesearch').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" style="padding:0px;">');
+			$('#submitrefinesearch').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" style="padding:0px;" width="16" height="16">');
 			// Post the search
 			$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year} );
 		}

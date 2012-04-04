@@ -43,7 +43,7 @@
 					<cfif qry_basket.recordcount NEQ 0>
 						<div style="float:right;">
 							<div style="float:left;"><a href="##" onclick="$('##basketaction').toggle();" style="text-decoration:none;" class="ddicon">#defaultsObj.trans("basket_actions")#</a></div>
-							<div style="float:right;padding-left:2px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" border="0" onclick="$('##basketaction').toggle();" class="ddicon"></div>
+							<div style="float:right;padding-left:2px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##basketaction').toggle();" class="ddicon"></div>
 							<div id="basketaction" class="ddselection_header" style="top:22px;">
 								<p><a href="##" onclick="$('##thebasket').submit();return false;">#defaultsObj.trans("download")#</a></p>
 								<p><a href="##" onclick="basketemail('#qry_basket.cart_order_email#');return false;">#defaultsObj.trans("send_basket_email")#</a></p>
@@ -400,7 +400,7 @@
 		// Show
 		$("#basketstatus").fadeTo("fast", 100);
 		$("#basketstatus").css("display","");
-		$("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0"> <cfoutput>#defaultsObj.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email once the basket is complete.');
+		$("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#defaultsObj.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email once the basket is complete.');
 		// Submit Form
 		$.ajax({
 			type: "POST",

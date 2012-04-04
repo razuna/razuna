@@ -25,24 +25,68 @@
 --->
 <cfoutput>
 	<!--- Folders --->
-	<div style="padding-left:10px;padding-bottom:10px;font-weight:bold;float:left;">Labels</div>
-	<div style="float:right;"><a href="##labels" onclick="loadcontent('labels','#myself#c.labels_list');return false;">#defaultsObj.trans("reload_list")#</a></div>
-	<div style="clear:both;"></div>
-	<!--- Load Labels --->
-	<div style="padding-left:10px;float:left;width:200px;">
-		<cfloop query="qry_labels">
-			<a href="##" onclick="loadcontent('rightside','#myself#c.labels_main&label_id=#label_id#');return false;" style="text-decoration:none;">
-				<div style="float:left;padding-right:5px;"><img src="#dynpath#/global/host/dam/images/tag.png" width="16" height="16" border="0" /></div>
-				<div>#label_text# (#label_count#)</div>
-			</a>
-			<br/>
-		</cfloop>
+	<div style="padding-left:10px;font-weight:bold;float:left;">Labels</div>
+	<div style="width:60px;float:right;left:190px;position:absolute;">
+		<div style="float:left;"><a href="##" onclick="$('##labeltools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
+		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##labeltools').toggle();" class="ddicon"></div>
+		<div id="labeltools" class="ddselection_header" style="top:18px;width:250px;z-index:6;">
+			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+				<p>Add Label</p>
+				<p><input type="text" name="label_text" id="label_text" style="width:120px;"> <input type="button" value="#defaultsObj.trans("labels_add")#" class="button" onclick="addlabel();"></p>
+				<p>Nest label under:<br />
+					<select name="sublabelof" id="sublabelof" style="width:240px;">
+					<option value="0" selected="selected">Please select a parent...</option>
+					<cfloop query="list_labels_dropdown">
+						<option value="#label_id#">#label_path#</option>
+					</cfloop>
+				</select></p>
+				<p><hr></p>
+			</cfif>
+			<p><a href="##" onclick="loadcontent('labels','#myself#c.labels_list');return false;" title="#defaultsObj.trans("tooltip_refresh_tree")#">#defaultsObj.trans("reload")#</a></p>
+		</div>
 	</div>
-	
 	<div style="clear:both;"></div>
-	
-	
+	<div id="labtree" style="width:200;height:200;float:left;">
+	</div>
+	<div style="clear:both;"></div>
 
-
+<script language="javascript" type="text/javascript">
+	// Load Collections
+	$(function () { 
+		$("##labtree").tree({
+			plugins : {
+				cookie : { prefix : "cookielabtree_" }
+			},
+			types : {
+				"default" : {
+					deletable : false,
+					renameable : false,
+					draggable : false,
+					icon : { 
+						image : "#dynpath#/global/host/dam/images/tag_16.png"
+					}
+				}
+			},
+			data : { 
+				async : true,
+				opts : {
+					url : "#myself#c.labels_tree"
+				}
+			}
+		});
+	});
+	// Add Label
+	function addlabel(){
+		// Get value
+		var thelab = $("##label_text").val();
+		// Submit
+		if (thelab != "") {
+			$('##labels').load('#myself#c.labels_add', {label_id:0, label_text: thelab});
+		}
+		else {
+			return false;
+		}
+	}
+</script>
 </cfoutput>
 	

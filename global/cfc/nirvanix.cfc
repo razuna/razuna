@@ -85,7 +85,7 @@
 				<cfset var nvxsession = 0>
 			</cfcatch>
 		</cftry>
-		<cfpause interval="2" />
+		<!--- <cfpause interval="2" /> --->
 		<!--- Return --->
 		<cfreturn nvxsession>
 	</cffunction>

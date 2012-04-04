@@ -99,7 +99,7 @@
 			// eMail is selected thus continue
 			if (arehere == 'T'){
 				// Show loading message in upload window
-				$("##uploadstatus").html('<div style="padding:10px"><img src="#dynpath#/global/host/dam/images/loading.gif" border="0"><br><br>#JSStringFormat(defaultsObj.trans("upload_wait_message"))#</div>');
+				$("##uploadstatus").html('<div style="padding:10px"><img src="#dynpath#/global/host/dam/images/loading.gif" border="0" width="16" height="16"><br><br>#JSStringFormat(defaultsObj.trans("upload_wait_message"))#</div>');
 				// Get values
 				var url = formaction("assetemailform");
 				var items = formserialize("assetemailform");

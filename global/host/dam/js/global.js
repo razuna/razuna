@@ -19,7 +19,7 @@ function showwindow(theurl,thetitle,thew,thewin) {
 	//$('#thewindowcontent' + thewin).css('top',  winH/2-$('#thewindowcontent' + thewin).height()/2);
 	//$('#thewindowcontent' + thewin).css('left', winW/2-$('#thewindowcontent' + thewin).width()/2);
 	// Clear the content of the window and show the loading gif
-	$('#thewindowcontent' + thewin).html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" border="0" style="padding:10px;">');
+	$('#thewindowcontent' + thewin).html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" width="16" height="16" border="0" style="padding:10px;">');
 	// Load Content into Dialog
 	$('#thewindowcontent' + thewin).load(theurl).dialog({
 		title: thetitle,
@@ -97,7 +97,7 @@ function trim(iString)	{
 }
 // Loading Gif
 function loadinggif(whatdiv){
-	$('#' + whatdiv).html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" border="0" style="padding:10px;">');
+	$('#' + whatdiv).html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" border="0" style="padding:10px;" width="16" height="16">');
 }
 // JS to be able to click on the text link and have the checkbox checked
 // This should be called like: <a href="##" onclick="clickcbk('theform','convert_to',0)"> where
@@ -307,7 +307,7 @@ function validateValues() {
 $(document).bind('click', function(e) {
 	var $clicked=$(e.target);
 	/* if($clicked.is('.ddselection_header') || $clicked.parents().is('.ddselection_header') || $clicked.is('.ddicon')) */
-	if($clicked.is('.ddicon')) {
+	if($clicked.is('.ddicon') || $clicked.parents().is('.ddselection_header')) {
 		//alert('inside');
     }
 	else {
@@ -415,11 +415,11 @@ function checkentry(){
 			alert('The first character of your search string is an illegal one. Please remove it!');
 		}
 		else {
-			$('#searchicon').html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" border="0" style="padding:0px;">');
+			$('#searchicon').html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" border="0" style="padding:0px;" width="16" height="16">');
 			//loadcontent('rightside','<cfoutput>#myself#</cfoutput>c.search_simple&folder_id=0&searchtext=' + escape(theentry) + '&thetype=' + thetype);
 			// We are now using POST for the search field (much more compatible then a simple laod for foreign chars)
 			$('#rightside').load('index.cfm?fa=c.search_simple', { searchtext: theentry, folder_id: 0, thetype: thetype }, function(){
-				$('#searchicon').html('<img src="' + dynpath + '/global/host/dam/images/search_16.png" border="0" onclick="checkentry();" class="ddicon">');
+				$('#searchicon').html('<img src="' + dynpath + '/global/host/dam/images/search_16.png" width="16" height="16" border="0" onclick="checkentry();" class="ddicon">');
 			});
 		}
 		return false;
@@ -443,5 +443,5 @@ function selectsearchtype(thetype){
 	$('#markdoc').css({'float':'left','padding-right':'14px'});
 	// Now mark the div
 	$('#mark' + thetype).css({'float':'left','padding-right':'3px'});
-	$('#mark' + thetype).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" border="0">');
+	$('#mark' + thetype).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
 }

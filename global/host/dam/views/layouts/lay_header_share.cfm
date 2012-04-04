@@ -40,10 +40,10 @@
 			<input type="hidden" name="fid" id="fid" value="#session.fid#">
 			<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all">
 			<div style="float:left;padding-top:4px;">
-				<img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" border="0" class="ddicon" onclick="$('##searchselection').toggle();">
+				<img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##searchselection').toggle();">
 			</div>
 			<div id="searchselection" class="ddselection_header">
-				<p><a href="##" onclick="selectsearchtype('all');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" border="0"></div>#defaultsObj.trans("search_for_allassets")#</a></p>
+				<p><a href="##" onclick="selectsearchtype('all');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#defaultsObj.trans("search_for_allassets")#</a></p>
 				<p><a href="##" onclick="selectsearchtype('img');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_images")#</a></p>
 				<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_documents")#</a></p>
 				<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_videos")#</a></p>
@@ -125,7 +125,7 @@
 				alert('The first character of your search string is an illegal one. Please remove it!');
 			}
 			else {
-				$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" style="padding:0px;">');
+				$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" style="padding:0px;" width="16" height="16">');
 				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.share_search', {searchtext: theentry, thetype: thetype, fid: thefid}, function(){
 					$('#searchicon').html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/search_16.png" border="0" onclick="checkentry();" class="ddicon">');
 				});
@@ -151,7 +151,7 @@
 		$('#markdoc').css({'float':'left','padding-right':'14px'});
 		// Now mark the div
 		$('#mark' + thetype).css({'float':'left','padding-right':'3px'});
-		$('#mark' + thetype).html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/arrow_selected.jpg" border="0">');
+		$('#mark' + thetype).html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
 	}
 </script>
 
