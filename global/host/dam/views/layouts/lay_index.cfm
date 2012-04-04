@@ -45,7 +45,8 @@
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/login.css" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css" />
 <!--- JS --->
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js"></script>
+<!--- /* <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js"></script> */ --->
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/login.js"></script>
