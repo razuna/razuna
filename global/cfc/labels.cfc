@@ -253,17 +253,64 @@
 	</cffunction>
 	
 	<!--- Get all labels for the explorer --->
-	<cffunction name="labels" output="false" access="public">
+	<cffunction name="labels" output="true" access="public">
+		<cfargument name="thestruct" type="struct" required="true">
+		<cfargument name="id" type="string" required="true">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels#session.hostid#" cachedomain="#session.hostid#_labels">
+		<cfinvoke method="labels_query" thestruct="#arguments.thestruct#" id="#arguments.id#" returnVariable="qry" />
+		<!--- Output for tree --->
+		<cfoutput query="qry">
+			<li id="#label_id#"<cfif subhere NEQ ""> class="closed"</cfif>><a href="##" onclick="loadcontent('rightside','index.cfm?fa=c.labels_main&label_id=#label_id#');return false;"><ins>&nbsp;</ins>#label_text# (#label_count#)</a></li>
+		</cfoutput>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+	
+	<!--- Build labels drop down menu --->
+	<cffunction name="labels_dropdown" output="true" access="public">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_dropdown#session.hostid#" cachedomain="#session.hostid#_labels">
+		SELECT label_id, label_path
+		FROM #session.hostdbprefix#labels l
+		WHERE l.host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+		ORDER BY label_path
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+	
+	<!--- Get all labels for the explorer --->
+	<cffunction name="labels_query" output="false" access="public" returnType="query">
+		<cfargument name="thestruct" type="struct" required="true">
+		<cfargument name="id" type="string" required="true">
+		<!--- Query  cachename="labels#session.hostid#" cachedomain="#session.hostid#_labels" --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT l.label_text, l.label_id,
 			(
 				SELECT count(ct.ct_label_id)
 				FROM ct_labels ct
 				WHERE ct.ct_label_id = l.label_id
-			) AS label_count
+			) AS label_count,
+			(
+				SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>label_id
+				FROM #session.hostdbprefix#labels
+				WHERE label_id_r = l.label_id
+				<cfif application.razuna.thedatabase EQ "oracle">
+					AND ROWNUM = 1
+				<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+					LIMIT 1
+				</cfif>
+			) AS subhere
 		FROM #session.hostdbprefix#labels l
 		WHERE l.host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+		AND 
+		<cfif arguments.id GT 0>
+			l.label_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> l.label_id_r
+			AND
+			l.label_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
+		<cfelse>
+			(l.label_id = l.label_id_r OR l.label_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">)
+		</cfif>
 		ORDER BY l.label_text
 		</cfquery>
 		<!--- Return --->
@@ -558,7 +605,7 @@
 		<cfargument name="label_id" type="string">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT label_id, label_text
+		SELECT label_id, label_text, label_id_r
 		FROM #session.hostdbprefix#labels
 		WHERE label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
@@ -603,29 +650,103 @@
 				label_text,
 				label_date,
 				user_id,
-				host_id
+				host_id,
+				label_id_r
 			)
 			VALUES(
 				<cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />,
 				<cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />,
 				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp" />,
 				<cfqueryparam value="#session.theuserid#" cfsqltype="cf_sql_varchar" />,
-				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />,
+				<cfqueryparam value="#arguments.thestruct.label_parent#" cfsqltype="cf_sql_varchar" />
 			)
 			</cfquery>
 		<!--- Update --->
 		<cfelse>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#labels
-			SET label_text = <cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />
+			SET 
+			label_text = <cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />,
+			label_id_r = <cfqueryparam value="#arguments.thestruct.label_parent#" cfsqltype="cf_sql_varchar" />
 			WHERE label_id = <cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			</cfquery>
 		</cfif>
+		<!--- Get path up --->
+		<cfinvoke method="label_get_path" label_id="#arguments.thestruct.label_id#" returnVariable="thepath" />
+		<!--- If path is not empty update --->
+		<cfif thepath NEQ "">
+			<!--- If the rightest char is / remove it --->
+			<cfif right(thepath,1) EQ "/">
+				<cfset thelen = len(thepath)>
+				<cfset thepath = removechars(thepath,thelen,1)>
+			</cfif>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#labels
+			SET label_path = <cfqueryparam value="#thepath#" cfsqltype="cf_sql_varchar" />
+			WHERE label_id = <cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />
+			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			</cfquery>
+			<cfset labelpath = thepath>
+		<cfelse>
+			<cfset labelpath = thelabel>
+		</cfif>
+		<!--- Get path down --->
+		<cfinvoke method="label_get_path_down" label_id="#arguments.thestruct.label_id#" llist="#labelpath#" />
 		<!--- Flush --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+	
+	<!--- Label get recursive for path --->
+	<cffunction name="label_get_path" output="false" access="public" returnType="string">
+		<cfargument name="label_id" type="string" required="true">
+		<cfargument name="llist" default="" type="string" required="false">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT label_id, label_text, label_id_r
+		FROM #session.hostdbprefix#labels
+		WHERE label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+		</cfquery>
+		<!--- Set into list --->
+		<cfset llist = qry.label_text & "/" & arguments.llist> 
+		<!--- Call this again if this label_id_r is not empty --->
+		<cfif qry.label_id_r NEQ 0>
+			<!--- Set into list --->
+			<cfinvoke method="label_get_path" label_id="#qry.label_id_r#" llist="#llist#" returnVariable="llist" />	
+		</cfif>
+		<!--- Return --->
+		<cfreturn llist />
+	</cffunction>
+	
+	<!--- Label get recursive for path DOWN --->
+	<cffunction name="label_get_path_down" output="false" access="public" returnType="string">
+		<cfargument name="label_id" type="string" required="true">
+		<cfargument name="llist" default="" type="string" required="false">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT label_id, label_text, label_id_r
+		FROM #session.hostdbprefix#labels
+		WHERE label_id_r = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
+		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+		</cfquery>
+		<!--- Update record --->
+		<cfif qry.recordcount NEQ 0>
+			<!--- Set into list --->
+			<cfset llist = arguments.llist & "/" & qry.label_text> 
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
+			UPDATE #session.hostdbprefix#labels
+			SET label_path = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#llist#">
+			WHERE label_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry.label_id#">
+			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			</cfquery>
+			<!--- Call this again to see if there are any more records below it --->
+			<cfinvoke method="label_get_path_down" label_id="#qry.label_id#" llist="#llist#" returnVariable="llist" />	
+		</cfif>
+		<!--- Return --->
+		<cfreturn llist />
 	</cffunction>
 	
 </cfcomponent>
