@@ -1716,7 +1716,7 @@
 <!--- HOW MANY FILES ARE IN TOTAL IN THIS FOLDER --->
 <cffunction name="filetotalcount" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
-	<cfargument name="theoverall" default="F" required="no" type="string">
+	<cfargument name="theoverall" default="f" required="no" type="string">
 	<!--- Show assets from subfolders or not --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke method="getfoldersinlist" dsn="#application.razuna.datasource#" folder_id="#arguments.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
@@ -1725,7 +1725,7 @@
 		<cfset thefolderlist = arguments.folder_id & ",">
 	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="total" cachename="#session.hostdbprefix##session.hostid#filetotalcount#arguments.folder_id#" cachedomain="#session.theuserid#_folders">
+	<cfquery datasource="#application.razuna.datasource#" name="total" cachename="#session.hostdbprefix##session.hostid#filetotalcount#arguments.folder_id##arguments.theoverall#" cachedomain="#session.theuserid#_folders">
 	SELECT
 		(
 		SELECT count(fi.file_id)

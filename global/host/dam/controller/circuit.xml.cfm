@@ -4418,7 +4418,7 @@
 				<!-- CFC: Get subfolders -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
 				<!-- CFC: Get the total file count -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry.qry_filecount" />
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id,'t')" returnvariable="qry.qry_filecount" />
 				<set name="attributes.qry_filecount" value="#qry.qry_filecount.thetotal#" overwrite="false" />
 				<!-- CFC: Get all assets -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry.qry_files" />
@@ -5103,7 +5103,7 @@
 				<!-- CFC: Get subfolders -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id,attributes.external)" returnvariable="qry_subfolders" />
 				<!-- CFC: Get the total file count -->
-				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry.qry_filecount" />
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id,'t')" returnvariable="qry.qry_filecount" />
 				<set name="attributes.qry_filecount" value="#qry.qry_filecount.thetotal#" overwrite="false" />
 				<!-- CFC: Get all assets -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry.qry_files" />
@@ -5360,7 +5360,7 @@
 						<!-- CFC: Set Access -->
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="qry_foldername" />
 						<!-- CFC: Get the total file count -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry_filecount" />
+						<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id,'t')" returnvariable="qry_filecount" />
 						<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
 						<!-- CFC: Get subfolders -->
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
