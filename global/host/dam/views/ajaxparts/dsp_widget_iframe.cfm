@@ -187,6 +187,7 @@
 						<!--- Videos --->
 						<cfelseif kind EQ "vid">
 							<cfif is_available>
+								<cfset theid = id>
 								<div class="theimg">
 									<cfif link_kind NEQ "url">
 										<!--- This is for the overlay --->
@@ -214,6 +215,7 @@
 						<!--- Audios --->
 						<cfelseif kind EQ "aud">
 							<cfif is_available>
+								<cfset theid = id>
 								<!--- This is for the overlay --->
 								<cfif theformat EQ "audio" OR theformat EQ "" OR theformat EQ "org">
 									<cfset theid = id>
