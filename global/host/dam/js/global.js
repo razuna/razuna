@@ -371,7 +371,7 @@ $(document).ready(function()
 // Adding labels for users who can not edit
 function razaddlabels(thediv,fileid,thetype){
 	$('#' + thediv).chosen().change(
-		loadcontent('div_forall','index.cfm?fa=c.label_add_all&fileid=' + fileid + '&thetype=' + thetype + '&labels=' + encodeURI($('#' + thediv).val()))
+		loadcontent('div_forall','index.cfm?fa=c.label_add_all&fileid=' + fileid + '&thetype=' + thetype + '&labels=' + $('#' + thediv).val())
 	);
 	$.sticky('<span style="color:green;font-Weight:bold;">Your change has been saved!</span>');
 };

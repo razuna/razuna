@@ -142,6 +142,15 @@
   height: auto !important;
   height: 1%;
   position: relative;
+  /* This is the Razuna style */
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  -khtml-border-radius: 4px;
+  box-shadow: inset 0px 1px 1px #eee;
+  -moz-box-shadow: inset 0px 1px 1px #eee;
+  -webkit-box-shadow: inset 0px 1px 1px #eee;
+  border: 1px solid #ddd;
 }
 .chzn-container-multi .chzn-choices li {
   float: left;

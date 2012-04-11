@@ -79,9 +79,10 @@
 	function addlabel(){
 		// Get value
 		var thelab = $("##label_text").val();
+		var theparent = $("##sublabelof option:selected").val();
 		// Submit
 		if (thelab != "") {
-			$('##labels').load('#myself#c.labels_add', {label_id:0, label_text: thelab});
+			$('##labels').load('#myself#c.labels_add', {label_id:0, label_text: thelab, label_parent: theparent});
 		}
 		else {
 			return false;

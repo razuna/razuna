@@ -26,7 +26,7 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th>Edit #qry_label.label_text#</th>
+			<th>#defaultsObj.trans("edit")#</th>
 		</tr>
 		<!--- Edit --->
 		<tr>
@@ -53,6 +53,15 @@
 		<tr>
 			<td class="list"></td>
 		</tr>
+		<tr>
+			<th>Remove</th>
+		</tr>
+		<tr>
+			<td>Removing this label, will remove the label itself and/or any sub-labels. It will not remove any assets that have been labeled.</td>
+		</tr>
+		<tr>
+			<td><input type="button" value="Remove Label" name="remlabel" class="button" onclick="labrem();" /></td>
+		</tr>
 	</table>
 	<div id="label_dummy" style="display:none;"></div>
 	<script type="text/javascript">
@@ -70,6 +79,11 @@
 			else {
 				return false;
 			}
+		}
+		// Remove Label
+		function labrem(){
+			$('##label_dummy').load('#myself#c.labels_remove', {id:'#attributes.label_id#'});
+			loadcontent('labels','#myself#c.labels_list');
 		}
 	</script>	
 </cfoutput>

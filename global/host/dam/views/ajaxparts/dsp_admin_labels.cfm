@@ -37,28 +37,40 @@
 			</td>
 		</tr>
 		<tr>
-			<th style="padding:18px 0 18px 0;" width="100%">Your Labels</th>
-			<th nowrap="nowrap" style="padding:18px 0 18px 0;"><input type="text" name="label_text" id="label_text" style="width:200px;"><input type="button" value="#defaultsObj.trans("labels_add")#" class="button" onclick="addlabel();"></th>
+			<th style="padding:18px 0 18px 0;" width="100%"></th>
+			<th nowrap="nowrap" style="padding:18px 0 18px 0;">
+				<input type="text" name="label_text" id="label_text_admin" style="width:200px;">
+				<select name="sublabelofnew" id="sublabelofnew" style="width:240px;">
+					<option value="0" selected="selected">Nest label under...</option>
+					<cfloop query="qry_labels">
+						<option value="#label_id#">#label_path#</option>
+					</cfloop>
+				</select>
+				<input type="button" value="#defaultsObj.trans("labels_add")#" class="button" onclick="addlabeladmin();">
+			</th>
 		</tr>
 		<cfloop query="qry_labels">
 			<tr class="list">
-				<td width="100%"><a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=#label_id#','#Jsstringformat(label_text)#',450,1);return false">#label_text#</a></td>
+				<td width="100%"><a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=#label_id#','#Jsstringformat(label_text)#',450,1);return false"><cfif listlen(label_path,"/") NEQ 1><cfloop from="1" to="#listlen(label_path,"/")#" index="i">-</cfloop></cfif> #label_text#</a></td>
 				<td width="1%" nowrap="true" align="right"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=labels&id=#label_id#&loaddiv=admin_labels','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 			</tr>
 		</cfloop>
 	</table>
 <script>
 // Update Comment
-function addlabel(){
-	var thelab = encodeURIComponent($("##label_text").val());
+function addlabeladmin(){
+	// Get value
+	var thelab = $("##label_text_admin").val();
+	var theparent = $("##sublabelofnew option:selected").val();
+	// Submit
 	if (thelab != "") {
-		loadcontent('admin_labels','#myself#c.admin_labels_update&label_id=0&label_text=' + thelab);
+		$('##admin_labels').load('#myself#c.admin_labels_update', {label_id:0, label_text: thelab, label_parent: theparent});
 	}
 	else {
 		return false;
 	}
 }
-// Sve setting
+// Save setting
 function save_setting(labelset){
 	// Save
 	loadcontent('save_status_hidden_label','#myself#c.admin_labels_setting&label_users=' + labelset);

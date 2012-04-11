@@ -2099,6 +2099,8 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
   		label_date		timestamp,
   		user_id			varchar2(100 char),
   		host_id			number,
+  		label_id_r		varchar2(100 char),
+  		label_path		varchar2(500 char),
   		PRIMARY KEY (label_id)
 		)
 		</cfquery>

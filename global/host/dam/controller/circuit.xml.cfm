@@ -131,10 +131,10 @@
 	 -->
 	 <fuseaction name="labels">
 		<!-- Get languages -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="getalllabels()" returnvariable="qry_labels" />
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="qry_labels" />
 		<!-- Set as attributes also -->
-		<set name="attributes.thelabels" value="#qry_labels.l#" />
-		<set name="attributes.thelabelsqry" value="#qry_labels.qryl#" />
+		<!-- <set name="attributes.thelabels" value="#qry_labels.l#" /> -->
+		<set name="attributes.thelabelsqry" value="#qry_labels#" />
 	</fuseaction>
 	
 	<!--
@@ -4018,7 +4018,7 @@
 		<!-- CFC: Get setting -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_labels_setting" />
 		<!-- CFC: Get all labels -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="admin_get()" returnvariable="qry_labels" />
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="qry_labels" />
 		<!-- Show -->
 		<do action="ajax.admin_labels" />
 	</fuseaction>
@@ -4031,8 +4031,13 @@
 	</fuseaction>
 	<!-- Add/Edit Label -->
 	<fuseaction name="admin_labels_add">
+		<!-- Param -->
+    	<set name="attributes.closewin" value="1" overwrite="false" />
+    	<set name="attributes.selectid" value="" overwrite="false" />
 		<!-- CFC: Get label -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="admin_get_one(attributes.label_id)" returnvariable="qry_label" />
+		<!-- CFC: Get all labels -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="list_labels_dropdown" />
 		<!-- Show -->
 		<do action="ajax.admin_labels_add" />
 	</fuseaction>
@@ -5413,6 +5418,8 @@
 	<fuseaction name="labels_list">
 		<!-- Params -->
 		<set name="attributes.id" value="0" overwrite="false" />
+		<!-- CFC: Get setting -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_labels_setting" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_dropdown()" returnvariable="list_labels_dropdown" />
 		<!-- Show -->

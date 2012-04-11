@@ -27,21 +27,45 @@
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
 			<td>
-				<input type="hidden" name="label_id" value="#attributes.label_id#">
 				<input type="text" name="label_text_edit" id="label_text_edit" style="width:400px;" value="#qry_label.label_text#">
+				<br /><br />
+				Nest label under:<br />
+				<select name="sublabelofedit" id="sublabelofedit" style="width:240px;">
+					<option value="0">Please select a parent...</option>
+					<option value="0">---</option>
+					<option value="0">Move to root</option>
+					<option value="0">---</option>
+					<cfloop query="list_labels_dropdown">
+						<cfif qry_label.label_id NEQ label_id>
+							<option value="#label_id#"<cfif qry_label.label_id_r EQ label_id> selected="selected"</cfif>>#label_path#</option>
+						</cfif>
+					</cfloop>
+				</select>
 				<br /><br />
 				<input type="button" value="#defaultsObj.trans("button_update")#" name="savecomment" class="button" onclick="updatelabel();">
 			</td>
 		</tr>
 	</table>
+	<div id="label_status_here" style="display:none;"></div>
 <script>
 // Update Comment
 function updatelabel(){
-	var thelab = encodeURIComponent($("##label_text_edit").val());
+	// Get value
+	var thelab = $("##label_text_edit").val();
+	var theparent = $("##sublabelofedit option:selected").val();
+	// Submit
 	if (thelab != "") {
-		loadcontent('admin_labels','#myself#c.admin_labels_update&label_id=#attributes.label_id#&label_text=' + thelab);
-		// Hide Window
-		destroywindow(1);
+		$('##label_status_here').load('#myself#c.admin_labels_update', {label_id: '#attributes.label_id#', label_text: thelab, label_parent: theparent}, function() {
+		  // Update chosen list
+		  $('.chosen-multiple-select').each(function(){
+		   $(this).trigger("liszt:updated");
+		  });
+		  $('.chosen-select').each(function(){
+		   $(this).trigger("liszt:updated");
+		  });
+		  // Hide Window
+		  destroywindow(#attributes.closewin#);
+		});
 	}
 	else {
 		return false;

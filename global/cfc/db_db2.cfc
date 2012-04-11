@@ -2136,6 +2136,8 @@
   		label_date		timestamp,
   		user_id			varchar(100),
   		host_id			int,
+  		label_id_r		varchar(100),
+  		label_path		varchar(500),
   		PRIMARY KEY (label_id)
 		)
 		</cfquery>

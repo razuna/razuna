@@ -98,12 +98,14 @@
 		<cfif arguments.thestruct.labels NEQ "null">
 			<cfloop list="#arguments.thestruct.labels#" delimiters="," index="i">
 				<!--- Select from labels to get id --->
+				<!---
 				<cfquery datasource="#application.razuna.datasource#" name="qryid">
 				SELECT label_id
 				FROM #session.hostdbprefix#labels
 				WHERE lower(label_text) = <cfqueryparam value="#lcase(i)#" cfsqltype="cf_sql_varchar" />
 				AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 				</cfquery>
+				--->
 				<!--- Insert into cross table --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO ct_labels
@@ -115,7 +117,7 @@
 				)
 				VALUES
 				(
-					<cfqueryparam value="#qryid.label_id#" cfsqltype="cf_sql_varchar" />,
+					<cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />,
 					<cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />,
 					<cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />,
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
@@ -189,7 +191,7 @@
 		<cfset var l = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="lab#session.hostid#" cachedomain="#session.hostid#_labels">
-		SELECT label_text
+		SELECT label_text, label_path, label_id
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		ORDER BY label_text
@@ -223,14 +225,14 @@
 		<!--- Query --->
 		<cfif qryct.recordcount NEQ 0>
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="lab#session.hostid##qryct.ct_label_id##arguments.theid##arguments.thetype#" cachedomain="#session.hostid#_labels">
-			SELECT label_text
+			SELECT label_id
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			ORDER BY label_text
 			</cfquery>
 			<!--- Param --->
-			<cfset var l = valuelist(qry.label_text)>
+			<cfset var l = valuelist(qry.label_id)>
 		<cfelse>
 			<cfset var l = "">
 		</cfif>
@@ -270,7 +272,7 @@
 	<cffunction name="labels_dropdown" output="true" access="public">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_dropdown#session.hostid#" cachedomain="#session.hostid#_labels">
-		SELECT label_id, label_path
+		SELECT label_id, label_path, label_text
 		FROM #session.hostdbprefix#labels l
 		WHERE l.host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		ORDER BY label_path
@@ -628,6 +630,27 @@
 		DELETE FROM ct_labels
 		WHERE ct_label_id = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
+		<!--- Now check for any sub labels and remove them as well --->
+		<cfquery datasource="#application.razuna.datasource#" name="sub">
+		SELECT label_id
+		FROM #session.hostdbprefix#labels
+		WHERE label_id_r = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar" />
+		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+		</cfquery>
+		<!--- If we find some records --->
+		<cfif sub.recordcount NEQ 0>
+			<!--- Remove in DBs --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#labels
+			WHERE label_id IN (<cfqueryparam value="#valuelist(sub.label_id)#" cfsqltype="cf_sql_varchar" list="Yes" />)
+			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			</cfquery>
+			<!--- DB CT table --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_labels
+			WHERE ct_label_id IN (<cfqueryparam value="#valuelist(sub.label_id)#" cfsqltype="cf_sql_varchar" list="Yes" />)
+			</cfquery>
+		</cfif>
 		<!--- Flush --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
 		<!--- Return --->
