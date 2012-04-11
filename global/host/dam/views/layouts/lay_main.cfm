@@ -63,7 +63,7 @@
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js" type="text/javascript"></script>
 <!--- <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script> --->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/jquery.tree.min.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/lib/jquery.cookie.js" type="text/javascript"></script>
 <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/plugins/jquery.tree.cookie.js" type="text/javascript"></script>
