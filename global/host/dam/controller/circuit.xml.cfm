@@ -2624,6 +2624,13 @@
 				<set name="attributes.rowmax" value="200" />
 			</true>
 		</if>
+		<!-- If we got a folder_id then we search from this folder on -->
+		<if condition="attributes.folder_id NEQ '' OR attributes.folder_id NEQ 0">
+			<true>
+				<!-- CFC: Load recfolder list -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="recfolder(attributes.folder_id)" returnvariable="attributes.list_recfolders" />
+			</true>
+		</if>
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<!-- ACTION: Search Files -->
@@ -2643,6 +2650,13 @@
 		<if condition="#attributes.searchtype# EQ 'adv'">
 			<true>
 				<set name="attributes.rowmax" value="200" />
+			</true>
+		</if>
+		<!-- If we got a folder_id then we search from this folder on -->
+		<if condition="attributes.folder_id NEQ '' OR attributes.folder_id NEQ 0">
+			<true>
+				<!-- CFC: Load recfolder list -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="recfolder(attributes.folder_id)" returnvariable="attributes.list_recfolders" />
 			</true>
 		</if>
 		<!-- XFA -->
@@ -2666,6 +2680,13 @@
 				<set name="attributes.rowmax" value="200" />
 			</true>
 		</if>
+		<!-- If we got a folder_id then we search from this folder on -->
+		<if condition="attributes.folder_id NEQ '' OR attributes.folder_id NEQ 0">
+			<true>
+				<!-- CFC: Load recfolder list -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="recfolder(attributes.folder_id)" returnvariable="attributes.list_recfolders" />
+			</true>
+		</if>
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<!-- ACTION: Search Files -->
@@ -2685,6 +2706,13 @@
 		<if condition="#attributes.searchtype# EQ 'adv'">
 			<true>
 				<set name="attributes.rowmax" value="200" />
+			</true>
+		</if>
+		<!-- If we got a folder_id then we search from this folder on -->
+		<if condition="attributes.folder_id NEQ '' OR attributes.folder_id NEQ 0">
+			<true>
+				<!-- CFC: Load recfolder list -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="recfolder(attributes.folder_id)" returnvariable="attributes.list_recfolders" />
 			</true>
 		</if>
 		<!-- XFA -->
