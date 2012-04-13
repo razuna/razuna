@@ -2878,7 +2878,7 @@
 <!--- Save the combined view --->
 <cffunction name="combined_save" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
-	<cfthread name="#createuuid()#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="combined_save_thread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 	<cfreturn />
@@ -2952,14 +2952,15 @@
 				</cfif>
 				<!--- Store the id in a temp var --->
 				<cfset imgid = theid>
-				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
+				<cfset arguments.thestruct.theid = theid>
 				<!--- Lucene --->
-				<!--- Get file detail --->
-				<cfinvoke component="images" method="filedetail" theid="#theid#" thecolumn="path_to_asset, link_kind, img_filename_org filenameorg, lucene_key, link_path_url" returnvariable="arguments.thestruct.qrydetail">
-				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#theid#" category="img" notfile="F">
-				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#theid#" category="img" notfile="F">
+				<cfthread intstruct="#arguments.thestruct#">
+					<!--- Get file detail --->
+					<cfinvoke component="images" method="filedetail" theid="#attributes.intstruct.theid#" thecolumn="path_to_asset, link_kind, img_filename_org filenameorg, lucene_key, link_path_url" returnvariable="attributes.intstruct.qrydetail">
+					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
+					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="img" notfile="F">
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="img" notfile="F">
+				</cfthread>
 			</cfif>
 		<!--- Videos --->
 		<cfelseif myform CONTAINS "vid_">
@@ -3016,14 +3017,15 @@
 				</cfif>
 				<!--- Store the id in a temp var --->
 				<cfset vidid = theid>
-				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+				<cfset arguments.thestruct.theid = theid>
 				<!--- Lucene --->
-				<!--- Get file detail --->
-				<cfinvoke component="videos" method="getdetails" vid_id="#theid#" ColumnList="v.path_to_asset, v.link_kind, v.vid_name_org filenameorg, v.lucene_key, v.link_path_url" returnvariable="arguments.thestruct.qrydetail">
-				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#theid#" category="vid" notfile="F">
-				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#theid#" category="vid" notfile="F">
+				<cfthread intstruct="#arguments.thestruct#">
+					<!--- Get file detail --->
+					<cfinvoke component="videos" method="getdetails" vid_id="#attributes.intstruct.theid#" ColumnList="v.path_to_asset, v.link_kind, v.vid_name_org filenameorg, v.lucene_key, v.link_path_url" returnvariable="attributes.intstruct.qrydetail">
+					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
+					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="vid" notfile="F">
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="vid" notfile="F">
+				</cfthread>
 			</cfif>
 		<!--- Audios --->
 		<cfelseif myform CONTAINS "aud_">
@@ -3078,20 +3080,21 @@
 					</cfquery>
 				</cfif>
 				<!--- Store the id in a temp var --->
-				<cfset audid = theid>
-				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />		
+				<cfset audid = theid>	
+				<cfset arguments.thestruct.theid = theid>
 				<!--- Lucene --->
-				<!--- Get file detail --->
-				<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrydetail">
-				SELECT link_kind, link_path_url, aud_name_org filenameorg, lucene_key, path_to_asset
-				FROM #session.hostdbprefix#audios
-				WHERE aud_id = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#theid#" category="aud" notfile="F">
-				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#theid#" category="aud" notfile="F">
+				<cfthread intstruct="#arguments.thestruct#">
+					<!--- Get file detail --->
+					<cfquery datasource="#application.razuna.datasource#" name="attributes.intstruct.qrydetail">
+					SELECT link_kind, link_path_url, aud_name_org filenameorg, lucene_key, path_to_asset
+					FROM #session.hostdbprefix#audios
+					WHERE aud_id = <cfqueryparam value="#attributes.intstruct.theid#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
+					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="aud" notfile="F">
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="aud" notfile="F">
+				</cfthread>
 			</cfif>
 		<!--- Files --->
 		<cfelseif myform CONTAINS "doc_">
@@ -3147,17 +3150,23 @@
 				</cfif>
 				<!--- Store the id in a temp var --->
 				<cfset docid = theid>
-				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_files" />
+				<cfset arguments.thestruct.theid = theid>
 				<!--- Lucene --->
-				<!--- Get file detail --->
-				<cfinvoke component="files" method="filedetail" theid="#theid#" thecolumn="path_to_asset, link_kind, file_name_org filenameorg, lucene_key, link_path_url" returnvariable="arguments.thestruct.qrydetail">
-				<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#theid#" category="doc" notfile="F">
-				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#theid#" category="doc" notfile="F">
+				<cfthread intstruct="#arguments.thestruct#">
+					<!--- Get file detail --->
+					<cfinvoke component="files" method="filedetail" theid="#attributes.intstruct.theid#" thecolumn="path_to_asset, link_kind, file_name_org filenameorg, lucene_key, link_path_url" returnvariable="attributes.intstruct.qrydetail">
+					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
+					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="doc" notfile="F">
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="doc" notfile="F">
+				</cfthread>
 			</cfif>
 		</cfif>
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_files" />
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />	
 	<!--- <cfoutput>Filename: #form["#fname#"]# Desc: #form["#fdesc#"]# Keywords: #form["#fkeys#"]#<br /></cfoutput> --->
 	<cfreturn />
 </cffunction>
