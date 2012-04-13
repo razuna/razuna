@@ -1273,12 +1273,23 @@ This is the main function called directly by a single upload else from addassets
 						</cfif>
 						<!--- If there are metadata fields then add them here --->
 						<cfif attributes.intstruct.metadata EQ 1>
-							<cfinvoke component="global.api.asset" method="setmetadata">
-								<cfinvokeargument name="sessiontoken" value="#attributes.intstruct.sessiontoken#">
-								<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
-								<cfinvokeargument name="assettype" value="doc">
-								<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
-							</cfinvoke>
+							<!--- Check if API is called the old way --->
+							<cfif structkeyexists(attributes.intstruct,"sessiontoken")>
+								<cfinvoke component="global.api.asset" method="setmetadata">
+									<cfinvokeargument name="sessiontoken" value="#attributes.intstruct.sessiontoken#">
+									<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+									<cfinvokeargument name="assettype" value="doc">
+									<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
+								</cfinvoke>
+							<cfelse>
+								<!--- API2 --->
+								<cfinvoke component="global.api2.asset" method="setmetadata">
+									<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#">
+									<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+									<cfinvokeargument name="assettype" value="doc">
+									<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
+								</cfinvoke>
+							</cfif>
 						</cfif>
 						<!--- Move the file to its own directory --->
 						<cfif attributes.intstruct.storage EQ "local" AND attributes.intstruct.qryfile.link_kind NEQ "url">
@@ -1588,12 +1599,23 @@ This is the main function called directly by a single upload else from addassets
 				</cfquery>
 				<!--- If there are metadata fields then add them here --->
 				<cfif attributes.intstruct.metadata EQ 1>
-					<cfinvoke component="global.api.asset" method="setmetadata">
-						<cfinvokeargument name="sessiontoken" value="#attributes.intstruct.sessiontoken#">
-						<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
-						<cfinvokeargument name="assettype" value="img">
-						<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
-					</cfinvoke>
+					<!--- Check if API is called the old way --->
+					<cfif structkeyexists(attributes.intstruct,"sessiontoken")>
+						<cfinvoke component="global.api.asset" method="setmetadata">
+							<cfinvokeargument name="sessiontoken" value="#attributes.intstruct.sessiontoken#">
+							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+							<cfinvokeargument name="assettype" value="img">
+							<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
+						</cfinvoke>
+					<cfelse>
+						<!--- API2 --->
+						<cfinvoke component="global.api2.asset" method="setmetadata">
+							<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#">
+							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+							<cfinvokeargument name="assettype" value="img">
+							<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
+						</cfinvoke>
+					</cfif>
 				</cfif>
 				<!--- Log --->
 				<cfinvoke component="extQueryCaching" method="log_assets">
@@ -2529,12 +2551,23 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- If there are metadata fields then add them here --->
 		<cfif arguments.thestruct.metadata EQ 1>
-			<cfinvoke component="global.api.asset" method="setmetadata">
-				<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
-				<cfinvokeargument name="assetid" value="#arguments.thestruct.thisvid.newid#">
-				<cfinvokeargument name="assettype" value="vid">
-				<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
-			</cfinvoke>
+			<!--- Check if API is called the old way --->
+			<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
+				<cfinvoke component="global.api.asset" method="setmetadata">
+					<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.thisvid.newid#">
+					<cfinvokeargument name="assettype" value="vid">
+					<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+				</cfinvoke>
+			<cfelse>
+				<!--- API2 --->
+				<cfinvoke component="global.api2.asset" method="setmetadata">
+					<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.thisvid.newid#">
+					<cfinvokeargument name="assettype" value="vid">
+					<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+				</cfinvoke>
+			</cfif>
 		</cfif>
 		<!--- Remove records which have no folder_id_r
 		<cfquery datasource="#variables.dsn#">
@@ -3223,12 +3256,23 @@ This is the main function called directly by a single upload else from addassets
 					</cfquery>
 					<!--- If there are metadata fields then add them here --->
 					<cfif attributes.audstruct.metadata EQ 1>
-						<cfinvoke component="global.api.asset" method="setmetadata">
-							<cfinvokeargument name="sessiontoken" value="#attributes.audstruct.sessiontoken#">
-							<cfinvokeargument name="assetid" value="#attributes.audstruct.newid#">
-							<cfinvokeargument name="assettype" value="aud">
-							<cfinvokeargument name="assetmetadata" value="#attributes.audstruct.assetmetadata#">
-						</cfinvoke>
+						<!--- Check if API is called the old way --->
+						<cfif structkeyexists(attributes.audstruct,"sessiontoken")>
+							<cfinvoke component="global.api.asset" method="setmetadata">
+								<cfinvokeargument name="sessiontoken" value="#attributes.audstruct.sessiontoken#">
+								<cfinvokeargument name="assetid" value="#attributes.audstruct.newid#">
+								<cfinvokeargument name="assettype" value="aud">
+								<cfinvokeargument name="assetmetadata" value="#attributes.audstruct.assetmetadata#">
+							</cfinvoke>
+						<cfelse>
+							<!--- API2 --->
+							<cfinvoke component="global.api2.asset" method="setmetadata">
+								<cfinvokeargument name="api_key" value="#attributes.audstruct.api_key#">
+								<cfinvokeargument name="assetid" value="#attributes.audstruct.newid#">
+								<cfinvokeargument name="assettype" value="aud">
+								<cfinvokeargument name="assetmetadata" value="#attributes.audstruct.assetmetadata#">
+							</cfinvoke>
+						</cfif>
 					</cfif>
 					<!--- Log --->
 					<cfinvoke component="extQueryCaching" method="log_assets">
