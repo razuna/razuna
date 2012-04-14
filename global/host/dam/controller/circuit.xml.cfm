@@ -2608,6 +2608,8 @@
 				<do action="search_audios" />
 			</true>
 		</if>
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -2637,6 +2639,8 @@
 		<do action="search_files" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -2665,6 +2669,8 @@
 		<do action="search_images" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -2693,6 +2699,8 @@
 		<do action="search_videos" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -2721,6 +2729,8 @@
 		<do action="search_audios" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show -->
@@ -2765,6 +2775,8 @@
 	
 	<!-- Search: Advanced -->
 	<fuseaction name="search_advanced">
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_fields" />
 		<!-- Show -->

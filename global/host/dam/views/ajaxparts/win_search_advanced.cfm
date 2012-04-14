@@ -24,6 +24,7 @@
 *
 --->
 <cfparam default="0" name="attributes.folder_id">
+<cfset myvar = structnew()>
 <cfoutput>
 	<div id="searchadvanced">
 		<ul>
@@ -37,10 +38,11 @@
 		<div id="loading_searchadv" style="width:100%;text-align:center;padding-top:5px;"></div>
 		<!--- All --->
 		<div id="all_assets">
-			<form name="advsearch_all" method="post" onsubmit="searchadv_all('advsearch_all','c.search_simple','#attributes.folder_id#');return false;">
+			<form name="advsearch_all" id="advsearch_all" method="post" onsubmit="searchadv_all('advsearch_all','c.search_simple','#attributes.folder_id#');return false;">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<!--- Include advanced fields --->
-					<cfinclude template="inc_search_fields.cfm" />
+					<cfset myvar.thetype = "all">
+					<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 					<cfset lastyear = #year(now())# - 10>
 					<cfset newyear = #year(now())# + 3>
 					<tr>
@@ -65,10 +67,11 @@
 		</div>
 		<!--- Documents --->
 		<div id="adv_files">
-			<form name="advsearch_files" onsubmit="searchadv_files('advsearch_files','c.search_files_do','#attributes.folder_id#');return false;">
+			<form name="advsearch_files" id="advsearch_files" onsubmit="searchadv_files('advsearch_files','c.search_files_do','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
-				<cfinclude template="inc_search_fields.cfm" />
+				<cfset myvar.thetype = "files">
+				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<tr>
 					<td nowrap="true" width="1%">#defaultsObj.trans("search_for_type")#</td>
 					<td>
@@ -138,10 +141,11 @@
 		</div>
 		<!--- Images --->
 		<div id="adv_images">
-			<form name="advsearch_images" onsubmit="searchadv_images('advsearch_images','c.search_images_do','#attributes.folder_id#');return false;">
+			<form name="advsearch_images" id="advsearch_images" onsubmit="searchadv_images('advsearch_images','c.search_images_do','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
-				<cfinclude template="inc_search_fields.cfm" />
+				<cfset myvar.thetype = "images">
+				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
 				<tr>
@@ -307,10 +311,11 @@
 		</div>
 		<!--- Videos --->
 		<div id="adv_videos">
-			<form name="advsearch_videos" onsubmit="searchadv_videos('advsearch_videos','c.search_videos_do','#attributes.folder_id#');return false;">
+			<form name="advsearch_videos" id="advsearch_videos" onsubmit="searchadv_videos('advsearch_videos','c.search_videos_do','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
-				<cfinclude template="inc_search_fields.cfm" />
+				<cfset myvar.thetype = "videos">
+				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
 				<tr>
@@ -335,10 +340,11 @@
 		</div>
 		<!--- Audios --->
 		<div id="adv_audios">
-			<form name="advsearch_audios" onsubmit="searchadv_audios('advsearch_audios','c.search_audios_do','#attributes.folder_id#');return false;">
+			<form name="advsearch_audios" id="advsearch_audios" onsubmit="searchadv_audios('advsearch_audios','c.search_audios_do','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
-				<cfinclude template="inc_search_fields.cfm" />
+				<cfset myvar.thetype = "audios">
+				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
 				<tr>
@@ -367,6 +373,8 @@
 	<!--- Activate the Tabs --->
 	<script language="JavaScript" type="text/javascript">
 		jqtabs("searchadvanced");
+		// Activate Chosen
+		$(".chzn-select").chosen();
 	</script>	
 </cfoutput>
 	

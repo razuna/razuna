@@ -73,9 +73,24 @@
 				LEFT JOIN #session.hostdbprefix#files_desc ct ON f.file_id = ct.file_id_r
 				LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON f.file_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id  AND ft.lang_id_r = 1
+				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id AND ft.lang_id_r = 1
 				WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#arguments.dsn#" cachename="ldoc#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_labels">
+				SELECT l.label_text
+				FROM ct_labels ct, #session.hostdbprefix#labels l
+				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Add labels to a list --->
+				<cfset l = valuelist(qry_l.label_text)>
+				<!--- Add labels to the query --->
+				<cfquery dbtype="query" name="qry_all">
+				SELECT *, '#l#' as labels
+				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
 				<cfscript>
@@ -86,7 +101,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value,labels",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -102,7 +117,8 @@
 						webstatement : "webstatement", 
 						rightsmarked : "rightsmarked",
 						cf_text : "cf_id_r",
-						cf_value : "cf_value"
+						cf_value : "cf_value",
+						labels : "labels"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
@@ -128,6 +144,21 @@
 				WHERE f.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#arguments.dsn#" cachename="limg#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_labels">
+				SELECT l.label_text
+				FROM ct_labels ct, #session.hostdbprefix#labels l
+				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Add labels to a list --->
+				<cfset l = valuelist(qry_l.label_text)>
+				<!--- Add labels to the query --->
+				<cfquery dbtype="query" name="qry_all">
+				SELECT *, '#l#' as labels
+				FROM qry_all
+				</cfquery>
 				<!--- Indexing --->
 				<cfscript>
 					args = {
@@ -137,7 +168,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value,labels",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -181,7 +212,8 @@
 						credit : "credit", 
 						rights : "rights",
 						cf_text : "cf_id_r",
-						cf_value : "cf_value"
+						cf_value : "cf_value",
+						labels : "labels"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
@@ -202,6 +234,21 @@
 				WHERE f.vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#arguments.dsn#" cachename="lvid#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_labels">
+				SELECT l.label_text
+				FROM ct_labels ct, #session.hostdbprefix#labels l
+				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Add labels to a list --->
+				<cfset l = valuelist(qry_l.label_text)>
+				<!--- Add labels to the query --->
+				<cfquery dbtype="query" name="qry_all">
+				SELECT *, '#l#' as labels
+				FROM qry_all
+				</cfquery>
 			<!--- FOR AUDIOS --->
 			<cfelseif arguments.category EQ "aud">
 				<!--- Query Record --->
@@ -218,6 +265,21 @@
 				WHERE a.aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#arguments.dsn#" cachename="laud#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_labels">
+				SELECT l.label_text
+				FROM ct_labels ct, #session.hostdbprefix#labels l
+				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND l.label_id = ct.ct_label_id
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Add labels to a list --->
+				<cfset l = valuelist(qry_l.label_text)>
+				<!--- Add labels to the query --->
+				<cfquery dbtype="query" name="qry_all">
+				SELECT *, '#l#' as labels
+				FROM qry_all
+				</cfquery>
 			</cfif>
 			<!--- Only for video and audio files --->
 			<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
@@ -230,7 +292,7 @@
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,cf_value,labels",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -240,17 +302,18 @@
 					rawmetadata : "rawmetadata",
 					extension : "theext",
 					cf_text : "cf_id_r",
-					cf_value : "cf_value"
+					cf_value : "cf_value",
+					labels : "labels"
 					}
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
 			</cfscript>
 			</cfif>
 			<!--- Index the file itself, but not video (since video throws an error) --->
-			<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F">
+			<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
 				<cftry>
 					<!--- Nirvanix or Amazon --->
-					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND arguments.notfile EQ "F">
+					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon")>
 						<!--- Index: Update file --->
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					<!--- Local Storage --->
@@ -295,23 +358,24 @@
 		<cfparam name="arguments.thestruct.link_kind" default="">
 		<!--- Index: delete file --->
 		<cftry>
-			<!--- Asset has URL --->
-			<cfif arguments.thestruct.link_kind EQ "">
-				<!--- Storage: Local --->
-				<cfif application.razuna.storage EQ "local">
-					<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
-				<!--- Storage: Nirvanix --->
-				<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND arguments.notfile EQ "F">
-					<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
+			<!--- Only if notfile is f --->
+			<cfif arguments.notfile EQ "F">
+				<!--- Asset has URL --->
+				<cfif arguments.thestruct.link_kind EQ "">
+					<!--- Storage: Local --->
+					<cfif application.razuna.storage EQ "local">
+						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
+					<!--- Storage: Nirvanix --->
+					<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon")>
+						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
+					</cfif>
+				<!--- For linked local assets --->
+				<cfelseif arguments.thestruct.link_kind EQ "lan">
+					<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.link_path_url#">
 				</cfif>
-			<!--- For linked local assets --->
-			<cfelseif arguments.thestruct.link_kind EQ "lan">
-				<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.link_path_url#">
 			</cfif>
 			<!--- Index: delete records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
-			<cfindex action="delete" collection="#session.hostid#" key="xmp_#arguments.assetid#">
-			<cfindex action="delete" collection="#session.hostid#" key="cf_#arguments.assetid#">
 			<cfcatch type="any">
 				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="lucene delete index">
 					<cfdump var="#cfcatch#" />
@@ -415,10 +479,19 @@
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
+		<!--- If criteria is empty --->
+<!---
+		<cfif arguments.criteria EQ "">
+			<cfset arguments.criteria = "*">
+		</cfif>
+--->
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfif NOT arguments.criteria CONTAINS ":">
-			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#)">
+			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)">
 		</cfif>
+		<cfset consoleoutput(true)>
+<cfset console(arguments)>
+
 		<cftry>
 			<cfsearch collection="#arguments.hostid#" criteria="#arguments.criteria#" name="qrylucene" category="#arguments.category#">
 			<cfcatch type="any">

@@ -83,6 +83,10 @@
 					<br />
 					<input name="searchfor" type="text" class="textbold" style="width:190px;">
 					<br />
+					Filename
+					<br />
+					<input type="text" name="filename" style="width:190px;" class="textbold">
+					<br />
 					Keywords
 					<br />
 					<input type="text" name="keywords" style="width:190px;" class="textbold">
@@ -91,9 +95,16 @@
 					<br />
 					<input type="text" name="description" style="width:190px;" class="textbold">
 					<br />
-					Filename
+					#defaultsObj.trans("labels")#
 					<br />
-					<input type="text" name="filename" style="width:190px;" class="textbold">
+					<select data-placeholder="Choose a label" class="chzn-select" style="width:201px;" name="labels" id="search_labels" multiple="multiple">
+						<option value=""></option>
+						<cfloop query="attributes.thelabelsqry">
+							<cfset l = replace(label_path," "," AND ","all")>
+							<cfset l = replace(l,"/"," AND ","all")>
+							<option value="(#l#)">#label_path#</option>
+						</cfloop>
+					</select>
 					<br />
 					Extension
 					<br /><input type="text" name="extension" style="width:190px;" class="textbold">
@@ -121,6 +132,7 @@
 							<option value="vid"<cfif attributes.thetype EQ "vid"> selected="true"</cfif>>#defaultsObj.trans("search_for_videos")#</option>
 							<option value="aud"<cfif attributes.thetype EQ "aud"> selected="true"</cfif>>#defaultsObj.trans("search_for_audios")#</option>
 						</select>
+					</td>
 				</tr>
 				<tr>
 					<td>
@@ -531,6 +543,9 @@
 </cfoutput>
 
 <script language="javascript">
+	// Activate Chosen
+	$(".chzn-select").chosen();
+	// Search submit
 	$("#form_searchsearch").submit(function(e){
 		// Call subfunction to get fields
 		var searchtext = subadvfields('form_searchsearch');

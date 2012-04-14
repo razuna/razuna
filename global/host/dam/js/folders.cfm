@@ -215,6 +215,8 @@
 		var filename = document.forms[theform].filename.value;
 		var extension = document.forms[theform].extension.value;
 		var rawmetadata = document.forms[theform].rawmetadata.value;
+		var labels = $('#' + theform + ' [name="labels"]').val();
+		if (labels == null) var labels = '';
 		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			var value_#cfid# = document.forms[theform].cf#cfid#.value;
@@ -227,6 +229,7 @@
 		if (filename != '') var filename = 'filename:' + filename;
 		if (extension != '') var extension = 'extension:' + extension;
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:' + rawmetadata;
+		if (labels != '') var labels = 'labels:' + labels;
 		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			if (value_#cfid# != '') var value_#cfid# = '(cf_text:#cf_id# AND cf_value:' + value_#cfid# + ')';
@@ -262,6 +265,12 @@
 		}
 		else {
 			var searchtext = searchtext + rawmetadata;
+		}
+		if (searchtext != '' && labels != '') {
+			var searchtext = searchtext + ' ' + andor + ' ' + labels;
+		}
+		else {
+			var searchtext = searchtext + labels;
 		}
 		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>

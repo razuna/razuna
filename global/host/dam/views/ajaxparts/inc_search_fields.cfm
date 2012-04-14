@@ -29,6 +29,10 @@
 		<td><input type="text" name="searchfor" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
+		<td>Filename</td>
+		<td><input type="text" name="filename" style="width:300px;" class="textbold"></td>
+	</tr>
+	<tr>
 		<td>Keywords</td>
 		<td><input type="text" name="keywords" style="width:300px;" class="textbold"></td>
 	</tr>
@@ -37,8 +41,17 @@
 		<td><input type="text" name="description" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
-		<td>Filename</td>
-		<td><input type="text" name="filename" style="width:300px;" class="textbold"></td>
+		<td>#defaultsObj.trans("labels")#</td>
+		<td>
+			<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="search_labels_#myvar.thetype#" multiple="multiple">
+				<option value=""></option>
+				<cfloop query="attributes.thelabelsqry">
+					<cfset l = replace(label_path," "," AND ","all")>
+					<cfset l = replace(l,"/"," AND ","all")>
+					<option value="(#l#)">#label_path#</option>
+				</cfloop>
+			</select>
+		</td>
 	</tr>
 	<tr>
 		<td>Extension</td>

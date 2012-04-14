@@ -127,6 +127,10 @@
 		</cfif>
 		<!--- Flush --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<!--- Lucene: Delete Records --->
+		<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
+		<!--- Lucene: Update Records --->
+		<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" category="#arguments.thestruct.thetype#" notfile="T">
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

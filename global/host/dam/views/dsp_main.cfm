@@ -300,16 +300,16 @@
 	}
 </script>
 <!--- JS: FOLDERS --->
-<cfinclude template="../js/folders.cfm">
+<cfinclude template="../js/folders.cfm" runonce="true">
 <!--- JS: FILES --->
-<cfinclude template="../js/files.cfm">
+<cfinclude template="../js/files.cfm" runonce="true">
 <!--- JS: BASKET --->
-<cfinclude template="../js/basket.cfm">
+<cfinclude template="../js/basket.cfm" runonce="true">
 <!--- JS: USERS --->
-<cfinclude template="../js/users.cfm">
+<cfinclude template="../js/users.cfm" runonce="true">
 <!--- JS: GROUPS --->
-<cfinclude template="../js/groups.cfm">
+<cfinclude template="../js/groups.cfm" runonce="true">
 <!--- JS: SCHEDULER --->
-<cfinclude template="../js/scheduler.cfm">
+<cfinclude template="../js/scheduler.cfm" runonce="true">
 <!--- JS: SCHEDULER --->
-<cfinclude template="../js/custom_fields.cfm">
+<cfinclude template="../js/custom_fields.cfm" runonce="true">
