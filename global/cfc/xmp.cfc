@@ -1126,7 +1126,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			</cftry>
 			<cfif xmp.orgwidth EQ "">
 				<cftry>
-					<cfset xmp.orgwidth = trim(#thexml[1]["SubIFD1:ImageWidth"].xmltext#)>
+					<cfset xmp.orgwidth = trim(#thexml[1]["IFD0:ImageWidth"].xmltext#)>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
@@ -1138,7 +1138,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			</cfif>
 			<cfif xmp.orgwidth EQ "">
 				<cftry>
-					<cfset xmp.orgwidth = trim(#thexml[1]["IFD0:ImageWidth"].xmltext#)>
+					<cfset xmp.orgwidth = trim(#thexml[1]["SubIFD1:ImageWidth"].xmltext#)>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
@@ -1149,7 +1149,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			</cftry>
 			<cfif xmp.orgheight EQ "">
 				<cftry>
-					<cfset xmp.orgheight = trim(#thexml[1]["SubIFD1:ImageHeight"].xmltext#)>
+					<cfset xmp.orgheight = trim(#thexml[1]["IFD0:ImageHeight"].xmltext#)>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
@@ -1161,7 +1161,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			</cfif>
 			<cfif xmp.orgheight EQ "">
 				<cftry>
-					<cfset xmp.orgheight = trim(#thexml[1]["IFD0:ImageHeight"].xmltext#)>
+					<cfset xmp.orgheight = trim(#thexml[1]["SubIFD1:ImageHeight"].xmltext#)>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
