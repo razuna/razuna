@@ -85,7 +85,7 @@
 		<cfreturn />
 	</cffunction>
 	
-	<!--- Add labels from users who can only select --->
+	<!--- Add labels --->
 	<cffunction name="label_add_all" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
 		<!--- Remove all labels for this record --->
@@ -277,8 +277,8 @@
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_dropdown#session.hostid#" cachedomain="#session.hostid#_labels">
 		SELECT label_id, label_path, label_text
-		FROM #session.hostdbprefix#labels l
-		WHERE l.host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+		FROM #session.hostdbprefix#labels
+		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		ORDER BY label_path
 		</cfquery>
 		<!--- Return --->
@@ -289,8 +289,8 @@
 	<cffunction name="labels_query" output="false" access="public" returnType="query">
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="id" type="string" required="true">
-		<!--- Query  cachename="labels#session.hostid#" cachedomain="#session.hostid#_labels" --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels#session.hostid#" cachedomain="#session.hostid#_labels">
 		SELECT l.label_text, l.label_id,
 			(
 				SELECT count(ct.ct_label_id)
@@ -694,8 +694,11 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#labels
 			SET 
-			label_text = <cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />,
-			label_id_r = <cfqueryparam value="#arguments.thestruct.label_parent#" cfsqltype="cf_sql_varchar" />
+			label_text = <cfqueryparam value="#thelabel#" cfsqltype="cf_sql_varchar" />
+			<cfif structkeyexists(arguments.thestruct,"label_parent") AND arguments.thestruct.label_parent NEQ 0>
+				,
+				label_id_r = <cfqueryparam value="#arguments.thestruct.label_parent#" cfsqltype="cf_sql_varchar" />
+			</cfif>
 			WHERE label_id = <cfqueryparam value="#arguments.thestruct.label_id#" cfsqltype="cf_sql_varchar" />
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 			</cfquery>
@@ -724,7 +727,7 @@
 		<!--- Flush --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
 		<!--- Return --->
-		<cfreturn />
+		<cfreturn arguments.thestruct.label_id />
 	</cffunction>
 	
 	<!--- Label get recursive for path --->
