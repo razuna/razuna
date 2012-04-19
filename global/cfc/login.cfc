@@ -58,8 +58,8 @@
 			<!--- Hash password --->
 			<cfset var thepass = hash(arguments.pass, "MD5", "UTF-8")>
 		</cfif>
-		<!--- Check for the user cachename="login#session.hostid##arguments.name##thepass#" cachedomain="#session.hostid#_users" --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+		<!--- Check for the user --->
+		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachename="login#session.hostid##arguments.name##thepass##arguments.loginto#" cachedomain="#session.hostid#_users">
 		SELECT u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
 		FROM users u<cfif arguments.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
