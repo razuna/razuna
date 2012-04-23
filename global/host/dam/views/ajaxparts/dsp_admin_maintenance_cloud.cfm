@@ -31,13 +31,13 @@
 		</tr>
 		<tr class="list">
 			<td>
-			Each asset has a signed URL that is being generated during uploading to Razuna. URL's have a expiration date of 10 years. If you need to re-create the URL's for ALL assets then please use the link below. <br /><br /><strong>Caution: This will create a NEW URL for each asset!</strong><br /><br />
+			Each asset has a signed URL that is being generated during uploading to Razuna. URL's have a expiration date of 10 years. If you need to re-create the URL's for ALL assets then please use the link below. <br /><br /><strong>Caution: This will create a NEW URL for each asset and is usually NOT needed! Only execute this if you know what you are doing or have been instructed to do so!</strong><br /><br />
 			<a href="##" onclick="dourls();">Re-create URL's</a>
 			<br /><br />
 			</td>
 		</tr>
 	</table>
-
+	
 	<div id="dummy_maintenance_cloud"></div>
 	<!--- Load Progress --->
 	<script type="text/javascript">
