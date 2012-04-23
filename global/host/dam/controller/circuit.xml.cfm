@@ -2984,6 +2984,8 @@
 				<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
 			</true>
 		</if>
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- Go to show the folder -->
 		<do action="ajax.batch_form" />
 	</fuseaction>
@@ -3068,6 +3070,7 @@
 				</if>
 			</true>
 		</if>
+		
 	</fuseaction>
 	<!-- Enable sharing for selected items -->
 	<fuseaction name="batch_sharing">
@@ -4043,7 +4046,18 @@
 			<argument name="thedomain" value="x" />
 		</invoke>
 	</fuseaction>
-	
+	<!-- For loading maintenance cloud -->
+	<fuseaction name="admin_maintenance_cloud">
+		<!-- Show -->
+		<do action="ajax.admin_maintenance_cloud" />
+	</fuseaction>
+	<!-- For loading maintenance cloud do -->
+	<fuseaction name="admin_maintenance_cloud_do">
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- Call CFC -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="rebuildurl(attributes)" />
+	</fuseaction>
 	
 	<!--  -->
 	<!-- ADMIN: MAINTENANCE END -->

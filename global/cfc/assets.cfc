@@ -4480,21 +4480,6 @@ This is the main function called directly by a single upload else from addassets
 </cffunction>
 
 <!--- Add assets from import path --->
-<!---
-<cffunction name="addassetpathfiles" output="true">
-	<cfargument name="thestruct" type="struct">
-	<cfpause interval="2" />
-	<cfset var t = createuuid()>
-	<cfthread name="#t#" intstruct="#arguments.thestruct#">
-		<cfinvoke method="addassetpathfilesthread" thestruct="#attributes.intstruct#" />
-	</cfthread>
-	<cfthread action="join" name="#t#" />
-	<!--- Return --->
-	<cfreturn />
-</cffunction>
---->
-
-<!--- Add assets from import path --->
 <cffunction name="addassetpathfiles" output="true">
 	<cfargument name="thestruct" type="struct">	
 	<cftry>

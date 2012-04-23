@@ -120,16 +120,16 @@
 		<cfargument name="minutesValid" type="string" required="false" default="5259600">
 		<cfset var aws = AmazonRegisterDataSource("up",application.razuna.awskey,application.razuna.awskeysecret,application.razuna.awslocation)>
 		<cfset var x = structnew()>
-		<!--- Add 10 years to the current time and convert to epoch time: 31556926 is a year in seconds --->
-		<!--- <cfset x.newepoch = ceiling(getTickCount() / 1000) + 315569260> --->
-		<cfset x.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
-		<!--- Wait --->
-		<!--- <cfinvoke component="s3" method="getobject" bucketName="#arguments.awsbucket#" filekey="#arguments.key#" minutesValid="#arguments.minutesValid#" returnVariable="x.theurl" /> --->
+		<!--- Add 10 years to expiration --->
+		<cfset epoch = dateadd("yyyy", 10, now())>
+		<!--- Epoch seconds (convert local time to UTC) --->
+		<cfset x.newepoch = dateDiff("s", "January 1 1970 00:00", dateConvert("Local2utc", epoch))>
+		<!--- Create the signed URL --->
 		<cfset x.theurl = AmazonS3geturl(
 		   datasource=aws, 
 		   bucket=arguments.awsbucket, 
 		   key=arguments.key, 
-		   expiration=arguments.minutesValid
+		   expiration=epoch
 		)>
 		<!--- Return --->
 		<cfreturn x />

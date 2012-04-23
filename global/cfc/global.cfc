@@ -906,4 +906,192 @@ Comment:<br>
 		<cfreturn qry_account>
 	</cffunction>
 	
+	<!--- Rebuild URL --->
+	<cffunction name="rebuildurl" output="true">
+		<cfargument name="thestruct" type="struct">
+		<cfargument name="assetid" type="string" required="false" default="0">
+		<!--- Feedback --->
+		<cfoutput><strong>Fetching images...</strong><br /><br /></cfoutput>
+		<cfflush>
+		<!--- Query images --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT img_id, path_to_asset, img_filename_org, thumb_extension
+		FROM #session.hostdbprefix#images
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>#qry.recordcount# images found. Creating URL's now. Hold on...<br /><br /></cfoutput>
+		<cfflush>
+		<!--- Loop over images and redo the urls --->
+		<cfloop query="qry">
+			<!--- put thumbnail path together --->
+			<cfset t = path_to_asset & "/thumb_" & img_id & "." & thumb_extension>
+			<!--- put org name together --->
+			<cfset a = path_to_asset & "/" & img_filename_org>
+			<!--- Nirvanix or Amazon --->
+			<cfif application.razuna.storage EQ "nirvanix">
+				<!--- Get signed URLS for thumb --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#t#" nvxsession="#arguments.thestruct.nvxsession#">
+				<!--- Get signed URLS original --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" key="#a#" nvxsession="#arguments.thestruct.nvxsession#">
+			<cfelse>
+				<!--- Get signed URLS for thumb --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#t#" awsbucket="#arguments.thestruct.awsbucket#">
+				<!--- Get signed URLS original --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#a#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
+			<!--- Update to DB --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET 
+			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
+			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
+			WHERE img_id = <cfqueryparam value="#img_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><strong>Done with images!</strong><br /><br /></cfoutput>
+		<cfflush>
+		<!--- Feedback --->
+		<cfoutput><strong>Fetching videos...</strong><br /><br /></cfoutput>
+		<cfflush>
+		<!--- Query images --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT vid_id, path_to_asset, vid_name_org, vid_name_image
+		FROM #session.hostdbprefix#videos
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>#qry.recordcount# videos found. Creating URL's now. Hold on...<br /><br /></cfoutput>
+		<cfflush>
+		<!--- Loop and redo the urls --->
+		<cfloop query="qry">
+			<!--- put thumbnail path together --->
+			<cfset t = path_to_asset & "/" & vid_name_image>
+			<!--- put org name together --->
+			<cfset a = path_to_asset & "/" & vid_name_org>
+			<!--- Nirvanix or Amazon --->
+			<cfif application.razuna.storage EQ "nirvanix">
+				<!--- Get signed URLS for thumb --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#t#" nvxsession="#arguments.thestruct.nvxsession#">
+				<!--- Get signed URLS original --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" key="#a#" nvxsession="#arguments.thestruct.nvxsession#">
+			<cfelse>
+				<!--- Get signed URLS for thumb --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#t#" awsbucket="#arguments.thestruct.awsbucket#">
+				<!--- Get signed URLS original --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#a#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
+			<!--- Update to DB --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#videos
+			SET 
+			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
+			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
+			WHERE vid_id = <cfqueryparam value="#vid_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><strong>Done with videos!</strong><br /><br /></cfoutput>
+		<cfflush>
+		<!--- Feedback --->
+		<cfoutput><strong>Fetching audios...</strong><br /><br /></cfoutput>
+		<cfflush>
+		<!--- Query images --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT aud_id, path_to_asset, aud_name_org, aud_extension, aud_name_noext
+		FROM #session.hostdbprefix#audios
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>#qry.recordcount# audios found. Creating URL's now. Hold on...<br /><br /></cfoutput>
+		<cfflush>
+		<!--- Loop and redo the urls --->
+		<cfloop query="qry">
+			<!--- put thumbnail path together --->
+			<cfset t = path_to_asset & "/" & aud_name_noext & ".wav">
+			<!--- put org name together --->
+			<cfset a = path_to_asset & "/" & aud_name_org>
+			<!--- Nirvanix or Amazon --->
+			<cfif application.razuna.storage EQ "nirvanix">
+				<!--- Get signed URLS for thumb --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#t#" nvxsession="#arguments.thestruct.nvxsession#">
+				<!--- Get signed URLS original --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" key="#a#" nvxsession="#arguments.thestruct.nvxsession#">
+			<cfelse>
+				<!--- Get signed URLS for thumb --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#t#" awsbucket="#arguments.thestruct.awsbucket#">
+				<!--- Get signed URLS original --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#a#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
+			<!--- Update to DB --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#audios
+			SET 
+			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
+			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
+			WHERE aud_id = <cfqueryparam value="#aud_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><strong>Done with audios!</strong><br /><br /></cfoutput>
+		<cfflush>
+		<!--- Feedback --->
+		<cfoutput><strong>Fetching files...</strong><br /><br /></cfoutput>
+		<cfflush>
+		<!--- Query images --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT file_id, path_to_asset, file_extension, file_name_org, file_name_noext
+		FROM #session.hostdbprefix#files
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Feedback --->
+		<cfoutput>#qry.recordcount# files found. Creating URL's now. Hold on...<br /><br /></cfoutput>
+		<cfflush>
+		<!--- Loop and redo the urls --->
+		<cfloop query="qry">
+			<!--- put thumbnail path together --->
+			<cfset t = path_to_asset & "/" & file_name_noext & ".jpg">
+			<!--- put org name together --->
+			<cfset a = path_to_asset & "/" & file_name_org>
+			<!--- Nirvanix or Amazon --->
+			<cfif application.razuna.storage EQ "nirvanix">
+				<!--- Get signed URLS for thumb --->
+				<cfif file_extension EQ "pdf">
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#t#" nvxsession="#arguments.thestruct.nvxsession#">
+				</cfif>
+				<!--- Get signed URLS original --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" key="#a#" nvxsession="#arguments.thestruct.nvxsession#">
+			<cfelse>
+				<!--- Get signed URLS for thumb --->
+				<cfif file_extension EQ "pdf">
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#t#" awsbucket="#arguments.thestruct.awsbucket#">
+				</cfif>
+				<!--- Get signed URLS original --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#a#" awsbucket="#arguments.thestruct.awsbucket#">
+			</cfif>
+			<!--- Update to DB --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#files
+			SET 
+			<cfif file_extension EQ "pdf">
+				cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
+			</cfif>
+			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
+			WHERE file_id = <cfqueryparam value="#file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfloop>
+		<!--- Feedback --->
+		<cfoutput><strong>Done with files!</strong><br /><br /></cfoutput>
+		<cfflush>
+	</cffunction>
+	
 </cfcomponent>
