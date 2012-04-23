@@ -409,6 +409,10 @@
 	<fuseaction name="admin_maintenance">
   		<include template="dsp_admin_maintenance" />
 	</fuseaction>
+	<!-- ADMIN: Maintenance Cloud -->
+	<fuseaction name="admin_maintenance_cloud">
+  		<include template="dsp_admin_maintenance_cloud" />
+	</fuseaction>
 	<!-- ADMIN: Maintenance Upload -->
 	<fuseaction name="admin_maintenance_upload">
   		<include template="dsp_admin_maintenance_upload" />
