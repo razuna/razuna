@@ -43,17 +43,19 @@
 				<li tabindex="5"><a href="##iptc_status">IPTC Status</a></li>
 				<li tabindex="6"><a href="##iptc_origin">Origin</a></li>
 			</cfif>
+			<li tabindex="7"><a href="##batch_labels">#defaultsObj.trans("labels")#</a></li>
+			<li tabindex="8"><a href="##batch_custom">#defaultsObj.trans("custom_fields_header")#</a></li>
 		</ul>
 		<!--- Descriptions & Keywords --->
 		<div id="batch_desc">
-			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
+			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<cfloop query="qry_langs">
 					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("description")#</td>
+						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
 						<td class="td2" width="100%"><textarea name="<cfif what EQ "doc">file<cfelseif what EQ "vid">vid<cfelseif what EQ "img">img<cfelseif what EQ "aud">aud<cfelseif what EQ "all">all</cfif>_desc_#lang_id#" class="text" rows="2" cols="50"<cfif attributes.what EQ "img"> onchange="javascript:document.form#attributes.file_id#.iptc_content_description_#lang_id#.value = document.form#attributes.file_id#.img_desc_#lang_id#.value"</cfif>></textarea></td>
 					</tr>
 					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("keywords")#</td>
+						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
 						<td class="td2" width="100%"><textarea name="<cfif what EQ "doc">file<cfelseif what EQ "vid">vid<cfelseif what EQ "img">img<cfelseif what EQ "aud">aud<cfelseif what EQ "all">all</cfif>_keywords_#lang_id#" class="text" rows="2" cols="50"<cfif attributes.what EQ "img"> onchange="javascript:document.form#attributes.file_id#.iptc_content_keywords_#lang_id#.value = document.form#attributes.file_id#.img_keywords_#lang_id#.value"</cfif>></textarea></td>
 					</tr>
 				</cfloop>
@@ -85,6 +87,20 @@
 				<cfinclude template="dsp_asset_images_origin.cfm">
 			</div>
 		</cfif>
+		<!--- Labels --->
+		<div id="batch_labels" style="min-height:200px;">
+			<strong>Choose #defaultsObj.trans("labels")#</strong><br />
+			<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="batch_labels" multiple="multiple">
+				<option value=""></option>
+				<cfloop query="qry_labels">
+					<cfset l = replace(label_path," "," AND ","all")>
+					<cfset l = replace(l,"/"," AND ","all")>
+					<option value="#label_id#">#label_path#</option>
+				</cfloop>
+			</select>
+		</div>
+		<!--- Custom Fields --->
+		<div id="batch_custom"></div>
 	</div>
 	<!--- Submit Button --->
 	<div id="updatebatch" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
@@ -93,6 +109,8 @@
 	<script language="JavaScript" type="text/javascript">
 		// Initialize Tabs
 		jqtabs("tabs_batch");
+		// Activate Chosen
+		$(".chzn-select").chosen();
 		// Submit Form
 		$("##form0").submit(function(e){
 			// Show

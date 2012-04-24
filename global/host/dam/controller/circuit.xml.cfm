@@ -3070,7 +3070,8 @@
 				</if>
 			</true>
 		</if>
-		
+		<!-- Add Labels -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="label_add_batch(attributes)" />
 	</fuseaction>
 	<!-- Enable sharing for selected items -->
 	<fuseaction name="batch_sharing">

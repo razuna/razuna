@@ -136,6 +136,20 @@
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
+	
+	<!--- Add label from batch --->
+	<cffunction name="label_add_batch" output="false" access="public">
+		<cfargument name="thestruct" type="struct">
+		<!--- Loop over files_ids --->
+		<cfloop list="#arguments.thestruct.file_ids#" index="i">
+			<cfset arguments.thestruct.fileid = listfirst(i,"-")>
+			<cfset arguments.thestruct.thetype = listlast(i,"-")>
+			<!--- Now pass each asset to the function above to add labels --->
+			<cfinvoke method="label_add_all" thestruct="#arguments.thestruct#" />
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
 		
 	<!--- Insert Label --->
 	<cffunction name="label_add" output="false" access="public">
