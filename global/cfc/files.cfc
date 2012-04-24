@@ -639,6 +639,7 @@
 			<!--- Select the record to get the original filename or assign if one is there --->
 			<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
 				<cfset arguments.thestruct.qrydetail.filenameorg = qry.file_name_org>
+				<cfset arguments.thestruct.filenameorg = qry.file_name_org>
 				<cfset arguments.thestruct.file_name = qry.file_name>
 			<cfelse>
 				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
