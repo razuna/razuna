@@ -130,7 +130,9 @@
 		<!--- Lucene: Delete Records --->
 		<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
 		<!--- Lucene: Update Records --->
-		<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" category="#arguments.thestruct.thetype#" notfile="T">
+		<cfif arguments.thestruct.thetype EQ "img" OR arguments.thestruct.thetype EQ "vid" OR arguments.thestruct.thetype EQ "aud" OR arguments.thestruct.thetype EQ "doc">
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" category="#arguments.thestruct.thetype#" notfile="T">
+		</cfif>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
