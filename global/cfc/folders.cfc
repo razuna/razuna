@@ -1174,7 +1174,7 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- <cfinvoke method="remove_folder_thread" thestruct="#arguments.thestruct#" /> --->
 		<!--- <cfset var tt = createuuid()> --->
-		<cfthread name="#createuuid()#" intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="remove_folder_thread" thestruct="#attributes.intstruct#" />
 		</cfthread>
 		<!--- <cfthread action="join" name="#tt#" /> --->

@@ -140,7 +140,13 @@
 		<cfargument name="folderpath" type="string" required="true" />
 		<cfargument name="awsbucket" type="string" required="true" />
 		<!--- Get keys --->
-		<cfinvoke component="s3" method="getbucket" bucketName="#arguments.awsbucket#" prefix="#arguments.folderpath#" returnVariable="thekeys" />
+		<!--- <cfinvoke component="s3" method="getbucket" bucketName="#arguments.awsbucket#" prefix="#arguments.folderpath#" returnVariable="thekeys" /> --->
+		<!--- Get keys --->
+		<cfset thekeys = AmazonS3list(
+			datasource=application.razuna.s3ds, 
+			bucket=arguments.awsbucket, 
+			prefix="#arguments.folderpath#/"
+		)>
 		<!--- Return --->
 		<cfreturn thekeys />
 	</cffunction>
@@ -152,8 +158,11 @@
 		<!--- Get keys --->
 		<cfset thekeys = listkeys(arguments.folderpath,arguments.awsbucket)>
 		<!--- Loop over the keys and delete them --->
-		<cfloop array="#thekeys#" index="i">
-			<cfset AmazonS3delete(application.razuna.s3ds,arguments.awsbucket,i.key)>
+		<cfloop query="thekeys">
+			<cfif size NEQ 0>
+				<cfset i = AmazonS3getinfo(application.razuna.s3ds,arguments.awsbucket,key)>
+				<cfset AmazonS3delete(application.razuna.s3ds,arguments.awsbucket,i.key)>
+			</cfif>
 		</cfloop>
 		<!--- Finally remove folder which is empty now --->
 		<cfset AmazonS3delete(application.razuna.s3ds,arguments.awsbucket,arguments.folderpath)>
