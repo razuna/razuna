@@ -1951,6 +1951,7 @@
 			cf_enabled 		VARCHAR(2), 
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
+			cf_select_list	VARCHAR(2000),
 			HOST_ID			INT,
 			PRIMARY KEY (cf_id),
 			KEY #arguments.thestruct.host_db_prefix#cf_enabled (cf_enabled),
