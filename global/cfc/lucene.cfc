@@ -319,13 +319,16 @@
 					<!--- Local Storage --->
 					<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 						<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#" status="lucstatus">
+						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					<!--- Linked file --->
 					<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 						<!--- Index: Update file --->
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cfif>
-					<cfcatch type="any"></cfcatch>
+					<cfcatch type="any">
+						<cfset consoleoutput(true)>
+						<cfset console(cfcatch)>
+					</cfcatch>
 				</cftry>
 			</cfif>
 	</cffunction>
@@ -489,9 +492,6 @@
 		<cfif NOT arguments.criteria CONTAINS ":">
 			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)">
 		</cfif>
-		<cfset consoleoutput(true)>
-<cfset console(arguments)>
-
 		<cftry>
 			<cfsearch collection="#arguments.hostid#" criteria="#arguments.criteria#" name="qrylucene" category="#arguments.category#">
 			<cfcatch type="any">
