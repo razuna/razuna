@@ -116,7 +116,21 @@
 						<cfset cfid = replace(cf_id,"-","","all")>
 						#cf_text#
 						<br />
-						<input type="text" name="cf#cfid#" style="width:190px;" class="textbold">
+						<!--- For text --->
+						<cfif cf_type EQ "text" OR cf_type EQ "textarea">
+							<input type="text" style="width:190px;" name="cf#cfid#">
+						<!--- Radio --->
+						<cfelseif cf_type EQ "radio">
+							<input type="radio" name="cf#cfid#" value="T">#defaultsObj.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#defaultsObj.trans("no")#
+						<!--- Select --->
+						<cfelseif cf_type EQ "select">
+							<select name="cf#cfid#" style="width:190px;">
+								<option value="" selected="selected"></option>
+								<cfloop list="#cf_select_list#" index="i">
+									<option value="#i#">#i#</option>
+								</cfloop>
+							</select>
+						</cfif>
 						<br />
 					</cfloop>
 					</td>

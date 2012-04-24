@@ -62,10 +62,26 @@
 		<td><input type="text" name="rawmetadata" style="width:300px;" class="textbold"></td>
 	</tr>
 	<cfloop query="qry_fields">
-		<cfset cfid = replace(cf_id,"-","","all")>
 		<tr>
 			<td nowrap="true">#cf_text#</td>
-			<td><input type="text" name="cf#cfid#" style="width:300px;" class="textbold"></td>
+			<td>
+				<cfset cfid = replace(cf_id,"-","","all")>
+				<!--- For text --->
+				<cfif cf_type EQ "text" OR cf_type EQ "textarea">
+					<input type="text" style="width:300px;" name="cf#cfid#">
+				<!--- Radio --->
+				<cfelseif cf_type EQ "radio">
+					<input type="radio" name="cf#cfid#" value="T">#defaultsObj.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#defaultsObj.trans("no")#
+				<!--- Select --->
+				<cfelseif cf_type EQ "select">
+					<select name="cf#cfid#" style="width:300px;">
+						<option value="" selected="selected"></option>
+						<cfloop list="#cf_select_list#" index="i">
+							<option value="#i#">#i#</option>
+						</cfloop>
+					</select>
+				</cfif>
+			</td>
 		</tr>
 	</cfloop>
 </cfoutput>

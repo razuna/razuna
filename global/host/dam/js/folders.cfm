@@ -219,7 +219,18 @@
 		if (labels == null) var labels = '';
 		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
-			var value_#cfid# = document.forms[theform].cf#cfid#.value;
+			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
+				var value_#cfid# = document.forms[theform].cf#cfid#.value;
+			<cfelseif cf_type EQ "select">
+				var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value;
+			<cfelseif cf_type EQ "radio">
+				var oRadio = document.forms[theform].elements['cf#cfid#'];
+				for(var i = 0; i < oRadio.length; i++){
+				  if(oRadio[i].checked){
+				     var value_#cfid# = oRadio[i].value;
+				  }
+				}
+			</cfif>
 		</cfoutput></cfloop>
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Put together the search

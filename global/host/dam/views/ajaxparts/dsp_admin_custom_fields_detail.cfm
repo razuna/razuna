@@ -58,34 +58,39 @@
 					<tr>
 						<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("custom_field_type")#</td>
 						<td width="100%">
-							<select name="cf_type" style="width:100px;">
-							<option value="text"<cfif qry_field.cf_type EQ "text"> selected="true"</cfif>>Text</option>
-							<option value="textarea"<cfif qry_field.cf_type EQ "textarea"> selected="true"</cfif>>Textarea</option>
-							<option value="radio"<cfif qry_field.cf_type EQ "radio"> selected="true"</cfif>>Radio Button (Yes/No)</option>
+							<select name="cf_type" style="width:150px;">
+								<option value="text"<cfif qry_field.cf_type EQ "text"> selected="true"</cfif>>Text</option>
+								<option value="textarea"<cfif qry_field.cf_type EQ "textarea"> selected="true"</cfif>>Textarea</option>
+								<option value="radio"<cfif qry_field.cf_type EQ "radio"> selected="true"</cfif>>Radio Button (Yes/No)</option>
+								<option value="select"<cfif qry_field.cf_type EQ "select"> selected="true"</cfif>>Select</option>
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("custom_field_for")#</td>
 						<td width="100%">
-							<select name="cf_show" style="width:100px;">
-							<option value="all"<cfif qry_field.cf_show EQ "all"> selected="true"</cfif>>All</option>
-							<option value="img"<cfif qry_field.cf_show EQ "img"> selected="true"</cfif>>#defaultsObj.trans("only_images")#</option>
-							<option value="vid"<cfif qry_field.cf_show EQ "vid"> selected="true"</cfif>>#defaultsObj.trans("only_videos")#</option>
-							<option value="vid"<cfif qry_field.cf_show EQ "aud"> selected="true"</cfif>>#defaultsObj.trans("only_audios")#</option>
-							<option value="doc"<cfif qry_field.cf_show EQ "doc"> selected="true"</cfif>>#defaultsObj.trans("only_documents")#</option>
+							<select name="cf_show" style="width:150px;">
+								<option value="all"<cfif qry_field.cf_show EQ "all"> selected="true"</cfif>>All</option>
+								<option value="img"<cfif qry_field.cf_show EQ "img"> selected="true"</cfif>>#defaultsObj.trans("only_images")#</option>
+								<option value="vid"<cfif qry_field.cf_show EQ "vid"> selected="true"</cfif>>#defaultsObj.trans("only_videos")#</option>
+								<option value="vid"<cfif qry_field.cf_show EQ "aud"> selected="true"</cfif>>#defaultsObj.trans("only_audios")#</option>
+								<option value="doc"<cfif qry_field.cf_show EQ "doc"> selected="true"</cfif>>#defaultsObj.trans("only_documents")#</option>
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<td width="120" nowrap="true" style="padding-right:10px;">Custom Group</td>
-						<td width="100%"><input type="text" name="cf_group" style="width:99px;" value="#qry_field.cf_group#"></td>
+						<td width="100%"><input type="text" name="cf_group" style="width:150px;" value="#qry_field.cf_group#"></td>
+					</tr>
+					<tr>
+						<td nowrap="nowrap" valign="top">Select list</td>
+						<td><textarea name="cf_select_list" style="width:150px;height:40px;">#qry_field.cf_select_list#</textarea><br /><em>(Separate values with a coma)</em></td>
+					</tr>
+					<tr>
+						<td colspan="2">ID: #attributes.cf_id#</td>
 					</tr>
 				</table>
 			</td>
-		</tr>
-		<tr>
-			<td colspan="2">ID: #attributes.cf_id#</td>
 		</tr>
 	</table>
 	<div style="float:right;padding-top:10px;">

@@ -55,7 +55,7 @@
 		<!--- Insert record --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#custom_fields
-		(cf_id, cf_type, cf_order, cf_enabled, cf_show, cf_group, host_id)
+		(cf_id, cf_type, cf_order, cf_enabled, cf_show, cf_group, host_id, cf_select_list)
 		VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newcfid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_type#">,
@@ -63,7 +63,8 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_enabled#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">
 		)
 		</cfquery>
 		<!--- Add text to related db --->
@@ -94,7 +95,7 @@
 <cffunction name="getfields" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_getfields_#session.hostid##arguments.thestruct.cf_show##session.thelangid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_customfields">
-		SELECT c.cf_id, c.cf_type, c.cf_order, ct.cf_text, cv.cf_value
+		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, ct.cf_text, cv.cf_value
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 		WHERE c.cf_id = ct.cf_id_r
@@ -114,7 +115,7 @@
 <cffunction name="getfieldssearch" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 		<cfquery datasource="#variables.dsn#" name="qry" cachename="f_getfieldssearch_#session.hostid##session.thelangid#" cachedomain="#session.theuserid#_customfields">
-		SELECT c.cf_id, c.cf_type, c.cf_order, ct.cf_text
+		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, ct.cf_text
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		WHERE c.cf_id = ct.cf_id_r
 		AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
@@ -146,7 +147,7 @@
 <cffunction name="getdetail" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_getdetail_#session.hostid##arguments.thestruct.cf_id#" cachedomain="#session.theuserid#_customfields">
-		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, ct.cf_text, ct.lang_id_r
+		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, c.cf_select_list, ct.cf_text, ct.lang_id_r
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c
 		WHERE c.cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.cf_id#">
 		AND ct.cf_id_r = c.cf_id
@@ -209,7 +210,8 @@
 		cf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_type#">, 
 		cf_enabled = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_enabled#">, 
 		cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">, 
-		cf_group = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">
+		cf_group = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
+		cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">
 		WHERE cf_id = <cfqueryparam value="#arguments.thestruct.cf_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>

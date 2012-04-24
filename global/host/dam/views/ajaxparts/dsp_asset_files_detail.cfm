@@ -288,23 +288,7 @@
 		<!--- CUSTOM FIELDS --->
 		<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
 			<div id="customfields">
-				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-					<cfloop query="qry_cf">
-						<tr>
-							<td class="td2" valign="top"><strong>#cf_text#</strong></td>
-							<td class="td2">
-								<!--- For text --->
-								<cfif cf_type EQ "text">
-									<input type="text" size="40" id="cf_#cf_id#" name="cf_#cf_id#" value="#cf_value#">
-								<cfelseif cf_type EQ "radio">
-									<input type="radio" name="cf_#cf_id#" value="T"<cfif cf_value EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" name="cf_#cf_id#" value="F"<cfif cf_value EQ "F" OR cf_value EQ ""> checked="true"</cfif>>#defaultsObj.trans("no")#
-								<cfelseif cf_type EQ "textarea">
-									<textarea name="cf_#cf_id#" style="width:400px;height:60px;">#cf_value#</textarea>
-								</cfif>
-							</td>
-						</tr>
-					</cfloop>
-				</table>
+				<cfinclude template="inc_custom_fields.cfm">
 			</div>
 		</cfif>
 		<!--- Meta Data --->

@@ -61,28 +61,33 @@
 						<tr>
 							<td width="120" nowrap="true">#defaultsObj.trans("custom_field_type")#</td>
 							<td>
-								<select name="cf_type" style="width:100px;">
-								<option value="text" selected="true">Text</option>
-								<option value="textarea">Textarea</option>
-								<option value="radio">Radio Button (Yes/No)</option>
+								<select name="cf_type" style="width:150px;">
+									<option value="text" selected="true">Text</option>
+									<option value="textarea">Textarea</option>
+									<option value="radio">Radio Button (Yes/No)</option>
+									<option value="select">Select</option>
 								</select>
 							</td>
 						</tr>
 						<tr>
 							<td width="120" nowrap="true">#defaultsObj.trans("custom_field_for")#</td>
 							<td>
-								<select name="cf_show" style="width:100px;">
-								<option value="all" selected="true">All</option>
-								<option value="img">#defaultsObj.trans("only_images")#</option>
-								<option value="vid">#defaultsObj.trans("only_videos")#</option>
-								<option value="doc">#defaultsObj.trans("only_documents")#</option>
-								<option value="aud">#defaultsObj.trans("only_audios")#</option>
+								<select name="cf_show" style="width:150px;">
+									<option value="all" selected="true">All</option>
+									<option value="img">#defaultsObj.trans("only_images")#</option>
+									<option value="vid">#defaultsObj.trans("only_videos")#</option>
+									<option value="doc">#defaultsObj.trans("only_documents")#</option>
+									<option value="aud">#defaultsObj.trans("only_audios")#</option>
 								</select>
 							</td>
 						</tr>
 						<tr>
 							<td nowrap="true">Custom Group</td>
-							<td><input type="text" name="cf_group" style="width:99px;"></td>
+							<td><input type="text" name="cf_group" style="width:150px;"></td>
+						</tr>
+						<tr>
+							<td nowrap="nowrap" valign="top">Select list</td>
+							<td><textarea name="cf_select_list" style="width:150px;height:40px;"></textarea><br /><em>(Separate values with a coma)</em></td>
 						</tr>
 					</table>
 				</td>
