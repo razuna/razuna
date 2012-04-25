@@ -44,7 +44,7 @@
 				<li tabindex="6"><a href="##iptc_origin">Origin</a></li>
 			</cfif>
 			<li tabindex="7"><a href="##batch_labels">#defaultsObj.trans("labels")#</a></li>
-			<li tabindex="8"><a href="##batch_custom">#defaultsObj.trans("custom_fields_header")#</a></li>
+			<!--- <li tabindex="8"><a href="##batch_custom">#defaultsObj.trans("custom_fields_header")#</a></li> --->
 		</ul>
 		<!--- Descriptions & Keywords --->
 		<div id="batch_desc">
@@ -100,7 +100,7 @@
 			</select>
 		</div>
 		<!--- Custom Fields --->
-		<div id="batch_custom"></div>
+		<!--- <div id="batch_custom"></div> --->
 	</div>
 	<!--- Submit Button --->
 	<div id="updatebatch" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
