@@ -28,10 +28,20 @@
 	<tr>
 		<td>#defaultsObj.trans("comment")#<br />
 			<textarea id="assetComment" name="assetComment" style="width:400px;height:50px;"></textarea> <br />
-			#defaultsObj.trans("labels")#
-			<input name="tags" id="tags_com" value="">
-			<br />
-			<em>(<cfif settingsobj.get_label_set().set2_labels_users EQ "f">You can only choose from available labels. Simply start typing to select from available labels.<cfelse>Simple start typing to choose from available labels or add a new one by entering above and hit ",".</cfif>)</em>
+			<!---
+<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)>
+				#defaultsObj.trans("labels")#<br />
+				<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_com" onchange="razaddlabels('tags_com','#session.newcommentid#','comment');" multiple="multiple">
+					<option value=""></option>
+					<cfloop query="attributes.thelabelsqry">
+						<option value="#label_id#">#label_path#</option>
+					</cfloop>
+				</select>
+				<cfif settingsobj.get_label_set().set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+					<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
+				</cfif>
+			</cfif>
+--->
 			<br />
 			<input type="button" class="button" onclick="addcomment('#attributes.file_id#','#attributes.type#');" value="#defaultsObj.trans("comments_submit")#" />
 		</td>
@@ -42,10 +52,7 @@
 <!--- Load Comment list --->
 <script language="JavaScript" type="text/javascript">
 	loadcontent('comlist','#myself##xfa.comlist#&file_id=#attributes.file_id#&type=#attributes.type#');
-	// TAG IT
-	var raztags = #attributes.thelabels#;
-	// Global Tagit function
-	// div, fileid, type, tags
-	raztagit('tags_com','#session.newcommentid#','comment',raztags,'#settingsobj.get_label_set().set2_labels_users#');
+	// Activate Chosen
+	/* $(".chzn-select").chosen(); */
 </script>
 </cfoutput>
