@@ -306,7 +306,7 @@
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="id" type="string" required="true">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels#session.hostid#" cachedomain="#session.hostid#_labels">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels#session.hostid##arguments.id#" cachedomain="#session.hostid#_labels">
 		SELECT l.label_text, l.label_id,
 			(
 				SELECT count(ct.ct_label_id)
@@ -326,12 +326,12 @@
 		FROM #session.hostdbprefix#labels l
 		WHERE l.host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		AND 
-		<cfif arguments.id GT 0>
+		<cfif arguments.id EQ 0>
+			(l.label_id = l.label_id_r OR l.label_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">)
+		<cfelse>
 			l.label_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> l.label_id_r
 			AND
 			l.label_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
-		<cfelse>
-			(l.label_id = l.label_id_r OR l.label_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">)
 		</cfif>
 		ORDER BY l.label_text
 		</cfquery>
