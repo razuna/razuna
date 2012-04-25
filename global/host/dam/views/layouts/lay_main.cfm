@@ -151,11 +151,10 @@
 				<h2 style="color:red;">Account is locked</h2>
 				<p>Unfortunately, your account is currently <span style="color:red;font-weight:bold;">locked due to unpaid invoices</span>. Before you can use Razuna again, your account has to be cleared with us.</p>
 				<p>Until then, your account remains locked.</p>
-				<p>If you are the account holder you will be able to pay the open invoices immediately otherwise please consult your account holder to clear the balance with us.</p>
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					<p><!--- <a href="##" onclick="showwindow('#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#','Account',700,1);return false;"> ---><a href="https://secure.razuna.com/account.cfm?userid=#session.theuserid#&hostid=#session.hostid#" target="_blank">Go to Account & Invoices</a></p>
-					<p><i>(After payment, simply refresh this page to access Razuna again)</i></p>
-				</cfif>
+				<p>Click on the link below to get to your account settings and resolve your outstanding invoices now. Thank you!</p>
+				<p><!--- <a href="##" onclick="showwindow('#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#','Account',700,1);return false;"> ---><a href="https://secure.razuna.com/account.cfm?userid=#session.theuserid#&hostid=#session.hostid#" target="_blank">Go to Account & Invoices</a></p>
+				<p><i>(After payment, you will be able to to access Razuna immediately again).</i></p>
+				<p>If you have any questions please contact us at <a href="mailto:sales@razuna.com">sales@razuna.com</a></p>
 			</div>
 		</div>
 	<cfelse>
