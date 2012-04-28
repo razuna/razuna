@@ -28,7 +28,7 @@
 <!--- List fields --->
 <cffunction name="get" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#variables.dsn#" name="qry" cachename="f_get_#session.hostid#" cachedomain="#session.theuserid#_customfields">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_get_#session.hostid#" cachedomain="#session.theuserid#_customfields">
 		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text
 		FROM #session.hostdbprefix#custom_fields c, #session.hostdbprefix#custom_fields_text ct
 		WHERE c.cf_id = ct.cf_id_r
@@ -46,14 +46,14 @@
 		<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#variables.database#" dsn="#variables.dsn#" thetable="#session.hostdbprefix#custom_fields" theid="cf_id"> --->
 		<cfset newcfid = createuuid()>
 		<!--- Add one up for order --->
-		<cfquery datasource="#variables.dsn#" name="neworder">
+		<cfquery datasource="#application.razuna.datasource#" name="neworder">
 		SELECT 
 		<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(max(cf_order),0) + 1 AS theorder
 		FROM #session.hostdbprefix#custom_fields
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Insert record --->
-		<cfquery datasource="#variables.dsn#">
+		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#custom_fields
 		(cf_id, cf_type, cf_order, cf_enabled, cf_show, cf_group, host_id, cf_select_list)
 		VALUES(
@@ -72,7 +72,7 @@
 			<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
 			<cfif thetext CONTAINS "#langindex#">
 				<cftransaction>
-					<cfquery datasource="#variables.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#custom_fields_text
 					(cf_id_r, lang_id_r, cf_text, host_id, rec_uuid)
 					VALUES(
@@ -114,7 +114,7 @@
 <!--- Get fields for the search view --->
 <cffunction name="getfieldssearch" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#variables.dsn#" name="qry" cachename="f_getfieldssearch_#session.hostid##session.thelangid#" cachedomain="#session.theuserid#_customfields">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_getfieldssearch_#session.hostid##session.thelangid#" cachedomain="#session.theuserid#_customfields">
 		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, ct.cf_text
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		WHERE c.cf_id = ct.cf_id_r
@@ -165,7 +165,7 @@
 			<!--- Remove the cf_ part so we only get the id --->
 			<cfset theid = replacenocase("#i#", "cf_", "", "ALL")>
 			<!--- Insert or update --->
-			<cfquery datasource="#variables.dsn#" name="qry">
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
 			SELECT cf_id_r
 			FROM #session.hostdbprefix#custom_fields_values
 			WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
@@ -173,7 +173,7 @@
 			</cfquery>
 			<!--- Insert --->
 			<cfif qry.recordcount EQ 0>
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#custom_fields_values
 				(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
 				VALUES(
@@ -186,7 +186,7 @@
 				</cfquery>
 			<!--- Update --->
 			<cfelse>
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#custom_fields_values
 				SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct[i]#">
 				WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
@@ -204,7 +204,7 @@
 <cffunction name="update" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
 		<!--- Update record --->
-		<cfquery datasource="#variables.dsn#">
+		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#custom_fields
 		SET
 		cf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_type#">, 
@@ -219,7 +219,7 @@
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 			<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
 			<cfif thetext CONTAINS "#langindex#">
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#custom_fields_text
 				SET cf_text = <cfqueryparam value="#evaluate(thetext)#" cfsqltype="cf_sql_varchar">
 				WHERE cf_id_r = <cfqueryparam value="#arguments.thestruct.cf_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -236,7 +236,7 @@
 <cffunction name="delete" access="public" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<!--- Rearrange the order --->
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	UPDATE #session.hostdbprefix#custom_fields
 	SET cf_order = cf_order - 1
 	WHERE cf_order > <cfqueryparam value="#arguments.thestruct.order#" cfsqltype="cf_sql_numeric">
@@ -244,7 +244,7 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- remove record --->
-	<cfquery datasource="#Variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#custom_fields
 	WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
