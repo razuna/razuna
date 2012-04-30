@@ -217,6 +217,7 @@
 		</cfquery>
 		<!--- Add text to related db --->
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+			<cfparam name="arguments.thestruct.cf_text_#langindex#" default="">
 			<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
 			<cfif thetext CONTAINS "#langindex#">
 				<cfquery datasource="#application.razuna.datasource#">
