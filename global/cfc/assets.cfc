@@ -36,7 +36,9 @@
 	<cfset arguments.thestruct.thetempfolder   = "asset#arguments.thestruct.tempid#">
 	<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
 	<!--- Create a temp directory to hold the file --->
-	<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
+	<cfif !DirectoryExists(arguments.thestruct.theincomingtemppath)>
+		<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
+	</cfif>
 	<!--- Upload file --->
 	<cffile action="upload" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="#arguments.thestruct.thefieldname#" result="thefile">
 	<cfset arguments.thestruct.thefile.serverFileExt = "#lcase(thefile.serverFileExt)#">
