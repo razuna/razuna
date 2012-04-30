@@ -46,7 +46,21 @@
                 <!--- Get a listing of the directory --->
                 <cfftp connection="#fc#" action="listdir" directory="#thedirname#/" name="dirlist" stoponerror="no" timeout="20">
         <cfelse>
-                <cfftp connection="#fc#" action="listdir" directory="#arguments.thestruct.folderpath#/" name="dirlist" stoponerror="no" timeout="30">
+        	<cftry>
+                <cfftp connection="#fc#" action="listdir" directory="#arguments.thestruct.folderpath#/" name="dirlist" stoponerror="yes" timeout="30">
+            	<cfcatch type="any">
+            		<cfoutput>
+            		<span style="color:red;font-weight:bold;">Sorry, but somehow we can't read this directory!</span>
+            		<br />
+        			<br />
+        			<cfset l = listlast(arguments.thestruct.folderpath,"/")>
+        			<cfset p = replacenocase(arguments.thestruct.folderpath,"/#l#","","one")>
+            		<a href="##" onclick="loadcontent('addftp','index.cfm?fa=c.asset_add_ftp_reload&folderpath=#URLEncodedFormat(p)#&folder_id=#folder_id#');">Take me back to the last directory</a>
+            		</cfoutput>
+            		<cfabort>
+            	</cfcatch>
+            </cftry>
+                <!--- <cfdump var="#dirlist#"><cfabort> --->
                 <cfif findoneof(arguments.thestruct.folderpath,"/") EQ 0>
                         <cfset qry.backpath = "">
                 <cfelse>
