@@ -285,11 +285,15 @@
 		}
 		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
-			if (searchtext != '' && value_#cfid# != '') {
-				var searchtext = searchtext + ' ' + andor + ' ' + value_#cfid#;
-			}
-			else {
-				var searchtext = searchtext + value_#cfid#;
+			// Check that value is not undefined
+			t = value_#cfid#.indexOf("undefined");
+			if (t == '-1'){
+				if (searchtext != '' && value_#cfid# != '') {
+					var searchtext = searchtext + ' ' + andor + ' ' + value_#cfid#;
+				}
+				else {
+					var searchtext = searchtext + value_#cfid#;
+				}
 			}
 		</cfoutput></cfloop>
 		return searchtext;
