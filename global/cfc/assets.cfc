@@ -390,6 +390,14 @@
 				<cfelse>
 					<cfset var theapikey = arguments.thestruct.api_key>
 				</cfif>
+				<!--- Set application variables. Needed for the checkdb method in API --->
+				<cfset application.razuna.api.dsn = application.razuna.datasource>
+				<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
+				<cfset application.razuna.api.storage = application.razuna.storage>
+				<cfset application.razuna.api.prefix[#theapikey#] = session.hostdbprefix>
+				<cfset application.razuna.api.hostid[#theapikey#] = session.hostid>
+				<cfset application.razuna.api.userid[#theapikey#] = session.theuserid>
+				<!--- Query --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="user_#theapikey#" cachedomain="#session.hostid#_users">
 				SELECT u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
 				FROM users u, ct_users_hosts ct, ct_groups_users gu

@@ -1053,15 +1053,15 @@
 			</cfinvoke>
 			<!--- Create Table --->
 			<cftry>
-			<cfquery datasource="razuna_backup">
-			CREATE TABLE backup_status 
-			(
-				back_id		VARCHAR(100), 
-				back_date	timestamp,
-				host_id		BIGINT
-			) 
-			</cfquery>
-			<cfcatch type="database"></cfcatch>
+				<cfquery datasource="razuna_backup">
+				CREATE TABLE backup_status 
+				(
+					back_id		VARCHAR(100), 
+					back_date	timestamp,
+					host_id		BIGINT
+				) 
+				</cfquery>
+				<cfcatch type="database"></cfcatch>
 			</cftry>
 		</cfcatch>
 	</cftry>
