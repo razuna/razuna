@@ -451,6 +451,7 @@
 				<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
 				<cfset application.razuna.datasource = application.razuna.api.dsn>
 				<cfset application.razuna.storage = application.razuna.api.storage>
+				<cfset application.razuna.setid = application.razuna.api.setid>
 				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
