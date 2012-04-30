@@ -496,6 +496,7 @@
 			<!--- Just assign the current path to the finalpath --->
 			<cfset arguments.thestruct.thisvid.finalpath = "#arguments.thestruct.qryfile.path#">
 			<cfset arguments.thestruct.thisvid.newid = arguments.thestruct.therandom>
+			<cfset arguments.thestruct.thetempdirectory = GetTempDirectory()>
 			<!--- Create thumbnail --->
 			<cfthread name="p#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="videos" method="create_previews" thestruct="#attributes.intstruct#">
