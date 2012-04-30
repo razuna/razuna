@@ -225,6 +225,32 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-		
+	
+	<!--- get label of asset --->
+	<cffunction name="getlabelofasset" access="remote" output="false" returntype="query" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="asset_id" required="true">
+		<cfargument name="asset_type" required="true">
+		<!--- Check key --->
+		<cfset thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Query --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+			SELECT l.label_id, l.label_text, l.label_path
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l, ct_labels ct
+			WHERE ct.ct_id_r IN (<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" list="Yes" />)
+			AND ct.ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
+			AND ct.ct_label_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
+			AND l.label_id = ct.ct_label_id
+			AND l.host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
+			</cfquery>
+		<!--- No session found --->
+		<cfelse>
+			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
 		
 </cfcomponent>
