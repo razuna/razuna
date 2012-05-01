@@ -1,6 +1,4 @@
-
-commons-compress-1.3.jar                                                        
 db2jcc4.jar*
-h2-1.3.159.jar*
+h2-*.jar*
 ojdbc6.jar
 tools.jar
