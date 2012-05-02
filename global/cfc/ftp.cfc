@@ -49,6 +49,7 @@
         	<cftry>
                 <cfftp connection="#fc#" action="listdir" directory="#arguments.thestruct.folderpath#/" name="dirlist" stoponerror="yes" timeout="30">
             	<cfcatch type="any">
+            		<cfparam name="folder_id" default="0" />
             		<cfoutput>
             		<span style="color:red;font-weight:bold;">Sorry, but somehow we can't read this directory!</span>
             		<br />
