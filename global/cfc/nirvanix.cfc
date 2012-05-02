@@ -647,6 +647,8 @@
 					80006	Session not found	Occurs when the session cannot be found. This may happen after the session has been ended with an explicit log out or the session has expired due to inactivity.<br />
 					80101	Invalid session token	Occurs when the session token is malformed.<br />
 					</p>
+					<cfdump var="//razuna/#session.hostid#/#arguments.theasset#">
+					<cfdump var="#cfhttp#"
 				</cfmail>
 			</cfif>
 			<!--- Set download url --->
