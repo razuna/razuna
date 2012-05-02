@@ -648,7 +648,7 @@
 					80101	Invalid session token	Occurs when the session token is malformed.<br />
 					</p>
 					<cfdump var="//razuna/#session.hostid#/#arguments.theasset#">
-					<cfdump var="#cfhttp#"
+					<cfdump var="#cfhttp#">
 				</cfmail>
 			</cfif>
 			<!--- Set download url --->
