@@ -225,6 +225,14 @@
 					</tr>
 				</cfif>
 --->
+			<!--- Submit Button --->
+			<cfif session.folderaccess NEQ "R">
+				<tr>
+					<td colspan="2">
+						<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+					</td>
+				</tr>
+			</cfif>
 			</table>
 		</div>
 		<!--- Comments --->
@@ -244,6 +252,14 @@
 							<td class="td2" width="100%"><textarea name="aud_keywords_#thisid#" class="text" rows="2" cols="50"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_keywords#</cfif></cfloop></textarea></td>
 						</tr>
 					</cfloop>
+					<!--- Submit Button --->
+					<cfif session.folderaccess NEQ "R">
+						<tr>
+							<td colspan="2">
+								<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+							</td>
+						</tr>
+					</cfif>
 				</table>
 			</div>
 		</cfif>
@@ -359,7 +375,7 @@
 		</cfif>
 		</div>
 		<cfif session.folderaccess NEQ "R">
-			<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+			<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 		</cfif>
 	</form>
 	<!--- Activate the Tabs --->
@@ -384,7 +400,7 @@
 				// loadcontent('relatedaudios','#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');
 				// Update Text
 				$("##updatefile").html("#defaultsObj.trans("success")#");
-				$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+				$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 		   	}
 		});
         return false; 

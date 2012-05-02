@@ -218,6 +218,14 @@
 					</tr>
 				</cfif>
 --->
+				<!--- Submit Button --->
+				<cfif session.folderaccess NEQ "R">
+					<tr>
+						<td colspan="2">
+							<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+						</td>
+					</tr>
+				</cfif>
 			</table>
 		</div>
 		<!--- Comments --->
@@ -282,6 +290,14 @@
 							</cfif>
 						</td>
 					</tr>
+					<!--- Submit Button --->
+					<cfif session.folderaccess NEQ "R">
+						<tr>
+							<td>
+								<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+							</td>
+						</tr>
+					</cfif>
 				</table>
 			</div>
 		</cfif>
@@ -311,7 +327,7 @@
 		</cfif>
 	</div>
 	<cfif session.folderaccess NEQ "R">
-		<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+		<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	</cfif>
 	</form>
 	<!--- Activate the Tabs --->
@@ -334,7 +350,7 @@
 		   	success: function(){
 				// Update Text
 				$("##updatefile").html("#defaultsObj.trans("success")#");
-				$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+				$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 		   	}
 		});
         return false; 

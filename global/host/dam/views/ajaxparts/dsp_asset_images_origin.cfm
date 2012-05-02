@@ -79,5 +79,13 @@
 		<td class="td2"></td>
 		<td class="td2">#defaultsObj.trans("comma_seperated")#</td>
 	</tr>
+	<!--- Submit Button --->
+	<cfif session.folderaccess NEQ "R">
+		<tr>
+			<td colspan="2">
+				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+			</td>
+		</tr>
+	</cfif>
 </table>
 </cfoutput>

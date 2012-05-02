@@ -57,5 +57,13 @@
 		<td class="td2" nowrap="nowrap"><strong>Copyright Info URL</strong></td>
 		<td class="td2"><input type="text" name="xmp_copyright_info_url" style="width:350px;" value="#qry_xmp.copyurl#"></td>
 	</tr>
+	<!--- Submit Button --->
+	<cfif session.folderaccess NEQ "R">
+		<tr>
+			<td colspan="2">
+				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+			</td>
+		</tr>
+	</cfif>
 </table>
 </cfoutput>

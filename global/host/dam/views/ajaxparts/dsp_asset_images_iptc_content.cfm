@@ -52,5 +52,13 @@
 		<td class="td2" nowrap="nowrap"><strong>Description Writer</strong></td>
 		<td class="td2"><input type="text" name="iptc_content_description_writer" style="width:350px;" value="#qry_xmp.descwriter#" onchange="javascript:document.form#attributes.file_id#.xmp_description_writer.value = document.form#attributes.file_id#.iptc_content_description_writer.value"></td>
 	</tr>
+	<!--- Submit Button --->
+	<cfif session.folderaccess NEQ "R">
+		<tr>
+			<td colspan="2">
+				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+			</td>
+		</tr>
+	</cfif>
 </table>
 </cfoutput>

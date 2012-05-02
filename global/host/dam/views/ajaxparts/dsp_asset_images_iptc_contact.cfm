@@ -65,5 +65,13 @@
 		<td class="td2" valign="top"><strong>Website(s)</strong></td>
 		<td class="td2" width="100%"><textarea name="iptc_contact_websites" style="width:350px;height:40px;">#qry_xmp.iptcwebsite#</textarea></td>
 	</tr>
+	<!--- Submit Button --->
+	<cfif session.folderaccess NEQ "R">
+		<tr>
+			<td colspan="2">
+				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+			</td>
+		</tr>
+	</cfif>
 </table>
 </cfoutput>

@@ -277,6 +277,14 @@
 					</tr>
 				</cfif>
 --->
+				<!--- Submit Button --->
+				<cfif session.folderaccess NEQ "R">
+					<tr>
+						<td colspan="2">
+							<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+						</td>
+					</tr>
+				</cfif>
 			</table>
 		</div>
 		<!--- Comments --->
@@ -300,6 +308,14 @@
 						<td class="td2"></td>
 						<td class="td2">#defaultsObj.trans("comma_seperated")#</td>
 					</tr>
+					<!--- Submit Button --->
+					<cfif session.folderaccess NEQ "R">
+						<tr>
+							<td colspan="2">
+								<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+							</td>
+						</tr>
+					</cfif>
 				</table>
 			</div>
 		</cfif>
@@ -383,7 +399,7 @@
 	</div>
 	<!--- Submit Button --->
 	<cfif session.folderaccess NEQ "R">
-		<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+		<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	</cfif>
 	</form>
 	<!--- Activate the Tabs --->
@@ -411,7 +427,7 @@
 					$("##updatefile").html("#defaultsObj.trans("success")#");
 					// Reload Related
 					// loadcontent('relatedimages','#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');
-					$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+					$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 			   	}
 			});
 	        return false; 

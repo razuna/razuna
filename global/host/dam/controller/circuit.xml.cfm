@@ -1966,12 +1966,6 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
-		<!-- Check if we need to convert the video -->
-		<if condition="attributes.convert_to NEQ ''">
-			<true>
-				<do action="videos_convert" />
-			</true>
-		</if>
 	</fuseaction>
 	<!-- Convert Video -->
 	<fuseaction name="videos_convert">
@@ -2140,12 +2134,6 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
-		<!-- Check if we need to convert the video -->
-		<if condition="attributes.convert_to NEQ ''">
-			<true>
-				<do action="audios_convert" />
-			</true>
-		</if>
 	</fuseaction>
 	<!-- Convert Audio -->
 	<fuseaction name="audios_convert">
