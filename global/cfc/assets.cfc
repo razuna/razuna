@@ -63,7 +63,7 @@
 		<!--- Add to temp db --->
 		<cfquery datasource="#attributes.intstruct.dsn#" name="qry">
 		INSERT INTO #session.hostdbprefix#assets_temp
-		(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path,mimetype,thesize,file_id,host_id,md5hash)
+		(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!--- ,mimetype --->,thesize,file_id,host_id,md5hash)
 		VALUES(
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.tempid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename#">,
@@ -73,7 +73,7 @@
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.user_id#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilenamenoext#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.theincomingtemppath#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.contentType#/#attributes.intstruct.thefile.contentSubType#">,
+		<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.contentType#/#attributes.intstruct.thefile.contentSubType#">, --->
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.thefile.filesize#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.file_id#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">,
@@ -478,8 +478,10 @@
 				FROM file_types
 				WHERE lower(type_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.serverFileExt#">
 				</cfquery>
-				<cfset thefile.contentType = qry_mime.type_mimecontent>
+				<!---
+<cfset thefile.contentType = qry_mime.type_mimecontent>
 				<cfset thefile.contentSubType = qry_mime.type_mimesubcontent>
+--->
 			<cfelse>
 				<!--- If plupload --->
 				<cfif arguments.thestruct.plupload>
@@ -510,7 +512,7 @@
 			<!--- Add to temp db --->
 			<cfquery datasource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#assets_temp
-			(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype, thesize, file_id, host_id, md5hash)
+			(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<!--- , mimetype --->, thesize, file_id, host_id, md5hash)
 			VALUES(
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
@@ -520,7 +522,7 @@
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">,
+			<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">, --->
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#thefile.filesize#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
@@ -839,12 +841,16 @@ This is the main function called directly by a single upload else from addassets
 		<!--- set attributes of file structure --->
 		<cfif fileType.recordCount GT 0>
 			<cfset arguments.thestruct.thefiletype = fileType.type_type>
-			<cfset arguments.thestruct.contentType = fileType.type_mimecontent>
+			<!---
+<cfset arguments.thestruct.contentType = fileType.type_mimecontent>
 			<cfset arguments.thestruct.contentSubType = fileType.type_mimesubcontent>
+--->
 		<cfelse>
 			<cfset arguments.thestruct.thefiletype = "other">
-			<cfset arguments.thestruct.contentType = "">
+			<!---
+<cfset arguments.thestruct.contentType = "">
 			<cfset arguments.thestruct.contentSubType = "">
+--->
 		</cfif>
 		<!--- Now start the file mumbo jumbo --->
 		<cfif fileType.type_type EQ "img">
@@ -1233,8 +1239,8 @@ This is the main function called directly by a single upload else from addassets
 								<cfelse>
 									<cfqueryparam value="#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
 								</cfif>
-							file_contenttype = <cfqueryparam value="#attributes.intstruct.ContentType#" cfsqltype="cf_sql_varchar">,
-							file_contentsubtype = <cfqueryparam value="#attributes.intstruct.ContentSubType#" cfsqltype="cf_sql_varchar">, 
+							<!--- file_contenttype = <cfqueryparam value="#attributes.intstruct.ContentType#" cfsqltype="cf_sql_varchar">,
+							file_contentsubtype = <cfqueryparam value="#attributes.intstruct.ContentSubType#" cfsqltype="cf_sql_varchar">,  --->
 							file_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
 							file_name_org = 
 								<cfif attributes.intstruct.link_kind EQ "lan">
@@ -2696,12 +2702,16 @@ This is the main function called directly by a single upload else from addassets
 				<!--- set attributes of file structure --->
 				<cfif #fileType.recordCount# GT 0>
 					<cfset arguments.thestruct.thefiletype = fileType.type_type>
-					<cfset arguments.thestruct.contentType = fileType.type_mimecontent>
+					<!---
+<cfset arguments.thestruct.contentType = fileType.type_mimecontent>
 					<cfset arguments.thestruct.contentSubType = fileType.type_mimesubcontent>
+--->
 				<cfelse>
 					<cfset arguments.thestruct.thefiletype = "other">
-					<cfset arguments.thestruct.contentType = "">
+					<!---
+<cfset arguments.thestruct.contentType = "">
 					<cfset arguments.thestruct.contentSubType = "">
+--->
 				</cfif>
 				<cfset arguments.thestruct.tempid = createuuid("")>
 				<cfset arguments.thestruct.thefilename = newFileName>
@@ -2729,7 +2739,7 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Add to temp db --->
 				<cfquery datasource="#variables.dsn#" name="qry">
 				INSERT INTO #session.hostdbprefix#assets_temp
-				(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path,mimetype,thesize,file_id,host_id,md5hash)
+				(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!---,mimetype--->,thesize,file_id,host_id,md5hash)
 				VALUES(
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
@@ -2739,7 +2749,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.contentType#/#arguments.thestruct.contentSubType#">,
+				<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.contentType#/#arguments.thestruct.contentSubType#">, --->
 				<cfif isnumeric(file.fileSize)>
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#file.fileSize#">,
 				<cfelse>
@@ -3043,8 +3053,10 @@ This is the main function called directly by a single upload else from addassets
 							<cfelse>
 								<cfqueryparam value="#attributes.audstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 							</cfif>, 
+						<!---
 						aud_contenttype = <cfqueryparam value="#attributes.audstruct.ContentType#" cfsqltype="cf_sql_varchar">,
-						aud_contentsubtype = <cfqueryparam value="#attributes.audstruct.ContentSubType#" cfsqltype="cf_sql_varchar">, 
+						aud_contentsubtype = <cfqueryparam value="#attributes.audstruct.ContentSubType#" cfsqltype="cf_sql_varchar">,
+						--->
 						aud_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
 						aud_name_org = 
 							<cfif attributes.audstruct.qryfile.link_kind EQ "lan">
