@@ -45,6 +45,8 @@
 						</cfif>
 					</cfloop>
 				</select>
+				<br /><br />
+				ID: #attributes.label_id#
 				<br />
 				<div id="label_feedback" style="font-weight:bold;color:green;padding-top:20px;"></div>
 			</td>
