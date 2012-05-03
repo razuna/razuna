@@ -292,7 +292,7 @@
 	<cffunction name="labels_dropdown" output="true" access="public">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_dropdown#session.hostid#" cachedomain="#session.hostid#_labels">
-		SELECT label_id, label_path, label_text
+		SELECT label_id, label_id_r, label_path, label_text
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		ORDER BY label_path

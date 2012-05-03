@@ -40,7 +40,7 @@
 					<option value="0">Move to root</option>
 					<option value="0">---</option>
 					<cfloop query="list_labels_dropdown">
-						<cfif qry_label.label_id NEQ label_id>
+						<cfif qry_label.label_id NEQ label_id AND label_id_r NEQ qry_label.label_id>
 							<option value="#label_id#"<cfif qry_label.label_id_r EQ label_id> selected="selected"</cfif>>#label_path#</option>
 						</cfif>
 					</cfloop>
