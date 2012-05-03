@@ -252,5 +252,31 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-		
+	
+	<!--- get asset from label --->
+	<cffunction name="getassetoflabel" access="remote" output="false" returntype="query" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="label_id" required="true">
+		<cfargument name="label_type" required="false" default="assets">
+		<!--- Check key --->
+		<cfset thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Set Values --->
+			<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
+			<cfset application.razuna.datasource = application.razuna.api.dsn>
+			<cfset application.razuna.storage = application.razuna.api.storage>
+			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
+			<!--- Call internal function --->
+			<cfinvoke component="global.cfc.labels" method="labels_assets" label_id="#arguments.label_id#" label_kind="#arguments.label_type#" fromapi="true" returnVariable="thexml">
+		<!--- No session found --->
+		<cfelse>
+			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+	
 </cfcomponent>

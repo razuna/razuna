@@ -391,40 +391,44 @@
 	
 	<!--- Get assets from label --->
 	<cffunction name="labels_assets" output="false" access="public">
-		<cfargument name="label_id" type="string">
-		<cfargument name="label_kind" type="string">
+		<cfargument name="label_id" type="string" required="true">
+		<cfargument name="label_kind" type="string" required="true">
+		<cfargument name="fromapi" required="false" default="false">
 		<!--- Get assets --->
 		<cfif arguments.label_kind EQ "assets">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_assets#session.hostid##arguments.label_id##arguments.label_kind##Session.theUserID#" cachedomain="#session.hostid#_labels">
 			SELECT i.img_id id, i.img_filename filename, 
 			i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
-			i.path_to_asset, i.cloud_url,
-			<!--- Permission follow but not for sysadmin and admin --->
-			<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-				CASE
-					WHEN EXISTS (
-						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
-						WHERE fg.folder_id_r = i.folder_id_r
-						AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-						AND gu.ct_g_u_grp_id = fg.grp_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						)
-				  		OR 
-				  		(
-				    	SELECT fo.folder_owner
-				    	FROM #session.hostdbprefix#folders fo
-					    WHERE fo.folder_id = i.folder_id_r
-					    AND lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-					    AND fo.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-				  		)
-				  	THEN 'unlocked'
-				  	ELSE 'locked'
-				END AS status
-			<cfelse>
-				'unlocked' AS status
-			</cfif>			
+			i.path_to_asset, i.cloud_url
+			<cfif !arguments.fromapi>
+				,
+				<!--- Permission follow but not for sysadmin and admin --->
+				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+					CASE
+						WHEN EXISTS (
+							SELECT fg.folder_id_r
+							FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
+							WHERE fg.folder_id_r = i.folder_id_r
+							AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+							AND gu.ct_g_u_grp_id = fg.grp_id_r
+							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+							)
+					  		OR 
+					  		(
+					    	SELECT fo.folder_owner
+					    	FROM #session.hostdbprefix#folders fo
+						    WHERE fo.folder_id = i.folder_id_r
+						    AND lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+						    AND fo.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+					  		)
+					  	THEN 'unlocked'
+					  	ELSE 'locked'
+					END AS status
+				<cfelse>
+					'unlocked' AS status
+				</cfif>
+			</cfif>
 			FROM #session.hostdbprefix#images i, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = i.img_id
@@ -433,31 +437,34 @@
 			SELECT f.file_id id, f.file_name filename, f.folder_id_r, 
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
-			f.path_to_asset, f.cloud_url,
-			<!--- Permission follow but not for sysadmin and admin --->
-			<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-				CASE
-					WHEN EXISTS (
-						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
-						WHERE fg.folder_id_r = f.folder_id_r
-						AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-						AND gu.ct_g_u_grp_id = fg.grp_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						)
-				  		OR 
-				  		(
-				    	SELECT fo.folder_owner
-				    	FROM #session.hostdbprefix#folders fo
-					    WHERE fo.folder_id = f.folder_id_r
-					    AND lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-					    AND fo.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-				  		)
-				  	THEN 'unlocked'
-				  	ELSE 'locked'
-				END AS status
-			<cfelse>
-				'unlocked' AS status
+			f.path_to_asset, f.cloud_url
+			<cfif !arguments.fromapi>
+				,
+				<!--- Permission follow but not for sysadmin and admin --->
+				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+					CASE
+						WHEN EXISTS (
+							SELECT fg.folder_id_r
+							FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
+							WHERE fg.folder_id_r = f.folder_id_r
+							AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+							AND gu.ct_g_u_grp_id = fg.grp_id_r
+							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+							)
+					  		OR 
+					  		(
+					    	SELECT fo.folder_owner
+					    	FROM #session.hostdbprefix#folders fo
+						    WHERE fo.folder_id = f.folder_id_r
+						    AND lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+						    AND fo.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+					  		)
+					  	THEN 'unlocked'
+					  	ELSE 'locked'
+					END AS status
+				<cfelse>
+					'unlocked' AS status
+				</cfif>
 			</cfif>
 			FROM #session.hostdbprefix#files f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
@@ -467,31 +474,34 @@
 			SELECT v.vid_id id, v.vid_filename filename, v.folder_id_r, 
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
-			v.path_to_asset, v.cloud_url,
-			<!--- Permission follow but not for sysadmin and admin --->
-			<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-				CASE
-					WHEN EXISTS (
-						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
-						WHERE fg.folder_id_r = v.folder_id_r
-						AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-						AND gu.ct_g_u_grp_id = fg.grp_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						)
-				  		OR 
-				  		(
-				    	SELECT fo.folder_owner
-				    	FROM #session.hostdbprefix#folders fo
-					    WHERE fo.folder_id = v.folder_id_r
-					    AND lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-					    AND fo.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-				  		)
-				  	THEN 'unlocked'
-				  	ELSE 'locked'
-				END AS status
-			<cfelse>
-				'unlocked' AS status
+			v.path_to_asset, v.cloud_url
+			<cfif !arguments.fromapi>
+				,
+				<!--- Permission follow but not for sysadmin and admin --->
+				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+					CASE
+						WHEN EXISTS (
+							SELECT fg.folder_id_r
+							FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
+							WHERE fg.folder_id_r = v.folder_id_r
+							AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+							AND gu.ct_g_u_grp_id = fg.grp_id_r
+							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+							)
+					  		OR 
+					  		(
+					    	SELECT fo.folder_owner
+					    	FROM #session.hostdbprefix#folders fo
+						    WHERE fo.folder_id = v.folder_id_r
+						    AND lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+						    AND fo.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+					  		)
+					  	THEN 'unlocked'
+					  	ELSE 'locked'
+					END AS status
+				<cfelse>
+					'unlocked' AS status
+				</cfif>
 			</cfif>
 			FROM #session.hostdbprefix#videos v, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
@@ -501,31 +511,34 @@
 			SELECT a.aud_id id, a.aud_name filename, a.folder_id_r, 
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
-			a.path_to_asset, a.cloud_url,
-			<!--- Permission follow but not for sysadmin and admin --->
-			<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-				CASE
-					WHEN EXISTS (
-						SELECT fg.folder_id_r
-						FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
-						WHERE fg.folder_id_r = a.folder_id_r
-						AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-						AND gu.ct_g_u_grp_id = fg.grp_id_r
-						AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						)
-				  		OR 
-				  		(
-				    	SELECT fo.folder_owner
-				    	FROM #session.hostdbprefix#folders fo
-					    WHERE fo.folder_id = a.folder_id_r
-					    AND lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-					    AND fo.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-				  		)
-				  	THEN 'unlocked'
-				  	ELSE 'locked'
-				END AS status
-			<cfelse>
-				'unlocked' AS status
+			a.path_to_asset, a.cloud_url
+			<cfif !arguments.fromapi>
+				,
+				<!--- Permission follow but not for sysadmin and admin --->
+				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+					CASE
+						WHEN EXISTS (
+							SELECT fg.folder_id_r
+							FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
+							WHERE fg.folder_id_r = a.folder_id_r
+							AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+							AND gu.ct_g_u_grp_id = fg.grp_id_r
+							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+							)
+					  		OR 
+					  		(
+					    	SELECT fo.folder_owner
+					    	FROM #session.hostdbprefix#folders fo
+						    WHERE fo.folder_id = a.folder_id_r
+						    AND lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+						    AND fo.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+					  		)
+					  	THEN 'unlocked'
+					  	ELSE 'locked'
+					END AS status
+				<cfelse>
+					'unlocked' AS status
+				</cfif>
 			</cfif>
 			FROM #session.hostdbprefix#audios a, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
@@ -535,7 +548,9 @@
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_folders#session.hostid##arguments.label_id##arguments.label_kind#" cachedomain="#session.hostid#_labels">
-			SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection,
+			SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection
+			<cfif !arguments.fromapi>
+				,
 				<!--- Permission follow but not for sysadmin and admin --->
 				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
 					CASE
@@ -569,6 +584,7 @@
 						ELSE 'unlocked'
 					END AS perm
 				</cfif>
+			</cfif>
 			FROM #session.hostdbprefix#folders f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.folder_id
@@ -578,7 +594,9 @@
 		<cfelseif arguments.label_kind EQ "collections">
 			<!--- Query for collections and get permissions --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_collections#session.hostid##arguments.label_id##arguments.label_kind#" cachedomain="#session.hostid#_labels">
-			SELECT c.col_id, c.folder_id_r, ct.col_name,
+			SELECT c.col_id, c.folder_id_r, ct.col_name
+			<cfif !arguments.fromapi>	
+				,
 				<!--- Permission follow but not for sysadmin and admin --->
 				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
 					CASE
@@ -596,6 +614,7 @@
 				<cfelse>
 					'unlocked' AS perm
 				</cfif>
+			</cfif>
 			FROM ct_labels ctl, #session.hostdbprefix#collections c
 			LEFT JOIN #session.hostdbprefix#collections_text ct ON c.col_id = ct.col_id_r 
 			WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
