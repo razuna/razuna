@@ -1,5 +1,12 @@
 OpenBlueDragon WEB-INF/lib README
-=============================
+  $Id: README.txt 2053 2012-05-02 14:20:11Z alan $
+
+Apache Tika 1.1
+The bundled Apache Compress is an older version so this has been removed from 
+this JAR file
+
+
+
 This is the standard directory used by J2EE web applications for locating Java
 library files. All ".jar" libraries found in this directory are automatically
 added to the web application's classpath by the web container.
@@ -29,11 +36,10 @@ The following libraries are required if your webapp uses the CFCHART tag:
 
 The following libraries are required if your webapp uses the CFSEARCH tag:
 
-   lucene-analyzers-3.3.0.jar
-   lucene-core-3.3.0.jar
-   lucene-highlighter-3.3.0.jar
-   PDFBox-0.7.2.jar
-
+   lucene-analyzers-3.6.0.jar
+   lucene-core-3.6.0.jar
+   lucene-highlighter-3.6.0.jar
+   
 The following library is for the HtmlGetPrintableText() function
    jericho-html-3.1.jar
 
