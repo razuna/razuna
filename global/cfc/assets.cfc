@@ -865,9 +865,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif fileType.type_type EQ "vid">
 			<!--- VIDEO UPLOAD (call method to process a vid-file) --->
 			<cfinvoke method="processVidFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
-			<cfset consoleoutput(true)>
-<cfset console(arguments.thestruct)>
-
 			<!--- Act on Upload Templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "">
 				<cfset arguments.thestruct.upltemptype = "vid">
@@ -3696,9 +3693,6 @@ This is the main function called directly by a single upload else from addassets
 <!--- Process Upload Template --->
 <cffunction name="process_upl_template" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
-	<cfset consoleoutput(true)>
-	<cfset console(arguments.thestruct)>
-
 	<!--- Param --->
 	<cfset arguments.thestruct.convert_to = "">
 	<cfset arguments.thestruct.convert = true>
