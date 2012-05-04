@@ -634,7 +634,7 @@
 				<cfset x.theurl = d.Response.Download.DownloadURL[1].XmlText>
 			<cfelse>
 				<!--- Set Downloadtoken --->
-				<cfset x.theurl = respcode>
+				<cfset x.theurl = "">
 				<!--- Send us eMail --->
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix signedurl reponsecode" type="html">
 					<cfdump var="#respcode#">
@@ -650,6 +650,13 @@
 					<cfdump var="//razuna/#session.hostid#/#arguments.theasset#">
 					<cfdump var="#cfhttp#">
 				</cfmail>
+				<!--- Send user an eMail --->
+				<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+				SELECT user_email
+				FROM users
+				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+				</cfquery>
+				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#arguments.theasset#) could not proberly be added to our system. Please re-upload it again or contact us at support@razuna.com. We apologize for this!">
 			</cfif>
 			<!--- Set download url --->
 <!--- 			<cfset x.theurl = "http://services.nirvanix.com/" & dtoken & "/razuna/#session.hostid#/#arguments.theasset#"> --->
