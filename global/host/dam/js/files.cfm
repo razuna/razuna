@@ -187,6 +187,141 @@ function batchaction(theform, what, kind, folder_id, theid){
 
 // Site conversion
 
+// Video Preset function
+function setpreset(theformat,theform){
+	// get value
+	var theval = $('#preset_' + theformat + ' option:selected').val();
+	// set form fields
+	var w = 'convert_width_' + theformat;
+	var h = 'convert_height_' + theformat;
+	switch(theval){
+		case 'hd1080':
+			var thew = '1920';
+			var theh = '1080';
+			break;
+		case 'hd720':
+			var thew = '1280';
+			var theh = '720';
+			break;
+		case 'hd480':
+			var thew = '852';
+			var theh = '480';
+			break;
+		case 'sqcif':
+			var thew = '128';
+			var theh = '96';
+			break;
+		case 'qcif':
+			var thew = '176';
+			var theh = '144';
+			break;
+		case 'cif':
+			var thew = '352';
+			var theh = '288';
+			break;
+		case '4cif':
+			var thew = '704';
+			var theh = '576';
+			break;
+		case '16cif':
+			var thew = '1408';
+			var theh = '1152';
+			break;
+		case 'qqvga':
+			var thew = '160';
+			var theh = '120';
+			break;
+		case 'qvga':
+			var thew = '320';
+			var theh = '240';
+			break;
+		case 'vga':
+			var thew = '640';
+			var theh = '480';
+			break;
+		case 'svga':
+			var thew = '800';
+			var theh = '600';
+			break;
+		case 'xga':
+			var thew = '1024';
+			var theh = '768';
+			break;
+		case 'uxga':
+			var thew = '1600';
+			var theh = '1200';
+			break;
+		case 'qxga':
+			var thew = '2048';
+			var theh = '1536';
+			break;
+		case 'sxga':
+			var thew = '1280';
+			var theh = '1024';
+			break;
+		case 'qsxga':
+			var thew = '2560';
+			var theh = '2048';
+			break;
+		case 'hsxga':
+			var thew = '5120';
+			var theh = '4096';
+			break;
+		case 'wvga':
+			var thew = '852';
+			var theh = '480';
+			break;
+		case 'wxga':
+			var thew = '1366';
+			var theh = '768';
+			break;
+		case 'wsxga':
+			var thew = '1600';
+			var theh = '1024';
+			break;
+		case 'wuxga':
+			var thew = '1920';
+			var theh = '1200';
+			break;
+		case 'woxga':
+			var thew = '2560';
+			var theh = '1600';
+			break;
+		case 'wqsxga':
+			var thew = '3200';
+			var theh = '2048';
+			break;
+		case 'wquxga':
+			var thew = '3840';
+			var theh = '2400';
+			break;
+		case 'whsxga':
+			var thew = '6400';
+			var theh = '4096';
+			break;
+		case 'whuxga':
+			var thew = '7680';
+			var theh = '4800';
+			break;
+		case 'cga':
+			var thew = '320';
+			var theh = '200';
+			break;
+		case 'ega':
+			var thew = '640';
+			var theh = '350';
+			break;
+		default:
+			var thew = '1280';
+			var theh = '720';
+			break;
+	}
+	// set the w and h
+	document.forms[theform][w].value = thew;
+	document.forms[theform][h].value = theh;
+	
+}
+
 // Set values for the 3GP format correct
 function clickset3gp(theform){
 	document.forms[theform].convert_width_3gp.value = '128';

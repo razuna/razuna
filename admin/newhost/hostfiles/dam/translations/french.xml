@@ -1659,6 +1659,9 @@
 	<transid name="admin_upload_templates_desc">
 		<transtext><![CDATA[Choose the format you want your assets to be converted to while your users will add them to the system. <br /><br />NOTE: Using a incorrect size value might leave your assets unrenderable/playable! If you want to convert to the same size of the original asset then simply leave the widthxheight field empty. You should also only enter either the width or the height to scale the asset properly.<br /><br /><strong>CAUTION: Selecting a lot of formats will slow down the process speed and put a strain on the server!!!</strong>]]></transtext>
 	</transid>
+	<transid name="admin_upload_templates_vid_desc">
+		<transtext><![CDATA[Choose the format you want your assets to be converted to while your users will add them to the system. <br /><br />NOTE: Using a incorrect size value might leave your assets unrenderable/playable! It is recommended to use one of the presets or else set your custom size. Size values must be entered and ratio size must be valid or else conversion will fail.<br /><br /><strong>CAUTION: Selecting a lot of formats will slow down the process speed and put a strain on the server!!!</strong>]]></transtext>
+	</transid>
 	<transid name="header_widget">
 		<transtext><![CDATA[Widgets]]></transtext>
 	</transid>

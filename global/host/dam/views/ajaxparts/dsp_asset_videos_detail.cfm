@@ -342,59 +342,92 @@
 							</cfif> --->
 							<tr>
 								<th colspan="2">#defaultsObj.trans("video_convert_to")#</th>
+								<th>Choose Preset size</th>
 								<th>#defaultsObj.trans("size")#</th>
 								<!--- <th>BitRate</th> --->
 							</tr>
 							<cfset theaspectratio = #qry_detail.detail.vwidth# / #qry_detail.detail.vheight#>
+							<!--- For the preset include below --->
+							<cfset incval = structnew()>
+							<cfset incval.theform = "form#attributes.file_id#">
 							<!--- OGV --->
 							<tr class="list">
 								<td align="center"><input type="checkbox" name="convert_to" value="ogv"></td>
 								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',0);return false;" style="text-decoration:none;">OGG (OGV)*</a></td>
-								<td><input type="text" size="3" name="convert_width_ogv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_ogv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
-								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_ogv" value="600">kb/s</td> --->
+								<td nowrap="true">
+									<cfset incval.theformat = "ogv">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
+								<td width="100%"><input type="text" size="3" name="convert_width_ogv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_ogv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
 							</tr>
 							<!--- WebM --->
 							<tr class="list">
 								<td align="center"><input type="checkbox" name="convert_to" value="webm"></td>
 								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',1);return false;" style="text-decoration:none;">WebM (WebM)*</a></td>
+								<td nowrap="true">
+									<cfset incval.theformat = "webm">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
 								<td><input type="text" size="3" name="convert_width_webm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_webm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_webm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_webm','form#attributes.file_id#',#theaspectratio#);"></td>
-								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_webm" value="600">kb/s</td> --->
 							</tr>
 							<!--- Flash --->
 							<tr class="list">
 								<td align="center"><input type="checkbox" name="convert_to" value="flv"></td>
 								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',2);return false;" style="text-decoration:none;">Flash (FLV)</a></td>
+								<td nowrap="true">
+									<cfset incval.theformat = "flv">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
 								<td><input type="text" size="3" name="convert_width_flv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_flv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_flv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_flv','form#attributes.file_id#',#theaspectratio#);"></td>
-								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_flv" value="600">kb/s</td> --->
 							</tr>
 							<!--- MP4 --->
 							<tr class="list">
 								<td align="center"><input type="checkbox" name="convert_to" value="mp4"></td>
 								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',3);return false;" style="text-decoration:none;">Mpeg4 (MP4)</a></td>
+								<td nowrap="true">
+									<cfset incval.theformat = "mp4">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
 								<td><input type="text" size="3" name="convert_width_mp4" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mp4','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mp4" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mp4','form#attributes.file_id#',#theaspectratio#);"></td>
 								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mp4" value="600">kb/s</td> --->
 							</tr>
 							<tr class="list">
 								<td width="1%" nowrap="true" align="center"><input type="checkbox" name="convert_to" value="wmv"></td>
 								<td width="1%" nowrap="true"><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',4);return false;" style="text-decoration:none;">Windows Media Video (WMV)</a></td>
+								<td nowrap="true">
+									<cfset incval.theformat = "wmv">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
 								<td width="1%" nowrap="true"><input type="text" size="3" name="convert_width_wmv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_wmv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_wmv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_wmv','form#attributes.file_id#',#theaspectratio#);"></td>
 								<!--- <td width="100%" nowrap="true"><input type="text" size="4" name="convert_bitrate_wmv" value="600">kb/s</td> --->
 							</tr>
 							<tr class="list">
 								<td align="center"><input type="checkbox" name="convert_to" value="avi"></td>
 								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',5);return false;" style="text-decoration:none;">Audio Video Interlaced (AVI)</a></td>
+								<td nowrap="true">
+									<cfset incval.theformat = "avi">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
 								<td><input type="text" size="3" name="convert_width_avi" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_avi','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_avi" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_avi','form#attributes.file_id#',#theaspectratio#);"></td>
 								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_avi" value="600">kb/s</td> --->
 							</tr>
 							<tr class="list">
 								<td align="center"><input type="checkbox" name="convert_to" value="mov"></td>
 								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',6);return false;" style="text-decoration:none;">Quicktime (MOV)</a></td>
+								<td nowrap="true">
+									<cfset incval.theformat = "mov">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
 								<td><input type="text" size="3" name="convert_width_mov" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mov','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mov" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mov','form#attributes.file_id#',#theaspectratio#);"></td>
 								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="600">kb/s</td> --->
 							</tr>
 							<tr class="list">
 								<td align="center"><input type="checkbox" name="convert_to" value="mpg"></td>
 								<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',7)" style="text-decoration:none;">Mpeg1 Mpeg2 (MPG)</a></td>
+								<td nowrap="true">
+									<cfset incval.theformat = "mpg">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
 								<td><input type="text" size="3" name="convert_width_mpg" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mpg','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mpg" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mpg','form#attributes.file_id#',#theaspectratio#);"></td>
 								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mpg" value="600">kb/s</td> --->
 							</tr>
@@ -418,11 +451,15 @@
 								<option value="12">1408x1152 (No size limit)</option>
 								</select>
 								</td>
-								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_3gp" value="64">kb/s</td> --->
+								<td nowrap="true"></td>
 							</tr>
 							<tr class="list">
 								<td align="center"><input type="checkbox" name="convert_to" value="rm"></td>
 								<td nowrap="true"><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',9);return false;" style="text-decoration:none;">RealNetwork Video Data (RM)</a></td>
+								<td nowrap="true">
+									<cfset incval.theformat = "rm">
+									<cfinclude template="inc_video_presets.cfm" />
+								</td>
 								<td><input type="text" size="3" name="convert_width_rm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_rm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_rm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_rm','form#attributes.file_id#',#theaspectratio#);"></td>
 								<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_rm" value="600">kb/s</td> --->
 							</tr>
