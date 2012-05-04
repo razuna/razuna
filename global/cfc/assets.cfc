@@ -2629,11 +2629,17 @@ This is the main function called directly by a single upload else from addassets
 		<cfset folderlevel = folders.folder_level>
 		<cfset loopname = "">
 		<!--- Loop over the zip directories and rename them if needed --->
-		<cfset var ttf = Replace( Createuuid(), "-", "", "ALL" )>
+		<!---
+<cfset var ttf = Replace( Createuuid(), "-", "", "ALL" )>
 		<cfthread name="#ttf#" intstruct="#arguments.thestruct#">
-			<cfinvoke method="rec_renamefolders" thedirectory="#attributes.intstruct.qryfile.path#" />
-		</cfthread>
+--->
+			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thestruct.qryfile.path#" />
+			
+		<!---
+</cfthread>
 		<cfthread action="join" name="#ttf#" />
+--->
+		<cfabort>
 		<!--- Get directory again since the directory names could have changed from above --->
 		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedir" recurse="true" sort="directory,type">
 		<!--- Get folders within the unzip RECURSIVE --->
@@ -2818,27 +2824,35 @@ This is the main function called directly by a single upload else from addassets
 </cffunction>
 
 <!--- Recursive function to rename folders from zip --->
-<cffunction name="rec_renamefolders" output="false" access="private">
+<cffunction name="rec_renamefolders" output="false" access="public" returnType="void">
 	<cfargument name="thedirectory" type="string">
-	<!--- Get folders within the unzip NOT recursive --->
+	<!--- Get folders within the unzip --->
 	<cfdirectory action="list" directory="#arguments.thedirectory#" name="thedir" recurse="true" type="dir">
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
-	<!--- <cfset consoleout=true> --->
+	<cfset consoleoutput(true)>
 	<cfloop query="thedir">
-		<!--- <cftry> --->
-			<!--- <cfif name CONTAINS " "> --->
-				<cfset thedirnospaces = REReplaceNoCase(name, "[^a-zA-Z0-9\s]", "_", "ALL")>				
-				<cfset thedirnospaces = REReplaceNoCase(thedirnospaces, "[^[:word:]^-]", "_", "ALL")>
-				<!--- <cfset console(thedirnospaces)> --->
-				<cfif name NEQ "#thedirnospaces#">
-					<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#thedirnospaces#">
-				</cfif>
-				<!--- <cfinvoke method="rec_renamefolders" thedirectory="#directory#/#thedirnospaces#" /> --->
-			<!--- </cfif> --->
-			<!---
-<cfcatch type="any"></cfcatch>
-		</cftry>
---->
+		<cfset console(name)>
+		<cfset d = name>
+		<!--- All foreign chars are now converted, except the / --->
+		<cfset d = Rereplacenocase(d,"[^[:word:]^/]","_","ALL")>
+		<!--- Danish Chars --->
+		<cfset d = Rereplacenocase(d,"([å]+)","aa","ALL")>
+		<cfset d = Rereplacenocase(d,"([æ]+)","ae","ALL")>
+		<cfset d = Rereplacenocase(d,"([ø]+)","o","ALL")>
+		<!--- German Chars --->
+		<cfset d = Rereplacenocase(d,"([ü]+)","ue","ALL")>
+		<cfset d = Rereplacenocase(d,"([ä]+)","ae","ALL")>
+		<cfset d = Rereplacenocase(d,"([ö]+)","oe","ALL")>
+		<!--- French Chars --->
+		<cfset d = Rereplacenocase(d,"([è]+)","e","ALL")>
+		<cfset d = Rereplacenocase(d,"([à]+)","a","ALL")>
+		<cfset d = Rereplacenocase(d,"([é]+)","e","ALL")>
+		<cfset console("#directory#/#d#")>
+		<!--- <cfset console(thedirnospaces)> --->
+		<cfif "#directory#/#name#" NEQ "#directory#/#d#">
+			<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
+		</cfif>
+		<cfabort>
 	</cfloop>
 	<cfreturn />
 </cffunction>
@@ -3680,6 +3694,9 @@ This is the main function called directly by a single upload else from addassets
 <!--- Process Upload Template --->
 <cffunction name="process_upl_template" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
+	<cfset consoleoutput(true)>
+	<cfset console(arguments.thestruct)>
+
 	<!--- Param --->
 	<cfset arguments.thestruct.convert_to = "">
 	<cfset arguments.thestruct.convert = true>
