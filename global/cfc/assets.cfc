@@ -2638,7 +2638,7 @@ This is the main function called directly by a single upload else from addassets
 </cfthread>
 		<cfthread action="join" name="#ttf#" />
 --->
-		<cfabort>
+<!--- 		<cfabort> --->
 		<!--- Get directory again since the directory names could have changed from above --->
 		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedir" recurse="true" sort="directory,type">
 		<!--- Get folders within the unzip RECURSIVE --->
@@ -2851,7 +2851,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfif "#directory#/#name#" NEQ "#directory#/#d#">
 			<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
 		</cfif>
-		<cfabort>
+		<!--- <cfabort> --->
 	</cfloop>
 	<cfreturn />
 </cffunction>
