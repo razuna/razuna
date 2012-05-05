@@ -42,36 +42,36 @@
 <!--- Add field --->
 <cffunction name="add" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<!--- Create a new field id --->
-		<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#variables.database#" dsn="#variables.dsn#" thetable="#session.hostdbprefix#custom_fields" theid="cf_id"> --->
+		<!--- Params --->
 		<cfset newcfid = createuuid()>
-		<!--- Add one up for order --->
-		<cfquery datasource="#application.razuna.datasource#" name="neworder">
-		SELECT 
-		<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(max(cf_order),0) + 1 AS theorder
-		FROM #session.hostdbprefix#custom_fields
-		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<!--- Insert record --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#custom_fields
-		(cf_id, cf_type, cf_order, cf_enabled, cf_show, cf_group, host_id, cf_select_list)
-		VALUES(
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newcfid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_type#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#neworder.theorder#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_enabled#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">
-		)
-		</cfquery>
-		<!--- Add text to related db --->
-		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-			<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
-			<cfif thetext CONTAINS "#langindex#">
-				<cftransaction>
+		<cfparam name="arguments.thestruct.cf_group" default="" />
+		<cftransaction>
+			<!--- Add one up for order --->
+			<cfquery datasource="#application.razuna.datasource#" name="neworder">
+			SELECT 
+			<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(cf_order),0) + 1 AS theorder
+			FROM #session.hostdbprefix#custom_fields
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- Insert record --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#custom_fields
+			(cf_id, cf_type, cf_order, cf_enabled, cf_show, cf_group, host_id, cf_select_list)
+			VALUES(
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newcfid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_type#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#neworder.theorder#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_enabled#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">
+			)
+			</cfquery>
+			<!--- Add text to related db --->
+			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+				<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
+				<cfif thetext CONTAINS "#langindex#">
 					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#custom_fields_text
 					(cf_id_r, lang_id_r, cf_text, host_id, rec_uuid)
@@ -83,12 +83,12 @@
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
-				</cftransaction>
-			</cfif>
-		</cfloop>
+				</cfif>
+			</cfloop>
+		</cftransaction>
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_customfields" />
-	<cfreturn />
+	<cfreturn newcfid />
 </cffunction>
 
 <!--- Get fields for the detail view of assets --->
@@ -241,7 +241,7 @@
 	UPDATE #session.hostdbprefix#custom_fields
 	SET cf_order = cf_order - 1
 	WHERE cf_order > <cfqueryparam value="#arguments.thestruct.order#" cfsqltype="cf_sql_numeric">
-	AND cf_order <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> 1
+	AND cf_order <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> 1
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- remove record --->
