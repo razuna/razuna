@@ -1291,7 +1291,7 @@
 		<!-- CFC: Get languages -->
 		<do action="languages" />
 		<!-- Get settings -->
-		<do action="asset_get_settings" />
+		<!-- <do action="asset_get_settings" /> -->
 		<!-- Show -->
 		<do action="ajax.asset_add_single" />
 	</fuseaction>
@@ -1315,7 +1315,7 @@
 		<xfa name="serverfolders" value="c.asset_add_server_folders" />
 		<xfa name="submitassetserver" value="c.asset_upload_server" />
 		<!-- Get settings -->
-		<do action="asset_get_settings" />
+		<!-- <do action="asset_get_settings" /> -->
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- Show -->
