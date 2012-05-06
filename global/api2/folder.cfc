@@ -26,6 +26,12 @@
 
 <cfcomponent output="false" extends="authentication">
 	
+	<!--- Set Values --->
+	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
+	<cfset application.razuna.datasource = application.razuna.api.dsn>
+	<cfset application.razuna.storage = application.razuna.api.storage>
+	<cfset application.razuna.setid = application.razuna.api.setid>
+	
 	<!--- Retrieve assets from a folder --->
 	<cffunction name="getassets" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
@@ -422,7 +428,6 @@
 			)
 			</cfquery>
 			<!--- Flush cache --->
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
 			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_folders" />
 			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_folders_desc" />
 			<!--- Feedback --->
@@ -447,11 +452,6 @@
 			<cfif arguments.folder_id NEQ 1 AND arguments.folder_id NEQ 2>
 				<!--- Struct --->
 				<cfset var fs = structnew()>
-				<!--- Set Values --->
-				<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
-				<cfset application.razuna.datasource = application.razuna.api.dsn>
-				<cfset application.razuna.storage = application.razuna.api.storage>
-				<cfset application.razuna.setid = application.razuna.api.setid>
 				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 				<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>

@@ -24,6 +24,11 @@
 *
 --->
 <cfcomponent output="false" extends="authentication">
+	
+	<!--- Set Values --->
+	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
+	<cfset application.razuna.datasource = application.razuna.api.dsn>
+	<cfset application.razuna.storage = application.razuna.api.storage>
 
 	<!--- Get all labels --->
 	<cffunction name="getall" access="remote" output="false" returntype="query" returnformat="json">
@@ -82,9 +87,6 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Set Values --->
-			<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
-			<cfset application.razuna.storage = application.razuna.api.storage>
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
@@ -115,9 +117,6 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Set Values --->
-			<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
-			<cfset application.razuna.storage = application.razuna.api.storage>
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
@@ -148,8 +147,6 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Set Values --->
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
 			<!--- If we replace, then remove all labels for this record first --->
 			<cfif !arguments.append>
 				<cfquery datasource="#application.razuna.api.dsn#">
@@ -203,8 +200,6 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Set Values --->
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
 			<!--- Loop over label_id and remove them --->
 			<cfloop list="#arguments.label_id#" index="i" delimiters=",">
 				<cfquery datasource="#application.razuna.api.dsn#">
@@ -263,9 +258,6 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Set Values --->
-			<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
-			<cfset application.razuna.storage = application.razuna.api.storage>
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>

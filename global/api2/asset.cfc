@@ -25,6 +25,11 @@
 --->
 <cfcomponent output="false" extends="authentication">
 	
+	<!--- Set application values --->
+	<cfset application.razuna.storage = application.razuna.api.storage>
+	<cfset application.razuna.datasource = application.razuna.api.dsn>
+	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
+	
 	<!--- Asset: Get info --->
 	<cffunction name="getasset" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">
@@ -241,10 +246,6 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Set application scopes for calls into the Razuna methods --->
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
-			<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
-			<cfset application.razuna.storage = application.razuna.api.storage>
 			<!--- Set db and id --->
 			<cfif arguments.assettype EQ "img">
 				<cfset var thedb = "images_text">
@@ -362,9 +363,6 @@
 			<cfset orgstruct.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset orgstruct.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
 			<cfset orgstruct.id = arguments.assetid>
-			<!--- Set application values --->
-			<cfset application.razuna.storage = application.razuna.api.storage>
-			<cfset application.razuna.datasource = application.razuna.api.dsn>
 			<!--- Get assetpath --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
 			SELECT set2_path_to_assets
