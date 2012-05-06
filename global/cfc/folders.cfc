@@ -1978,14 +1978,15 @@
 
 <!--- THE FOLDERS OF THIS HOST --------------------------------------------------->
 <cffunction name="getserverdir" output="true">
-	<cfargument name="thepath"      type="string"  default="">
+	<cfargument name="thepath" type="string" default="">
 	<cfdirectory action="list" directory="#arguments.thepath#" name="thedirs" sort="name ASC">
 	<!--- exclude special folders --->
 	<cfquery name="folderlist" dbtype="query">
-		SELECT *
-		FROM thedirs
-		WHERE type = 'Dir'
-		AND lower(name) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" list="true" value="outgoing,js,images,.svn,parsed,model,controller,translations,views,.DS_Store,bluedragon,global,incoming,web-inf">)
+	SELECT *
+	FROM thedirs
+	WHERE type = 'Dir'
+	AND attributes != 'H'
+	AND lower(name) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" list="true" value="outgoing,js,images,.svn,parsed,model,controller,translations,views,.DS_Store,bluedragon,global,incoming,web-inf,.git,backup">)
 	</cfquery>
 	<cfreturn folderlist>
 </cffunction>
@@ -3186,6 +3187,7 @@
 			SELECT count(name) thecount
 			FROM thedir
 			WHERE type = 'File'
+			AND attributes != 'H'
 			</cfquery>
 			<!--- Count the dirs --->
 			<cfquery dbtype="query" name="status.countdirs">

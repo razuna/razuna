@@ -514,9 +514,9 @@
 	<cfdirectory action="list" directory="#arguments.source#" name="contents">
 	
 	<cfloop query="contents">
-		<cfif contents.type eq "file" AND contents.name IS NOT "thumbs.db" AND contents.name IS NOT "dwsync.xml">
+		<cfif type eq "file" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS "dwsync.xml">
 			<cffile action="#theaction#" source="#arguments.source#/#name#" destination="#arguments.destination#/#name#" mode="775">
-		<cfelseif contents.type eq "dir" AND contents.name IS NOT "CVS" AND contents.name IS NOT ".svn">
+		<cfelseif type EQ "dir" AND NOT name CONTAINS "CVS" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS ".git">
 			<cfset directoryCopy(arguments.source & dirDelim & name, arguments.destination & dirDelim & name, arguments.move) />
 		</cfif>
 	</cfloop>
@@ -933,11 +933,9 @@
 		<!--- directories
 		<cfdirectory action="delete" directory="#arguments.thestruct.pathoneup#/#host_path_replace#/dam/translations" mode="775" recurse="yes"> --->
 		<!--- files --->
-		<cfdirectory action="list" directory="#arguments.thestruct.pathoneup#/#host_path_replace#/dam/" name="thefiles">
+		<cfdirectory action="list" directory="#arguments.thestruct.pathoneup#/#host_path_replace#/dam/" name="thefiles" type="file">
 		<cfloop query="thefiles">
-			<cfif thefiles.type eq "file">
-				<cffile action="delete" file="#arguments.thestruct.pathoneup#/#host_path_replace#/dam/#name#">
-			</cfif>
+			<cffile action="delete" file="#arguments.thestruct.pathoneup#/#host_path_replace#/dam/#name#">
 		</cfloop>
 		<cfcatch type="any"></cfcatch>
 	</cftry>

@@ -536,30 +536,31 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 			</cftransaction>
 		</cfloop>
 		<!--- FILESYSTEM --->
-			<!--- Go grab the platform --->
-			<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
-			<!--- Check the platform and then decide on the Exiftool tag --->
-			<cfif isWindows>
-				<cfset theexe = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
-			<cfelse>
-				<cfset theexe = "#arguments.thestruct.thetools.exiftool#/exiftool">
-			</cfif>
-			<cfset theasset = arguments.thestruct.thesource>
-			<!--- On Windows a bat --->
-			<cfif isWindows>
-				<cfexecute name="#theexe#" arguments="-X #theasset#" timeout="60" variable="themeta" />
-			<cfelse>
-				<!--- The script --->
-				<cfset var thescript = createuuid()>
-				<!--- Set script --->
-				<cfset thesh = gettempdirectory() & "/#thescript#.sh">
-				<!--- Write files --->
-				<cffile action="write" file="#thesh#" output="#theexe# -X #theasset#" mode="777">
-				<!--- Execute --->
-				<cfexecute name="#thesh#" timeout="60" variable="themeta" />
-				<!--- Delete scripts --->
-				<cffile action="delete" file="#thesh#">
-			</cfif>
+		<!--- Go grab the platform --->
+		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+		<!--- Check the platform and then decide on the Exiftool tag --->
+		<cfif isWindows>
+			<cfset theexe = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+		<cfelse>
+			<cfset theexe = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		</cfif>
+		<cfset theasset = arguments.thestruct.thesource>
+		<!--- On Windows a bat --->
+		<cfif isWindows>
+			<cfexecute name="#theexe#" arguments="-X #theasset#" timeout="60" variable="themeta" />
+		<cfelse>
+			<!--- The script --->
+			<cfset var thescript = createuuid()>
+			<!--- Set script --->
+			<cfset thesh = gettempdirectory() & "/#thescript#.sh">
+			<!--- Write files --->
+			<cffile action="write" file="#thesh#" output="#theexe# -X #theasset#" mode="777">
+			<!--- Execute --->
+			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
+			<!--- Delete scripts --->
+			<cffile action="delete" file="#thesh#">
+		</cfif>
+		<cfif themeta NEQ "">
 			<!--- Parse Metadata which is now XML --->
 			<cfset var thexml = xmlparse(ToString(themeta.getBytes(),'utf-8'))>
 			<!--- Description from XMP --->
@@ -597,59 +598,59 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 						<cfset keywords = keywords & ",">
 					</cfif>
 				</cfloop>
-			</cfif>			
-			
-		<!--- 
-		Append the keywords and description to the images_text table. Since XMP is not multilingual we just insert it into 
-		every language there is 
-		--->
-		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-			<cfset newkeywords = "">
-			<cfset newdescription = "">
-			<!--- Grab the user input --->
-			<cfif arguments.thestruct.uploadkind EQ "many">
-				<cfset userdesc="file_desc_" & "#countnr#" & "_" & "#langindex#">
-				<cfset userkeywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
-			<cfelse>
-				<cfset userdesc="arguments.thestruct.file_desc_" & "#langindex#">
-				<cfset userkeywords="arguments.thestruct.file_keywords_" & "#langindex#">
-			</cfif>
-			<cfif userdesc CONTAINS #langindex#>
-				<!--- Now put xmp values and user values together  --->
-				<cfif evaluate(userkeywords) EQ "">
-					<cfset newkeywords = keywords>
+			</cfif>	
+			<!--- 
+			Append the keywords and description to the images_text table. Since XMP is not multilingual we just insert it into 
+			every language there is 
+			--->
+			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+				<cfset newkeywords = "">
+				<cfset newdescription = "">
+				<!--- Grab the user input --->
+				<cfif arguments.thestruct.uploadkind EQ "many">
+					<cfset userdesc="file_desc_" & "#countnr#" & "_" & "#langindex#">
+					<cfset userkeywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
 				<cfelse>
-					<cfset newkeywords = evaluate(userkeywords) & "," & keywords>
+					<cfset userdesc="arguments.thestruct.file_desc_" & "#langindex#">
+					<cfset userkeywords="arguments.thestruct.file_keywords_" & "#langindex#">
 				</cfif>
-				<cfif evaluate(userdesc) EQ "">
-					<cfset newdescription = description>
-				<cfelse>
-					<cfset newdescription = evaluate(userdesc) & " " & description>
+				<cfif userdesc CONTAINS #langindex#>
+					<!--- Now put xmp values and user values together  --->
+					<cfif evaluate(userkeywords) EQ "">
+						<cfset newkeywords = keywords>
+					<cfelse>
+						<cfset newkeywords = evaluate(userkeywords) & "," & keywords>
+					</cfif>
+					<cfif evaluate(userdesc) EQ "">
+						<cfset newdescription = description>
+					<cfelse>
+						<cfset newdescription = evaluate(userdesc) & " " & description>
+					</cfif>
+					<cftry>
+						<!--- Append to DB --->
+						<cftransaction>
+							<cfquery datasource="#arguments.thestruct.dsn#">
+							UPDATE #session.hostdbprefix#images_text
+							SET 
+							<cfif newkeywords EQ ",">
+								img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
+							<cfelse>
+								img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
+							</cfif>,
+							img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
+							WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+							AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+							</cfquery>
+						</cftransaction>
+						<cfcatch type="any">
+							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in image upload keywords">
+								<cfdump var="#cfcatch#" />
+							</cfmail>
+						</cfcatch>
+					</cftry>
 				</cfif>
-				<cftry>
-					<!--- Append to DB --->
-					<cftransaction>
-						<cfquery datasource="#arguments.thestruct.dsn#">
-						UPDATE #session.hostdbprefix#images_text
-						SET 
-						<cfif newkeywords EQ ",">
-							img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
-						<cfelse>
-							img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
-						</cfif>,
-						img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
-						WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-						AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
-						</cfquery>
-					</cftransaction>
-					<cfcatch type="any">
-						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in image upload keywords">
-							<cfdump var="#cfcatch#" />
-						</cfmail>
-					</cfcatch>
-				</cftry>
-			</cfif>
-		</cfloop>
+			</cfloop>
+		</cfif>
 		<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in xmpwritekeydesc">
 				<cfdump var="#cfcatch#" />

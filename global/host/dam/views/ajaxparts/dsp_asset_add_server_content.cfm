@@ -24,7 +24,7 @@
 *
 --->
 <cfdirectory action="list" directory="#attributes.folderpath#" name="thecontent" sort="name ASC">
-<cfquery name="fc" dbtype="query">SELECT * FROM thecontent WHERE type = 'File' AND name NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" list="true" value=".svn,.DS_Store">)</cfquery>
+<cfquery name="fc" dbtype="query">SELECT * FROM thecontent WHERE type = 'File' AND attributes != 'H' AND name NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" list="true" value=".svn,.DS_Store,.git">)</cfquery>
 <cfoutput>
 <div id="uploadstatus" style="background-color:##FFFFE0;display:none;"></div>
 <form name="assetserverform" id="assetserverform" method="post" action="#self#">

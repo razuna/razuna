@@ -1169,7 +1169,7 @@ This is the main function called directly by a single upload else from addassets
 									<cfset attributes.intstruct.qryfile.path = replace(attributes.intstruct.qryfile.path,"'","\'","all")>
 								<cfelse>
 									<cfset attributes.intstruct.theorgfileraw = "#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
-									<!--- <cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#"> --->
+									<cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
 								</cfif>
 								<!--- Write Script --->
 								<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theexif# -a -g #attributes.intstruct.qryfile.path#" mode="777">
@@ -1210,7 +1210,9 @@ This is the main function called directly by a single upload else from addassets
 							<cffile action="delete" file="#attributes.intstruct.theshexmetaxmp#">							
 						</cfif>
 						<!--- Parse PDF XMP and write to DB --->
-						<cfinvoke component="xmp" method="getpdfxmp" thestruct="#attributes.intstruct#" />
+						<cfif attributes.intstruct.pdf_xmp NEQ "">
+							<cfinvoke component="xmp" method="getpdfxmp" thestruct="#attributes.intstruct#" />
+						</cfif>
 					</cfif>
 					<!--- If we are a new version --->
 					<cfif attributes.intstruct.qryfile.file_id NEQ 0>
@@ -1796,6 +1798,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"'","\'","all")>
 			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 		</cfif>
+		<!--- Parse keywords and description from XMP --->
+		<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
 		<!--- Parse the Metadata from the image --->
 		<cfinvoke component="xmp" method="xmpparse" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.thexmp" />
 		<!--- resize original to thumb --->
@@ -1814,8 +1818,6 @@ This is the main function called directly by a single upload else from addassets
 				<cftry>
 					<!--- Set Variable --->
 					<cfset arguments.thestruct.assetpath = arguments.thestruct.qrysettings.set2_path_to_assets>
-					<!--- Invoke XMP Methods --->
-					<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
 					<!--- Store XMP values in DB --->
 					<cfquery datasource="#arguments.thestruct.dsn#">
 					INSERT INTO #session.hostdbprefix#xmp
@@ -2628,41 +2630,35 @@ This is the main function called directly by a single upload else from addassets
 		<cfset folderlevel = folders.folder_level>
 		<cfset loopname = "">
 		<!--- Loop over the zip directories and rename them if needed --->
-		<!---
-<cfset var ttf = Replace( Createuuid(), "-", "", "ALL" )>
+		<cfset var ttf = Replace( Createuuid(), "-", "", "ALL" )>
 		<cfthread name="#ttf#" intstruct="#arguments.thestruct#">
---->
 			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thestruct.qryfile.path#" />
-			
-		<!---
-</cfthread>
+		</cfthread>
 		<cfthread action="join" name="#ttf#" />
---->
-<!--- 		<cfabort> --->
 		<!--- Get directory again since the directory names could have changed from above --->
-		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedir" recurse="true" sort="directory,type">
+		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedir" recurse="true" sort="name" type="dir">
 		<!--- Get folders within the unzip RECURSIVE --->
-		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedirrecurse" recurse="true" sort="type">
+		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedirfiles" recurse="true" sort="name" type="file">
 		<!--- Create Directories --->
 		<cfset arguments.thestruct.theid = folderId>
 		<cfset arguments.thestruct.folderlevel = folderlevel>
 		<cfset arguments.thestruct.rid = rootfolderId>
 		<cfloop query="thedir">
-			<cfif type EQ "dir" AND NOT directory CONTAINS ".svn" AND name NEQ ".svn" AND thedir.attributes NEQ "H" AND NOT directory CONTAINS "__MACOSX" AND name NEQ "__MACOSX">
-				<cfset arguments.thestruct.foldername = name>
+			<cfif thedir.attributes NEQ "H" AND NOT directory CONTAINS ".svn" AND NOT directory CONTAINS "__MACOSX">
+				<cfset arguments.thestruct.foldername = listlast(name,FileSeparator())>
+				<cfset arguments.thestruct.thepathtofolder = replacenocase(name,arguments.thestruct.foldername,"","one")>
+				<cfif arguments.thestruct.thepathtofolder NEQ arguments.thestruct.foldername>
+					<cfset f = arguments.thestruct.thepathtofolder & "/" & arguments.thestruct.foldername>
+				<cfelse>
+					<cfset f = arguments.thestruct.foldername>
+				</cfif>
 				<!--- Check to see if there are other folders in here --->
-				<cfdirectory action="list" directory="#directory#" name="thedirsub" recurse="false" sort="directory">
-				<!--- QoQ to only select directories --->
-				<cfquery dbtype="query" name="thedirsub">
-				SELECT *
-				FROM thedirsub
-				WHERE type = 'Dir'
-				</cfquery>
+				<cfdirectory action="list" directory="#directory#/#f#" name="thedirsub" recurse="false" type="dir" sort="name">
 				<!--- Get the folder id of the last directory --->
 				<cfquery datasource="#variables.dsn#" name="lastfolderid">
 				SELECT folder_id
 				FROM #session.hostdbprefix#folders
-				WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast(thedirsub.directory,"/\"))#">
+				WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast(arguments.thestruct.thepathtofolder,FileSeparator()))#">
 				AND folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.rid#"> 
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -2684,14 +2680,15 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfloop>
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
-		<cfloop query="thedirrecurse">
-			<cfif type EQ "file" AND size NEQ 0 AND fileexists("#directory#/#name#") AND NOT directory CONTAINS "__MACOSX" AND attributes NEQ "H" AND name NEQ "thumbs.db">
+		<cfloop query="thedirfiles">
+			<cfif size NEQ 0 AND fileexists("#directory#/#name#") AND attributes NEQ "H" AND NOT name CONTAINS "thumbs.db">
 				<cfset md5hash = "">
 				<!--- Set Original FileName --->
-				<cfset arguments.thestruct.theoriginalfilename = name>
+				<cfset arguments.thestruct.theoriginalfilename = listlast(name,FileSeparator())>
+				<cfset arguments.thestruct.thepathtoname = replacenocase(name,arguments.thestruct.theoriginalfilename,"","one")>
 				<!--- Rename the file so that we can remove any spaces --->
-				<cfinvoke component="global" method="convertname" returnvariable="newFileName" thename="#name#">
-				<cffile action="rename" source="#directory#/#name#" destination="#directory#/#newFileName#">
+				<cfinvoke component="global" method="convertname" returnvariable="newFileName" thename="#arguments.thestruct.theoriginalfilename#">
+				<cffile action="rename" source="#directory#/#name#" destination="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#">
 				<!--- Detect file extension --->
 				<cfinvoke method="getFileExtension" theFileName="#newFileName#" returnvariable="fileNameExt">
 				<cfset file = structnew()>
@@ -2707,30 +2704,22 @@ This is the main function called directly by a single upload else from addassets
 				<!--- set attributes of file structure --->
 				<cfif #fileType.recordCount# GT 0>
 					<cfset arguments.thestruct.thefiletype = fileType.type_type>
-					<!---
-<cfset arguments.thestruct.contentType = fileType.type_mimecontent>
-					<cfset arguments.thestruct.contentSubType = fileType.type_mimesubcontent>
---->
 				<cfelse>
 					<cfset arguments.thestruct.thefiletype = "other">
-					<!---
-<cfset arguments.thestruct.contentType = "">
-					<cfset arguments.thestruct.contentSubType = "">
---->
 				</cfif>
 				<cfset arguments.thestruct.tempid = createuuid("")>
 				<cfset arguments.thestruct.thefilename = newFileName>
 				<cfset arguments.thestruct.thefilenamenoext = replacenocase("#newFileName#", ".#fileNameExt.theext#", "", "ALL")>
-				<cfset arguments.thestruct.theincomingtemppath = directory>
+				<cfset arguments.thestruct.theincomingtemppath = "#directory#/#arguments.thestruct.thepathtoname#">
 				<!--- MD5 Hash --->
-				<cfif FileExists("#directory#/#newfilename#")>
-					<cfset md5hash = hashbinary("#directory#/#newfilename#")>
+				<cfif FileExists("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
+					<cfset md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
 				</cfif>
 				<!--- Get folder id with the name of the folder --->
 				<cfquery datasource="#variables.dsn#" name="qryfolderid">
 				SELECT folder_id, folder_name
 				FROM #session.hostdbprefix#folders
-				WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast(directory,"/\"))#">
+				WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast("#directory#/#arguments.thestruct.thepathtoname#","/\"))#">
 				AND folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#"> 
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -2807,7 +2796,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfelse>
 					<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
 					<cfinvoke method="processDocFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
-				</cfif>	
+				</cfif>
 				<!--- Clear the path for the loop
 				<cfset arguments.thestruct.qryfile.path = replacenocase("#arguments.thestruct.qryfile.path#", "#zipFileList.directory#", "", "ALL")> --->
 			</cfif>
@@ -2828,30 +2817,13 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Get folders within the unzip --->
 	<cfdirectory action="list" directory="#arguments.thedirectory#" name="thedir" recurse="true" type="dir">
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
-	<cfset consoleoutput(true)>
 	<cfloop query="thedir">
-		<cfset console(name)>
-		<cfset d = name>
-		<!--- All foreign chars are now converted, except the / --->
-		<cfset d = Rereplacenocase(d,"[^[:word:]^/]","_","ALL")>
-		<!--- Danish Chars --->
-		<cfset d = Rereplacenocase(d,"([å]+)","aa","ALL")>
-		<cfset d = Rereplacenocase(d,"([æ]+)","ae","ALL")>
-		<cfset d = Rereplacenocase(d,"([ø]+)","o","ALL")>
-		<!--- German Chars --->
-		<cfset d = Rereplacenocase(d,"([ü]+)","ue","ALL")>
-		<cfset d = Rereplacenocase(d,"([ä]+)","ae","ALL")>
-		<cfset d = Rereplacenocase(d,"([ö]+)","oe","ALL")>
-		<!--- French Chars --->
-		<cfset d = Rereplacenocase(d,"([è]+)","e","ALL")>
-		<cfset d = Rereplacenocase(d,"([à]+)","a","ALL")>
-		<cfset d = Rereplacenocase(d,"([é]+)","e","ALL")>
-		<cfset console("#directory#/#d#")>
-		<!--- <cfset console(thedirnospaces)> --->
+		<!--- All foreign chars are now converted, except the FileSeparator and - --->
+		<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","","ALL")>
+		<!--- Rename --->
 		<cfif "#directory#/#name#" NEQ "#directory#/#d#">
 			<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
 		</cfif>
-		<!--- <cfabort> --->
 	</cfloop>
 	<cfreturn />
 </cffunction>
@@ -3868,12 +3840,12 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Loop over the assets --->
 	<cfloop query="thefiles">
 		<!--- Feedback --->
-		<cfoutput>Adding: #name#<br></cfoutput>
+		<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 		<cfflush>
 		<!--- Params --->
 		<cfset arguments.thestruct.filepath = directory & "/" & name>
 		<cfset arguments.thestruct.thedir = directory>
-		<cfset arguments.thestruct.filename = name>
+		<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 		<cfset arguments.thestruct.orgsize = size>
 		<!--- Now add the asset --->
 		<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
@@ -3914,7 +3886,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The loop --->
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
-		<cfset arguments.thestruct.folder_name = name>
+		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
@@ -3946,12 +3918,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
 			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
@@ -4001,7 +3973,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The loop --->
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
-		<cfset arguments.thestruct.folder_name = name>
+		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
@@ -4033,12 +4005,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
 			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
@@ -4088,7 +4060,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The loop --->
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
-		<cfset arguments.thestruct.folder_name = name>
+		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
@@ -4120,12 +4092,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
 			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
@@ -4175,7 +4147,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The loop --->
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
-		<cfset arguments.thestruct.folder_name = name>
+		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
@@ -4207,12 +4179,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
 			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
@@ -4262,7 +4234,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The loop --->
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
-		<cfset arguments.thestruct.folder_name = name>
+		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
@@ -4294,12 +4266,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
 			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
@@ -4349,7 +4321,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The loop --->
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
-		<cfset arguments.thestruct.folder_name = name>
+		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
@@ -4381,12 +4353,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
 			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
@@ -4436,7 +4408,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The loop --->
 	<cfloop query="arguments.thestruct.thesubdirs">
 		<!--- Read the name of the root folder --->
-		<cfset arguments.thestruct.folder_name = name>
+		<cfset arguments.thestruct.folder_name = listlast(name,FileSeparator())>
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
@@ -4468,12 +4440,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #name#<br></cfoutput>
+			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
 			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = name>
+			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
 			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />

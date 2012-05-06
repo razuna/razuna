@@ -401,23 +401,23 @@
 	<!--- Start receiving server folder input --->
 	<cfdirectory action="list" directory="#arguments.thepath#" name="thedirs" sort="name ASC" type="dir" recurse="false">
 	<cfoutput query="thedirs">
-		<cfif (#thedirs.type# EQ "Dir") AND (#thedirs.name# IS NOT "outgoing") AND (#thedirs.name# IS NOT "controller") AND (#thedirs.name# IS NOT "js") AND (#thedirs.name# IS NOT "images") AND (#thedirs.name# IS NOT "model") AND (#thedirs.name# IS NOT "cvs") AND (#thedirs.name# IS NOT ".svn") AND (#thedirs.name# IS NOT "parsed") AND (#thedirs.name# IS NOT "translations") AND (#thedirs.name# IS NOT "views") AND (#thedirs.name# IS NOT "global") AND (#thedirs.name# IS NOT "bluedragon") AND (#thedirs.name# IS NOT "WEB-INF")>
-			<cfif #count# GT 1>
-				<cfset foldername = insert(RepeatString("--", count-1) & " ", thedirs.name, 0)>
+		<cfif type EQ "Dir" AND NOT name CONTAINS "outgoing" AND NOT name CONTAINS "controller" AND NOT name CONTAINS "js" AND NOT name CONTAINS "images" AND NOT name CONTAINS "model" AND NOT name CONTAINS "cvs" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "parsed" AND NOT name CONTAINS "translations" AND NOT name CONTAINS "views" AND NOT name CONTAINS "global" AND NOT name CONTAINS "bluedragon" AND NOT name CONTAINS "WEB-INF" AND NOT name CONTAINS ".git" AND NOT name CONTAINS "incoming" AND NOT name CONTAINS "backup">
+			<cfif count GT 1>
+				<cfset foldername = insert(RepeatString("--", count-1) & " ", name, 0)>
 			<cfelse>
-				<cfset foldername = "<b>#thedirs.name#</b>">
+				<cfset foldername = "<b>#name#</b>">
 			</cfif>
-			<cfif #arguments.thedirstring# EQ "">
-				<cfset thisdir = "#thedirs.name#">
+			<cfif arguments.thedirstring EQ "">
+				<cfset thisdir = "#name#">
 			<cfelse>
-				<cfset thisdir = "#arguments.thedirstring#/#thedirs.name#">
+				<cfset thisdir = "#arguments.thedirstring#/#name#">
 			</cfif>
 			<cfset QueryAddRow(Arguments.qReturn,1)>
-			<cfset QuerySetCell(Arguments.qReturn, "path", "#arguments.thepath#/#thedirs.name#")>
+			<cfset QuerySetCell(Arguments.qReturn, "path", "#arguments.thepath#/#name#")>
 			<cfset QuerySetCell(Arguments.qReturn, "name", "#foldername#")>
 			<!--- call me again to guarantee recursive loop --->
 			<cfinvoke method="listServerFolder" returnvariable="Arguments.qReturn">
-				<cfinvokeargument name="thepath" value="#arguments.thepath#/#thedirs.name#">
+				<cfinvokeargument name="thepath" value="#arguments.thepath#/#name#">
 				<cfinvokeargument name="thecount" value="#count#">
 				<cfinvokeargument name="thedirstring" value="#thisdir#">
 				<cfinvokeargument name="qReturn" value="#Arguments.qReturn#">

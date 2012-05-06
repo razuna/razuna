@@ -38,7 +38,7 @@
 	<cfloop query="qry_filefolders">
 		<!--- Bad code habit. Move this into recursive or better function some day --->
 		<cfdirectory action="list" directory="#thispath#/#name#" name="thedirs" sort="name ASC">
-		<cfquery name="subf" dbtype="query">SELECT * FROM thedirs WHERE type = 'Dir' AND name NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" list="true" value=".svn,.DS_Store,bluedragon,global,incoming,web-inf">)</cfquery>
+		<cfquery name="subf" dbtype="query">SELECT * FROM thedirs WHERE type = 'Dir' AND attributes != 'H' AND name NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" list="true" value=".svn,.DS_Store,bluedragon,global,incoming,web-inf,.git,backup">)</cfquery>
 		<tr>
 			<td width="1%" nowrap="true" class="td2"><cfif subf.recordcount NEQ 0><a href="##" onclick="loadcontent('browse','#myself##xfa.serverfolders#&folder_id=#attributes.folder_id#&folderpath=#urlencodedformat(directory)#/#urlencodedformat(name)#');return false;"><img src="#dynpath#/global/host/dam/images/folder_open.png" width="16" height="16" border="0"></a><cfelse><img src="#dynpath#/global/host/dam/images/folder.png" width="16" height="16" border="0"></cfif></td>
 			<td width="100%" class="td2" style="padding-left:0px;"><a href="##" onclick="loadcontent('serverfoldercontent','#myself##xfa.servercontent#&folder_id=#attributes.folder_id#&folderpath=#urlencodedformat(directory)#/#urlencodedformat(name)#');return false;">#name#</a></td>
