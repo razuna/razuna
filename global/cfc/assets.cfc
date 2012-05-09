@@ -2632,7 +2632,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the zip directories and rename them if needed --->
 		<cfset var ttf = Replace( Createuuid(), "-", "", "ALL" )>
 		<cfthread name="#ttf#" intstruct="#arguments.thestruct#">
-			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thestruct.qryfile.path#" />
+			<cfinvoke method="rec_renamefolders" thedirectory="#attributes.intstruct.qryfile.path#" />
 		</cfthread>
 		<cfthread action="join" name="#ttf#" />
 		<!--- Get directory again since the directory names could have changed from above --->
