@@ -1395,7 +1395,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfthread name="#upd#" intupstruct="#attributes.intstruct#">
 								<cfinvoke component="amazon" method="Upload">
 									<cfinvokeargument name="key" value="/#attributes.intupstruct.qryfile.folder_id#/doc/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#">
-									<cfinvokeargument name="theasset" value="#attributes.intupstruct.qryfile.path#/#attributes.intupstruct.qryfile.filename#">
+									<cfinvokeargument name="theasset" value="#attributes.intupstruct.qryfile.path#">
 									<cfinvokeargument name="awsbucket" value="#attributes.intupstruct.awsbucket#">
 								</cfinvoke>
 							</cfthread>
