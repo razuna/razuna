@@ -1181,29 +1181,25 @@
 					<!--- IMAGEMAGICK: copy over the existing still image and resize --->
 					<cfexecute name="#theimexe#" arguments="#inputpathimage# -resize #thewidth#x#theheight# #thispreviewimage#" timeout="5" />
 					<!--- Copy the video image --->
-					<!--- <cfthread name="uploadconvertc#arguments.thestruct.file_id##theformat#" intstruct="#arguments.thestruct#"> --->
+					<cfthread name="uploadconvertc#arguments.thestruct.file_id##theformat#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thispreviewimage#">
-							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/vid/#attributes.intstruct.newid#">
+							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thispreviewimage#">
+							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 						</cfinvoke>
-					<!---
-</cfthread>
+					</cfthread>
 					<!--- Wait for this thread to finish --->
 					<cfthread action="join" name="uploadconvertc#arguments.thestruct.file_id##theformat#" />
---->
 					<!--- Upload: Video --->
-					<!--- <cfthread name="uploadconvertu#arguments.thestruct.file_id##theformat#" intstruct="#arguments.thestruct#"> --->
+					<cfthread name="uploadconvertu#arguments.thestruct.file_id##theformat#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thisfolder#/#arguments.thestruct.previewvideo#">
-							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/vid/#attributes.intstruct.newid#">
+							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.previewvideo#">
+							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 						</cfinvoke>
-					<!---
-</cfthread>
+					</cfthread>
 					<!--- Wait for this thread to finish --->
 					<cfthread action="join" name="uploadconvertu#arguments.thestruct.file_id##theformat#" />
---->
 					<!--- Get signed URLS --->
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewimage#" nvxsession="#arguments.thestruct.nvxsession#">
 					<!--- Get signed URLS --->

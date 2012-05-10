@@ -1334,11 +1334,16 @@ This is the main function called directly by a single upload else from addassets
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.newid#" category="doc">
 						<!--- NIRVANIX --->
 						<cfelseif attributes.intstruct.storage EQ "nirvanix" AND attributes.intstruct.qryfile.link_kind NEQ "url">
-							<cfinvoke component="nirvanix" method="Upload">
-								<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#">
-								<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
-								<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-							</cfinvoke>
+							<cfset var ttu = createuuid("")>
+							<cfthread name="#ttu#" upstruct="#attributes.intstruct#">
+								<cfinvoke component="nirvanix" method="Upload">
+									<cfinvokeargument name="destFolderPath" value="/#attributes.upstruct.qryfile.folder_id#/doc/#attributes.upstruct.newid#">
+									<cfinvokeargument name="uploadfile" value="#attributes.upstruct.qryfile.path#/#attributes.upstruct.qryfile.filename#">
+									<cfinvokeargument name="nvxsession" value="#attributes.upstruct.nvxsession#">
+								</cfinvoke>
+							</cfthread>
+							<!--- Wait for thread to finish --->
+							<cfthread action="join" name="#ttu#" />	
 							<!--- If we are PDF we need to upload the thumbnail and image as well --->
 							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
 								<cfinvoke component="nirvanix" method="Upload">
@@ -1933,11 +1938,15 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Upload Thumbnail --->
 				<cfif !application.razuna.rfs>
 					<cftry>
-						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.destination#">
-							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-						</cfinvoke>
+						<cfthread name="upload#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+							<cfinvoke component="nirvanix" method="Upload">
+								<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
+								<cfinvokeargument name="uploadfile" value="#attributes.intstruct.destination#">
+								<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+							</cfinvoke>
+						</cfthread>
+						<!--- Wait for thread to finish --->
+						<cfthread action="join" name="upload#arguments.thestruct.newid#" />
 						<cfcatch type="any">
 							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
 						</cfcatch>
@@ -2383,34 +2392,30 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Upload Movie Image --->
 				<cfif !application.razuna.rfs>
 					<cfset upmi = Replace( Createuuid(), "-", "", "ALL" )>
-					<!--- <cfthread name="#upmi#" intstruct="#arguments.thestruct#"> --->
+					<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#">
-							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#">
-							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#">
+							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thisvid.theorgimage#">
+							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 						</cfinvoke>
-					<!---
-</cfthread>
+					</cfthread>
+					<!--- Wait --->
 					<cfthread action="join" name="#upmi#" />
---->
 					<!--- Get signed URL --->
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.thisvid.theorgimage#" nvxsession="#arguments.thestruct.nvxsession#">
 				</cfif>
 				<!--- Upload Movie --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-					<!---
-<cfset upmt = Replace( Createuuid(), "-", "", "ALL" )>
+					<cfset upmt = Createuuid("")>
 					<cfthread name="#upmt#" intstruct="#arguments.thestruct#">
---->
 						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#">
-							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
-							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#">
+							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
+							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 						</cfinvoke>
-					<!---
-</cfthread>
+					</cfthread>
+					<!--- Wait --->
 					<cfthread action="join" name="#upmt#" />
---->
 				</cfif>
 				<!--- Get signed URLS for movie --->
 				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
@@ -3122,31 +3127,44 @@ This is the main function called directly by a single upload else from addassets
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.audstruct.dsn#" thestruct="#attributes.audstruct#" assetid="#attributes.audstruct.newid#" category="aud">
 						<!--- NIRVANIX --->
 						<cfelseif attributes.audstruct.storage EQ "nirvanix">
+							<!--- Unique --->
+							<cfset upa = Createuuid("")>
+							<cfset upaw = "w" & upa>
+							<cfset upam = "m" & upa>
 							<!--- Add to Lucene --->
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.audstruct.dsn#" thestruct="#attributes.audstruct#" assetid="#attributes.audstruct.newid#" category="aud">
 							<!--- Upload file --->
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
-								<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.theorgfile#">
-									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-								</cfinvoke>
+								<cfthread name="#upa#" audupstruct="#attributes.audstruct#">
+									<cfinvoke component="nirvanix" method="Upload">
+										<cfinvokeargument name="destFolderPath" value="/#attributes.audupstruct.qryfile.folder_id#/aud/#attributes.audupstruct.newid#">
+										<cfinvokeargument name="uploadfile" value="#attributes.audupstruct.theorgfile#">
+										<cfinvokeargument name="nvxsession" value="#attributes.audupstruct.nvxsession#">
+									</cfinvoke>
+								</cfthread>
+								<cfthread action="join" name="#upa#" />
 							</cfif>
 							<!--- Upload the WAV --->
 							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
-								<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.wav">
-									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-								</cfinvoke>
+								<cfthread name="#upaw#" audupstruct="#attributes.audstruct#">
+									<cfinvoke component="nirvanix" method="Upload">
+										<cfinvokeargument name="destFolderPath" value="/#attributes.audupstruct.qryfile.folder_id#/aud/#attributes.audupstruct.newid#">
+										<cfinvokeargument name="uploadfile" value="#attributes.audupstruct.thetempdirectory#/#attributes.audupstruct.qryfile.filenamenoext#.wav">
+										<cfinvokeargument name="nvxsession" value="#attributes.audupstruct.nvxsession#">
+									</cfinvoke>
+								</cfthread>
+								<cfthread action="join" name="#upaw#" />
 							</cfif>
 							<!--- Move the MP3 but only if local asset link --->
 							<cfif attributes.audstruct.qryfile.link_kind EQ "lan">
-								<cfinvoke component="nirvanix" method="Upload">
-									<cfinvokeargument name="destFolderPath" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
-									<cfinvokeargument name="nvxsession" value="#attributes.audstruct.nvxsession#">
-								</cfinvoke>
+								<cfthread name="#upam#" audupstruct="#attributes.audstruct#">
+									<cfinvoke component="nirvanix" method="Upload">
+										<cfinvokeargument name="destFolderPath" value="/#attributes.audupstruct.qryfile.folder_id#/aud/#attributes.audupstruct.newid#">
+										<cfinvokeargument name="uploadfile" value="#attributes.audupstruct.thetempdirectory#/#attributes.audupstruct.qryfile.filenamenoext#.mp3">
+										<cfinvokeargument name="nvxsession" value="#attributes.audupstruct.nvxsession#">
+									</cfinvoke>
+								</cfthread>
+								<cfthread action="join" name="#upam#" />
 							</cfif>
 							<!--- Get signed URLS --->
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
@@ -3171,11 +3189,14 @@ This is the main function called directly by a single upload else from addassets
 							</cfquery>
 						<!--- AMAZON --->
 						<cfelseif attributes.audstruct.storage EQ "amazon">
+							<!--- Unique --->
+							<cfset upa = Createuuid("")>
+							<cfset upw = "w" & upa>
+							<cfset upmp = "m" & upa>
 							<!--- Add to Lucene --->
 							<cfinvoke component="lucene" method="index_update" dsn="#attributes.audstruct.dsn#" thestruct="#attributes.audstruct#" assetid="#attributes.audstruct.newid#" category="aud">
 							<!--- Upload file --->
 							<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
-								<cfset upa = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upa#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="amazon" method="Upload">
 										<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filename#">
@@ -3187,7 +3208,6 @@ This is the main function called directly by a single upload else from addassets
 							</cfif>
 							<!--- Upload the WAV --->
 							<cfif attributes.audstruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
-								<cfset upw = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upw#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="amazon" method="Upload">
 										<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.wav">
@@ -3199,7 +3219,6 @@ This is the main function called directly by a single upload else from addassets
 							</cfif>
 							<!--- Move the MP3 but only if local asset link --->
 							<cfif attributes.audstruct.qryfile.link_kind EQ "lan">
-								<cfset upmp = Replace( Createuuid(), "-", "", "ALL" )>
 								<cfthread name="#upmp#" audstruct="#attributes.audstruct#">
 									<cfinvoke component="amazon" method="Upload">
 										<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
@@ -3389,19 +3408,16 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
 			</cfinvoke>
 			<!--- Upload it --->
-			<!---
-<cfset upa = Replace( Createuuid(), "-", "", "ALL" )>
+			<cfset upa = Createuuid("")>
 			<cfthread name="#upa#" intstruct="#arguments.thestruct#">
---->
 				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_existing.path_to_asset#">
-					<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thedest#">
-					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_existing.path_to_asset#">
+					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thedest#">
+					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
-			<!---
-</cfthread>
+			</cfthread>
+			<!--- Wait --->
 			<cfthread action="join" name="#upa#" />
---->
 			<!--- Get signed URLS --->
 			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.newname#" nvxsession="#arguments.thestruct.nvxsession#">
 			<!--- Update DB --->
@@ -3633,11 +3649,15 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
 			</cfinvoke>
 			<!--- Upload Thumbnail --->
-			<cfinvoke component="nirvanix" method="Upload">
-				<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_existing.path_to_asset#">
-				<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thumbpath#">
-				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-			</cfinvoke>
+			<cfthread name="upload#thescript#" intstruct="#arguments.thestruct#">
+				<cfinvoke component="nirvanix" method="Upload">
+					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_existing.path_to_asset#">
+					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thumbpath#">
+					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+				</cfinvoke>
+			</cfthread>
+			<!--- Wait for thread to finish --->
+			<cfthread action="join" name="upload#thescript#" />
 			<!--- Get signed URLS --->
 			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" nvxsession="#arguments.thestruct.nvxsession#">
 			<!--- Update DB --->
@@ -3742,20 +3762,16 @@ This is the main function called directly by a single upload else from addassets
 	<!--- NIRVANIX --->
 	<cfelseif application.razuna.storage EQ "nirvanix">
 		<!--- Upload Original --->
-		<!---
-<cfset upt = Replace( Createuuid(), "-", "", "ALL" )>
+		<cfset upt = Createuuid("")>
 		<cfthread name="#upt#" intstruct="#arguments.thestruct#">
---->
 			<cfinvoke component="nirvanix" method="Upload">
-				<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#">
-				<cfinvokeargument name="uploadfile" value="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
-				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+				<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#arguments.thestruct.newid#">
+				<cfinvokeargument name="uploadfile" value="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#">
+				<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 			</cfinvoke>
-		<!---
-</cfthread>
+		</cfthread>
 		<!--- Wait for thread to finish --->
 		<cfthread action="join" name="#upt#" />
---->
 		<!--- Get signed URLS for original --->
 		<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloudurl" theasset="#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" nvxsession="#arguments.thestruct.nvxsession#">
 		<!--- Set the URL --->

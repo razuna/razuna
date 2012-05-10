@@ -825,24 +825,22 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
-			<!--- <cfthread name="upload#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#"> --->
+			<cfthread name="upload#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
 				<!--- Upload Original Image --->
 				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#">
-					<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thisfolder#/#arguments.thestruct.thenamenoext#.#arguments.thestruct.theformat#">
-					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#">
+					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.thenamenoext#.#attributes.intstruct.theformat#">
+					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
 				<!--- Upload Thumbnail --->
 				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#">
-					<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
-					<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#">
+					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
+					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
-			<!---
-</cfthread>
+			</cfthread>
 			<!--- Wait for thread to finish --->
 			<cfthread action="join" name="upload#theformat##arguments.thestruct.newid#" />
---->
 			<!--- Get signed URLS --->
 			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/#arguments.thestruct.thenamenoext#.#arguments.thestruct.theformat#" nvxsession="#arguments.thestruct.nvxsession#">
 			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
