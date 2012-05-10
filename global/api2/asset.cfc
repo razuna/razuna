@@ -465,6 +465,19 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
 					WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				</cfif>
+				UNION ALL
+				SELECT 
+				av_id id, 
+				0 AS width, 
+				0 AS height, 
+				"" AS path_to_asset, 
+				"" AS cloud_url_org,
+				av_link_title AS filename_org,
+				av_type AS extension,
+				0 AS size,
+				av_link_url AS local_url_org
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
+				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
