@@ -88,14 +88,14 @@
 	<!--- Add labels --->
 	<cffunction name="label_add_all" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
-		<!--- Remove all labels for this record --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM ct_labels
-		WHERE ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
-		AND ct_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />
-		</cfquery>
-		<!--- Loop over fields --->
-		<cfif arguments.thestruct.labels NEQ "null">
+		<cfif structkeyexists(arguments.thestruct,"labels") AND arguments.thestruct.labels NEQ "null">
+			<!--- Remove all labels for this record --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_labels
+			WHERE ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
+			AND ct_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />
+			</cfquery>
+			<!--- Loop over fields --->		
 			<cfloop list="#arguments.thestruct.labels#" delimiters="," index="i">
 				<!--- Select from labels to get id --->
 				<!---
@@ -124,14 +124,14 @@
 				)
 				</cfquery>
 			</cfloop>
-		</cfif>
-		<!--- Flush --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
-		<!--- Lucene: Delete Records --->
-		<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
-		<!--- Lucene: Update Records --->
-		<cfif arguments.thestruct.thetype EQ "img" OR arguments.thestruct.thetype EQ "vid" OR arguments.thestruct.thetype EQ "aud" OR arguments.thestruct.thetype EQ "doc">
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" category="#arguments.thestruct.thetype#" notfile="T">
+			<!--- Flush --->
+			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+			<!--- Lucene: Delete Records --->
+			<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
+			<!--- Lucene: Update Records --->
+			<cfif arguments.thestruct.thetype EQ "img" OR arguments.thestruct.thetype EQ "vid" OR arguments.thestruct.thetype EQ "aud" OR arguments.thestruct.thetype EQ "doc">
+				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" category="#arguments.thestruct.thetype#" notfile="T">
+			</cfif>
 		</cfif>
 		<!--- Return --->
 		<cfreturn />
