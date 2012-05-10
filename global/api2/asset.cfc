@@ -471,7 +471,7 @@
 				0 AS width, 
 				0 AS height, 
 				"" AS path_to_asset, 
-				"" AS cloud_url_org,
+				av_link_url AS cloud_url_org,
 				av_link_title AS filename_org,
 				av_type AS extension,
 				0 AS size,
