@@ -161,28 +161,32 @@
 			<!--- Get session --->
 			<cfset var nvxsession = login()>
 			<!--- Get Storage Node Stuff --->
-			<cfset arguments.storagenode = getstoragenode(nvxsession)>
+			<cfset var storagenode = getstoragenode(nvxsession)>
 			<!--- Upload Asset --->
-			<cfthread name="#tt#" intstruct="#arguments#">
-				<cftry>
-					<cfhttp url="#attributes.intstruct.storagenode.uploadhost#/Upload.ashx?" method="post" throwonerror="yes" timeout="900">
-						<cfhttpparam name="uploadtoken" value="#attributes.intstruct.storagenode.uploadtoken#" type="url">
-						<cfhttpparam name="destFolderPath" value="#attributes.intstruct.destFolderPath#" type="url">
-						<cfhttpparam name="uploadFile" file="#attributes.intstruct.uploadfile#" type="file">
-					</cfhttp>
-					<cfcatch type="any">
-						<cfif cfcatch.message CONTAINS "bandwidth limit">
-							<cfinvoke component="email" method="send_email" subject="Razuna: Bandwidth exceeded" themessage="The file you are trying to upload exceeds the bandwidth limit for your plan. If you want to continue using Razuna you either have to wait until the end of your subsription period or simply upgrade to the PRO plan for only $1.80 per GB/month.">
-						<cfelse>
-							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
-								<cfdump var="#cfcatch#" />
-							</cfmail>
-						</cfif>
-						<cfabort>
-					</cfcatch>
-				</cftry>
+			<!---
+<cfthread name="#tt#" intstruct="#arguments#">
+--->
+			<cftry>
+				<cfhttp url="#storagenode.uploadhost#/Upload.ashx?" method="post" throwonerror="yes" timeout="900">
+					<cfhttpparam name="uploadtoken" value="#storagenode.uploadtoken#" type="url">
+					<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
+					<cfhttpparam name="uploadFile" file="#arguments.uploadfile#" type="file">
+				</cfhttp>
+				<cfcatch type="any">
+					<cfif cfcatch.message CONTAINS "bandwidth limit">
+						<cfinvoke component="email" method="send_email" subject="Razuna: Bandwidth exceeded" themessage="The file you are trying to upload exceeds the bandwidth limit for your plan. If you want to continue using Razuna you either have to wait until the end of your subscription period or simply upgrade your Razuna plan. You can do so within the Account Settings of Razuna!">
+					<cfelse>
+						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
+							<cfdump var="#cfcatch#" />
+						</cfmail>
+					</cfif>
+					<cfabort>
+				</cfcatch>
+			</cftry>
+<!---
 			</cfthread>
 			<cfthread action="join" name="#tt#" />
+--->
 		</cfif>
 		<cfreturn />
 	</cffunction>

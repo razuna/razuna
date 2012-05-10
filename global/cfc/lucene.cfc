@@ -64,7 +64,7 @@
 			<cfif arguments.category EQ "doc">
 				<!--- Query Record --->
 				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucdoc#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_files">
-			    SELECT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, f.link_kind,
+			    SELECT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, f.link_kind, f.lucene_key,
 			    ct.file_desc description, ct.file_keywords keywords, 
 			    f.file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext,
 			    x.author, x.rights, x.authorsposition, x.captionwriter, x.webstatement, x.rightsmarked,
@@ -127,7 +127,7 @@
 			<cfelseif arguments.category EQ "img">
 				<!--- Query Record --->
 				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucimg#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_images">
-			    SELECT f.img_id id, f.folder_id_r folder, f.img_filename filename, f.img_filename_org filenameorg, f.link_kind,
+			    SELECT f.img_id id, f.folder_id_r folder, f.img_filename filename, f.img_filename_org filenameorg, f.link_kind, f.lucene_key,
 			    ct.img_description description, ct.img_keywords keywords, 
 				f.img_extension theext, img_meta as rawmetadata, '#arguments.category#' as thecategory,
 				x.subjectcode, x.creator, x.title, x.authorsposition, x.captionwriter, x.ciadrextadr, x.category,
@@ -222,7 +222,7 @@
 			<cfelseif arguments.category EQ "vid">
 				<!--- Query Record --->
 				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucvid#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_videos">
-			    SELECT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, f.link_kind,
+			    SELECT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, f.link_kind, f.lucene_key,
 			    ct.vid_description description, ct.vid_keywords keywords, 
 				vid_meta as rawmetadata, '#arguments.category#' as thecategory,
 				f.vid_extension theext,
@@ -253,7 +253,7 @@
 			<cfelseif arguments.category EQ "aud">
 				<!--- Query Record --->
 				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucaud#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_audios">
-			    SELECT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, a.link_kind,
+			    SELECT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, a.link_kind, a.lucene_key,
 			    aut.aud_description description, aut.aud_keywords keywords, 
 				a.aud_meta as rawmetadata, '#arguments.category#' as thecategory,
 				a.aud_extension theext,
@@ -315,7 +315,7 @@
 					<!--- Nirvanix or Amazon --->
 					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon")>
 						<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					<!--- Local Storage --->
 					<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 						<!--- Index: Update file --->

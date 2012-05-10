@@ -1041,7 +1041,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.iswindows = iswindows()>
 			<!--- thread --->
 			<cfthread name="upload#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
-				<cftry>
+				<!--- <cftry> --->
 					<!--- Params --->
 					<cfset cloud_url_org.theurl = "">
 					<cfset cloud_url.theurl = "">
@@ -1145,6 +1145,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfif NOT fileexists("#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#")>
 								<cffile action="copy" source="#attributes.intstruct.rootpath#global/host/dam/images/icons/icon_pdf.png" destination="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="775">
 							</cfif>
+							<cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
 						<!--- We are normal files --->
 						<cfelse>
 							<!--- Check the platform and then decide on the ImageMagick tag --->
@@ -1157,6 +1158,7 @@ This is the main function called directly by a single upload else from addassets
 								<cfelse>
 									<cfset attributes.intstruct.theorgfileraw = "#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
 								</cfif>
+								<cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
 							<cfelse>
 								<cfset attributes.intstruct.theexif = "#attributes.intstruct.thetools.exiftool#/exiftool">
 								<!--- Set scripts --->
@@ -1255,10 +1257,11 @@ This is the main function called directly by a single upload else from addassets
 							host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">, 
 							file_meta = <cfqueryparam value="#file_meta#" cfsqltype="cf_sql_varchar">,
 							path_to_asset =  <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#/doc/#attributes.intstruct.newid#" cfsqltype="cf_sql_varchar">,
-							hashtag =  <cfqueryparam value="#attributes.intstruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
+							hashtag =  <cfqueryparam value="#attributes.intstruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">,
+							is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">
 							<cfif attributes.intstruct.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 								,
-								lucene_key = <cfqueryparam value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+								lucene_key = <cfqueryparam value="#attributes.intstruct.qryfile.path#" cfsqltype="cf_sql_varchar">
 							</cfif>
 							WHERE file_id = <cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 							</cfquery>
@@ -1338,7 +1341,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfthread name="#ttu#" upstruct="#attributes.intstruct#">
 								<cfinvoke component="nirvanix" method="Upload">
 									<cfinvokeargument name="destFolderPath" value="/#attributes.upstruct.qryfile.folder_id#/doc/#attributes.upstruct.newid#">
-									<cfinvokeargument name="uploadfile" value="#attributes.upstruct.qryfile.path#/#attributes.upstruct.qryfile.filename#">
+									<cfinvokeargument name="uploadfile" value="#attributes.upstruct.qryfile.path#">
 									<cfinvokeargument name="nvxsession" value="#attributes.upstruct.nvxsession#">
 								</cfinvoke>
 							</cfthread>
@@ -1474,13 +1477,15 @@ This is the main function called directly by a single upload else from addassets
 						<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
 					</cfif>
 					<!--- Catch --->
-					<cfcatch type="any">
+					<!---
+<cfcatch type="any">
 						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in creating doc">
 							<cfdump var="#cfcatch#" />
 							<cfdump var="#attributes.intstruct#" />
 						</cfmail>
 					</cfcatch>
 				</cftry>
+--->
 			</cfthread>
 			<!--- Join above thread --->
 			<!--- <cfthread action="join" name="upload#arguments.thestruct.newid.id#" /> --->
