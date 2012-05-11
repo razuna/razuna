@@ -405,6 +405,10 @@
 	<fuseaction name="randompass">
   		<include template="dsp_randompass" />
 	</fuseaction>
+	<!-- ADMIN: Customization -->
+	<fuseaction name="admin_customization">
+  		<include template="dsp_admin_customization" />
+	</fuseaction>
 	<!-- ADMIN: Maintenance -->
 	<fuseaction name="admin_maintenance">
   		<include template="dsp_admin_maintenance" />

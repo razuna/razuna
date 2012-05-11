@@ -1854,4 +1854,382 @@
 	<transid name="download_folder_what">
 		<transtext><![CDATA[Please select what you want to download by checking each box below.]]></transtext>
 	</transid>
+	<transid name="header_customization">
+		<transtext><![CDATA[Customization]]></transtext>
+	</transid>
+	<transid name="header_customization_desc">
+		<transtext><![CDATA[This section allow you to customize the look and feel of certain aspects in Razuna. Be aware that your SystemAdministrator might already have a customization configuration set for you. In any case, the settings below will always override the system wide settings!<br /><br />Note: Settings will take effect immediately and should only be used if you know what you are doing!]]></transtext>
+	</transid>
+	<transid name="header_customization_design_desc">
+		<transtext><![CDATA[If you set both of the above parameters to "hide" you will be left with a design of only the middle main section of Razuna. This might come in handy if you simply want to include Razuna in another application via iFrame. <br/>Note: In case, that the upper part is hidden and as there are Administration-Functions and a search field available, we show an Administration (only visible to Administrator) and a Search Panel on the main page, mirroring the same options.]]></transtext>
+	</transid>
+	<transid name="header_customization_design_top_part">
+		<transtext><![CDATA[Hide top part]]></transtext>
+	</transid>
+	<transid name="header_customization_design_top_part_desc">
+		<transtext><![CDATA[Setting this to "hide" will hide the top navigation of Razuna. This means, the complete upper part of Razuna will be hidden for your users.]]></transtext>
+	</transid>
+	<transid name="hide">
+		<transtext><![CDATA[Hide]]></transtext>
+	</transid>
+	<transid name="header_customization_design_bottom_part">
+		<transtext><![CDATA[Hide bottom part (Basket & Favorites)]]></transtext>
+	</transid>
+	<transid name="header_customization_design_bottom_part_desc">
+		<transtext><![CDATA[Setting this to "hide" will hide the complete bottom part of Razuna, that is the basket, favorites and "about Razuna". Please note, that this will also disable the "basket" functionality in the system overall!]]></transtext>
+	</transid>
+	<transid name="header_customization_general">
+		<transtext><![CDATA[General (Main Page)]]></transtext>
+	</transid>
+	<transid name="header_customization_general_desc">
+		<transtext><![CDATA[The below settings apply to the main page of Razuna, e.g. the page your users see when they log in.]]></transtext>
+	</transid>
+	<transid name="header_customization_general_twitter">
+		<transtext><![CDATA[Twitter]]></transtext>
+	</transid>
+	<transid name="header_customization_general_twitter_desc">
+		<transtext><![CDATA[Show/hide the Twitter link on the main page.]]></transtext>
+	</transid>
+	<transid name="header_customization_general_twitter_tab">
+		<transtext><![CDATA[Twitter Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_general_twitter_tab_desc">
+		<transtext><![CDATA[Show/Hide the Razuna Twitter tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_general_fb">
+		<transtext><![CDATA[Facebook]]></transtext>
+	</transid>
+	<transid name="header_customization_general_fb_desc">
+		<transtext><![CDATA[Show/hide the Facebook link on the main page.]]></transtext>
+	</transid>
+	<transid name="header_customization_general_fb_tab">
+		<transtext><![CDATA[Facebook Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_general_fb_tab_desc">
+		<transtext><![CDATA[Show/Hide the Razuna Facebook tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_general_raz_blog">
+		<transtext><![CDATA[Razuna Blog Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_general_raz_blog_desc">
+		<transtext><![CDATA[Show/Hide the Razuna Blog tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_general_raz_support">
+		<transtext><![CDATA[Razuna Support Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_general_raz_support_desc">
+		<transtext><![CDATA[Show/Hide the Razuna Support tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_explorer">
+		<transtext><![CDATA[Explorer (Left side)]]></transtext>
+	</transid>
+	<transid name="header_customization_explorer_desc">
+		<transtext><![CDATA[The below settings apply to the left side of Razuna and will show/hide the collections and labels.<br /><br />Note: If you disable the collection or label tab, then this will also disable collections and labels in the *whole* system!]]></transtext>
+	</transid>
+	<transid name="header_customization_explorer_collections">
+		<transtext><![CDATA[Collections Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_explorer_collections_desc">
+		<transtext><![CDATA[Show/Hide the Collection Explorer tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_explorer_labels">
+		<transtext><![CDATA[Labels Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_explorer_labels_desc">
+		<transtext><![CDATA[Show/Hide the Labels Explorer tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_upload">
+		<transtext><![CDATA[Upload Tabs]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_desc">
+		<transtext><![CDATA[The below settings apply to the upload tool and will show/hide the available upload features.]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_from_server">
+		<transtext><![CDATA["Add from Server" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_from_server_desc">
+		<transtext><![CDATA[Show/Hide the Razuna "Add from Server" tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_from_email">
+		<transtext><![CDATA["Add from eMail" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_from_email_desc">
+		<transtext><![CDATA[Show/Hide the Razuna "Add from eMail" tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_from_ftp">
+		<transtext><![CDATA["Add from FTP" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_from_ftp_desc">
+		<transtext><![CDATA[Show/Hide the Razuna "Add from FTP" tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_from_link">
+		<transtext><![CDATA["Add from Link" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_upload_from_link_desc">
+		<transtext><![CDATA[Show/Hide the Razuna "Add from Link" tab.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview">
+		<transtext><![CDATA[Folder View]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_desc">
+		<transtext><![CDATA[The below "TAB_" parameters apply to all tabs in all folder views, e.g the below "ICON_" parameters apply to the list of icons within all folder views. NOTE: The Tabs: "Folder Properties", "Sharing", and "Widgets" are shown to groups with permissions only. The tab "Content of this folder" is always shown as it contains all assets in this folder and is the entry point of any folder for the users.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_images">
+		<transtext><![CDATA["Images" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_images_desc">
+		<transtext><![CDATA[Show/hide the "Images" tab in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_videos">
+		<transtext><![CDATA["Videos" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_videos_desc">
+		<transtext><![CDATA[Show/hide the "Videos" tab in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_audios">
+		<transtext><![CDATA["Audios" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_audios_desc">
+		<transtext><![CDATA[Show/hide the "Audios" tab in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_other">
+		<transtext><![CDATA["Other Formats" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_other_desc">
+		<transtext><![CDATA[Show/hide the "Other Formats" tab in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_pdf">
+		<transtext><![CDATA["PDF" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_pdf_desc">
+		<transtext><![CDATA[Show/hide the "PDF" tab in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_doc">
+		<transtext><![CDATA["Word Documents" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_doc_desc">
+		<transtext><![CDATA[Show/hide the "Word Documents" tab in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_xls">
+		<transtext><![CDATA["Excel" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_tab_xls_desc">
+		<transtext><![CDATA[Show/hide the "Excel" tab in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_select">
+		<transtext><![CDATA["Select" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_select_desc">
+		<transtext><![CDATA[Show/hide the "Select" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_refresh">
+		<transtext><![CDATA["Refresh" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_refresh_desc">
+		<transtext><![CDATA[Show/hide the "Refresh" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_show_subfolder">
+		<transtext><![CDATA["Show Subfolder" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_show_subfolder_desc">
+		<transtext><![CDATA[Show/hide the "Show Subfolder" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_create_subfolder">
+		<transtext><![CDATA["Create Subfolder" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_create_subfolder_desc">
+		<transtext><![CDATA[Show/hide the "Create Subfolder" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_favorite_folder">
+		<transtext><![CDATA["Favorite Folder" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_favorite_folder_desc">
+		<transtext><![CDATA[Show/hide the "Favorite Folder" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_search">
+		<transtext><![CDATA["Search in Folder" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_search_desc">
+		<transtext><![CDATA[Show/hide the "Search in Folder" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_print">
+		<transtext><![CDATA["Print Assets" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_print_desc">
+		<transtext><![CDATA[Show/hide the "Print Assets" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_rss">
+		<transtext><![CDATA["RSS" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_rss_desc">
+		<transtext><![CDATA[Show/hide the "RSS" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_word">
+		<transtext><![CDATA["Word" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_word_desc">
+		<transtext><![CDATA[Show/hide the "Word" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_metadata_import">
+		<transtext><![CDATA["Metadata Import" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_metadata_import_desc">
+		<transtext><![CDATA[Show/hide the "Metadata Import" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_metadata_export">
+		<transtext><![CDATA["Metadata Export" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_metadata_export_desc">
+		<transtext><![CDATA[Show/hide the "Metadata Export" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_download_folder">
+		<transtext><![CDATA["Download Folder" Icon]]></transtext>
+	</transid>
+	<transid name="header_customization_folderview_icon_download_folder_desc">
+		<transtext><![CDATA[Show/hide the "Download Folder" icon in the folder views.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview">
+		<transtext><![CDATA[Asset View]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_desc">
+		<transtext><![CDATA[The below "TAB_" parameters apply to all tabs in the asset views, e.g the below "BUTTON_" parameters apply to the list of buttons within the asset view.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_description_keywords">
+		<transtext><![CDATA["Description & Keyword" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_description_keywords_desc">
+		<transtext><![CDATA[Show/hide the "Description & Keywords" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_custom_fields">
+		<transtext><![CDATA["Custom Fields" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_custom_fields_desc">
+		<transtext><![CDATA[Show/hide the "Custom Fields" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_convert_files">
+		<transtext><![CDATA["Create Rendition(s)" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_convert_files_desc">
+		<transtext><![CDATA[Show/hide the "Create Rendition(s)" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_comments">
+		<transtext><![CDATA["Comments" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_comments_desc">
+		<transtext><![CDATA[Show/hide the "Comments" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_metadata">
+		<transtext><![CDATA["Metadata" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_metadata_desc">
+		<transtext><![CDATA[Show/hide the "Metadata" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_xmp_description">
+		<transtext><![CDATA["XMP Description" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_xmp_description_desc">
+		<transtext><![CDATA[Show/hide the "XMP Description" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_iptc_contact">
+		<transtext><![CDATA["IPTC Contact" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_iptc_contact_desc">
+		<transtext><![CDATA[Show/hide the "IPTC Contact" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_iptc_image">
+		<transtext><![CDATA["IPTC Image" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_iptc_image_desc">
+		<transtext><![CDATA[Show/hide the "IPTC Image" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_iptc_content">
+		<transtext><![CDATA["IPTC Content" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_iptc_content_desc">
+		<transtext><![CDATA[Show/hide the "IPTC Content" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_iptc_status">
+		<transtext><![CDATA["IPTC Status" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_iptc_status_desc">
+		<transtext><![CDATA[Show/hide the "IPTC Status" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_origin">
+		<transtext><![CDATA["Origin" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_origin_desc">
+		<transtext><![CDATA[Show/hide the "Origin" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_versions">
+		<transtext><![CDATA["Versions" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_versions_desc">
+		<transtext><![CDATA[Show/hide the "Versions" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_sharing_options">
+		<transtext><![CDATA["Sharing Options" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_sharing_options_desc">
+		<transtext><![CDATA[Show/hide the "Sharing Options" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_preview_images">
+		<transtext><![CDATA["Preview Images" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_preview_images_desc">
+		<transtext><![CDATA[Show/hide the "Preview Images" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_additional_renditions">
+		<transtext><![CDATA["Additional Rendtions" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_additional_renditions_desc">
+		<transtext><![CDATA[Show/hide the "Additional Renditions" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_history">
+		<transtext><![CDATA["History" Tab]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_tab_history_desc">
+		<transtext><![CDATA[Show/hide the "History" tab in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_send_email">
+		<transtext><![CDATA["Send eMail" Button]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_send_email_desc">
+		<transtext><![CDATA[Show/hide the "Send eMail" button in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_send_ftp">
+		<transtext><![CDATA["Upload with FTP" Button]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_send_ftp_desc">
+		<transtext><![CDATA[Show/hide the "Upload with FTP" button in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_basket">
+		<transtext><![CDATA["Put into Basket" Button]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_basket_desc">
+		<transtext><![CDATA[Show/hide the "Put into Basket" button in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_add_to_collection">
+		<transtext><![CDATA["Add to Collection" Button]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_add_to_collection_desc">
+		<transtext><![CDATA[Show/hide the "Add to Collection" button in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_print">
+		<transtext><![CDATA["Print" Button]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_print_desc">
+		<transtext><![CDATA[Show/hide the "Print" button in the asset view window.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_move">
+		<transtext><![CDATA["Move Asset" Button]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_move_desc">
+		<transtext><![CDATA[Show/hide the "Move Asset" button in the asset view window. Note: Administrators will always see this button.]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_move">
+		<transtext><![CDATA["Move Asset" Button]]></transtext>
+	</transid>
+	<transid name="header_customization_assetview_button_move_desc">
+		<transtext><![CDATA[Show/hide the "Move Asset" button in the asset view window. Note: Administrators will always see this button.]]></transtext>
+	</transid>
 </translations>

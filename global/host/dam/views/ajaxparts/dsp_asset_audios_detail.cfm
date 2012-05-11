@@ -41,38 +41,38 @@
 	<div id="tab_detail#file_id#">
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('relatedaudios','#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#defaultsObj.trans("asset_information")#</a></li>
-			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_description_keywords)>
+			<cfif cs.tab_description_keywords>
 				<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
 			</cfif>
-			<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
+			<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
 				<li><a href="##customfields">#defaultsObj.trans("custom_fields_asset")#</a></li>
 			</cfif>
 			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 				<!--- Convert --->
-				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_convert_files)>
+				<cfif cs.tab_convert_files>
 					<li><a href="##convert">#defaultsObj.trans("convert")#</a></li>
 				</cfif>
 				<cfif qry_detail.detail.link_kind NEQ "lan">
-					<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_versions)>
+					<cfif cs.tab_versions>
 						<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
 					</cfif>
 				</cfif>
 			</cfif>
 			<!--- Comments --->
-			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_comments)>
+			<cfif cs.tab_comments>
 				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
 			</cfif>
-			<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_metadata)>
+			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_metadata>
 				<li><a href="##audmeta">Meta Data</a></li>
 			</cfif>
 			<cfif session.folderaccess NEQ "R">
-				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_sharing_options)>
+				<cfif cs.tab_sharing_options>
 					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
 				</cfif>
-				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_additional_renditions)>
+				<cfif cs.tab_additional_renditions>
 					<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
 				</cfif>
-				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_history)>
+				<cfif cs.tab_history>
 					<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
 				</cfif>
 			</cfif>
@@ -81,23 +81,23 @@
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
 				<tr>
 					<td width="100%" nowrap="true" colspan="2">
-						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_send_email)>
+						<cfif cs.button_send_email>
 							<input type="button" name="sendemail" value="#defaultsObj.trans("send_with_email")#" class="button" onclick="showwindow('#myself##xfa.sendemail#&file_id=#attributes.file_id#&thetype=aud','#defaultsObj.trans("send_with_email")#',600,2);return false;"> 
 						</cfif>
-						<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_send_ftp)>
+						<cfif qry_detail.detail.link_kind NEQ "url" AND cs.button_send_ftp>
 							<input type="button" name="sendftp" value="#defaultsObj.trans("send_with_ftp")#" class="button" onclick="showwindow('#myself##xfa.sendftp#&file_id=#attributes.file_id#&thetype=aud','#defaultsObj.trans("send_with_ftp")#',600,2);return false;">
 						</cfif>
-						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_basket)>
+						<cfif cs.show_bottom_part AND cs.button_basket>
 							<input type="button" name="inbasket" value="#defaultsObj.trans("put_in_basket")#" class="button" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#-aud&thetype=#attributes.file_id#-aud');flash_footer();">
 						</cfif>
-						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_add_to_collection)>
+						<cfif cs.tab_collections AND cs.button_add_to_collection>
 							<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-aud&thetype=aud&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
 						</cfif>
 						<cfif #session.folderaccess# EQ "X">
 							<input type="button" name="move" value="#defaultsObj.trans("move_file")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=#attributes.file_id#&type=movefile&thetype=aud&folder_id=#folder_id#','#defaultsObj.trans("move_file")#',600,2);">
 							<input type="button" name="remove" value="#defaultsObj.trans("delete_asset")#" class="button" onclick="showwindow('#myself#ajax.remove_record&id=#attributes.file_id#&what=audios&loaddiv=#loaddiv#&folder_id=#folder_id#&showsubfolders=#session.showsubfolders#','#defaultsObj.trans("remove")#',400,2);return false;"> 
 						</cfif>
-						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.button_print)>
+						<cfif cs.button_print>
 							<input type="button" name="print" value="#defaultsObj.trans("tooltip_print")#" class="button" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#qry_detail.detail.folder_id_r#&kind=detail&thetype=aud&file_id=#attributes.file_id#','#defaultsObj.trans("pdf_window_title")#',500,2);return false;">
 						</cfif>
 					</td>
@@ -160,7 +160,7 @@
 				<tr>
 					<td colspan="2" style="padding-top:20px;">
 						<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)>
+							<cfif cs.custom.tab_labels>
 								<tr>
 									<td>#defaultsObj.trans("labels")#</td>
 									<td width="100%" nowrap="true" colspan="5">
@@ -238,7 +238,7 @@
 		<!--- Comments --->
 		<div id="divcomments"></div>
 		<!--- Description & Keywords --->
-		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_description_keywords)>
+		<cfif cs.tab_description_keywords>
 			<div id="detaildesc">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<cfloop query="qry_langs">
@@ -264,7 +264,7 @@
 			</div>
 		</cfif>
 		<!--- Meta Data --->
-		<cfif qry_detail.detail.link_kind NEQ "url" AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_metadata)>
+		<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_metadata>
 			<div id="audmeta">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
@@ -274,14 +274,14 @@
 			</div>
 		</cfif>
 		<!--- CUSTOM FIELDS --->
-		<cfif qry_cf.recordcount NEQ 0 AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_custom_fields)>
+		<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields)>
 			<div id="customfields">
 				<cfinclude template="inc_custom_fields.cfm">
 			</div>
 		</cfif>
 		<!--- Convert Audios --->
 		<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
-			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_convert_files)>
+			<cfif cs.tab_convert_files>
 				<div id="convert">
 					<cfif session.hosttype EQ 0>
 						<cfinclude template="dsp_host_upgrade.cfm">

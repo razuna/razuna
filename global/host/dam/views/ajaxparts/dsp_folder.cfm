@@ -32,37 +32,37 @@
 				<cfloop query="qry_fileTotalAllTypes">
 					<cfif qry_fileTotalAllTypes.cnt GT 0>
 						<cfif ext EQ "img">
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_images)>
+							<cfif cs.tab_images>
 								<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img');" rel="prefetch prerender">#defaultsObj.trans("folder_images")#</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "vid">
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_videos)>
+							<cfif cs.tab_videos>
 								<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid');" rel="prefetch">#defaultsObj.trans("folder_videos")#</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "aud">
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_audios)>
+							<cfif cs.tab_audios>
 								<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud');" rel="prefetch">#defaultsObj.trans("folder_audios")#</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "doc">
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_doc)>
+							<cfif cs.tab_doc>
 								<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc');" rel="prefetch">#defaultsObj.trans("folder_word")#</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "xls">
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_xls)>
+							<cfif cs.tab_xls>
 								<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls');" rel="prefetch">#defaultsObj.trans("folder_excel")#</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "pdf">
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_pdf)>
+							<cfif cs.tab_pdf>
 								<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf');" rel="prefetch">#defaultsObj.trans("folder_pdf")#</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "other">
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_other)>
+							<cfif cs.tab_other>
 								<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other');" rel="prefetch">#defaultsObj.trans("folder_others")#</a></li>
 							</cfif>
 						</cfif>

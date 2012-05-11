@@ -69,7 +69,7 @@
 				</cfloop>
 				<!--- Labels --->
 				<cfif attributes.isdetail EQ "T">
-					<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)>
+					<cfif cs.tab_labels>
 						<tr>
 							<td>#defaultsObj.trans("labels")#</td>
 							<td width="100%" nowrap="true" colspan="5">

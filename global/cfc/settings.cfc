@@ -1565,5 +1565,272 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfif>
 </cffunction>
 
+<!--- get tenant customization --->
+<cffunction name="get_customization" output="false" returnType="struct">
+	<!--- Query db --->
+	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachename="customization_#session.hostid#" cachedomain="#session.hostid#_customization">
+	SELECT custom_id, custom_value
+	FROM #session.hostdbprefix#custom
+	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	</cfquery>
+	<!--- Set value here --->
+	<cfset var v = structnew()>
+	<cfset v.show_top_part = true>
+	<cfset v.show_bottom_part = true>
+	<cfset v.show_twitter = true>
+	<cfset v.tab_twitter = true>
+	<cfset v.show_facebook = true>
+	<cfset v.tab_facebook = true>
+	<cfset v.tab_razuna_blog = true>
+	<cfset v.tab_razuna_support = true>
+	<cfset v.tab_collections = true>
+	<cfset v.tab_labels = true>
+	<cfset v.tab_add_from_server = true>
+	<cfset v.tab_add_from_email = true>
+	<cfset v.tab_add_from_ftp = true>
+	<cfset v.tab_add_from_link = true>
+	<cfset v.tab_images = true>
+	<cfset v.tab_videos = true>
+	<cfset v.tab_audios = true>
+	<cfset v.tab_other = true>
+	<cfset v.tab_pdf = true>
+	<cfset v.tab_doc = true>
+	<cfset v.tab_xls = true>
+	<cfset v.icon_select = true>
+	<cfset v.icon_refresh = true>
+	<cfset v.icon_show_subfolder = true>
+	<cfset v.icon_create_subfolder = true>
+	<cfset v.icon_favorite_folder = true>
+	<cfset v.icon_search = true>
+	<cfset v.icon_print = true>
+	<cfset v.icon_rss = true>
+	<cfset v.icon_word = true>
+	<cfset v.icon_metadata_import = true>
+	<cfset v.icon_metadata_export = true>
+	<cfset v.icon_download_folder = true>
+	<cfset v.tab_description_keywords = true>
+	<cfset v.tab_custom_fields = true>
+	<cfset v.tab_convert_files = true>
+	<cfset v.tab_comments = true>
+	<cfset v.tab_metadata = true>
+	<cfset v.tab_xmp_description = true>
+	<cfset v.tab_iptc_contact = true>
+	<cfset v.tab_iptc_image = true>
+	<cfset v.tab_iptc_content = true>
+	<cfset v.tab_iptc_status = true>
+	<cfset v.tab_origin = true>
+	<cfset v.tab_versions = true>
+	<cfset v.tab_sharing_options = true>
+	<cfset v.tab_preview_images = true>
+	<cfset v.tab_additional_renditions = true>
+	<cfset v.tab_history = true>
+	<cfset v.button_send_email = true>
+	<cfset v.button_send_ftp = true>
+	<cfset v.button_basket = true>
+	<cfset v.button_add_to_collection = true>
+	<cfset v.button_print = true>
+	<cfset v.button_move = true>
+	<cfset v.button_delete = true>
+	<!--- Loop over query --->
+	<cfloop query="qry">
+		<cfif custom_id EQ "show_top_part" AND !custom_value>
+			<cfset v.show_top_part = false>
+		</cfif>
+		<cfif custom_id EQ "show_bottom_part" AND !custom_value>
+			<cfset v.show_bottom_part = false>
+		</cfif>
+		<cfif custom_id EQ "show_twitter" AND !custom_value>
+			<cfset v.show_twitter = false>
+		</cfif>
+		<cfif custom_id EQ "tab_twitter" AND !custom_value>
+			<cfset v.tab_twitter = false>
+		</cfif>
+		<cfif custom_id EQ "show_facebook" AND !custom_value>
+			<cfset v.show_facebook = false>
+		</cfif>
+		<cfif custom_id EQ "tab_facebook" AND !custom_value>
+			<cfset v.tab_facebook = false>
+		</cfif>
+		<cfif custom_id EQ "tab_razuna_blog" AND !custom_value>
+			<cfset v.tab_razuna_blog = false>
+		</cfif>
+		<cfif custom_id EQ "tab_razuna_support" AND !custom_value>
+			<cfset v.tab_razuna_support = false>
+		</cfif>
+		<cfif custom_id EQ "tab_collections" AND !custom_value>
+			<cfset v.tab_collections = false>
+		</cfif>
+		<cfif custom_id EQ "tab_labels" AND !custom_value>
+			<cfset v.tab_labels = false>
+		</cfif>
+		<cfif custom_id EQ "tab_add_from_server" AND !custom_value>
+			<cfset v.tab_add_from_server = false>
+		</cfif>
+		<cfif custom_id EQ "tab_add_from_email" AND !custom_value>
+			<cfset v.tab_add_from_email = false>
+		</cfif>
+		<cfif custom_id EQ "tab_add_from_ftp" AND !custom_value>
+			<cfset v.tab_add_from_ftp = false>
+		</cfif>
+		<cfif custom_id EQ "tab_add_from_link" AND !custom_value>
+			<cfset v.tab_add_from_link = false>
+		</cfif>
+		<cfif custom_id EQ "tab_images" AND !custom_value>
+			<cfset v.tab_images = false>
+		</cfif>
+		<cfif custom_id EQ "tab_videos" AND !custom_value>
+			<cfset v.tab_videos = false>
+		</cfif>
+		<cfif custom_id EQ "tab_audios" AND !custom_value>
+			<cfset v.tab_audios = false>
+		</cfif>
+		<cfif custom_id EQ "tab_other" AND !custom_value>
+			<cfset v.tab_other = false>
+		</cfif>
+		<cfif custom_id EQ "tab_pdf" AND !custom_value>
+			<cfset v.tab_pdf = false>
+		</cfif>
+		<cfif custom_id EQ "tab_doc" AND !custom_value>
+			<cfset v.tab_doc = false>
+		</cfif>
+		<cfif custom_id EQ "tab_xls" AND !custom_value>
+			<cfset v.tab_xls = false>
+		</cfif>
+		<cfif custom_id EQ "icon_select" AND !custom_value>
+			<cfset v.icon_select = false>
+		</cfif>
+		<cfif custom_id EQ "icon_refresh" AND !custom_value>
+			<cfset v.icon_refresh = false>
+		</cfif>
+		<cfif custom_id EQ "icon_show_subfolder" AND !custom_value>
+			<cfset v.icon_show_subfolder = false>
+		</cfif>
+		<cfif custom_id EQ "icon_create_subfolder" AND !custom_value>
+			<cfset v.icon_create_subfolder = false>
+		</cfif>
+		<cfif custom_id EQ "icon_favorite_folder" AND !custom_value>
+			<cfset v.icon_favorite_folder = false>
+		</cfif>
+		<cfif custom_id EQ "icon_search" AND !custom_value>
+			<cfset v.icon_search = false>
+		</cfif>
+		<cfif custom_id EQ "icon_print" AND !custom_value>
+			<cfset v.icon_print = false>
+		</cfif>
+		<cfif custom_id EQ "icon_rss" AND !custom_value>
+			<cfset v.icon_rss = false>
+		</cfif>
+		<cfif custom_id EQ "icon_word" AND !custom_value>
+			<cfset v.icon_word = false>
+		</cfif>
+		<cfif custom_id EQ "icon_metadata_import" AND !custom_value>
+			<cfset v.icon_metadata_import = false>
+		</cfif>
+		<cfif custom_id EQ "icon_metadata_export" AND !custom_value>
+			<cfset v.icon_metadata_export = false>
+		</cfif>
+		<cfif custom_id EQ "icon_download_folder" AND !custom_value>
+			<cfset v.icon_download_folder = false>
+		</cfif>
+		<cfif custom_id EQ "tab_description_keywords" AND !custom_value>
+			<cfset v.tab_description_keywords = false>
+		</cfif>
+		<cfif custom_id EQ "tab_custom_fields" AND !custom_value>
+			<cfset v.tab_custom_fields = false>
+		</cfif>
+		<cfif custom_id EQ "tab_convert_files" AND !custom_value>
+			<cfset v.tab_convert_files = false>
+		</cfif>
+		<cfif custom_id EQ "tab_comments" AND !custom_value>
+			<cfset v.tab_comments = false>
+		</cfif>
+		<cfif custom_id EQ "tab_metadata" AND !custom_value>
+			<cfset v.tab_metadata = false>
+		</cfif>
+		<cfif custom_id EQ "tab_xmp_description" AND !custom_value>
+			<cfset v.tab_xmp_description = false>
+		</cfif>
+		<cfif custom_id EQ "tab_iptc_contact" AND !custom_value>
+			<cfset v.tab_iptc_contact = false>
+		</cfif>
+		<cfif custom_id EQ "tab_iptc_image" AND !custom_value>
+			<cfset v.tab_iptc_image = false>
+		</cfif>
+		<cfif custom_id EQ "tab_iptc_content" AND !custom_value>
+			<cfset v.tab_iptc_content = false>
+		</cfif>
+		<cfif custom_id EQ "tab_iptc_status" AND !custom_value>
+			<cfset v.tab_iptc_status = false>
+		</cfif>
+		<cfif custom_id EQ "tab_origin" AND !custom_value>
+			<cfset v.tab_origin = false>
+		</cfif>
+		<cfif custom_id EQ "tab_versions" AND !custom_value>
+			<cfset v.tab_versions = false>
+		</cfif>
+		<cfif custom_id EQ "tab_sharing_options" AND !custom_value>
+			<cfset v.tab_sharing_options = false>
+		</cfif>
+		<cfif custom_id EQ "tab_preview_images" AND !custom_value>
+			<cfset v.tab_preview_images = false>
+		</cfif>
+		<cfif custom_id EQ "tab_additional_renditions" AND !custom_value>
+			<cfset v.tab_additional_renditions = false>
+		</cfif>
+		<cfif custom_id EQ "tab_history" AND !custom_value>
+			<cfset v.tab_history = false>
+		</cfif>
+		<cfif custom_id EQ "button_send_email" AND !custom_value>
+			<cfset v.button_send_email = false>
+		</cfif>
+		<cfif custom_id EQ "button_send_ftp" AND !custom_value>
+			<cfset v.button_send_ftp = false>
+		</cfif>
+		<cfif custom_id EQ "button_basket" AND !custom_value>
+			<cfset v.button_basket = false>
+		</cfif>
+		<cfif custom_id EQ "button_add_to_collection" AND !custom_value>
+			<cfset v.button_add_to_collection = false>
+		</cfif>
+		<cfif custom_id EQ "button_print" AND !custom_value>
+			<cfset v.button_print = false>
+		</cfif>
+		<cfif custom_id EQ "button_move" AND !custom_value>
+			<cfset v.button_move = false>
+		</cfif>
+		<cfif custom_id EQ "button_delete" AND !custom_value>
+			<cfset v.button_delete = false>
+		</cfif>
+	</cfloop>
+	<!--- Return --->
+	<cfreturn v />
+</cffunction>
+
+<!--- Save customization --->
+<cffunction name="set_customization" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- First remove all records for this host --->
+	<cfquery dataSource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#custom
+	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	</cfquery>
+	<!--- Now loop over the fieldnames and do an insert for each record found --->
+	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#custom
+		(custom_id, custom_value, host_id)
+		VALUES(
+			<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_DOUBLE">,
+			<cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		)
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_customization" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
 
 </cfcomponent>

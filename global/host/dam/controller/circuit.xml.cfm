@@ -169,6 +169,8 @@
 				<invoke object="myFusebox.getApplicationData().Global" methodcall="wisdom()" returnvariable="wisdom" />
 				<!-- CFC: Get Orders of this user -->
 				<invoke object="myFusebox.getApplicationData().basket" methodcall="get_orders()" returnvariable="qry_orders" />
+				<!-- CFC: Get customization -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 				<!-- Show main page -->
 			 	<do action="v.main" />
 			</true>
@@ -347,7 +349,8 @@
 		<xfa name="folder" value="c.folder" />
 		<xfa name="foldernew" value="c.folder_new" />
 		<xfa name="collections" value="c.collections" />
-		<!-- Set showmyfolder state -->
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.explorer" />
 	</fuseaction>
@@ -896,6 +899,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" />
 		<!-- CFC: Get the total of files count and kind of files -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="fileTotalAllTypes(attributes.folder_id)" returnvariable="qry_fileTotalAllTypes" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.folder" />
 	</fuseaction>
@@ -943,6 +948,8 @@
 		</invoke>
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.folder_files" />
 	</fuseaction>
@@ -977,6 +984,8 @@
 		</invoke>
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.folder_images" />
 	</fuseaction>
@@ -1013,6 +1022,8 @@
 		</invoke>
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.folder_videos" />
 	</fuseaction>
@@ -1062,6 +1073,8 @@
 		</invoke>
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.folder_audios" />
 	</fuseaction>
@@ -1101,6 +1114,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 	</fuseaction>
 	<!-- Load Folder Content -->
 	<fuseaction name="folder_content">
@@ -1197,6 +1212,8 @@
 		<set name="attributes.coll_folder" value="F" overwrite="false" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<!-- Action: Storage -->
+		<do action="storage" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Add new folder -->
@@ -1276,8 +1293,8 @@
 		<xfa name="addemail" value="c.asset_add_email" />
 		<xfa name="addftp" value="c.asset_add_ftp" />
 		<xfa name="addlink" value="c.asset_add_link" />
-		<!-- Param
-		<set name="attributes.tempid" value="#createuuid()#" />	 -->
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.asset_add" />
 	</fuseaction>
@@ -1290,8 +1307,8 @@
 		<xfa name="submitassetsingle" value="c.asset_upload_do" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
-		<!-- Get settings -->
-		<!-- <do action="asset_get_settings" /> -->
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.asset_add_single" />
 	</fuseaction>
@@ -1870,6 +1887,8 @@
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show the folder listing -->
 		<do action="ajax.files_detail" />
 	</fuseaction>
@@ -1940,6 +1959,8 @@
 		<do action="labels" />
 		<!-- Get labels for this record -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'vid')" returnvariable="qry_labels" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show the folder listing -->
 		<do action="ajax.videos_detail" />
 	</fuseaction>
@@ -2025,6 +2046,8 @@
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show the image detail window -->
 		<do action="ajax.images_detail" />
 	</fuseaction>
@@ -2115,6 +2138,8 @@
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Get how many comments there are -->
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show the folder listing -->
 		<do action="ajax.audios_detail" />
 	</fuseaction>
@@ -2974,6 +2999,8 @@
 		</if>
 		<!-- Get labels -->
 		<do action="labels" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Go to show the folder -->
 		<do action="ajax.batch_form" />
 	</fuseaction>
@@ -3879,6 +3906,18 @@
 	<!-- ADMIN: MAINTENANCE START -->
 	<!--  -->
 	
+	<!-- For loading customization -->
+	<fuseaction name="admin_customization">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_customization()" returnvariable="qry_customization" />
+		<!-- Show -->
+		<do action="ajax.admin_customization" />
+	</fuseaction>
+	<!-- For saving customization -->
+	<fuseaction name="admin_customization_save">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_customization(attributes)" />
+	</fuseaction>
 	<!-- For loading maitenance -->
 	<fuseaction name="admin_maintenance">
 		<!-- Params -->

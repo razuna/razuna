@@ -113,7 +113,7 @@
 				</td>
 				<td width="50%" valign="top" style="padding-left:10px;">
 					<!--- If the top part is hidden then admin functions are here and the search also --->
-					<cfif application.razuna.custom.enabled AND !application.razuna.custom.show_top_part>
+					<cfif !cs.show_top_part>
 						<!--- If SystemAdmin or Admininstrator --->
 						<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 							<div id="tab_admin">
@@ -185,10 +185,10 @@
 						<!-- the tabs -->
 						<ul class="tabs">
 							<li><a href="##raztools">Razuna Tools</a></li>
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_razuna_support)><li><a href="##support">Support for Razuna</a></li></cfif>
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_twitter)><li><a href="##twitter" onclick="window.open('http://twitter.com/razunahq');">Twitter</a></li></a></cfif>
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_facebook)><li><a href="##facebook" onclick="window.open('http://facebook.com/razunahq');">Facebook</a></li></cfif>
-							<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_razuna_blog)><li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Razuna Blog</a></li></cfif>
+							<cfif cs.tab_razuna_support><li><a href="##support">Support for Razuna</a></li></cfif>
+							<cfif cs.tab_twitter><li><a href="##twitter" onclick="window.open('http://twitter.com/razunahq');">Twitter</a></li></a></cfif>
+							<cfif cs.tab_facebook><li><a href="##facebook" onclick="window.open('http://facebook.com/razunahq');">Facebook</a></li></cfif>
+							<cfif cs.tab_razuna_blog><li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Razuna Blog</a></li></cfif>
 						</ul>
 						<!-- tab "panes" -->
 						<div class="pane" id="raztools">
@@ -222,14 +222,14 @@
 								</tr>
 								<tr>
 									<td>
-										<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_twitter)>
+										<cfif cs.show_twitter>
 											<a href="http://twitter.com/razunahq" class="twitter-follow-button">Follow @razunahq</a>
 										</cfif>
 									</td>
 								</tr>
 								<tr>
 									<td>
-										<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_facebook)>
+										<cfif cs.show_facebook>
 											<script>(function(d){
   var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
   js = d.createElement('script'); js.id = id; js.async = true;
@@ -242,37 +242,37 @@
 								</tr>
 							</table>
 						</div>
-						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_razuna_support)>
-						<div class="pane" id="support">
-							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-								<cfif !application.razuna.isp>
+						<cfif cs.tab_razuna_support>
+							<div class="pane" id="support">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+									<cfif !application.razuna.isp>
+										<tr>
+											<th>Razuna Support</th>
+										</tr>
+										<tr>
+											<td>#defaultsObj.trans("support_desc")#</td>
+										</tr>
+									</cfif>
 									<tr>
-										<th>Razuna Support</th>
+										<th style="padding-top:15px;">Online Support Tools</th>
 									</tr>
 									<tr>
-										<td>#defaultsObj.trans("support_desc")#</td>
+										<td><a href="##" onClick="feedback_widget.show();">Leave us a Feedback</a></td>
 									</tr>
-								</cfif>
-								<tr>
-									<th style="padding-top:15px;">Online Support Tools</th>
-								</tr>
-								<tr>
-									<td><a href="##" onClick="feedback_widget.show();">Leave us a Feedback</a></td>
-								</tr>
-								<tr>
-									<td><a href="http://wiki.razuna.com/">Documentation (Wiki)</a></td>
-								</tr>
-								<tr>
-									<td><a href="https://getsatisfaction.com/razuna" target="_blank">Join the Razuna Customer Community</a></td>
-								</tr>
-								<tr>
-									<td><a href="http://issues.razuna.com/" target="_blank">Razuna Issue Platform</a></td>
-								</tr>
-							</table>
-						</div>
+									<tr>
+										<td><a href="http://wiki.razuna.com/">Documentation (Wiki)</a></td>
+									</tr>
+									<tr>
+										<td><a href="https://getsatisfaction.com/razuna" target="_blank">Join the Razuna Customer Community</a></td>
+									</tr>
+									<tr>
+										<td><a href="http://issues.razuna.com/" target="_blank">Razuna Issue Platform</a></td>
+									</tr>
+								</table>
+							</div>
 						</cfif>
-						<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_razuna_blog)>
-						<div class="pane" id="blog">#defaultsObj.loadinggif("#dynpath#")#</div>
+						<cfif cs.tab_razuna_blog>
+							<div class="pane" id="blog">#defaultsObj.loadinggif("#dynpath#")#</div>
 						</cfif>
 						<div class="pane" id="twitter"></div>
 						<div class="pane" id="facebook">

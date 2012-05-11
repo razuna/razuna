@@ -27,21 +27,21 @@
 	<div id="tab_addassets">
 		<ul>
 			<li><a href="##addsingle" onclick="loadcontent('addsingle','#myself##xfa.addsingle#&folder_id=#folder_id#');">#defaultsObj.trans("header_add_asset")#</a></li>
-			<cfif !application.razuna.isp AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_add_from_server)>
+			<cfif cs.tab_add_from_server>
 				<li><a href="##addserver">#defaultsObj.trans("header_add_asset_server")#</a></li>
 			</cfif>
-			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_add_from_email)>
+			<cfif cs.tab_add_from_email>
 				<li><a href="##addemail" onclick="loadcontent('addemail','#myself##xfa.addemail#&folder_id=#folder_id#');">#defaultsObj.trans("header_add_asset_email")#</a></li>
 			</cfif>
-			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_add_from_ftp)>
+			<cfif cs.tab_add_from_ftp>
 				<li><a href="##addftp" onclick="loadcontent('addftp','#myself##xfa.addftp#&folder_id=#folder_id#');">#defaultsObj.trans("header_add_asset_ftp")#</a></li>
 			</cfif>
-			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_add_from_link)>
+			<cfif cs.tab_add_from_link>
 				<li><a href="##addlink" onclick="loadcontent('addlink','#myself##xfa.addlink#&folder_id=#folder_id#');">#defaultsObj.trans("link_tab_header")#</a></li>
 			</cfif>
 		</ul>
 		<div id="addsingle" style="padding:0px;margin:0px;">#defaultsObj.loadinggif("#dynpath#")#</div>
-		<cfif !application.razuna.isp AND !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_add_from_server)>
+		<cfif cs.tab_add_from_server>
 			<div id="addserver">
 				<p><a href="##" onclick="showwindow('#myself##xfa.addserver#&folder_id=#folder_id#','#defaultsObj.trans("header_add_asset_server")#',800,2);">#defaultsObj.trans("import_from_folder")#</a> #defaultsObj.trans("import_from_folder_custom")#.</p>
 				<p>
@@ -56,9 +56,9 @@
 				</p>
 			</div>
 		</cfif>
-		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_add_from_email)><div id="addemail">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
-		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_add_from_ftp)><div id="addftp">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
-		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_add_from_link)><div id="addlink">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
+		<cfif cs.tab_add_from_email><div id="addemail">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
+		<cfif cs.tab_add_from_ftp><div id="addftp">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
+		<cfif cs.tab_add_from_link><div id="addlink">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
 	</div>
 	<!--- Activate the Tabs --->
 <script language="JavaScript" type="text/javascript">

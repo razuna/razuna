@@ -2141,6 +2141,7 @@
 		)
 		</cfquery>
 		
+		<!--- Import Templates Values --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#import_templates_val (
   		imp_temp_id_r		varchar(100),
@@ -2153,6 +2154,14 @@
 		)
 		</cfquery>
 
+		<!--- Customization --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom (
+	  	custom_id			varchar(200),
+		custom_value		boolean,
+		host_id				int
+		)
+		</cfquery>
 		
 	</cffunction>
 	
@@ -2578,7 +2587,7 @@
 		CREATE INDEX #arguments.thestruct.host_db_prefix#w_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#widgets(host_id)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#w_colid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#widgets(col_id_r)		
+		CREATE INDEX #arguments.thestruct.host_db_prefix#w_colid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#widgets(col_id_r)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#av_id_r ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#additional_versions(asset_id_r)
@@ -2600,6 +2609,9 @@
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#labels_text ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#labels(label_text)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#custom ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom(custom_id)
 		</cfquery>
 		<cfreturn />
 	</cffunction>

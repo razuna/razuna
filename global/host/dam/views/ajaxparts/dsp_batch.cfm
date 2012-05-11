@@ -43,7 +43,7 @@
 				<li tabindex="5"><a href="##iptc_status">IPTC Status</a></li>
 				<li tabindex="6"><a href="##iptc_origin">Origin</a></li>
 			</cfif>
-			<li tabindex="7"><a href="##batch_labels">#defaultsObj.trans("labels")#</a></li>
+			<cfif cs.tab_labels><li tabindex="7"><a href="##batch_labels">#defaultsObj.trans("labels")#</a></li></cfif>
 			<!--- <li tabindex="8"><a href="##batch_custom">#defaultsObj.trans("custom_fields_header")#</a></li> --->
 		</ul>
 		<!--- Descriptions & Keywords --->
@@ -88,17 +88,19 @@
 			</div>
 		</cfif>
 		<!--- Labels --->
-		<div id="batch_labels" style="min-height:200px;">
-			<strong>Choose #defaultsObj.trans("labels")#</strong><br />
-			<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="batch_labels" multiple="multiple">
-				<option value=""></option>
-				<cfloop query="qry_labels">
-					<cfset l = replace(label_path," "," AND ","all")>
-					<cfset l = replace(l,"/"," AND ","all")>
-					<option value="#label_id#">#label_path#</option>
-				</cfloop>
-			</select>
-		</div>
+		<cfif cs.tab_labels>
+			<div id="batch_labels" style="min-height:200px;">
+				<strong>Choose #defaultsObj.trans("labels")#</strong><br />
+				<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="batch_labels" multiple="multiple">
+					<option value=""></option>
+					<cfloop query="qry_labels">
+						<cfset l = replace(label_path," "," AND ","all")>
+						<cfset l = replace(l,"/"," AND ","all")>
+						<option value="#label_id#">#label_path#</option>
+					</cfloop>
+				</select>
+			</div>
+		</cfif>
 		<!--- Custom Fields --->
 		<!--- <div id="batch_custom"></div> --->
 	</div>

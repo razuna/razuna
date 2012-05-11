@@ -1586,7 +1586,7 @@
 			lang_name		VARCHAR(100),
 			lang_active		VARCHAR(2) default 'f',
 			host_id			BIGINT,
-			rec_uuid			VARCHAR(100),
+			rec_uuid		VARCHAR(100),
 			PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
@@ -1785,6 +1785,7 @@
 		)
 		</cfquery>
 		
+		<!--- Import Templates Values --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#import_templates_val (
   		imp_temp_id_r		varchar(100),
@@ -1796,7 +1797,16 @@
   		PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
-
+		
+		<!--- Customization --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.host_db_prefix#custom (
+	  	custom_id			varchar(200),
+		custom_value		boolean,
+		host_id				bigint
+		)
+		</cfquery>
+		
 	</cffunction>
 	
 	<!--- Create Indexes --->
@@ -2043,6 +2053,9 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#labels_id ON #arguments.thestruct.host_db_prefix#labels(label_id);
 		CREATE INDEX #arguments.thestruct.host_db_prefix#labels_text ON #arguments.thestruct.host_db_prefix#labels(label_text);
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX #arguments.thestruct.host_db_prefix#custom ON #arguments.thestruct.host_db_prefix#custom(custom_id)
 		</cfquery>
 		<cfreturn />
 	</cffunction>

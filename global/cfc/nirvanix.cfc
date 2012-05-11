@@ -125,7 +125,7 @@
 		<!--- Login and get session token --->
 		<cftry>
 			<cfhttp url="http://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
-				<cfhttpparam name="appKey" value="#arguments.thestruct.nvxkey#" type="url">
+				<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
 				<cfhttpparam name="username" value="#arguments.thestruct.nvxname#" type="url">
 				<cfhttpparam name="password" value="#arguments.thestruct.nvxpass#" type="url">
 			</cfhttp>

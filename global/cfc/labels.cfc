@@ -97,15 +97,6 @@
 			</cfquery>
 			<!--- Loop over fields --->		
 			<cfloop list="#arguments.thestruct.labels#" delimiters="," index="i">
-				<!--- Select from labels to get id --->
-				<!---
-				<cfquery datasource="#application.razuna.datasource#" name="qryid">
-				SELECT label_id
-				FROM #session.hostdbprefix#labels
-				WHERE lower(label_text) = <cfqueryparam value="#lcase(i)#" cfsqltype="cf_sql_varchar" />
-				AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-				</cfquery>
-				--->
 				<!--- Insert into cross table --->
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO ct_labels
