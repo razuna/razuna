@@ -61,7 +61,7 @@
 		</cfif>
 	</cfif>
 	<!--- Show link back to main page --->
-	<cfif application.razuna.custom.enabled AND !application.razuna.custom.show_top_part>
+	<cfif !cs.show_top_part>
 		<div style="clear:both;"></div>
 		<p style="padding-left:10px;"><a href="#myself#c.main" title="Click here to get to the main page">Go to main page</p>
 	</cfif>

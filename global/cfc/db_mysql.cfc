@@ -2290,6 +2290,7 @@
 		#this.tableoptions#
 		</cfquery>
 		
+		<!--- Import Templates Values --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#import_templates_val (
   		imp_temp_id_r		varchar(100),
@@ -2302,7 +2303,17 @@
 		)
 		#this.tableoptions#
 		</cfquery>
-
+		
+		<!--- Customization --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom (
+	  	custom_id			varchar(200),
+		custom_value		boolean,
+		host_id				int(11),
+		KEY #arguments.thestruct.host_db_prefix#custom_id (custom_id)
+		)
+		#this.tableoptions#
+		</cfquery>
 		
 	</cffunction>
 	

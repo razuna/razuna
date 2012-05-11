@@ -1197,6 +1197,7 @@
 		)
 		</cfquery>
 		
+		<!--- Import Templates Values --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.tschema#.#arguments.thestruct.host_db_prefix#import_templates_val (
   		imp_temp_id_r		varchar(100),
@@ -1208,6 +1209,14 @@
 		)
 		</cfquery>
 
+		<!--- Customization --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.tschema#.#arguments.thestruct.host_db_prefix#custom (
+	  	custom_id			varchar(200),
+		custom_value		boolean,
+		host_id				bigint
+		)
+		</cfquery>
 				
 	</cffunction>
 		

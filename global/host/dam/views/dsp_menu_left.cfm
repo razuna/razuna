@@ -28,12 +28,12 @@
 <div id="tabs_left">
 	<ul>
 		<li><a href="##explorer">Folders</a></li>
-		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_collections)><li><a href="##explorer_col" onclick="loadcontent('explorer_col','#myself#c.explorer_col');">Collections</a></li></cfif>
-		<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)><li><a href="##labels" onclick="loadcontent('labels','#myself#c.labels_list');">#defaultsObj.trans("labels")#</a></li></cfif>
+		<cfif cs.tab_collections><li><a href="##explorer_col" onclick="loadcontent('explorer_col','#myself#c.explorer_col');">Collections</a></li></cfif>
+		<cfif cs.tab_labels><li><a href="##labels" onclick="loadcontent('labels','#myself#c.labels_list');">#defaultsObj.trans("labels")#</a></li></cfif>
 	</ul>
 	<div id="explorer" style="margin-left:0;padding-left:0;">#defaultsObj.loadinggif("#dynpath#")#</div>
-	<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_collections)><div id="explorer_col" style="margin-left:0;padding-left:0;">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
-	<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_labels)><div id="labels" style="margin-left:0;padding-left:0;">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
+	<cfif cs.tab_collections><div id="explorer_col" style="margin-left:0;padding-left:0;">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
+	<cfif cs.tab_labels><div id="labels" style="margin-left:0;padding-left:0;">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
 </div>
 <div id="apMiddle"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div>
 <script language="JavaScript" type="text/javascript">

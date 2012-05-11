@@ -37,6 +37,7 @@
 			<!--- <li><a href="##admin_logs_users" onclick="loadcontent('log_users_show','#myself#c.log_users');">#defaultsObj.trans("log_users_header")#</a></li> --->
 			<li><a href="##admin_settings" onclick="loadcontent('admin_settings','#myself#c.isp_settings');">#defaultsObj.trans("settings")#</a></li>
 			<li><a href="##admin_maintenance" onclick="loadcontent('admin_maintenance','#myself#c.admin_maintenance');">#defaultsObj.trans("admin_maintenance")#</a></li>
+			<li><a href="##admin_customization" onclick="loadcontent('admin_customization','#myself#c.admin_customization');">#defaultsObj.trans("header_customization")#</a></li>
 			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				<li><a href="##admin_maintenance_cloud" onclick="loadcontent('admin_maintenance_cloud','#myself#c.admin_maintenance_cloud');">Cloud #defaultsObj.trans("admin_maintenance")#</a></li>
 			</cfif>
@@ -74,6 +75,8 @@
 		<div id="admin_settings">#defaultsObj.loadinggif("#dynpath#")#</div>
 		<!--- Maintenance --->
 		<div id="admin_maintenance">#defaultsObj.loadinggif("#dynpath#")#</div>
+		<!--- Customization --->
+		<div id="admin_customization">#defaultsObj.loadinggif("#dynpath#")#</div>
 		<!--- Maintenance Cloud --->
 		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 			<div id="admin_maintenance_cloud">#defaultsObj.loadinggif("#dynpath#")#</div>

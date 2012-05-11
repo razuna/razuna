@@ -37,7 +37,7 @@
 		</tr>
 	</table>
 	<!--- Save as a Collection --->
-	<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.tab_collections)>
+	<cfif cs.tab_collections>
 		<hr class="theline" />
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
