@@ -958,9 +958,13 @@
 			<cfset thenamenoext = listfirst(arguments.thestruct.qry_detail.vid_name_org, ".")>
 			<cfset thename = arguments.thestruct.qry_detail.vid_name_org>
 			<cfset arguments.thestruct.thename = thename>
-			<!--- Download and write the file --->
-			<cfhttp url="#arguments.thestruct.qry_detail.cloud_url_org#" file="#arguments.thestruct.qry_detail.vid_name_org#" path="#arguments.thestruct.thisfolder#"></cfhttp>
-			<cfhttp url="#arguments.thestruct.qry_detail.cloud_url#" file="#arguments.thestruct.qry_detail.vid_name_image#" path="#arguments.thestruct.thisfolder#"></cfhttp>
+			<!--- Download file --->
+			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+				<cfhttp url="#attributes.intstruct.qry_detail.cloud_url_org#" file="#attributes.intstruct.qry_detail.vid_name_org#" path="#attributes.intstruct.thisfolder#"></cfhttp>
+				<cfhttp url="#attributes.intstruct.qry_detail.cloud_url#" file="#attributes.intstruct.qry_detail.vid_name_image#" path="#attributes.intstruct.thisfolder#"></cfhttp>
+			</cfthread>
+			<!--- Wait for the thread above until the file is downloaded fully --->
+			<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread name="convert#arguments.thestruct.file_id#" />
 			<!--- Set the input path --->

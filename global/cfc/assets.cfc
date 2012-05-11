@@ -1052,7 +1052,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfset thekeywords = "">
 					<cfset theapplekeywords = "">
 					<!--- Random ID for script --->
-					<cfset var ttpdf = Replace( Createuuid(), "-", "", "ALL" )>
+					<cfset var ttpdf = Createuuid("")>
 					<!--- Set some more vars but only for PDF --->
 					<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND attributes.intstruct.qryfile.link_kind NEQ "url">
 						<!--- If this is a linked asset --->
@@ -1391,7 +1391,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- AMAZON --->
 						<cfelseif attributes.intstruct.storage EQ "amazon" AND attributes.intstruct.qryfile.link_kind NEQ "url">
 							<!--- Upload file --->
-							<cfset upd = Replace( Createuuid(), "-", "", "ALL" )>
+							<cfset upd = Createuuid("")>
 							<cfthread name="#upd#" intupstruct="#attributes.intstruct#">
 								<cfinvoke component="amazon" method="Upload">
 									<cfinvokeargument name="key" value="/#attributes.intupstruct.qryfile.folder_id#/doc/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#">
@@ -1403,7 +1403,7 @@ This is the main function called directly by a single upload else from addassets
 							<!--- If we are PDF we need to upload the thumbnail and image as well --->
 							<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
 								<!--- Upload thumbnail --->		
-								<cfset updt = Replace( Createuuid(), "-", "", "ALL" )>
+								<cfset updt = Createuuid("")>
 								<cfthread name="#updt#" intuptstruct="#attributes.intstruct#">
 									<cfinvoke component="amazon" method="Upload">
 										<cfinvokeargument name="key" value="/#attributes.intuptstruct.qryfile.folder_id#/doc/#attributes.intuptstruct.newid#/#attributes.intuptstruct.thepdfimage#">
@@ -1926,7 +1926,7 @@ This is the main function called directly by a single upload else from addassets
 --->
 			<!--- NIRVANIX --->
 			<cfelseif arguments.thestruct.storage EQ "nirvanix">
-				<cfset uplt = "u" & Replace( Createuuid(), "-", "", "ALL" )>
+				<cfset uplt = "u" & Createuuid("")>
 				<!--- Upload Original Image --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cftry>
@@ -1973,7 +1973,7 @@ This is the main function called directly by a single upload else from addassets
 				<cftry>
 					<!--- Upload Original Image --->
 					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-						<cfset upt = Replace( Createuuid(), "-", "", "ALL" )>
+						<cfset upt = Createuuid("")>
 						<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="amazon" method="Upload">
 								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
@@ -1985,7 +1985,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 					<!--- Upload Thumbnail --->
 					<cfif !application.razuna.rfs>
-						<cfset uptn = Replace( Createuuid(), "-", "", "ALL" )>
+						<cfset uptn = Createuuid("")>
 						<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="amazon" method="Upload">
 								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
@@ -2124,7 +2124,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- ImageMagick: Create Thumbnail.
 		Some images can not be converted thus we just copy the original so we have a thumbnail --->
-		<cfset reimtt = Replace( Createuuid(), "-", "", "ALL" )>
+		<cfset reimtt = Createuuid("")>
 		<!--- Write the sh script files --->
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#reimtt#.sh">
 		<cfset arguments.thestruct.theshm = GetTempDirectory() & "/#reimtt#m.sh">
@@ -2396,7 +2396,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Upload Movie Image --->
 				<cfif !application.razuna.rfs>
-					<cfset upmi = Replace( Createuuid(), "-", "", "ALL" )>
+					<cfset upmi = Createuuid("")>
 					<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#">
@@ -2428,7 +2428,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfelseif application.razuna.storage EQ "amazon">
 				<!--- Upload Movie Image --->
 				<cfif !application.razuna.rfs>
-					<cfset upmi = Replace( Createuuid(), "-", "", "ALL" )>
+					<cfset upmi = Createuuid("")>
 					<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#/#attributes.intstruct.thisvid.theorgimage#">
@@ -2442,7 +2442,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 				<!--- Upload Movie --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-					<cfset upmt = Replace( Createuuid(), "-", "", "ALL" )>
+					<cfset upmt = Createuuid("")>
 					<cfthread name="#upmt#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#/#attributes.intstruct.qryfile.filename#">
@@ -2640,7 +2640,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset folderlevel = folders.folder_level>
 		<cfset loopname = "">
 		<!--- Loop over the zip directories and rename them if needed --->
-		<cfset var ttf = Replace( Createuuid(), "-", "", "ALL" )>
+		<cfset var ttf = Createuuid("")>
 		<cfthread name="#ttf#" intstruct="#arguments.thestruct#">
 			<cfinvoke method="rec_renamefolders" thedirectory="#attributes.intstruct.qryfile.path#" />
 		</cfthread>
@@ -2925,7 +2925,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.theuserid = session.theuserid>
 			<cfset arguments.thestruct.iswindows = iswindows()>
 			<!--- thread --->
-			<cfset var tt = Replace( Createuuid(), "-", "", "ALL" )>
+			<cfset var tt = Createuuid("")>
 			<cfthread name="#tt#" audstruct="#arguments.thestruct#">
 				<!--- Params --->
 				<cfset cloud_url_org.theurl = "">
@@ -2981,7 +2981,7 @@ This is the main function called directly by a single upload else from addassets
 							<cfset attributes.audstruct.qryfile.filenamenoext = replace(attributes.audstruct.qryfile.filenamenoext,"'","\'","all")>
 						</cfif>
 						<!--- Write the script --->
-						<cfset var thescript = Replace( Createuuid(), "-", "", "ALL" )>
+						<cfset var thescript = Createuuid("")>
 						<cfset attributes.audstruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 						<!--- On Windows a .bat --->
 						<cfif attributes.audstruct.iswindows>
@@ -3447,7 +3447,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
-			<cfset upa = Replace( Createuuid(), "-", "", "ALL" )>
+			<cfset upa = Createuuid("")>
 			<cfthread name="#upa#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="amazon" method="Upload">
 					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_existing.path_to_asset#/#attributes.intstruct.newname#">
@@ -3546,7 +3546,7 @@ This is the main function called directly by a single upload else from addassets
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Create script files --->
-		<cfset thescript = Replace( Createuuid(), "-", "", "ALL" )>
+		<cfset thescript = Createuuid("")>
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 		<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.sh">
 		<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.sh">
@@ -3783,7 +3783,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.av_link_url = cloudurl.theurl>
 	<!--- AMAZON --->
 	<cfelseif application.razuna.storage EQ "amazon">
-		<cfset upt = Replace( Createuuid(), "-", "", "ALL" )>
+		<cfset upt = Createuuid("")>
 		<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 			<cfinvoke component="amazon" method="Upload">
 				<cfinvokeargument name="key" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#attributes.intstruct.newid#/#attributes.intstruct.thefilename#">
