@@ -609,17 +609,38 @@
 			<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 			<!--- Loop over records --->
 			<cfloop query="qry">
-				<!--- Params --->
-				<cfset arguments.thestruct.link_kind = link_kind>
-				<!--- DOCS download them and index --->
-				<cfif cat EQ "doc">
-					<!--- Feedback --->
-					<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
-					<cfflush>
-					<!--- Download --->
-					<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
-					<!--- If download was successful --->
-					<cfif fileexists("#arguments.thestruct.qryfile.path#/#file_name_org#")>
+				<cfif link_kind NEQ "url">
+					<!--- Params --->
+					<cfset arguments.thestruct.link_kind = link_kind>
+					<!--- DOCS download them and index --->
+					<cfif cat EQ "doc">
+						<!--- Feedback --->
+						<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
+						<cfflush>
+						<!--- Download --->
+						<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
+						<!--- If download was successful --->
+						<cfif fileexists("#arguments.thestruct.qryfile.path#/#file_name_org#")>
+							<!--- Call to update asset --->
+							<cfinvoke method="index_update">
+								<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
+								<cfinvokeargument name="assetid" value="#id#">
+								<cfinvokeargument name="category" value="#cat#">
+								<cfinvokeargument name="dsn" value="#variables.dsn#">
+								<cfinvokeargument name="notfile" value="#notfile#">
+							</cfinvoke>
+							<!--- Update file DB with new lucene_key --->
+							<cfquery datasource="#variables.dsn#">
+							UPDATE #session.hostdbprefix#files
+							SET lucene_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.path#/#file_name_org#">
+							WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+							</cfquery>
+						</cfif>
+					<!--- All other assets simply index --->
+					<cfelse>
+						<!--- Feedback --->
+						<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)...</strong><br></cfoutput>
+						<cfflush>
 						<!--- Call to update asset --->
 						<cfinvoke method="index_update">
 							<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
@@ -628,26 +649,7 @@
 							<cfinvokeargument name="dsn" value="#variables.dsn#">
 							<cfinvokeargument name="notfile" value="#notfile#">
 						</cfinvoke>
-						<!--- Update file DB with new lucene_key --->
-						<cfquery datasource="#variables.dsn#">
-						UPDATE #session.hostdbprefix#files
-						SET lucene_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.path#/#file_name_org#">
-						WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-						</cfquery>
 					</cfif>
-				<!--- All other assets simply index --->
-				<cfelse>
-					<!--- Feedback --->
-					<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)...</strong><br></cfoutput>
-					<cfflush>
-					<!--- Call to update asset --->
-					<cfinvoke method="index_update">
-						<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
-						<cfinvokeargument name="assetid" value="#id#">
-						<cfinvokeargument name="category" value="#cat#">
-						<cfinvokeargument name="dsn" value="#variables.dsn#">
-						<cfinvokeargument name="notfile" value="#notfile#">
-					</cfinvoke>
 				</cfif>
 			</cfloop>
 		<!--- LOCAL --->
