@@ -1044,24 +1044,27 @@
 	<!--- Check rec_uuid --->
 	<cffunction name="check_rec_uuid" output="true">
 		<cfargument name="theschema" required="true" />
-		<!--- Check of label path is empty and add --->
-		<cfquery datasource="razuna_backup" name="l">
-		select label_id, label_text
-		from #arguments.theschema#.raz1_labels
-		where (label_path IS NULL OR label_path = '')
-		</cfquery>
-		<cfloop query="l">
-			<cftry>
-				<cfquery datasource="razuna_backup">
-				UPDATE #arguments.theschema#.raz1_labels
-				SET label_path = '#label_text#'
-				WHERE label_id = '#label_id#'
-				</cfquery>
-				<cfcatch type="database">
-					<cfoutput><p>#cfcatch.detail#</p></cfoutput>
-				</cfcatch>
-			</cftry>
-		</cfloop>
+		<cftry>
+			<!--- Check of label path is empty and add --->
+			<cfquery datasource="razuna_backup" name="l">
+			select label_id, label_text
+			from #arguments.theschema#.raz1_labels
+			where (label_path IS NULL OR label_path = '')
+			</cfquery>
+			<cfloop query="l">
+				<cftry>
+					<cfquery datasource="razuna_backup">
+					UPDATE #arguments.theschema#.raz1_labels
+					SET label_path = '#label_text#'
+					WHERE label_id = '#label_id#'
+					</cfquery>
+					<cfcatch type="database">
+						<cfoutput><p>#cfcatch.detail#</p></cfoutput>
+					</cfcatch>
+				</cftry>
+			</cfloop>
+			<cfcatch type="database"></cfcatch>
+		</cftry>
 		<!--- Add the rec_uuid to the tables. Wrap in a catch in case they exists --->
 		<cftry>
 			<cfquery datasource="razuna_backup">
