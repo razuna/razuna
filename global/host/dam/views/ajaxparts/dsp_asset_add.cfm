@@ -27,7 +27,7 @@
 	<div id="tab_addassets">
 		<ul>
 			<li><a href="##addsingle" onclick="loadcontent('addsingle','#myself##xfa.addsingle#&folder_id=#folder_id#');">#defaultsObj.trans("header_add_asset")#</a></li>
-			<cfif application.razuna.isp AND cs.tab_add_from_server>
+			<cfif !application.razuna.isp AND cs.tab_add_from_server>
 				<li><a href="##addserver">#defaultsObj.trans("header_add_asset_server")#</a></li>
 			</cfif>
 			<cfif cs.tab_add_from_email>
@@ -41,7 +41,7 @@
 			</cfif>
 		</ul>
 		<div id="addsingle" style="padding:0px;margin:0px;">#defaultsObj.loadinggif("#dynpath#")#</div>
-		<cfif application.razuna.isp AND cs.tab_add_from_server>
+		<cfif !application.razuna.isp AND cs.tab_add_from_server>
 			<div id="addserver">
 				<p><a href="##" onclick="showwindow('#myself##xfa.addserver#&folder_id=#folder_id#','#defaultsObj.trans("header_add_asset_server")#',800,2);">#defaultsObj.trans("import_from_folder")#</a> #defaultsObj.trans("import_from_folder_custom")#.</p>
 				<p>
