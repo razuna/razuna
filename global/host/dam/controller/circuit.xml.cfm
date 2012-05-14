@@ -915,6 +915,8 @@
 		<!-- XFA -->
 		<xfa name="submitfolderform" value="c.folder_update" />
 		<xfa name="foldernew" value="c.folder_new" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="folder_new" />
 	</fuseaction>
