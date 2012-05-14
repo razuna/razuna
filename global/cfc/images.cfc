@@ -658,8 +658,9 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
-			<cfhttp url="#arguments.thestruct.qry_detail.cloud_url_org#" file="#arguments.thestruct.thename#" path="#arguments.thestruct.thisfolder#"></cfhttp>
-			<cfthread name="convert#arguments.thestruct.file_id#" />
+			<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+				<cfhttp url="#attributes.intstruct.qry_detail.cloud_url_org#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.thisfolder#"></cfhttp>
+			</cfthread>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<!--- Download file --->
