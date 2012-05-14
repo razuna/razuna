@@ -360,7 +360,8 @@
 		<!-- XFA -->
 		<xfa name="foldernew" value="c.folder_new" />
 		<xfa name="collections" value="c.collections" />
-		<!-- Set showmyfolder state -->
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.explorer_col" />
 	</fuseaction>
