@@ -831,6 +831,8 @@
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="getcollectiongroups(attributes.col_id,qry_groups)" returnvariable="qry_col_groups" />
 		<!-- CFC: Load Groups of this folder for group 0 -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="getcollectiongroupszero(attributes.col_id)" returnvariable="qry_col_groups_zero" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.collection_detail" />
 	</fuseaction>

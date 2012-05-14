@@ -2317,7 +2317,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cffile action="copy" source="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#" mode="775">
 				</cfif>
-			<!--- For NIRVANIX --->
+			<!--- NIRVANIX / AMAZON --->
 			<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				<!--- Just assign the current path to the finalpath --->
 				<cfset arguments.thestruct.thisvid.finalpath = "#arguments.thestruct.qryfile.path#">
