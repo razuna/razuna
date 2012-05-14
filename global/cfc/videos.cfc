@@ -1036,7 +1036,7 @@
 			<cfset previewvideo = "#newname#" & "_" & arguments.thestruct.newid & "." & theformat>
 			<cfset previewimage = "#newname#" & "_" & arguments.thestruct.newid & ".jpg">
 			<!--- If from upload templates we select with and height of image --->
-			<cfif arguments.thestruct.upl_template NEQ 0>
+			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined" AND arguments.thestruct.upl_template NEQ "">
 				<cfquery datasource="#application.razuna.datasource#" name="qry_w">
 				SELECT upl_temp_field, upl_temp_value
 				FROM #session.hostdbprefix#upload_templates_val
