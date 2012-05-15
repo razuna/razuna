@@ -173,7 +173,7 @@
 				<cfset xmlVar = xmlParse(cfhttp.filecontent) />
 				<!--- Check if all is ok --->
 				<cfif xmlvar.Response.Responsecode[1].XmlText NEQ 0>
-					<cfinvoke component="email" to="nitai@razuna.com" method="send_email" subject="Razuna: Could not add your file!" themessage="#xmlvar.Response.ErrorMessage[1].XmlText#. <br /><br />If you want to continue using Razuna you either have to wait until the end of your subscription period or simply upgrade your Razuna plan. You can do so within the Account Settings of Razuna!">
+					<cfinvoke component="email" method="send_email" subject="Razuna: Could not add your file!" themessage="#xmlvar.Response.ErrorMessage[1].XmlText#. <br /><br />If you want to add your file now you need upgrade your Razuna plan to allow for more storage and bandwidth traffic! You can do so within the Account Settings of Razuna.">
 					<cfabort>
 				</cfif>
 				<cfcatch type="any">
