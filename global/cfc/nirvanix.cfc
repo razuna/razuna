@@ -583,13 +583,13 @@
 				<!--- If storage or bandwidth is full then set variable and email user --->
 				<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
 					<!--- Send eMail --->
-					<cfinvoke component="email" method="send_email" to="nitai@razuna.com" subject="Razuna: Your account needs upgrading" themessage="You have exceeded the total amount of storage or traffic for your account for this month!<br /><br />If you want to add any more files you need upgrade your Razuna plan to allow for more storage and bandwidth traffic!<br /><br />Please login to Razuna and then go to your Account Settings in order to upgrade your plan now.">
+					<cfinvoke component="email" method="send_email" subject="Razuna: Your account needs upgrading" themessage="You have exceeded the total amount of storage or traffic for your account for this month!<br /><br />If you want to add any more files you need upgrade your Razuna plan to allow for more storage and bandwidth traffic!<br /><br />Please login to Razuna and then go to your Account Settings in order to upgrade your plan now.">
 					<!--- Set var --->
 					<cfset x.limitup = true>
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#cfcatch#"></cfmail>
+				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#cfcatch#"><cfdump var="#session#"></cfmail>
 				<cfset x = structnew()>
 				<cfset x.DBU = 0>
 				<cfset x.UBU = 0>
