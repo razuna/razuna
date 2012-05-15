@@ -555,9 +555,36 @@
 			<cfset x.band = x.DBU + x.UBU>
 			<!--- According to host type set the alert --->
 			<cfif session.hosttype NEQ 149>
-				<cfset var storage = 536870912>
-				<cfset var bandud = 268435456>
+				<!--- 0 --->
+				<cfif session.hosttype EQ 0>
+					<cfset var storage = 524288000>
+					<cfset var bandud = 262144000>
+				</cfif>
+				<!--- 8 --->
+				<cfif session.hosttype EQ 0>
+					<cfset var storage = 2147483648>
+					<cfset var bandud = 1073741824>
+				</cfif>
+				<!--- 24 --->
+				<cfif session.hosttype EQ 0>
+					<cfset var storage = 16106127360>
+					<cfset var bandud = 8053063680>
+				</cfif>
+				<!--- 49 --->
+				<cfif session.hosttype EQ 0>
+					<cfset var storage = 53687091200>
+					<cfset var bandud = 26843545600>
+				</cfif>
+				<!--- 99 --->
+				<cfif session.hosttype EQ 0>
+					<cfset var storage = 161061273600>
+					<cfset var bandud = 80530636800>
+				</cfif>
+				<!--- If storage or bandwidth is full then set variable and email user --->
 				<cfif x.tsu GTE storage OR x.band GTE bandud>
+					<!--- Send eMail --->
+					<cfinvoke component="email" method="send_email" to="nitai@razuna.com" subject="Razuna: Your account needs upgrading" themessage="You have exceeded the total amount of storage or traffic for your account for this month!<br /><br />If you want to add any more files you need upgrade your Razuna plan to allow for more storage and bandwidth traffic!<br /><br />Please login to Razuna and then go to your Account Settings in order to upgrade your plan now.">
+					<!--- Set var --->
 					<cfset x.limitup = true>
 				</cfif>
 			</cfif>
