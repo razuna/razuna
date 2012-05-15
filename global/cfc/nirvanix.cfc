@@ -163,9 +163,6 @@
 			<!--- Get Storage Node Stuff --->
 			<cfset var storagenode = getstoragenode(nvxsession)>
 			<!--- Upload Asset --->
-			<!---
-<cfthread name="#tt#" intstruct="#arguments#">
---->
 			<cftry>
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug storagenode" type="html"><cfdump var="#storagenode#"><cfdump var="#arguments#"></cfmail>
 				<cfhttp url="#storagenode.uploadhost#/Upload.ashx" method="post" throwonerror="yes" timeout="900">
@@ -174,21 +171,19 @@
 					<cfhttpparam name="uploadFile" file="#arguments.uploadfile#" type="file">
 				</cfhttp>
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug cfhttp" type="html"><cfdump var="#cfhttp#"></cfmail>
+				<!--- Parse the response --->
+				<cfset xmlVar = xmlParse(cfhttp.filecontent) />
+				<!--- Check if all is ok --->
+				<cfif xmlvar.Response.Responsecode[1].XmlText NEQ 0>
+					<cfinvoke component="email" to="nitai@razuna.com" method="send_email" subject="Razuna: Could not add your file!" themessage="#xmlvar.Response.ErrorMessage[1].XmlText#. If you want to continue using Razuna you either have to wait until the end of your subscription period or simply upgrade your Razuna plan. You can do so within the Account Settings of Razuna!">
+				</cfif>
 				<cfcatch type="any">
-					<cfif cfcatch.message CONTAINS "bandwidth limit">
-						<cfinvoke component="email" method="send_email" subject="Razuna: Bandwidth exceeded" themessage="The file you are trying to upload exceeds the bandwidth limit for your plan. If you want to continue using Razuna you either have to wait until the end of your subscription period or simply upgrade your Razuna plan. You can do so within the Account Settings of Razuna!">
-					<cfelse>
-						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
-							<cfdump var="#cfcatch#" />
-						</cfmail>
-					</cfif>
+					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
+						<cfdump var="#cfcatch#" />
+					</cfmail>
 					<cfabort>
 				</cfcatch>
 			</cftry>
-<!---
-			</cfthread>
-			<cfthread action="join" name="#tt#" />
---->
 		</cfif>
 		<cfreturn />
 	</cffunction>
