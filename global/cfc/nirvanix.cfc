@@ -164,18 +164,17 @@
 			<cfset var storagenode = getstoragenode(nvxsession)>
 			<!--- Upload Asset --->
 			<cftry>
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug storagenode" type="html"><cfdump var="#storagenode#"><cfdump var="#arguments#"></cfmail>
 				<cfhttp url="#storagenode.uploadhost#/Upload.ashx" method="post" throwonerror="yes" timeout="900">
 					<cfhttpparam name="uploadtoken" value="#storagenode.uploadtoken#" type="url">
 					<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 					<cfhttpparam name="uploadFile" file="#arguments.uploadfile#" type="file">
 				</cfhttp>
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug cfhttp" type="html"><cfdump var="#cfhttp#"></cfmail>
 				<!--- Parse the response --->
 				<cfset xmlVar = xmlParse(cfhttp.filecontent) />
 				<!--- Check if all is ok --->
 				<cfif xmlvar.Response.Responsecode[1].XmlText NEQ 0>
-					<cfinvoke component="email" to="nitai@razuna.com" method="send_email" subject="Razuna: Could not add your file!" themessage="#xmlvar.Response.ErrorMessage[1].XmlText#. If you want to continue using Razuna you either have to wait until the end of your subscription period or simply upgrade your Razuna plan. You can do so within the Account Settings of Razuna!">
+					<cfinvoke component="email" to="nitai@razuna.com" method="send_email" subject="Razuna: Could not add your file!" themessage="#xmlvar.Response.ErrorMessage[1].XmlText#. <br /><br />If you want to continue using Razuna you either have to wait until the end of your subscription period or simply upgrade your Razuna plan. You can do so within the Account Settings of Razuna!">
+					<cfabort>
 				</cfif>
 				<cfcatch type="any">
 					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
