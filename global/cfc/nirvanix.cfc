@@ -552,7 +552,8 @@
 			<cfset x.DBU = #DBU[1].TotalUsageAmount.xmlText#>
 			<cfset x.UBU = #UBU[1].TotalUsageAmount.xmlText#>
 			<cfset x.TSU = #TSU[1].TotalUsageAmount.xmlText#>
-			<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#x#"></cfmail>
+			<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#x#"><cfdump var="#session#"></cfmail>
+			<cfabort>
 			<!--- Add bandwidth together --->
 			<cfset x.band = x.DBU + x.UBU>
 			<!--- According to host type set the alert --->
@@ -582,7 +583,7 @@
 					<cfset var storage = 161061273600>
 					<cfset var bandud = 80530636800>
 				</cfif>
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#x#"><cfdump var="#storage#"><cfdump var="#bandup#"><cfdump var="#session.hosttype#"></cfmail>
+				<!--- <cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#x#"><cfdump var="#storage#"><cfdump var="#bandup#"><cfdump var="#session.hosttype#"></cfmail> --->
 				<!--- If storage or bandwidth is full then set variable and email user --->
 				<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
 					<!--- Send eMail --->
