@@ -557,30 +557,29 @@
 			<cfif session.hosttype NEQ 149>
 				<!--- 0 --->
 				<cfif session.hosttype EQ 0>
-					<cfset var storage = 524288000>
-					<cfset var bandud = 262144000>
+					<cfset var storage = 524288000 - 10485760>
+					<cfset var bandud = 262144000 - 10485760>
 				</cfif>
 				<!--- 8 --->
 				<cfif session.hosttype EQ 8>
-					<cfset var storage = 2147483648>
-					<cfset var bandud = 1073739824>
+					<cfset var storage = 2147483648 - 10485760>
+					<cfset var bandud = 1073741824 - 10485760>
 				</cfif>
 				<!--- 24 --->
 				<cfif session.hosttype EQ 24>
-					<cfset var storage = 16106127360>
-					<cfset var bandud = 8053063680>
+					<cfset var storage = 16106127360 - 10485760>
+					<cfset var bandud = 8053063680 - 10485760>
 				</cfif>
 				<!--- 49 --->
 				<cfif session.hosttype EQ 49>
-					<cfset var storage = 53687091200>
-					<cfset var bandud = 26843545600>
+					<cfset var storage = 53687091200 - 10485760>
+					<cfset var bandud = 26843545600 - 10485760>
 				</cfif>
 				<!--- 99 --->
 				<cfif session.hosttype EQ 99>
-					<cfset var storage = 161061273600>
-					<cfset var bandud = 80530636800>
+					<cfset var storage = 161061273600 - 10485760>
+					<cfset var bandud = 80530636800 - 10485760>
 				</cfif>
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#x#"><cfdump var="#bandud#"></cfmail>
 				<!--- If storage or bandwidth is full then set variable and email user --->
 				<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
 					<!--- Send eMail --->
