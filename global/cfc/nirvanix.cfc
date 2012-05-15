@@ -563,7 +563,7 @@
 				<!--- 8 --->
 				<cfif session.hosttype EQ 8>
 					<cfset var storage = 2147483648>
-					<cfset var bandud = 1073741824>
+					<cfset var bandud = 1073739824>
 				</cfif>
 				<!--- 24 --->
 				<cfif session.hosttype EQ 24>
@@ -580,7 +580,7 @@
 					<cfset var storage = 161061273600>
 					<cfset var bandud = 80530636800>
 				</cfif>
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#x#"><cfdump var="#storage#"><cfdump var="#bandud#"><cfdump var="#session.hosttype#"></cfmail>
+				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#x#"><cfdump var="#bandud#"></cfmail>
 				<!--- If storage or bandwidth is full then set variable and email user --->
 				<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
 					<!--- Send eMail --->
