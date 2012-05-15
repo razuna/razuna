@@ -552,7 +552,7 @@
 			<cfset x.DBU = #DBU[1].TotalUsageAmount.xmlText#>
 			<cfset x.UBU = #UBU[1].TotalUsageAmount.xmlText#>
 			<cfset x.TSU = #TSU[1].TotalUsageAmount.xmlText#>
-			<cfdump var="#x#">
+			<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#x#"></cfmail>
 			<!--- Add bandwidth together --->
 			<cfset x.band = x.DBU + x.UBU>
 			<!--- According to host type set the alert --->
@@ -592,6 +592,7 @@
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
+				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#cfcatch#"></cfmail>
 				<cfset x = structnew()>
 				<cfset x.DBU = 0>
 				<cfset x.UBU = 0>
