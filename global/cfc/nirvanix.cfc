@@ -561,22 +561,22 @@
 					<cfset var bandud = 262144000>
 				</cfif>
 				<!--- 8 --->
-				<cfif session.hosttype EQ 0>
+				<cfif session.hosttype EQ 8>
 					<cfset var storage = 2147483648>
 					<cfset var bandud = 1073741824>
 				</cfif>
 				<!--- 24 --->
-				<cfif session.hosttype EQ 0>
+				<cfif session.hosttype EQ 24>
 					<cfset var storage = 16106127360>
 					<cfset var bandud = 8053063680>
 				</cfif>
 				<!--- 49 --->
-				<cfif session.hosttype EQ 0>
+				<cfif session.hosttype EQ 49>
 					<cfset var storage = 53687091200>
 					<cfset var bandud = 26843545600>
 				</cfif>
 				<!--- 99 --->
-				<cfif session.hosttype EQ 0>
+				<cfif session.hosttype EQ 99>
 					<cfset var storage = 161061273600>
 					<cfset var bandud = 80530636800>
 				</cfif>
