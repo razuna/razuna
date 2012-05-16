@@ -26,7 +26,7 @@
 <cfoutput>
 	<div id="tab_addassets">
 		<ul>
-			<li><a href="##addsingle" onclick="loadcontent('addsingle','#myself##xfa.addsingle#&folder_id=#folder_id#');">#defaultsObj.trans("header_add_asset")#</a></li>
+			<li><a href="##addsingle">#defaultsObj.trans("header_add_asset")#</a></li>
 			<cfif !application.razuna.isp AND cs.tab_add_from_server>
 				<li><a href="##addserver">#defaultsObj.trans("header_add_asset_server")#</a></li>
 			</cfif>

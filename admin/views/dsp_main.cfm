@@ -176,7 +176,7 @@
 						<div class="pane" id="raztools">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 								<tr>
-									<td>Hi there. Thank you for using Razuna. In order for your to enjoy Razuna even more we have some additional tools for you available.</td>
+									<td>Hi there. Thank you for using Razuna. In order for you to enjoy Razuna even more we have some additional tools for you available.</td>
 								</tr>
 								<tr>
 									<th><a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Razuna Desktop</a></th>
