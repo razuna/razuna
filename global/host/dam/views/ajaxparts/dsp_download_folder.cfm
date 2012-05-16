@@ -44,4 +44,13 @@
 	<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("header_download_folder")#" class="button"></div>
 	</form>
 </div>
+<script type="text/javascript">
+$("##form_download_folder").submit(function(e){
+	var checked = $("##form_download_folder input:checked").length > 0;
+    if (!checked){
+        alert("Please check at least one checkbox");
+        return false;
+    }
+})
+</script>
 </cfoutput>
