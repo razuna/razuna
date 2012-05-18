@@ -92,7 +92,64 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-				
+	
+	<!--- Set Custom Field Value --->
+	<cffunction name="setfieldvalue" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="assetid" required="true">
+		<cfargument name="field_values" required="true">
+		<!--- Check key --->
+		<cfset thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Deserialize the JSON back into a struct --->
+			<cfset thejson = DeserializeJSON(arguments.field_values)>
+			<!--- Loop over the assetid --->
+			<cfloop list="#arguments.assetid#" index="i" delimiters=",">
+				<!--- Loop over struct --->
+				<cfloop array="#thejson#" index="f">
+					<!--- Check to see if there is a record --->
+					<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+					SELECT cf_id_r
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					</cfquery>
+					<!--- Insert --->
+					<cfif qry.recordcount EQ 0>
+						<cfquery datasource="#application.razuna.api.dsn#">
+						INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+						(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+						VALUES(
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#f[2]#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+						)
+						</cfquery>
+					<!--- Update --->
+					<cfelse>
+						<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
+						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#f[2]#">
+						WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+						</cfquery>
+					</cfif>
+				</cfloop>
+			</cfloop>
+			<!--- Return --->
+			<cfset thexml.responsecode = 0>
+			<cfset thexml.message = "Custom field values successfully added">
+		<!--- No session found --->
+		<cfelse>
+			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+	
 	<!--- get custom fields from asset --->
 	<cffunction name="getfieldsofasset" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
