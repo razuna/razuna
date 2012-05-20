@@ -56,7 +56,7 @@
 			</tr>
 		</cfloop>
 	</table>
-<script>
+<script type="text/javascript">
 // Update Comment
 function addlabeladmin(){
 	// Get value

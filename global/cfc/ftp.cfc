@@ -39,12 +39,13 @@
     <!--- Try to connect to the FTP server --->
     <cfif cfftp.succeeded>                
         <cfif NOT structkeyexists(arguments.thestruct,"folderpath")>
-                <!--- Get the current directory name --->
-                <cfftp connection="#fc#" action="GetCurrentDir" stoponerror="no" timeout="30">
-                <cfset thedirname="#cfftp.returnvalue#">
-                <cfset wodirname="#thedirname#">
-                <!--- Get a listing of the directory --->
-                <cfftp connection="#fc#" action="listdir" directory="#thedirname#/" name="dirlist" stoponerror="no" timeout="20">
+            <!--- Get the current directory name --->
+            <cfftp connection="#fc#" action="GetCurrentDir" stoponerror="no" timeout="30">
+            <cfset thedirname="#cfftp.returnvalue#">
+            <cfset wodirname="#thedirname#">
+            <!--- Get a listing of the directory --->
+            <cfftp connection="#fc#" action="listdir" directory="#thedirname#/" name="dirlist" stoponerror="no" timeout="20">
+            <cfdump var="#dirlist#"><cfabort>
         <cfelse>
         	<cftry>
                 <cfftp connection="#fc#" action="listdir" directory="#arguments.thestruct.folderpath#/" name="dirlist" stoponerror="yes" timeout="30">
@@ -63,10 +64,10 @@
             </cftry>
                 <!--- <cfdump var="#dirlist#"><cfabort> --->
                 <cfif findoneof(arguments.thestruct.folderpath,"/") EQ 0>
-                        <cfset qry.backpath = "">
+                	<cfset qry.backpath = "">
                 <cfelse>
-                        <cfset temp = listlast(arguments.thestruct.folderpath, "/\")>
-                        <cfset qry.backpath = replacenocase(arguments.thestruct.folderpath, "/#temp#", "", "ALL")>
+                    <cfset temp = listlast(arguments.thestruct.folderpath, "/\")>
+                    <cfset qry.backpath = replacenocase(arguments.thestruct.folderpath, "/#temp#", "", "ALL")>
                 </cfif>
                 <cfset thedirname="#arguments.thestruct.folderpath#">
         </cfif>

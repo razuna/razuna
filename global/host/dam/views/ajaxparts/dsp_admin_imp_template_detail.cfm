@@ -132,8 +132,9 @@
 		loadcontent('admin_imp_templates', '#myself#c.imp_templates');
 	}
 	$(document).ready(function() {
-		$('##btnDel').css('display','none');
-		
+		<cfif qry_detail.impval.recordcount EQ 0>
+			$('##btnDel').css('display','none');
+		</cfif>
 		$('##btnAdd').click(function() {
 	        var num     = $('.clonedInput').length; // how many "duplicatable" input fields we currently have
 	        var newNum  = new Number(num + 1);      // the numeric ID of the new input field being added

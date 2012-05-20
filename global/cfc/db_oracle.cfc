@@ -2143,6 +2143,18 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		)
 		</cfquery>
 		
+		<!--- Social accounts --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#users_accounts (
+	  	identifier			varchar2(200 char),
+		provider			varchar2(100 char),
+		user_id_r			varchar2(100 char),
+		jr_identifier		varchar2(500 char),
+		profile_pic_url		varchar2(1000 char),
+		host_id				number
+		)
+		</cfquery>
+		
 	</cffunction>
 	
 	

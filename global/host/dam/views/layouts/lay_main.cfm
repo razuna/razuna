@@ -47,36 +47,31 @@
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfif application.razuna.isp>
 <!--- CSS --->
-<!--- <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" /> --->
 <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" />
-<!--- <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css" /> --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/tagit.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/multiple-instances.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/css/jquery.tagit.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.css" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css?_v=2012.05.18.1" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=2012.05.18.1" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/tagit.css?_v=2012.05.18.1" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/multiple-instances.css?_v=2012.05.18.1" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/css/jquery.tagit.css?_v=2012.05.18.1" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.css?_v=2012.05.18.1" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.css?_v=2012.05.18.1" />
 <!--- JS --->
-<!--- <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js" type="text/javascript"></script> --->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js" type="text/javascript"></script>
-<!--- <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script> --->
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=2012.05.18.1" type="text/javascript"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/jquery.tree.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/lib/jquery.cookie.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/plugins/jquery.tree.cookie.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/js/tag-it.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js" type="text/javascript"></script>
-<!--- <script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js" type="text/javascript"></script> --->
-<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.jquery.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.formparams.js" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/jquery.tree.min.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/lib/jquery.cookie.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/plugins/jquery.tree.cookie.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/js/tag-it.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.jquery.min.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.formparams.js?_v=2012.05.18.1" type="text/javascript"></script>
 <!--- Favicon --->
-<link rel="SHORTCUT ICON" href="//d3jcwo7gahoav9.cloudfront.net/razuna/favicon.ico" />
+<link rel="SHORTCUT ICON" href="//d3jcwo7gahoav9.cloudfront.net/razuna/favicon.ico?_v=2012.05.18.1" />
 <cfelse>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />

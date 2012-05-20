@@ -291,9 +291,13 @@
 	DELETE FROM users
 	WHERE user_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
+	<!--- Delete social accounts --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#users_accounts
+	WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfquery>
 	<!--- Flush Cache --->
 	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_users" />
-	
 	<cfreturn />
 </cffunction>
 
@@ -444,5 +448,67 @@
 	<!--- Return --->
 	<cfreturn key.user_api_key />
 </cffunction>
+
+<!--- Get social accounts for this user --->
+<cffunction name="getsocial">
+	<cfargument name="thestruct" type="Struct">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="getsocial#arguments.thestruct.user_id##session.hostid#" cachedomain="#session.hostid#_users">
+	SELECT identifier, provider
+	FROM #session.hostdbprefix#users_accounts
+	WHERE user_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
+	</cfquery>
+	<cfreturn qry>
+</cffunction>
+
+<!--- Save social accounts ---------------------------------------------------------------------->
+<cffunction name="savesocial" output="false">
+	<cfargument name="thestruct" type="struct" required="true">
+	<!--- Delete all records with this ID in the DB --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#users_accounts
+	WHERE user_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
+	</cfquery>
+	<!--- Get the name and select fields --->
+	<cfset var thefield = "">
+	<cfset var theselect = "">
+	<cfloop collection="#arguments.thestruct#" item="i">
+		<cfif i CONTAINS "identifier_">
+			<!--- Get values --->
+			<cfset f = listfirst(i,"_")>
+			<cfset fn = listlast(i,"_")>
+			<cfset fg = f & "_" & fn>
+			<cfset thefield = thefield & "," & fg>
+		</cfif>
+		<cfif i CONTAINS "provider_">
+			<!--- Get values --->
+			<cfset s = listfirst(i,"_")>
+			<cfset sn = listlast(i,"_")>
+			<cfset sg = s & "_" & sn>
+			<cfset theselect = theselect & "," & sg>
+		</cfif>
+	</cfloop>
+	<!--- loop over list amount and do insert and listgetat --->
+	<cfloop from="1" to="#listlen(thefield)#" index="i">
+		<cfset fi = listgetat(thefield, listfindnocase(thefield,"identifier_#i#"))>
+		<cfset se = listgetat(theselect, listfindnocase(theselect,"provider_#i#"))>
+		<cfset fi_value = arguments.thestruct["#fi#"]>
+		<cfset se_value = arguments.thestruct["#se#"]>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#users_accounts
+		(user_id_r, host_id, identifier, provider)
+		VALUES(
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#fi_value#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#se_value#">
+		)
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_users" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
 
 </cfcomponent>

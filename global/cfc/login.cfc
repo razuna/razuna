@@ -82,8 +82,6 @@
 		<!--- check to see if a record has been found --->
 		<cfif qryuser.recordcount EQ 0>
 			<cfset theuser.notfound = "T">
-<!--- 			<cflocation url="index.cfm?fa=c.logout&loginerror=T" /> --->
-			<!--- <cfoutput>false</cfoutput> --->
 		<cfelse>
 			<cfset theuser.notfound = "F">
 			<!--- Put the query result in the structure --->
@@ -93,7 +91,7 @@
 			<!--- Set the Web Login into a session --->
 			<cfset session.weblogin = "F">
 			<!--- Set the user ID into a session --->
-			<cfset session.theuserid = "#qryuser.user_id#">
+			<cfset session.theuserid = qryuser.user_id>
 			<!--- Set User First and last name --->
 			<cfset session.firstlastname = "#qryuser.user_first_name# #qryuser.user_last_name#">
 			<!--- Admin Login: Set the domain ID into a session --->
@@ -122,61 +120,61 @@
 				</cfif>
 				<!--- Cookie --->
 				<cfset setcookie("loginrem",arguments.rem_login,"never")>
-				<cfset arguments.thestruct.dsn = application.razuna.datasource>
-				<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
-				<cfset arguments.thestruct.database = application.razuna.thedatabase>
-				<cfset arguments.thestruct.qryuser = qryuser>
-				<cfthread intstruct="#arguments.thestruct#">
-					<cfquery datasource="#attributes.intstruct.dsn#" name="myfolder">
-					SELECT folder_of_user
-					FROM #attributes.intstruct.hostdbprefix#folders
-					WHERE folder_owner = <cfqueryparam value="#attributes.intstruct.qryuser.user_id#" cfsqltype="CF_SQL_VARCHAR">
-					AND lower(folder_name) = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-					<!--- Create the MY FOLDER for this user --->
-					<cfif myfolder.recordcount EQ 0>
-						<!--- Create ID --->
-						<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#attributes.intstruct.database#" dsn="#attributes.intstruct.dsn#" thetable="#session.hostdbprefix#folders" theid="folder_id"> --->
-						<!--- Insert --->						
-						<cfset newfolderid = createuuid("")>
-						<cfquery datasource="#attributes.intstruct.dsn#">
-						INSERT INTO #attributes.intstruct.hostdbprefix#folders
-						(folder_id, folder_name, folder_level, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, folder_of_user, folder_id_r, folder_main_id_r, host_id)
-						values (
-						<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="My Folder" cfsqltype="cf_sql_varchar">, 
-						<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
-						<cfqueryparam value="#attributes.intstruct.qryuser.user_id#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-						<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
-						</cfquery>
-						<!--- Insert the DESCRIPTION --->
-						<cfquery datasource="#attributes.intstruct.dsn#">
-						insert into #attributes.intstruct.hostdbprefix#folders_desc
-						(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
-						values(
-						<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
-						<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
-						<cfqueryparam value="This is your personal folder" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-						)
-						</cfquery>
-					</cfif>
-				</cfthread>
+				<!--- Call internal create my folder function --->
+				<cfinvoke method="createmyfolder" userid="#qryuser.user_id#" />
 			</cfif>
-<!--- 			<cflocation url="index.cfm?fa=c.main"> --->
-			<!--- <cfoutput>true</cfoutput> --->
 		</cfif>
 		<cfreturn theuser />
+	</cffunction>
+
+<!--- Create my folder --->
+	<cffunction name="createmyfolder" access="private">
+		<cfargument name="userid" required="yes" type="string">
+		<cfthread intstruct="#arguments#">
+			<cfquery datasource="#application.razuna.datasource#" name="myfolder">
+			SELECT folder_of_user
+			FROM #session.hostdbprefix#folders
+			WHERE folder_owner = <cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">
+			AND lower(folder_name) = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- Create the MY FOLDER for this user --->
+			<cfif myfolder.recordcount EQ 0>
+				<!--- New ID --->				
+				<cfset newfolderid = createuuid("")>
+				<!--- Insert --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#folders
+				(folder_id, folder_name, folder_level, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, folder_of_user, folder_id_r, folder_main_id_r, host_id)
+				values (
+				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="My Folder" cfsqltype="cf_sql_varchar">, 
+				<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
+				<cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+				<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
+				<!--- Insert the DESCRIPTION --->
+				<cfquery datasource="#application.razuna.datasource#">
+				insert into #session.hostdbprefix#folders_desc
+				(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
+				values(
+				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
+				<cfqueryparam value="This is your personal folder" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfif>
+		</cfthread>
 	</cffunction>
 
 <!--- FUNCTION: LOGINSTATUS --->
@@ -373,8 +371,104 @@ Password: #randompassword#
 			</cfif>
 		<cfelse>
 			<cflocation url="index.cfm?fa=c.mini&e=t">
-		
-			
+		</cfif>
+	</cffunction>
+	
+	<!--- Janrain --->
+	<cffunction name="login_janrain" access="public">
+		<cfargument name="thestruct" required="yes" type="struct">
+		<!--- Param --->
+		<cfset var razgo = false>
+		<!--- Api call to auth_info --->
+		<cfhttp url="https://rpxnow.com/api/v2/auth_info">
+			<cfhttpparam name="token" value="#arguments.thestruct.token#" type="URL">
+			<cfhttpparam name="apiKey" value="#arguments.thestruct.jr_apikey#" type="URL">
+		</cfhttp>
+		<!--- If status code is 200 --->
+		<cfif cfhttp.responseheader.status_code EQ "200">
+			<!--- Read the json response --->
+			<cfset var auth_info_json = Deserializejson(cfhttp.filecontent)>
+			<!--- Set default variables which might be in the response (depending on the provider) --->
+			<cfparam name="auth_info_json.profile.displayName" default="" />
+			<cfparam name="auth_info_json.profile.email" default="" />
+			<cfparam name="auth_info_json.profile.photo" default="" />
+			<!--- check if the return is ok --->
+			<cfif auth_info_json.stat EQ "OK">
+				<!---
+				'identifier' will always be in the payload
+				this is the unique idenfifier that you use to sign the user
+				in to your site
+				--->
+				<cfset var identifier = auth_info_json.profile.identifier>
+				<!---
+				these fields MAY be in the profile, but are not guaranteed. it
+				depends on the provider and their implementation.
+				--->
+				<cfset var displayName = auth_info_json.profile.displayName>
+				<cfset var email = auth_info_json.profile.email>
+				<cfset var profile_pic_url = auth_info_json.profile.photo>
+				<cfset var providerName = auth_info_json.profile.providerName>
+				<cfset var preferredUsername = auth_info_json.profile.preferredUsername>
+				<!--- Now check DB --->
+				<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachename="getsocial#identifier#" cachedomain="#session.hostid#_users">
+				SELECT jr_identifier, user_id_r
+				FROM #session.hostdbprefix#users_accounts
+				WHERE jr_identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#identifier#">
+				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				</cfquery>
+				<!--- If we don't have an identifier yet then compare by eMail or preferredUsername --->
+				<cfif qryaccount.recordcount EQ 0>
+					<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachename="getsocialemail#identifier#" cachedomain="#session.hostid#_users">
+					SELECT identifier, user_id_r
+					FROM #session.hostdbprefix#users_accounts
+					WHERE (
+						lower(identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(email)#">
+						OR
+						lower(identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(preferredUsername)#">
+						)
+					AND lower(provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					</cfquery>
+					<!--- If we found the account update the record with the janrain identifier --->
+					<cfif qryaccount.recordcount NEQ 0>
+						<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#users_accounts
+						SET jr_identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#identifier#">
+						WHERE user_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qryaccount.user_id_r#">
+						AND lower(provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
+						</cfquery>
+						<!--- Flush Cache --->
+						<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_users" />
+						<!--- and let him in --->
+						<cfset razgo = true>
+					</cfif>
+				<!--- Identifier matches thus let user in --->
+				<cfelse>
+					<cfset razgo = true>
+				</cfif>
+				<!--- If all goes well redirect to login --->
+				<cfif razgo>
+					<!--- Set the Login into a session --->
+					<cfset session.login = "T">
+					<!--- Set the Web Login into a session --->
+					<cfset session.weblogin = "F">
+					<!--- Set the user ID into a session --->
+					<cfset session.theuserid = qryaccount.user_id_r>
+					<!--- Call internal create my folder function --->
+					<cfinvoke method="createmyfolder" userid="#qryaccount.user_id_r#" />
+					<!--- and return --->
+					<cfreturn qryaccount.user_id_r />
+				<cfelse>
+					<cfreturn "0" />
+				</cfif>
+			<cfelse>
+			    <h1>Error with the authentication</h1>
+			    <cfdump var="#auth_info_json.err.msg#">
+			</cfif>
+		<!--- There is an error with the http response --->
+		<cfelse>
+			<h1>Error with the HTTP Response</h1>
+			<cfdump var="#cfhttp#">
 		</cfif>
 	</cffunction>
 	
