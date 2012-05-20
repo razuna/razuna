@@ -59,7 +59,7 @@
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/login.js"></script>
 </cfif>
-<cfif jr_enable EQ "true"><cfinclude template="../js/janrain.cfm" runonce="true"></cfif>
+<cfif jr_enable EQ "true"><cfinclude template="../../js/janrain.cfm" runonce="true"></cfif>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 </head>
 <body>
