@@ -2315,6 +2315,19 @@
 		#this.tableoptions#
 		</cfquery>
 		
+		<!--- Social accounts --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#users_accounts (
+	  	identifier			varchar(200),
+		provider			varchar(100),
+		user_id_r			varchar(100),
+		jr_identifier		varchar(500),
+		profile_pic_url		varchar(1000),
+		host_id				int(11)
+		)
+		#this.tableoptions#
+		</cfquery>
+		
 	</cffunction>
 	
 	<!--- Clear database completely --->

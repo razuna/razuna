@@ -30,6 +30,8 @@
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
 			</true>
 		</if>
+		<!-- Check for JanRain -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<!-- Show -->
 		<do action="v.login" />
 	</fuseaction>
@@ -87,6 +89,52 @@
 		   		<!-- <do action="login" /> -->
 		   	</false>
 		</if>
+	</fuseaction>
+	
+	<!-- Login: Janrain -->
+	<fuseaction name="login_janrain">
+		<!-- Get Janrain API key -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_apikey')" returnvariable="attributes.jr_apikey" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="login_janrain(attributes)" returnvariable="loginstatus" />
+		<!-- Log this action -->
+		<if condition="loginstatus NEQ 0">
+    		<true>
+				<!-- Log -->
+				<invoke object="myFusebox.getApplicationData().log" method="log_users">
+					<argument name="theuserid" value="#loginstatus#" />
+					<argument name="logaction" value="Login" />
+					<argument name="logsection" value="DAM" />
+    				<argument name="logdesc" value="Login: User-ID: #loginstatus# with Janrain" />
+				</invoke>
+				<!-- check groups -->
+				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" />
+				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" />
+				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser">
+					<argument name="user_id" value="#loginstatus#" />
+					<argument name="host_id" value="#Session.hostid#" />
+				</invoke>
+				<!-- CFC: Check for collection -->
+				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
+				<!-- set host again with real value -->
+				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
+				<!-- Relocate -->
+				<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
+			</true>
+			<false>
+				<!-- Log -->
+				<invoke object="myFusebox.getApplicationData().log" method="log_users">
+					<argument name="theuserid" value="0" />
+					<argument name="logaction" value="Error" />
+					<argument name="logsection" value="DAM" />
+    				<argument name="logdesc" value="Login Error for user: #loginstatus# with Janrain" />
+				</invoke>
+		   		<set name="attributes.loginerror" value="T" />
+		   		<!-- Relocate -->
+		   		<relocate url="#variables.thehttp##cgi.http_host##myself#c.logout&amp;loginerror=T" />
+		   	</false>
+		</if>
+		
 	</fuseaction>
 	
 	<!-- 
@@ -3261,6 +3309,10 @@
 		<invoke object="myFusebox.getApplicationData().groups_users" method="getUsersOfGroup" returnvariable="qry_groups_users">
 			<argument name="grp_id" value="2" />
 		</invoke>
+		<!-- CFC: Check if Janrain is enabled -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
+		<!-- CFC: Get social -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getsocial(attributes)" returnvariable="qry_social" />
 		<!-- Show -->
 		<do action="ajax.users_detail" />
 	</fuseaction>
@@ -3291,6 +3343,15 @@
 				<!-- CFC: Insert user to groups -->
 				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="addtogroups(attributes)" />
 			</false>
+		</if>
+		<!-- CFC: Check if Janrain is enabled -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
+		<!-- CFC: Save social accounts -->
+		<if condition="jr_enable EQ 'true'">
+			<true>
+				<set name="attributes.user_id" value="#attributes.newid#" />
+				<invoke object="myFusebox.getApplicationData().users" methodcall="savesocial(attributes)" />
+			</true>
 		</if>
 	</fuseaction>
 	<!-- Delete -->
@@ -3923,6 +3984,43 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_customization(attributes)" />
 	</fuseaction>
+	
+	<!--  -->
+	<!-- ADMIN: MAINTENANCE STOP -->
+	<!--  -->
+
+	<!--  -->
+	<!-- ADMIN: INTEGRATION START -->
+	<!--  -->
+	
+	<!-- For loading integration -->
+	<fuseaction name="admin_integration">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_apikey')" returnvariable="jr_apikey" />
+		<!-- We expect a boolean value for jr_enable but since it will return an empty string if not found -->
+		<if condition="jr_enable EQ ''">
+			<true>
+				<set name="jr_enable" value="false" />
+			</true>
+		</if>
+		<!-- Show -->
+		<do action="ajax.admin_integration" />
+	</fuseaction>
+	<!-- For saving customization -->
+	<fuseaction name="admin_integration_save">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_janrain(attributes.janrain_enable,attributes.janrain_apikey)" />
+	</fuseaction>
+	
+	<!--  -->
+	<!-- ADMIN: INTEGRATION STOP -->
+	<!--  -->
+	
+	<!--  -->
+	<!-- ADMIN: MAINTENANCE START -->
+	<!--  -->
+	
 	<!-- For loading maitenance -->
 	<fuseaction name="admin_maintenance">
 		<!-- Params -->

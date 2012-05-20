@@ -25,7 +25,7 @@
 		<transtext><![CDATA[Paramètres]]></transtext>
 	</transid>
 	<transid name="headerlogin">
-		<transtext><![CDATA[Connexion à votre Gestion des Actifs Numériques]]></transtext>
+		<transtext><![CDATA[Sign in to Razuna]]></transtext>
 	</transid>
 	<transid name="error_nousername">
 		<transtext><![CDATA[Entrez votre nom d'utilisateur!]]></transtext>
@@ -2226,10 +2226,28 @@
 	<transid name="header_customization_assetview_button_move_desc">
 		<transtext><![CDATA[Show/hide the "Move Asset" button in the asset view window. Note: Administrators will always see this button.]]></transtext>
 	</transid>
-	<transid name="header_customization_assetview_button_move">
-		<transtext><![CDATA["Move Asset" Button]]></transtext>
+	<transid name="header_integration">
+		<transtext><![CDATA[Integration]]></transtext>
 	</transid>
-	<transid name="header_customization_assetview_button_move_desc">
-		<transtext><![CDATA[Show/hide the "Move Asset" button in the asset view window. Note: Administrators will always see this button.]]></transtext>
+	<transid name="header_integration_social_login">
+		<transtext><![CDATA[Social Login]]></transtext>
+	</transid>
+	<transid name="header_integration_social_login_desc">
+		<transtext><![CDATA[You can enable social login to Razuna with the <a href="http://janrain.com/products/engage/" target="_blank">JanRain Social Login Plugin</a>. This will allow your users to use their Google, Twitter, Facebook, Yahoo!, etc. account to transparently login to Razuna. <br /><br /><strong>Note: In order for this plugin to work, you will need a JanRain account and have it configured correctly! Also, you need to add their social login account to their user profile.</strong>]]></transtext>
+	</transid>
+	<transid name="header_integration_social_login_enable">
+		<transtext><![CDATA[Enable JanRain Plugin]]></transtext>
+	</transid>
+	<transid name="header_integration_social_login_apikey">
+		<transtext><![CDATA[JanRain API Key]]></transtext>
+	</transid>
+	<transid name="button_janrain">
+		<transtext><![CDATA[Use social account for login]]></transtext>
+	</transid>
+	<transid name="tab_users_social_accounts">
+		<transtext><![CDATA[Social Network Accounts]]></transtext>
+	</transid>
+	<transid name="tab_users_social_accounts_desc">
+		<transtext><![CDATA[Your administrator has the Social Network Login enabled. In order for your users to login sucessfully with their Twitter, Facebook, Google, etc. account you need to provide their login name (usually the eMail address) which they use with their social account in the list below. Upon signing in, we then compare their login name with the information below and let the user access Razuna transparently.]]></transtext>
 	</transid>
 </translations>

@@ -31,6 +31,7 @@
 	<ul>
 		<li><a href="##tab_user">#defaultsObj.trans("user_edit")#</a></li>
 		<li><a href="##tab_groups">#defaultsObj.trans("groups")#</a></li>
+		<cfif jr_enable EQ "true"><li><a href="##tab_logins">#defaultsObj.trans("tab_users_social_accounts")#</a></li></cfif>
 		<cfif attributes.add EQ "f" AND grpnrlist EQ 2>
 			<li><a href="##tab_api" onclick="loadcontent('tab_api','#myself#c.admin_user_api&user_id=#attributes.user_id#');">API Key</a></li>
 		</cfif>
@@ -140,6 +141,76 @@
 			</tr>
 		</table>
 	</div>
+	<!--- Social Network Accounts --->
+	<cfif jr_enable EQ "true">
+		<div id="tab_logins">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+				<tr class="list">
+					<td>#defaultsObj.trans("tab_users_social_accounts_desc")#</td>
+				</tr>
+				
+				
+				<tr>
+					<td style="padding-top:10px;">
+						<!--- List accounts found --->
+						<cfloop query="qry_social">
+							<div id="input#currentrow#" style="margin-bottom:4px;" class="clonedInput">
+						        <input type="text" name="identifier_#currentrow#" id="identifier_#currentrow#" style="width:250px;" value="#identifier#" />
+						        <select id="provider_#currentrow#" name="provider_#currentrow#" style="width:250px;">
+						        	<option selected="selected">Choose Provider ...</option>
+						        	<option value="google"<cfif provider EQ "google"> selected="selected"</cfif>>Google</option>
+						        	<option value="twitter"<cfif provider EQ "twitter"> selected="selected"</cfif>>Twitter</option>
+						        	<option value="facebook"<cfif provider EQ "facebook"> selected="selected"</cfif>>Facebook</option>
+						        	<option value="linkedin"<cfif provider EQ "linkedin"> selected="selected"</cfif>>LinkedIn</option>
+						        	<option value="yahoo"<cfif provider EQ "yahoo"> selected="selected"</cfif>>Yahoo!</option>
+						        	<option value="openid"<cfif provider EQ "openid"> selected="selected"</cfif>>OpenID</option>
+						        	<option value="flickr"<cfif provider EQ "flickr"> selected="selected"</cfif>>Flickr</option>
+						        	<option value="paypal"<cfif provider EQ "paypal"> selected="selected"</cfif>>PayPal</option>
+						        	<option value="salesforce"<cfif provider EQ "salesforce"> selected="selected"</cfif>>Salesforce</option>
+						        	<option value="foursquare"<cfif provider EQ "foursquare"> selected="selected"</cfif>>Foursquare</option>
+						        	<option value="aol"<cfif provider EQ "aol"> selected="selected"</cfif>>AOL</option>
+						        	<option value="blogger"<cfif provider EQ "blogger"> selected="selected"</cfif>>Blogger</option>
+						        	<option value="myspace"<cfif provider EQ "myspace"> selected="selected"</cfif>>MySpace</option>
+						        	<option value="verisign"<cfif provider EQ "verisign"> selected="selected"</cfif>>Verisign</option>
+						        	<option value="wordpress"<cfif provider EQ "wordpress"> selected="selected"</cfif>>Wordpress</option>
+						        	<option value="windowslive"<cfif provider EQ "windowslive"> selected="selected"</cfif>>Windows Live ID</option>
+						        </select>
+						    </div>
+						</cfloop>
+						<!--- If no accounts found then show first input field --->
+						<cfif qry_social.recordcount EQ 0>
+							<div id="input1" style="margin-bottom:4px;" class="clonedInput">
+						        <input type="text" name="identifier_1" id="identifier_1" style="width:250px;" />
+						        <select id="provider_1" name="provider_1" style="width:250px;">
+						        	<option selected="selected">Choose Provider ...</option>
+						        	<option value="google">Google</option>
+						        	<option value="twitter">Twitter</option>
+						        	<option value="facebook">Facebook</option>
+						        	<option value="linkedin">LinkedIn</option>
+						        	<option value="yahoo">Yahoo!</option>
+						        	<option value="openid">OpenID</option>
+						        	<option value="flickr">Flickr</option>
+						        	<option value="paypal">PayPal</option>
+						        	<option value="salesforce">Salesforce</option>
+						        	<option value="foursquare">Foursquare</option>
+						        	<option value="aol">AOL</option>
+						        	<option value="blogger">Blogger</option>
+						        	<option value="myspace">MySpace</option>
+						        	<option value="verisign">Verisign</option>
+						        	<option value="wordpress">Wordpress</option>
+						        	<option value="windowslive">Windows Live ID</option>
+						        </select>
+						    </div>
+					    </cfif>
+					    <div style="width:50px;height:40px;">
+					 		<img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" align="left" id="btnAdd" />
+					    	<img src="#dynpath#/global/host/dam/images/list-remove-3.png" width="24" height="24" border="0" align="right" id="btnDel" />
+						</div>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</cfif>
 	<!--- API --->
 	<cfif attributes.add EQ "f" AND grpnrlist EQ 2>
 		<div id="tab_api"></div>
@@ -202,6 +273,48 @@
 	  		$('##user_pass_confirm').val(thepass);
 		})
 	}
+	
+	$(document).ready(function() {
+		<cfif qry_social.recordcount EQ 0>
+			$('##btnDel').css('display','none');
+		</cfif>
+		$('##btnAdd').click(function() {
+	        var num     = $('.clonedInput').length; // how many "duplicatable" input fields we currently have
+	        var newNum  = new Number(num + 1);      // the numeric ID of the new input field being added
+			
+	        // create the new element via clone(), and manipulate it's ID using newNum value
+	        var newElem = $('##input' + num).clone().attr('id', 'input' + newNum);
+	
+	        // manipulate the name/id values of the input inside the new element
+	        newElem.children(':first').attr('id', 'identifier_' + newNum).attr('name', 'identifier_' + newNum);
+	        newElem.children(':nth-child(2)').attr('id', 'provider_' + newNum).attr('name', 'provider_' + newNum);
+	      	
+	        // Add the fields to the page
+	        $('##input' + num).after(newElem)
+	        
+	        // enable the "remove" button
+	        $('##btnDel').css('display','');
+			
+			// Add the new num as the new radio value
+	       /*  $('##radio_' + newNum).val(newNum); */
+	         // Reset the values for the new field set
+	        $('##identifier_' + newNum).val('');
+	        $('##provider_' + newNum).val($('option:first', this).val());
+	    });
+	
+	    $('##btnDel').click(function() {
+	        var num = $('.clonedInput').length; // how many "duplicatable" input fields we currently have
+	        $('##input' + num).remove();     // remove the last element
+	
+	        // enable the "add" button
+	        $('##btnAdd').attr('disabled',false);
+	
+	        // if only one element remains, disable the "remove" button
+	        if (num-1 == 1)
+	            $('##btnDel').css('display','none');
+	    });
+	
+	});
 </script>
 
 </cfoutput>

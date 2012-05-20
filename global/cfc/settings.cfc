@@ -907,7 +907,7 @@
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
-<!--- Get specific setting --->
+<!--- Save global settings --->
 <cffunction name="savesetting" output="false" returntype="void">
 	<cfargument name="thefield" type="string" default="" required="yes">
 	<cfargument name="thevalue" type="string" default="" required="yes">
@@ -1832,5 +1832,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn />
 </cffunction>
 
-
+<!--- Save JanRain --->
+<cffunction name="set_janrain" output="false">
+	<cfargument name="janrain_enable" type="string">
+	<cfargument name="janrain_apikey" type="string">
+	<!--- Delete & Insert --->
+	<cfinvoke method="savesetting" thefield="janrain_enable" thevalue="#arguments.janrain_enable#" />
+	<cfinvoke method="savesetting" thefield="janrain_apikey" thevalue="#arguments.janrain_apikey#" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+	
 </cfcomponent>
