@@ -114,7 +114,7 @@ Page output starts here
 		<div id="alertbox" style="padding-top:10px;" class="alert">#defaultsObj.trans("login_error")#</div>
 	</cfif>
 </div>
-<div id="login_loading" style="display:none;text-align:center;"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" width="128" height="15" border="0" /></div>
+<div id="login_loading" style="display:none;text-align:center;padding-top:20px;"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" width="128" height="15" border="0" /></div>
 <!--- <div id="alertbox" style="padding-top:10px;display:none;" class="alert">#defaultsObj.trans("login_error")#</div> --->
 </cfoutput>
 <script type="text/javascript">
