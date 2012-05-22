@@ -44,6 +44,10 @@
 				<td nowrap="nowrap">#defaultsObj.trans("header_integration_social_login_apikey")#</td>
 				<td width="100%"><input type="text" name="janrain_apikey" id="janrain_apikey" style="width:300px;" value="#jr_apikey#" /></td>
 			</tr>
+			<tr>
+				<td nowrap="nowrap">JanRain APP URL</td>
+				<td width="100%"><input type="text" name="janrain_appurl" id="janrain_appurl" style="width:300px;" value="#jr_appurl#" /></td>
+			</tr>
 		</table>
 		<div id="status_integration" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="button" value="#defaultsObj.trans("save_changes")#" class="button" onclick="save_integr();" /></div>
 		<div style="clear:both;"></div>
@@ -54,8 +58,9 @@
 			// Values
 			var e = $("##janrain_enable:checked").val();
 			var k = $("##janrain_apikey").val();
+			var a = $("##janrain_appurl").val();
 			// Save
-			loadcontent('dummy_integration','#myself#c.admin_integration_save&janrain_enable=' + e + '&janrain_apikey=' + k );
+			$('##dummy_integration').load('#myself#c.admin_integration_save', {janrain_enable: e, janrain_apikey: k, janrain_appurl: a});
 			// Feedback
 			$('##status_integration').fadeTo("fast", 100);
 			$('##status_integration').html('<span style="font-weight:bold;color:green;">We saved the change successfully!</span>');

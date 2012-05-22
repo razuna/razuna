@@ -1836,9 +1836,11 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="set_janrain" output="false">
 	<cfargument name="janrain_enable" type="string">
 	<cfargument name="janrain_apikey" type="string">
+	<cfargument name="janrain_appurl" type="string">
 	<!--- Delete & Insert --->
 	<cfinvoke method="savesetting" thefield="janrain_enable" thevalue="#arguments.janrain_enable#" />
 	<cfinvoke method="savesetting" thefield="janrain_apikey" thevalue="#arguments.janrain_apikey#" />
+	<cfinvoke method="savesetting" thefield="janrain_appurl" thevalue="#arguments.janrain_appurl#" />
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

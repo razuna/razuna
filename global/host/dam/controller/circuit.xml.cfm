@@ -35,6 +35,7 @@
 		</if>
 		<!-- Check for JanRain -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_url" />
 		<!-- Show -->
 		<do action="v.login" />
 	</fuseaction>
@@ -4049,6 +4050,7 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_apikey')" returnvariable="jr_apikey" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_appurl" />
 		<!-- We expect a boolean value for jr_enable but since it will return an empty string if not found -->
 		<if condition="jr_enable EQ ''">
 			<true>
@@ -4061,7 +4063,7 @@
 	<!-- For saving customization -->
 	<fuseaction name="admin_integration_save">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_janrain(attributes.janrain_enable,attributes.janrain_apikey)" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_janrain(attributes.janrain_enable,attributes.janrain_apikey,attributes.janrain_appurl)" />
 	</fuseaction>
 	
 	<!--  -->
@@ -4539,6 +4541,7 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckperm(attributes)" returnvariable="shared" />
 		<!-- Check for JanRain -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_url" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
 		<!-- If ISP (for now) -->
@@ -5263,6 +5266,7 @@
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<!-- Check for JanRain -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_url" />
 		<!-- Set folder ID -->
 		<if condition="qry_widget.col_id_r EQ ''">
 			<true>

@@ -5,6 +5,8 @@
     
     janrain.settings.tokenUrl = 'http://<cfoutput>#cgi.http_host##cgi.script_name#?fa=c.login_janrain&shared=#attributes.shared#&fid=#attributes.fid#&wid=#attributes.wid#</cfoutput>';
 
+	janrain.settings.appUrl = '<cfoutput>#jr_url#</cfoutput>';
+
     function isReady() { janrain.ready = true; };
     if (document.addEventListener) {
       document.addEventListener("DOMContentLoaded", isReady, false);
