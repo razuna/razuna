@@ -1,3 +1,6 @@
+<cfset d = replacenocase(jr_url,"http://","","all")>
+<cfset d = replacenocase(d,"https://","","all")>
+<cfset d = listfirst(d,".")>
 <script type="text/javascript">
 (function() {
     if (typeof window.janrain !== 'object') window.janrain = {};
@@ -19,9 +22,9 @@
     e.id = 'janrainAuthWidget';
 
     if (document.location.protocol === 'https:') {
-      e.src = 'https://rpxnow.com/js/lib/razuna/engage.js';
+      e.src = 'https://rpxnow.com/js/lib/<cfoutput>#d#</cfoutput>/engage.js';
     } else {
-      e.src = 'http://widget-cdn.rpxnow.com/js/lib/razuna/engage.js';
+      e.src = 'http://widget-cdn.rpxnow.com/js/lib/<cfoutput>#d#</cfoutput>/engage.js';
     }
 
     var s = document.getElementsByTagName('script')[0];
