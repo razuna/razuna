@@ -27,7 +27,7 @@
 Page output starts here
  --->
 <cfoutput>
-<div id="login_div">
+<div id="login_div" style="text-align:center;">
 	<span class="loginform_header">
 		<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
 			<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
@@ -66,11 +66,16 @@ Page output starts here
 					</td>
 			    </tr>
 			    <tr>
-			        <td align="right" style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
+			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
 			    </tr>
+			     <cfif jr_enable EQ "true">
+				    <tr>
+				        <td style="padding-bottom:10px;padding-top:10px;"><div id="janrainEngageEmbed"></div></td>
+				    </tr>
+				</cfif>
 				<cfif qry_langs.recordcount NEQ 1 AND attributes.wid EQ 0>
 					<tr>
-				        <td align="right" style="padding-bottom:10px;">
+				        <td style="padding-bottom:10px;">
 							<select name="app_lang" onChange="javascript:changelang('form_login_share');">
 								<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
 								<cfloop query="qry_langs">
@@ -95,7 +100,7 @@ Page output starts here
 					</td>
 			    </tr>
 			    <tr>
-			        <td colspan="2" align="right" style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
+			        <td colspan="2" style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
 			    </tr>
 		   	</cfif>
 		</table>

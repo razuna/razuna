@@ -61,7 +61,7 @@
 		</div>
 		<cfif shared.everyone NEQ "T">
 			<div style="width:auto;float:right;padding-top:12px;padding-left:20px;">
-				<a href="#myself#c.share_logout" style="padding-left:10px;padding-right:10px;">#defaultsObj.trans("logoff")#</a>
+				<a href="#myself#c.share_logout&fid=#attributes.fid#" style="padding-left:10px;padding-right:10px;">#defaultsObj.trans("logoff")#</a>
 			</div>
 		</cfif>
 		<cfif qry_langs.recordcount NEQ 1>

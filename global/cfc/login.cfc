@@ -379,6 +379,7 @@ Password: #randompassword#
 		<cfargument name="thestruct" required="yes" type="struct">
 		<!--- Param --->
 		<cfset var razgo = false>
+		<cfparam name="arguments.thestruct.shared" default="F">
 		<!--- Api call to auth_info --->
 		<cfhttp url="https://rpxnow.com/api/v2/auth_info">
 			<cfhttpparam name="token" value="#arguments.thestruct.token#" type="URL">
@@ -409,25 +410,28 @@ Password: #randompassword#
 				<cfset var profile_pic_url = auth_info_json.profile.photo>
 				<cfset var providerName = auth_info_json.profile.providerName>
 				<cfset var preferredUsername = auth_info_json.profile.preferredUsername>
+				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_users" />
 				<!--- Now check DB --->
 				<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachename="getsocial#identifier#" cachedomain="#session.hostid#_users">
-				SELECT jr_identifier, user_id_r
-				FROM #session.hostdbprefix#users_accounts
-				WHERE jr_identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#identifier#">
-				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				SELECT uc.jr_identifier, uc.user_id_r, u.user_first_name, u.user_last_name
+				FROM #session.hostdbprefix#users_accounts uc, users u
+				WHERE uc.jr_identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#identifier#">
+				AND uc.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				AND uc.user_id_r = u.user_id
 				</cfquery>
 				<!--- If we don't have an identifier yet then compare by eMail or preferredUsername --->
 				<cfif qryaccount.recordcount EQ 0>
 					<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachename="getsocialemail#identifier#" cachedomain="#session.hostid#_users">
-					SELECT identifier, user_id_r
-					FROM #session.hostdbprefix#users_accounts
+					SELECT uc.identifier, uc.user_id_r
+					FROM #session.hostdbprefix#users_accounts uc, users u
 					WHERE (
-						lower(identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(email)#">
+						lower(uc.identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(email)#">
 						OR
-						lower(identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(preferredUsername)#">
+						lower(uc.identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(preferredUsername)#">
 						)
-					AND lower(provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					AND lower(uc.provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
+					AND uc.host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					AND uc.user_id_r = u.user_id
 					</cfquery>
 					<!--- If we found the account update the record with the janrain identifier --->
 					<cfif qryaccount.recordcount NEQ 0>
@@ -454,8 +458,12 @@ Password: #randompassword#
 					<cfset session.weblogin = "F">
 					<!--- Set the user ID into a session --->
 					<cfset session.theuserid = qryaccount.user_id_r>
+					<!--- Set User First and last name --->
+					<cfset session.firstlastname = "#qryaccount.user_first_name# #qryaccount.user_last_name#">
 					<!--- Call internal create my folder function --->
-					<cfinvoke method="createmyfolder" userid="#qryaccount.user_id_r#" />
+					<cfif arguments.thestruct.shared EQ "F">
+						<cfinvoke method="createmyfolder" userid="#qryaccount.user_id_r#" />
+					</cfif>
 					<!--- and return --->
 					<cfreturn qryaccount.user_id_r />
 				<cfelse>

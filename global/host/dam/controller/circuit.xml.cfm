@@ -17,6 +17,9 @@
 		<set name="attributes.loginerror" value="F" overwrite="false" />
 		<set name="attributes.passsend" value="F" overwrite="false" />
 		<set name="attributes.sameuser" value="F" overwrite="false" />
+		<set name="attributes.shared" value="F" overwrite="false" />
+		<set name="attributes.fid" value="0" overwrite="false" />
+		<set name="attributes.wid" value="0" overwrite="false" />
 		<if condition="#session.hostid# NEQ ''">
 			<true>
 				<!-- CFC: Get languages -->
@@ -93,48 +96,96 @@
 	
 	<!-- Login: Janrain -->
 	<fuseaction name="login_janrain">
+		<!-- Params -->
+		<set name="session.indebt" value="false" />
 		<!-- Get Janrain API key -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_apikey')" returnvariable="attributes.jr_apikey" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Login" methodcall="login_janrain(attributes)" returnvariable="loginstatus" />
-		<!-- Log this action -->
+		<!-- Let user in -->
 		<if condition="loginstatus NEQ 0">
     		<true>
-				<!-- Log -->
-				<invoke object="myFusebox.getApplicationData().log" method="log_users">
-					<argument name="theuserid" value="#loginstatus#" />
-					<argument name="logaction" value="Login" />
-					<argument name="logsection" value="DAM" />
-    				<argument name="logdesc" value="Login: User-ID: #loginstatus# with Janrain" />
-				</invoke>
-				<!-- check groups -->
-				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" />
-				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" />
-				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser">
-					<argument name="user_id" value="#loginstatus#" />
-					<argument name="host_id" value="#Session.hostid#" />
-				</invoke>
-				<!-- CFC: Check for collection -->
-				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
-				<!-- set host again with real value -->
-				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
-				<!-- Relocate -->
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
+    			<!-- If this is NOT for a share -->
+    			<if condition="attributes.shared EQ 'F'">
+    				<true>
+						<!-- Log -->
+						<invoke object="myFusebox.getApplicationData().log" method="log_users">
+							<argument name="theuserid" value="#loginstatus#" />
+							<argument name="logaction" value="Login" />
+							<argument name="logsection" value="DAM" />
+		    				<argument name="logdesc" value="Login: User-ID: #loginstatus# with Janrain" />
+						</invoke>
+						<!-- check groups -->
+						<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" />
+						<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" />
+						<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser">
+							<argument name="user_id" value="#loginstatus#" />
+							<argument name="host_id" value="#Session.hostid#" />
+						</invoke>
+						<!-- CFC: Check for collection -->
+						<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
+						<!-- set host again with real value -->
+						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
+						<!-- Relocate -->
+						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
+					</true>
+					<!-- This is for shared login -->
+					<false>
+						<!-- set host again with real value -->
+						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
+						<!-- Folder id into session -->
+						<set name="session.fid" value="#attributes.fid#" />
+						<!-- Only for the shared folder -->
+						<if condition="attributes.wid EQ 0">
+							<true>
+								<!-- CFC: Check if user is allowed for this folder -->
+								<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckpermfolder(session.fid)" />
+								<!-- Relocate -->
+								<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#" />
+							</true>
+							<false>
+								<set name="session.widget_login" value="T" />
+								<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#attributes.wid#" />
+							</false>
+						</if>
+					</false>
+				</if>
 			</true>
 			<false>
-				<!-- Log -->
-				<invoke object="myFusebox.getApplicationData().log" method="log_users">
-					<argument name="theuserid" value="0" />
-					<argument name="logaction" value="Error" />
-					<argument name="logsection" value="DAM" />
-    				<argument name="logdesc" value="Login Error for user: #loginstatus# with Janrain" />
-				</invoke>
-		   		<set name="attributes.loginerror" value="T" />
-		   		<!-- Relocate -->
-		   		<relocate url="#variables.thehttp##cgi.http_host##myself#c.logout&amp;loginerror=T" />
+				<if condition="attributes.shared EQ 'F'">
+    				<true>
+						<!-- Log -->
+						<invoke object="myFusebox.getApplicationData().log" method="log_users">
+							<argument name="theuserid" value="0" />
+							<argument name="logaction" value="Error" />
+							<argument name="logsection" value="DAM" />
+		    				<argument name="logdesc" value="Login Error for user: #loginstatus# with Janrain" />
+						</invoke>
+				   		<set name="attributes.loginerror" value="T" />
+				   		<!-- Relocate -->
+				   		<relocate url="#variables.thehttp##cgi.http_host##myself#c.logout&amp;loginerror=T" />
+				   	</true>
+				   	<!-- This is for shared login -->
+					<false>
+						<!-- Param -->
+				   		<set name="attributes.loginerror" value="T" />
+						<!-- Only for the shared folder -->
+						<if condition="attributes.wid EQ 0">
+							<true>
+								<!-- Relocate -->
+								<relocate url="#variables.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#" />
+							</true>
+							<false>
+								<!-- Param -->
+								<set name="session.widget_login" value="F" />
+								<!-- Relocate -->
+								<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
+							</false>
+						</if>
+					</false>
+				</if>
 		   	</false>
 		</if>
-		
 	</fuseaction>
 	
 	<!-- 
@@ -4475,7 +4526,7 @@
 		<set name="attributes.perm_password" value="F" />
 		<!-- Folder id into session -->
 		<set name="session.fid" value="#attributes.fid#" />
-		<if condition="#attributes.fromcol# EQ 'F'">
+		<if condition="#attributes.fromcol# EQ 'F' OR NOT structkeyexists(session,'iscol')">
 			<true>
 				<set name="session.iscol" value="F" />
 			</true>
@@ -4486,6 +4537,8 @@
 		<xfa name="switchlang" value="c.switchlang" />
 		<!-- Check if folder is shared, secured. If so display log in -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckperm(attributes)" returnvariable="shared" />
+		<!-- Check for JanRain -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
 		<!-- If ISP (for now) -->
@@ -4524,7 +4577,7 @@
 	<!-- Do Login -->
 	<fuseaction name="share_login">
 		<!-- Param -->
-		<set name="session.iscol" value="T" overwrite="false" />
+		<set name="session.iscol" value="F" overwrite="false" />
 		<!-- Check the user and let him in ot nor -->
 		<invoke object="myFusebox.getApplicationData().Login" method="login" returnvariable="logindone">
 			<argument name="name" value="#attributes.name#" />
@@ -4542,7 +4595,7 @@
 				<!-- CFC: Check if user is allowed for this folder -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckpermfolder(session.fid)" />
 				<!-- Relocate -->
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep" />
+				<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#" />
 			</true>
 			<!-- User not found -->
 			<false>
@@ -4577,6 +4630,11 @@
 		<if condition="NOT structkeyexists(session,'fid')">
 			<true>
 				<relocate url="#variables.thehttp##cgi.http_host##myself#c.share&amp;fid=#attributes.fid#" />
+			</true>
+		</if>
+		<if condition="NOT structkeyexists(session,'iscol')">
+			<true>
+				<set name="session.iscol" value="F" />
 			</true>
 		</if>
 		<set name="attributes.folder_id" value="#session.fid#" overwrite="false" />
@@ -5203,6 +5261,8 @@
 		<do action="languages" />
 		<!-- Get how the widget is being shared -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
+		<!-- Check for JanRain -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<!-- Set folder ID -->
 		<if condition="qry_widget.col_id_r EQ ''">
 			<true>
@@ -5258,7 +5318,7 @@
 		</if>
 		<if condition="NOT structkeyexists(session,'widget_id') OR session.widget_id EQ '' OR session.widget_id EQ 0">
 			<true>
-				<relocate url="#variables.thehttp##cgi.http_host##myself#v.share_login&amp;shared=F" />
+				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
 			</true>
 		</if>
 		<!-- set host again with real value -->
@@ -5354,6 +5414,12 @@
 	</fuseaction>
 	<!-- External call: Login -->
 	<fuseaction name="w_login">
+		<!-- Param -->
+		<if condition="NOT structkeyexists(session,'widget_id')">
+			<true>
+				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
+			</true>
+		</if>
 		<!-- Check the user and let him in ot nor -->
 		<invoke object="myFusebox.getApplicationData().Login" method="login" returnvariable="logindone">
 			<argument name="name" value="#attributes.name#" />
