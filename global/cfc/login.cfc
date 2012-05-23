@@ -422,7 +422,7 @@ Password: #randompassword#
 				<!--- If we don't have an identifier yet then compare by eMail or preferredUsername --->
 				<cfif qryaccount.recordcount EQ 0>
 					<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachename="getsocialemail#identifier#" cachedomain="#session.hostid#_users">
-					SELECT uc.identifier, uc.user_id_r
+					SELECT uc.identifier, uc.user_id_r, u.user_first_name, u.user_last_name
 					FROM #session.hostdbprefix#users_accounts uc, users u
 					WHERE (
 						lower(uc.identifier) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(email)#">
