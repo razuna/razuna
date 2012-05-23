@@ -598,36 +598,38 @@
 			<cfinvokeargument name="logfiletype" value="vid">
 			<cfinvokeargument name="assetid" value="#i#">
 		</cfinvoke>
-		<!--- Delete from files DB (including referenced data)--->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#videos
-		WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-		</cfquery>
-		<!--- Delete from collection --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#collections_ct_files
-		WHERE file_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND col_file_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- Delete from favorites --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#users_favorites
-		WHERE fav_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND fav_kind = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-		AND user_id_r = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
-		<!--- Delete from Versions --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#versions
-		WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND ver_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- Delete from Share Options --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#share_options
-		WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
+		<cftransaction>
+			<!--- Delete from files DB (including referenced data)--->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#videos
+			WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+			<!--- Delete from collection --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#collections_ct_files
+			WHERE file_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND col_file_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Delete from favorites --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#users_favorites
+			WHERE fav_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND fav_kind = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+			AND user_id_r = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<!--- Delete from Versions --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#versions
+			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND ver_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Delete from Share Options --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#share_options
+			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+		</cftransaction>
 		<!--- Delete labels --->
 		<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
 		<!--- Delete from file system --->
