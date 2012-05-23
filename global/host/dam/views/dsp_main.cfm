@@ -119,7 +119,7 @@
 										<th>Administrator Panel</th>
 									</tr>
 									<tr>
-										<td><a href="##" onclick="loadcontent('rightside','#myself#ajax.admin');$('##userselection').toggle();return false;" style="width:100%;">Go to Administration</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a> | </cfloop> </cfif> <a href="http://getsatisfaction.razuna" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&c=#createuuid()#">#defaultsObj.trans("logoff")#</a></td>
+										<td><a href="##" onclick="loadcontent('rightside','#myself#ajax.admin');$('##userselection').toggle();return false;" style="width:100%;">Go to Administration</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="http://getsatisfaction.razuna" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#defaultsObj.trans("logoff")#</a></td>
 									</tr>
 								</table>
 							</div>

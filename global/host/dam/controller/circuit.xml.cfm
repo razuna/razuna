@@ -72,7 +72,7 @@
 				<!-- TL = Transparent login. In other words this action is called directly -->
 				<if condition="structkeyexists(attributes,'tl')">
 					<true>
-						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
+						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
 					</true>
 				</if>
 			</true>
@@ -128,7 +128,7 @@
 						<!-- set host again with real value -->
 						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
 						<!-- Relocate -->
-						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main" />
+						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
 					</true>
 					<!-- This is for shared login -->
 					<false>
@@ -142,11 +142,11 @@
 								<!-- CFC: Check if user is allowed for this folder -->
 								<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckpermfolder(session.fid)" />
 								<!-- Relocate -->
-								<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#" />
+								<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
 							</true>
 							<false>
 								<set name="session.widget_login" value="T" />
-								<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#attributes.wid#" />
+								<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#attributes.wid#&amp;_v=#createuuid('')#" />
 							</false>
 						</if>
 					</false>
@@ -174,13 +174,13 @@
 						<if condition="attributes.wid EQ 0">
 							<true>
 								<!-- Relocate -->
-								<relocate url="#variables.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#" />
+								<relocate url="#variables.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
 							</true>
 							<false>
 								<!-- Param -->
 								<set name="session.widget_login" value="F" />
 								<!-- Relocate -->
-								<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
+								<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T&amp;_v=#createuuid('')#" />
 							</false>
 						</if>
 					</false>
@@ -4598,7 +4598,7 @@
 				<!-- CFC: Check if user is allowed for this folder -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckpermfolder(session.fid)" />
 				<!-- Relocate -->
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#" />
+				<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
 			</true>
 			<!-- User not found -->
 			<false>
@@ -5305,7 +5305,7 @@
 	</fuseaction>
 	<!-- External call: Widget PRoxy -->
 	<fuseaction name="w_proxy">
-		<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#session.widget_id#" />
+		<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#session.widget_id#&amp;_v=#createuuid('')#" />
 	</fuseaction>
 	<!-- External call: Get content -->
 	<fuseaction name="w_content">
@@ -5439,7 +5439,7 @@
 				<!-- Folder id into session -->
 				<set name="session.fid" value="#attributes.fid#" />
 				<set name="session.widget_login" value="T" />
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#session.widget_id#" />
+				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#session.widget_id#&amp;_v=#createuuid('')#" />
 			</true>
 			<!-- User not found -->
 			<false>

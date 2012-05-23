@@ -95,7 +95,7 @@
 					</cfloop>
 				</cfif>
 				<p><hr></p>
-				<p><a href="#myself#c.logout&c=#createuuid()#">#defaultsObj.trans("logoff")#</a></p>
+				<p><a href="#myself#c.logout&_v=#createuuid('')#">#defaultsObj.trans("logoff")#</a></p>
 			</div>
 		</div>
 		<div style="width:auto;float:right;padding:11px 0px 0px 0px;">
