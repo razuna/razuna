@@ -70,7 +70,7 @@
 				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(logindone.qryuser.user_id)" returnvariable="qry_groups_user" />
 				<!-- init with dummy host 0 -->
 				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(0,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
-				<relocate url="#myself#c.choosehost" />
+				<relocate url="#myself#c.choosehost&amp;_v=#createuuid('')#" />
 			</true>
 			<false>
 		   		<!-- <set name="attributes.loginerror" value="T" /> -->

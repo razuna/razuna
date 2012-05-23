@@ -27,8 +27,9 @@
 <cfset session.hostdbprefix = userhosts.host_shard_group>
 <cfset session.hostid = userhosts.host_id>
 <cfset session.host_count = 1>
-<script language="javascript" type="text/javascript">
-	location.href='index.cfm?fa=c.main&c=' + parseInt((Math.random() * 99999999));
+<script type="text/javascript">
+	location.href='index.cfm?fa=c.main&_v=<cfoutput>#createuuid("")#</cfoutput>' ;
+	/* &c=' + parseInt((Math.random() * 99999999)) */
 </script>
 
 <!--- 
