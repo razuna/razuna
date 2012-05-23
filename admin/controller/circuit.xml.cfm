@@ -70,7 +70,8 @@
 				<invoke object="myFusebox.getApplicationData().groups_users" methodcall="getGroupsOfUser(logindone.qryuser.user_id)" returnvariable="qry_groups_user" />
 				<!-- init with dummy host 0 -->
 				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(0,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
-				<relocate url="#myself#c.choosehost&amp;_v=#createuuid('')#" />
+				<!-- <relocate url="#myself#c.choosehost" /> -->
+				<do action="choosehost" />
 			</true>
 			<false>
 		   		<!-- <set name="attributes.loginerror" value="T" /> -->
@@ -82,9 +83,15 @@
 	<fuseaction name="choosehost">
 		<!-- Check in how many hosts this user is in -->
 		<set name="attributes.user_id" value="#session.theuserid#" />
-		<invoke object="myFusebox.getApplicationData().users" methodcall="userhosts(attributes)" returnvariable="userhosts" />		
+		<invoke object="myFusebox.getApplicationData().users" methodcall="userhosts(attributes)" returnvariable="userhosts" />
+		<!-- Params -->
+		<set name="session.hostdbprefix" value="#userhosts.host_shard_group#" />
+		<set name="session.hostid" value="#userhosts.host_id#" />
+		<set name="session.host_count" value="1" />
+		<!-- Relocate -->
+		<relocate url="#myself#c.main&amp;_v=#createuuid('')#" />
 		<!-- Show -->
-		<do action="ajax.choosehost" />
+		<!-- <do action="ajax.choosehost" /> -->
 	</fuseaction>
 	<!--
 		If host is chosen

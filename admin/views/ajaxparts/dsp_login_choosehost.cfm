@@ -31,39 +31,3 @@
 	location.href='index.cfm?fa=c.main&_v=<cfoutput>#createuuid("")#</cfoutput>' ;
 	/* &c=' + parseInt((Math.random() * 99999999)) */
 </script>
-
-<!--- 
-
-<!--- If there is only one host then login --->
-<cfif userhosts.recordcount EQ 1>
-	<cfset session.hostdbprefix = userhosts.host_shard_group>
-	<cfset session.hostid = userhosts.host_id>
-	<cfset session.host_count = 1>
-	<script language="javascript" type="text/javascript">
-		location.href='index.cfm?fa=c.main&c=' + parseInt((Math.random() * 99999999));
-	</script>
-<cfelse>
-	<!--- Host Form --->
-	<cfoutput>#userhosts.host_id#--<cfdump var="#userhosts#">
-	<span class="loginform_header">#defaultsObj.trans("choosehost")#</span>
-	<br />
-	<br />
-	<form name="hostform" id="hostform" action="#self#" method="post">
-	<input type="hidden" name="#theaction#" value="c.sethost">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
-		<tr>
-			<td>
-				<select name="host_id" onChange="javascript:changehostform();">
-				<option value="javascript:void();" selected="true"></option>
-				<cfloop query="userhosts">
-					<option value="#host_id#">#ucase(host_name)#</option>
-				</cfloop>
-				</select>
-			</td>
-			<div id="loading" style="display:none;float:right;"></div>
-		</tr>
-		</table>
-	</form>
-	</cfoutput>
-</cfif>
- --->
