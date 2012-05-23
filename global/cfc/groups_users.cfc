@@ -159,10 +159,6 @@
 <!--- Insert bulk records --->
 <cffunction hint="Insert bulk records" name="insertBulk" returntype="void">
 	<cfargument name="thestruct" type="Struct">
-	<!--- check input --->
-	<cfif not Len(arguments.thestruct.grp_id_assigneds) or not Len(arguments.thestruct.newid)>
-		<cfthrow message=" 'list_grp_id' and 'list_user_id' can not be emtpy strings!">
-	</cfif>
 	<!--- insert --->
 	<cfloop list="#arguments.thestruct.grp_id_assigneds#" delimiters="," index="i">
 		<cftransaction>
@@ -171,7 +167,7 @@
 			(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
 			VALUES(
 				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
 				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
 			)
 			</cfquery>
