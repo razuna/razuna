@@ -874,7 +874,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif fileType.type_type EQ "aud">
 			<!--- AUDIO UPLOAD (call method to process a aud-file) --->
 			<cfinvoke method="processAudFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
-			
 			<!--- Act on Upload Templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
 				<cfset arguments.thestruct.upltemptype = "aud">
@@ -884,7 +883,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfelse>
 			<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
 			<cfinvoke method="processDocFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
-			
 		</cfif>
 	</cfif>
 	<!--- Remove record in DB and file system (when we come from converting we call the function in the loop) --->
@@ -1051,6 +1049,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfset thesubject = "">
 					<cfset thekeywords = "">
 					<cfset theapplekeywords = "">
+					<cfset attributes.intstruct.pathorg = attributes.intstruct.qryfile.path>
 					<!--- Random ID for script --->
 					<cfset var ttpdf = Createuuid("")>
 					<!--- Set some more vars but only for PDF --->
@@ -1181,6 +1180,10 @@ This is the main function called directly by a single upload else from addassets
 								<cffile action="delete" file="#attributes.intstruct.thesh#">
 							</cfif>
 						</cfif>
+					</cfif>
+					<!--- If this is a URL then reset the path --->
+					<cfif attributes.intstruct.qryfile.link_kind EQ "url">
+						<cfset attributes.intstruct.qryfile.path = attributes.intstruct.pathorg>
 					</cfif>
 					<!--- Get Metadata for PDF --->
 					<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND attributes.intstruct.qryfile.link_kind NEQ "url">
