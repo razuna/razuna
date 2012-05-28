@@ -32,6 +32,7 @@
 <cfparam name="cookie.loginpass" default="">
 <cfparam name="session.theuserid" default="0">
 <cfparam name="session.view" default="">
+<cfparam name="session.sortby" default="name">
 
 <!--- Set the session for the language --->
 <cfparam name="session.thelang" default="english">

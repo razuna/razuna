@@ -67,6 +67,20 @@
 		<cfset var min = 0>
 		<cfset var max = 1000>
 	</cfif>
+	<!--- Set sortby variable --->
+	<cfset var sortby = session.sortby>
+	<!--- Set the order by --->
+	<cfif session.sortby EQ "name" OR session.sortby EQ "kind">
+		<cfset var sortby = "filename_forsort">
+	<cfelseif session.sortby EQ "sizedesc">
+		<cfset var sortby = "size DESC">
+	<cfelseif session.sortby EQ "sizeasc">
+		<cfset var sortby = "size ASC">
+	<cfelseif session.sortby EQ "dateadd">
+		<cfset var sortby = "date_create DESC">
+	<cfelseif session.sortby EQ "datechanged">
+		<cfset var sortby = "date_change DESC">
+	</cfif>
 	<!--- If there is a columnlist then take it else the default--->
 	<cfif structkeyexists(arguments.thestruct,"columnlist")>
 		<cfset thecolumns = arguments.thestruct.columnlist>
@@ -78,17 +92,17 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_audios">
-		SELECT rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max##sortby#" cachedomain="#session.theuserid#_audios">
+		SELECT rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
-			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
+			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT #thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>
+				SELECT #thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>, lower(a.aud_name) filename_forsort,	a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_date date_change
 				FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (a.aud_group IS NULL OR a.aud_group = '')
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				ORDER BY LOWER(a.aud_name) ASC
+				ORDER BY #sortby#
 				)
 			WHERE ROWNUM <= <cfqueryparam cfsqltype="cf_sql_numeric" value="#max#">
 			)
@@ -99,19 +113,16 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_audios">
-		SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max##sortby#" cachedomain="#session.theuserid#_audios">
+		SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
-			SELECT row_number() over() as rownr, a.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, att.*</cfif>
+			SELECT row_number() over() as rownr, a.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, att.*</cfif>, 
+			lower(a.aud_name) filename_forsort,	a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_date date_change
 			FROM audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (a.aud_group IS NULL OR a.aud_group = '')
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			<!--- Nirvanix and in Admin --->
-			<cfif session.thisapp EQ "admin" AND application.razuna.storage EQ "nirvanix">
-				AND lower(a.shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-			</cfif>
-			ORDER BY LOWER(a.aud_name) ASC
+			ORDER BY #sortby#
 		)
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
@@ -123,17 +134,14 @@
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumns##max#" cachedomain="#session.theuserid#_audios">
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumns##max##sortby#" cachedomain="#session.theuserid#_audios">
 		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>
-		#thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>
+		#thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>,
+		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_date date_change
 		FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
 		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<!--- Nirvanix and in Admin --->
-		<cfif session.thisapp EQ "admin" AND application.razuna.storage EQ "nirvanix">
-			AND lower(a.shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-		</cfif>
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			AND a.aud_id NOT IN (
@@ -144,10 +152,10 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			)
 		</cfif>
+		ORDER BY #sortby#
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				ORDER BY LOWER(a.aud_name) ASC
 				LIMIT #mysqloffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>

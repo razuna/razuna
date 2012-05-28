@@ -181,7 +181,7 @@ function batchaction(theform, what, kind, folder_id, theid){
 				break;
 		}
 		// Reset Selection
-		$('#' + theid + ' option:first').attr('selected','selected');
+		//$('#' + theid + ' option:first').attr('selected','selected');
    	};
 }
 

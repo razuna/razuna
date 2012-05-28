@@ -102,17 +102,33 @@
 			<cfset var min = 0>
 			<cfset var max = 1000>
 		</cfif>
+		<!--- Set sortby variable --->
+		<cfset var sortby = session.sortby>
+		<!--- Set the order by --->
+		<cfif session.sortby EQ "name" OR session.sortby EQ "kind">
+			<cfset var sortby = "filename_forsort">
+		<cfelseif session.sortby EQ "sizedesc">
+			<cfset var sortby = "size DESC">
+		<cfelseif session.sortby EQ "sizeasc">
+			<cfset var sortby = "size ASC">
+		<cfelseif session.sortby EQ "dateadd">
+			<cfset var sortby = "date_create DESC">
+		<cfelseif session.sortby EQ "datechanged">
+			<cfset var sortby = "date_change DESC">
+		</cfif>
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
 			<!--- Clean columnlist --->
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
-			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_files">
-			SELECT rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
+			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max##sortby#" cachedomain="#session.theuserid#_files">
+			SELECT rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, 
+			filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>
+				SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, 
+				filename_forsort, size, hashtag, date_create, date_change
 				FROM (
-					SELECT #Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>
+					SELECT #Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
 					FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					<cfif Len(Arguments.file_extension)>
@@ -135,7 +151,7 @@
 						</cfif>
 					</cfif>
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					ORDER BY LOWER(file_name) ASC
+					ORDER BY #sortby#
 					)
 				WHERE ROWNUM <= <cfqueryparam cfsqltype="cf_sql_numeric" value="#max#">
 				)
@@ -146,10 +162,10 @@
 			<!--- Clean columnlist --->
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
-			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max#" cachedomain="#session.theuserid#_files">
-			SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>
+			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max##sortby#" cachedomain="#session.theuserid#_files">
+			SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, ft.*</cfif>
+				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, ft.*</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
 				FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				<cfif Len(Arguments.file_extension)>
@@ -172,7 +188,7 @@
 					</cfif>
 				</cfif>
 				AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				ORDER BY LOWER(file_name) ASC
+				ORDER BY #sortby#
 			)
 			<!--- Show the limit only if pages is null or current (from print) --->
 			<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
@@ -184,8 +200,9 @@
 			<!--- MySQL Offset --->
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
-			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##Arguments.ColumnList##max#" cachedomain="#session.theuserid#_files">
-			SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>
+			<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="doc#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##Arguments.ColumnList##max##sortby#" cachedomain="#session.theuserid#_files">
+			SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, 
+			file_create_time date_create, file_change_date date_change
 			FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			<cfif Len(Arguments.file_extension)>
@@ -210,7 +227,7 @@
 			AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<!--- MySQL --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				ORDER BY LOWER(file_name) ASC
+				ORDER BY #sortby#
 				<!--- Show the limit only if pages is null or current (from print) --->
 				<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 					LIMIT #mysqloffset#, #session.rowmaxpage#
@@ -242,7 +259,7 @@
 						</cfif>
 					</cfif>
 				)
-				ORDER BY LOWER(file_name) ASC
+				ORDER BY #sortby#
 			</cfif>
 			</cfquery>
 		</cfif>

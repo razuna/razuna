@@ -1031,6 +1031,8 @@
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
+		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
+		<set name="session.sortby" value="#attributes.sortby#" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- CFC: Get folder name -->
@@ -1067,6 +1069,8 @@
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
+		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
+		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="attributes.cache" value="" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
@@ -1104,6 +1108,8 @@
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
+		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
+		<set name="session.sortby" value="#attributes.sortby#" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- CFC: Get folder name -->
@@ -1158,6 +1164,8 @@
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
+		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
+		<set name="session.sortby" value="#attributes.sortby#" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- CFC: Get folder name -->
@@ -1198,10 +1206,12 @@
 		<!-- Param -->
 		<set name="kind" value="all" />
 		<set name="url.kind" value="all" />
-		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
-		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
 		<set name="attributes.cache" value="" />
 		<set name="attributes.json" value="f" overwrite="false" />
+		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
+		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
+		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
+		<set name="session.sortby" value="#attributes.sortby#" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- Action: Get asset path -->

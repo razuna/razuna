@@ -29,7 +29,7 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>
-					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, except #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif session.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a></cfif><cfif session.folderaccess NEQ "R"> or <a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(defaultsObj.trans("folder_new"))#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">create a sub folder</a>.</cfif> If you are looking for assets, try to <a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#Jsstringformat(defaultsObj.trans("folder_search"))#',500,1);" title="#defaultsObj.trans("folder_search")#">search for assets here</a>.
+					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, except #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif session.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a></cfif><cfif session.folderaccess NEQ "R"> or <a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(defaultsObj.trans("folder_new"))#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">create a sub folder</a>.</cfif>
 				</td>
 			</tr>
 			<tr>
