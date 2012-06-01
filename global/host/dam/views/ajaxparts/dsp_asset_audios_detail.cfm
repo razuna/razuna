@@ -160,7 +160,7 @@
 				<tr>
 					<td colspan="2" style="padding-top:20px;">
 						<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
-							<cfif cs.custom.tab_labels>
+							<cfif cs.tab_labels>
 								<tr>
 									<td>#defaultsObj.trans("labels")#</td>
 									<td width="100%" nowrap="true" colspan="5">
@@ -274,7 +274,7 @@
 			</div>
 		</cfif>
 		<!--- CUSTOM FIELDS --->
-		<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields)>
+		<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
 			<div id="customfields">
 				<cfinclude template="inc_custom_fields.cfm">
 			</div>
