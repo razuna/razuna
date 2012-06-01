@@ -118,7 +118,7 @@
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 												<img src="#cloud_url#" border="0">
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0">
+												<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0">
@@ -137,7 +137,7 @@
 							<cfelseif kind EQ "vid">
 								<cfif is_available>
 									<div class="theimg">
-										<cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif>
+										<cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif>
 									</div>
 									<div>
 <!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" width="16" height="16" border="0" /> --->
@@ -252,7 +252,7 @@
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 										<img src="#cloud_url#" border="0">
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0">
+										<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
 									</cfif>
 								<cfelseif link_kind EQ "url">
 									<img src="#link_path_url#" border="0" width="120">
@@ -264,7 +264,7 @@
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 										<img src="#cloud_url#" border="0" width="160">
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160">
+										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160">
 									</cfif>
 								<cfelseif link_kind EQ "url">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">

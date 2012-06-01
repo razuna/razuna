@@ -85,7 +85,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0">
@@ -161,7 +161,7 @@
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
 									<cfelse>
-										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
+										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
 									</cfif>
 								<cfelse>
 									<img src="#link_path_url#" border="0" width="120">

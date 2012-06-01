@@ -3267,7 +3267,7 @@
 		<!-- CFC: Get images -->
 		<invoke object="myFusebox.getApplicationData().images" method="filedetail" returnvariable="qry_detail">
 			<argument name="theid" value="#attributes.f#" />
-			<argument name="thecolumn" value="img_id,thumb_width,thumb_height,folder_id_r,img_width,img_height,img_filename_org,thumb_extension,img_extension,img_filename,path_to_asset,cloud_url,cloud_url_org" />
+			<argument name="thecolumn" value="img_id,thumb_width,thumb_height,folder_id_r,img_width,img_height,img_filename_org,thumb_extension,img_extension,img_filename,path_to_asset,cloud_url,cloud_url_org,hashtag" />
 		</invoke>
 		<!-- Do -->
 		<do action="ajax.serve_image" />

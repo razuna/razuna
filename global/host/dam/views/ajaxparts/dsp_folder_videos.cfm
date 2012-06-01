@@ -85,7 +85,7 @@
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
+										<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0">
 									</cfif>
 								<cfelse>
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -213,7 +213,7 @@
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 										<img src="#cloud_url#" border="0" width="160">
 									<cfelse>		
-										<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0" width="160">
+										<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0" width="160">
 									</cfif>
 								<cfelse>
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">

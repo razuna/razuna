@@ -41,31 +41,26 @@
 <cfif qry_widget.widget_style EQ "d">
 	<cfif application.razuna.isp>
 		<!--- CSS --->
-		<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css" />
+		<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css?_v=#attributes.cachetag#" />
 		<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" />
-		<!--- <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" /> --->
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/widget/overlay.css"></script>
+		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/widget/overlay.css?_v=#attributes.cachetag#"></script>
 		<!--- JS --->
-		<!---
-		<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js" type="text/javascript"></script>
-		<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script>
-		--->
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js"></script>
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js"></script>
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js"></script>
+		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
+		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
+		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js?_v=#attributes.cachetag#"></script>
 	<cfelse>
 		<!--- CSS --->
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css"/>
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css?_v=#attributes.cachetag#" />
+		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css?_v=#attributes.cachetag#"/>
 		<!--- JS --->
-		<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js"></script>
-		<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js"></script>
-		<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>
+		<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js?_v=#attributes.cachetag#"></script>
+		<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js?_v=#attributes.cachetag#"></script>
+		<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
+		<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
+		<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
 	</cfif>
 	<!--[if lt IE 7]>
 	<style> 
@@ -172,7 +167,7 @@
 												<cfset thev = "o">
 												<cfset theid = theformat>
 											</cfif>
-											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0">
+											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
 										</cfif>
 									<cfelse>
 										<img src="#link_path_url#" border="0">
@@ -200,7 +195,7 @@
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0" width="160"></a>
 										<cfelse>
-											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160"></a>
+											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160"></a>
 										</cfif>
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">

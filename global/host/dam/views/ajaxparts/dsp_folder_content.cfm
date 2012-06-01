@@ -116,7 +116,7 @@
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif>
 										<cfelse>
-											<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#" border="0">
+											<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
 										</cfif>
 									<cfelse>
 										<img src="#link_path_url#" border="0" width="120">
@@ -175,7 +175,7 @@
 												<img src="#cloud_url#" border="0">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-											</cfif><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
+											</cfif><cfelse><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
 							<!--- <br><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#attributes.folder_id#','#filename#',800,600);return false;">#defaultsObj.trans("file_detail")#</a> --->
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');">
@@ -367,7 +367,7 @@
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
 									<cfelse>
-										<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#" border="0">
+										<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
 									</cfif>
 								<cfelse>
 									<img src="#link_path_url#" border="0" width="120">
@@ -426,7 +426,7 @@
 							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable#id#-#kind#" type="#id#-#kind#">
 									<cfif link_kind NEQ "url">
-										<img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160">
+										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160">
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
 									</cfif>

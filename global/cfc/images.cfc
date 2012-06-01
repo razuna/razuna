@@ -434,7 +434,7 @@
 	i.img_owner, i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
 	i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org,
 	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, 
-	i.thumb_height thumbheight, i.img_size ilength, i.thumb_size thumblength,
+	i.thumb_height thumbheight, i.img_size ilength, i.thumb_size thumblength, i.hashtag,
 	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one,
 	i.img_remarks, i.img_extension, i.shared, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
@@ -499,8 +499,7 @@
 	<cfset arguments.thestruct.dsn = application.razuna.datasource>
 	<cfset arguments.thestruct.setid = variables.setid>
 	<!--- Start the thread for updating --->
-	<cfset tt = CreateUUid()>
-	<cfthread name="update#tt#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 </cffunction>

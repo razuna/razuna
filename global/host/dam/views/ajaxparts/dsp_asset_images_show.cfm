@@ -49,14 +49,14 @@
 				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 					<img src="#qry_detail.cloud_url_org#" border="0">
 				<cfelse>
-					<img src="#thestorageurl##qry_detail.path_to_asset#/#qry_detail.img_filename_org#" border="0">
+					<img src="#thestorageurl##qry_detail.path_to_asset#/#qry_detail.img_filename_org#?#qry_detail.hashtag#" border="0">
 				</cfif>
 			<cfelse>	
 				<!--- Thumbnail --->
 				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 					<img src="#qry_detail.cloud_url#" border="0">
 				<cfelse>
-					<img src="#thestorageurl##qry_detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.thumb_extension#" border="0">
+					<img src="#thestorageurl##qry_detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.thumb_extension#?#qry_detail.hashtag#" border="0">
 				</cfif>
 			</cfif>
 		</div>
