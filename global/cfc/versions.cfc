@@ -441,6 +441,8 @@
 			<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
 			<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 			<cfset arguments.thestruct.newid = arguments.thestruct.therandom>
+			<cfset arguments.thestruct.thexmp.orgwidth = arguments.thestruct.qryfilelocal.img_width>
+			<cfset arguments.thestruct.thexmp.orgheight = arguments.thestruct.qryfilelocal.img_height>
 			<!--- resize original to thumb. This also returns the original width and height --->
 			<cfinvoke component="assets" method="resizeImage">
 				<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
