@@ -42,7 +42,8 @@
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfif application.razuna.isp>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/login.css?_v=#attributes.cachetag#" />
+<!--- <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/login.css?_v=#attributes.cachetag#" /> --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=#attributes.cachetag#" />
 <!--- JS --->
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
