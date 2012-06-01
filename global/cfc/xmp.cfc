@@ -1773,15 +1773,15 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		WHERE id = '#arguments.thestruct.file_id#'
 		</cfquery>
 		<!--- Check if the above query returns the custom text column in the columnlist --->
-		<cfset qhas = ListContainsNoCase(qcf.columnlist, cfcolumn)>
+		<!--- <cfset qhas = ListContainsNoCase(qcf.columnlist, cfcolumn)> --->
 		<!--- This will either return a 0 (for not found) --->
-		<cfif qhas EQ 0>
+		<!--- <cfif qhas EQ 0> --->
 			<!--- Add new column with value --->
 			<cfset MyArray = ArrayNew(1)>
 			<cfset MyArray[1] = "">
 			<cfset QueryAddcolumn(arguments.thestruct.tq, cfcolumn, "varchar", MyArray)>
 			<cfset arguments.thestruct.meta_fields = arguments.thestruct.meta_fields & "," & cfcolumn>
-		</cfif>
+		<!--- </cfif> --->
 		<!--- Set Cell --->
 		<cfset QuerySetCell(arguments.thestruct.tq, cfcolumn, cf_value)>
 	</cfloop>
