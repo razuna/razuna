@@ -3,6 +3,11 @@
 
 <circuit access="public" xmlns:cf="cf/">
 
+	<!-- Cache Tag for layouts -->
+	<fuseaction name="cachetag">
+		<set name="attributes.cachetag" value="2012.05.18.1" />
+	</fuseaction>
+
 	<!--
 		Default fuseaction for application, uses model and view circuits
 		to do all of its work:
@@ -36,6 +41,8 @@
 		<!-- Check for JanRain -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_url" />
+		<!-- Get the Cache tag -->
+		<do action="cachetag" />
 		<!-- Show -->
 		<do action="v.login" />
 	</fuseaction>
@@ -271,6 +278,8 @@
 				<invoke object="myFusebox.getApplicationData().basket" methodcall="get_orders()" returnvariable="qry_orders" />
 				<!-- CFC: Get customization -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+				<!-- Get the Cache tag -->
+				<do action="cachetag" />
 				<!-- Show main page -->
 			 	<do action="v.main" />
 			</true>
@@ -2038,6 +2047,8 @@
 		<do action="assetpath" />
 		<!-- CFC: Serve the file -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="servefile(attributes)" returnvariable="qry_binary" />
+		<!-- Get the Cache tag -->
+		<do action="cachetag" />
 		<!-- Show -->
 		<do action="v.serve_asset" />
 	</fuseaction>
@@ -4554,6 +4565,8 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_url" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
+		<!-- Get the Cache tag -->
+		<do action="cachetag" />
 		<!-- If ISP (for now) -->
 		<if condition="#application.razuna.isp#">
 			<true>
@@ -4623,6 +4636,8 @@
 	</fuseaction>
 	<!-- Share Proxy -->
 	<fuseaction name="sharep">
+		<!-- Get the Cache tag -->
+		<do action="cachetag" />
 		<!-- Param -->
 		<set name="shared.everyone" value="F" overwrite="false" />
 		<do action="v.share" />
@@ -5272,6 +5287,8 @@
 		<xfa name="switchlang" value="c.switchlang" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
+		<!-- Get the Cache tag -->
+		<do action="cachetag" />
 		<!-- Get how the widget is being shared -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<!-- Check for JanRain -->
@@ -5574,6 +5591,8 @@
 				<do action="languages" />
 			</true>
 		</if>
+		<!-- Get the Cache tag -->
+		<do action="cachetag" />
 		<!-- Show -->
 		<do action="v.login_mini" />
 	</fuseaction>
@@ -5638,7 +5657,8 @@
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
 					</false>
 				</if>
-				
+				<!-- Get the Cache tag -->
+				<do action="cachetag" />
 				<!-- Get View -->
 				<do action="v.mini_browser" />
 			</true>

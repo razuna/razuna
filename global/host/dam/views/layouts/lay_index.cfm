@@ -42,22 +42,22 @@
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfif application.razuna.isp>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/login.css?_v=2012.05.18.1" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=2012.05.18.1" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/login.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=#attributes.cachetag#" />
 <!--- JS --->
 <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=2012.05.18.1"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=2012.05.18.1"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/login.js?_v=2012.05.18.1"></script>
+<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/login.js?_v=#attributes.cachetag#"></script>
 <cfelse>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css?_v=#attributes.cachetag#" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
-<script type="text/javascript" src="#dynpath#/global/host/dam/js/login.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.form.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/host/dam/js/login.js?_v=#attributes.cachetag#"></script>
 </cfif>
 <cfif jr_enable EQ "true"><cfinclude template="../../js/janrain.cfm" runonce="true"></cfif>
 <link rel="SHORTCUT ICON" href="favicon.ico" />

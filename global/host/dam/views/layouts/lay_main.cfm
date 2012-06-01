@@ -48,55 +48,55 @@
 <cfif application.razuna.isp>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css?_v=2012.05.18.1" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=2012.05.18.1" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/tagit.css?_v=2012.05.18.1" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/multiple-instances.css?_v=2012.05.18.1" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/css/jquery.tagit.css?_v=2012.05.18.1" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.css?_v=2012.05.18.1" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.css?_v=2012.05.18.1" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/tagit.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/multiple-instances.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.css?_v=#attributes.cachetag#" />
 <!--- JS --->
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=2012.05.18.1" type="text/javascript"></script>
 <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/jquery.tree.min.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/lib/jquery.cookie.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/plugins/jquery.tree.cookie.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/js/tag-it.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.jquery.min.js?_v=2012.05.18.1" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.formparams.js?_v=2012.05.18.1" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/jquery.tree.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/lib/jquery.cookie.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/plugins/jquery.tree.cookie.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/js/tag-it.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
+<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.formparams.js?_v=#attributes.cachetag#" type="text/javascript"></script>
 <!--- Favicon --->
-<link rel="SHORTCUT ICON" href="//d3jcwo7gahoav9.cloudfront.net/razuna/favicon.ico?_v=2012.05.18.1" />
+<link rel="SHORTCUT ICON" href="//d3jcwo7gahoav9.cloudfront.net/razuna/favicon.ico?_v=#attributes.cachetag#" />
 <cfelse>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css?_v=#attributes.cachetag#" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jqtree/lib/jquery.cookie.js"></script>
-<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jqtree/jquery.tree.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jqtree/plugins/jquery.tree.cookie.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.form.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jqtree/lib/jquery.cookie.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jqtree/jquery.tree.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jqtree/plugins/jquery.tree.cookie.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js?_v=#attributes.cachetag#"></script>
 <!--- Favicon --->
 <link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
 </cfif>

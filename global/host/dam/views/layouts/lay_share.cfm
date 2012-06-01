@@ -30,32 +30,36 @@
 <head>
 <title>Razuna Enterprise Digital Asset Management</title>
 <meta http-equiv="content-type" content="text/html;charset=utf-8" />
-<cfheader name="Expires" value="#GetHttpTimeString(Now())#">
-<cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
-<cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
+<cfset cacheTimeSeconds = 60*60*24>
+<cfheader name="Expires" value="#GetHttpTimeString(DateAdd('s', cacheTimeSeconds, Now()))#">
+<cfheader name="CACHE-CONTROL" value="max-age=#cacheTimeSeconds#">
+<cfheader name="PRAGMA" value="public">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfif application.razuna.isp>
-<!--- JS --->
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js" type="text/javascript"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js"></script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/multiple-instances.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
+<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/smoothness/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/multiple-instances.css?_v=#attributes.cachetag#" />
+<!--- JS --->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js" type="text/javascript"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.18/jquery-ui.min.js" type="text/javascript"></script>
+<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js?_v=#attributes.cachetag#"></script>
 <cfelse>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js"></script>
-<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
+<!--- CSS --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css?_v=#attributes.cachetag#" />
+<!--- JS --->
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
 </cfif>
 <link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
 <style>
