@@ -326,11 +326,21 @@
 				<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 				<!--- If we store on the file system we create the folder here --->
 				<cfif application.razuna.storage EQ "local">
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+					<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+						<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+					</cfif>
+					<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+						<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+					</cfif>
+					<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+						<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+					</cfif>
+					<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+						<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+					</cfif>
+					<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+						<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+					</cfif>
 				</cfif>
 				<!--- Set the Action2: Fill certain arguments (folder name, collection) with supporting argument if coming from CFC files --->
 				<cfif StructIsEmpty(arguments.thefolderparam)>
@@ -368,11 +378,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#arguments.thestruct.link_path#" name="arguments.thestruct.thefiles" type="file">
@@ -436,11 +456,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
@@ -508,11 +538,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
@@ -580,11 +620,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
@@ -652,11 +702,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
@@ -724,11 +784,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
@@ -796,11 +866,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
@@ -868,11 +948,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
@@ -940,11 +1030,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
@@ -1012,11 +1112,21 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
-			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/img" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/vid" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/doc" mode="775">
+			</cfif>
+			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud")>
+				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
+			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
 		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
