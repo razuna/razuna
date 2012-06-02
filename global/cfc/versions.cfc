@@ -639,11 +639,6 @@
 			</cfthread>
 			<!--- Wait for the upload thread to finish --->
 			<cfthread action="join" name="ut#arguments.thestruct.therandom#" />
-
-<!---
-			<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#arguments.thestruct.qryfilelocal#"><cfdump var="#arguments.thestruct.thumbnailname_new#"></cfmail>
-			<cfabort>
---->
 			<!--- Get SignedURL thumbnail --->
 			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfilelocal.path_to_asset#/#arguments.thestruct.thumbnailname_new#" nvxsession="#arguments.thestruct.nvxsession#">
 			<!--- Get SignedURL original --->
@@ -673,7 +668,11 @@
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
-				<!--- Upload Thumbnail --->
+			</cfthread>
+			<!--- Wait for the upload thread to finish --->
+			<cfthread action="join" name="u#arguments.thestruct.therandom#" />
+			<!--- Upload Thumbnail --->
+			<cfthread name="ut#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="amazon" method="Upload">
 					<cfinvokeargument name="key" value="/#attributes.intstruct.qryfilelocal.path_to_asset#/#attributes.intstruct.thumbnailname_new#">
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.thumbnailname_new#">
@@ -681,7 +680,7 @@
 				</cfinvoke>
 			</cfthread>
 			<!--- Wait for the upload thread to finish --->
-			<cfthread action="join" name="u#arguments.thestruct.therandom#" />
+			<cfthread action="join" name="ut#arguments.thestruct.therandom#" />
 			<!--- Get SignedURL thumbnail --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfilelocal.path_to_asset#/#arguments.thestruct.thumbnailname_new#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL original --->
