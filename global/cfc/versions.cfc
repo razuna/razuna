@@ -617,7 +617,7 @@
 				</cfinvoke>
 			</cfthread>
 			<!--- Wait for the rename thread to finish --->
-			<cfthread action="join" name="#mtt#" />
+			<cfthread action="join" name="r#mtt#" />
 			<!--- Upload the new version to the old directory --->
 			<cfthread name="u#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
 				<!--- Upload Original --->
