@@ -605,14 +605,18 @@
 					<cfinvokeargument name="destFolderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#">
 					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
-				<!--- Rename --->
+			</cfthread>
+			<!--- Wait for the move thread to finish --->
+			<cfthread action="join" name="#mtt#" />
+			<!--- Rename the just moved folder --->
+			<cfthread name="r#mtt#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="nirvanix" method="RenameFolders">
 					<cfinvokeargument name="folderPath" value="/versions/#attributes.intstruct.type#/#attributes.intstruct.qryfile.file_id#/#attributes.intstruct.qryfile.file_id#">
 					<cfinvokeargument name="newFolderName" value="#attributes.intstruct.newversion#">
 					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
 			</cfthread>
-			<!--- Wait for the move thread to finish --->
+			<!--- Wait for the rename thread to finish --->
 			<cfthread action="join" name="#mtt#" />
 			<!--- Upload the new version to the old directory --->
 			<cfthread name="u#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
@@ -622,7 +626,10 @@
 					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
 					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
-				<!--- Upload Thumbnail --->
+			<!--- Wait for the upload thread to finish --->
+			<cfthread action="join" name="u#arguments.thestruct.therandom#" />
+			<!--- Upload Thumbnail --->
+			<cfthread name="ut#arguments.thestruct.therandom#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="nirvanix" method="Upload">
 					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfilelocal.path_to_asset#">
 					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.thumbnailname_new#">
@@ -630,7 +637,7 @@
 				</cfinvoke>
 			</cfthread>
 			<!--- Wait for the upload thread to finish --->
-			<cfthread action="join" name="u#arguments.thestruct.therandom#" />
+			<cfthread action="join" name="ut#arguments.thestruct.therandom#" />
 
 <!---
 			<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#arguments.thestruct.qryfilelocal#"><cfdump var="#arguments.thestruct.thumbnailname_new#"></cfmail>
