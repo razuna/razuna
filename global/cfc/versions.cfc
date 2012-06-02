@@ -626,6 +626,7 @@
 					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
 					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
+			</cfthread>
 			<!--- Wait for the upload thread to finish --->
 			<cfthread action="join" name="u#arguments.thestruct.therandom#" />
 			<!--- Upload Thumbnail --->
