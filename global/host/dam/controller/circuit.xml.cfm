@@ -1037,6 +1037,7 @@
 		<!-- XFAs -->
 		<xfa name="assetadd" value="c.asset_add" />
 		<xfa name="assetdetail" value="c.files_detail" />
+		<xfa name="sendemail" value="c.email_send" />
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
@@ -1075,6 +1076,7 @@
 		<xfa name="fimages" value="c.folder_images" />
 		<xfa name="assetadd" value="c.asset_add" />
 		<xfa name="assetdetail" value="c.images_detail" />
+		<xfa name="sendemail" value="c.email_send" />
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
@@ -1114,6 +1116,7 @@
 		<xfa name="fvideosloader" value="c.folder_videos_show" />
 		<xfa name="assetadd" value="c.asset_add" />
 		<xfa name="assetdetail" value="c.videos_detail" />
+		<xfa name="sendemail" value="c.email_send" />
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
@@ -1170,6 +1173,7 @@
 		<!-- XFAs -->
 		<xfa name="assetadd" value="c.asset_add" />
 		<xfa name="assetdetail" value="c.audios_detail" />
+		<xfa name="sendemail" value="c.email_send" />
 		<!-- Params -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
@@ -1212,6 +1216,7 @@
 		<xfa name="detailimg" value="c.images_detail" />
 		<xfa name="detailvid" value="c.videos_detail" />
 		<xfa name="detailaud" value="c.audios_detail" />
+		<xfa name="sendemail" value="c.email_send" />
 		<!-- Param -->
 		<set name="kind" value="all" />
 		<set name="url.kind" value="all" />

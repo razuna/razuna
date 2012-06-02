@@ -168,7 +168,7 @@
 						</tr>
 						<tr>
 							<td></td>
-							<td><input type="radio" name="sendaszip" value="F" checked="true"> #defaultsObj.trans("no")# <input type="radio" name="sendaszip" value="T"> #defaultsObj.trans("yes")#</td>
+							<td><input type="radio" name="sendaszip" value="T"> #defaultsObj.trans("yes")# <input type="radio" name="sendaszip" value="F" checked="true"> #defaultsObj.trans("no")#</td>
 						</tr>
 						<tr>
 							<td colspan="2"><input type="text" size="50" name="zipname" value="#attributes.filename#">.zip</td>
