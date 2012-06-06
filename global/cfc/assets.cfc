@@ -540,9 +540,7 @@
 			<!--- Add the original file name in a session since it is stored as lower case in the temp DB --->
 			<cfset arguments.thestruct.theoriginalfilename = thefile.serverFile>
 			<!--- Call the addasset function --->
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
-			</cfthread>
+			<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 			<!--- Get file type so we can return the type --->
 			<cfquery datasource="#variables.dsn#" name="fileType">
 			SELECT type_type
@@ -1676,8 +1674,16 @@ This is the main function called directly by a single upload else from addassets
 	<cfreturn arguments.thestruct.newid />
 </cffunction>
 
-<!--- IMPORT INTO DB AND IMAGEMAGICK STUFF (called from the various image uploads components) ---->
+<!--- IMPORTIMAGES in a thread ---->
 <cffunction name="importimages" output="true">
+	<cfargument name="thestruct" type="struct">
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke method="importimagesthread" thestruct="#attributes.intstruct#" />
+	</cfthread>
+</cffunction>
+
+<!--- IMPORT INTO DB AND IMAGEMAGICK STUFF (called from the various image uploads components) ---->
+<cffunction name="importimagesthread" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- init function internal vars --->
 	<cfset var isAnimGIF = 0>
@@ -2051,7 +2057,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- </cfif> --->
 	</cfif>
 	<!--- return the new id nr --->
-	<cfreturn arguments.thestruct.newid />
+	<cfreturn />
 </cffunction>
 
 <!--- CHECK IF AN IMAGE IS AN ANIMATED GIF --->
