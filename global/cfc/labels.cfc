@@ -132,12 +132,16 @@
 	<cffunction name="label_add_batch" output="false" access="public">
 		<cfargument name="thestruct" type="struct">
 		<!--- Loop over files_ids --->
-		<cfloop list="#arguments.thestruct.file_ids#" index="i">
-			<cfset arguments.thestruct.fileid = listfirst(i,"-")>
-			<cfset arguments.thestruct.thetype = listlast(i,"-")>
+		<cfthread intstruct="#arguments.thestruct#">
+		<cfloop list="#attributes.intstruct.file_ids#" index="i">
+			<cfset attributes.intstruct.fileid = listfirst(i,"-")>
+			<cfset attributes.intstruct.thetype = listlast(i,"-")>
 			<!--- Now pass each asset to the function above to add labels --->
-			<cfinvoke method="label_add_all" thestruct="#arguments.thestruct#" />
+			
+				<cfinvoke method="label_add_all" thestruct="#attributes.intstruct#" />
+			
 		</cfloop>
+		</cfthread>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

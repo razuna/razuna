@@ -1046,6 +1046,8 @@ This is the main function called directly by a single upload else from addassets
 				<!--- <cftry> --->
 					<!--- Params --->
 					<cfset var cloud_url = structnew()>
+					<cfset var cloud_url_org = structnew()>
+					<cfset var cloud_url_2 = structnew()>
 					<cfset cloud_url_org.theurl = "">
 					<cfset cloud_url.theurl = "">
 					<cfset cloud_url_2.theurl = "">

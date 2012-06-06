@@ -826,8 +826,7 @@
 				</cfif>
 				<cfif arguments.thestruct.doc_id NEQ "">
 					<!--- <cfinvoke method="move" thestruct="#arguments.thestruct#" /> --->
-					<cfset tt = CreateUUid()>
-					<cfthread name="#tt#" intstruct="#arguments.thestruct#">
+					<cfthread intstruct="#arguments.thestruct#">
 						<cfinvoke method="move" thestruct="#attributes.intstruct#" />
 					</cfthread>
 				</cfif>

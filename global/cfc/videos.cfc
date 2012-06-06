@@ -801,8 +801,7 @@
 	<cfset arguments.thestruct.dsn = variables.dsn>
 	<cfset arguments.thestruct.setid = variables.setid>
 	<!--- Start the thread for updating --->
-	<cfset tt = CreateUUid()>
-	<cfthread name="update#tt#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 </cffunction>
@@ -941,6 +940,9 @@
 		<cfset arguments.thestruct.setid = application.razuna.setid>
 		<cfset arguments.thestruct.hostid = session.hostid>
 		<cfparam name="fromadmin" default="F">
+		<cfset var cloud_url = structnew()>
+		<cfset var cloud_url_org = structnew()>
+		<cfset var cloud_url_2 = structnew()>
 		<cfset cloud_url_org.theurl = "">
 		<cfset cloud_url.theurl = "">
 		<cfset cloud_url_2.theurl = "">
@@ -1465,8 +1467,7 @@
 			</cfif>
 			<cfif arguments.thestruct.vid_id NEQ "">
 				<!--- <cfinvoke method="move" thestruct="#arguments.thestruct#" /> --->
-				<cfset tt = CreateUUid()>
-				<cfthread name="#tt#" intstruct="#arguments.thestruct#">
+				<cfthread intstruct="#arguments.thestruct#">
 					<cfinvoke method="move" thestruct="#attributes.intstruct#" />
 				</cfthread>
 			</cfif>

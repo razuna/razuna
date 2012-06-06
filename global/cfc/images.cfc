@@ -639,6 +639,9 @@
 <cffunction name="convertImagethread" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
+	<cfset var cloud_url = structnew()>
+	<cfset var cloud_url_org = structnew()>
+	<cfset var cloud_url_2 = structnew()>
 	<cfset cloud_url_org.theurl = "">
 	<cfset cloud_url.theurl = "">
 	<cfset cloud_url_2.theurl = "">
@@ -1106,9 +1109,7 @@
 				<cfset arguments.thestruct.img_id = fileid>
 			</cfif>
 			<cfif arguments.thestruct.img_id NEQ "">
-				<!--- <cfinvoke method="move" thestruct="#arguments.thestruct#" /> --->
-				<cfset tt = CreateUUid()>
-				<cfthread name="#tt#" intstruct="#arguments.thestruct#">
+				<cfthread intstruct="#arguments.thestruct#">
 					<cfinvoke method="move" thestruct="#attributes.intstruct#" />
 				</cfthread>
 			</cfif>

@@ -222,8 +222,7 @@
 	<cfset arguments.thestruct.setid = variables.setid>
 	<!--- <cfinvoke method="updatethread" thestruct="#arguments.thestruct#" /> --->
 	<!--- Start the thread for updating --->
-	<cfset tt = CreateUUid()>
-	<cfthread name="update#tt#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 </cffunction>
@@ -343,7 +342,6 @@
 		<!--- Flush Cache --->
 		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
 	</cfloop>
-	
 </cffunction>
 
 <!--- REMOVE THE AUDIO --->
@@ -561,8 +559,7 @@
 			</cfif>
 			<cfif arguments.thestruct.aud_id NEQ "">
 				<!--- <cfinvoke method="move" thestruct="#arguments.thestruct#" /> --->
-				<cfset tt = CreateUUid()>
-				<cfthread name="#tt#" intstruct="#arguments.thestruct#">
+				<cfthread intstruct="#arguments.thestruct#">
 					<cfinvoke method="move" thestruct="#attributes.intstruct#" />
 				</cfthread>
 			</cfif>
@@ -677,6 +674,9 @@
 		<cfset arguments.thestruct.dsn = application.razuna.datasource>
 		<cfset arguments.thestruct.setid = application.razuna.setid>
 		<cfset arguments.thestruct.hostid = session.hostid>
+		<cfset var cloud_url = structnew()>
+		<cfset var cloud_url_org = structnew()>
+		<cfset var cloud_url_2 = structnew()>
 		<cfset cloud_url_org.theurl = "">
 		<cfset cloud_url.theurl = "">
 		<cfset cloud_url_2.theurl = "">
