@@ -1811,7 +1811,7 @@ This is the main function called directly by a single upload else from addassets
 		</cftransaction>
 		<!--- <cfset resizeImagett = createuuid()> --->
 		<cfset arguments.thestruct.theplaceholderpic = theplaceholderpic>
-		<cfset arguments.thestruct.width  = arguments.thestruct.qrysettings.set2_img_thumb_width>
+		<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
 		<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 		<cfset arguments.thestruct.destination = "#arguments.thestruct.thetempdirectory#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
 		<cfif isWindows()>
@@ -2034,22 +2034,24 @@ This is the main function called directly by a single upload else from addassets
 				<cfset thumbsize = 0>
 			</cfif>
 			<!--- Update DB with the sizes from above --->
-			<cfquery datasource="#arguments.thestruct.dsn#">
-			UPDATE #session.hostdbprefix#images
-			SET 
-			img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
-			thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
-			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.md5hash#">
-			<!--- AMAZON --->
-			<cfif arguments.thestruct.storage EQ "amazon" OR arguments.thestruct.storage EQ "nirvanix">
-				,
-				cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
-				cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
-				cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
-			</cfif>
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-			</cfquery>
+			<cftransaction>
+				<cfquery datasource="#arguments.thestruct.dsn#">
+				UPDATE #session.hostdbprefix#images
+				SET 
+				img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
+				thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
+				hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.md5hash#">
+				<!--- AMAZON --->
+				<cfif arguments.thestruct.storage EQ "amazon" OR arguments.thestruct.storage EQ "nirvanix">
+					,
+					cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
+					cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+					cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
+				</cfif>
+				WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+				</cfquery>
+			</cftransaction>
 			<!---
 </cfthread>
 			<cfthread action="join" name="#tt#" />
@@ -2226,15 +2228,17 @@ This is the main function called directly by a single upload else from addassets
 			<cfset thumbheight = 0>
 		</cfif>
 		<!--- Set original and thumbnail width and height --->
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#images
-		SET
-		thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">, 
-		thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">, 
-		img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">, 
-		img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
-		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
+		<cftransaction>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET
+			thumb_width = <cfqueryparam value="#thumbwidth#" cfsqltype="cf_sql_numeric">, 
+			thumb_height = <cfqueryparam value="#thumbheight#" cfsqltype="cf_sql_numeric">, 
+			img_width = <cfqueryparam value="#arguments.thestruct.thexmp.orgwidth#" cfsqltype="cf_sql_numeric">, 
+			img_height = <cfqueryparam value="#arguments.thestruct.thexmp.orgheight#" cfsqltype="cf_sql_numeric">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+		</cftransaction>
 		<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="assets.cfc resizeImage">
 				<cfdump var="#cfcatch#" />

@@ -632,27 +632,40 @@
 	</cffunction>
 	
 	<!--- FUNCTION: SIGNED URL --->
-	<cffunction name="signedurl" access="public" output="true">
+	<cffunction name="signedurl" access="public" output="false">
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="minutesValid" type="string" required="false" default="5259600">
 		<cfargument name="nvxsession" type="string" required="false">
+		<!--- Create Epoc time --->
+		<cfset arguments.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
+		<!--- Create thread --->
+		<cfset var tt = createuuid("")>
+		<cfthread name="#tt#" intstruct="#arguments#" output="yes">
+			<cfinvoke method="signedurlthread" thestruct="#attributes.intstruct#" returnvariable="turl">
+			<cfoutput>#turl#</cfoutput>
+		</cfthread>
+		<!--- Join thread --->
+		<cfthread action="join" name="#tt#" timeout="6000" />
+		<!--- Put variables together for return --->
+		<cfset var u = structnew()>
+		<cfset u.theurl = cfthread["#tt#"].output>
+		<cfset u.newepoch = arguments.newepoch>
+		<!--- Return --->
+		<cfreturn u />
+	</cffunction>
+
+	<!--- FUNCTION: SIGNED URL --->
+	<cffunction name="signedurlthread" access="public" output="false" returntype="string">
+		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Get session --->
 		<cfset var nvxsession = login()>
-		<cfset var x = structnew()>
-		<cfset x.theurl = "">
-		<!--- Create Epoc time --->
-		<cfset x.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
 		<!--- Get Signed URL --->
 		<cftry>
-			<!--- <cfset var theurl = NxGetoptimalurls(variables.nvxsession,"//razuna/#session.hostid#/#arguments.theasset#",x.newepoch)> --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetOptimalUrls.ashx" method="get" throwonerror="no">
 				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
-				<cfhttpparam name="filePath" value="//razuna/#session.hostid#/#arguments.theasset#" type="url">
-				<cfhttpparam name="expiration" value="#x.newepoch#" type="url">
+				<cfhttpparam name="filePath" value="#arguments.thestruct.theasset#" type="url">
+				<cfhttpparam name="expiration" value="#arguments.thestruct.newepoch#" type="url">
 			</cfhttp>
-			<!--- Get downloadurl
-			<cfset xmlfound = xmlSearch(cfhttp.FileContent, "//DownloadURL")>
-			<cfset x.theurl = xmlfound[1].xmlText> --->
 			<!--- Parse XML --->
 			<cfset var d = xmlparse(cfhttp.filecontent)>
 			<!--- Get ResponseCode --->
@@ -660,12 +673,12 @@
 			<!--- If response is 0 then ok, else let us know --->
 			<cfif respcode EQ 0>
 				<!--- Get Downloadtoken --->
-				<cfset x.theurl = d.Response.Download.DownloadURL[1].XmlText>
+				<cfset var theurl = d.Response.Download.DownloadURL[1].XmlText>
 			<cfelse>
 				<!--- Set Downloadtoken --->
-				<cfset x.theurl = "">
+				<cfset var theurl = "">
 				<!--- Send us eMail --->
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix signedurl reponsecode" type="html">
+				<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="Nirvanix signedurl reponsecode" type="html">
 					<cfdump var="#respcode#">
 					<p>
 					100	Missing required parameters	Occurs when one or more required parameters is missing.<br />
@@ -676,7 +689,7 @@
 					80006	Session not found	Occurs when the session cannot be found. This may happen after the session has been ended with an explicit log out or the session has expired due to inactivity.<br />
 					80101	Invalid session token	Occurs when the session token is malformed.<br />
 					</p>
-					<cfdump var="//razuna/#session.hostid#/#arguments.theasset#">
+					<cfdump var="//razuna/#session.hostid#/#arguments.thestruct.theasset#">
 					<cfdump var="#cfhttp#">
 				</cfmail>
 				<!--- Send user an eMail --->
@@ -685,19 +698,17 @@
 				FROM users
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
-				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#arguments.theasset#) could not proberly be added to our system. Please re-upload it again or contact us at support@razuna.com. We apologize for this!">
+				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#arguments.thestruct.theasset#) could not proberly be added to our system. Please re-upload it again or contact us at support@razuna.com. We apologize for this!">
 			</cfif>
-			<!--- Set download url --->
-<!--- 			<cfset x.theurl = "http://services.nirvanix.com/" & dtoken & "/razuna/#session.hostid#/#arguments.theasset#"> --->
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug signedurl" type="html">
 					<cfdump var="#cfcatch#">
-					<cfdump var="#arguments#">
+					<cfdump var="#arguments.thestruct#">
 				</cfmail>
 			</cfcatch>
 		</cftry>
 		<!--- Return --->
-		<cfreturn x />
+		<cfreturn theurl />
 	</cffunction>
 	
 	<!--- FUNCTION: Download --->
