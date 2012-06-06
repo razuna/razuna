@@ -1045,6 +1045,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfthread name="upload#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
 				<!--- <cftry> --->
 					<!--- Params --->
+					<cfset var cloud_url = structnew()>
 					<cfset cloud_url_org.theurl = "">
 					<cfset cloud_url.theurl = "">
 					<cfset cloud_url_2.theurl = "">
@@ -1686,6 +1687,8 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="importimagesthread" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- init function internal vars --->
+	<cfset var cloud_url = structnew()>
+	<cfset var cloud_url_org = structnew()>
 	<cfset var isAnimGIF = 0>
 	<cfset var thesourcefile = "">
 	<cfset var theimconverttarget = "">
@@ -2275,6 +2278,8 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="processVidFile" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
+	<cfset var cloud_url = structnew()>
+	<cfset var cloud_url_org = structnew()>
 	<cfset cloud_url.theurl = "">
 	<cfset arguments.thestruct.thisvid = structnew()>
 	<cfparam name="arguments.thestruct.vid_online" default="F">
@@ -2947,6 +2952,9 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var tt = Createuuid("")>
 			<cfthread name="#tt#" audstruct="#arguments.thestruct#">
 				<!--- Params --->
+				<cfset var cloud_url = structnew()>
+				<cfset var cloud_url_2 = structnew()>
+				<cfset var cloud_url_org = structnew()>
 				<cfset cloud_url_org.theurl = "">
 				<cfset cloud_url.theurl = "">
 				<cfset cloud_url_2.theurl = "">
@@ -3394,6 +3402,8 @@ This is the main function called directly by a single upload else from addassets
 <!--- Activate Preview Image --->
 <cffunction name="previewimageactivate" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var cloud_url = structnew()>
 	<!--- Query the image --->
 	<cfinvoke method="gettemprecord" thestruct="#arguments.thestruct#" returnVariable="qry" />
 	<!--- If record return zero records then abort --->
@@ -3520,7 +3530,8 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="recreatepreviewimagethread" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
-	<cfset theargsdc = "x">
+	<cfset var theargsdc = "x">
+	<cfset var cloud_url = structnew()>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Check the platform and then decide on the ImageMagick tag --->
