@@ -361,9 +361,11 @@
 		<cfinvoke component="debugme" method="email_dump" emailto="#arguments.thestruct.emailto#" emailfrom="server@razuna.com" emailsubject="debug apiupload" dump="#arguments.thestruct#">
 	</cfif>
 	<cftry>
+		<!--- This is from the uploader in Razuna --->
 		<cfif arguments.thestruct.plupload>
 			<cfset var thesession = true>
 			<cfset var theuserid = session.theuserid>
+		<!--- Below is for API uploads --->
 		<cfelse>
 			<!--- Check if this API is still called with the old method if so, use the old authentication --->
 			<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
@@ -510,25 +512,27 @@
 				<cfset arguments.thestruct.destfolderid = arguments.thestruct.folder_id>
 			</cfif>
 			<!--- Add to temp db --->
-			<cfquery datasource="#variables.dsn#">
-			INSERT INTO #session.hostdbprefix#assets_temp
-			(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<!--- , mimetype --->, thesize, file_id, host_id, md5hash)
-			VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.serverFileExt#">,
-			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.destfolderid#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-			<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">, --->
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#thefile.filesize#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#md5hash#">
-			)
-			</cfquery>
+			<cftransaction>
+				<cfquery datasource="#variables.dsn#">
+				INSERT INTO #session.hostdbprefix#assets_temp
+				(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<!--- , mimetype --->, thesize, file_id, host_id, md5hash)
+				VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.serverFileExt#">,
+				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.destfolderid#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
+				<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">, --->
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#thefile.filesize#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#md5hash#">
+				)
+				</cfquery>
+			</cftransaction>
 			<!--- Put user id into session for later on --->
 			<cfset session.theuserid = theuserid>
 			<!--- We don't need to send an email --->
@@ -536,7 +540,9 @@
 			<!--- Add the original file name in a session since it is stored as lower case in the temp DB --->
 			<cfset arguments.thestruct.theoriginalfilename = thefile.serverFile>
 			<!--- Call the addasset function --->
-			<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#">
+				<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
+			</cfthread>
 			<!--- Get file type so we can return the type --->
 			<cfquery datasource="#variables.dsn#" name="fileType">
 			SELECT type_type
