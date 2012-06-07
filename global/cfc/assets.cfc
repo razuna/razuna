@@ -3532,8 +3532,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="recreatepreviewimagethread" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
-	<cfset var theargsdc = "x">
-	<cfset var cloud_url = structnew()>
+	<cfset theargsdc = "x">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Check the platform and then decide on the ImageMagick tag --->
@@ -3550,11 +3549,7 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- Loop over file id --->
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
-		<!---
-<cfif arguments.thestruct.thetype NEQ "all">
-			<cfset i = i & "-" & arguments.thestruct.thetype>
-		</cfif>
---->
+		<cfset cloud_url = structnew()>
 		<!--- Get the ID and the type --->
 		<cfset theid = listfirst(i,"-")>
 		<cfset thetype = listlast(i,"-")>
