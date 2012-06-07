@@ -648,7 +648,7 @@
 		<cfthread action="join" name="#tt#" timeout="6000" />
 		<!--- Put variables together for return --->
 		<cfset var u = structnew()>
-		<cfset u.theurl = cfthread["#tt#"].output>
+		<cfset u.theurl = trim(cfthread["#tt#"].output)>
 		<cfset u.newepoch = arguments.newepoch>
 		<!--- Return --->
 		<cfreturn u />

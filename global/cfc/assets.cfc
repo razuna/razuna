@@ -3532,7 +3532,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="recreatepreviewimagethread" output="true" access="public">
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
-	<cfset theargsdc = "x">
+	<cfset var theargsdc = "x">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Check the platform and then decide on the ImageMagick tag --->
