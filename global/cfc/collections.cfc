@@ -426,6 +426,7 @@
 	<cfparam name="arguments.thestruct.col_shared" default="F">
 	<cfparam name="arguments.thestruct.col_name_shared" default="#arguments.thestruct.col_id#">
 	<cfparam name="arguments.thestruct.share_order_user" default="0">
+	<cfparam name="arguments.thestruct.share_dl_org" default="f">
 	<!--- Check if a collection by this name exists in this folder --->
 	<cfquery datasource="#variables.dsn#" name="here">
 	SELECT ct.col_name
@@ -601,7 +602,7 @@
 	<cfquery datasource="#variables.dsn#" name="qry.qry_files" cachename="#session.hostid#getallassets#arguments.thestruct.col_id##arguments.thestruct.qry_files.cart_product_id#" cachedomain="#session.theuserid#_col">
 	SELECT i.img_id id, i.img_filename filename, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, i.is_available,
 	'img' as kind, it.img_description description, it.img_keywords keywords, link_kind, link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org,
-	'0' as vheight, '0' as vwidth,
+	'0' as vheight, '0' as vwidth, i.hashtag,
 		(
 			SELECT ct.col_item_order
 			FROM #session.hostdbprefix#collections_ct_files ct
@@ -625,7 +626,7 @@
 	UNION ALL
 	SELECT v.vid_id id, v.vid_name_org filename, v.folder_id_r, v.vid_extension ext, v.vid_name_image filename_org, v.is_available,
 	'vid' as kind, vt.vid_description description, vt.vid_keywords keywords, link_kind, link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org,
-	v.vid_height as vheight, v.vid_width as vwidth,
+	v.vid_height as vheight, v.vid_width as vwidth, v.hashtag,
 		(
 			SELECT ct.col_item_order
 			FROM #session.hostdbprefix#collections_ct_files ct
@@ -649,7 +650,7 @@
 	UNION ALL
 	SELECT a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_extension ext, a.aud_name_org filename_org, a.is_available,
 	'aud' as kind, aut.aud_description description, aut.aud_keywords keywords, link_kind, link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org,
-	'0' as vheight, '0' as vwidth,
+	'0' as vheight, '0' as vwidth, a.hashtag,
 		(
 			SELECT ct.col_item_order
 			FROM #session.hostdbprefix#collections_ct_files ct
@@ -673,7 +674,7 @@
 	UNION ALL
 	SELECT f.file_id id, f.file_name filename, f.folder_id_r, f.file_extension ext, f.file_name_org filename_org, f.is_available,
 	f.file_type as kind, ft.file_desc description, ft.file_keywords keywords, link_kind, link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org,
-	'0' as vheight, '0' as vwidth,
+	'0' as vheight, '0' as vwidth, f.hashtag,
 		(
 			SELECT ct.col_item_order
 			FROM #session.hostdbprefix#collections_ct_files ct
