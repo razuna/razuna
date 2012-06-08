@@ -3523,6 +3523,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfset arguments.thestruct.hostid = session.hostid>
+	<!--- <cfinvoke method="recreatepreviewimagethread" thestruct="#arguments.thestruct#" /> --->
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="recreatepreviewimagethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
@@ -3549,166 +3550,179 @@ This is the main function called directly by a single upload else from addassets
 	</cfif>
 	<!--- Loop over file id --->
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
-		<cfset cloud_url = structnew()>
-		<!--- Get the ID and the type --->
-		<cfset theid = listfirst(i,"-")>
-		<cfset thetype = listlast(i,"-")>
-		<!--- Create variables according to type --->
-		<cfif thetype EQ "vid">
-			<cfset thedb = "#session.hostdbprefix#videos">
-			<cfset theflush = "#session.theuserid#_videos">
-			<cfset therecid = "vid_id">
-			<cfset thecolumns = "path_to_asset, vid_name_image, vid_name_org orgname, cloud_url_org">
-		<cfelseif thetype EQ "img">
-			<cfset thedb = "#session.hostdbprefix#images">
-			<cfset theflush = "#session.theuserid#_images">
-			<cfset therecid = "img_id">
-			<cfset thecolumns = "path_to_asset, folder_id_r, img_filename_org orgname, img_extension, img_filename, cloud_url_org">
-		</cfif>
-		<!--- Query current thumbnail info --->
-		<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qry_existing">
-		SELECT #thecolumns#
-		FROM #thedb#
-		WHERE #therecid# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<!--- Create script files --->
-		<cfset thescript = Createuuid("")>
-		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
-		<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.sh">
-		<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.sh">
-		<!--- On Windows a .bat --->
-		<cfif iswindows()>
-			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
-			<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.bat">
-			<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.bat">
-		</cfif>
-		<!--- The path to original: different on local --->
-		<cfif application.razuna.storage EQ "local">
-			<cfset arguments.thestruct.filepath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_existing.path_to_asset#/">
-		<cfelse>
-			<!--- temp dir --->
-			<cfset arguments.thestruct.filepath = GetTempDirectory()>
-		</cfif>
-		<!--- Set filename with complete path --->
-		<cfif thetype EQ "vid">
-			<cfset arguments.thestruct.thumbname = arguments.thestruct.qry_existing.vid_name_image>
-			<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
-			<cfset theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vframes 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
-		<cfelseif thetype EQ "img">
-			<cfset arguments.thestruct.thumbname = "thumb_#theid#.#arguments.thestruct.qry_settings_image.set2_img_format#">
-			<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
-			<!--- Create the args for conversion --->
-			<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
-				<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
-				<cfcase value="psd,eps,ai">
-					<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB -flatten #arguments.thestruct.thumbpath#">
-				</cfcase>
-				<!--- For RAW images we take dcraw --->
-				<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
-					<cfset theargs = "#thedcraw# -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
-					<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
-				</cfcase>
-				<!--- For everything else --->
-				<cfdefaultcase>
-					<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
-				</cfdefaultcase>
-			</cfswitch>
-		</cfif>
-		<!--- Write script file --->
-		<cffile action="write" file="#arguments.thestruct.thesh#" output="#theargs#" mode="777">
-		<cffile action="write" file="#arguments.thestruct.theshdc#" output="#theargsdc#" mode="777">
-		<!--- Local: Delete thumbnail --->
-		<cfif application.razuna.storage EQ "local">
-			<!--- Delete old thumb (if there) --->
-			<cfif fileexists(arguments.thestruct.thumbpath)>
-				<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+		<cftry>
+			<cfset cloud_url = structnew()>
+			<!--- Get the ID and the type --->
+			<cfset theid = listfirst(i,"-")>
+			<cfset thetype = listlast(i,"-")>
+			<!--- Create variables according to type --->
+			<cfif thetype EQ "vid">
+				<cfset thedb = "#session.hostdbprefix#videos">
+				<cfset theflush = "#session.theuserid#_videos">
+				<cfset therecid = "vid_id">
+				<cfset thecolumns = "path_to_asset, vid_name_image, vid_name_org orgname, cloud_url_org">
+			<cfelseif thetype EQ "img">
+				<cfset thedb = "#session.hostdbprefix#images">
+				<cfset theflush = "#session.theuserid#_images">
+				<cfset therecid = "img_id">
+				<cfset thecolumns = "path_to_asset, folder_id_r, img_filename_org orgname, img_extension, img_filename, cloud_url_org">
 			</cfif>
-		<!--- Amazon: download file --->
-		<cfelseif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-			<cfhttp url="#arguments.thestruct.qry_existing.cloud_url_org#" file="#arguments.thestruct.qry_existing.orgname#" path="#arguments.thestruct.filepath#"></cfhttp>
-		</cfif>
-		<!--- Convert image to thumbnail --->
-		<cfthread name="con#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
-		</cfthread>
-		<!--- Wait --->
-		<cfthread action="join" name="con#thescript#" />
-		<!--- For RAW image additionally use mogrify --->
-		<cfthread name="con2#thescript#" intstruct="#arguments.thestruct#">
-			<cfexecute name="#attributes.intstruct.theshdc#" timeout="60" />
-		</cfthread>
-		<!--- Wait --->
-		<cfthread action="join" name="con2#thescript#" />
-		<!--- Delete scripts --->
-		<cffile action="delete" file="#arguments.thestruct.thesh#">
-		<cffile action="delete" file="#arguments.thestruct.theshdc#">
-		<!--- Amazon: upload file --->
-		<cfif application.razuna.storage EQ "amazon">
-			<cfthread name="upload#thescript#" intstruct="#arguments.thestruct#">
-				<!--- Upload Thumbnail --->
-				<cfinvoke component="amazon" method="Upload">
-					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_existing.path_to_asset#/#attributes.intstruct.thumbname#">
-					<cfinvokeargument name="theasset" value="#attributes.intstruct.thumbpath#">
-					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-				</cfinvoke>
-			</cfthread>
-			<!--- Wait for thread to finish --->
-			<cfthread action="join" name="upload#thescript#" />
-			<!--- Get signed URLS --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" awsbucket="#arguments.thestruct.awsbucket#">
-			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
-			UPDATE #thedb#
-			SET cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">
-			WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+			<!--- Query current thumbnail info --->
+			<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qry_existing">
+			SELECT #thecolumns#
+			FROM #thedb#
+			WHERE #therecid# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#theflush#" />
-			<!--- Remove the original and thumbnail --->
-			<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
-				<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
+			<!--- If the cloud_url_org column is empty skip it --->
+			<cfif arguments.thestruct.qry_existing.cloud_url_org EQ "" AND (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix")>
+				<cfset conti = false>
+			<cfelse>
+				<cfset conti = true>
 			</cfif>
-			<!--- Delete old thumb (if there) --->
-			<cfif fileexists(arguments.thestruct.thumbpath)>
-				<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+			<cfif conti>
+				<!--- Create script files --->
+				<cfset thescript = Createuuid("")>
+				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
+				<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.sh">
+				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.sh">
+				<!--- On Windows a .bat --->
+				<cfif iswindows()>
+					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
+					<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.bat">
+					<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.bat">
+				</cfif>
+				<!--- The path to original: different on local --->
+				<cfif application.razuna.storage EQ "local">
+					<cfset arguments.thestruct.filepath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_existing.path_to_asset#/">
+				<cfelse>
+					<!--- temp dir --->
+					<cfset arguments.thestruct.filepath = GetTempDirectory()>
+				</cfif>
+				<!--- Set filename with complete path --->
+				<cfif thetype EQ "vid">
+					<cfset arguments.thestruct.thumbname = arguments.thestruct.qry_existing.vid_name_image>
+					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
+					<cfset theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vframes 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
+				<cfelseif thetype EQ "img">
+					<cfset arguments.thestruct.thumbname = "thumb_#theid#.#arguments.thestruct.qry_settings_image.set2_img_format#">
+					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
+					<!--- Create the args for conversion --->
+					<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
+						<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
+						<cfcase value="psd,eps,ai">
+							<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB -flatten #arguments.thestruct.thumbpath#">
+						</cfcase>
+						<!--- For RAW images we take dcraw --->
+						<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
+							<cfset theargs = "#thedcraw# -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
+							<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
+						</cfcase>
+						<!--- For everything else --->
+						<cfdefaultcase>
+							<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace RGB #arguments.thestruct.thumbpath#">
+						</cfdefaultcase>
+					</cfswitch>
+				</cfif>
+				<!--- Write script file --->
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theargs#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshdc#" output="#theargsdc#" mode="777">
+				<!--- Local: Delete thumbnail --->
+				<cfif application.razuna.storage EQ "local">
+					<!--- Delete old thumb (if there) --->
+					<cfif fileexists(arguments.thestruct.thumbpath)>
+						<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+					</cfif>
+				<!--- Amazon & Nirvanix download file --->
+				<cfelseif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+					<cfhttp url="#arguments.thestruct.qry_existing.cloud_url_org#" file="#arguments.thestruct.qry_existing.orgname#" path="#arguments.thestruct.filepath#"></cfhttp>
+				</cfif>
+				<!--- Convert image to thumbnail --->
+				<cfthread name="con#thescript#" intstruct="#arguments.thestruct#">
+					<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
+				</cfthread>
+				<!--- Wait --->
+				<cfthread action="join" name="con#thescript#" />
+				<!--- For RAW image additionally use mogrify --->
+				<cfthread name="con2#thescript#" intstruct="#arguments.thestruct#">
+					<cfexecute name="#attributes.intstruct.theshdc#" timeout="60" />
+				</cfthread>
+				<!--- Wait --->
+				<cfthread action="join" name="con2#thescript#" />
+				<!--- Delete scripts --->
+				<cffile action="delete" file="#arguments.thestruct.thesh#">
+				<cffile action="delete" file="#arguments.thestruct.theshdc#">
+				<!--- Amazon: upload file --->
+				<cfif application.razuna.storage EQ "amazon">
+					<cfthread name="upload#thescript#" intstruct="#arguments.thestruct#">
+						<!--- Upload Thumbnail --->
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#attributes.intstruct.qry_existing.path_to_asset#/#attributes.intstruct.thumbname#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thumbpath#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<!--- Wait for thread to finish --->
+					<cfthread action="join" name="upload#thescript#" />
+					<!--- Get signed URLS --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" awsbucket="#arguments.thestruct.awsbucket#">
+					<!--- Update DB --->
+					<cfquery datasource="#variables.dsn#">
+					UPDATE #thedb#
+					SET cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">
+					WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+					</cfquery>
+					<!--- Flush Cache --->
+					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#theflush#" />
+					<!--- Remove the original and thumbnail --->
+					<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
+						<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
+					</cfif>
+					<!--- Delete old thumb (if there) --->
+					<cfif fileexists(arguments.thestruct.thumbpath)>
+						<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+					</cfif>
+				<!--- Nirvanix: delete file --->
+				<cfelseif application.razuna.storage EQ "nirvanix">
+					<!--- Delete existing preview --->
+					<cfinvoke component="nirvanix" method="DeleteFiles">
+						<cfinvokeargument name="filePath" value="/#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#">
+						<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					</cfinvoke>
+					<!--- Upload Thumbnail --->
+					<cfthread name="upload#thescript#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="nirvanix" method="Upload">
+							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_existing.path_to_asset#">
+							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thumbpath#">
+							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+						</cfinvoke>
+					</cfthread>
+					<!--- Wait for thread to finish --->
+					<cfthread action="join" name="upload#thescript#" />
+					<!--- Get signed URLS --->
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" nvxsession="#arguments.thestruct.nvxsession#">
+					<!--- Update DB --->
+					<cfquery datasource="#variables.dsn#">
+					UPDATE #thedb#
+					SET cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">
+					WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
+					</cfquery>
+					<!--- Flush Cache --->
+					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#theflush#" />
+					<!--- Remove the original and thumbnail --->
+					<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
+						<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
+					</cfif>
+					<!--- Delete old thumb (if there) --->
+					<cfif fileexists(arguments.thestruct.thumbpath)>
+						<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+					</cfif>
+				</cfif>
 			</cfif>
-		<!--- Nirvanix: delete file --->
-		<cfelseif application.razuna.storage EQ "nirvanix">
-			<!--- Delete existing preview --->
-			<cfinvoke component="nirvanix" method="DeleteFiles">
-				<cfinvokeargument name="filePath" value="/#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#">
-				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
-			</cfinvoke>
-			<!--- Upload Thumbnail --->
-			<cfthread name="upload#thescript#" intstruct="#arguments.thestruct#">
-				<cfinvoke component="nirvanix" method="Upload">
-					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_existing.path_to_asset#">
-					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thumbpath#">
-					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-				</cfinvoke>
-			</cfthread>
-			<!--- Wait for thread to finish --->
-			<cfthread action="join" name="upload#thescript#" />
-			<!--- Get signed URLS --->
-			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" nvxsession="#arguments.thestruct.nvxsession#">
-			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
-			UPDATE #thedb#
-			SET cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">
-			WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
-			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#theflush#" />
-			<!--- Remove the original and thumbnail --->
-			<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
-				<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
-			</cfif>
-			<!--- Delete old thumb (if there) --->
-			<cfif fileexists(arguments.thestruct.thumbpath)>
-				<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
-			</cfif>
-		</cfif>
+			<cfcatch type="all">
+				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug recreating preview" type="html"><cfdump var="#cfcatch#"></cfmail>
+			</cfcatch>
+		</cftry>
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />
