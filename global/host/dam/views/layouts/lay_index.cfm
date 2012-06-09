@@ -46,7 +46,7 @@
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=#attributes.cachetag#" />
 <!--- JS --->
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/login.js?_v=#attributes.cachetag#"></script>
@@ -55,7 +55,7 @@
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css?_v=#attributes.cachetag#" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/login.js?_v=#attributes.cachetag#"></script>

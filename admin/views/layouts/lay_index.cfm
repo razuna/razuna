@@ -40,7 +40,7 @@
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
 <script type="text/javascript" src="js/login.js"></script>

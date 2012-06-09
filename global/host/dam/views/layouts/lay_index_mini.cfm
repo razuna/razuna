@@ -37,14 +37,14 @@
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfif application.razuna.isp>
 <!--- JS --->
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=#attributes.cachetag#"></script>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/mini.css?_v=#attributes.cachetag#" />
 <cfelse>
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js?_v=#attributes.cachetag#"></script>
 <!--- CSS --->

@@ -39,15 +39,15 @@
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- Cache JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js"></script>
 <script type="text/javascript" src="js/global.js"></script>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="views/layouts/main.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/error.css" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.16.custom/css/smoothness/jquery-ui-1.8.16.custom.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css" />
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <style>
 .ui-widget { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 12px; }
