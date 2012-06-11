@@ -581,7 +581,9 @@
 			<cfset arguments.thestruct.thumbnailname_existing = replacenocase(arguments.thestruct.qryfilelocal.file_name_org,".pdf",".jpg","all")>
 			<cfset arguments.thestruct.thumbnailname_new = "#arguments.thestruct.qryfile.filenamenoext#.jpg">
 			<!--- MD5 Hash --->
-			<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#')>
+			<cfset md5hash = hashbinary('#arguments.thestruct.qryfile.path#')>
+			<!--- Remove the filename from the path --->
+			<cfset arguments.thestruct.qryfile.path = replacenocase(arguments.thestruct.qryfile.path,"/#arguments.thestruct.qryfile.filename#","","one")>
 		</cfif>
 		<!--- Create a new version number --->
 		<cfquery datasource="#arguments.thestruct.dsn#" name="qryversion">
