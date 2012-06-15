@@ -66,7 +66,7 @@
 	<cfelse>
 		<cfset thefolderlist = arguments.folder_id & ",">
 	</cfif>
-	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
 	<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
 		<cfset session.offset = 0>
 	</cfif>
@@ -776,7 +776,7 @@
 		</cfif>
 		<!--- IM commands --->
 		<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -strip -colorspace RGB #theflatten##theformatconv#">
-		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# -strip -colorspace RGB #theflatten##thethumbtconv#">
+		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# -strip -colorspace sRGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
 		<cfset thescript = createuuid()>
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
