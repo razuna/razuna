@@ -45,7 +45,7 @@
             <cfset wodirname="#thedirname#">
             <!--- Get a listing of the directory --->
             <cfftp connection="#fc#" action="listdir" directory="#thedirname#/" name="dirlist" stoponerror="no" timeout="20">
-            <cfdump var="#dirlist#"><cfabort>
+            <!--- <cfdump var="#dirlist#"><cfabort> --->
         <cfelse>
         	<cftry>
                 <cfftp connection="#fc#" action="listdir" directory="#arguments.thestruct.folderpath#/" name="dirlist" stoponerror="yes" timeout="30">
