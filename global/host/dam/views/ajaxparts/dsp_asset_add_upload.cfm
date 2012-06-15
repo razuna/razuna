@@ -35,20 +35,10 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <cfparam name="attributes.file_id" default="0">
 <!-- Load Queue widget CSS and jQuery -->
-<cfif application.razuna.isp>
-<link rel="stylesheet" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css" type="text/css" media="screen" />
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery-1.6.4.min.js"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/plupload/plupload.full.js"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js"></script>
-<cfelse>
-<link rel="stylesheet" href="#dynpath#/global/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css" type="text/css" media="screen" />
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
-<!-- Thirdparty intialization scripts, needed for the Google Gears and BrowserPlus runtimes -->
-<!--- <script type="text/javascript" src="#dynpath#/global/js/plupload/gears_init.js"></script> --->
-<!-- Load plupload and all it's runtimes and finally the jQuery queue widget -->
-<script type="text/javascript" src="#dynpath#/global/js/plupload/plupload.full.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js"></script>
-</cfif>
+<link rel="stylesheet" href="#dynpath#/global/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css?_v=#attributes.cachetag#" type="text/css" media="screen" />
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/plupload/plupload.full.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js?_v=#attributes.cachetag#"></script>
 <style type="text/css">
 body {
 	background: white;
