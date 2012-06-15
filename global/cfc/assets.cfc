@@ -2283,6 +2283,8 @@ This is the main function called directly by a single upload else from addassets
 	<cfset var cloud_url = structnew()>
 	<cfset var cloud_url_org = structnew()>
 	<cfset cloud_url.theurl = "">
+	<cfset cloud_url_org.theurl = "">
+	<cfset cloud_url_org.newepoch = 0>
 	<cfset arguments.thestruct.thisvid = structnew()>
 	<cfparam name="arguments.thestruct.vid_online" default="F">
 	<cfset arguments.thestruct.dsn = variables.dsn>
