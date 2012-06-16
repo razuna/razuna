@@ -37,7 +37,7 @@ a:visited {
 	text-decoration: underline;
 }
 a:hover {
-	color: #CC0000;
+	color: green;
 	text-decoration: underline;
 }
 form {
@@ -206,7 +206,7 @@ th {
 	text-decoration: underline;
 }
 .navrighttop a:hover {
-	color: #CC0000;
+	color: green;
 	text-decoration: underline;
 }
 .navrighttop .loginheader {
@@ -270,7 +270,7 @@ div#hnav a{
 	text-decoration: none;
 }
 div#hnav a:hover{	
-	color: #CC0000;
+	color: green;
 	text-decoration: none;
 }
 
@@ -293,7 +293,7 @@ div#lnav a{
 	text-decoration: none;
 }
 div#lnav a:hover{	
-	color: #CC0000;
+	color: green;
 	text-decoration: none;
 }
 .clear {
@@ -473,7 +473,7 @@ tr.darkrow td {
 	text-decoration:none;
 }
 .ddselection_header a:hover {
-	color: red;
+	color: green;
 }
 .ddselection_header p {
 	padding: 0px;
@@ -605,7 +605,7 @@ input, textarea {
 	padding: 5px;	
 }
 input:focus, textarea:focus { 
-	border: 1px solid #972324; 
+	border: 1px solid #357EC7; 
 }
 #bodybg {
     position: absolute;

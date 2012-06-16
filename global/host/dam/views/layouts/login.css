@@ -27,7 +27,15 @@ html>body #container {
 	height: auto;
 }
 a {
-	color: #CC0000;
+	color: #000000;
+	text-decoration: underline;
+}
+a:visited {
+	color: #000000;
+	text-decoration: underline;
+}
+a:hover {
+	color: green;
 	text-decoration: underline;
 }
 form {
@@ -203,5 +211,5 @@ input, textarea {
 	padding: 10px;	
 }
 input:focus, textarea:focus { 
-	border: 1px solid #972324; 
+	border: 1px solid #357EC7; 
 }
