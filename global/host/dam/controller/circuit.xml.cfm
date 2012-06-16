@@ -2384,6 +2384,12 @@
 	-->
 	<!-- Basket include -->
 	<fuseaction name="basket_put_include">
+		<!-- Put session file_id into attributes -->
+		<if condition="#session.file_id# NEQ ''">
+			<true>
+				<set name="attributes.file_id" value="#session.file_id#" />
+			</true>
+		</if>
 		<!-- CFC: Put file into basket -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="tobasket(attributes)" />
 	</fuseaction>
