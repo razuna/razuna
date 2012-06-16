@@ -86,14 +86,16 @@
 	<cfset arguments.thestruct.theschema = application.razuna.theschema>
 	<cfset arguments.thestruct.storage = application.razuna.storage>
 	<!--- Loop over the file_id (important when working on more then one image) --->
-	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
-		<cfset arguments.thestruct.file_id = i>
-		<cfset arguments.thestruct.newid = i>
+	<cfthread intstruct="#arguments.thestruct#">
+	<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="i">
+		<cfset attributes.intstruct.file_id = i>
+		<cfset attributes.intstruct.newid = i>
 		<!--- <cfinvoke method="xmpwrite" thestruct="#arguments.thestruct#" /> --->
-		<cfthread intstruct="#arguments.thestruct#">
+		
 			<cfinvoke method="xmpwrite" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		
 	</cfloop>
+	</cfthread>
 </cffunction>
 
 <!--- Write the XMP XML to the filesystem --->
@@ -1773,14 +1775,16 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#attributes.intstruct.
 		WHERE id = '#arguments.thestruct.file_id#'
 		</cfquery>
 		<!--- Check if the above query returns the custom text column in the columnlist --->
-		<!--- <cfset qhas = ListContainsNoCase(qcf.columnlist, cfcolumn)> --->
+		<cfset qhas = ListContainsNoCase(qcf.columnlist, cfcolumn)>
 		<!--- This will either return a 0 (for not found) --->
 		<!--- <cfif qhas EQ 0> --->
 			<!--- Add new column with value --->
 			<cfset MyArray = ArrayNew(1)>
 			<cfset MyArray[1] = "">
-			<cfset QueryAddcolumn(arguments.thestruct.tq, cfcolumn, "varchar", MyArray)>
-			<cfset arguments.thestruct.meta_fields = arguments.thestruct.meta_fields & "," & cfcolumn>
+			<cfif qhas EQ 0>
+				<cfset QueryAddcolumn(arguments.thestruct.tq, cfcolumn, "varchar", MyArray)>
+				<cfset arguments.thestruct.meta_fields = arguments.thestruct.meta_fields & "," & cfcolumn>
+			</cfif>
 		<!--- </cfif> --->
 		<!--- Set Cell --->
 		<cfset QuerySetCell(arguments.thestruct.tq, cfcolumn, cf_value)>

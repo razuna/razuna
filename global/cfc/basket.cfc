@@ -31,7 +31,7 @@
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.thetype" default="">
 	<cfparam name="arguments.thestruct.fromshare" default="F">
-	<cfloop index="thenr" delimiters="," list="#arguments.thestruct.file_id#">
+	<cfloop index="thenr" delimiters="," list="#session.file_id#">
 		<!--- If we come from a overview we have numbers with the type --->
 		<cfset thetype = listlast(thenr,"-")>
 		<cfset thenr = listfirst(thenr,"-")>
