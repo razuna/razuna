@@ -3,7 +3,7 @@
 function addcomment(fileid,type){
 	var thecom = escape($("#comment" + fileid).val());
 	// Save Comment and reload list
-	loadcontent('divlatcomment' + fileid,'<cfoutput>#myself#</cfoutput>c.share_comments_add&file_id=' + fileid + '&type=' + type + '&comment=' + thecom);
+	loadcontent('divlatcomment' + fileid,'index.cfm?fa=c.share_comments_add&file_id=' + fileid + '&type=' + type + '&comment=' + thecom);
 	// Empty textarea
 	document.getElementById('comment' + fileid).value = '';
 }
