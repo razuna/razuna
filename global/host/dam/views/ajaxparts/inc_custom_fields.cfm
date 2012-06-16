@@ -52,7 +52,7 @@
 			</tr>
 		</cfloop>
 		<!--- Submit Button --->
-		<cfif session.folderaccess NEQ "R">
+		<cfif attributes.folderaccess NEQ "R">
 			<tr>
 				<td colspan="2">
 					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>

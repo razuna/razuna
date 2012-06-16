@@ -33,17 +33,10 @@
 <cfheader name="Expires" value="#GetHttpTimeString(Now())#">
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
-<cfif application.razuna.isp>
-<!--- CSS --->
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/mini.css?_v=#attributes.cachetag#" />
-<!--- Favicon --->
-<link rel="SHORTCUT ICON" href="//d3jcwo7gahoav9.cloudfront.net/razuna/favicon.ico" />
-<cfelse>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/mini.css?_v=#attributes.cachetag#" />
 <!--- Favicon --->
 <link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
-</cfif>
 </head>
 <body>
 <div id="container">

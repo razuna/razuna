@@ -40,31 +40,35 @@
 			</a>
 		</div>
 		<!--- Search --->
-		<div style="width:auto;float:right;padding-top:7px;">
+		<div style="width:auto;float:right;padding-top:3px;">
 			<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
-			<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all">
-			<div style="float:left;padding-top:4px;">
-				<img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##searchselection').toggle();">
+			<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
+			<div style="float:left;background-color:##ddd;padding:2px 4px 2px 2px;">
+				<div style="float:left;">
+					<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:300px;" value="Quick Search">
+				</div>
+				<div style="float:left;padding:5px 5px 0px 5px;">
+					<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">#defaultsObj.trans("search_for_allassets")#</a></div>
+					<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##searchselection').toggle();" class="ddicon"></div>
+				</div>
+				<div id="searchselection" class="ddselection_header" style="left:610px;">
+					<p><a href="##" onclick="selectsearchtype('all','#defaultsObj.trans("search_for_allassets")#');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#defaultsObj.trans("search_for_allassets")#</a></p>
+					<p><a href="##" onclick="selectsearchtype('img','#defaultsObj.trans("search_for_images")#');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_images")#</a></p>
+					<p><a href="##" onclick="selectsearchtype('doc','#defaultsObj.trans("search_for_documents")#');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_documents")#</a></p>
+					<p><a href="##" onclick="selectsearchtype('vid','#defaultsObj.trans("search_for_videos")#');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_videos")#</a></p>
+					<p><a href="##" onclick="selectsearchtype('aud','#defaultsObj.trans("search_for_audios")#');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_audios")#</a></p>
+					<p><hr></p>
+	<!--- 				<p><a href="##" onclick="showwindow('#myself#ajax.search_advanced','#defaultsObj.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#defaultsObj.trans("link_adv_search")#</a></p>
+					<p><hr></p> --->
+					<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">Help with Search</a></p>
+				</div>
+				<div style="float:left;padding-left:2px;padding-top:1px;">
+					<button class="awesome big green">Search</button>
+					<!--- <img src="#dynpath#/global/host/dam/images/search_16.png" width="16" height="16" border="0" onclick="checkentry();" class="ddicon"> --->
+				</div>
 			</div>
-			<div id="searchselection" class="ddselection_header">
-				<p><a href="##" onclick="selectsearchtype('all');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#defaultsObj.trans("search_for_allassets")#</a></p>
-				<p><a href="##" onclick="selectsearchtype('img');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_images")#</a></p>
-				<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_documents")#</a></p>
-				<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_videos")#</a></p>
-				<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_audios")#</a></p>
-				<p><hr></p>
-<!--- 				<p><a href="##" onclick="showwindow('#myself#ajax.search_advanced','#defaultsObj.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#defaultsObj.trans("link_adv_search")#</a></p>
-				<p><hr></p> --->
-				<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">Help with Search</a></p>
-			</div>
-			<div style="float:left;">
-				<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:300px;" value="Quick Search">
-			</div>
-			<div style="float:left;padding-left:2px;padding-top:4px;" id="searchicon">
-				<img src="#dynpath#/global/host/dam/images/search_16.png" width="16" height="16" border="0" onclick="checkentry();" class="ddicon">
-			</div>
-			<div style="float:right;padding-left:20px;padding-top:4px;">
-				<a href="##" onclick="showwindow('#myself#c.search_advanced','#defaultsObj.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#defaultsObj.trans("link_adv_search")#</a>
+			<div style="float:right;padding-left:20px;padding-top:8px;">
+				<a href="##" onclick="loadcontent('rightside','#myself#c.search_advanced');$('##searchselection').toggle();return false;">#defaultsObj.trans("link_adv_search")#</a>
 			</div>
 			</form>
 		</div>

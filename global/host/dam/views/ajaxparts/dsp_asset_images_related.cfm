@@ -33,7 +33,7 @@
 			<td width="100%" nowrap="true" valign="top" colspan="2">
 				<cfloop query="qry_related">
 					<cfif attributes.s EQ "F"><a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#" target="_blank"></cfif>#ucase(img_extension)#<cfif ilength NEQ ""> (#defaultsObj.converttomb("#ilength#")# MB)</cfif> #defaultsObj.trans("size")#: #orgwidth#x#orgheight# pixel</a> <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a> 
-					<cfif session.folderaccess NEQ "R">
+					<cfif attributes.folderaccess NEQ "R">
 						<a href="##" onclick="loadcontent('relatedimages','#myself#c.images_remove_related&id=#img_id#&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
 					</cfif>
 					<br>

@@ -33,7 +33,7 @@
 			<td width="100%" nowrap="true" valign="top" colspan="2">
 				<cfloop query="qry_related">
 					<cfif attributes.s EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name#" target="_blank"></cfif>#ucase(aud_extension)# (#defaultsObj.converttomb("#aud_size#")# MB)</a> <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a> 
-					<cfif session.folderaccess NEQ "R">
+					<cfif attributes.folderaccess NEQ "R">
 						<a href="##" onclick="loadcontent('relatedaudios','#myself#c.audios_remove_related&id=#aud_id#&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
 					</cfif>
 					<br>

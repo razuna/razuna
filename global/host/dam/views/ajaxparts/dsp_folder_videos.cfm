@@ -150,7 +150,7 @@
 								</cfswitch> --->
 								<!--- <br><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#','#vid_filename#',800,600);return false;">#defaultsObj.trans("file_detail")#</a> --->
 								<div style="float:left;padding:3px 0px 3px 0px;">
-									<input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');">
+									<input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#vid_id#-vid") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#vid_id#&kind=vid','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
@@ -159,8 +159,7 @@
 										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#vid_id#&thetype=vid','#defaultsObj.trans("send_with_email")#',600,2);return false;" title="#defaultsObj.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#vid_id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-									
-									<cfif #session.folderaccess# EQ "X">
+									<cfif attributes.folderaccess EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
@@ -180,7 +179,7 @@
 			</tr>
 		<!--- View: Combined --->
 		<cfelseif session.view EQ "combined">
-			<cfif #session.folderaccess# NEQ "R">
+			<cfif attributes.folderaccess NEQ "R">
 				<tr>
 					<td colspan="4" align="right"><div id="updatestatusvid" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsavevid();return false;" class="button"></td>
 				</tr>
@@ -208,7 +207,7 @@
 				});
 				</script>
 				<tr class="thumbview">
-					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"></td>
+					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#vid_id#-vid") NEQ 0> checked="checked"</cfif>></td>
 					<td valign="top" width="1%" nowrap="true">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
 							<div id="draggable#vid_id#" type="#vid_id#-vid">
@@ -229,7 +228,7 @@
 					</td>
 					<td valign="top" width="100%">
 						<!--- User has Write access --->
-						<cfif #session.folderaccess# NEQ "R">
+						<cfif attributes.folderaccess NEQ "R">
 							<input type="text" name="#vid_id#_vid_filename" value="#vid_filename#" style="width:300px;"><br />
 							#defaultsObj.trans("description")#:<br />
 							<textarea name="#vid_id#_vid_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
@@ -241,14 +240,14 @@
 							#defaultsObj.trans("keywords")#: #keywords#
 						</cfif>
 					</td>
-					<cfif #session.folderaccess# EQ "X">
+					<cfif attributes.folderaccess EQ "X">
 						<td valign="top" width="1%" nowrap="true">
 							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 						</td>
 					</cfif>
 				</tr>
 			</cfloop>
-			<cfif #session.folderaccess# NEQ "R">
+			<cfif attributes.folderaccess NEQ "R">
 				<tr>
 					<td colspan="4" align="right"><div id="updatestatusvid2" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsavevid();return false;" class="button"></td>
 				</tr>
@@ -260,7 +259,7 @@
 				<td width="100%"><b>#defaultsObj.trans("file_name")#</b></td>
 				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_created")#</b></td>
 				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_changed")#</b></td>
-				<cfif #session.folderaccess# EQ "X">
+				<cfif attributes.folderaccess EQ "X">
 					<td></td>
 				</cfif>
 			</tr>
@@ -268,11 +267,11 @@
 			<cfinclude template="inc_folder_list.cfm">
 			<cfloop query="qry_files">
 			<tr class="list">
-				<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"></td>
+				<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#vid_id#-vid") NEQ 0> checked="checked"</cfif>></td>
 				<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;"><strong>#vid_filename#</strong></a></td>
 				<td nowrap="true" width="1%" align="center">#dateformat(vid_create_date, "#defaultsObj.getdateformat()#")#</td>
 				<td nowrap="true" width="1%" align="center">#dateformat(vid_change_date, "#defaultsObj.getdateformat()#")#</td>
-				<cfif #session.folderaccess# EQ "X">
+				<cfif attributes.folderaccess EQ "X">
 					<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 				</cfif>
 			</tr>
@@ -284,36 +283,38 @@
 		</tr>
 	</table>
 	</form>
+
+	<!--- JS for the combined view --->
+	<script language="JavaScript" type="text/javascript">
+		<cfif session.file_id NEQ "">
+			enablesub('#kind#form');
+		</cfif>
+		// Submit form
+		function combinedsavevid(){
+			loadinggif('updatestatusvid');
+			loadinggif('updatestatusvid2');
+			$("##updatestatusvid").fadeTo("fast", 100);
+			$("##updatestatusvid2").fadeTo("fast", 100);
+			var url = formaction("#kind#form");
+			var items = formserialize("#kind#form");
+			// Submit Form
+	       	$.ajax({
+				type: "POST",
+				url: url,
+			   	data: items,
+			   	success: function(){
+					// Update Text
+					$("##updatestatusvid").css('color','green');
+					$("##updatestatusvid2").css('color','green');
+					$("##updatestatusvid").css('font-weight','bold');
+					$("##updatestatusvid2").css('font-weight','bold');
+					$("##updatestatusvid").html("#defaultsObj.trans("success")#");
+					$("##updatestatusvid2").html("#defaultsObj.trans("success")#");
+					$("##updatestatusvid").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+					$("##updatestatusvid2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+			   	}
+			});
+	        return false; 
+		}
+	</script>
 </cfoutput>
-
-<!--- JS for the combined view --->
-<script language="JavaScript" type="text/javascript">
-	// Submit form
-	function combinedsavevid(){
-		loadinggif('updatestatusvid');
-		loadinggif('updatestatusvid2');
-		$("#updatestatusvid").fadeTo("fast", 100);
-		$("#updatestatusvid2").fadeTo("fast", 100);
-		var url = formaction("<cfoutput>#kind#</cfoutput>form");
-		var items = formserialize("<cfoutput>#kind#</cfoutput>form");
-		// Submit Form
-       	$.ajax({
-			type: "POST",
-			url: url,
-		   	data: items,
-		   	success: function(){
-				// Update Text
-				$("#updatestatusvid").css('color','green');
-				$("#updatestatusvid2").css('color','green');
-				$("#updatestatusvid").css('font-weight','bold');
-				$("#updatestatusvid2").css('font-weight','bold');
-				$("#updatestatusvid").html("<cfoutput>#defaultsObj.trans("success")#</cfoutput>");
-				$("#updatestatusvid2").html("<cfoutput>#defaultsObj.trans("success")#</cfoutput>");
-				$("#updatestatusvid").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-				$("#updatestatusvid2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-		   	}
-		});
-        return false; 
-	}
-</script>
-

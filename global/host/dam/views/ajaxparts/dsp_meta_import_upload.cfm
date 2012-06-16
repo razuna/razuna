@@ -26,7 +26,7 @@
 <head>
 <cfoutput>
 <link rel="stylesheet" href="#dynpath#/global/host/dam/views/layouts/main.css" type="text/css" />
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.6.4.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/upload/swfupload.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/upload/jquery-asyncUpload-0.1.js"></script>
 <script>

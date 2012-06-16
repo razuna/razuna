@@ -45,34 +45,6 @@
 <cfheader name="PRAGMA" value="public">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
-<cfif application.razuna.isp>
-<!--- CSS --->
-<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/smoothness/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/tagit.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/multiple-instances.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.css?_v=#attributes.cachetag#" />
-<!--- JS --->
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/jquery.tree.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/lib/jquery.cookie.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jqtree/plugins/jquery.tree.cookie.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/tag/js/tag-it.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/notification/sticky.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<script src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.formparams.js?_v=#attributes.cachetag#" type="text/javascript"></script>
-<!--- Favicon --->
-<link rel="SHORTCUT ICON" href="//d3jcwo7gahoav9.cloudfront.net/razuna/favicon.ico?_v=#attributes.cachetag#" />
-<cfelse>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
@@ -99,7 +71,6 @@
 <script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js?_v=#attributes.cachetag#"></script>
 <!--- Favicon --->
 <link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
-</cfif>
 <!--- tooltip styling --->
 <style>
 ##demotip {

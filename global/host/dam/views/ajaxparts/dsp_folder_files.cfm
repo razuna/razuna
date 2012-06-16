@@ -97,7 +97,7 @@
 								</div>
 								</a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
-									<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');">
+									<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<a href="#myself#c.serve_file&file_id=#file_id#&type=doc"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
@@ -106,8 +106,7 @@
 										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#file_id#&thetype=doc','#defaultsObj.trans("send_with_email")#',600,2);return false;" title="#defaultsObj.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-									
-									<cfif #session.folderaccess# EQ "X">
+									<cfif attributes.folderaccess EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
@@ -127,7 +126,7 @@
 			</tr>
 		<!--- View: Combined --->
 		<cfelseif session.view EQ "combined">
-			<cfif #session.folderaccess# NEQ "R">
+			<cfif attributes.folderaccess NEQ "R">
 				<tr>
 					<td colspan="4" align="right"><div id="updatestatusdoc" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsavedoc();return false;" class="button"></td>
 				</tr>
@@ -155,7 +154,7 @@
 				});
 				</script>
 				<tr>
-					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"></td>
+					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>></td>
 					<td valign="top" width="1%" nowrap="true">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;">
 							<div id="draggable#file_id#" type="#file_id#-doc">
@@ -184,7 +183,7 @@
 					</td>
 					<td valign="top" width="100%">
 						<!--- User has Write access --->
-						<cfif #session.folderaccess# NEQ "R">
+						<cfif attributes.folderaccess NEQ "R">
 							<input type="text" name="#file_id#_doc_filename" value="#file_name#" style="width:300px;"><br />
 							#defaultsObj.trans("description")#:<br />
 							<textarea name="#file_id#_doc_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
@@ -196,14 +195,14 @@
 							#defaultsObj.trans("keywords")#: #keywords#
 						</cfif>
 					</td>
-					<cfif #session.folderaccess# EQ "X">
+					<cfif attributes.folderaccess EQ "X">
 						<td valign="top" width="1%" nowrap="true">
 							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 						</td>
 					</cfif>
 				</tr>
 			</cfloop>
-			<cfif #session.folderaccess# NEQ "R">
+			<cfif attributes.folderaccess NEQ "R">
 				<tr>
 					<td colspan="4" align="right"><div id="updatestatusdoc2" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsavedoc();return false;" class="button"></td>
 				</tr>
@@ -216,7 +215,7 @@
 				<td width="100%"><b>#defaultsObj.trans("file_name")#</b></td>
 				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_created")#</b></td>
 				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_changed")#</b></td>
-				<cfif #session.folderaccess# EQ "X">
+				<cfif attributes.folderaccess EQ "X">
 					<td></td>
 				</cfif>
 			</tr>
@@ -224,12 +223,12 @@
 			<cfinclude template="inc_folder_list.cfm">
 			<cfloop query="qry_files">
 				<tr class="list">
-					<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"></td>
+					<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>></td>
 					<!--- <td align="center" nowrap="true" width="1%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#file_name#',1000,1);return false;"><cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="20" height="20" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="20" height="20" border="0"></cfif></a></td> --->
 					<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;"><strong>#file_name#</strong></a></td>
 					<td nowrap="true" width="1%" align="center">#dateformat(file_create_date, "#defaultsObj.getdateformat()#")#</td>
 					<td nowrap="true" width="1%" align="center">#dateformat(file_change_date, "#defaultsObj.getdateformat()#")#</td>
-					<cfif #session.folderaccess# EQ "X">
+					<cfif attributes.folderaccess EQ "X">
 						<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 					</cfif>
 				</tr>
@@ -241,35 +240,39 @@
 		</tr>
 	</table>
 	</form>
-</cfoutput>
 
-<!--- JS for the combined view --->
-<script language="JavaScript" type="text/javascript">
-	// Submit form
-	function combinedsavedoc(){
-		loadinggif('updatestatusdoc');
-		loadinggif('updatestatusdoc2');
-		$("#updatestatusdoc").fadeTo("fast", 100);
-		$("#updatestatusdoc2").fadeTo("fast", 100);
-		var url = formaction("<cfoutput>#kind#</cfoutput>form");
-		var items = formserialize("<cfoutput>#kind#</cfoutput>form");
-		// Submit Form
-       	$.ajax({
-			type: "POST",
-			url: url,
-		   	data: items,
-		   	success: function(){
-				// Update Text
-				$("#updatestatusdoc").css('color','green');
-				$("#updatestatusdoc2").css('color','green');
-				$("#updatestatusdoc").css('font-weight','bold');
-				$("#updatestatusdoc2").css('font-weight','bold');
-				$("#updatestatusdoc").html("<cfoutput>#defaultsObj.trans("success")#</cfoutput>");
-				$("#updatestatusdoc2").html("<cfoutput>#defaultsObj.trans("success")#</cfoutput>");
-				$("#updatestatusdoc").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-				$("#updatestatusdoc2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-		   	}
-		});
-        return false; 
-	}
-</script>
+	<!--- JS for the combined view --->
+	<script language="JavaScript" type="text/javascript">
+		<cfif session.file_id NEQ "">
+			enablesub('#kind#form');
+		</cfif>
+		// Submit form
+		function combinedsavedoc(){
+			loadinggif('updatestatusdoc');
+			loadinggif('updatestatusdoc2');
+			$("##updatestatusdoc").fadeTo("fast", 100);
+			$("##updatestatusdoc2").fadeTo("fast", 100);
+			var url = formaction("#kind#form");
+			var items = formserialize("#kind#form");
+			// Submit Form
+	       	$.ajax({
+				type: "POST",
+				url: url,
+			   	data: items,
+			   	success: function(){
+					// Update Text
+					$("##updatestatusdoc").css('color','green');
+					$("##updatestatusdoc2").css('color','green');
+					$("##updatestatusdoc").css('font-weight','bold');
+					$("##updatestatusdoc2").css('font-weight','bold');
+					$("##updatestatusdoc").html("#defaultsObj.trans("success")#");
+					$("##updatestatusdoc2").html("#defaultsObj.trans("success")#");
+					$("##updatestatusdoc").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+					$("##updatestatusdoc2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+			   	}
+			});
+	        return false; 
+		}
+	</script>
+
+</cfoutput>

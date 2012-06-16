@@ -125,6 +125,7 @@ $(function() {
 			var thisid = $(ui.draggable).attr("id");
 			var thistype = $(ui.draggable).attr("type");
 			thisid = thisid.replace('draggable','');
+			thisid = thisid.replace('draggable-s','');
 			loadcontent('thedropbasket','#myself#c.basket_put&file_id=' + thistype + '&thetype=' + thistype);
 			loadcontent('thedropbasket','#myself#c.basket');
 		}
@@ -144,6 +145,7 @@ $(function() {
 				var thisid = thistype;
 			}
 			thisid = thisid.replace('draggable','');
+			thisid = thisid.replace('draggable-s','');
 			loadcontent('thedropfav','#myself#c.favorites_put&favtype=file&favid=' + thisid);
 			loadcontent('thedropfav','#myself#c.favorites');
 		}

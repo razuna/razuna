@@ -24,12 +24,7 @@
 *
 --->
 <!--- Storage Decision --->
-<!---
-<cfif application.razuna.storage EQ "nirvanix">
-	<cfset thestorage = "#application.razuna.nvxurlservices#/#attributes.nvxsession#/razuna/#session.hostid#/">
-<cfelse>
---->
-	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <!--- </cfif> --->
 <cfif session.iscol EQ "F">
 	<cfset thefid = attributes.folder_id>
@@ -45,53 +40,45 @@
 	</ul>
 	<div id="shared_thumbs">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+			<!--- Header --->
 			<tr>
-				<th colspan="5">
+				<td colspan="5">
 					<div style="float:left;">
-						<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#');"><img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" /></a>
-						<a href="#myself#c.view_rss&folder_id=#session.fid#&kind=all&col=#session.iscol#" target="_blank" title="#defaultsObj.trans("view_rss_desc")#"><img src="#dynpath#/global/host/dam/images/application-rss+xml.png" border="0" width="16" height="16" style="padding-left:2px;" /></a>
-						<a href="#myself#c.view_xls&folder_id=#session.fid#&kind=all&col=#session.iscol#" target="_blank" title="#defaultsObj.trans("view_xls_desc")#"><img src="#dynpath#/global/host/dam/images/page-excel.png" border="0" style="margin-left:2px;" width="16" height="16" /></a>
-						<a href="#myself#c.view_doc&folder_id=#session.fid#&kind=all&col=#session.iscol#" target="_blank" title="#defaultsObj.trans("view_doc_desc")#"><img src="#dynpath#/global/host/dam/images/page-word.png" border="0" style="margin-left:2px;" width="16" height="16" /></a>
+						<cfif qry_folder.share_upload EQ "T">
+							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">#defaultsObj.trans("add_file")#</a> | 
+						</cfif>
+						#qry.qry_filecount.thetotal# #defaultsObj.trans("share_content_count")#
 						<!--- BreadCrumb --->
 						<cfif structkeyexists(url,"folder_id_r")>
-							Folder: <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
+							| Folder: <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 						</cfif>
-						<div style="padding-left:50px;float:right;">
-							<cfif session.offset GTE 1>
-								<!--- For Back --->
-								<cfset newoffset = session.offset - 1>
-								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');"><<< #defaultsObj.trans("back")#</a> |
-							</cfif>
-							<cfset showoffset = session.offset * session.rowmaxpage>
-							<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
-							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
-							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
-								<!--- For Next --->
-								<cfset newoffset = session.offset + 1>
-								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">#defaultsObj.trans("next")# >>></a>
-							</cfif>
-						</div>
-						<!--- Pages --->
-						<div style="float:right;">
-							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
-								<span style="padding-left:30px;">
-								<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
-								Pages: 
-									<select id="thepagelistshare" onChange="loadcontent('rightside', $('##thepagelistshare :selected').val());">
-									<cfloop from="1" to="#thepage#" index="i">
-										<cfset loopoffset = i - 1>
-										<option value="#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
-									</cfloop>
-									</select>
-							</span>
-							</cfif>
-						</div>
 					</div>
 					<div style="float:right;">
-						<cfif qry_folder.share_upload EQ "T"><a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">#defaultsObj.trans("add_file")#</a> | </cfif>
-						#qry.qry_filecount.thetotal# #defaultsObj.trans("share_content_count")#
+						<cfif session.offset GTE 1>
+							<!--- For Back --->
+							<cfset newoffset = session.offset - 1>
+							<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">< #defaultsObj.trans("back")#</a> |
+						</cfif>
+						<cfset showoffset = session.offset * session.rowmaxpage>
+						<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
+						<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+						<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
+							<!--- For Next --->
+							<cfset newoffset = session.offset + 1>
+							<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');" style="padding-right:5px;">#defaultsObj.trans("next")# ></a>
+						</cfif>
+						<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
+							<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
+							Page: 
+								<select id="thepagelistshare" onChange="loadcontent('rightside', $('##thepagelistshare :selected').val());">
+								<cfloop from="1" to="#thepage#" index="i">
+									<cfset loopoffset = i - 1>
+									<option value="#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
+								</cfloop>
+								</select>
+						</cfif>
 					</div>
-				</th>
+				</td>
 			</tr>
 			<tr>
 				<td valign="top" align="center">
@@ -126,7 +113,7 @@
 									</div>
 									<div>
 										<!--- <img src="#dynpath#/global/host/dam/images/icons/icon_tiff.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a><!--- <img src="#dynpath#/global/host/dam/images/go-down-7.png" width="16" height="16" border="0" /> --->
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#">#defaultsObj.trans("put_in_basket")#</a><!--- <img src="#dynpath#/global/host/dam/images/go-down-7.png" width="16" height="16" border="0" /> --->
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -141,7 +128,7 @@
 									</div>
 									<div>
 <!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#">#defaultsObj.trans("put_in_basket")#</a>
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -156,7 +143,7 @@
 									</div>
 									<div>
 <!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_aud.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#">#defaultsObj.trans("put_in_basket")#</a>
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -182,7 +169,7 @@
 									</div>
 									<div>
 <!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#">#defaultsObj.trans("put_in_basket")#</a>
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -202,45 +189,43 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 				<!--- Header --->
 				<tr>
-					<th colspan="2">
+					<td colspan="5">
 						<div style="float:left;">
-							<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#');"><img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" /></a>
-						<a href="#myself#c.view_rss&folder_id=#session.fid#&kind=all&col=#session.iscol#" target="_blank" title="#defaultsObj.trans("view_rss_desc")#"><img src="#dynpath#/global/host/dam/images/application-rss+xml.png" border="0" width="16" height="16" style="padding-left:2px;" /></a>
-						<a href="#myself#c.view_xls&folder_id=#session.fid#&kind=all&col=#session.iscol#" target="_blank" title="#defaultsObj.trans("view_xls_desc")#"><img src="#dynpath#/global/host/dam/images/page-excel.png" border="0" style="margin-left:2px;" width="16" height="16" /></a>
-						<a href="#myself#c.view_doc&folder_id=#session.fid#&kind=all&col=#session.iscol#" target="_blank" title="#defaultsObj.trans("view_doc_desc")#"><img src="#dynpath#/global/host/dam/images/page-word.png" border="0" style="margin-left:2px;" width="16" height="16" /></a>
-							<div style="padding-left:50px;float:right;">
-								<cfif session.offset GTE 1>
-									<!--- For Back --->
-									<cfset newoffset = session.offset - 1>
-									<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#session.fid#&fid=#session.fid#&offset=#newoffset#&tab=1');"><<< #defaultsObj.trans("back")#</a> |
-								</cfif>
-								<cfset showoffset = session.offset * session.rowmaxpage>
-								<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
-								<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
-								<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
-									<!--- For Next --->
-									<cfset newoffset = session.offset + 1>
-									<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#session.fid#&fid=#session.fid#&offset=#newoffset#&tab=1');">#defaultsObj.trans("next")# >>></a>
-								</cfif>
-							</div>
-							<!--- Pages --->
-							<div style="float:right;">
-								<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
-									<span style="padding-left:30px;">
-									<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
-									Pages: 
-										<select>
-										<cfloop from="1" to="#thepage#" index="i">
-											<cfset loopoffset = i - 1>
-											<option onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&offset=#loopoffset#');"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
-										</cfloop>
-										</select>
-								</span>
-								</cfif>
-							</div>
+							<cfif qry_folder.share_upload EQ "T">
+								<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">#defaultsObj.trans("add_file")#</a> | 
+							</cfif>
+							#qry.qry_filecount.thetotal# #defaultsObj.trans("share_content_count")#
+							<!--- BreadCrumb --->
+							<cfif structkeyexists(url,"folder_id_r")>
+								| Folder: <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
+							</cfif>
 						</div>
-						<div style="float:right;"><cfif qry_folder.share_upload EQ "T"><a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">#defaultsObj.trans("add_file")#</a> | </cfif>#qry.qry_filecount.thetotal# #defaultsObj.trans("share_content_count")#</div>
-					</th>
+						<div style="float:right;">
+							<cfif session.offset GTE 1>
+								<!--- For Back --->
+								<cfset newoffset = session.offset - 1>
+								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">< #defaultsObj.trans("back")#</a> |
+							</cfif>
+							<cfset showoffset = session.offset * session.rowmaxpage>
+							<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
+							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
+								<!--- For Next --->
+								<cfset newoffset = session.offset + 1>
+								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');" style="padding-right:5px;">#defaultsObj.trans("next")# ></a>
+							</cfif>
+							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
+								<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
+								Page: 
+									<select id="thepagelistshare" onChange="loadcontent('rightside', $('##thepagelistshare :selected').val());">
+									<cfloop from="1" to="#thepage#" index="i">
+										<cfset loopoffset = i - 1>
+										<option value="#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
+									</cfloop>
+									</select>
+							</cfif>
+						</div>
+					</td>
 				</tr>
 				<!--- List assets --->
 				<cfoutput query="qry.qry_files" group="id">
@@ -291,7 +276,7 @@
 								</cfif>
 								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc');flash_basket_tab();return false;" title="#defaultsObj.trans("put_in_basket")#">
 							</cfif>
-							<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-top:5px;" /></a>
+							#defaultsObj.trans("put_in_basket")#</a>
 						</td>
 						<td valign="top"><b>#filename#</b><cfif description NEQ ""><br />#description#</cfif><br />
 							<div style="width:300px;">

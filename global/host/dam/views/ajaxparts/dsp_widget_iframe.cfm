@@ -39,29 +39,16 @@
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <!--- According to widget style we decide here what to load --->
 <cfif qry_widget.widget_style EQ "d">
-	<cfif application.razuna.isp>
-		<!--- CSS --->
-		<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/main.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/themes/smoothness/jquery-ui.css" />
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/widget/overlay.css?_v=#attributes.cachetag#"></script>
-		<!--- JS --->
-		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
-		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js" type="text/javascript"></script>
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/global.js?_v=#attributes.cachetag#"></script>
-	<cfelse>
-		<!--- CSS --->
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css?_v=#attributes.cachetag#" />
-		<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css?_v=#attributes.cachetag#"/>
-		<!--- JS --->
-		<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
-		<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
-	</cfif>
+	<!--- CSS --->
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css?_v=#attributes.cachetag#" />
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css?_v=#attributes.cachetag#"/>
+	<!--- JS --->
+	<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
+	<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
+	<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
+	<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
+	<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
 	<!--[if lt IE 7]>
 	<style> 
 	div.apple_overlay {
@@ -79,21 +66,21 @@
 	<div id="rightside">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
-			<th colspan="5">
-				<div style="float:left;">
+			<td colspan="5">
+				<div style="float:left;padding-left:10px;">
 					<cfif qry_widget.widget_uploading EQ "T"><a href="##" onclick="window.open('#myself#c.asset_add_single&folder_id=#session.fid#&_w=t','up#session.fid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#defaultsObj.trans("add_file")#</a> | </cfif>
 					#qry.qry_filecount.thetotal# #defaultsObj.trans("share_content_count")#
 					<!--- BreadCrumb --->
 					<cfif structkeyexists(url,"folder_id_r")>
 						| <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&fid=#attributes.fid#">#ListGetAt(i,1,"|")#</a> </cfloop>
 					</cfif>
-					<!--- Not when a collection --->
+					<!--- Not when a collection since they do not know limits!!! --->
 					<cfif session.iscol EQ "F">
 						<div style="padding-left:50px;float:right;">
 							<cfif session.offset GTE 1>
 								<!--- For Back --->
 								<cfset newoffset = session.offset - 1>
-								<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');"><<< #defaultsObj.trans("back")#</a> |
+								<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">< #defaultsObj.trans("back")#</a> |
 							</cfif>
 							<cfset showoffset = session.offset * session.rowmaxpage>
 							<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -101,27 +88,23 @@
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
 								<!--- For Next --->
 								<cfset newoffset = session.offset + 1>
-								<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">#defaultsObj.trans("next")# >>></a>
+								<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');" style="padding-right:5px;">#defaultsObj.trans("next")# ></a>
 							</cfif>
-						</div>
-						<!--- Pages --->
-						<div style="float:right;">
+							<!--- Pages --->
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
-								<span style="padding-left:30px;">
 								<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
-								Pages: 
+								Page: 
 									<select id="thepagelistw" onChange="loadcontent('rightside', $('##thepagelistw :selected').val());">
 									<cfloop from="1" to="#thepage#" index="i">
 										<cfset loopoffset = i - 1>
 										<option value="#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
 									</cfloop>
 									</select>
-							</span>
 							</cfif>
 						</div>
 					</cfif>
 				</div>
-			</th>
+			</td>
 		</tr>
 		<tr>
 			<td valign="top" align="center">

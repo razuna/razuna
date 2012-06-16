@@ -29,7 +29,7 @@
 		<td>#defaultsObj.trans("comment")#<br />
 			<textarea id="assetComment" name="assetComment" style="width:400px;height:50px;"></textarea> <br />
 			<br />
-			<input type="button" class="button" onclick="addcomment('#attributes.file_id#','#attributes.type#');" value="#defaultsObj.trans("comments_submit")#" />
+			<input type="button" class="button" onclick="addcomment('#attributes.file_id#','#attributes.type#','#attributes.folder_id#');" value="#defaultsObj.trans("comments_submit")#" />
 		</td>
 	</tr>
 </table>
@@ -37,7 +37,7 @@
 <div id="status_com"></div>
 <!--- Load Comment list --->
 <script language="JavaScript" type="text/javascript">
-	loadcontent('comlist','#myself##xfa.comlist#&file_id=#attributes.file_id#&type=#attributes.type#');
+	loadcontent('comlist','#myself##xfa.comlist#&file_id=#attributes.file_id#&type=#attributes.type#&folder_id=#attributes.folder_id#');
 	// Activate Chosen
 	/* $(".chzn-select").chosen(); */
 </script>

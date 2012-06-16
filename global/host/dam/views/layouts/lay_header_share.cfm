@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<div style="float:left;">
-		<a href="#myself#c.sharep">
+		<a href="#myself#c.sharep&fid=#session.fid#">
 			<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
 				<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;" />
 			<cfelse>
@@ -35,7 +35,7 @@
 	</div>
 	<div style="float:right;">
 		<!--- Search --->
-		<div style="width:auto;float:right;padding-top:7px;padding-left:20px;padding-right:10px;">
+		<!--- <div style="width:auto;float:right;padding-top:7px;padding-left:20px;padding-right:10px;">
 			<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 			<input type="hidden" name="fid" id="fid" value="#session.fid#">
 			<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all">
@@ -58,7 +58,7 @@
 				<img src="#dynpath#/global/host/dam/images/search_16.png" border="0" onclick="checkentry();" class="ddicon">
 			</div>
 			</form>
-		</div>
+		</div> --->
 		<cfif shared.everyone NEQ "T">
 			<div style="width:auto;float:right;padding-top:12px;padding-left:20px;">
 				<a href="#myself#c.share_logout&fid=#attributes.fid#" style="padding-left:10px;padding-right:10px;">#defaultsObj.trans("logoff")#</a>

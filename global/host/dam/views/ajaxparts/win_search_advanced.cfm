@@ -67,7 +67,7 @@
 		</div>
 		<!--- Documents --->
 		<div id="adv_files">
-			<form name="advsearch_files" id="advsearch_files" onsubmit="searchadv_files('advsearch_files','c.search_files_do','#attributes.folder_id#');return false;">
+			<form name="advsearch_files" id="advsearch_files" onsubmit="searchadv_files('advsearch_files','c.search_simple','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
 				<cfset myvar.thetype = "files">
@@ -141,7 +141,7 @@
 		</div>
 		<!--- Images --->
 		<div id="adv_images">
-			<form name="advsearch_images" id="advsearch_images" onsubmit="searchadv_images('advsearch_images','c.search_images_do','#attributes.folder_id#');return false;">
+			<form name="advsearch_images" id="advsearch_images" onsubmit="searchadv_images('advsearch_images','c.search_simple','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
 				<cfset myvar.thetype = "images">
@@ -311,7 +311,7 @@
 		</div>
 		<!--- Videos --->
 		<div id="adv_videos">
-			<form name="advsearch_videos" id="advsearch_videos" onsubmit="searchadv_videos('advsearch_videos','c.search_videos_do','#attributes.folder_id#');return false;">
+			<form name="advsearch_videos" id="advsearch_videos" onsubmit="searchadv_videos('advsearch_videos','c.search_simple','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
 				<cfset myvar.thetype = "videos">
@@ -340,7 +340,7 @@
 		</div>
 		<!--- Audios --->
 		<div id="adv_audios">
-			<form name="advsearch_audios" id="advsearch_audios" onsubmit="searchadv_audios('advsearch_audios','c.search_audios_do','#attributes.folder_id#');return false;">
+			<form name="advsearch_audios" id="advsearch_audios" onsubmit="searchadv_audios('advsearch_audios','c.search_simple','#attributes.folder_id#');return false;">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Include advanced fields --->
 				<cfset myvar.thetype = "audios">
@@ -375,6 +375,8 @@
 		jqtabs("searchadvanced");
 		// Activate Chosen
 		$(".chzn-select").chosen();
+		// Focus
+		$('##searchforadv_all').focus();
 	</script>	
 </cfoutput>
 	

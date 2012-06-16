@@ -120,6 +120,10 @@
 	<fuseaction name="folder_content_list">
   		<include template="dsp_folder_content_list" />
 	</fuseaction>
+	<!-- Folder: Content for search -->
+	<fuseaction name="folder_content_results">
+  		<include template="dsp_folder_content_results" />
+	</fuseaction>
 	<!-- Folder: Files -->
 	<fuseaction name="folder_files">
   		<include template="dsp_folder_files" />

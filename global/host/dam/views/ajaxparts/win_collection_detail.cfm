@@ -41,7 +41,7 @@
 	<div id="col_detail#col_id#">
 		<ul>
 			<li><a href="##colassets">#defaultsObj.trans("collection_assets")# (<cfif qry_assets.recordcount EQ "">0<cfelse>#qry_assets.recordcount#</cfif>)</a></li>
-			<cfif session.folderaccess NEQ "R">
+			<cfif attributes.folderaccess NEQ "R">
 				<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
 				<li><a href="##settings">#defaultsObj.trans("settings")# & #defaultsObj.trans("share_header")#</a></li>
 				<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("header_widget")#</a></li>
@@ -109,7 +109,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif session.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- VIDEOS --->
@@ -165,7 +165,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif session.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- AUDIOS --->
@@ -205,7 +205,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif session.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- FILES --->
@@ -243,19 +243,19 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif session.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfdefaultcase>
 					</cfswitch>
 				</cfloop>
-				<cfif session.folderaccess NEQ "R">
+				<cfif attributes.folderaccess NEQ "R">
 					<tr>
 						<td colspan="5"><div style="float:right;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
 					</tr>
 				</cfif>
 			</table>
 		</div>
-		<cfif session.folderaccess NEQ "R">
+		<cfif attributes.folderaccess NEQ "R">
 			<!--- Desc and Keywords --->
 			<div id="detaildesc">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">

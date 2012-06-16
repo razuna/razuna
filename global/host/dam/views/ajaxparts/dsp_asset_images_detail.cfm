@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#"<cfif session.folderaccess NEQ "R"> onsubmit="filesubmit();return false;"</cfif>>
+	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#"<cfif attributes.folderaccess NEQ "R"> onsubmit="filesubmit();return false;"</cfif>>
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<input type="hidden" name="folder_id" value="#qry_detail.detail.folder_id_r#">
@@ -50,14 +50,14 @@
 				<li><a href="##customfields">#defaultsObj.trans("custom_fields_asset")#</a></li>
 			</cfif>
 			<!--- Convert --->
-			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+			<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 				<cfif cs.tab_convert_files>
 					<li><a href="##convert">#defaultsObj.trans("convert")#</a></li>
 				</cfif>
 			</cfif>
 			<!--- Comments --->
 			<cfif cs.tab_comments>
-				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
+				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
 			</cfif>
 			<!--- Metadata tabs  --->
 			<cfif qry_detail.detail.link_kind NEQ "url">
@@ -83,12 +83,12 @@
 					<li><a href="##origin">Origin</a></li>
 				</cfif>
 			</cfif>
-			<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind EQ "">
+			<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind EQ "">
 				<cfif cs.tab_versions>
 					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
 				</cfif>
 			</cfif>
-			<cfif session.folderaccess NEQ "R">
+			<cfif attributes.folderaccess NEQ "R">
 				<cfif cs.tab_sharing_options>
 					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
 				</cfif>
@@ -122,7 +122,7 @@
 							<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-img&thetype=img&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
 						</cfif>
 						<!--- Only users with full access can do the following --->
-						<cfif session.folderaccess EQ "X">
+						<cfif attributes.folderaccess EQ "X">
 							<input type="button" name="move" value="#defaultsObj.trans("move_file")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=#attributes.file_id#&type=movefile&thetype=img&folder_id=#qry_detail.detail.folder_id_r#','#defaultsObj.trans("move_file")#',600,2);"> 
 							<input type="button" name="remove" value="#defaultsObj.trans("delete_asset")#" class="button" onclick="showwindow('#myself#ajax.remove_record&id=#attributes.file_id#&what=images&loaddiv=#loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&showsubfolders=#session.showsubfolders#','#defaultsObj.trans("remove")#',400,2);return false;"> 
 						</cfif>
@@ -278,13 +278,15 @@
 				</cfif>
 --->
 				<!--- Submit Button --->
-				<cfif session.folderaccess NEQ "R">
-					<tr>
-						<td colspan="2">
+				<tr>
+					<td colspan="2">
+						<cfif attributes.folderaccess NEQ "R">
 							<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
-						</td>
-					</tr>
-				</cfif>
+						<cfelse>
+							<div style="float:right;padding:20px;"></div>
+						</cfif>
+					</td>
+				</tr>
 			</table>
 		</div>
 		<!--- Comments --->
@@ -309,7 +311,7 @@
 						<td class="td2">#defaultsObj.trans("comma_seperated")#</td>
 					</tr>
 					<!--- Submit Button --->
-					<cfif session.folderaccess NEQ "R">
+					<cfif attributes.folderaccess NEQ "R">
 						<tr>
 							<td colspan="2">
 								<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
@@ -326,7 +328,7 @@
 			</div>
 		</cfif>
 		<!--- Convert Image --->
-		<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+		<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 			<cfif cs.tab_convert_files>
 				<div id="convert">
 					<cfif session.hosttype EQ 0>
@@ -386,11 +388,11 @@
 			</cfif>
 		</cfif>
 		<!--- VERSIONS --->
-		<cfif session.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+		<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 			<div id="divversions"></div>
 		</cfif>
 		<!--- SHARING OPTIONS --->
-		<cfif session.folderaccess NEQ "R">
+		<cfif attributes.folderaccess NEQ "R">
 			<div id="shareoptions"></div>
 			<div id="previewimage"></div>
 			<div id="moreversions"></div>
@@ -398,7 +400,7 @@
 		</cfif>
 	</div>
 	<!--- Submit Button --->
-	<cfif session.folderaccess NEQ "R">
+	<cfif attributes.folderaccess NEQ "R">
 		<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	</cfif>
 	</form>

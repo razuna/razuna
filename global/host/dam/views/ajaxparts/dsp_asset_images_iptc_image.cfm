@@ -66,7 +66,7 @@
 		<td class="td2" width="100%">Country code is either a 2 or 3 letter code as defined by the ISO 3166 standard.</td>
 	</tr>
 	<!--- Submit Button --->
-	<cfif session.folderaccess NEQ "R">
+	<cfif attributes.folderaccess NEQ "R">
 		<tr>
 			<td colspan="2">
 				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>

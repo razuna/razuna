@@ -40,17 +40,6 @@
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
-<cfif application.razuna.isp>
-<!--- CSS --->
-<!--- <link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/login.css?_v=#attributes.cachetag#" /> --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="//d3jcwo7gahoav9.cloudfront.net/razuna/css/error.css?_v=#attributes.cachetag#" />
-<!--- JS --->
-<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/jquery.form.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="//d3jcwo7gahoav9.cloudfront.net/razuna/js/login.js?_v=#attributes.cachetag#"></script>
-<cfelse>
 <!--- CSS --->
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/login.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/error.css?_v=#attributes.cachetag#" />
@@ -59,7 +48,6 @@
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/login.js?_v=#attributes.cachetag#"></script>
-</cfif>
 <cfif jr_enable EQ "true"><cfinclude template="../../js/janrain.cfm" runonce="true"></cfif>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 </head>

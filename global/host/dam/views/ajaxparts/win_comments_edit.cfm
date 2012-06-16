@@ -39,7 +39,7 @@
 					<br />
 				</cfif>
 --->
-				<div style="float:right;"><input type="button" value="#defaultsObj.trans("button_update")#" name="savecomment" class="button" onclick="updatecomment<cfif attributes.fa CONTAINS "share_">share</cfif>('#attributes.file_id#','#attributes.com_id#','#attributes.type#');"></div>
+				<div style="float:right;"><input type="button" value="#defaultsObj.trans("button_update")#" name="savecomment" class="button" onclick="updatecomment<cfif attributes.fa CONTAINS "share_">share</cfif>('#attributes.file_id#','#attributes.com_id#','#attributes.type#','#attributes.folder_id#');"></div>
 				</div>
 			</td>
 		</tr>

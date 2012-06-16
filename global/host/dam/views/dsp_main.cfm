@@ -284,17 +284,6 @@
 <!--- Activate the Tabs on the main page --->
 <script language="JavaScript" type="text/javascript">
 	jqtabs("tabs_main_support");
-	function showaccount(){
-		win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
-		document.form_account.target='myWin';
-		document.form_account.submit();
-	}
-	// Detect Firebug
-	if (window.console && window.console.firebug) {
-		//Firebug is enabled
-		$("#firebugalert").css({'display':'','padding':'10px','background-color':'#FFFFE0','color':'#900','font-weight':'bold','text-align':'center'});
-		$("#firebugalert").html('Hi there, Developer. The Firebug extension can significantly degrade the performance of Razuna. We recommend that you disable it for Razuna!<br />');
-	}
 </script>
 <!--- JS: FOLDERS --->
 <cfinclude template="../js/folders.cfm" runonce="true">
@@ -304,9 +293,6 @@
 <cfinclude template="../js/basket.cfm" runonce="true">
 <!--- JS: USERS --->
 <cfinclude template="../js/users.cfm" runonce="true">
-<!--- JS: GROUPS --->
-<cfinclude template="../js/groups.cfm" runonce="true">
 <!--- JS: SCHEDULER --->
 <cfinclude template="../js/scheduler.cfm" runonce="true">
-<!--- JS: SCHEDULER --->
-<cfinclude template="../js/custom_fields.cfm" runonce="true">
+

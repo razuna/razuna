@@ -82,7 +82,7 @@
 									</div>
 								</a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
-									<input type="checkbox" name="file_id" value="#aud_id#-aud" onclick="enablesub('#kind#form');">
+									<input type="checkbox" name="file_id" value="#aud_id#-aud" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#aud_id#-aud") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#aud_id#&kind=aud','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
@@ -91,8 +91,7 @@
 										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#aud_id#&thetype=aud','#defaultsObj.trans("send_with_email")#',600,2);return false;" title="#defaultsObj.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#aud_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-									
-									<cfif #session.folderaccess# EQ "X">
+									<cfif attributes.folderaccess EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
@@ -112,7 +111,7 @@
 			</tr>
 		<!--- View: Combined --->
 		<cfelseif session.view EQ "combined">
-			<cfif #session.folderaccess# NEQ "R">
+			<cfif attributes.folderaccess NEQ "R">
 				<tr>
 					<td colspan="4" align="right"><div id="updatestatusaud" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsaveaud();return false;" class="button"></td>
 				</tr>
@@ -141,7 +140,7 @@
 				});
 				</script>
 				<tr>
-					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#aud_id#-aud" onclick="enablesub('#kind#form');"></td>
+					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#aud_id#-aud" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#aud_id#-aud") NEQ 0> checked="checked"</cfif>></td>
 					<td valign="top" width="1%" nowrap="true">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;">
 							<div id="draggable#aud_id#" type="#aud_id#-aud">
@@ -154,7 +153,7 @@
 					</td>
 					<td valign="top" width="100%">
 						<!--- User has Write access --->
-						<cfif #session.folderaccess# NEQ "R">
+						<cfif attributes.folderaccess NEQ "R">
 							<input type="text" name="#aud_id#_aud_filename" value="#aud_name#" style="width:300px;"><br />
 							#defaultsObj.trans("description")#:<br />
 							<textarea name="#aud_id#_aud_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
@@ -166,14 +165,14 @@
 							#defaultsObj.trans("keywords")#: #keywords#
 						</cfif>
 					</td>
-					<cfif #session.folderaccess# EQ "X">
+					<cfif attributes.folderaccess EQ "X">
 						<td valign="top" width="1%" nowrap="true">
 							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 						</td>
 					</cfif>
 				</tr>
 			</cfloop>
-			<cfif #session.folderaccess# NEQ "R">
+			<cfif attributes.folderaccess NEQ "R">
 				<tr>
 					<td colspan="4" align="right"><div id="updatestatusaud2" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsaveaud();return false;" class="button"></td>
 				</tr>
@@ -185,7 +184,7 @@
 				<td width="100%"><b>#defaultsObj.trans("file_name")#</b></td>
 				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_created")#</b></td>
 				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_changed")#</b></td>
-				<cfif #session.folderaccess# EQ "X">
+				<cfif attributes.folderaccess EQ "X">
 					<td></td>
 				</cfif>
 			</tr>
@@ -193,12 +192,12 @@
 			<cfinclude template="inc_folder_list.cfm">
 			<cfloop query="qry_files">
 				<tr class="list">
-					<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#aud_id#-aud" onclick="enablesub('#kind#form');"></td>
+					<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#aud_id#-aud" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#aud_id#-aud") NEQ 0> checked="checked"</cfif>></td>
 					<!--- <td align="center" nowrap="true" width="1%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#aud_name#',1000,1);return false;"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="20" height="20" border="0"></a></td> --->
 					<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;"><strong>#aud_name#</strong></a></td>
 					<td nowrap="true" width="1%" align="center">#dateformat(aud_create_date, "#defaultsObj.getdateformat()#")#</td>
 					<td nowrap="true" width="1%" align="center">#dateformat(aud_change_date, "#defaultsObj.getdateformat()#")#</td>
-					<cfif #session.folderaccess# EQ "X">
+					<cfif attributes.folderaccess EQ "X">
 						<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 					</cfif>
 				</tr>
@@ -210,35 +209,38 @@
 		</tr>
 	</table>
 	</form>
-</cfoutput>
 
-<!--- JS for the combined view --->
-<script language="JavaScript" type="text/javascript">
-	// Submit form
-	function combinedsaveaud(){
-		loadinggif('updatestatusaud');
-		loadinggif('updatestatusaud2');
-		$("#updatestatusaud").fadeTo("fast", 100);
-		$("#updatestatusaud2").fadeTo("fast", 100);
-		var url = formaction("<cfoutput>#kind#</cfoutput>form");
-		var items = formserialize("<cfoutput>#kind#</cfoutput>form");
-		// Submit Form
-       	$.ajax({
-			type: "POST",
-			url: url,
-		   	data: items,
-		   	success: function(){
-				// Update Text
-				$("#updatestatusaud").css('color','green');
-				$("#updatestatusaud2").css('color','green');
-				$("#updatestatusaud").css('font-weight','bold');
-				$("#updatestatusaud2").css('font-weight','bold');
-				$("#updatestatusaud").html("<cfoutput>#defaultsObj.trans("success")#</cfoutput>");
-				$("#updatestatusaud2").html("<cfoutput>#defaultsObj.trans("success")#</cfoutput>");
-				$("#updatestatusaud").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-				$("#updatestatusaud2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-		   	}
-		});
-        return false; 
-	}
-</script>
+	<!--- JS for the combined view --->
+	<script language="JavaScript" type="text/javascript">
+		<cfif session.file_id NEQ "">
+			enablesub('#kind#form');
+		</cfif>
+		// Submit form
+		function combinedsaveaud(){
+			loadinggif('updatestatusaud');
+			loadinggif('updatestatusaud2');
+			$("##updatestatusaud").fadeTo("fast", 100);
+			$("##updatestatusaud2").fadeTo("fast", 100);
+			var url = formaction("#kind#form");
+			var items = formserialize("#kind#form");
+			// Submit Form
+	       	$.ajax({
+				type: "POST",
+				url: url,
+			   	data: items,
+			   	success: function(){
+					// Update Text
+					$("##updatestatusaud").css('color','green');
+					$("##updatestatusaud2").css('color','green');
+					$("##updatestatusaud").css('font-weight','bold');
+					$("##updatestatusaud2").css('font-weight','bold');
+					$("##updatestatusaud").html("#defaultsObj.trans("success")#");
+					$("##updatestatusaud2").html("#defaultsObj.trans("success")#");
+					$("##updatestatusaud").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+					$("##updatestatusaud2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+			   	}
+			});
+	        return false; 
+		}
+	</script>
+</cfoutput>

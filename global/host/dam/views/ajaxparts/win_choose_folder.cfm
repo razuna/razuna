@@ -24,47 +24,50 @@
 *
 --->
 <cfoutput>
-<div id="win_choosefolder"></div>
-<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+	<div><strong>Choose from the folder list below in order to store the asset(s).</strong></div>
+	<div id="win_choosefolder"></div>
+	<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+		<div style="clear:both;padding-top:15px;" />
+		<div><a href="##" onclick="loadcontent('rightside','index.cfm?fa=#session.savehere#&intofolderid=#session.thefolderorg#&intolevel=1');destroywindow(1);loadcontent('explorer','index.cfm?fa=c.explorer');return false;">Move the folder to the top level</a></div>
+	</cfif>
+	<div id="div_choosecol"></div>
 	<div style="clear:both;padding-top:15px;" />
-	<div><a href="##" onclick="loadcontent('rightside','index.cfm?fa=#session.savehere#&intofolderid=#session.thefolderorg#&intolevel=1');destroywindow(1);loadcontent('explorer','index.cfm?fa=c.explorer');return false;">Move the folder to the top level</a></div>
-</cfif>
-<div id="div_choosecol"></div>
-<cfif session.type EQ "choosecollection" OR session.type EQ "saveascollection">
-	<cfset iscol = "T">
-<cfelse>
-	<cfset iscol = "F">
-</cfif>
-<script language="javascript" type="text/javascript">
-	// Load Folders
-	$(function () { 
-		$("##win_choosefolder").tree({
-			plugins : {
-				cookie : { prefix : "treemovebox_" }
-			},
-			types : {
-				"default"  : {
-					deletable : false,
-					renameable : false,
-					draggable : false
+	<div id="div_choosefolder_status" style="color:green;font-weight:bold;"></div>
+	<cfif session.type EQ "choosecollection" OR session.type EQ "saveascollection">
+		<cfset iscol = "T">
+	<cfelse>
+		<cfset iscol = "F">
+	</cfif>
+	<script language="javascript" type="text/javascript">
+		// Load Folders
+		$(function () { 
+			$("##win_choosefolder").tree({
+				plugins : {
+					cookie : { prefix : "treemovebox_" }
 				},
-				"file" : {
-					// the following three rules basically do the same
-					valid_children : "none",
-					max_children : 0,
-					max_depth :0,
-					icon : { 
-						image : "file.png"
+				types : {
+					"default"  : {
+						deletable : false,
+						renameable : false,
+						draggable : false
+					},
+					"file" : {
+						// the following three rules basically do the same
+						valid_children : "none",
+						max_children : 0,
+						max_depth :0,
+						icon : { 
+							image : "file.png"
+						}
+					}
+				},
+				data : { 
+					async : true,
+					opts : {
+						url : "#myself#c.getfolderfortree&col=#iscol#&actionismove=T&kind=#attributes.kind#"
 					}
 				}
-			},
-			data : { 
-				async : true,
-				opts : {
-					url : "#myself#c.getfolderfortree&col=#iscol#&actionismove=T"
-				}
-			}
+			});
 		});
-	});
-</script>
+	</script>
 </cfoutput>

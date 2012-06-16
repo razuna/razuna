@@ -53,120 +53,154 @@
 	<tr>
 		<!--- Icons and drop down menu --->
 		<td align="left" width="1%" nowrap="true">
-			<!--- Icons --->			
-			<div id="tooltip" style="float:left;">
-				<!--- Upload --->
-				<cfif session.folderaccess NEQ "R">
-					<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;" title="#defaultsObj.trans("add_file")#">
-						<div style="float:left;">
-							<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" border="0" style="padding-right:2px;" />
-						</div>
-						<div style="float:left;padding-right:15px;">#defaultsObj.trans("add_file")#</div>
-					</a>
-				</cfif>
-				<!--- Select --->
-				<cfif cs.icon_select><a href="##" onClick="CheckAll('#kind#form');" title="#defaultsObj.trans("tooltip_select_desc")#"><img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" name="edit_1" border="0" /></a></cfif>
-				<!--- Refresh --->
-				<cfif cs.icon_refresh><a href="##" onclick="showloadinggif();loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#');return false;" title="#defaultsObj.trans("tooltip_refresh_desc")#"><img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" style="padding-left:3px;" /></a></cfif>
-				<!--- Add Subfolder --->
-				<cfif session.folderaccess NEQ "R" AND cs.icon_create_subfolder><a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#defaultsObj.trans("folder_new")#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#"><img src="#dynpath#/global/host/dam/images/folder-new-7.png" width="16" height="16" border="0" style="padding-left:3px;"></a></cfif>
-				<!--- Search --->
-				<cfif cs.icon_search><a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#defaultsObj.trans("folder_search")#',500,1);" title="#defaultsObj.trans("folder_search")#"><img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" style="padding-left:3px;" /></a></cfif>
-			</div>
-			<!--- More actions menu --->	
-			<div style="width:300px;">
-				<div style="float:left;padding-left:10px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
-				<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
-				<div id="drop#thediv#" class="ddselection_header" style="width:200px;position:absolute;top:105px;left:<cfif session.folderaccess NEQ "R">205<cfelse>98</cfif>px;">
-					<!--- Favorite Folder --->
-					<cfif cs.icon_favorite_folder>
-						<p>
-							<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#url.folder_id#&favtype=folder&favkind=');flash_footer();$('##drop#thediv#').toggle();return false;">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/folder-favorites.png" width="16" height="16" border="0" />
-								</div>
-								<div style="padding-top:2px;">Add folder to favorites</div>
-							</a>
-						</p>
+			<div>
+				<!--- Icons --->
+				<div id="tooltip" style="float:left;width:450px;">
+					<!--- Upload --->
+					<cfif attributes.folderaccess NEQ "R">
+						<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;" title="#defaultsObj.trans("add_file")#">
+							<div style="float:left;">
+								<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:2px;" />
+							</div>
+							<div style="float:left;padding-right:15px;">#defaultsObj.trans("add_file")#</div>
+						</a>
 					</cfif>
-					<!--- Show sub assets --->
-					<cfif cs.icon_show_subfolder>
-						<p>
-							<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&showsubfolders=<cfif session.showsubfolders EQ "F">T<cfelse>F</cfif>');$('##drop#thediv#').toggle();return false;">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/link.png" width="16" height="16" border="0" />
-								</div>
-								<div style="padding-top:2px;">Show Assets from Sub-Folders</div>
-							</a>
-						</p>
+					<!--- Select --->
+					<cfif cs.icon_select>
+						<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" title="#defaultsObj.trans("tooltip_select_desc")#">
+							<div style="float:left;">
+								<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
+							</div>
+							<div style="float:left;padding-right:15px;">Select all</div>
+						</a>
+					</cfif>
+					<!--- Search --->
+					<cfif cs.icon_search>
+						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#defaultsObj.trans("folder_search")#',500,1);" title="#defaultsObj.trans("folder_search")#">
+							<div style="float:left;">
+								<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" />
+							</div>
+							<div style="float:left;padding-right:15px;">#defaultsObj.trans("folder_search")#</div>
+						</a>
+					</cfif>
+					<div style="float:left;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
+					<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
+				</div>
+				<!--- More actions menu --->	
+				<div>
+					<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:105px;left:<cfif attributes.folderaccess NEQ "R">328<cfelse>221</cfif>px;">
+						<!--- Refresh --->
+						<cfif cs.icon_refresh>
+							<p>
+								<a href="##" onclick="loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#');return false;" title="#defaultsObj.trans("tooltip_refresh_desc")#">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" />
+									</div>
+									<div style="padding-top:2px;">#defaultsObj.trans("tooltip_refresh")#</div>
+								</a>
+							</p>
+						</cfif>
+						<!--- Add Subfolder --->
+						<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder>
+							<p>
+								<a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#defaultsObj.trans("folder_new")#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/folder-new-7.png" width="16" height="16" border="0" />
+									</div>
+									<div style="padding-top:2px;">#defaultsObj.trans("folder_new")#</div>
+								</a>
+							</p>
+						</cfif>
+						<!--- Favorite Folder --->
+						<cfif cs.icon_favorite_folder>
+							<p>
+								<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#url.folder_id#&favtype=folder&favkind=');flash_footer();$('##drop#thediv#').toggle();return false;">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/folder-favorites.png" width="16" height="16" border="0" />
+									</div>
+									<div style="padding-top:2px;">Add folder to favorites</div>
+								</a>
+							</p>
+						</cfif>
+						<!--- Show sub assets --->
+						<cfif cs.icon_show_subfolder>
+							<p>
+								<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&showsubfolders=<cfif session.showsubfolders EQ "F">T<cfelse>F</cfif>');$('##drop#thediv#').toggle();return false;">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/link.png" width="16" height="16" border="0" />
+									</div>
+									<div style="padding-top:2px;">Show Assets from Sub-Folders</div>
+								</a>
+							</p>
+							<p><hr></p>
+						</cfif>
+						<!--- Exporting icons --->
+						<cfif cs.icon_print>
+							<p>
+								<a href="##" target="_blank" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#url.folder_id#&kind=#url.kind#','#defaultsObj.trans("pdf_window_title")#',500,1);$('##drop#thediv#').toggle();return false;">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/preferences-desktop-printer-2.png" border="0" width="16" height="16" />
+									</div>
+									<div style="padding-top:2px;">Print</div>
+								</a>
+							</p>
+						</cfif>
+						<cfif cs.icon_rss>
+							<p>
+								<a href="#myself#c.view_rss&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" onclick="$('##drop#thediv#').toggle();">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/application-rss+xml.png" border="0" width="16" height="16" />
+									</div>
+									<div style="padding-top:2px;">RSS-Feed of this folder</div>
+								</a>
+							</p>
+						</cfif>
+						<cfif cs.icon_word>
+							<p>
+								<a href="#myself#c.view_doc&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" onclick="$('##drop#thediv#').toggle();">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/page-word.png" border="0" width="16" height="16" />
+									</div>
+									<div style="padding-top:2px;">Create a Word-Document</div>
+								</a>
+							</p>
+						</cfif>
 						<p><hr></p>
-					</cfif>
-					<!--- Exporting icons --->
-					<cfif cs.icon_print>
-						<p>
-							<a href="##" target="_blank" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#url.folder_id#&kind=#url.kind#','#defaultsObj.trans("pdf_window_title")#',500,1);$('##drop#thediv#').toggle();return false;">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/preferences-desktop-printer-2.png" border="0" width="16" height="16" />
-								</div>
-								<div style="padding-top:2px;">Print</div>
-							</a>
-						</p>
-					</cfif>
-					<cfif cs.icon_rss>
-						<p>
-							<a href="#myself#c.view_rss&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" onclick="$('##drop#thediv#').toggle();">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/application-rss+xml.png" border="0" width="16" height="16" />
-								</div>
-								<div style="padding-top:2px;">RSS-Feed of this folder</div>
-							</a>
-						</p>
-					</cfif>
-					<cfif cs.icon_word>
-						<p>
-							<a href="#myself#c.view_doc&folder_id=#url.folder_id#&kind=#url.kind#&col=F" target="_blank" onclick="$('##drop#thediv#').toggle();">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/page-word.png" border="0" width="16" height="16" />
-								</div>
-								<div style="padding-top:2px;">Create a Word-Document</div>
-							</a>
-						</p>
-					</cfif>
-					<p><hr></p>
-					<!--- Import Metadata --->
-					<cfif session.folderaccess NEQ "R" AND cs.icon_metadata_import>
-						<p>
-							<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#defaultsObj.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#defaultsObj.trans("header_import_metadata_desc")#">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/package-add.png" border="0" width="16" height="16" />
-								</div>
-								<div style="padding-top:2px;">#defaultsObj.trans("header_import_metadata")#</div>
-							</a>
-						</p>
-					</cfif>
-					<!--- Export Metadata --->
-					<cfif cs.icon_metadata_export>
-						<p>
-							<a href="##" onclick="showwindow('#myself#c.meta_export&folder_id=#url.folder_id#&what=folder','#defaultsObj.trans("header_export_metadata")#',500,1);$('##drop#thediv#').toggle();return false;">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/document-export-4.png" border="0" width="16" height="16" />
-								</div>
-								<div style="padding-top:2px;">#defaultsObj.trans("header_export_metadata")#</div>
-							</a>
-						</p>
-					</cfif>
-					<!--- Download Folder --->
-					<cfif session.folderaccess NEQ "R" AND cs.icon_download_folder>
-						<p><hr></p>
-						<p>
-							<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=#url.folder_id#','#defaultsObj.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/folder-download.png" border="0" width="16" />
-								</div>
-								<div style="padding-top:2px;">Download assets in this folder</div>
-							</a>
-						</p>
-					</cfif>
+						<!--- Import Metadata --->
+						<cfif attributes.folderaccess NEQ "R" AND cs.icon_metadata_import>
+							<p>
+								<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#defaultsObj.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#defaultsObj.trans("header_import_metadata_desc")#">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/package-add.png" border="0" width="16" height="16" />
+									</div>
+									<div style="padding-top:2px;">#defaultsObj.trans("header_import_metadata")#</div>
+								</a>
+							</p>
+						</cfif>
+						<!--- Export Metadata --->
+						<cfif cs.icon_metadata_export>
+							<p>
+								<a href="##" onclick="showwindow('#myself#c.meta_export&folder_id=#url.folder_id#&what=folder','#defaultsObj.trans("header_export_metadata")#',500,1);$('##drop#thediv#').toggle();return false;">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/document-export-4.png" border="0" width="16" height="16" />
+									</div>
+									<div style="padding-top:2px;">#defaultsObj.trans("header_export_metadata")#</div>
+								</a>
+							</p>
+						</cfif>
+						<!--- Download Folder --->
+						<cfif attributes.folderaccess NEQ "R" AND cs.icon_download_folder>
+							<p><hr></p>
+							<p>
+								<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=#url.folder_id#','#defaultsObj.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/folder-download.png" border="0" width="16" />
+									</div>
+									<div style="padding-top:2px;">Download assets in this folder</div>
+								</a>
+							</p>
+						</cfif>
+					</div>
 				</div>
 			</div>
 		</td>
@@ -176,7 +210,7 @@
 			<cfif session.offset GTE 1>
 				<!--- For Back --->
 				<cfset newoffset = session.offset - 1>
-				<a href="##" onclick="showloadinggif();loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');"><<< #defaultsObj.trans("back")#</a> |
+				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">&lt; #defaultsObj.trans("back")#</a> |
 			</cfif>
 			<cfset showoffset = session.offset * session.rowmaxpage>
 			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -184,14 +218,14 @@
 			<cfif qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry_filecount.thetotal> | 
 				<!--- For Next --->
 				<cfset newoffset = session.offset + 1>
-				<a href="##" onclick="showloadinggif();loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">#defaultsObj.trans("next")# >>></a>
+				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">#defaultsObj.trans("next")# &gt;</a>
 			</cfif>
 			<!--- Pages --->
 			<cfif qry_filecount.thetotal GT session.rowmaxpage>
 				<span style="padding-left:10px;">
 					<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
-					Pages: 
-						<select id="thepagelist#kind#" onChange="showloadinggif();loadcontent('#thediv#', $('##thepagelist#kind# :selected').val());">
+					Page: 
+						<select id="thepagelist#kind#" onChange="loadcontent('#thediv#', $('##thepagelist#kind# :selected').val());">
 						<cfloop from="1" to="#thepage#" index="i">
 							<cfset loopoffset = i - 1>
 							<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&offset=#loopoffset#&showsubfolders=#attributes.showsubfolders#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
@@ -203,18 +237,18 @@
 		<!--- Sort by --->
 		<td align="right" width="1%" nowrap="true">
 			Sort by: 
-			 <select name="selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="showloadinggif();changerow('#thediv#','selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
-			 	<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
-			 	<cfif kind EQ "all"><option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
-			 	<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
-			 	<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
-			 	<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
-			 	<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
-			 	<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
+			 <select name="selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changesortby('selectsortby#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" style="width:80px;">
+			 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
+			 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
+			 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
+			 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
+			 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
+			 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
+			 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
 			 </select>
 		</td>
 		<!--- Change the amount of images shown --->
-		<td align="right" width="1%" nowrap="true"><cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25> <select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="showloadinggif();changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
+		<td align="right" width="1%" nowrap="true"><cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25> <select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
 			<option value="javascript:return false;">Show how many...</option>
 			<option value="javascript:return false;">---</option>
 			<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
@@ -227,47 +261,77 @@
 </table>
 
 <!--- Put in basket button / Action Menu --->
-<div id="folderselection<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form" style="display:none;padding-top:10px;">		
+<div id="folderselection<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form" style="display:none;padding-top:10px;">
+	<!--- Select all link --->
+	<div style="float:left;padding-right:5px;padding-bottom:5px;" id="selectstore#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">
+		<div style="float:left;" id="store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>"></div>
+		<div style="float:left;padding-left:10px;display:none;" id="nonstore#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>"><a href="##" onclick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');">Select none</a></div>
+		<!--- <div>#session.file_id#</div> --->
+	</div>
+	<div style="clear:both;"></div>
+	<!--- Actions with selection icons --->
+	<div style="float:left;padding-right:5px;"><strong>#defaultsObj.trans("action_with_selection")#: </strong></div>
 	<cfif cs.show_bottom_part>
-		<button onclick="sendtobasket('#kind#form');" class="button">#defaultsObj.trans("put_in_basket")#</button>
+		<a href="##" onclick="sendtobasket('#kind#form');">
+			<div style="float:left;">
+				<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-right:3px;" />
+			</div>
+			<div style="float:left;padding-right:5px;">#defaultsObj.trans("put_in_basket")#</div>
+		</a> 
 	</cfif>
-	<cfif StructKeyExists(Session, "folderaccess") and #session.folderaccess# IS NOT "R"> 
-		<button onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','btn_move#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" class="button" value="move" id="btn_move#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">#defaultsObj.trans("move")#</button>
-		<button onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','btn_batch#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" class="button" value="batch" id="btn_batch#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">#defaultsObj.trans("batch")#</button>
+	<cfif attributes.folderaccess IS NOT "R">
+		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','move');">
+			<div style="float:left;padding-left:5px;">
+				<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
+			</div>
+			<div style="float:left;padding-right:5px;">#defaultsObj.trans("move")#</div>
+		</a>
+		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','batch');">
+			<div style="float:left;padding-left:5px;">
+				<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
+			</div>
+			<div style="float:left;padding-right:5px;">#defaultsObj.trans("batch")#</div>
+		</a>
 		<cfif cs.tab_collections>
-			<button onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','btn_chcoll#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" class="button" value="chcoll" id="btn_chcoll#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">#defaultsObj.trans("add_to_collection")#</button>
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','chcoll');">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/picture-link.png" width="16" height="16" border="0" style="padding-right:3px;" />
+				</div>
+				<div style="float:left;padding-right:5px;">#defaultsObj.trans("add_to_collection")#</div>
+			</a>
 		</cfif>
-		<button onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','btn_exportmeta#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" class="button" value="exportmeta" id="btn_exportmeta#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">#defaultsObj.trans("header_export_metadata")#</button>
+		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','exportmeta');">
+			<div style="float:left;padding-left:5px;">
+				<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
+			</div>
+			<div style="float:left;padding-right:5px;">#defaultsObj.trans("header_export_metadata")#</div>
+		</a>
 		<cfif kind EQ "img" OR kind EQ "vid">
-			<button onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','btn_prev#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" class="button" value="prev" id="btn_prev#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">#defaultsObj.trans("batch_recreate_preview")#</button>
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','prev');">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/picture-go.png" width="16" height="16" border="0" style="padding-right:2px;" />
+				</div>
+				<div style="float:left;">#defaultsObj.trans("batch_recreate_preview")#</div>
+			</a>
 		</cfif>
-		<cfif session.folderaccess EQ "X">
-			<button onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','btn_delete#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" class="button" value="delete" id="btn_delete#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">#defaultsObj.trans("delete")#</button>
+		<cfif attributes.folderaccess EQ "X">
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','delete');">
+				<div style="float:left;padding-left:5px;">
+					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
+				</div>
+				<div style="float:left;">#defaultsObj.trans("delete")#</div>
+			</a>
 		</cfif>
-	<!---
-<select name="fileaction#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="fileaction#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','fileaction#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" style="width:130px;">
-		<option value="javascript:return false;" selected="true">#defaultsObj.trans("action_with_selection")#</option>
-		<option value="javascript:return false;">---</option>
-		<option value="move">#defaultsObj.trans("move")#</option>
-		<option value="batch">#defaultsObj.trans("batch")#</option>
-		<cfif cs.tab_collections><option value="chcoll">#defaultsObj.trans("add_to_collection")#</option></cfif>
-		<option value="exportmeta">#defaultsObj.trans("header_export_metadata")#</option>
-		<cfif kind EQ "img" OR kind EQ "vid">
-			<option value="prev">#defaultsObj.trans("batch_recreate_preview")#</option>
-		</cfif>
-		<cfif session.folderaccess EQ "X">
-			<option value="delete">#defaultsObj.trans("delete")#</option>
-		</cfif>
-	</select>
---->
 	</cfif>
 </div>
 		
 
 <script language="javascript">
-	function showloadinggif(){
-		$('##dummy_#kind#').css('display','');
-		loadinggif('dummy_#kind#');
+	// Change the sortby
+	function changesortby(theselect){
+		// Get selected option
+		var thesortby = $('##' + theselect + ' option:selected').val();
+		loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=' + thesortby);
 	}
 </script>
 

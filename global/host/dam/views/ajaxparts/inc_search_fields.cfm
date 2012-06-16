@@ -26,7 +26,7 @@
 <cfoutput>
 	<tr>
 		<td>Search Term</td>
-		<td><input type="text" name="searchfor" style="width:300px;" class="textbold"></td>
+		<td><input type="text" name="searchfor" id="searchforadv_#myvar.thetype#" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
 		<td>Filename</td>
