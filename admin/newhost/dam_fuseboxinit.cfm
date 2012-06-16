@@ -75,6 +75,7 @@ WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase
 </cfquery>
 </cfif>
 <cfif thehost.recordcount EQ 0>
+<cflocation url="http://razuna.razuna.com?nohost=t" addtoken="false" />
 <cfset nohost = "T">
 </cfif>
 <!--- Set sessions --->
