@@ -4141,8 +4141,8 @@
 	
 	<!-- Get settings -->
 	<fuseaction name="isp_settings">
-		<!-- Params -->
-		
+		<!-- CFC: Get image settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getsettingsfromdam()" returnvariable="prefs" />
 		<!-- CFC: Get languages -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="lang_get()" returnvariable="qry_langs" />
 		<!-- Show -->
@@ -4159,6 +4159,8 @@
 	</fuseaction>
 	<!-- Update languages -->
 	<fuseaction name="isp_settings_langsave">
+		<!-- CFC: Save settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="setsettingsfromdam(attributes)" />
 		<!-- CFC: Get languages -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="lang_save(attributes)" />
 	</fuseaction>
