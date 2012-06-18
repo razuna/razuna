@@ -30,9 +30,44 @@
 	<cfelse>
 		<div>#defaultsObj.trans("header_customization_desc")#<br /><br /><a href="http://wiki.razuna.com/display/ecp/Tenant+Customization" target="_blank">Read the documentation!</a></div>
 		<form name="form_admin_custom" id="form_admin_custom" method="post" action="#self#?#theaction#=c.admin_customization_save">
+		<input type="hidden" name="folder_redirect" value="#qry_customization.folder_redirect#" >
 		<div id="status_custom_1" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="submit" value="#defaultsObj.trans("save_changes")#" class="button" /></div>
 		<div style="clear:both;"></div>
 		<div><hr /></div>
+		<!--- User --->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+			<tr>
+				<th>User Options</th>
+			</tr>
+			<tr class="list">
+				<td>
+					#defaultsObj.trans("custom_users_desc")#
+					<br /><br />
+					<strong>#defaultsObj.trans("custom_users_redirect")#</strong>
+					<br />
+					#defaultsObj.trans("custom_users_redirect_desc")#
+					<br />
+					<div>
+					<input type="text" name="folder_name" size="25" disabled="true" value="#qry_foldername#" /> <a href="##" onclick="showwindow('#myself#c.admin_customization_choose_folder','#defaultsObj.trans("choose_location")#',600,1);">#defaultsObj.trans("scheduled_uploads_task_folder_cap")#</a>
+					<br />
+					<input type="checkbox" name="folder_redirect_off" value="true"> #defaultsObj.trans("custom_users_redirect_off")#
+					</div>
+					<br />
+					<strong>#defaultsObj.trans("custom_users_myfolder")#</strong>
+					<br />
+					#defaultsObj.trans("custom_users_myfolder_desc")#
+					<br />
+					<div><input type="radio" name="myfolder_create" value="true"<cfif qry_customization.myfolder_create> checked="checked"</cfif> />#defaultsObj.trans("enabled")# <input type="radio" name="myfolder_create" value="false"<cfif !qry_customization.myfolder_create> checked="checked"</cfif> />#defaultsObj.trans("disabled")#</div>
+					<br />
+					<strong>#defaultsObj.trans("custom_users_myfolder_upload")#</strong>
+					<br />
+					#defaultsObj.trans("custom_users_myfolder_upload_desc")#
+					<br />
+					<div><input type="radio" name="myfolder_upload" value="true"<cfif qry_customization.myfolder_upload> checked="checked"</cfif> />#defaultsObj.trans("enabled")# <input type="radio" name="myfolder_upload" value="false"<cfif !qry_customization.myfolder_upload> checked="checked"</cfif> />#defaultsObj.trans("disabled")#</div>
+					<br />
+				</td>
+			</tr>
+		</table>
 		<!--- Design --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>

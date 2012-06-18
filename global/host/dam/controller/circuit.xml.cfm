@@ -251,7 +251,17 @@
 	 <fuseaction name="main">
 	 	<if condition="#session.login# EQ 'T'">
 	 		<true>
+	 			<!-- Param -->
 	 			<set name="session.hosttype" value="" overwrite="false" />
+	 			<set name="attributes.redirectmain" value="false" overwrite="false" />
+	 			<!-- For Nirvanix get usage count -->
+				<if condition="application.razuna.storage EQ 'nirvanix'">
+					<true>
+						<!-- Action: Check storage -->
+						<do action="storage" />
+						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
+					</true>
+				</if>
 	 			<!-- If ISP (for now) -->
 				<if condition="#application.razuna.isp#">
 					<true>
@@ -259,14 +269,6 @@
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
 						<!-- Get Invoices -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="getaccount(cgi.HTTP_X_FORWARDED_SERVER,session.hostid)" returnvariable="res_account" />
-					</true>
-				</if>
-				<!-- For Nirvanix get usage count -->
-				<if condition="application.razuna.storage EQ 'nirvanix'">
-					<true>
-						<!-- Action: Check storage -->
-						<do action="storage" />
-						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
 				</if>
 				<!-- CFC: Get languages -->
@@ -1260,6 +1262,8 @@
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
 			</true>
 		</if>
+		<!-- CFC: Get folder name -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get user name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get breadcrumb -->
@@ -3075,10 +3079,16 @@
 		<set name="attributes.rid" value="0" overwrite="false" />
 		<set name="attributes.iscol" value="0" overwrite="false" />
 		<set name="attributes.kind" value="" overwrite="false" />
+		<!-- For customization do... -->
+		<if condition="session.type EQ 'customization'">
+			<true>
+				<set name="session.savehere" value="" />
+			</true>
+		</if>
 		<!-- For scheduled uploads do... -->
 		<if condition="session.type EQ 'scheduler'">
 			<true>
-				<set name="session.savehere" value="c.scheduler_choose_folder_do" />
+				<set name="session.savehere" value="" />
 			</true>
 		</if>
 		<!-- If we save the basket as zip in this folder do... -->
@@ -4188,8 +4198,10 @@
 	
 	<!-- For loading customization -->
 	<fuseaction name="admin_customization">
-		<!-- CFC -->
+		<!-- CFC: Get Customization -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_customization()" returnvariable="qry_customization" />
+		<!-- CFC: Get folder name -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(qry_customization.folder_redirect)" returnvariable="qry_foldername" />
 		<!-- Show -->
 		<do action="ajax.admin_customization" />
 	</fuseaction>
@@ -4197,6 +4209,13 @@
 	<fuseaction name="admin_customization_save">
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_customization(attributes)" />
+	</fuseaction>
+	<!-- Choose Folder for folder redirect -->
+	<fuseaction name="admin_customization_choose_folder">
+		<!-- Param -->
+		<set name="session.type" value="customization" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
 	</fuseaction>
 	
 	<!--  -->

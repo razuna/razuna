@@ -57,13 +57,22 @@
 				<!--- Icons --->
 				<div id="tooltip" style="float:left;width:450px;">
 					<!--- Upload --->
-					<cfif attributes.folderaccess NEQ "R">
-						<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;" title="#defaultsObj.trans("add_file")#">
-							<div style="float:left;">
-								<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:2px;" />
-							</div>
-							<div style="float:left;padding-right:15px;">#defaultsObj.trans("add_file")#</div>
-						</a>
+					<cfif attributes.folderaccess NEQ "R"> 
+						<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;" title="#defaultsObj.trans("add_file")#">
+								<div style="float:left;">
+									<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:2px;" />
+								</div>
+								<div style="float:left;padding-right:15px;">#defaultsObj.trans("add_file")#</div>
+							</a>
+						<cfelseif cs.myfolder_upload>
+							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;" title="#defaultsObj.trans("add_file")#">
+								<div style="float:left;">
+									<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:2px;" />
+								</div>
+								<div style="float:left;padding-right:15px;">#defaultsObj.trans("add_file")#</div>
+							</a>
+						</cfif>
 					</cfif>
 					<!--- Select --->
 					<cfif cs.icon_select>

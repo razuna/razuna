@@ -2138,7 +2138,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom (
 	  	custom_id			varchar2(200 char),
-		custom_value		boolean,
+		custom_value		varchar2(100 char),
 		host_id				number
 		)
 		</cfquery>

@@ -61,9 +61,9 @@
 		</cfif>
 	</cfif>
 	<!--- Show link back to main page --->
-	<cfif !cs.show_top_part>
+	<cfif !cs.show_top_part OR cs.folder_redirect NEQ "0">
 		<div style="clear:both;"></div>
-		<p style="padding-left:10px;"><a href="#myself#c.main" title="Click here to get to the main page">Go to main page</p>
+		<p style="padding-left:10px;"><a href="#myself#c.main&redirectmain=true&_v=#createuuid('')#" title="Click here to get to the main page">Go to main page</p>
 	</cfif>
 		
 <script language="javascript" type="text/javascript">
@@ -73,7 +73,7 @@
 	$(function () { 
 		$("##treeBox").tree({
 			plugins : {
-				cookie : { prefix : "cookietreebox_" }
+				cookie : { prefix : "cookietreebox_", keep_selected : false, keep_opened: true }
 			},
 			types : {
 				"default"  : {

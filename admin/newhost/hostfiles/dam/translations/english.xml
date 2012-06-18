@@ -2298,4 +2298,31 @@
 	<transid name="multiple_emails">
 		<transtext>Divide many eMail addresses with a "," (comma)</transtext>
 	</transid>
+	<transid name="custom_users_desc">
+		<transtext><![CDATA[The below settings influence what users will see upon sign in and controls their "My Folder" options.]]></transtext>
+	</transid>
+	<transid name="custom_users_redirect">
+		<transtext><![CDATA[Redirect users on sign in to a folder]]></transtext>
+	</transid>
+	<transid name="custom_users_redirect_desc">
+		<transtext><![CDATA[By default your users are presented with the Razuna login page upon sign in. If you would rather want that *ALL* users get redirected to a folder you can choose the folder with the link below.]]></transtext>
+	</transid>
+	<transid name="custom_users_redirect_off">
+		<transtext><![CDATA[Turn off redirection (check this and click on save to turn off the redirection)]]></transtext>
+	</transid>
+	<transid name="custom_users_myfolder">
+		<transtext><![CDATA[Users have a personal folder (My Folder)]]></transtext>
+	</transid>
+	<transid name="custom_users_myfolder_desc">
+		<transtext><![CDATA[By default every user has his own "My Folder" in Razuna. This is a personal folder where they have all permissions to store assets. If your users don't need them or you simply don't want this, the option below will turn this off. Note: This only applies to new users. You will need to remove the "My Folder" for existing users manually!]]></transtext>
+	</transid>
+	<transid name="custom_users_myfolder_upload">
+		<transtext><![CDATA[Allow users to upload to their "My Folder"]]></transtext>
+	</transid>
+	<transid name="custom_users_myfolder_upload_desc">
+		<transtext><![CDATA[By default users are allowed to upload into their "My Folder". Below is the option to disable uploading. Note: SystemAdministrator and Administrators are always able to upload into their own and the users "My Folder"!]]></transtext>
+	</transid>
+	<transid name="disabled">
+		<transtext>Disabled</transtext>
+	</transid>
 </translations>

@@ -131,48 +131,64 @@
 	<cffunction name="createmyfolder" access="private">
 		<cfargument name="userid" required="yes" type="string">
 		<cfthread intstruct="#arguments#">
-			<cfquery datasource="#application.razuna.datasource#" name="myfolder">
-			SELECT folder_of_user
-			FROM #session.hostdbprefix#folders
-			WHERE folder_owner = <cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">
-			AND lower(folder_name) = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- Query customization DB --->
+			<cfquery dataSource="#application.razuna.datasource#" name="qry" cachename="customization_myfolder_#session.hostid#" cachedomain="#session.hostid#_customization">
+			SELECT custom_id, custom_value
+			FROM #session.hostdbprefix#custom
+			WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+			AND lower(custom_id) = <cfqueryparam value="myfolder_create" cfsqltype="cf_sql_varchar">
 			</cfquery>
-			<!--- Create the MY FOLDER for this user --->
-			<cfif myfolder.recordcount EQ 0>
-				<!--- New ID --->				
-				<cfset newfolderid = createuuid("")>
-				<!--- Insert --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#folders
-				(folder_id, folder_name, folder_level, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, folder_of_user, folder_id_r, folder_main_id_r, host_id)
-				values (
-				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
-				<cfqueryparam value="My Folder" cfsqltype="cf_sql_varchar">, 
-				<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
-				<cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">, 
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-				<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				)
+			<!--- Check if value is here --->
+			<cfif qry.recordcount EQ 0>
+				<cfset myfolder_create = true>
+			<cfelse>
+				<cfset myfolder_create = qry.custom_value>
+			</cfif>
+			<!--- If myfolder is true then create or check for myfolder --->
+			<cfif myfolder_create>
+				<cfquery datasource="#application.razuna.datasource#" name="myfolder">
+				SELECT folder_of_user
+				FROM #session.hostdbprefix#folders
+				WHERE folder_owner = <cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">
+				AND lower(folder_name) = <cfqueryparam value="my folder" cfsqltype="cf_sql_varchar">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Insert the DESCRIPTION --->
-				<cfquery datasource="#application.razuna.datasource#">
-				insert into #session.hostdbprefix#folders_desc
-				(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
-				values(
-				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
-				<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
-				<cfqueryparam value="This is your personal folder" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
+				<!--- Create the MY FOLDER for this user --->
+				<cfif myfolder.recordcount EQ 0>
+					<!--- New ID --->				
+					<cfset newfolderid = createuuid("")>
+					<!--- Insert --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#folders
+					(folder_id, folder_name, folder_level, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, folder_of_user, folder_id_r, folder_main_id_r, host_id)
+					values (
+					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="My Folder" cfsqltype="cf_sql_varchar">, 
+					<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
+					<cfqueryparam value="#attributes.intstruct.userid#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+					<cfqueryparam value="t" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+					</cfquery>
+					<!--- Insert the DESCRIPTION --->
+					<cfquery datasource="#application.razuna.datasource#">
+					insert into #session.hostdbprefix#folders_desc
+					(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
+					values(
+					<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
+					<cfqueryparam value="This is your personal folder" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				</cfif>
 			</cfif>
 		</cfthread>
 	</cffunction>

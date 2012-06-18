@@ -27,7 +27,7 @@
 <!--- Show Subfolders --->
 <cfloop query="qry_subfolders">
 	<div class="assetbox" style="text-align:center;">
-		<a href="##" onclick="$.tree.focused().open_branch('###folder_id_r#');$.tree.focused().select_branch('###folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
+		<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
 			<div class="theimg">
 				<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 			</div>

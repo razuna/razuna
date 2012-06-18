@@ -2788,6 +2788,9 @@
 		<!--- saveaszip or as a collection --->
 		<cfelseif session.type EQ "saveaszip" OR session.type EQ "saveascollection">
 			<a href="##" onclick="loadcontent('win_choosefolder','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#');">
+		<!--- customization --->
+		<cfelseif session.type EQ "customization">
+			<a href="##" onclick="javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);">
 		<!--- scheduler --->
 		<cfelseif session.type EQ "scheduler">
 			<a href="##" onclick="javascript:document.schedulerform.folder_id.value = '#folder_id#'; document.schedulerform.folder_name.value = '#folder_name#';destroywindow(2);">

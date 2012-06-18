@@ -27,8 +27,8 @@
 <!--- Show Subfolders --->
 <cfloop query="qry_subfolders">
 	<tr class="list">
-		<td><a href="##" onclick="$.tree.focused().open_branch('###folder_id_r#');$.tree.focused().select_branch('###folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');"><img src="#dynpath#/global/host/dam/images/folder-yellow_16.png" border="0"></a></td>
-		<td colspan="6"><a href="##" onclick="$.tree.focused().open_branch('###folder_id_r#');$.tree.focused().select_branch('###folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');"><strong>#folder_name#</strong></a></td>
+		<td><a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');"><img src="#dynpath#/global/host/dam/images/folder-yellow_16.png" border="0"></a></td>
+		<td colspan="6"><a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');"><strong>#folder_name#</strong></a></td>
 	</tr>
 </cfloop>
 </cfoutput>

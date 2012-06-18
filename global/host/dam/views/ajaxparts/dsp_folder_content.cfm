@@ -30,7 +30,7 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>
-					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, except #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a></cfif><cfif attributes.folderaccess NEQ "R"> or <a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(defaultsObj.trans("folder_new"))#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">create a sub folder</a>.</cfif>
+					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, except #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif attributes.folderaccess NEQ "R"><cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a> | <cfelseif cs.myfolder_upload><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a> | </cfif></cfif><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(defaultsObj.trans("folder_new"))#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">Create a sub folder</a></cfif>
 				</td>
 			</tr>
 			<tr>
@@ -38,7 +38,7 @@
 					<!--- Show Subfolders --->
 					<cfloop query="qry_subfolders">
 						<div class="assetbox" style="text-align:center;">
-							<a href="##" onclick="$.tree.focused().open_branch('###folder_id_r#');$.tree.focused().select_branch('###folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
+							<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
 								<div class="theimg">
 									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 								</div>
@@ -681,6 +681,8 @@
 	</cfif>
 	<!--- JS for the combined view --->
 	<script language="JavaScript" type="text/javascript">
+		// Focus tree
+		razunatreefocus('#attributes.folder_id#');
 		<cfif session.file_id NEQ "">
 			enablesub('#kind#form');
 		</cfif>

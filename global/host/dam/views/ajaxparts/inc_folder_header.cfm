@@ -28,5 +28,5 @@
 	<div style="font-weight:normal;font-style:italic;padding-left:2px">The user "#qry_user.user#" shared this folder with you. Your permission is: <cfif attributes.folderaccess EQ "R">Read only<cfelseif attributes.folderaccess EQ "W">Read & Write<cfelse>No Restrictions</cfif></div>
 	<br />
 </cfif>
-<div style="float:left;padding-left:2px;padding-top:5px;"><cfif attributes.issearch>Your search returned #qry_filecount.thetotal# record(s) in this folder! | </cfif><cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/<a href="##" onclick="$.tree.focused().open_branch('###ListGetAt(i,3,"|")#');$.tree.focused().select_branch('###ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a></cfloop></div>
+<div style="float:left;padding-left:2px;padding-top:5px;"><cfif attributes.issearch>Your search returned #qry_filecount.thetotal# record(s) in this folder! | </cfif><cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/<a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a></cfloop></div>
 </cfoutput>

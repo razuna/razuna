@@ -1584,3 +1584,16 @@ function subadvfieldsimg(theform,searchtext){
 	}	
 	return searchtext;
 }
+// Focus tree
+function razunatreefocus(folderid){
+	setTimeout(function() {
+    	razunatreefocusdelay(folderid);
+	}, 1250)
+}
+function razunatreefocusbranch(folderidr,folderid){
+	$.tree.focused().open_branch('#' + folderidr);
+	$.tree.focused().select_branch('#' + folderid);	
+}
+function razunatreefocusdelay(folderid){
+	$.tree.focused().select_branch('#' + folderid);	
+}

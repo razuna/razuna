@@ -1607,6 +1607,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfquery>
 	<!--- Set value here --->
 	<cfset var v = structnew()>
+	<cfset v.folder_redirect = "0">
+	<cfset v.myfolder_create = true>
+	<cfset v.myfolder_upload = true>
 	<cfset v.show_top_part = true>
 	<cfset v.show_bottom_part = true>
 	<cfset v.show_twitter = true>
@@ -1665,6 +1668,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.button_delete = true>
 	<!--- Loop over query --->
 	<cfloop query="qry">
+		<cfif custom_id EQ "folder_redirect">
+			<cfset v.folder_redirect = custom_value>
+		</cfif>
+		<cfif custom_id EQ "myfolder_create" AND !custom_value>
+			<cfset v.myfolder_create = false>
+		</cfif>
+		<cfif custom_id EQ "myfolder_upload" AND !custom_value>
+			<cfset v.myfolder_upload = false>
+		</cfif>
 		<cfif custom_id EQ "show_top_part" AND !custom_value>
 			<cfset v.show_top_part = false>
 		</cfif>
@@ -1853,11 +1865,20 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		(custom_id, custom_value, host_id)
 		VALUES(
 			<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_DOUBLE">,
+			<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
 			<cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		)
 		</cfquery>
 	</cfloop>
+	<!--- Turn off redirection --->
+	<cfif structKeyExists(arguments.thestruct,"folder_redirect_off")>
+		<cfquery dataSource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#custom
+		SET custom_value = <cfqueryparam value="0" CFSQLType="CF_SQL_VARCHAR">
+		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		AND custom_id = <cfqueryparam value="folder_redirect" CFSQLType="CF_SQL_VARCHAR">
+		</cfquery>
+	</cfif>
 	<!--- Flush Cache --->
 	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_customization" />
 	<!--- Return --->
