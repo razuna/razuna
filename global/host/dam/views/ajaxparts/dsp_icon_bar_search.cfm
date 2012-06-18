@@ -114,7 +114,7 @@
 	<!--- Select all link --->
 	<div style="float:left;padding-right:5px;padding-bottom:5px;" id="selectstoresearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">
 		<div style="float:left;" id="storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>"></div>
-		<div style="float:left;padding-left:10px;display:none;" id="nonstoresearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>"><a href="##" onclick="CheckAll('#attributes.kind#form','x','store#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');">Select none</a></div>
+		<div style="float:left;padding-left:10px;display:none;" id="nonstoresearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>"><a href="##" onclick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');">Select none</a></div>
 		<!--- <div>#session.file_id#</div> --->
 	</div>
 	<div style="clear:both;"></div>
