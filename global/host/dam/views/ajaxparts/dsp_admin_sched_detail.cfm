@@ -229,6 +229,9 @@
 							</table>
 						</td>
 					</tr>
+					<tr>
+						<td colspan="2"><em>(Time is server time. Current time is: #LSTimeFormat(now(), 'HH:mm')#)</em></td>
+					</tr>
 				</table>
 			</td>
 		</tr>
