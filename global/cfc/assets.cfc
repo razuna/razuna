@@ -1102,8 +1102,11 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Insert --->
 			<cfquery datasource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#files
-			(file_id)
-			VALUES(<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">)
+			(file_id, is_available)
+			VALUES(
+				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">
+				)
 			</cfquery>
 			<!--- Set Params --->
 			<cfset arguments.thestruct.dsn = variables.dsn>
@@ -1213,9 +1216,9 @@ This is the main function called directly by a single upload else from addassets
 							<!--- Script: Create images --->
 							<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thepdfdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 							<!--- Execute --->
-							<cfexecute name="#attributes.intstruct.thesh#" timeout="60" />
+							<cfexecute name="#attributes.intstruct.thesh#" timeout="900" />
 							<cfif attributes.intstruct.storage NEQ "amazon">
-								<cfexecute name="#attributes.intstruct.thesht#" timeout="60" />
+								<cfexecute name="#attributes.intstruct.thesht#" timeout="900" />
 							</cfif>
 							<!--- Delete scripts --->
 							<cffile action="delete" file="#attributes.intstruct.thesh#">
@@ -1255,7 +1258,7 @@ This is the main function called directly by a single upload else from addassets
 								<!--- Write Script --->
 								<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theexif# -a -g #attributes.intstruct.qryfile.path#" mode="777">
 								<!--- Execute Script --->
-								<cfexecute name="#attributes.intstruct.thesh#" timeout="60" variable="file_meta" />
+								<cfexecute name="#attributes.intstruct.thesh#" timeout="900" variable="file_meta" />
 								<!--- Delete scripts --->
 								<cffile action="delete" file="#attributes.intstruct.thesh#">
 							</cfif>
@@ -2755,7 +2758,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.folderlevel = folderlevel>
 		<cfset arguments.thestruct.rid = rootfolderId>
 		<cfloop query="thedir">
-			<cfif thedir.attributes NEQ "H" AND NOT directory CONTAINS ".svn" AND NOT directory CONTAINS "__MACOSX">
+			<cfif thedir.attributes NEQ "H" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
 				<cfset arguments.thestruct.foldername = listlast(name,FileSeparator())>
 				<cfset arguments.thestruct.thepathtofolder = replacenocase(name,arguments.thestruct.foldername,"","one")>
 				<cfif arguments.thestruct.thepathtofolder NEQ arguments.thestruct.foldername>
@@ -2792,7 +2795,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfloop>
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
-			<cfif size NEQ 0 AND fileexists("#directory#/#name#") AND attributes NEQ "H" AND NOT name CONTAINS "thumbs.db">
+			<cfif size NEQ 0 AND fileexists("#directory#/#name#") AND attributes NEQ "H" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
 				<cfset md5hash = "">
 				<!--- Set Original FileName --->
 				<cfset arguments.thestruct.theoriginalfilename = listlast(name,FileSeparator())>
@@ -2936,11 +2939,13 @@ This is the main function called directly by a single upload else from addassets
 	<cfdirectory action="list" directory="#arguments.thedirectory#" name="thedir" recurse="true" type="dir">
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
 	<cfloop query="thedir">
-		<!--- All foreign chars are now converted, except the FileSeparator and - --->
-		<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","","ALL")>
-		<!--- Rename --->
-		<cfif "#directory#/#name#" NEQ "#directory#/#d#">
-			<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
+		<cfif thedir.attributes NEQ "H" AND NOT name CONTAINS "__MACOSX">
+			<!--- All foreign chars are now converted, except the FileSeparator and - --->
+			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","","ALL")>
+			<!--- Rename --->
+			<cfif "#directory#/#name#" NEQ "#directory#/#d#">
+				<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
+			</cfif>
 		</cfif>
 	</cfloop>
 	<cfreturn />
