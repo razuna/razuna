@@ -154,7 +154,7 @@
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 			AND f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 		</cfif>
-		GROUP BY id, filename, folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
+		GROUP BY id, filename, f.folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
 		path_to_asset, cloud_url, cloud_url_org, description, keywords, vwidth, vheight, theformat, filename_forsort, size, hashtag, folder_name
 		ORDER BY #sortby#
 		</cfquery>
@@ -356,7 +356,7 @@
 		<!--- Exclude related images --->
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		GROUP BY id, filename, folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
+		GROUP BY id, filename, i.folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
 		path_to_asset, cloud_url, cloud_url_org, description, keywords, vwidth, vheight, theformat, filename_forsort, size, hashtag, folder_name
 		ORDER BY #sortby#
 		</cfquery>
@@ -522,7 +522,7 @@
 		<!--- Exclude related images --->
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		GROUP BY id, filename, folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
+		GROUP BY id, filename, v.folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
 		path_to_asset, cloud_url, cloud_url_org, description, keywords, vwidth, vheight, theformat, filename_forsort, size, hashtag, folder_name
 		ORDER BY #sortby#
 		</cfquery>
@@ -688,7 +688,7 @@
 		<!--- Exclude related images --->
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		GROUP BY id, filename, folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
+		GROUP BY id, filename, a.folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
 		path_to_asset, cloud_url, cloud_url_org, description, keywords, vwidth, vheight, theformat, filename_forsort, size, hashtag, folder_name
 		ORDER BY #sortby#
 		</cfquery>
