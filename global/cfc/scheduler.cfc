@@ -473,7 +473,7 @@
 	<cfargument name="sched_id" type="string" required="yes" default="">
 	<cfset var doit = structnew()>
 	<cfset doit.dirlist = "">
-	<cfset var tempid = "sched-" & createuuid()>
+	<!--- <cfset var tempid = "sched-" & createuuid()> --->
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
 	<!--- List all files from the server directory --->
