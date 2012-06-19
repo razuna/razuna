@@ -69,29 +69,10 @@
 		</ul>
 		<div class="TabbedPanelsContent" id="detailinfo">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%">
-				<tr>
-					<td colspan="2">
-						<cfif cs.button_send_email>	
-							<input type="button" name="sendemail" value="#defaultsObj.trans("send_with_email")#" class="button" onclick="showwindow('#myself##xfa.sendemail#&file_id=#file_id#&thetype=doc','#defaultsObj.trans("send_with_email")#',600,2);return false;">
-						</cfif>
-						<cfif qry_detail.detail.link_kind NEQ "url" AND cs.button_send_ftp>
-							<input type="button" name="sendftp" value="#defaultsObj.trans("send_with_ftp")#" class="button" onclick="showwindow('#myself##xfa.sendftp#&file_id=#file_id#&thetype=doc','#defaultsObj.trans("send_with_ftp")#',600,2);return false;">
-						</cfif>
-						<cfif cs.show_bottom_part AND cs.button_basket>
-							<input type="button" name="inbasket" value="#defaultsObj.trans("put_in_basket")#" class="button" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#-doc&thetype=#attributes.file_id#-doc');flash_footer();">
-						</cfif>
-						<cfif cs.tab_collections AND cs.button_add_to_collection>
-							<input type="button" name="tocollection" value="#defaultsObj.trans("add_to_collection")#" class="button" onclick="showwindow('#myself#c.choose_collection&file_id=#attributes.file_id#-doc&thetype=doc&artofimage=list&artofvideo=&artofaudio=&artoffile=','#defaultsObj.trans("add_to_collection")#',600,2);">
-						</cfif>
-						<cfif attributes.folderaccess EQ "X">
-							<input type="button" name="move" value="#defaultsObj.trans("move_file")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=#attributes.file_id#&type=movefile&thetype=doc&folder_id=#folder_id#','#defaultsObj.trans("move_file")#',600,2);">
-							<input type="button" name="remove" value="#defaultsObj.trans("delete_asset")#" class="button" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#loaddiv#&folder_id=#folder_id#&showsubfolders=#session.showsubfolders#','#defaultsObj.trans("remove")#',400,2);return false;">
-						</cfif>
-						<cfif cs.button_print>
-							<input type="button" name="print" value="#defaultsObj.trans("tooltip_print")#" class="button" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#qry_detail.detail.folder_id_r#&kind=detail&thetype=doc&file_id=#attributes.file_id#','#defaultsObj.trans("pdf_window_title")#',500,2);return false;">
-						</cfif>
-					</td>
-				</tr>
+				<!--- The Buttons --->
+				<cfset what = "files">
+				<cfinclude template="inc_detail_buttons.cfm" />
+				<!--- Description when url is a link --->
 				<cfif qry_detail.detail.link_kind NEQ "">
 					<tr>
 						<td colspan="2"><strong>#defaultsObj.trans("link_url_desc")#</strong></td>

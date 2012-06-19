@@ -110,7 +110,7 @@
 				<td colspan="2" align="right"><div id="form_admin_settings_status" style="float:left;font-weight:bold;color:green;"></div><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></td>
 			</tr>
 			<tr class="list">
-				<td><br /></td>
+				<td colspan="2"><br /></td>
 			</tr>
 		</table>
 	</form>
