@@ -64,7 +64,7 @@
 				</tr>
 			</cfloop>
 				<tr>
-					<td colspan="3"><input type="button" name="back" value="#defaultsObj.trans("back")#" onclick="loadcontent('addftp','#myself#c.asset_add_ftp&folder_id=#attributes.folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&ftp_server=#session.ftp_server#&ftp_user=#session.ftp_user#&ftp_pass=#URLEncodedFormat(session.ftp_pass)#&ftp_passive=#session.ftp_passive#<cfif structkeyexists(attributes,'folderpath')>&folderpath=#URLEncodedFormat(attributes.folderpath)#</cfif>');"> <input type="submit" name="submit" value="#defaultsObj.trans("button_add_selected")#" class="button"> <div id="uploadstatus" style="background-color:##FFFFE0;display:none;"></div></td>
+					<td colspan="3"><input type="button" name="back" value="#defaultsObj.trans("back")#" onclick="loadcontent('addftp','#myself#c.asset_add_ftp&folder_id=#attributes.folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&ftp_server=#session.ftp_server#&ftp_user=#session.ftp_user#&ftp_pass=#URLEncodedFormat(session.ftp_pass)#&ftp_passive=#session.ftp_passive#<cfif structkeyexists(attributes,'folderpath')>&folderpath=#URLEncodedFormat(attributes.folderpath)#</cfif>');"> <input type="submit" name="submit" value="#defaultsObj.trans("button_add_selected")#" class="button"> <div id="ftpuploadstatus" style="background-color:##FFFFE0;display:none;"></div></td>
 				</tr>
 			</table>
 			<br>
@@ -109,8 +109,8 @@
 				// file is selected thus continue
 				if (arehere == 'T'){
 					// Show loading message in upload window
-					$('##uploadstatus').css("display","");
-					$("##uploadstatus").html('<div style="padding:10px"><img src="#dynpath#/global/host/dam/images/loading.gif" border="0" width="16" height="16"><br><br>#JSStringFormat(defaultsObj.trans("upload_wait_message"))#</div>');
+					$('##ftpuploadstatus').css("display","");
+					$("##ftpuploadstatus").html('<div style="padding:10px"><img src="#dynpath#/global/host/dam/images/loading.gif" border="0" width="16" height="16"><br><br>#JSStringFormat(defaultsObj.trans("upload_wait_message"))#</div>');
 					// Get values
 					var url = formaction("assetftpform");
 					var items = formserialize("assetftpform");
@@ -120,8 +120,8 @@
 						url: url,
 					   	data: items,
 					   	success: function(){
-					   		$("##uploadstatus").html('<div style="padding:10px;font-weight:bold;color:##900;">#JSStringFormat(defaultsObj.trans("upload_success_email"))#</div>');
-					   		$("##uploadstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+					   		$("##ftpuploadstatus").html('<div style="padding:10px;font-weight:bold;color:green;">#JSStringFormat(defaultsObj.trans("upload_success_email"))#</div>');
+					   		$("##ftpuploadstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 					   	}
 					});
 					return false;
