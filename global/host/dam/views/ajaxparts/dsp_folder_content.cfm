@@ -27,6 +27,7 @@
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- If no record is in this folder --->
 	<cfif qry_files.recordcount EQ 0>
+		<form id="#kind#form"></form>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>
