@@ -60,26 +60,33 @@
 		<cfif FileExists("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
 			<cfset md5hash = hashbinary("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
 		</cfif>
-		<!--- Add to temp db --->
-		<cfquery datasource="#attributes.intstruct.dsn#" name="qry">
-		INSERT INTO #session.hostdbprefix#assets_temp
-		(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!--- ,mimetype --->,thesize,file_id,host_id,md5hash)
-		VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.tempid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(attributes.intstruct.thefile.serverFileExt)#">,
-		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.folder_id#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.user_id#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilenamenoext#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.theincomingtemppath#">,
-		<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.contentType#/#attributes.intstruct.thefile.contentSubType#">, --->
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.thefile.filesize#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.file_id#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#md5hash#">
-		)
-		</cfquery>
+		<!--- Check for the same MD5 hash in the existing records --->
+		<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+		<!--- If file does not exsist continue else send user an eMail --->
+		<cfif md5here EQ 0>
+			<!--- Add to temp db --->
+			<cfquery datasource="#attributes.intstruct.dsn#" name="qry">
+			INSERT INTO #session.hostdbprefix#assets_temp
+			(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!--- ,mimetype --->,thesize,file_id,host_id,md5hash)
+			VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.tempid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(attributes.intstruct.thefile.serverFileExt)#">,
+			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.folder_id#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.user_id#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilenamenoext#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.theincomingtemppath#">,
+			<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.contentType#/#attributes.intstruct.thefile.contentSubType#">, --->
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.thefile.filesize#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.file_id#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#md5hash#">
+			)
+			</cfquery>
+		<cfelse>
+			<cfinvoke component="email" method="send_email" subject="Razuna: File #thefilename# already exists" themessage="Hi there. The file (#thefilename#) already exists in Razuna and thus was not added to the system!">
+		</cfif>
 	</cfthread>
 	<cfset result = "T">
 	<!--- Return --->
@@ -139,35 +146,42 @@
 		<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 			<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 		</cfif>
-		<!--- Add to temp db --->
-		<cfquery datasource="#variables.dsn#">
-		INSERT INTO #session.hostdbprefix#assets_temp
-		(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<cfif structkeyexists(arguments.thestruct,"sched")>, sched_id, sched_action</cfif>, file_id, host_id, thesize, md5hash)
-		VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#namenoext#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">
-		<cfif structkeyexists(arguments.thestruct,"sched")>
+		<!--- Check for the same MD5 hash in the existing records --->
+		<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+		<!--- If file does not exsist continue else send user an eMail --->
+		<cfif md5here EQ 0>
+			<!--- Add to temp db --->
+			<cfquery datasource="#variables.dsn#">
+			INSERT INTO #session.hostdbprefix#assets_temp
+			(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<cfif structkeyexists(arguments.thestruct,"sched")>, sched_id, sched_action</cfif>, file_id, host_id, thesize, md5hash)
+			VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#namenoext#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">
+			<cfif structkeyexists(arguments.thestruct,"sched")>
+				,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.sched_id#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.sched_action#">
+			</cfif>
 			,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.sched_id#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.sched_action#">
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+			)
+			</cfquery>
+			<!--- We don't need to send an email --->
+			<cfset arguments.thestruct.sendemail = false>
+			<!--- Call the addasset function --->
+			<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+		<cfelse>
+			<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 		</cfif>
-		,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-		)
-		</cfquery>
-		<!--- We don't need to send an email --->
-		<cfset arguments.thestruct.sendemail = false>
-		<!--- Call the addasset function --->
-		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
 	</cfloop>
 </cffunction>
 
@@ -210,29 +224,36 @@
 						<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 							<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						</cfif>
-						<!--- Add to temp db --->
-						<cfquery datasource="#variables.dsn#">
-						INSERT INTO #session.hostdbprefix#assets_temp
-						(TEMPID,FILENAME,EXTENSION,DATE_ADD,FOLDER_ID,WHO,FILENAMENOEXT,PATH,file_id,host_id,thesize,md5hash)
-						VALUES(
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-						<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
-						<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-						)
-						</cfquery>
-						<!--- We don't need to send an email --->
-						<cfset arguments.thestruct.sendemail = false>
-						<!--- Call the addasset function --->
-						<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+						<!--- Check for the same MD5 hash in the existing records --->
+						<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+						<!--- If file does not exsist continue else send user an eMail --->
+						<cfif md5here EQ 0>
+							<!--- Add to temp db --->
+							<cfquery datasource="#variables.dsn#">
+							INSERT INTO #session.hostdbprefix#assets_temp
+							(TEMPID,FILENAME,EXTENSION,DATE_ADD,FOLDER_ID,WHO,FILENAMENOEXT,PATH,file_id,host_id,thesize,md5hash)
+							VALUES(
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+							<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
+							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+							)
+							</cfquery>
+							<!--- We don't need to send an email --->
+							<cfset arguments.thestruct.sendemail = false>
+							<!--- Call the addasset function --->
+							<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+						<cfelse>
+							<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+						</cfif>
 					</cfif>
 					<!--- Remove the attachment from the email folder. This is on purpose outside of the if so that we remove unwanted attachments as well --->
 					<cftry>
@@ -273,7 +294,9 @@
 			<cfset arguments.thestruct.thetempfolder = "ftp#arguments.thestruct.tempid#">
 			<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
 			<!--- Create a temp directory to hold the file --->
-			<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
+			<cfif !directoryExists(arguments.thestruct.theincomingtemppath)>
+				<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
+			</cfif>
 			<!--- Get file extension --->
 			<cfset theextension = listlast("#i#",".")>
 			<cfset namenoext = replacenocase("#i#",".#theextension#","","All")>
@@ -294,48 +317,53 @@
 			</cfif>
 			<!--- Get file from FTP --->
 			<cfset arguments.thestruct.remote_file = remote_file>
-			<!---
-<cfset tt = Replace(CreateUUid(),"-","","ALL")>
+			<!--- Create uuid --->
+			<cfset tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#">
---->
 				<cfset fc = "f" & randrange(1,10000000)>
 				<!--- Get the file --->
-				<cfftp action="getfile" connection="#fc#" server="#arguments.thestruct.ftp_server#" passive="#arguments.thestruct.ftp_passive#" stoponerror="no" username="#arguments.thestruct.ftp_user#" password="#arguments.thestruct.ftp_pass#" localfile="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" remotefile="#arguments.thestruct.remote_file#" transfermode="AUTO" failifexists="no" timeout="3600" />
+				<cfftp action="getfile" connection="#fc#" server="#attributes.intstruct.ftp_server#" passive="#attributes.intstruct.ftp_passive#" stoponerror="no" username="#attributes.intstruct.ftp_user#" password="#attributes.intstruct.ftp_pass#" localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#" remotefile="#attributes.intstruct.remote_file#" transfermode="AUTO" failifexists="no" timeout="3600" />
+				<!--- Close connection --->
 				<cfftp action="close" connection="#fc#" />
-			<!---
-</cfthread>
+			</cfthread>
 			<!--- Wait for the download above to finish --->
 			<cfthread action="join" name="#tt#" />
---->
 			<!--- Get the filesize --->
 			<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 			<!--- MD5 Hash --->
 			<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 				<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 			</cfif>
-			<!--- Add to temp db --->
-			<cfquery datasource="#variables.dsn#">
-			INSERT INTO #session.hostdbprefix#assets_temp
-			(TEMPID,FILENAME,EXTENSION,DATE_ADD,FOLDER_ID,WHO,FILENAMENOEXT,PATH,file_id,host_id,thesize,md5hash)
-			VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-			)
-			</cfquery>
-			<!--- We don't need to send an email --->
-			<cfset arguments.thestruct.sendemail = false>
-			<!--- Call the addasset function --->
-			<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+			<!--- Check for the same MD5 hash in the existing records --->
+			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<!--- If file does not exsist continue else send user an eMail --->
+			<cfif md5here EQ 0>
+				<!--- Add to temp db --->
+				<cfquery datasource="#variables.dsn#">
+				INSERT INTO #session.hostdbprefix#assets_temp
+				(TEMPID,FILENAME,EXTENSION,DATE_ADD,FOLDER_ID,WHO,FILENAMENOEXT,PATH,file_id,host_id,thesize,md5hash)
+				VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+				)
+				</cfquery>
+				<!--- We don't need to send an email --->
+				<cfset arguments.thestruct.sendemail = false>
+				<!--- Call the addasset function --->
+				<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+			<cfelse>
+				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
 			</cfcatch>
@@ -507,71 +535,87 @@
 			<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 				<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 			</cfif>
-			<!--- If we only have the folder_id as variable --->
-			<cfif structkeyexists(arguments.thestruct,"folder_id")>
-				<cfset arguments.thestruct.destfolderid = arguments.thestruct.folder_id>
-			</cfif>
-			<!--- Add to temp db --->
-			<cftransaction>
-				<cfquery datasource="#variables.dsn#">
-				INSERT INTO #session.hostdbprefix#assets_temp
-				(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<!--- , mimetype --->, thesize, file_id, host_id, md5hash)
-				VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.serverFileExt#">,
-				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.destfolderid#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-				<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">, --->
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#thefile.filesize#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#md5hash#">
-				)
+			<!--- Check for the same MD5 hash in the existing records --->
+			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<!--- If file does not exsist continue else send user an eMail --->
+			<cfif md5here EQ 0>
+				<!--- If we only have the folder_id as variable --->
+				<cfif structkeyexists(arguments.thestruct,"folder_id")>
+					<cfset arguments.thestruct.destfolderid = arguments.thestruct.folder_id>
+				</cfif>
+				<!--- Add to temp db --->
+				<cftransaction>
+					<cfquery datasource="#variables.dsn#">
+					INSERT INTO #session.hostdbprefix#assets_temp
+					(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<!--- , mimetype --->, thesize, file_id, host_id, md5hash)
+					VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.serverFileExt#">,
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.destfolderid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
+					<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">, --->
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#thefile.filesize#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#md5hash#">
+					)
+					</cfquery>
+				</cftransaction>
+				<!--- Put user id into session for later on --->
+				<cfset session.theuserid = theuserid>
+				<!--- We don't need to send an email --->
+				<cfset arguments.thestruct.sendemail = false>
+				<!--- Add the original file name in a session since it is stored as lower case in the temp DB --->
+				<cfset arguments.thestruct.theoriginalfilename = thefile.serverFile>
+				<!--- Call the addasset function --->
+				<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+				<!--- Get file type so we can return the type --->
+				<cfquery datasource="#variables.dsn#" name="fileType">
+				SELECT type_type
+				FROM file_types
+				WHERE lower(type_id) = <cfqueryparam value="#lcase(thefile.serverFileExt)#" cfsqltype="cf_sql_varchar">
 				</cfquery>
-			</cftransaction>
-			<!--- Put user id into session for later on --->
-			<cfset session.theuserid = theuserid>
-			<!--- We don't need to send an email --->
-			<cfset arguments.thestruct.sendemail = false>
-			<!--- Add the original file name in a session since it is stored as lower case in the temp DB --->
-			<cfset arguments.thestruct.theoriginalfilename = thefile.serverFile>
-			<!--- Call the addasset function --->
-			<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-			<!--- Get file type so we can return the type --->
-			<cfquery datasource="#variables.dsn#" name="fileType">
-			SELECT type_type
-			FROM file_types
-			WHERE lower(type_id) = <cfqueryparam value="#lcase(thefile.serverFileExt)#" cfsqltype="cf_sql_varchar">
-			</cfquery>
-			<!--- set attributes of file structure --->
-			<cfif fileType.recordCount GT 0>
-				<cfset thefiletype = fileType.type_type>
-			<cfelse>
-				<cfset thefiletype = "other">
-			</cfif>
-			<!--- Return Message --->
-			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+				<!--- set attributes of file structure --->
+				<cfif fileType.recordCount GT 0>
+					<cfset thefiletype = fileType.type_type>
+				<cfelse>
+					<cfset thefiletype = "other">
+				</cfif>
+				<!--- Return Message --->
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 <Response>
 <responsecode>0</responsecode>
 <message>success</message>
 <assetid>#xmlformat(arguments.thestruct.tempid)#</assetid>
 <filetype>#xmlformat(thefiletype)#</filetype>
 </Response></cfoutput>
-			</cfsavecontent>
-			<!--- When the redirect param is here then --->
-			<cfif structkeyexists(arguments.thestruct,"redirectto")>
-				<!--- If additional params are passed --->
-				<cfif structkeyexists(arguments.thestruct,"redirecttoparams")>
-					<cfset redirvar = "#arguments.thestruct.redirectto#?responsecode=0&message=success&assetid=#arguments.thestruct.tempid#&filetype=#thefiletype#&#arguments.thestruct.redirecttoparams#">
-				<cfelse>
-					<cfset redirvar = "#arguments.thestruct.redirectto#?responsecode=0&message=success&assetid=#arguments.thestruct.tempid#&filetype=#thefiletype#">
+				</cfsavecontent>
+				<!--- When the redirect param is here then --->
+				<cfif structkeyexists(arguments.thestruct,"redirectto")>
+					<!--- If additional params are passed --->
+					<cfif structkeyexists(arguments.thestruct,"redirecttoparams")>
+						<cfset redirvar = "#arguments.thestruct.redirectto#?responsecode=0&message=success&assetid=#arguments.thestruct.tempid#&filetype=#thefiletype#&#arguments.thestruct.redirecttoparams#">
+					<cfelse>
+						<cfset redirvar = "#arguments.thestruct.redirectto#?responsecode=0&message=success&assetid=#arguments.thestruct.tempid#&filetype=#thefiletype#">
+					</cfif>
+					<!--- Redirect --->
+					<cflocation url="#redirvar#" addToken="yes">
 				</cfif>
-				<!--- Redirect --->
-				<cflocation url="#redirvar#" addToken="yes">
+			<cfelse>
+				<!--- Return Message --->
+				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
+<Response>
+<responsecode>1</responsecode>
+<message>File already exists in Razuna</message>
+<assetid>#xmlformat(arguments.thestruct.thefilename)#</assetid>
+</Response></cfoutput>
+				</cfsavecontent>
+				<!--- Send email with the duplicate asset --->
+				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
@@ -654,35 +698,43 @@
 			<cfif FileExists("#arguments.thestruct.link_path_url#")>
 				<cfset md5hash = hashbinary("#arguments.thestruct.link_path_url#")>
 			</cfif>
+			<!--- Check for the same MD5 hash in the existing records --->
+			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
 		<!--- If a URL --->
 		<cfelse>
 			<cfset var orgsize = 0>
+			<cfset var md5here = 0>
 		</cfif>
-		<!--- Add to temp db --->
-		<cfquery datasource="#variables.dsn#">
-		INSERT INTO #session.hostdbprefix#assets_temp
-		(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype, thesize, file_id, link_kind, host_id, md5hash)
-		VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#theext#">,
-		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilenamenoext#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.link_path_url#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.link_kind#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-		)
-		</cfquery>
-		<!--- We don't need to send an email --->
-		<cfset arguments.thestruct.sendemail = false>
-		<!--- Call the addasset function --->
-		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+		<!--- If file does not exsist continue else send user an eMail --->
+		<cfif md5here EQ 0>
+			<!--- Add to temp db --->
+			<cfquery datasource="#variables.dsn#">
+			INSERT INTO #session.hostdbprefix#assets_temp
+			(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype, thesize, file_id, link_kind, host_id, md5hash)
+			VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilename#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theext#">,
+			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilenamenoext#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.link_path_url#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.link_kind#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+			)
+			</cfquery>
+			<!--- We don't need to send an email --->
+			<cfset arguments.thestruct.sendemail = false>
+			<!--- Call the addasset function --->
+			<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+		<cfelse>
+			<cfinvoke component="email" method="send_email" subject="Razuna: File #thefilename# already exists" themessage="Hi there. The file (#thefilename#) already exists in Razuna and thus was not added to the system!">
+		</cfif>
 		<!--- Catch --->
 		<cfcatch type="any">
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from LINK upload" dump="#cfcatch#">
@@ -969,9 +1021,30 @@ This is the main function called directly by a single upload else from addassets
 	<cfthread intvars="#ts#">
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -6, "#now()#")>
+		<!--- Clear assets dbs from records which have no path_to_asset --->
+		<cfquery datasource="#attributes.intvars.dsn#">
+		DELETE FROM #session.hostdbprefix#images
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
+		</cfquery>
+		<cfquery datasource="#attributes.intvars.dsn#">
+		DELETE FROM #session.hostdbprefix#videos
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
+		</cfquery>
+		<cfquery datasource="#attributes.intvars.dsn#">
+		DELETE FROM #session.hostdbprefix#files
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
+		</cfquery>
+		<cfquery datasource="#attributes.intvars.dsn#">
+		DELETE FROM #session.hostdbprefix#audios
+		WHERE (path_to_asset IS NULL OR path_to_asset = '')
+		AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
+		</cfquery>
 		<!--- Select temp assets which are older then 6 hours --->
 		<cfquery datasource="#attributes.intvars.dsn#" name="qry">
-		SELECT path, tempid
+		SELECT path as temppath, tempid
 		FROM #session.hostdbprefix#assets_temp
 		WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 		<!--- AND link_kind <cfif attributes.intvars.database EQ "oracle" OR attributes.intvars.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="lan">
@@ -986,8 +1059,8 @@ This is the main function called directly by a single upload else from addassets
 			<!--- AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->
 			</cfquery>
 			<!--- Delete on the file system --->
-			<cfif DirectoryExists(path)>
-				<cfdirectory action="delete" recurse="true" directory="#path#">
+			<cfif directoryexists(temppath)>
+				<cfdirectory action="delete" recurse="true" directory="#temppath#">
 			</cfif>
 		</cfloop>
 		<cftry>
@@ -2753,90 +2826,97 @@ This is the main function called directly by a single upload else from addassets
 				<cfif FileExists("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
 					<cfset md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
 				</cfif>
-				<!--- Get folder id with the name of the folder --->
-				<cfquery datasource="#variables.dsn#" name="qryfolderid">
-				SELECT folder_id, folder_name
-				FROM #session.hostdbprefix#folders
-				WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast("#directory#/#arguments.thestruct.thepathtoname#","/\"))#">
-				AND folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#"> 
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- Put folder id into the general struct --->
-				<cfif qryfolderid.recordcount NEQ 0>
-					<cfset arguments.thestruct.theid = qryfolderid.folder_id>
-				<cfelse>
-					<cfset arguments.thestruct.theid = rootfolderId>
-					<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
-				</cfif>
-				<!--- Add to temp db --->
-				<cfquery datasource="#variables.dsn#" name="qry">
-				INSERT INTO #session.hostdbprefix#assets_temp
-				(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!---,mimetype--->,thesize,file_id,host_id,md5hash)
-				VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileNameExt.theext#">,
-				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theid#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-				<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.contentType#/#arguments.thestruct.contentSubType#">, --->
-				<cfif isnumeric(file.fileSize)>
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#file.fileSize#">,
-				<cfelse>
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="0">,
-				</cfif>
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-				)
-				</cfquery>
-				<!--- Return IDs in a variable --->
-				<!--- <cfset thetempids = arguments.thestruct.tempid & "," & thetempids> --->
-				<!--- For each file we need query for the file --->
-				<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qryfile">
-				SELECT 
-				tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype,
-				thesize, groupid, sched_id, sched_action, file_id, link_kind, md5hash
-				FROM #session.hostdbprefix#assets_temp
-				WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- Now start the file mumbo jumbo --->
-				<cfif fileType.type_type EQ "img">
-					<!--- IMAGE UPLOAD (call method to process a img-file) --->
-					<cfinvoke method="processImgFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
-					<!--- Act on Upload Templates --->
-					<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
-						<cfset arguments.thestruct.upltemptype = "img">
-						<cfset arguments.thestruct.file_id = returnid>
-						<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+				<!--- Check for the same MD5 hash in the existing records --->
+				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+				<!--- If file does not exsist continue else send user an eMail --->
+				<cfif md5here EQ 0>
+					<!--- Get folder id with the name of the folder --->
+					<cfquery datasource="#variables.dsn#" name="qryfolderid">
+					SELECT folder_id, folder_name
+					FROM #session.hostdbprefix#folders
+					WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast("#directory#/#arguments.thestruct.thepathtoname#","/\"))#">
+					AND folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#"> 
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- Put folder id into the general struct --->
+					<cfif qryfolderid.recordcount NEQ 0>
+						<cfset arguments.thestruct.theid = qryfolderid.folder_id>
+					<cfelse>
+						<cfset arguments.thestruct.theid = rootfolderId>
+						<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
 					</cfif>
-				<cfelseif fileType.type_type EQ "vid">
-					<!--- VIDEO UPLOAD (call method to process a vid-file) --->
-					<cfinvoke method="processVidFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
-					<!--- Act on Upload Templates --->
-					<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
-						<cfset arguments.thestruct.upltemptype = "vid">
-						<cfset arguments.thestruct.file_id = returnid>
-						<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+					<!--- Add to temp db --->
+					<cfquery datasource="#variables.dsn#" name="qry">
+					INSERT INTO #session.hostdbprefix#assets_temp
+					(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!---,mimetype--->,thesize,file_id,host_id,md5hash)
+					VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileNameExt.theext#">,
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
+					<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.contentType#/#arguments.thestruct.contentSubType#">, --->
+					<cfif isnumeric(file.fileSize)>
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#file.fileSize#">,
+					<cfelse>
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="0">,
 					</cfif>
-				<cfelseif fileType.type_type EQ "aud">
-					<!--- AUDIO UPLOAD (call method to process a vid-file) --->
-					<cfinvoke method="processAudFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
-					<!--- Act on Upload Templates --->
-					<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
-						<cfset arguments.thestruct.upltemptype = "aud">
-						<cfset arguments.thestruct.file_id = returnid>
-						<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+					)
+					</cfquery>
+					<!--- Return IDs in a variable --->
+					<!--- <cfset thetempids = arguments.thestruct.tempid & "," & thetempids> --->
+					<!--- For each file we need query for the file --->
+					<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qryfile">
+					SELECT 
+					tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype,
+					thesize, groupid, sched_id, sched_action, file_id, link_kind, md5hash
+					FROM #session.hostdbprefix#assets_temp
+					WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- Now start the file mumbo jumbo --->
+					<cfif fileType.type_type EQ "img">
+						<!--- IMAGE UPLOAD (call method to process a img-file) --->
+						<cfinvoke method="processImgFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<!--- Act on Upload Templates --->
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+							<cfset arguments.thestruct.upltemptype = "img">
+							<cfset arguments.thestruct.file_id = returnid>
+							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+						</cfif>
+					<cfelseif fileType.type_type EQ "vid">
+						<!--- VIDEO UPLOAD (call method to process a vid-file) --->
+						<cfinvoke method="processVidFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<!--- Act on Upload Templates --->
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+							<cfset arguments.thestruct.upltemptype = "vid">
+							<cfset arguments.thestruct.file_id = returnid>
+							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+						</cfif>
+					<cfelseif fileType.type_type EQ "aud">
+						<!--- AUDIO UPLOAD (call method to process a vid-file) --->
+						<cfinvoke method="processAudFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<!--- Act on Upload Templates --->
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+							<cfset arguments.thestruct.upltemptype = "aud">
+							<cfset arguments.thestruct.file_id = returnid>
+							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
+						</cfif>
+					<cfelse>
+						<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
+						<cfinvoke method="processDocFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
 					</cfif>
+					<!--- Clear the path for the loop
+					<cfset arguments.thestruct.qryfile.path = replacenocase("#arguments.thestruct.qryfile.path#", "#zipFileList.directory#", "", "ALL")> --->
 				<cfelse>
-					<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
-					<cfinvoke method="processDocFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+					<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 				</cfif>
-				<!--- Clear the path for the loop
-				<cfset arguments.thestruct.qryfile.path = replacenocase("#arguments.thestruct.qryfile.path#", "#zipFileList.directory#", "", "ALL")> --->
 			</cfif>
 		</cfloop>
 		<cfcatch type="any">
@@ -4578,35 +4658,90 @@ This is the main function called directly by a single upload else from addassets
 		<cfif FileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
 			<cfset md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
 		</cfif>
-		<!--- Add to temp db --->
-		<cfquery datasource="#variables.dsn#">
-		INSERT INTO #session.hostdbprefix#assets_temp
-		(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, file_id, host_id, thesize, md5hash)
-		VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.new_folder_id#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thedir#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.orgsize#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-		)
-		</cfquery>
-		<!--- We don't need to send an email --->
-		<cfset arguments.thestruct.sendemail = false>
-		<!--- We set that this is from this function --->
-		<cfset arguments.thestruct.importpath = true>
-		<!--- Call the addasset function --->
-		<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+		<!--- Check for the same MD5 hash in the existing records --->
+			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<!--- If file does not exsist continue else send user an eMail --->
+			<cfif md5here EQ 0>
+				<!--- Add to temp db --->
+				<cfquery datasource="#variables.dsn#">
+				INSERT INTO #session.hostdbprefix#assets_temp
+				(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, file_id, host_id, thesize, md5hash)
+				VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.new_folder_id#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thedir#">,
+				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.orgsize#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+				)
+				</cfquery>
+				<!--- We don't need to send an email --->
+				<cfset arguments.thestruct.sendemail = false>
+				<!--- We set that this is from this function --->
+				<cfset arguments.thestruct.importpath = true>
+				<!--- Call the addasset function --->
+				<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+			<cfelse>
+				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
+			</cfif>
 		<cfcatch type="any">
 			<cfoutput><span style="color:red;font-weight:bold;">The file "#arguments.thestruct.filename#" could not be proccessed!</span><br />#cfcatch.detail#<br /></cfoutput>
 		</cfcatch>
 	</cftry>
+</cffunction>
+
+<!--- Check for existing MD5 mash records --->
+<cffunction name="checkmd5" output="false">
+	<cfargument name="md5hash" type="string">
+	<!--- Param --->
+	<cfset var rec = 0>
+	<!--- Images --->
+	<cfquery datasource="#application.razuna.datasource#" name="qryimg" cachename="images_#arguments.md5hash#" cachedomain="#session.hostid#_images">
+	SELECT img_id
+	FROM #session.hostdbprefix#images
+	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- videos --->
+	<cfquery datasource="#application.razuna.datasource#" name="qryvid" cachename="videos_#arguments.md5hash#" cachedomain="#session.hostid#_videos">
+	SELECT vid_id
+	FROM #session.hostdbprefix#videos
+	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Files --->
+	<cfquery datasource="#application.razuna.datasource#" name="qrydoc" cachename="files_#arguments.md5hash#" cachedomain="#session.hostid#_files">
+	SELECT file_id
+	FROM #session.hostdbprefix#files
+	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Audios --->
+	<cfquery datasource="#application.razuna.datasource#" name="qryaud" cachename="audios_#arguments.md5hash#" cachedomain="#session.hostid#_audios">
+	SELECT aud_id
+	FROM #session.hostdbprefix#audios
+	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Put each result into var --->
+	<cfset rec = qryimg.recordcount>
+	<cfif !rec>
+		<cfset rec = qryvid.recordcount>
+	</cfif>
+	<cfif !rec>
+		<cfset rec = qrydoc.recordcount>
+	</cfif>
+	<cfif !rec>
+		<cfset rec = qryaud.recordcount>
+	</cfif>
+	<!--- Return --->
+	<cfreturn rec />
 </cffunction>
 
 </cfcomponent>
