@@ -99,13 +99,6 @@
   		<include template="dsp_firsttime_done" />
 	</fuseaction>
 
-	<!-- Menu: CMS -->
-	<fuseaction name="menu_cms">
-		<xfa name="pageexplorer" value="c_cms.pageexplorer&amp;cl=1" />
-		<xfa name="news_cat_explorer" value="c_cms.news_cat_explorer&amp;cl=1" />
-		<xfa name="faq_cat_explorer" value="c_cms.faq_cat_explorer&amp;cl=1" />
-  	<include template="dsp_menu_cms" />
-	</fuseaction>
 	<!-- Menu: DAM -->
 	<fuseaction name="menu_dam">
   	<include template="dsp_menu_dam" />
