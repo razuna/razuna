@@ -71,7 +71,7 @@
 			    v.cf_value, ft.cf_id_r
 				FROM #session.hostdbprefix#files f 
 				LEFT JOIN #session.hostdbprefix#files_desc ct ON f.file_id = ct.file_id_r
-				LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON f.file_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id AND ft.lang_id_r = 1
 				WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
@@ -555,7 +555,7 @@
 		</cfif>
 		UNION ALL
 		<!--- Images --->
-		SELECT img_id id, 'img' as cat, 'T' as notfile, 0 as folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url,
+		SELECT img_id id, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url,
 		img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = '')
@@ -567,7 +567,7 @@
 		</cfif>
 		UNION ALL
 		<!--- Videos --->
-		SELECT vid_id id, 'vid' as cat, 'T' as notfile, 0 as folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url,
+		SELECT vid_id id, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url,
 		vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize
 		FROM #session.hostdbprefix#videos
 		WHERE (vid_group IS NULL OR vid_group = '')
@@ -579,7 +579,7 @@
 		</cfif>
 		UNION ALL
 		<!--- Audios --->
-		SELECT aud_id id, 'aud' as cat, 'T' as notfile, 0 as folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url,
+		SELECT aud_id id, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url,
 		aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize
 		FROM #session.hostdbprefix#audios
 		WHERE (aud_group IS NULL OR aud_group = '')
