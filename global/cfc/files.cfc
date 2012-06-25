@@ -761,7 +761,10 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Rename --->
-		<cfset newname = replacenocase("#arguments.thestruct.zipname#", " ", "_", "All")>
+		<!--- If filename contains /\ --->
+		<cfset newname = replace(arguments.thestruct.zipname,"/","-","all")>
+		<cfset newname = replace(newname,"\","-","all")>
+		<cfset newname = replacenocase(newname, " ", "_", "All")>
 		<cfset newname = replacenocase(newname, ".#getbin.file_extension#", "", "ALL")>
 		<cfset newnamenoext = newname>
 		<cfset newname = "#newname#" & ".#getbin.file_extension#">
@@ -777,8 +780,9 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND getbin.link_kind EQ "">
-			<cfhttp url="#arguments.thestruct.getbin.cloud_url_org#" file="#arguments.thestruct.getbin.file_name_org#" path="#arguments.thestruct.thepath#/outgoing"></cfhttp>
-			<cfthread name="download#arguments.thestruct.file_id#" />
+			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+				<cfhttp url="#attributes.intstruct.getbin.cloud_url_org#" file="#attributes.intstruct.getbin.file_name_org#" path="#attributes.intstruct.thepath#/outgoing"></cfhttp>
+			</cfthread>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND getbin.link_kind EQ "">
 			<!--- Download file --->

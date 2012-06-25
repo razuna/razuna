@@ -611,6 +611,13 @@
 		<!-- Show -->
 		<do action="ajax.basket" />
 	</fuseaction>
+	<!-- Load Basket Save window -->
+	<fuseaction name="basket_save">
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />		
+		<!-- Show -->
+		<do action="ajax.basket_save" />
+	</fuseaction>
 	<!-- Load full Basket -->
 	<fuseaction name="basket_full">
 		<!-- Param -->
@@ -2667,11 +2674,11 @@
 			</true>
 		</if>
 		<!-- If this is a video, image or audio -->
-		<if condition="attributes.thetype EQ 'vid' OR attributes.thetype EQ 'img' OR attributes.thetype EQ 'aud' OR attributes.thetype EQ 'doc'">
+		<!-- <if condition="attributes.thetype EQ 'vid' OR attributes.thetype EQ 'img' OR attributes.thetype EQ 'aud' OR attributes.thetype EQ 'doc'">
 			<true>
 				<set name="session.artofimage" value="#attributes.artofimage#" />
 			</true>
-		</if>
+		</if> -->
 		<!-- If this is from the basket -->
 		<if condition="attributes.frombasket EQ 'T'">
 			<true>
@@ -2712,14 +2719,12 @@
 		<!-- CFC: Write file to system -->
 		<if condition="session.thetype EQ 'doc'">
 			<true>
-				<set name="attributes.artofimage" value="#session.artofimage#" />
 				<invoke object="myFusebox.getApplicationData().files" methodcall="writefile(attributes)" returnvariable="attributes.thefile" />
 			</true>
 		</if>
 		<!-- CFC: Write video to system -->
 		<if condition="session.thetype EQ 'vid'">
 			<true>
-				<set name="attributes.artofimage" value="#session.artofimage#" />
 				<!-- CFC: Write -->
 				<invoke object="myFusebox.getApplicationData().videos" methodcall="writevideo(attributes)" returnvariable="attributes.thefile" />
 			</true>
@@ -2727,7 +2732,6 @@
 		<!-- CFC: Write audio to system -->
 		<if condition="session.thetype EQ 'aud'">
 			<true>
-				<set name="attributes.artofimage" value="#session.artofimage#" />
 				<!-- CFC: Write -->
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="writeaudio(attributes)" returnvariable="attributes.thefile" />
 			</true>
@@ -2735,7 +2739,6 @@
 		<!-- CFC: Write image to system -->
 		<if condition="session.thetype EQ 'img'">
 			<true>
-				<set name="attributes.artofimage" value="#session.artofimage#" />
 				<!-- CFC: Write -->
 				<invoke object="myFusebox.getApplicationData().images" methodcall="writeimage(attributes)" returnvariable="attributes.thefile" />
 			</true>

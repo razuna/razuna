@@ -1006,7 +1006,7 @@
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- Start the loop to get the different kinds of audios --->
-	<cfloop delimiters="," list="#arguments.thestruct.artofimage#" index="art">
+	<cfloop delimiters="," list="#session.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
 		<cfif isnumeric(art)>
 			<!--- Set the video id for this type of format and set the extension --->
@@ -1050,8 +1050,9 @@
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND qry.link_kind EQ "">
-			<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art#"></cfhttp>
-			<cfthread name="download#art##theaudioid#" />
+			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
+				<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#"></cfhttp>
+			</cfthread>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
 			<!--- Download file --->
@@ -1088,12 +1089,17 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
-		<cfset thenewname = listfirst(qry.aud_name, ".") & "." & theext>
+		<!--- If filename contains /\ --->
+		<cfset thenewname = replace(qry.aud_name,"/","-","all")>
+		<cfset thenewname = replace(thenewname,"\","-","all")>
+		<cfset thenewname = listfirst(thenewname, ".") & "." & theext>
 		<!--- Rename the file --->
 		<cffile action="move" source="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thefinalname#" destination="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thenewname#">
 	</cfloop>
 	<!--- Check that the zip name contains no spaces --->
-	<cfset zipname = replacenocase("#arguments.thestruct.zipname#", " ", "_", "All")>
+	<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
+	<cfset zipname = replace(zipname,"\","-","all")>
+	<cfset zipname = replace(zipname, " ", "_", "All")>
 	<cfset zipname = zipname & ".zip">
 	<!--- Remove any file with the same name in this directory. Wrap in a cftry so if the file does not exist we don't have a error --->
 	<cftry>
@@ -1105,7 +1111,7 @@
 	<!--- Remove the temp folder --->
 	<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" recurse="yes">
 	<!--- Return --->
-	<cfreturn #zipname#>
+	<cfreturn zipname>
 </cffunction>
 
 <!--- Get description and keywords for print --->

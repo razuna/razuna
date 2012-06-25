@@ -43,11 +43,11 @@
 	</cfif>
 	<tr>
 		<td>#defaultsObj.trans("ftp_server")#</td>
-		<td><input type="text" name="ftp_server" id="ftp_server" size="60"></td>
+		<td><input type="text" name="ftp_server" id="ftp_server" size="60" value="#session.ftp_server#"></td>
 	</tr>
 	<tr>
 		<td>#defaultsObj.trans("username")#</td>
-		<td><input type="text" name="ftp_user" id="ftp_user" size="60"></td>
+		<td><input type="text" name="ftp_user" id="ftp_user" size="60" value="#session.ftp_user#"></td>
 	</tr>
 	<tr>
 		<td>#defaultsObj.trans("password")#</td>
@@ -145,7 +145,7 @@
 			<td>
 				<table border="0" cellpadding="0" cellspacing="0" class="gridno">
 					<tr>
-						<td colspan="2"><input type="text" size="50" name="zipname" id="zipname" value="#attributes.filename#">.zip</td>
+						<td colspan="2"><input type="text" size="50" name="zipname" id="zipname" value="#rereplace(attributes.filename,"[\\/.+]","","all")#">.zip</td>
 					</tr>
 						<input type="hidden" name="sendaszip" value="T">
 				</table>
@@ -158,6 +158,9 @@
 </table>
 </form>
 <script type="text/javascript">
+	// Focus
+	$('##ftp_server').focus();
+	// Function
 	function loadftpsite(){
 		// Submit Form
 		if (($("##ftp_server").val() != "") && ($("##ftp_user").val() != "")){
@@ -196,24 +199,10 @@
 					url: url,
 				   	data: items
 				});
-				loadcontent('thewindowcontent2','<cfoutput>#myself#</cfoutput>c.ftp_gologin&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + escape(document.sendftpform.ftp_user.value) + '&ftp_pass=' + escape(document.sendftpform.ftp_pass.value) + '&ftp_passive=' + passive + '&thetype=' + document.sendftpform.thetype.value + '&thepath=' + document.sendftpform.thepath.value + '&zipname=' + document.sendftpform.zipname.value + '&sendaszip=' + document.sendftpform.sendaszip.value);
+				$('##thewindowcontent2').load('<cfoutput>#myself#</cfoutput>c.ftp_gologin', { file_id: document.sendftpform.file_id.value, ftp_server: document.sendftpform.ftp_server.value, ftp_user: document.sendftpform.ftp_user.value, ftp_pass: document.sendftpform.ftp_pass.value, ftp_passive: passive, thetype: document.sendftpform.thetype.value, thepath: document.sendftpform.thepath.value, zipname: document.sendftpform.zipname.value, sendaszip: document.sendftpform.sendaszip.value } );
 			<cfelse>
-				// Grab values from fields
-				var artimg = document.sendftpform.artofimage.value;
-				var artvid = document.sendftpform.artofvideo.value;
-				var artaud = document.sendftpform.artofaudio.value;
-				var artdoc = document.sendftpform.artoffile.value;
-				// Submit the values so we put them into sessions
-				var url = '<cfoutput>#myself#</cfoutput>c.store_art_values';
-				var items = '&artofimage=' + artimg + '&artofvideo=' + artvid + '&artofaudio=' + artaud + '&artoffile=' + artdoc;
-				// Submit Form
-				$.ajax({
-					type: "POST",
-					url: url,
-				   	data: items
-				});
 				// Load the FTP window
-				loadcontent('thewindowcontent1','<cfoutput>#myself#</cfoutput>c.ftp_gologin&sendaszip=T&thetype=&frombasket=T&file_id=' + document.sendftpform.file_id.value + '&ftp_server=' + document.sendftpform.ftp_server.value + '&ftp_user=' + escape(document.sendftpform.ftp_user.value) + '&ftp_pass=' + escape(document.sendftpform.ftp_pass.value) + '&ftp_passive=' + passive + '&thepath=' + document.sendftpform.thepath.value);
+				$('##thewindowcontent1').load('<cfoutput>#myself#</cfoutput>c.ftp_gologin', { sendaszip:"T", thetype:"", frombasket:"T", file_id: document.sendftpform.file_id.value, ftp_server: document.sendftpform.ftp_server.value, ftp_user: document.sendftpform.ftp_user.value, ftp_pass: document.sendftpform.ftp_pass.value, ftp_passive: passive, thepath: document.sendftpform.thepath.value });
 			</cfif>
 		}
 		return false;

@@ -258,7 +258,7 @@
 		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->
-	<cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput>
+	<!--- <cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput> --->
 	<cfreturn arguments.thestruct.zipname>
 </cffunction>
 
@@ -295,8 +295,9 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thename#" path="#arguments.thestruct.newpath#"></cfhttp>
-				<cfthread name="#ttd#" />
+				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+				</cfthread>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
@@ -356,13 +357,13 @@
 				<cfset theimgname = "thumb_#theimgid#.#qry.thumb_extension#">
 				<cfset thefinalname = listfirst(qry.img_filename_org,".") & ".#qry.thumb_extension#">
 				<cfset theext = qry.thumb_extension>
-				<cfset thiscloudurl = qry.cloud_url>
+				<cfset arguments.thestruct.thiscloudurl = qry.cloud_url>
 			<cfelse>
 				<cfset theimgname = qry.img_filename_org>
 				<cfset thefinalname = qry.img_filename_org>
 				<cfset theext = qry.img_extension>
 				<cfset theart = theext>
-				<cfset thiscloudurl = qry.cloud_url_org>
+				<cfset arguments.thestruct.thiscloudurl = qry.cloud_url_org>
 			</cfif>
 			<!--- If the art id not thumb and original we need to get the name from the parent record --->
 			<cfif qry.img_group NEQ "">
@@ -408,13 +409,9 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<cftry>
-					<cfhttp url="#thiscloudurl#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#"></cfhttp>
-					<cfcatch type="any">
-						<cfmail from="server@razuna.com" to="support@razuna.com" subject="Nirvanix error on download in basket" type="html"><cfdump var="#cfcatch#"></cfmail>
-					</cfcatch>
-				</cftry>
-				<cfthread name="#thethreadid#" />
+				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.thiscloudurl#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+				</cfthread>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
@@ -519,8 +516,10 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thenewname#" path="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#"></cfhttp>
-				<cfthread name="#wvt#" />			<!--- Amazon --->
+				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+				</cfthread>			
+			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<!--- Download file --->
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
@@ -618,8 +617,9 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
-				<cfhttp url="#arguments.thestruct.qry.cloud_url_org#" file="#arguments.thestruct.thenewname# " path="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#"></cfhttp>
-				<cfthread name="download#theart##theaudid#" />
+				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+				</cfthread>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<!--- Download file --->

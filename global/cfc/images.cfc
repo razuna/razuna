@@ -974,9 +974,10 @@
 <!--- WRITE IMAGE TO SYSTEM --->
 <cffunction name="writeimage" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
 	<cfparam name="arguments.thestruct.zipit" default="T">
 	<!--- Create a temp folder --->
-	<cfset tempfolder = createuuid()>
+	<cfset tempfolder = createuuid("")>
 	<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" mode="775">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -985,18 +986,18 @@
 	<!--- Put the id into a variable --->
 	<cfset theimageid = #arguments.thestruct.file_id#>
 	<!--- Start the loop to get the different kinds of images --->
-	<cfloop delimiters="," list="#arguments.thestruct.artofimage#" index="art">
+	<cfloop delimiters="," list="#session.artofimage#" index="art">
 		<!--- Since the image format could be from the related table we need to check this here so if the value is a number it is the id for the image --->
 		<cfif isnumeric(art)>
 			<!--- Set the image id for this type of format and set the extension --->
-			<cfset theimageid = #art#>
+			<cfset theimageid = art>
 			<cfquery name="ext" datasource="#variables.dsn#">
 			SELECT img_extension
 			FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam value="#theimageid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<cfset art = #ext.img_extension#>
+			<cfset art = ext.img_extension>
 		</cfif>
 		<!--- Create subfolder for the kind of image --->
 		<cfdirectory action="create" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#" mode="775">
@@ -1041,8 +1042,9 @@
 				</cfthread>
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
-				<cfhttp url="http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#arguments.thestruct.hostid#/#arguments.thestruct.qry.path_to_asset#/#arguments.thestruct.theimgname#" file="#arguments.thestruct.thefinalname#" path="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.tempfolder#/#arguments.thestruct.art#"></cfhttp>
-				<cfthread name="download#art##theimageid#" />
+				<cfthread name="download#art##theimageid#" intstruct="#arguments.thestruct#">
+					<cfhttp url="http://services.nirvanix.com/#attributes.intstruct.nvxsession#/razuna/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#"></cfhttp>
+				</cfthread>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon">
 				<!--- Download file --->
@@ -1077,12 +1079,17 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
-		<cfset thenewname = listfirst(qry.img_filename, ".") & "." & theext>
+		<!--- If filename contains /\ --->
+		<cfset thenewname = replace(qry.img_filename,"/","-","all")>
+		<cfset thenewname = replace(thenewname,"\","-","all")>
+		<cfset thenewname = listfirst(thenewname, ".") & "." & theext>
 		<!--- Rename the file --->
 		<cffile action="move" source="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thefinalname#" destination="#arguments.thestruct.thepath#/outgoing/#tempfolder#/#art#/#thenewname#">
 	</cfloop>
 	<!--- Check that the zip name contains no spaces --->
-	<cfset zipname = replacenocase("#arguments.thestruct.zipname#", " ", "_", "All")>
+	<cfset zipname = replace(arguments.thestruct.zipname,"/","-","all")>
+	<cfset zipname = replace(zipname,"\","-","all")>
+	<cfset zipname = replace(zipname, " ", "_", "All")>
 	<cfset zipname = zipname & ".zip">
 	<!--- Remove any file with the same name in this directory. Wrap in a cftry so if the file does not exist we don't have a error --->
 	<cftry>
@@ -1094,7 +1101,7 @@
 	<!--- Remove the temp folder --->
 	<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/outgoing/#tempfolder#" recurse="yes">
 	<!--- Return --->
-	<cfreturn #zipname#>
+	<cfreturn zipname>
 </cffunction>
 
 <!--- MOVE FILE IN THREADS --->
