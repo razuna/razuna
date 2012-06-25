@@ -339,9 +339,9 @@
 		</cfif>
 		<!--- Log --->
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')#>
-		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
 </cffunction>
 
 <!--- REMOVE THE AUDIO --->

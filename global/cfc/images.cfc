@@ -512,8 +512,8 @@
 	<cfparam name="arguments.thestruct.frombatch" default="F">
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
-	<cfset i = listfirst(i,"-")>
-	<cfset arguments.thestruct.file_id = i>
+		<cfset i = listfirst(i,"-")>
+		<cfset arguments.thestruct.file_id = i>
 		<!--- Save the desc and keywords --->
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 			<!--- If we come from all we need to change the desc and keywords arguments name --->
@@ -612,9 +612,9 @@
 		</cfif>
 		<!--- Log --->
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='img',assetid='#arguments.thestruct.file_id#')#>
-		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
 </cffunction>
 
 <!--- CONVERT ASSET IN THREADS --->
