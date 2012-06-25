@@ -283,6 +283,9 @@
 			<!--- Check that the filename has an extension --->
 			<cfset rep = replacenocase(arguments.thestruct.qry.file_name,".#arguments.thestruct.qry.file_extension#","","one")>
 			<cfset thename = replace(rep,".","-","all")>
+			<!--- If thenewname variable contains /\ --->
+			<cfset thename = replace(thename,"/","-","all")>
+			<cfset thename = replace(thename,"\","-","all")>
 			<cfset arguments.thestruct.thename = thename & ".#arguments.thestruct.qry.file_extension#">
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
@@ -381,6 +384,9 @@
 				<cfset thefname = replace(rep,".","-","all")>
 				<cfset thenewname = rep & "." & theext>
 			</cfif>
+			<!--- If thenewname variable contains /\ --->
+			<cfset thenewname = replace(thenewname,"/","-","all")>
+			<cfset thenewname = replace(thenewname,"\","-","all")>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset thefname = listfirst(thefnamewithext, ".")>
@@ -488,6 +494,9 @@
 				<cfset thefname = replace(rep,".","-","all")>
 				<cfset thenewname = rep & "." & qry.vid_extension>
 			</cfif>
+			<!--- If thenewname variable contains /\ --->
+			<cfset thenewname = replace(thenewname,"/","-","all")>
+			<cfset thenewname = replace(thenewname,"\","-","all")>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset thefname = listfirst(thefnamewithext, ".")>
@@ -586,6 +595,9 @@
 				<cfset thefname = replace(rep,".","-","all")>
 				<cfset thenewname = rep & "." & qry.aud_extension>
 			</cfif>
+			<!--- If thenewname variable contains /\ --->
+			<cfset thenewname = replace(thenewname,"/","-","all")>
+			<cfset thenewname = replace(thenewname,"\","-","all")>
 			<!--- convert the foldername without space and foreign chars --->
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset thefname = listfirst(thefnamewithext, ".")>
