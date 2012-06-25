@@ -2029,7 +2029,7 @@
 			</true>
 		</if>
 		<!-- Show the folder listing -->
-		<do action="folder_content" />
+		<do action="folder" />
 	</fuseaction>
 	
 	<!--
