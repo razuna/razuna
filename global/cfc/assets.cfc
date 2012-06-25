@@ -60,8 +60,14 @@
 		<cfif FileExists("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
 			<cfset md5hash = hashbinary("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
 		</cfif>
+		<!--- Check if we have to check for md5 records --->
+		<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
 		<!--- Check for the same MD5 hash in the existing records --->
-		<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+		<cfif checkformd5>
+			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+		<cfelse>
+			<cfset var md5here = 0>
+		</cfif>
 		<!--- If file does not exsist continue else send user an eMail --->
 		<cfif md5here EQ 0>
 			<!--- Add to temp db --->
@@ -146,8 +152,14 @@
 		<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 			<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 		</cfif>
+		<!--- Check if we have to check for md5 records --->
+		<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
 		<!--- Check for the same MD5 hash in the existing records --->
-		<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+		<cfif checkformd5>
+			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+		<cfelse>
+			<cfset var md5here = 0>
+		</cfif>
 		<!--- If file does not exsist continue else send user an eMail --->
 		<cfif md5here EQ 0>
 			<!--- Add to temp db --->
@@ -224,8 +236,14 @@
 						<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 							<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						</cfif>
+						<!--- Check if we have to check for md5 records --->
+						<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
 						<!--- Check for the same MD5 hash in the existing records --->
-						<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+						<cfif checkformd5>
+							<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+						<cfelse>
+							<cfset var md5here = 0>
+						</cfif>
 						<!--- If file does not exsist continue else send user an eMail --->
 						<cfif md5here EQ 0>
 							<!--- Add to temp db --->
@@ -334,8 +352,14 @@
 			<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 				<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 			</cfif>
+			<!--- Check if we have to check for md5 records --->
+			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
 			<!--- Check for the same MD5 hash in the existing records --->
-			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<cfif checkformd5>
+				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<cfelse>
+				<cfset var md5here = 0>
+			</cfif>
 			<!--- If file does not exsist continue else send user an eMail --->
 			<cfif md5here EQ 0>
 				<!--- Add to temp db --->
@@ -535,8 +559,14 @@
 			<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 				<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 			</cfif>
+			<!--- Check if we have to check for md5 records --->
+			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
 			<!--- Check for the same MD5 hash in the existing records --->
-			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<cfif checkformd5>
+				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<cfelse>
+				<cfset var md5here = 0>
+			</cfif>
 			<!--- If file does not exsist continue else send user an eMail --->
 			<cfif md5here EQ 0>
 				<!--- If we only have the folder_id as variable --->
@@ -698,8 +728,14 @@
 			<cfif FileExists("#arguments.thestruct.link_path_url#")>
 				<cfset md5hash = hashbinary("#arguments.thestruct.link_path_url#")>
 			</cfif>
+			<!--- Check if we have to check for md5 records --->
+			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
 			<!--- Check for the same MD5 hash in the existing records --->
-			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<cfif checkformd5>
+				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<cfelse>
+				<cfset var md5here = 0>
+			</cfif>
 		<!--- If a URL --->
 		<cfelse>
 			<cfset var orgsize = 0>
@@ -2818,8 +2854,14 @@ This is the main function called directly by a single upload else from addassets
 				<cfif FileExists("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
 					<cfset md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
 				</cfif>
+				<!--- Check if we have to check for md5 records --->
+				<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
 				<!--- Check for the same MD5 hash in the existing records --->
-				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+				<cfif checkformd5>
+					<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+				<cfelse>
+					<cfset var md5here = 0>
+				</cfif>
 				<!--- If file does not exsist continue else send user an eMail --->
 				<cfif md5here EQ 0>
 					<!--- Get folder id with the name of the folder --->
@@ -4637,8 +4679,14 @@ This is the main function called directly by a single upload else from addassets
 		<cfif FileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
 			<cfset md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
 		</cfif>
-		<!--- Check for the same MD5 hash in the existing records --->
-			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<!--- Check if we have to check for md5 records --->
+			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
+			<!--- Check for the same MD5 hash in the existing records --->
+			<cfif checkformd5>
+				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+			<cfelse>
+				<cfset var md5here = 0>
+			</cfif>
 			<!--- If file does not exsist continue else send user an eMail --->
 			<cfif md5here EQ 0>
 				<!--- Add to temp db --->

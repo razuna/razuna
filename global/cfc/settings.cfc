@@ -35,6 +35,16 @@
 	<cfreturn set>
 </cffunction>
 
+<!--- Get md5check value --->
+<cffunction name="getmd5check">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="getmd5check#session.hostid#" cachedomain="#session.hostid#_settings2">
+	SELECT set2_md5check
+	FROM #session.hostdbprefix#settings_2
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn qry.set2_md5check>
+</cffunction>
+
 <!--- Get all settings for this host --->
 <cffunction name="allsettings_2">
 	<cfquery datasource="#application.razuna.datasource#" name="set2" cachename="allsettings_2#session.hostid#" cachedomain="#session.hostid#_settings2">
@@ -59,7 +69,7 @@
 <!--- Get settings from within DAM --->
 <cffunction name="getsettingsfromdam" returntype="query">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="getsettingsfromdam#session.hostid#" cachedomain="#session.hostid#_settings2">
-	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub
+	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -80,7 +90,8 @@
 	set2_date_format = <cfqueryparam value="#arguments.thestruct.set2_date_format#" cfsqltype="cf_sql_varchar">,
 	set2_date_format_del = <cfqueryparam value="#arguments.thestruct.set2_date_format_del#" cfsqltype="cf_sql_varchar">,
 	set2_intranet_reg_emails = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails#" cfsqltype="cf_sql_varchar">,
-	set2_intranet_reg_emails_sub = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails_sub#" cfsqltype="cf_sql_varchar">
+	set2_intranet_reg_emails_sub = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails_sub#" cfsqltype="cf_sql_varchar">,
+	set2_md5check = <cfqueryparam value="#arguments.thestruct.set2_md5check#" cfsqltype="cf_sql_varchar">
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>

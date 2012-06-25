@@ -717,6 +717,7 @@
 		  HOST_ID						BIGINT,
 		  SET2_AWS_BUCKET				VARCHAR(100),
 		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 't',
+		  SET2_MD5CHECK					VARCHAR(5) DEFAULT 'true',
 		  rec_uuid			VARCHAR(100)
 		)
 		</cfquery>
