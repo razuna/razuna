@@ -1597,3 +1597,11 @@ function razunatreefocusbranch(folderidr,folderid){
 function razunatreefocusdelay(folderid){
 	$.tree.focused().select_branch('#' + folderid);	
 }
+// Toggle Slide
+function toggleslide(theclickid,thefield){
+	$('#' + theclickid).slideToggle('slow');
+	$('#' + thefield).select();
+	$('#' + thefield).click(function(){ 
+		this.select(); 
+	});
+};

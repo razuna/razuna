@@ -121,6 +121,8 @@
 											<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
 												<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#</i>
 											</cfif>
+											<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');"><img src="#dynpath#/global/host/dam/images/emblem-symbolic-link.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
+											<div id="divo#attributes.file_id#" style="display:none;">Link: <input type="text" id="inputo#attributes.file_id#" style="width:270px;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" /></div>
 										</cfif>
 									</td>
 								</tr>

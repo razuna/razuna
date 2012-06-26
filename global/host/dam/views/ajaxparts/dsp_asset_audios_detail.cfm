@@ -102,14 +102,8 @@
 								<td width="100%" nowrap="true">
 									<cfif qry_detail.detail.link_kind NEQ "url">
 										<cfif qry_detail.detail.shared EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" target="_blank"></cfif>Original #defaultsObj.trans("format")#: #ucase(qry_detail.detail.aud_extension)#</a> <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
-										<!--- Nirvanix --->
-										<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
-											<!--- <br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#</i> --->
-										</cfif>
-										<!--- Amazon --->
-										<cfif application.razuna.storage EQ "amazon">
-											<!--- <br><i>#qry_detail.detail.cloud_url_org#</i> --->
-										</cfif>
+										<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');"><img src="#dynpath#/global/host/dam/images/emblem-symbolic-link.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
+										<div id="divo#attributes.file_id#" style="display:none;">Link: <input type="text" id="inputo#attributes.file_id#" style="width:270px;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#&v=o" /></div>
 									<cfelse>
 										<a href="#qry_detail.detail.link_path_url#" target="_blank">#defaultsObj.trans("link_to_original")#</a>
 									</cfif>
