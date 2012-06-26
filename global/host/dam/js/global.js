@@ -5,17 +5,6 @@ $.ajaxSetup({
 // Show Window
 function showwindow(theurl,thetitle,thew,thewin) {
 	destroywindow(thewin);
-	//Get the screen height and width  
-	//var maskHeight = $(document).height();  
-	// var maskWidth = $(window).width();
-	//Get the window height and width
-	// var winH = $(window).height();
-	//var winW = $(window).width();
-	//var t = winH/2-$('#thewindowcontent' + thewin).height()/2-200;
-	//var w = winW/2-$('#thewindowcontent' + thewin).width()/2;
-	//Set the popup window to center
-	//$('#thewindowcontent' + thewin).css('top',  winH/2-$('#thewindowcontent' + thewin).height()/2);
-	//$('#thewindowcontent' + thewin).css('left', winW/2-$('#thewindowcontent' + thewin).width()/2);
 	// Clear the content of the window and show the loading gif
 	$('#thewindowcontent' + thewin).html('<img src="' + dynpath + '/global/host/dam/images/loading.gif" width="16" height="16" border="0" style="padding:10px;">');
 	// Load Content into Dialog
