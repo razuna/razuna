@@ -2786,8 +2786,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfif thedir.attributes NEQ "H" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
 				<cfset arguments.thestruct.foldername = listlast(name,FileSeparator())>
 				<cfset arguments.thestruct.thepathtofolder = replacenocase(name,arguments.thestruct.foldername,"","one")>
-				<cfif arguments.thestruct.thepathtofolder NEQ arguments.thestruct.foldername>
-					<cfset f = arguments.thestruct.thepathtofolder & "/" & arguments.thestruct.foldername>
+				<cfif arguments.thestruct.thepathtofolder NEQ arguments.thestruct.foldername AND arguments.thestruct.thepathtofolder NEQ "">
+					<cfset f = arguments.thestruct.thepathtofolder & arguments.thestruct.foldername>
 				<cfelse>
 					<cfset f = arguments.thestruct.foldername>
 				</cfif>
@@ -2805,7 +2805,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfif lastfolderid.recordcount NEQ 0>
 					<cfset arguments.thestruct.theid = lastfolderid.folder_id>
 				</cfif>
-				<cfif thedirsub.recordcount GT 1>
+				<cfif thedirsub.recordcount GTE 1>
 					<cfset arguments.thestruct.folderlevel = arguments.thestruct.folderlevel>
 				<cfelse>
 					<cfset arguments.thestruct.folderlevel = arguments.thestruct.folderlevel + 1>
@@ -2818,6 +2818,9 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfif>
 		</cfloop>
+		<!--- Flush Folders Cache --->
+		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_folders" />
+		<cfpause interval="5" />
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
 			<cfif size NEQ 0 AND fileexists("#directory#/#name#") AND attributes NEQ "H" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
@@ -2986,20 +2989,18 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="createfolderfromzip" output="true" access="private">
 	<cfargument name="thestruct" type="struct">
 	<!--- Check that the same folder does not already exist --->
-	<cfquery datasource="#variables.dsn#" name="ishere">
+	<!--- <cfquery datasource="#variables.dsn#" name="ishere">
 	SELECT folder_id
 	FROM #session.hostdbprefix#folders
 	WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.foldername)#" cfsqltype="cf_sql_varchar">
-	AND folder_level = <cfqueryparam value="#arguments.thestruct.folderlevel#" cfsqltype="cf_sql_numeric">
 	AND folder_id_r = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- If not the same folder here continue else abort --->
-	<cfif ishere.recordcount EQ 0>
+	<cfif ishere.recordcount EQ 0> --->
 		<!--- Create a new ID --->
-		<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#variables.database#" dsn="#variables.dsn#" thetable="#session.hostdbprefix#folders" theid="folder_id"> --->
-		<!--- Add the Folder --->
 		<cfset newfolderid = createuuid("")>
+		<!--- Add the Folder --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#folders
 		(folder_id, folder_name, folder_level, folder_id_r, folder_main_id_r, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
@@ -3007,12 +3008,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#arguments.thestruct.foldername#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.folderlevel#" cfsqltype="cf_sql_numeric">,
-		<cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
-		<!--- <cfif arguments.thestruct.folderlevel EQ (arguments.thestruct.folderlevelprevious + 1)>
-			<cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="cf_sql_numeric">
-		<cfelse>
-			<cfqueryparam value="#newid.id#" cfsqltype="cf_sql_numeric">
-		</cfif> --->,
+		<cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfif Val(arguments.thestruct.rid)>
 			<cfqueryparam value="#arguments.thestruct.rid#" cfsqltype="CF_SQL_VARCHAR">
 		<cfelse>
@@ -3026,12 +3022,9 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		)
 		</cfquery>
-
-		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_folders" />
-	<cfelse>
+<!--- 	<cfelse>
 		<cfset newfolderid = 0>
-	</cfif>
+	</cfif> --->
 	<cfreturn newfolderid />
 </cffunction>
 

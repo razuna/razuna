@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
 	<configid name="version">
-		<thetext>1.5</thetext>
+		<thetext>1.5 RC1</thetext>
 	</configid>
 	<configid name="prerelease">
-		<thetext>false</thetext>
+		<thetext>true</thetext>
 	</configid>
 	<configid name="global_im">
 		<thetext>/usr/bin</thetext>
