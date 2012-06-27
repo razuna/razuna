@@ -37,6 +37,8 @@
 
 <script type="text/javascript">
 	function remfolder(){
+		// Show loading bar
+		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		$('##explorer<cfif attributes.iscol EQ "T">_col</cfif>').load('#myself#c.folder_remove&folder_id=#folder_id#&iscol=<cfif attributes.iscol EQ "T">T<cfelse>F</cfif>', function() {
 			setTimeout("remfolderdelay()", 1000);
 		});
@@ -44,6 +46,7 @@
 	function remfolderdelay(){
 		$('##rightside').load('#myself#ajax.remove_folder_confirm');
 		destroywindow(1);
+		$("##bodyoverlay").remove();
 	}
 </script>
 </cfoutput>
