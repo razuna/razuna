@@ -2782,6 +2782,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.theid = folderId>
 		<cfset arguments.thestruct.folderlevel = folderlevel>
 		<cfset arguments.thestruct.rid = rootfolderId>
+		<cfset arguments.thestruct.fidr = 0>
 		<cfloop query="thedir">
 			<cfif thedir.attributes NEQ "H" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
 				<cfset arguments.thestruct.foldername = listlast(name,FileSeparator())>
@@ -2795,17 +2796,20 @@ This is the main function called directly by a single upload else from addassets
 				<cfdirectory action="list" directory="#directory#/#f#" name="thedirsub" recurse="false" type="dir" sort="name">
 				<!--- Get the folder id of the last directory --->
 				<cfquery datasource="#variables.dsn#" name="lastfolderid">
-				SELECT folder_id
+				SELECT folder_id, folder_id_r
 				FROM #session.hostdbprefix#folders
 				WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast(arguments.thestruct.thepathtofolder,FileSeparator()))#">
 				AND folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.rid#"> 
+				<cfif arguments.thestruct.fidr NEQ 0>
+					AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.fidr#">
+				</cfif>
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- If there are records found then assign the folder_id to theid else take the one given below --->
 				<cfif lastfolderid.recordcount NEQ 0>
 					<cfset arguments.thestruct.theid = lastfolderid.folder_id>
 				</cfif>
-				<cfif thedirsub.recordcount GTE 1>
+				<cfif thedirsub.recordcount GT 1>
 					<cfset arguments.thestruct.folderlevel = arguments.thestruct.folderlevel>
 				<cfelse>
 					<cfset arguments.thestruct.folderlevel = arguments.thestruct.folderlevel + 1>
@@ -2815,6 +2819,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfif thedirsub.recordcount EQ 1>
 					<cfset arguments.thestruct.theid = thenewfid>
 					<cfset arguments.thestruct.folderlevel = arguments.thestruct.folderlevel + 1>
+					<cfset arguments.thestruct.fidr = lastfolderid.folder_id_r>
 				</cfif>
 			</cfif>
 		</cfloop>
@@ -2868,19 +2873,36 @@ This is the main function called directly by a single upload else from addassets
 				<!--- If file does not exsist continue else send user an eMail --->
 				<cfif md5here EQ 0>
 					<!--- Get folder id with the name of the folder --->
-					<cfquery datasource="#variables.dsn#" name="qryfolderid">
-					SELECT folder_id, folder_name
-					FROM #session.hostdbprefix#folders
-					WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast("#directory#/#arguments.thestruct.thepathtoname#","/\"))#">
-					AND folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#"> 
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					<cfquery datasource="#variables.dsn#" name="qryfolderidmain">
+					SELECT f.folder_id, f.folder_name,
+					CASE
+						WHEN EXISTS(
+							SELECT s.folder_id
+							FROM raz1_folders s
+							WHERE s.folder_id = f.folder_id_r
+							AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						) THEN 1
+						ELSE 0
+					END AS ISHERE
+					FROM #session.hostdbprefix#folders f
+					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast("#directory#/#arguments.thestruct.thepathtoname#",FileSeparator()))#">
+					AND f.folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
+					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- Subselect --->
+					<cfquery dbtype="query" name="qryfolderid">
+					SELECT *
+					FROM qryfolderidmain
+					WHERE ishere = 1
 					</cfquery>
 					<!--- Put folder id into the general struct --->
 					<cfif qryfolderid.recordcount NEQ 0>
 						<cfset arguments.thestruct.theid = qryfolderid.folder_id>
+						<!--- <cfset arguments.thestruct.fidr = qryfolderid.folder_id_r> --->
 					<cfelse>
 						<cfset arguments.thestruct.theid = rootfolderId>
 						<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
+						<!--- <cfset arguments.thestruct.fidr = 0> --->
 					</cfif>
 					<!--- Add to temp db --->
 					<cfquery datasource="#variables.dsn#" name="qry">
