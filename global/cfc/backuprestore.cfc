@@ -832,14 +832,9 @@
 		<cfflush>
 		<!--- Backup Dir --->
 		<cfif arguments.thestruct.admin EQ "F">
-			<cfif application.razuna.storage EQ "local">
-				<cfset var backupdir = "#arguments.thestruct.thepath#/backup">
-				<cfset var scriptname = replacenocase(cgi.script_name,"index.cfm","","one")>
-				<cfset var backupdl = "#scriptname#backup/#arguments.thestruct.thedatefile#.zip">
-			<cfelse>
-				<cfset var backupdir = "#arguments.thestruct.thepath#/backup/#session.hostid#">
-				<cfset var backupdl = "backup/#session.hostid#/#arguments.thestruct.thedatefile#.zip">
-			</cfif>
+			<cfset var backupdir = "#arguments.thestruct.thepath#/backup/#session.hostid#">
+			<cfset var scriptname = replacenocase(cgi.script_name,"index.cfm","","one")>
+			<cfset var backupdl = "#scriptname#backup/#session.hostid#/#arguments.thestruct.thedatefile#.zip">
 		<cfelseif arguments.thestruct.admin EQ "T">
 			<cfset var backupdir = ExpandPath("backup")>
 			<cfset var backupdl = "admin/backup/#arguments.thestruct.thedatefile#.zip">
