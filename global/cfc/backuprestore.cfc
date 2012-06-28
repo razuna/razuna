@@ -840,7 +840,7 @@
 			<cfset var backupdl = "admin/backup/#arguments.thestruct.thedatefile#.zip">
 		</cfif>
 		<!--- Download URL complete --->
-		<cfset backupdl = "http://#cgi.HTTP_HOST#/#cgi.context_path#/" & backupdl>
+		<cfset backupdl = "http://#cgi.HTTP_HOST#" & backupdl>
 		<!--- Check if errors folder exists, else create it --->
 		<cfif NOT DirectoryExists("#backupdir#")>
 			<cfdirectory action="create" directory="#backupdir#" mode="775">
