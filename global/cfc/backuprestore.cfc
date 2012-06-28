@@ -835,14 +835,10 @@
 			<cfset var backupdir = "#arguments.thestruct.thepath#/backup/#session.hostid#">
 			<cfset var scriptname = replacenocase(cgi.script_name,"index.cfm","","one")>
 			<cfset var backupdl = "backup/#session.hostid#/#arguments.thestruct.thedatefile#.zip">
-			<!--- <cfset var backupdl = replacenocase(backupdl,"/#arguments.thestruct.dynpath#","","one")> --->
 		<cfelseif arguments.thestruct.admin EQ "T">
 			<cfset var backupdir = ExpandPath("backup")>
 			<cfset var backupdl = "admin/backup/#arguments.thestruct.thedatefile#.zip">
 		</cfif>
-		<!--- Download URL complete --->
-		<!--- <cfset backupdl = "http://#cgi.HTTP_HOST#" & backupdl> --->
-		
 		<!--- Check if errors folder exists, else create it --->
 		<cfif NOT DirectoryExists("#backupdir#")>
 			<cfdirectory action="create" directory="#backupdir#" mode="775">
