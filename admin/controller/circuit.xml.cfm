@@ -750,6 +750,8 @@
 		<!-- Assetpath -->
 		<do action="assetpath" />
 		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('sched_backup')" returnvariable="qry_setinterval" />
+		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_backup(attributes.hostid)" returnvariable="qry_backup" />
 		<!-- Show -->
 		<do action="ajax.prefs_backup_restore" />
@@ -770,6 +772,14 @@
 				<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backupxml(attributes)" />
 			</false>
 		</if>
+	</fuseaction>
+	<!-- Run backup from scheduled task -->
+	<fuseaction name="runschedbackup">
+		<!-- Param -->
+		<set name="attributes.admin" value="T" />
+		<set name="attributes.hostid" value="0" />
+		<!-- CFC: Backup -->
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="backuptodbthread(attributes)" />
 	</fuseaction>
 	<!-- Restore from filesystem -->
 	<fuseaction name="prefs_restore_do">
@@ -814,7 +824,11 @@
 		<!-- Show -->
 		<do action="prefs_backup_restore" />
 	</fuseaction>
-
+	<!-- Pref Backup -->
+	<fuseaction name="prefs_sched_backup">
+		<!-- Set schedule -->
+		<invoke object="myFusebox.getApplicationData().backuprestore" methodcall="setschedbackup(attributes.sched)" />
+	</fuseaction>
 	<!--  -->
 	<!-- END: GLOBAL PREFERENCES -->
 	<!--  -->

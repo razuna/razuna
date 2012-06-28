@@ -25,6 +25,14 @@
 --->
 <cfcomponent extends="extQueryCaching">
 	
+	<!--- Call this from the scheduled task --->
+	<cffunction name="backuptodbthread" output="true">
+		<cfargument name="thestruct" type="struct">
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="backuptodb" thestruct="#attributes.intstruct#" />
+		</cfthread>
+	</cffunction>
+
 	<!--- Backup to internal DB --->
 	<cffunction name="backuptodb" output="true">
 		<cfargument name="thestruct" type="struct">
@@ -1861,4 +1869,30 @@
 		<cfreturn mystruct>
 	</cffunction>
 	
+	<!--- Save scheduled backup --->
+	<cffunction name="setschedbackup" output="false">
+		<cfargument name="interval" type="string">
+		<!--- If we need to reset the key then save first --->
+		<cfif arguments.interval EQ 0>
+			<cfinvoke component="settings" method="savesetting" thefield="sched_backup" thevalue="0" />
+			<cfschedule action="delete" task="RazScheduledBackup" />
+		<cfelse>
+			<cfinvoke component="settings" method="savesetting" thefield="sched_backup" thevalue="#arguments.interval#" />
+			<!--- Get Server URL --->
+			<cfset serverUrl = "http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
+			<cfset startDate = LSDateFormat(now(), "mm/dd/yyyy")>
+			<cfset startTime = LSTimeFormat(now(), "HH:mm")>
+			<!--- Save scheduled event in CFML scheduling engine --->
+			<cfschedule action="update"
+						task="RazScheduledBackup" 
+						operation="HTTPRequest"
+						url="#serverUrl#?fa=c.runschedbackup&tofiletype=raz"
+						startDate="#startDate#"
+						startTime="#startTime#"
+						interval="#arguments.interval#">
+		</cfif>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

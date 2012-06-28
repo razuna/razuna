@@ -35,6 +35,7 @@
 			<td style="background-color:yellow;font-weight:bold;">During a Backup or Restore operation your server will become unresponsive to any requests! Do these operation when no one is accessing your server.</td>
 		</tr>
 	</table>
+	<!--- Backup --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
 			<th>Backup</th>
@@ -44,6 +45,24 @@
 			Backup to: <input type="radio" name="tofiletype" id="tofiletype" value="raz" checked="checked"> Razuna format &mdash; Export to:<input type="radio" name="tofiletype" id="tofiletype" value="sql"> SQL file <input type="radio" name="tofiletype" id="tofiletype" value="xml"> XML file <input type="button" name="backup" value="Backup" class="button" onclick="dobackup();" style="margin-left:30px;"><div id="backup_progress"></div><div id="backup_dummy"></div></td>
 		</tr>
 	</table>
+	<!--- Schedule Backup --->
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+		<tr>
+			<th>Scheduled Backup</th>
+		</tr>
+		<tr>
+			<td>
+				<input type="radio" name="schedback" value="0"<cfif qry_setinterval EQ 0 OR qry_setinterval EQ ""> checked="ckecked"</cfif>> Never<br />
+				<input type="radio" name="schedback" value="3600"<cfif qry_setinterval EQ 3600> checked="ckecked"</cfif>> Once Hourly<br />
+				<input type="radio" name="schedback" value="21600"<cfif qry_setinterval EQ 21600> checked="ckecked"</cfif>> Twice Daily<br />
+				<input type="radio" name="schedback" value="daily"<cfif qry_setinterval EQ "daily"> checked="ckecked"</cfif>> Once Daily<br />
+				<input type="radio" name="schedback" value="weekly"<cfif qry_setinterval EQ "weekly"> checked="ckecked"</cfif>> Once Weekly<br /><br />
+				<input type="button" name="backup" value="Save Schedule" class="button" onclick="doschedbackup();">
+				<div id="schedback_dummy"></div>
+			</td>
+		</tr>
+	</table>
+	<!--- Restore --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
 			<th colspan="3">#defaultsObj.trans("admin_maintenance_restore_desc")#</th>
@@ -72,41 +91,18 @@
 	<script language="JavaScript" type="text/javascript">
 		// Do Backup
 		function dobackup(){
-			// Clear the value of the divs
-			// $("##backup_progress").html('');
-			// $("##backup_dummy").html('');
-			// Get value of server or download
-			// var backuptosystem = $('##backuptosystem').val();
 			var tofiletype = $('input:radio[name=tofiletype]:checked').val();
-			// Set div to waiting
-			// $("##backup_progress").html('Working...Please wait!');
-			// loadinggif('backup_dummy');
-			// Start backup
-			// loadcontent('backup_dummy','#myself#c.prefs_backup_do&backuptosystem=' + backuptosystem);
 			window.open('#myself#c.prefs_backup_do&tofiletype=' + tofiletype, 'winbackup', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=500,height=500');
+		}
+		// Do Schedule Backup
+		function doschedbackup(){
+			var schedback = $('input:radio[name=schedback]:checked').val();
+			loadcontent('dummy_maintenance','#myself#c.prefs_sched_backup&sched=' + schedback);
+			$('##schedback_dummy').html('<span style="font-weight:bold;color:green;">#defaultsObj.trans("success")#</span>');
 		}
 		// Do Restore from filesystem
 		function dorestore(backid){
-			// Clear the value of the divs
-			// $("##restore_progress").html('');
-			// $("##restore_dummy").html('');
-			// Get the selected file
-			// var thebackupfile = $('##thebackupfile').val();
-			// if (thebackupfile == null){
-				// Alert user
-			//	$("##restore_progress").html('<span style="color:red;">Please select a backup file!</span>');
-			// }
-			// else {
-				// Set div to waiting
-				// $("##restore_progress").html('Working...Please wait!');
-				// loadinggif('restore_dummy');
-				// Get value of reindex
-				// var reindex = $('##reindex').attr('checked');
-				// Start Restore
-				//loadcontent('restore_dummy','#myself#c.prefs_restore_do&thebackupfile=' + escape(thebackupfile));
-				// window.open('#myself#c.prefs_restore_do&thebackupfile=' + escape(thebackupfile));
-				window.open('#myself#c.prefs_restore_do&back_id=' + escape(backid), 'winrestore', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=500,height=500');
-			//}
+			window.open('#myself#c.prefs_restore_do&back_id=' + escape(backid), 'winrestore', 'toolbar=no,location=no,directories=no,status=no,menubar=no,scrollbars=1,resizable=1,copyhistory=no,width=500,height=500');
 		}
 	</script>
 </cfoutput>
