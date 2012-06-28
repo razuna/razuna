@@ -1253,7 +1253,7 @@
 		  HOST_ID						BIGINT,
 		  SET2_AWS_BUCKET				VARCHAR(100),
 		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 'f',
-		  SET2_MD5CHECK					VARCHAR(5) DEFAULT 'true',
+		  SET2_MD5CHECK					VARCHAR(5) DEFAULT 'false',
 		  rec_uuid						VARCHAR(100),
 		  PRIMARY KEY (rec_uuid),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS_2_FK FOREIGN KEY (HOST_ID)
