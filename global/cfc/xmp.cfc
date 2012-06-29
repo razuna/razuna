@@ -1596,6 +1596,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 <!--- Loop to get files --->
 <cffunction name="loopfiles" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Get all custom fields --->
+	<cfinvoke component="custom_fields" method="get" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cfields" />
 	<!--- Get the files according to the extension --->
 	<cfswitch expression="#arguments.thestruct.filetype#">
 		<!--- Images --->
@@ -1758,7 +1760,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
 	</cfif>
 	<!--- Add custom fields --->
-	<cfloop query="arguments.thestruct.qry_cf">
+	<cfloop query="arguments.thestruct.qry_cfields">
 		<!--- Replace foreign chars in column names --->
 		<cfset cfcolumn = REReplace(cf_text, "([^[:word:]^-]+)", "_", "ALL")>
 		<!--- Query the query first to see if there is already a column with this custom field there. If not then add column else set cell --->
@@ -1768,17 +1770,19 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		WHERE id = '#arguments.thestruct.file_id#'
 		</cfquery>
 		<!--- Check if the above query returns the custom text column in the columnlist --->
-		<cfset qhas = ListContainsNoCase(qcf.columnlist, cfcolumn)>
-		<!--- This will either return a 0 (for not found) --->
-		<!--- <cfif qhas EQ 0> --->
+		<cfset qhas = ListFindNoCase(qcf.columnlist, cfcolumn)>
+		<cfif qhas EQ 0>
 			<!--- Add new column with value --->
 			<cfset MyArray = ArrayNew(1)>
 			<cfset MyArray[1] = "">
-			<cfif qhas EQ 0>
-				<cfset QueryAddcolumn(arguments.thestruct.tq, cfcolumn, "varchar", MyArray)>
-				<cfset arguments.thestruct.meta_fields = arguments.thestruct.meta_fields & "," & cfcolumn>
-			</cfif>
-		<!--- </cfif> --->
+			<cfset QueryAddcolumn(arguments.thestruct.tq, cfcolumn, "varchar", MyArray)>
+			<cfset arguments.thestruct.meta_fields = arguments.thestruct.meta_fields & "," & cfcolumn>
+		</cfif>
+	</cfloop>
+	<!--- Add custom fields values --->
+	<cfloop query="arguments.thestruct.qry_cf">
+		<!--- Replace foreign chars in column names --->
+		<cfset cfcolumn = REReplace(cf_text, "([^[:word:]^-]+)", "_", "ALL")>
 		<!--- Set Cell --->
 		<cfset QuerySetCell(arguments.thestruct.tq, cfcolumn, cf_value)>
 	</cfloop>

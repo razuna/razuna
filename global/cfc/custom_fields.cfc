@@ -32,7 +32,7 @@
 		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text
 		FROM #session.hostdbprefix#custom_fields c, #session.hostdbprefix#custom_fields_text ct
 		WHERE c.cf_id = ct.cf_id_r
-<!--- 		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1"> --->
+ 		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		ORDER BY c.cf_order
 		</cfquery>
