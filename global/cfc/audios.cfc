@@ -893,7 +893,7 @@
 					<cfthread name="uploadconvert#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.detail.folder_id_r#/aud/#attributes.intstruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/#arguments.intstruct.finalaudioname#">
+							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/#intstruct.intstruct.finalaudioname#">
 							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 						</cfinvoke>
 					</cfthread>
