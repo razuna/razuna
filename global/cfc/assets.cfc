@@ -2346,9 +2346,9 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 		</cftransaction>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="assets.cfc resizeImage">
+			<!--- <cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="assets.cfc resizeImage">
 				<cfdump var="#cfcatch#" />
-			</cfmail>
+			</cfmail> --->
 		</cfcatch>
 	</cftry>
 	<!--- Return --->

@@ -678,7 +678,7 @@
 				<!--- Set Downloadtoken --->
 				<cfset var theurl = "">
 				<!--- Send us eMail --->
-				<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="Nirvanix signedurl reponsecode" type="html">
+				<!--- <cfmail from="server@razuna.com" to="nitai@razuna.com" subject="Nirvanix signedurl reponsecode" type="html">
 					<cfdump var="#respcode#">
 					<p>
 					100	Missing required parameters	Occurs when one or more required parameters is missing.<br />
@@ -691,14 +691,14 @@
 					</p>
 					<cfdump var="//razuna/#session.hostid#/#arguments.thestruct.theasset#">
 					<cfdump var="#cfhttp#">
-				</cfmail>
+				</cfmail> --->
 				<!--- Send user an eMail --->
 				<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 				SELECT user_email
 				FROM users
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
-				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#arguments.thestruct.theasset#) could not proberly be added to our system. Please re-upload it again or contact us at support@razuna.com. We apologize for this!">
+				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#arguments.thestruct.theasset#) could not be added to our system. Most likely this means you have exceeded your storage or bandwidth quota. Please upgrade within your account settings!">
 			</cfif>
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug signedurl" type="html">
