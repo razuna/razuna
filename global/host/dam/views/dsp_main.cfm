@@ -87,7 +87,7 @@
 										</tr>
 										<tr>
 											<td>
-												<img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif" height=30 width=140 alt="Google Groups"><br />
+												<img src="//groups.google.com/intl/en/images/logos/groups_logo_sm.gif" height=30 width=140 alt="Google Groups"><br />
 												Subscribe to razuna-testers<br />
 												<form action="http://groups.google.com/group/razuna-testers/boxsubscribe">
 												Email: <input type="text" name="email" style="width:200px"> <input type=submit name="sub" value="Subscribe">

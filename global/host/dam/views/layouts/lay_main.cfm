@@ -57,7 +57,7 @@
 <!--- JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.form.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.form.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
@@ -166,7 +166,7 @@
   var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
 </script>
 <!--- Twitter --->
-<script src="https://platform.twitter.com/widgets.js" type="text/javascript"></script>
+<script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
 <cfif application.razuna.isp>
 <script type="text/javascript">
   var _gaq = _gaq || [];
