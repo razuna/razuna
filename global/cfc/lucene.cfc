@@ -63,7 +63,7 @@
 			<!--- FOR FILES --->
 			<cfif arguments.category EQ "doc">
 				<!--- Query Record --->
-				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucdoc#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_files">
+				<cfquery name="qry_all" datasource="#arguments.dsn#">
 			    SELECT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, f.link_kind, f.lucene_key,
 			    ct.file_desc description, ct.file_keywords keywords, 
 			    f.file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext,
@@ -78,7 +78,7 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Query labels --->
-				<cfquery name="qry_l" datasource="#arguments.dsn#" cachename="ldoc#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_labels">
+				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
 				FROM ct_labels ct, #session.hostdbprefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
@@ -126,7 +126,7 @@
 			<!--- FOR IMAGES --->
 			<cfelseif arguments.category EQ "img">
 				<!--- Query Record --->
-				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucimg#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_images">
+				<cfquery name="qry_all" datasource="#arguments.dsn#">
 			    SELECT f.img_id id, f.folder_id_r folder, f.img_filename filename, f.img_filename_org filenameorg, f.link_kind, f.lucene_key,
 			    ct.img_description description, ct.img_keywords keywords, 
 				f.img_extension theext, img_meta as rawmetadata, '#arguments.category#' as thecategory,
@@ -145,7 +145,7 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Query labels --->
-				<cfquery name="qry_l" datasource="#arguments.dsn#" cachename="limg#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_labels">
+				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
 				FROM ct_labels ct, #session.hostdbprefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
@@ -221,7 +221,7 @@
 			<!--- FOR VIDEOS --->
 			<cfelseif arguments.category EQ "vid">
 				<!--- Query Record --->
-				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucvid#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_videos">
+				<cfquery name="qry_all" datasource="#arguments.dsn#">
 			    SELECT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, f.link_kind, f.lucene_key,
 			    ct.vid_description description, ct.vid_keywords keywords, 
 				vid_meta as rawmetadata, '#arguments.category#' as thecategory,
@@ -235,7 +235,7 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Query labels --->
-				<cfquery name="qry_l" datasource="#arguments.dsn#" cachename="lvid#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_labels">
+				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
 				FROM ct_labels ct, #session.hostdbprefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
@@ -252,7 +252,7 @@
 			<!--- FOR AUDIOS --->
 			<cfelseif arguments.category EQ "aud">
 				<!--- Query Record --->
-				<cfquery name="qry_all" datasource="#arguments.dsn#" cachename="lucaud#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_audios">
+				<cfquery name="qry_all" datasource="#arguments.dsn#">
 			    SELECT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, a.link_kind, a.lucene_key,
 			    aut.aud_description description, aut.aud_keywords keywords, 
 				a.aud_meta as rawmetadata, '#arguments.category#' as thecategory,
@@ -266,7 +266,7 @@
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Query labels --->
-				<cfquery name="qry_l" datasource="#arguments.dsn#" cachename="laud#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_labels">
+				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
 				FROM ct_labels ct, #session.hostdbprefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
@@ -338,7 +338,7 @@
 		<cfargument name="assetid" type="string" required="false">
 		<cfargument name="dsn" type="string" required="true">
 		<!--- Get Custom Values --->
-		<cfquery name="qry_custom" datasource="#arguments.dsn#" cachename="luccustomfields#session.hostid##arguments.assetid#" cachedomain="#session.theuserid#_customfields">
+		<cfquery name="qry_custom" datasource="#arguments.dsn#">
 		SELECT v.cf_value, f.cf_id_r, asset_id_r
 		FROM #session.hostdbprefix#custom_fields_values v
 		LEFT JOIN #session.hostdbprefix#custom_fields_text f ON v.cf_id_r = f.cf_id_r AND f.lang_id_r = 1

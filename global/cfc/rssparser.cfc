@@ -30,7 +30,7 @@
 </cffunction>
 
 	
-<cffunction name="rssParse" returnType="array" output="true" hint="Attempts to parse the RSS feed for the items.">
+<cffunction name="rssParse" returnType="array" output="true" region="function" cachedwithin="#CreateTimeSpan(0,6,0,0)#">
 	<cfargument name="thefeed" type="string" required="true" hint="the feed url">
 	<cfargument name="themany" type="numeric" default="0" required="no" hint="how many records do we want to show">
 	<cfset var xmlData = "">
@@ -40,7 +40,7 @@
 	<cfset var xPath = "">
 	<cfset var node = "">
 	
-		<cfcachecontent action="cache" cachename="razunacache" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfcachecontent name="blog" cachedwithin="#CreateTimeSpan(0,6,0,0)#">
 			<cfhttp url="#arguments.thefeed#" method="get" throwonerror="no" timeout="6">
 		</cfcachecontent>
 		

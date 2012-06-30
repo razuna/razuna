@@ -31,7 +31,7 @@
 			<td width="1%" nowrap style="padding:5px;">#totalcount.thetotal#</td>
 		</tr>
 		<cfif NOT application.razuna.isp>
-			<cfcachecontent action="cache" cachename="razunainfo" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+			<cfcachecontent name="damsysteminfo" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
 				<tr>
 					<td width="100%" style="padding:5px;">#defaultsObj.trans("database_in_use")#</td>
 					<td width="1%" nowrap style="padding:5px;">#application.razuna.thedatabase#</td>

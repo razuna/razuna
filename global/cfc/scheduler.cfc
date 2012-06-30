@@ -258,7 +258,7 @@
 	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	)
 	</cfquery>
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfset variables.cachetoken = resetcachetoken("logs")>
 </cffunction>
 
 <!--- DELETE SCHEDULED EVENT --------------------------------------------------------------------->

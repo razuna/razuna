@@ -25,6 +25,9 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("labels")>
+
 	<!--- Update the label of a record --->
 	<cffunction name="label_update" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
@@ -80,7 +83,7 @@
 			</cfif>
 		</cfif>
 		<!--- Flush --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -116,7 +119,7 @@
 				</cfquery>
 			</cfloop>
 			<!--- Flush --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+			<cfset variables.cachetoken = resetcachetoken("labels")>
 			<!--- Lucene: Delete Records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
 			<!--- Lucene: Update Records --->
@@ -171,7 +174,7 @@
 		)
 		</cfquery>
 		<!--- Flush --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn theid />
 	</cffunction>
@@ -194,7 +197,7 @@
 		AND ct_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
 		<!--- Flush --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -205,8 +208,8 @@
 		<cfset var st = structnew()>
 		<cfset var l = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="lab#session.hostid#" cachedomain="#session.hostid#_labels">
-		SELECT label_text, label_path, label_id
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getalllabels */ label_text, label_path, label_id
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		ORDER BY label_text
@@ -230,8 +233,8 @@
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
 		<!--- Query ct table --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachename="ctlab#session.hostid##arguments.theid##arguments.thetype#" cachedomain="#session.hostid#_labels">
-		SELECT ct_label_id
+		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getlabels */ ct_label_id
 		FROM ct_labels
 		WHERE ct_id_r = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
 		AND ct_type = <cfqueryparam value="#arguments.thetype#" cfsqltype="cf_sql_varchar" />
@@ -239,8 +242,8 @@
 		</cfquery>
 		<!--- Query --->
 		<cfif qryct.recordcount NEQ 0>
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="lab#session.hostid##qryct.ct_label_id##arguments.theid##arguments.thetype#" cachedomain="#session.hostid#_labels">
-			SELECT label_id
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			SELECT /* #variables.cachetoken#getlabels2 */ label_id
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
@@ -264,7 +267,7 @@
 		WHERE ct_id_r = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
 		<!--- Flush --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -286,8 +289,8 @@
 	<!--- Build labels drop down menu --->
 	<cffunction name="labels_dropdown" output="true" access="public">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_dropdown#session.hostid#" cachedomain="#session.hostid#_labels">
-		SELECT label_id, label_id_r, label_path, label_text
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#labels_dropdown */ label_id, label_id_r, label_path, label_text
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
 		ORDER BY label_path
@@ -301,8 +304,8 @@
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="id" type="string" required="true">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels#session.hostid##arguments.id#" cachedomain="#session.hostid#_labels">
-		SELECT l.label_text, l.label_id,
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#labels_query */ l.label_text, l.label_id,
 			(
 				SELECT count(ct.ct_label_id)
 				FROM ct_labels ct
@@ -338,8 +341,8 @@
 	<cffunction name="getlabeltext" output="false" access="public">
 		<cfargument name="theid" type="string">
 		<!--- Query ct table --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labeltext#session.hostid##arguments.theid#" cachedomain="#session.hostid#_labels">
-		SELECT label_text
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getlabeltext */ label_text
 		FROM #session.hostdbprefix#labels
 		WHERE label_id = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
 		AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
@@ -352,8 +355,8 @@
 	<cffunction name="labels_count" output="false" access="public">
 		<cfargument name="label_id" type="string">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_count#session.hostid##arguments.label_id#" cachedomain="#session.hostid#_labels">
-		SELECT 
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT  /* #variables.cachetoken#labels_count */
 			(
 				SELECT count(ct_label_id)
 				FROM ct_labels
@@ -391,8 +394,8 @@
 		<cfargument name="fromapi" required="false" default="false">
 		<!--- Get assets --->
 		<cfif arguments.label_kind EQ "assets">
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_assets#session.hostid##arguments.label_id##arguments.label_kind##Session.theUserID#" cachedomain="#session.hostid#_labels">
-			SELECT i.img_id id, i.img_filename filename, 
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			SELECT /* #variables.cachetoken#labels_assets */ i.img_id id, i.img_filename filename, 
 			i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 			i.path_to_asset, i.cloud_url
@@ -542,8 +545,8 @@
 			</cfquery>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_folders#session.hostid##arguments.label_id##arguments.label_kind#" cachedomain="#session.hostid#_labels">
-			SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			SELECT /* #variables.cachetoken#getlabelsfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection
 			<cfif !arguments.fromapi>
 				,
 				<!--- Permission follow but not for sysadmin and admin --->
@@ -588,8 +591,8 @@
 		<!--- Get collections --->
 		<cfelseif arguments.label_kind EQ "collections">
 			<!--- Query for collections and get permissions --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="labels_collections#session.hostid##arguments.label_id##arguments.label_kind#" cachedomain="#session.hostid#_labels">
-			SELECT c.col_id, c.folder_id_r, ct.col_name
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			SELECT /* #variables.cachetoken#getlabelscol */ c.col_id, c.folder_id_r, ct.col_name
 			<cfif !arguments.fromapi>	
 				,
 				<!--- Permission follow but not for sysadmin and admin --->
@@ -686,7 +689,7 @@
 			</cfquery>
 		</cfif>
 		<!--- Flush --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -755,7 +758,7 @@
 		<!--- Get path down --->
 		<cfinvoke method="label_get_path_down" label_id="#arguments.thestruct.label_id#" llist="#labelpath#" />
 		<!--- Flush --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn arguments.thestruct.label_id />
 	</cffunction>

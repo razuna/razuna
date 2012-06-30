@@ -113,6 +113,7 @@
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -159,6 +160,7 @@
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -205,6 +207,7 @@
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_users_remoteusers">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -410,6 +413,7 @@
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
 					<!---
 					<cfif version GT "1.4">
 						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="sequences">
@@ -482,6 +486,7 @@
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
 					<!---
 					<cfif version GT "1.4">
 						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="sequences">
@@ -556,6 +561,7 @@
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="search_reindex">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="tools">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
+					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
 					<!---
 					<cfif variables.database EQ "h2" AND version EQ "1.4">
 					<cfelse>
@@ -1035,7 +1041,7 @@
 			</cftry>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="nuclear" thedomain="bla" />
+		<cfset resetcachetokenall()>
 		<!--- Final Feedback --->
 		<cfoutput><br><br><span style="font-weight:bold;color:green;">Restore done! You can <a href="##" onclick="window.close();">close this window now</a>.</span><br></cfoutput>	
 		<!--- Return --->

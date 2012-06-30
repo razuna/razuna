@@ -179,7 +179,8 @@
 				</cftry>
 			</cfloop>
 			<!--- Flush cache --->
-			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_labels" />
+			<cfset session.cachetoken = "#arguments.api_key##createuuid()#">
+			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="labels" />
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Label(s) added to asset successfully">
@@ -209,7 +210,8 @@
 				</cfquery>
 			</cfloop>
 			<!--- Flush cache --->
-			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_labels" />
+			<cfset session.cachetoken = "#arguments.api_key##createuuid()#">
+			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="labels" />
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Label(s) removed from asset successfully">

@@ -25,6 +25,9 @@
 --->
 <cfcomponent extends="extQueryCaching">
 
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("users")>
+
 <!--- DO A QUICKSEARCH --->
 <cffunction name="quicksearch">
 	<cfargument name="thestruct" type="Struct">
@@ -144,8 +147,8 @@
 <!--- Get Details from this User --->
 <cffunction name="details">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="details#arguments.thestruct.user_id##session.hostid#" cachedomain="#session.hostid#_users">
-	select user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin, user_create_date,
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin, user_create_date,
 	user_active,USER_COMPANY,USER_PHONE,USER_MOBILE,USER_FAX,user_in_dam, user_salutation
 	from users
 	where user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
@@ -155,8 +158,8 @@
 
 <!--- GET EMAIL FROM THIS USER --->
 <cffunction name="user_email">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="emails#session.theuserid##session.hostid#" cachedomain="#session.hostid#_users">
-	SELECT user_email
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#user_emailuser */ user_email
 	FROM users
 	WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 	</cfquery>
@@ -166,8 +169,8 @@
 <!--- Get hosts of this user --->
 <cffunction name="userhosts">
 	<cfargument name="thestruct" type="Struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="hosts#arguments.thestruct.user_id##session.hostid#" cachedomain="#session.hostid#_users">
-		SELECT h.host_id, h.host_name, h.host_db_prefix, h.host_shard_group, h.host_path
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#userhosts */ h.host_id, h.host_name, h.host_db_prefix, h.host_shard_group, h.host_path
 		FROM ct_users_hosts ct, hosts h
 		WHERE ct.ct_u_h_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
 		AND ct.ct_u_h_host_id = h.host_id
@@ -196,8 +199,6 @@
 	<!--- Not the same user thus go on --->
 	<cfif qry_sameuser.RecordCount EQ 0>
 		<cfset newid = 0>
-		<!--- Create new ID --->
-		<!--- <cfinvoke component="global" method="getsequence" returnvariable="newid" database="#application.razuna.thedatabase#" dsn="#application.razuna.datasource#" thetable="users" theid="user_id"> --->
 		<!--- Hash Password --->
 		<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
 		<!--- Insert the User into the DB --->
@@ -249,7 +250,7 @@
 		</cfif>
 		<cfset log = #log_users(theuserid=newid,logaction='Add',logsection='#logsection#',logdesc='Added: UserID: #newid# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')#>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_users" />
+		<cfset variables.cachetoken = resetcachetoken("users")>
 	<cfelse>
 		<cfset newid = 0>
 	</cfif>
@@ -297,7 +298,7 @@
 	WHERE user_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_users" />
+	<cfset variables.cachetoken = resetcachetoken("users")>
 	<cfreturn />
 </cffunction>
 
@@ -381,8 +382,7 @@
 		<cfset log = #log_users(theuserid=arguments.thestruct.user_id,logsection='#logsection#',logaction='Update',logdesc='Updated: UserID: #arguments.thestruct.user_id# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')#>
 	</cfif>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_users" />
-	
+	<cfset variables.cachetoken = resetcachetoken("users")>
 	<cfreturn />
 </cffunction>
 
@@ -452,8 +452,8 @@
 <!--- Get social accounts for this user --->
 <cffunction name="getsocial">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="getsocial#arguments.thestruct.user_id##session.hostid#" cachedomain="#session.hostid#_users">
-	SELECT identifier, provider
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#getsocial */ identifier, provider
 	FROM #session.hostdbprefix#users_accounts
 	WHERE user_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
 	</cfquery>
@@ -505,7 +505,7 @@
 		</cfquery>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_users" />
+	<cfset variables.cachetoken = resetcachetoken("users")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

@@ -327,7 +327,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
+			<cfset variables.cachetoken = resetcachetoken("images")>
 		<!--- Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
 			<cfquery datasource="#Variables.dsn#">
@@ -347,7 +347,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+			<cfset variables.cachetoken = resetcachetoken("videos")>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 			<cfquery datasource="#Variables.dsn#">
@@ -364,7 +364,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
+			<cfset variables.cachetoken = resetcachetoken("audios")>
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#Variables.dsn#">
@@ -380,7 +380,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_files" />
+			<cfset variables.cachetoken = resetcachetoken("files")>
 		</cfif>
 		<cfset arguments.thestruct.qrydetail.path_to_asset = qry.path_to_asset>
 		<cfset arguments.thestruct.qrydetail.filenameorg = qry.filenameorg>
@@ -782,7 +782,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
+			<cfset variables.cachetoken = resetcachetoken("images")>
 		<!--- Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -809,7 +809,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+			<cfset variables.cachetoken = resetcachetoken("videos")>
 		<!--- Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -833,7 +833,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
+			<cfset variables.cachetoken = resetcachetoken("audios")>
 		<!--- Documents --->
 		<cfelse>
 			<cfquery datasource="#arguments.thestruct.dsn#">
@@ -856,7 +856,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_files" />
+			<cfset variables.cachetoken = resetcachetoken("files")>
 		</cfif>
 		<cfset arguments.thestruct.qrydetail.path_to_asset = arguments.thestruct.qryfilelocal.path_to_asset>
 		<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>

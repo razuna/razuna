@@ -512,9 +512,6 @@
 		<xfa name="folder" value="c.folder" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- Action: Check storage
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
 		<!-- CFC: Load users favorites -->
 		<invoke object="myFusebox.getApplicationData().favorites" methodcall="readfavorites(attributes)" returnvariable="qry_favorites" />
 		<set name="attributes.qrybasket" value="#qry_favorites#" />

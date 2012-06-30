@@ -46,7 +46,15 @@
 		<cfcatch type="database"></cfcatch>
 		</cftry>
 		 
-		<!--- CREATE TABLES --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.tschema#.cache 
+		(
+			cache_token varchar(100) DEFAULT NULL,
+			cache_type varchar(20) DEFAULT NULL,
+			host_id bigint DEFAULT NULL
+		)
+		</cfquery>
+		<!--- CREATE MODULES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.tschema#.modules 
 		(

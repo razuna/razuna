@@ -21,7 +21,6 @@ iText-2.0.8.jar
 jackson-all-1.8.3-openbd.jar
 jai_imageio.jar
 jakarta-oro-2.0.8.jar
-java_memcached-release_2.0.1.jar
 javolution.jar
 jaxrpc.jar
 jcommon-1.0.0.jar
@@ -43,13 +42,16 @@ ojdbc14.jar
 postgresql-8.4-701.jdbc4.jar
 rome-1.0RC1.jar
 saaj.jar
+salesforce-partner.jar
 serializer.jar
 shiro-core-1.1.0.jar
 slf4j-api-1.6.1.jar
+spymemcached-2.8.1.jar
 sqljdbc4.jar
 tika-app-1.1-bd.jar
 webservices.jar
 ws-commons-util-1.0.2.jar
+wsc-22a.jar
 wsdl4j.jar
 xalan.jar
 xmlrpc-client-3.1.2.jar

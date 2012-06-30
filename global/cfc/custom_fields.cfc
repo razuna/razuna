@@ -25,11 +25,14 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("general")>
+
 <!--- List fields --->
 <cffunction name="get" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_get_#session.hostid#" cachedomain="#session.theuserid#_customfields">
-		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_enabled, c.cf_show, ct.cf_text
 		FROM #session.hostdbprefix#custom_fields c, #session.hostdbprefix#custom_fields_text ct
 		WHERE c.cf_id = ct.cf_id_r
  		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
@@ -87,15 +90,15 @@
 			</cfloop>
 		</cftransaction>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_customfields" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn newcfid />
 </cffunction>
 
 <!--- Get fields for the detail view of assets --->
 <cffunction name="getfields" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_getfields_#session.hostid##arguments.thestruct.cf_show##session.thelangid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_customfields">
-		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, ct.cf_text, cv.cf_value
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, ct.cf_text, cv.cf_value
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 		WHERE c.cf_id = ct.cf_id_r
@@ -114,8 +117,8 @@
 <!--- Get fields for the search view --->
 <cffunction name="getfieldssearch" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_getfieldssearch_#session.hostid##session.thelangid#" cachedomain="#session.theuserid#_customfields">
-		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, ct.cf_text
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getfieldssearch */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, ct.cf_text
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		WHERE c.cf_id = ct.cf_id_r
 		AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
@@ -146,8 +149,8 @@
 <!--- Get detail view --->
 <cffunction name="getdetail" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="f_getdetail_#session.hostid##arguments.thestruct.cf_id#" cachedomain="#session.theuserid#_customfields">
-		SELECT c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, c.cf_select_list, ct.cf_text, ct.lang_id_r
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, c.cf_select_list, ct.cf_text, ct.lang_id_r
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c
 		WHERE c.cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.cf_id#">
 		AND ct.cf_id_r = c.cf_id
@@ -196,7 +199,7 @@
 		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_customfields" />
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Lucene is indexing these values in the video.cfc already thus we are done here --->
 </cffunction>
 
@@ -229,13 +232,15 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_customfields" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
 <!--- Delete --->
 <cffunction name="delete" access="public" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Rearrange the order --->
 	<cfquery datasource="#application.razuna.datasource#">
 	UPDATE #session.hostdbprefix#custom_fields
@@ -251,7 +256,7 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_customfields" />
+	<cfset variables.cachetoken = resetcachetoken("general")>
 </cffunction>
 
 </cfcomponent>

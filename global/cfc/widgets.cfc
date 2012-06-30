@@ -24,15 +24,16 @@
 *
 --->
 <cfcomponent output="false" extends="extQueryCaching">
-	<!--- FUNCTION: INIT --->
-	<!--- in parent-cfc --->
-	
+
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("general")>
+
 	<!--- Get existing widgets --->
 	<cffunction name="getwidgets" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
 		<!--- Query --->
-		<cfquery dataSource="#variables.dsn#" name="qry" cachename="getwidgets#session.hostid##arguments.thestruct.folder_id##arguments.thestruct.col_id#" cachedomain="#session.theuserid#_widget">
-		SELECT widget_id, widget_name, widget_description
+		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getwidgets */ widget_id, widget_name, widget_description
 		FROM #session.hostdbprefix#widgets
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
@@ -48,8 +49,8 @@
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.external" default="f">
 		<!--- Query --->
-		<cfquery dataSource="#variables.dsn#" name="qry" cachename="widgetdetail#session.hostid##arguments.thestruct.widget_id#" cachedomain="#session.theuserid#_widget">
-		SELECT widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading
+		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#detailwidget */ widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading
 		FROM #session.hostdbprefix#widgets
 		WHERE widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -105,7 +106,7 @@
 			</cfquery>
 		</cfif>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_widget" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- Return --->
 		<cfoutput>#arguments.thestruct.widget_id#</cfoutput>
 		<cfreturn />
@@ -145,7 +146,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_widget" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>

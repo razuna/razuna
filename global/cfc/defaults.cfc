@@ -23,21 +23,17 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent>
+<cfcomponent extends="extQueryCaching">
 
-<!--- FUNCTION: INIT --->
-<cffunction name="init" returntype="defaults" access="public" output="false">
-	<cfargument name="dsn" type="string" required="yes" />
-	<cfset variables.dsn = arguments.dsn />
-	<cfreturn this />
-</cffunction>
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("general")>
 
 <!--- GET THE LANGUAGES --->
 <cffunction name="getlangs" output="false">
 	<cftry>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="thelangs" cachename="getlang#session.hostid#" cachedomain="#session.hostid#_lang">
-		SELECT lang_id, lang_name
+		<cfquery datasource="#application.razuna.datasource#" name="thelangs" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getlangs */ lang_id, lang_name
 		FROM #session.hostdbprefix#languages
 		WHERE lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -46,14 +42,14 @@
 		<!--- If no record is found then insert the default English one --->
 		<cfif thelangs.recordcount EQ 0>
 			<!--- Check if english is here or not --->
-			<cfquery datasource="#Variables.dsn#" name="thelangseng" cachename="getlangeng#session.hostid#" cachedomain="#session.hostid#_lang">
-			SELECT lang_id
+			<cfquery datasource="#application.razuna.datasource#" name="thelangseng" cachedwithin="1">
+			SELECT /* #variables.cachetoken#getlangeng */ lang_id
 			FROM #session.hostdbprefix#languages
 			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND lang_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">
 			</cfquery>
 			<cfif thelangseng.recordcount EQ 0>
-				<cfquery datasource="#Variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#languages
 				(lang_id, lang_name, lang_active, host_id, rec_uuid)
 				VALUES(
@@ -65,7 +61,7 @@
 				)
 				</cfquery>
 			<cfelse>
-				<cfquery datasource="#Variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#languages
 				SET lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 				WHERE lang_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="1">
@@ -73,10 +69,10 @@
 				</cfquery>
 			</cfif>
 			<!--- Reset Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.hostid#_lang" />
+			<cfset variables.cachetoken = resetcachetoken("general")>
 			<!--- Query again --->
-			<cfquery datasource="#Variables.dsn#" name="thelangs" cachename="getlang#session.hostid#" cachedomain="#session.hostid#_lang">
-			SELECT lang_id, lang_name
+			<cfquery datasource="#application.razuna.datasource#" name="thelangs" cachedwithin="1">
+			SELECT /* #variables.cachetoken#getlangsagain */ lang_id, lang_name
 			FROM #session.hostdbprefix#languages
 			WHERE lang_active = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -153,7 +149,7 @@
 <!--- GET THE PATH OF THIS HOST --->
 <cffunction hint="Get the path of this host" name="hostpath" output="false" returntype="string">
 	<cfset var hostp = 0>
-	<cfquery datasource="#Variables.dsn#" name="hostp">
+	<cfquery datasource="#application.razuna.datasource#" name="hostp">
 	SELECT host_path
 	FROM hosts
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -170,7 +166,7 @@
 <!--- GET HOW MANY LANGUAGES THIS HOST IS ALLOWED --->
 <cffunction hint="Get how many languages this host has installed" name="howmanylang" output="false" returntype="numeric">
 	<cfset var langs = 0>
-	<cfquery datasource="#Variables.dsn#" name="langs">
+	<cfquery datasource="#application.razuna.datasource#" name="langs">
 		SELECT host_lang 
 		FROM hosts
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -182,7 +178,7 @@
 <cffunction hint="Get the exact language tag" name="thislang" output="false" returntype="string">
 	<cfargument name="theid" default="" required="yes" type="string">
 	<cfset var thislang = 0>
-	<cfquery datasource="#Variables.dsn#" name="thislang">
+	<cfquery datasource="#application.razuna.datasource#" name="thislang">
 	SELECT set_pref 
 	FROM #session.hostdbprefix#settings
 	WHERE LOWER(set_id) = <cfqueryparam value="#lcase(arguments.theid)#" cfsqltype="cf_sql_varchar">
@@ -208,12 +204,12 @@
 	<cfargument name="dsn" required="false" type="string">
 	<!--- If we call this method within and not trough fusebox we dont have variables --->
 	<cfif NOT structkeyexists(variables,"dsn")>
-		<cfset variables.dsn = arguments.dsn>
+		<cfset application.razuna.datasource = arguments.dsn>
 	</cfif>
 	<!--- init function internal vars --->
 	<cfset var qDateFormat = 0>
 	<cfset var mydate = "">
-	<cfquery datasource="#Variables.dsn#" name="qDateFormat">
+	<cfquery datasource="#application.razuna.datasource#" name="qDateFormat">
 	SELECT set2_date_format, set2_date_format_del
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">

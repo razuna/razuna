@@ -25,14 +25,17 @@
 --->
 <cfcomponent extends="extQueryCaching">
 
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("videos")>
+
 <!--- COUNT ALL VIDEOS IN A FOLDER --->
 <cffunction name="getFolderCount" description="COUNT ALL VIDEOS IN A FOLDER" output="false" access="public" returntype="numeric">
 	<cfargument name="folder_id" required="true" type="string">
 	<cfargument name="file_extension" required="false" type="string" default="">
 	<!--- init local vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="vid#session.hostid#getFolderCount#arguments.folder_id#" cachedomain="#session.theuserid#_videos">
-	SELECT COUNT(*) AS folderCount
+	<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+	SELECT /* #variables.cachetoken#getFolderCountvid */ COUNT(*) AS folderCount
 	FROM #session.hostdbprefix#videos
 	WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND (vid_group IS NULL OR vid_group = '')
@@ -108,8 +111,8 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="vid#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max##sortby#" cachedomain="#session.theuserid#_videos">
-		SELECT rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getFolderAssetsvid */ rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
@@ -129,8 +132,8 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="vid#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max##sortby#" cachedomain="#session.theuserid#_videos">
-		SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,vt.vid_keywords keywords, vt.vid_description description</cfif>, filename_forsort, size, hashtag, date_create, date_change
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getFolderAssetsvid */ #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,vt.vid_keywords keywords, vt.vid_description description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, v.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, vt.*</cfif>, 
 			lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_date date_change
@@ -154,8 +157,8 @@
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="vid#session.hostid#getFolderAssets#arguments.folder_id##arguments.file_extension##session.offset##arguments.thestruct.thisview##session.view##Arguments.ColumnList##max##sortby#" cachedomain="#session.theuserid#_videos">
-		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,vt.vid_keywords keywords, vt.vid_description description</cfif>, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_date date_change
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getFolderAssetsvid */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,vt.vid_keywords keywords, vt.vid_description description</cfif>, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_date date_change
 		FROM #session.hostdbprefix#videos v<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1</cfif>
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -208,8 +211,8 @@
 	<cfargument name="ColumnList" required="false" type="string" hint="the column list for the selection" default="v.vid_id, v.vid_filename, v.vid_custom_id, v.vid_extension, v.vid_mimetype, v.vid_preview_width, v.vid_preview_heigth, v.folder_id_r, v.vid_name_org, v.vid_name_image, v.vid_name_pre, v.vid_name_pre_img, v.vid_width vwidth, v.vid_height vheight, v.path_to_asset, v.cloud_url, v.cloud_url_org">
 	<cfset qry = 0>
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="vid#session.hostid#getdetails#arguments.vid_id##arguments.columnlist#" cachedomain="#session.theuserid#_videos">
-		SELECT #arguments.columnlist#
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getdetailsvid */ #arguments.columnlist#
 		FROM #session.hostdbprefix#videos v
 		WHERE v.vid_id = <cfqueryparam value="#arguments.vid_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -439,8 +442,8 @@
 <!--- GET RELATED VIDEOS --->
 <cffunction name="relatedvideos" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="vid#session.hostid#relatedvideos#arguments.thestruct.file_id#" cachedomain="#session.theuserid#_videos">
-	SELECT v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, v.vid_height, v.vid_width, v.vid_size vlength,
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, v.vid_height, v.vid_width, v.vid_size vlength,
 	v.path_to_asset, v.cloud_url_org, v.vid_group
 	FROM #session.hostdbprefix#videos v
 	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -573,18 +576,18 @@
 	</cfquery>
 	<!--- Delete labels --->
 	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<!--- Delete from file system --->
-	<cfset tt = CreateUUid()>
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
 	<cfset arguments.thestruct.qrydetail = thedetail>
 	<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 	<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-	<cfthread name="del#tt#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
-	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
 	<cfreturn />
 </cffunction>
 
@@ -648,18 +651,18 @@
 		<!--- Delete labels --->
 		<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
 		<!--- Delete from file system --->
-		<cfset tt = CreateUUid()>
 		<cfset arguments.thestruct.id = i>
 		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
 		<cfset arguments.thestruct.qrydetail = thedetail>
 		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-		<cfthread name="del#tt#" intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#arguments.thestruct.theuserid#_videos" />
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
@@ -731,8 +734,8 @@
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<!--- Qry. We take the query and do a IN --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="vid#session.hostid#detailforbasket#ValueList(arguments.thestruct.qrybasket.cart_product_id)##arguments.thestruct.related#" cachedomain="#session.theuserid#_videos">
-	SELECT v.vid_id, v.vid_filename, v.vid_extension, v.vid_mimetype, v.vid_group, v.vid_preview_width, 
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#detailforbasketvid */ v.vid_id, v.vid_filename, v.vid_extension, v.vid_mimetype, v.vid_group, v.vid_preview_width, 
 	v.vid_preview_heigth, v.folder_id_r, v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, 
 	v.vid_prev_size vprevlength, v.vid_name_image, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url
 	FROM #session.hostdbprefix#videos v
@@ -758,8 +761,8 @@
 	<!--- Params --->
 	<cfset var qry = structnew()>
 	<!--- Get details --->
-	<cfquery datasource="#variables.dsn#" name="details" cachename="vid#session.hostid#detail#arguments.thestruct.file_id#" cachedomain="#session.theuserid#_videos">
-	SELECT v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_extension, v.vid_online, v.vid_owner,
+	<cfquery datasource="#variables.dsn#" name="details" cachedwithin="1">
+	SELECT /* #variables.cachetoken#detailvid */ v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_extension, v.vid_online, v.vid_owner,
 	v.vid_create_date, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.cloud_url, v.cloud_url_org,
 	v.vid_change_time, v.vid_mimetype, v.vid_publisher, v.vid_ranking rank, v.vid_single_sale, v.vid_is_new,
 	v.vid_selection, v.vid_in_progress, v.vid_license, v.vid_name_org, v.shared, v.path_to_asset,
@@ -910,7 +913,8 @@
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='vid',assetid='#arguments.thestruct.file_id#')#>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 </cffunction>
 
 <!--- CONVERT VIDEO IN A THREAD --->
@@ -1315,8 +1319,7 @@
 				<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#">
 				--->
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
+				<cfset variables.cachetoken = resetcachetoken("videos")>
 			</cfif>
 		</cfloop>
 		<cfcatch type="any">
@@ -1478,7 +1481,8 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 </cffunction>
 
 <!--- MOVE FILE --->
@@ -1540,8 +1544,8 @@
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachename="vid#session.hostid#gettext#ValueList(arguments.qry.id)#" cachedomain="#session.theuserid#_videos">
-	SELECT vid_id_r tid, vid_description description, vid_keywords keywords
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1">
+	SELECT /* #variables.cachetoken#gettextvid */ vid_id_r tid, vid_description description, vid_keywords keywords
 	FROM #session.hostdbprefix#videos_text
 	WHERE vid_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
@@ -1564,6 +1568,18 @@
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
+</cffunction>
+
+<!--- Check for existing MD5 mash records --->
+<cffunction name="checkmd5" output="false">
+	<cfargument name="md5hash" type="string">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#checkmd5 */ vid_id
+	FROM #session.hostdbprefix#videos
+	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn qry />
 </cffunction>
 
 </cfcomponent>

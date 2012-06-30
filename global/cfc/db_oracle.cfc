@@ -41,6 +41,14 @@
 		) 
 		</cfquery>
 		 --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE cache 
+		(
+			cache_token varchar2(100 char) DEFAULT NULL,
+			cache_type varchar2(20 char) DEFAULT NULL,
+			host_id number DEFAULT NULL
+		)
+		</cfquery>
 		<!--- Modules --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE modules 
@@ -477,8 +485,8 @@
 		<!--- DEFAULT ADMIN CROSS TABLE --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO ct_groups_users
-		(CT_G_U_GRP_ID, CT_G_U_USER_ID)
-		VALUES(	'1', '1')
+		(CT_G_U_GRP_ID, CT_G_U_USER_ID, rec_uuid)
+		VALUES(	'1', '1', '#createuuid()#')
 		</cfquery>
 		<!--- DEFAULT ADMIN permissions --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -2163,6 +2171,15 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 	<cffunction name="create_indexes" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
 		<!--- Start creating indexes --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX idx_cache_token ON #arguments.thestruct.theschema#.cache(cache_token)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX idx_cache_type ON #arguments.thestruct.theschema#.cache(cache_type)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX idx_cache_host_id ON #arguments.thestruct.theschema#.cache(host_id)
+		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX idx_mod_sort ON #arguments.thestruct.theschema#.modules(MOD_SHORT)
 		</cfquery>

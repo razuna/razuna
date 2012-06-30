@@ -44,8 +44,8 @@
 			<!--- Images --->
 			<cfif arguments.assettype EQ "img">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachename="getassets_#arguments.assetid#_#arguments.assettype#" cachedomain="#arguments.api_key#">
-				SELECT 
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				SELECT /* #session.cachetoken#getassetimg */
 				i.img_id id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
@@ -80,8 +80,8 @@
 			<!--- Videos --->
 			<cfelseif arguments.assettype EQ "vid">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachename="getassets_#arguments.assetid#_#arguments.assettype#" cachedomain="#arguments.api_key#">
-				SELECT 
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				SELECT /* #session.cachetoken#getassetvid */
 				v.vid_id id, 
 				v.vid_filename filename, 
 				v.folder_id_r folder_id, 
@@ -117,8 +117,8 @@
 			<!--- Audios --->
 			<cfelseif arguments.assettype EQ "aud">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachename="getassets_#arguments.assetid#_#arguments.assettype#" cachedomain="#arguments.api_key#">
-				SELECT 
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				SELECT /* #session.cachetoken#getassetaud */
 				a.aud_id id, 
 				a.aud_name filename, 
 				a.folder_id_r folder_id, 
@@ -151,8 +151,8 @@
 			<!--- Documents --->
 			<cfelseif arguments.assettype EQ "doc">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachename="getassets_#arguments.assetid#_#arguments.assettype#" cachedomain="#arguments.api_key#">
-				SELECT 
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				SELECT /* #session.cachetoken#getassetfile */
 				f.file_id id, 
 				f.file_name filename, 
 				f.folder_id_r folder_id, 
@@ -252,21 +252,25 @@
 				<cfset var theid = "img_id">
 				<cfset var theidr = "img_id_r">
 				<cfset var lucenecategory = "img">
+				<cfset var cachetype = "images">
 			<cfelseif arguments.assettype EQ "vid">
 				<cfset var thedb = "videos_text">
 				<cfset var theid = "vid_id">
 				<cfset var theidr = "vid_id_r">
 				<cfset var lucenecategory = "vid">
+				<cfset var cachetype = "videos">
 			<cfelseif arguments.assettype EQ "aud">
 				<cfset var thedb = "audios_text">
 				<cfset var theid = "aud_id">
 				<cfset var theidr = "aud_id_r">
 				<cfset var lucenecategory = "aud">
+				<cfset var cachetype = "audios">
 			<cfelse>
 				<cfset var thedb = "files_desc">
 				<cfset var theid = "file_id">
 				<cfset var theidr = "file_id_r">
 				<cfset var lucenecategory = "doc">
+				<cfset var cachetype = "files">
 			</cfif>
 			<!--- Deserialize the JSON back into an array --->
 			<cfset thejson = DeserializeJSON(arguments.assetmetadata)>
@@ -336,8 +340,8 @@
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" dsn="#application.razuna.api.dsn#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" assetid="#i#" assetcategory="#lucenecategory#" userid="#application.razuna.api.userid["#arguments.api_key#"]#">
 			</cfloop>
 			<!--- Flush cache --->
-			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_#thedb#" />
-			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_xmp" />
+			<cfset session.cachetoken = "#arguments.api_key##createuuid()#">
+			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="#cachetype#" />
 			<!--- Feedback --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Metadata successfully stored">
@@ -424,9 +428,9 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachename="getrenditions_#arguments.assetid#_#arguments.assettype#" cachedomain="#arguments.api_key#">
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1">
 				<cfif arguments.assettype EQ "img">
-					SELECT 
+					SELECT /* #session.cachetoken#getrenditionsimg */
 					img_id id, 
 					img_width width, 
 					img_height height, 
@@ -439,7 +443,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
 					WHERE img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "vid">
-					SELECT 
+					SELECT /* #session.cachetoken#getrenditionsvid */
 					vid_id id, 
 					vid_width width, 
 					vid_height height, 
@@ -452,7 +456,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					WHERE vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "aud">
-					SELECT 
+					SELECT /* #session.cachetoken#getrenditionsaud */
 					aud_id id, 
 					0 AS width, 
 					0 AS height, 

@@ -254,13 +254,8 @@
 		<cfinvoke method="doimportdocs" thestruct="#arguments.thestruct#" />
 		<!--- Custom Fields --->
 		<!--- (import of custom fields in 1.5.1) --->
-		
 		<!--- Flush tables --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_files" />
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_labels" />
+		<cfset resetcachetokenall()>
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>

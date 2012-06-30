@@ -25,6 +25,9 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
  
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("general")>
+
 <!--- UPLOAD TEMP --->
 <cffunction name="upload" output="true">
 	<cfargument name="thestruct" type="struct">
@@ -452,7 +455,7 @@
 				<cfset application.razuna.api.hostid[#theapikey#] = session.hostid>
 				<cfset application.razuna.api.userid[#theapikey#] = session.theuserid>
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="user_#theapikey#" cachedomain="#session.hostid#_users">
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
 				FROM users u, ct_users_hosts ct, ct_groups_users gu
 				WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
@@ -1572,7 +1575,9 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 				</cfinvoke>
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_files" />
+				<cfset variables.cachetoken = resetcachetoken("files")>
+				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset variables.cachetoken = resetcachetoken("general")>
 				<!--- RFS --->
 				<cfif application.razuna.rfs>
 					<cfset arguments.thestruct.assettype = "doc">	
@@ -1761,8 +1766,9 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 				</cfinvoke>
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#arguments.thestruct.hostid#_images" />
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#arguments.thestruct.hostid#_share_options" />
+				<cfset variables.cachetoken = resetcachetoken("images")>
+				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset variables.cachetoken = resetcachetoken("general")>
 				<!--- RFS --->
 				<cfif application.razuna.rfs>
 					<cfset arguments.thestruct.assettype = "img">
@@ -2737,8 +2743,9 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Log --->
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid='#arguments.thestruct.thisvid.newid#')#>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
+		<cfset variables.cachetoken = resetcachetoken("videos")>
+		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- RFS --->
 		<cfif application.razuna.rfs>
 			<cfset arguments.thestruct.newid = arguments.thestruct.thisvid.newid>
@@ -2823,8 +2830,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfif>
 		</cfloop>
-		<!--- Flush Folders Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_folders" />
+		<cfset variables.cachetoken = resetcachetoken("folders")>
 		<cfpause interval="5" />
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
@@ -3462,8 +3468,9 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvokeargument name="assetid" value="#attributes.audstruct.newid#">
 				</cfinvoke>
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.audstruct.theuserid#_audios" />
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.audstruct.theuserid#_share_options" />	
+				<cfset variables.cachetoken = resetcachetoken("audios")>
+				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset variables.cachetoken = resetcachetoken("general")>
 				<!--- RFS --->
 				<cfif application.razuna.rfs AND attributes.audstruct.qryfile.extension NEQ "wav" AND attributes.audstruct.newid NEQ 0>
 					<cfset attributes.audstruct.assettype = "aud">
@@ -3583,7 +3590,9 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+				<cfset variables.cachetoken = resetcachetoken("videos")>
+				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#images
@@ -3592,7 +3601,9 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
+				<cfset variables.cachetoken = resetcachetoken("images")>
+				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
@@ -3616,7 +3627,9 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_videos" />
+				<cfset variables.cachetoken = resetcachetoken("videos")>
+				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#images
@@ -3625,7 +3638,9 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_images" />
+				<cfset variables.cachetoken = resetcachetoken("images")>
+				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		</cfif>
 		<!--- Remove record in DB --->
@@ -3790,8 +3805,6 @@ This is the main function called directly by a single upload else from addassets
 					SET cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">
 					WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
 					</cfquery>
-					<!--- Flush Cache --->
-					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#theflush#" />
 					<!--- Remove the original and thumbnail --->
 					<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
 						<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
@@ -3825,8 +3838,6 @@ This is the main function called directly by a single upload else from addassets
 					SET cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">
 					WHERE #therecid# = <cfqueryparam value="#theid#" cfsqltype="CF_SQL_VARCHAR">
 					</cfquery>
-					<!--- Flush Cache --->
-					<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#theflush#" />
 					<!--- Remove the original and thumbnail --->
 					<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
 						<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
@@ -3842,6 +3853,11 @@ This is the main function called directly by a single upload else from addassets
 			</cfcatch>
 		</cftry>
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("images")>
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -4744,33 +4760,13 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Param --->
 	<cfset var rec = 0>
 	<!--- Images --->
-	<cfquery datasource="#application.razuna.datasource#" name="qryimg" cachename="images_#arguments.md5hash#" cachedomain="#session.hostid#_images">
-	SELECT img_id
-	FROM #session.hostdbprefix#images
-	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
+	<cfinvoke component="images" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qryimg" />
 	<!--- videos --->
-	<cfquery datasource="#application.razuna.datasource#" name="qryvid" cachename="videos_#arguments.md5hash#" cachedomain="#session.hostid#_videos">
-	SELECT vid_id
-	FROM #session.hostdbprefix#videos
-	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
+	<cfinvoke component="videos" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qryvid" />
 	<!--- Files --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrydoc" cachename="files_#arguments.md5hash#" cachedomain="#session.hostid#_files">
-	SELECT file_id
-	FROM #session.hostdbprefix#files
-	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
+	<cfinvoke component="files" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qrydoc" />
 	<!--- Audios --->
-	<cfquery datasource="#application.razuna.datasource#" name="qryaud" cachename="audios_#arguments.md5hash#" cachedomain="#session.hostid#_audios">
-	SELECT aud_id
-	FROM #session.hostdbprefix#audios
-	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
+	<cfinvoke component="audios" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qryaud" />
 	<!--- Put each result into var --->
 	<cfset rec = qryimg.recordcount>
 	<cfif !rec>

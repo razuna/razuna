@@ -25,6 +25,9 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("general")>
+
 <!--- PUT FILE OR FOLDER INTO FAVORITES --->
 <cffunction name="tofavorites" output="false">
 	<cfargument name="thestruct" type="struct">
@@ -71,18 +74,18 @@
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
-			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_fav" />
 		</cfif>
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
 <!--- LIST FAVORITES FOR THIS USER --->
 <cffunction name="readfavorites" output="false">
 	<!--- select the favorites --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#readfavorites#session.hostid##session.theuserid#" cachedomain="#session.theuserid#_fav">
-	SELECT f.fav_id cart_product_id, f.fav_type, f.fav_kind, f.fav_order,
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#readfavorites */ f.fav_id cart_product_id, f.fav_type, f.fav_kind, f.fav_order,
 		CASE
 			WHEN f.fav_type = 'file'
 				THEN
@@ -151,6 +154,7 @@
 <!--- REMOVE FAVORITE --->
 <cffunction name="removeitem" output="false">
 	<cfargument name="favid" default="" required="yes" type="string">
+	<!--- Remove --->
 	<cfquery datasource="#variables.dsn#">
 	DELETE FROM #session.hostdbprefix#users_favorites
 	WHERE user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
@@ -158,7 +162,7 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_fav" />
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 

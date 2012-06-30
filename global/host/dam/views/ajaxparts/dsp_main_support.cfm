@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcachecontent action="cache" cachename="razunasupportcache" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+<cfcachecontent name="damsupport" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
 	<cfoutput>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>

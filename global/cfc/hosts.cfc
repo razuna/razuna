@@ -23,16 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent hint="CFC for hosts" output="false">
+<cfcomponent hint="CFC for hosts" output="false" extends="extQueryCaching">
 
-<!--- FUNCTION: INIT --->
-<cffunction name="init" returntype="hosts" access="public" output="false">
-	<cfargument name="dsn" type="string" required="yes" />
-	<cfargument name="database" type="string" required="yes" />
-	<cfset variables.dsn = arguments.dsn />
-	<cfset variables.database = arguments.database />
-	<cfreturn this />
-</cffunction>
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("general")>
 
 <!--- FUNCTION: This is called from the first time setup --->
 <cffunction name="setupdb" access="public" output="false">
@@ -81,8 +75,6 @@
 	</cfquery>
 	<!--- No record with the same name exist thus add it else throw an error --->
 	<cfif same.recordcount EQ 0>
-		<!--- Get new host id --->
-		<!--- <cfinvoke component="global" method="getsequence" returnvariable="hostid" database="#variables.database#" dsn="#variables.dsn#" thetable="hosts" theid="host_id"> --->
 		<cftransaction>
 			<cfquery datasource="#variables.dsn#" name="hostid">
 			SELECT <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(max(host_id),0) + 1 AS id
@@ -214,7 +206,8 @@
 				</cftransaction>
 			</cfif>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="hosts" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
+		<cfset variables.cachetoken = resetcachetoken("users")>
 	</cfif>
 	<cfreturn  />
 </cffunction>
@@ -372,48 +365,6 @@
 		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 		)
 		</cfquery>
-		<!--- Tools
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO tools
-		(thetool, thepath)
-		VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="imagemagick">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thetools.imagemagick#">
-		)
-		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO tools
-		(thetool, thepath)
-		VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="ffmpeg">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thetools.ffmpeg#">
-		)
-		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO tools
-		(thetool, thepath)
-		VALUES(
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="exiftool">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thetools.exiftool#">
-		)
-		</cfquery>
-		 --->
-		<!--- Create the UploadBin Folder --->
-		<!---
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		Insert into #arguments.thestruct.host_db_prefix#folders
-		(FOLDER_ID, FOLDER_NAME, FOLDER_LEVEL, FOLDER_ID_R, FOLDER_MAIN_ID_R, host_id)
-		Values('1', 'UploadBin', 1, '1', '1', #arguments.thestruct.host_id#<!--- <cfqueryparam value="#arguments.thestruct.host_id#" cfsqltype="cf_sql_numeric"> --->)
-		</cfquery>
-		--->
-		<!--- and description with it --->
-		<!---
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		Insert into #arguments.thestruct.host_db_prefix#folders_desc
-		(FOLDER_ID_R, LANG_ID_R, FOLDER_DESC, host_id)
-		Values('1', 1, 'This is the default folder for storing files that get uploaded within the administration. Feel free to move the files to other folders, but be careful with removing files because they might be used within the CMS part.', <!--- <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->#arguments.thestruct.host_id#)
-		</cfquery>
-		--->
 		<!--- Create a new ID --->
 		<cfset var newfolderid = createuuid("")>
 		<!--- Create the default Collections Folder --->
@@ -427,6 +378,73 @@
 		Insert into #arguments.thestruct.host_db_prefix#folders_desc
 		(FOLDER_ID_R, LANG_ID_R, FOLDER_DESC, host_id, rec_uuid)
 		Values('#newfolderid#', 1, 'This is the default collections folder for storing collections.', #arguments.thestruct.host_id#, <cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<!--- INTO CACHE --->
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="folders" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="images" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="videos" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="files" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="audios" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="labels" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="logs" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="search" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="settings" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="users" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#arguments.thestruct.dsn#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.thestruct.host_id#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#newfolderid#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="general" CFSQLType="CF_SQL_VARCHAR">)
 		</cfquery>
 		<cfcatch type="any">
 			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error during inserting default values" type="html">
@@ -702,7 +720,8 @@
 	</cfquery>
 	
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="hosts" />
+	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfset variables.cachetoken = resetcachetoken("settings")>
 
 </cffunction>
 
@@ -909,7 +928,7 @@
 			</cfloop>
 		</cfif>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="hosts" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 	</cfif>
 </cffunction>
 
@@ -953,6 +972,10 @@
 			<cfinvokeargument name="host_db_prefix_replace" value="#host_db_prefix_replace#">
 			<cfinvokeargument name="pathoneup" value="#arguments.thestruct.pathoneup#">
 		</cfinvoke>
+
+	<!--- Check to see if cache values are in the DB --->
+	<cfinvoke method="setcachetoken" hostid="#arguments.thestruct.host_id#" />
+
 	<!--- </cfloop> --->
 	<!--- Now update the language table from this host. Compare the change and id column
 	<cfloop index="l" from="1" to="#qrythishost.host_lang#">
@@ -1014,6 +1037,91 @@
 <!--- Clear database: We have to go trough here since we don't initialize the DB CFC's directly --->
 <cffunction name="cleardb" output="true">
 	<cfinvoke component="db_#session.firsttime.database#" method="clearall" />
+	<cfreturn />
+</cffunction>
+
+<!--- Save cachetoken --->
+<cffunction name="setcachetoken" output="false" returntype="void">
+	<cfargument name="hostid" required="true">
+	<!--- Query for hostid --->
+	<cfquery dataSource="#application.razuna.datasource#" name="qry">
+	SELECT host_id
+	FROM cache
+	WHERE host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	</cfquery>
+	<!--- No cache record is here thus insert for the first time --->
+	<cfif qry.recordcount EQ 0>
+		<!--- Create token --->
+		<cfset var t = createuuid('')>
+		<!--- Inserts --->
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="folders" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="images" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="videos" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="files" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="audios" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="labels" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="logs" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="search" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="settings" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="users" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+		<cfquery dataSource="#application.razuna.datasource#">
+		INSERT INTO cache
+		(host_id, cache_token, cache_type)
+		VALUES
+		(<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">, <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">, <cfqueryparam value="general" CFSQLType="CF_SQL_VARCHAR">)
+		</cfquery>
+	</cfif>
+	<!--- Return --->
 	<cfreturn />
 </cffunction>
 

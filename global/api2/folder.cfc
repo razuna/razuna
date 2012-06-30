@@ -56,10 +56,10 @@
 				<cfset thefolderlist = arguments.folderid>
 			</cfif>	
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachename="fgetassets_#thefolderlist#_#arguments.show#" cachedomain="#arguments.api_key#">
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
 				<!--- Images --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "img">
-					SELECT 
+					SELECT  /* #session.cachetoken#getassetsfolder1 */
 					i.img_id id, 
 					i.img_filename filename, 
 					i.folder_id_r folder_id, 
@@ -99,7 +99,7 @@
 				</cfif>
 				<!--- Videos --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "vid">
-					SELECT 
+					SELECT /* #session.cachetoken#getassetsfolder2 */
 					v.vid_id id, 
 					v.vid_filename filename, 
 					v.folder_id_r folder_id, 
@@ -139,7 +139,7 @@
 				</cfif>
 				<!--- Audios --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "aud">
-					SELECT 
+					SELECT /* #session.cachetoken#getassetsfolder3 */ 
 					a.aud_id id, 
 					a.aud_name filename, 
 					a.folder_id_r folder_id, 
@@ -179,7 +179,7 @@
 				</cfif>
 				<!--- Docs --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "doc">
-					SELECT 
+					SELECT /* #session.cachetoken#getassetsfolder4 */
 					f.file_id id, 
 					f.file_name filename, 
 					f.folder_id_r folder_id, 
@@ -428,8 +428,8 @@
 			)
 			</cfquery>
 			<!--- Flush cache --->
-			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_folders" />
-			<cfinvoke component="global.cfc.global" method="clearcache" theaction="flushall" thedomain="#application.razuna.api.userid["#arguments.api_key#"]#_folders_desc" />
+			<cfset session.cachetoken = "#arguments.api_key##createuuid()#">
+			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="folders" />
 			<!--- Feedback --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.folder_id = newfolderid>

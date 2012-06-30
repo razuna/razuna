@@ -25,6 +25,9 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("general")>
+
 <!--- PUT INTO BASKET --->
 <cffunction name="tobasket" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
@@ -76,7 +79,7 @@
 			</cfloop>
 --->
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_cart" />
+			<cfset variables.cachetoken = resetcachetoken("general")>
 		</cfif>
 	</cfloop>
 	<cfreturn />
@@ -84,8 +87,8 @@
 
 <!--- READ BASKET --->
 <cffunction name="readbasket" output="false" returnType="query">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="#session.hostid#readbasket#session.thecart#" cachedomain="#session.theuserid#_cart">
-		SELECT c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, 
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, 
 			CASE 
 				WHEN c.cart_file_type = 'doc' 
 					THEN (
@@ -154,7 +157,7 @@
 	<!--- AND user_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.theuserid#"> --->
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_cart" />
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
@@ -167,7 +170,7 @@
 	<!--- AND user_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.theuserid#"> --->
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_cart" />
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
@@ -274,8 +277,8 @@
 			<!--- Create thread  --->
 			<cfset ttd = createuuid()>
 			<!--- Query --->
-			<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qry" cachename="writedoc2#session.hostid##arguments.thestruct.theid#" cachedomain="#session.theuserid#_files">
-			SELECT file_extension, file_name, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset, cloud_url_org
+			<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qry" cachedwithin="1">
+			SELECT /* #variables.cachetoken#writefiles */ file_extension, file_name, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset, cloud_url_org
 			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -695,15 +698,15 @@
 		</cfcatch>
 	</cftry>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_cart" />
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
 <!--- Read Orders --->
 <cffunction name="get_orders" output="false">
 	<!--- Read orders --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_orders#session.thecart#" cachedomain="#session.theuserid#_cart">
-	SELECT cart_id, cart_order_date, cart_order_done
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_orders */ cart_id, cart_order_date, cart_order_done
 	FROM #session.hostdbprefix#cart
 	WHERE cart_order_done IS NOT NULL
 	AND cart_order_user_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
@@ -721,7 +724,7 @@
 	WHERE cart_id = <cfqueryparam value="#session.thecart#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_cart" />
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfoutput>Done!</cfoutput>
 	<cfreturn />
 </cffunction>

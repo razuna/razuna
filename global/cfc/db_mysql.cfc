@@ -45,7 +45,20 @@
 		#this.tableoptions#
 		</cfquery>
 		 --->
-		<!--- CREATE TABLES --->
+		<!--- CREATE CACHE --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.cache 
+		(
+			cache_token varchar(100) DEFAULT NULL,
+			cache_type varchar(20) DEFAULT NULL,
+			host_id int DEFAULT NULL,
+			KEY cache_token (cache_token),
+			KEY cache_type (cache_type),
+			KEY host_id (host_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+		<!--- CREATE MODULES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.modules 
 		(

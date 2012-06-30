@@ -42,7 +42,15 @@
 		) 
 		</cfquery> 
 		--->
-		<!--- CREATE TABLES --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.cache 
+		(
+			cache_token varchar(100) DEFAULT NULL,
+			cache_type varchar(20) DEFAULT NULL,
+			host_id int DEFAULT NULL
+		)
+		</cfquery>
+		<!--- CREATE MODULES --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.modules 
 		(
@@ -2201,6 +2209,15 @@
 	<cffunction name="create_indexes" access="public" output="false">
 		<cfargument name="thestruct" type="Struct">
 		<!--- Start creating indexes --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX idx_cache_token ON #arguments.thestruct.theschema#.cache(cache_token)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX idx_cache_type ON #arguments.thestruct.theschema#.cache(cache_type)
+		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE INDEX idx_cache_host_id ON #arguments.thestruct.theschema#.cache(host_id)
+		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX idx_mod_sort ON #arguments.thestruct.theschema#.modules(MOD_SHORT)
 		</cfquery>

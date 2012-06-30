@@ -25,6 +25,9 @@
 --->
 <cfcomponent extends="extQueryCaching">
 
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("audios")>
+
 <!--- GET ALL RECORDS OF THIS TYPE IN A FOLDER --->
 <cffunction name="getFolderAssets" access="public" description="GET ALL RECORDS OF THIS TYPE IN A FOLDER" output="false" returntype="query">
 	<cfargument name="folder_id" type="string" required="true">
@@ -92,8 +95,8 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max##sortby#" cachedomain="#session.theuserid#_audios">
-		SELECT rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getFolderAssetsaud */ rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
@@ -113,8 +116,8 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumnlist##max##sortby#" cachedomain="#session.theuserid#_audios">
-		SELECT #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>, filename_forsort, size, hashtag, date_create, date_change
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getFolderAssetsaud */ #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, a.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, att.*</cfif>, 
 			lower(a.aud_name) filename_forsort,	a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_date date_change
@@ -134,8 +137,8 @@
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachename="aud#session.hostid#getFolderAssets#arguments.folder_id##session.offset##arguments.thestruct.thisview##session.view##thecolumns##max##sortby#" cachedomain="#session.theuserid#_audios">
-		SELECT <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		SELECT /* #variables.cachetoken#getFolderAssetsaud */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>
 		#thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>,
 		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_date date_change
 		FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
@@ -171,8 +174,8 @@
 	<!--- Params --->
 	<cfset var qry = structnew()>
 	<!--- Get details --->
-	<cfquery datasource="#application.razuna.datasource#" name="details" cachename="aud#session.hostid#detail#arguments.thestruct.file_id#" cachedomain="#session.theuserid#_audios">
-	SELECT a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner, a.cloud_url, a.cloud_url_org,
+	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1">
+	SELECT /* #variables.cachetoken#detailaud */ a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner, a.cloud_url, a.cloud_url_org,
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
 	a.path_to_asset, a.lucene_key, s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
@@ -185,8 +188,8 @@
 	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>	
 	<!--- Get descriptions and keywords --->
-	<cfquery datasource="#application.razuna.datasource#" name="desc" cachename="aud#session.hostid#detaildesc#arguments.thestruct.file_id#" cachedomain="#session.theuserid#_audios">
-	SELECT aud_description, aud_keywords, lang_id_r
+	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1">
+	SELECT /* #variables.cachetoken#detaildescaud */ aud_description, aud_keywords, lang_id_r
 	FROM #session.hostdbprefix#audios_text
 	WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
@@ -341,7 +344,8 @@
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')#>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
+	<cfset variables.cachetoken = resetcachetoken("audios")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 </cffunction>
 
 <!--- REMOVE THE AUDIO --->
@@ -395,17 +399,17 @@
 	<!--- Delete labels --->
 	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
 	<!--- Delete from file system --->
-	<cfset tt = CreateUUid()>
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.folder_id_r = details.folder_id_r>
 	<cfset arguments.thestruct.qrydetail = details>
 	<cfset arguments.thestruct.link_kind = details.link_kind>
 	<cfset arguments.thestruct.filenameorg = details.filenameorg>
-	<cfthread name="del#tt#" intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
+	<cfset variables.cachetoken = resetcachetoken("audios")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
@@ -469,18 +473,18 @@
 		<!--- Delete labels --->
 		<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
 		<!--- Delete from file system --->
-		<cfset tt = CreateUUid()>
 		<cfset arguments.thestruct.id = i>
 		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
 		<cfset arguments.thestruct.qrydetail = thedetail>
 		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
 		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-		<cfthread name="del#tt#" intstruct="#arguments.thestruct#">
+		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#arguments.thestruct.theuserid#_audios" />
+	<cfset variables.cachetoken = resetcachetoken("audios")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
@@ -565,7 +569,8 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
+		<cfset variables.cachetoken = resetcachetoken("audios")>
+		<cfset variables.cachetoken = resetcachetoken("folders")>
 </cffunction>
 
 <!--- MOVE FILE --->
@@ -629,8 +634,8 @@
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<!--- Qry. We take the query and do a IN --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="aud#session.hostid#detailforbasket#ValueList(arguments.thestruct.qrybasket.cart_product_id)##arguments.thestruct.related#" cachedomain="#session.theuserid#_audios">
-	SELECT aud_id, aud_name, aud_extension, aud_group, folder_id_r, aud_size, link_kind, link_path_url, path_to_asset
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#detailforbasketaud */ aud_id, aud_name, aud_extension, aud_group, folder_id_r, aud_size, link_kind, link_path_url, path_to_asset
 	FROM #session.hostdbprefix#audios
 	WHERE 
 	<cfif arguments.thestruct.related EQ "T">
@@ -966,8 +971,7 @@
 				<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#">
 				--->
 				<!--- Flush Cache --->
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_audios" />
-				<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
+				<cfset variables.cachetoken = resetcachetoken("audios")>
 			</cfif>
 		</cfloop>
 		<cfcatch type="any">
@@ -982,8 +986,8 @@
 <!--- GET RELATED AUDIOS --->
 <cffunction name="relatedaudios" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="aud#session.hostid#relatedaudios#arguments.thestruct.file_id#" cachedomain="#session.theuserid#_audios">
-	SELECT aud_id, folder_id_r, aud_name, aud_extension, aud_size, path_to_asset, aud_group
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#relatedaudios */ aud_id, folder_id_r, aud_name, aud_extension, aud_size, path_to_asset, aud_group
 	FROM #session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1118,8 +1122,8 @@
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachename="aud#session.hostid#gettext#ValueList(arguments.qry.id)#" cachedomain="#session.theuserid#_audios">
-	SELECT aud_id_r tid, aud_description description, aud_keywords keywords
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1">
+	SELECT /* #variables.cachetoken#gettextaud */ aud_id_r tid, aud_description description, aud_keywords keywords
 	FROM #session.hostdbprefix#audios_text
 	WHERE aud_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
@@ -1142,6 +1146,18 @@
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
+</cffunction>
+
+<!--- Check for existing MD5 mash records --->
+<cffunction name="checkmd5" output="false">
+	<cfargument name="md5hash" type="string">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#checkmd5 */ aud_id
+	FROM #session.hostdbprefix#audios
+	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn qry />
 </cffunction>
 
 </cfcomponent>

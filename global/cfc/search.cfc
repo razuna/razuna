@@ -24,7 +24,10 @@
 *
 --->
 <cfcomponent extends="extQueryCaching">
-	
+
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("search")>
+
 	<!--- SEARCH: FILES --->
 	<cffunction name="search_files">
 		<cfargument name="thestruct" type="struct">
@@ -97,8 +100,8 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="#CreateTimeSpan(0,6,0,0)#">
-		SELECT f.file_id id, f.file_name filename, f.folder_id_r, 
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1">
+		SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r, 
 		f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc description, fd.file_keywords keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
@@ -284,8 +287,8 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="#CreateTimeSpan(0,6,0,0)#">
-		SELECT i.img_id id, i.img_filename filename, 
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1">
+		SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, 
 		i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 		i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description description, it.img_keywords keywords, '0' as vwidth, '0' as vheight, 
@@ -450,8 +453,8 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="#CreateTimeSpan(0,6,0,0)#">
-		SELECT v.vid_id id, v.vid_filename filename, v.folder_id_r, 
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1">
+		SELECT /* #variables.cachetoken#search_videos */ v.vid_id id, v.vid_filename filename, v.folder_id_r, 
 		v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 		v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
 		v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description description, vt.vid_keywords keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,
@@ -616,8 +619,8 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="#CreateTimeSpan(0,6,0,0)#">
-		SELECT a.aud_id id, a.aud_name filename, a.folder_id_r, 
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="#1#">
+		SELECT /* #variables.cachetoken#search_audios */ a.aud_id id, a.aud_name filename, a.folder_id_r, 
 		a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 		a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
 		a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description description, aut.aud_keywords keywords, '0' as vwidth, '0' as vheight,

@@ -25,40 +25,58 @@
 --->
 <cfcomponent hint="Serves as parent only!" output="false">
 
+<!--- Set global variable for caching cache_token --->
+<cfparam name="session.datecachetoken" default="#createuuid('')#" />
+
 <!--- FUNCTION: INIT --->
 <cffunction name="init" returntype="extQueryCaching" access="public" output="false">
-	<cfargument name="dsn" type="string" required="yes" />
-	<cfargument name="database" type="string" required="yes" />
-	<cfargument name="setid" type="numeric" required="no" default="#application.razuna.setid#" />
-	<cfset variables.dsn = arguments.dsn />
-	<cfset variables.database = arguments.database />
-	<cfset variables.setid = arguments.setid />
-	<!--- init caching scope, this is a reference to a globally shared server-struct! --->
-	<!--- <cfset Variables.sCache = intgetCache(dsn=Arguments.dsn, prefix=Arguments.prefix)> --->
-	<!--- This MUST be updated after each modification to the DB !!!!!!!!! --->
-	<!--- <cfset Variables.sCache.lastmod = GetTickCount() /> --->
+	<cfset variables.dsn = application.razuna.datasource />
+	<cfset variables.database = application.razuna.thedatabase />
+	<cfset variables.setid = application.razuna.setid />
 	<cfreturn this />
 </cffunction>
 
-<cffunction name="intgetCache" output="false" access="private" returntype="struct">
-	<cfargument name="dsn" type="string" required="yes" />
-	<!--- init caching scope --->
-	<!--- This is shared across applications if they use the same DB --->
-	<cfif not IsDefined("Server.razunaServer.razuna.DB.#Arguments.dsn#.#Arguments.prefix##ListLast(GetMetaData(this).name, ".")#")>
-		<cfset Server.razunaServer.razuna.DB[Arguments.dsn][Arguments.prefix & ListLast(GetMetaData(this).name, ".")] = StructNew()>
-	</cfif>
-	<cfreturn Server.razunaServer.razuna.DB[Arguments.dsn][Arguments.prefix & ListLast(GetMetaData(this).name, ".")] />
+<cffunction name="getcachetoken" output="false" returntype="string">
+	<cfargument name="type" type="string" required="yes">
+	<!--- Query --->
+	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	SELECT /* #session.datecachetoken# */ cache_token
+	FROM cache
+	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
+	</cfquery>
+	<cfreturn qry.cache_token />
 </cffunction>
 
 <!--- reset the global caching variable of this cfc-object --->
-<cffunction name="resetCaching" output="false" access="private" returntype="void">
-	<!--- 1 second in the future --->
-	<cfset Variables.sCache.lastmod = GetTickCount() + 1000>
+<cffunction name="resetcachetoken" output="false" returntype="string">
+	<cfargument name="type" type="string" required="yes">
+	<!--- Create token --->
+	<cfset var t = createuuid('')>
+	<!--- Reset token date --->
+	<cfset session.datecachetoken = t>
+	<!--- Update DB --->
+	<cfquery dataSource="#application.razuna.datasource#">
+	UPDATE cache
+	SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
+	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
+	</cfquery>
+	<cfreturn t>
 </cffunction>
 
-<!--- get the cachedWithin value --->
-<cffunction name="cachedWithin" output="false" access="private" returntype="date">
-	<cfreturn CreateODBCDateTime(Int((GetTickCount() - Variables.sCache.lastmod) /1000) /60 / 60 / 24)>
+<!--- reset all --->
+<cffunction name="resetcachetokenall" output="false" returntype="void">
+	<!--- Create token --->
+	<cfset var t = createuuid('')>
+	<!--- Reset token date --->
+	<cfset session.datecachetoken = t>
+	<!--- Update DB --->
+	<cfquery dataSource="#application.razuna.datasource#">
+	UPDATE cache
+	SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
+	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	</cfquery>
 </cffunction>
 
 <!--- Log Search --->
@@ -91,7 +109,7 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfinvoke method="resetcachetoken" type="logs" />
 </cffunction>
 
 <!--- Log Assets --->
@@ -125,7 +143,7 @@
 			)
 			</cfquery>
 			<!--- Flush Cache --->
-			<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.theuserid#_log" />
+			<cfinvoke method="resetcachetoken" type="logs" />
 		</cfthread>
 		<cfcatch type="any">
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
@@ -160,7 +178,7 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfinvoke method="resetcachetoken" type="logs" />
 </cffunction>
 
 <!--- LOG USERS --->
@@ -192,7 +210,7 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfinvoke method="resetcachetoken" type="logs" />
 </cffunction>
 
 </cfcomponent>

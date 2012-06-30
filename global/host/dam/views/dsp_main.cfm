@@ -46,14 +46,16 @@
 			</cfif>
 			<!--- Nirvanix Usage --->
 			<cfif application.razuna.isp AND application.razuna.storage EQ "nirvanix" AND structkeyexists(attributes.nvxusage,"limitup")>
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
-					<tr>
-						<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;color:##900;">
-							You have exceeded the total amount of storage or traffic for your account for this month. Please login to your <a href="##" onclick="showaccount();">account panel and upgrade</a>!
-						</td>
-					</tr>
-				</table>
-				<br />
+				<cfcachecontent name="nvx_exceeded" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
+						<tr>
+							<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;color:##900;">
+								You have exceeded the total amount of storage or traffic for your account for this month. Please login to your <a href="##" onclick="showaccount();">account panel and upgrade</a>!
+							</td>
+						</tr>
+					</table>
+					<br />
+				</cfcachecontent>
 			</cfif>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
@@ -75,36 +77,38 @@
 							</table>
 						<cfelse>
 							<cfif settingsObj.getconfig("prerelease")>
+								<cfcachecontent name="razunatesters" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+									<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
+										<tr>
+											<th>Razuna Tester</th>
+										</tr>
+										<tr>
+											<td>Thank you for taking this Pre-Release Version of Razuna for a spin. We appreciate your help a lot. To streamline the process of reporting issues that you might find, please <a href="http://groups.google.com/group/razuna-testers" target="_blank">subscribe to the Razuna-Testers Google Group</a>. <br /><br />Please <strong>always</strong> <a href="http://issues.razuna.com" target="_blank">check our issue platform for reported issues first</a>, <strong>before</strong> posting to the group.</td>
+										</tr>
+										<tr>
+											<td>
+												<img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif" height=30 width=140 alt="Google Groups"><br />
+												Subscribe to razuna-testers<br />
+												<form action="http://groups.google.com/group/razuna-testers/boxsubscribe">
+												Email: <input type="text" name="email" style="width:200px"> <input type=submit name="sub" value="Subscribe">
+												</form>
+												<br />
+												<a href="http://groups.google.com/group/razuna-testers">Visit the Razuna-Testers group on the Web</a>
+											</td>
+										</tr>
+									</table>
+									<br />
+								</cfcachecontent>
+							</cfif>
+							<cfcachecontent name="razunawelcomecache" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
 									<tr>
-										<th>Razuna Tester</th>
+										<th>#defaultsObj.trans("welcome_to_ecp")#</th>
 									</tr>
 									<tr>
-										<td>Thank you for taking this Pre-Release Version of Razuna for a spin. We appreciate your help a lot. To streamline the process of reporting issues that you might find, please <a href="http://groups.google.com/group/razuna-testers" target="_blank">subscribe to the Razuna-Testers Google Group</a>. <br /><br />Please <strong>always</strong> <a href="http://issues.razuna.com" target="_blank">check our issue platform for reported issues first</a>, <strong>before</strong> posting to the group.</td>
-									</tr>
-									<tr>
-										<td>
-											<img src="http://groups.google.com/intl/en/images/logos/groups_logo_sm.gif" height=30 width=140 alt="Google Groups"><br />
-											Subscribe to razuna-testers<br />
-											<form action="http://groups.google.com/group/razuna-testers/boxsubscribe">
-											Email: <input type="text" name="email" style="width:200px"> <input type=submit name="sub" value="Subscribe">
-											</form>
-											<br />
-											<a href="http://groups.google.com/group/razuna-testers">Visit the Razuna-Testers group on the Web</a>
-										</td>
+										<td>#defaultsObj.trans("welcome_text")#</td>
 									</tr>
 								</table>
-								<br />
-							</cfif>
-							<cfcachecontent action="cache" cachename="razunawelcomecache" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
-							<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
-								<tr>
-									<th>#defaultsObj.trans("welcome_to_ecp")#</th>
-								</tr>
-								<tr>
-									<td>#defaultsObj.trans("welcome_text")#</td>
-								</tr>
-							</table>
 							</cfcachecontent>
 						</cfif>
 						</div>
@@ -190,83 +194,87 @@
 							</ul>
 							<!-- tab "panes" -->
 							<div class="pane" id="raztools">
-								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-									<tr>
-										<td>Hi there. Thank you for using Razuna. In order for you to enjoy Razuna even more we have some additional tools for you available.</td>
-									</tr>
-									<tr>
-										<th><a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Razuna Desktop</a></th>
-									</tr>
-									<tr>
-										<td>Razuna Desktop enables you to add any asset from your desktop to Razuna by simply dragging and dropping it into your Razuna Desktop application. <a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Read more >>></a></td>
-									</tr>
-									<tr>
-										<th><a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Razuna Wordpress Plugin</a></th>
-									</tr>
-									<tr>
-										<td>With the Razuna Wordpress plugin you simply choose assets within Razuna on your Wordpress powered site. There is no need to upload or import them to Wordpress. <a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Read more >>></a></td>
-									</tr>
-									<tr>
-										<th><a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Razuna Google Chrome Extension</a></th>
-									</tr>
-									<tr>
-										<td>With the Razuna Google Chrome Extension installed you can browse your assets directly within Chrome. <a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Read more >>></a></td>
-									</tr>
-									<tr>
-										<th><a href="http://razuna.org/getinvolved/developers" target="_blank">Razuna API</a></th>
-									</tr>
-									<tr>
-										<td>Razuna features a extensive API for you to expand on and access your assets Head over to our <a href="http://razuna.org/getinvolved/developers" target="_blank">Developer section</a> or directly to the <a href="http://wiki.razuna.com/display/ecp/API+Developer+Guide" target="_blank">API guide</a>. </a></td>
-									</tr>
-									<tr>
-										<td>
-											<cfif cs.show_twitter>
-												<a href="http://twitter.com/razunahq" class="twitter-follow-button">Follow @razunahq</a>
-											</cfif>
-										</td>
-									</tr>
-									<tr>
-										<td>
-											<cfif cs.show_facebook>
-												<script>(function(d){
-	  var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-	  js = d.createElement('script'); js.id = id; js.async = true;
-	  js.src = "//connect.facebook.net/en_US/all.js##appId=207944582601260&xfbml=1";
-	  d.getElementsByTagName('head')[0].appendChild(js);
-	}(document));</script>
-	<div class="fb-like" data-href="https://www.facebook.com/razunahq" data-send="true" data-width="350" data-show-faces="true"></div>
-											</cfif>
-										</td>
-									</tr>
-								</table>
+								<cfcachecontent name="raztools" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+									<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+										<tr>
+											<td>Hi there. Thank you for using Razuna. In order for you to enjoy Razuna even more we have some additional tools for you available.</td>
+										</tr>
+										<tr>
+											<th><a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Razuna Desktop</a></th>
+										</tr>
+										<tr>
+											<td>Razuna Desktop enables you to add any asset from your desktop to Razuna by simply dragging and dropping it into your Razuna Desktop application. <a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Read more >>></a></td>
+										</tr>
+										<tr>
+											<th><a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Razuna Wordpress Plugin</a></th>
+										</tr>
+										<tr>
+											<td>With the Razuna Wordpress plugin you simply choose assets within Razuna on your Wordpress powered site. There is no need to upload or import them to Wordpress. <a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Read more >>></a></td>
+										</tr>
+										<tr>
+											<th><a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Razuna Google Chrome Extension</a></th>
+										</tr>
+										<tr>
+											<td>With the Razuna Google Chrome Extension installed you can browse your assets directly within Chrome. <a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Read more >>></a></td>
+										</tr>
+										<tr>
+											<th><a href="http://razuna.org/getinvolved/developers" target="_blank">Razuna API</a></th>
+										</tr>
+										<tr>
+											<td>Razuna features a extensive API for you to expand on and access your assets Head over to our <a href="http://razuna.org/getinvolved/developers" target="_blank">Developer section</a> or directly to the <a href="http://wiki.razuna.com/display/ecp/API+Developer+Guide" target="_blank">API guide</a>. </a></td>
+										</tr>
+										<tr>
+											<td>
+												<cfif cs.show_twitter>
+													<a href="http://twitter.com/razunahq" class="twitter-follow-button">Follow @razunahq</a>
+												</cfif>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<cfif cs.show_facebook>
+													<script>(function(d){
+		  var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+		  js = d.createElement('script'); js.id = id; js.async = true;
+		  js.src = "//connect.facebook.net/en_US/all.js##appId=207944582601260&xfbml=1";
+		  d.getElementsByTagName('head')[0].appendChild(js);
+		}(document));</script>
+		<div class="fb-like" data-href="https://www.facebook.com/razunahq" data-send="true" data-width="350" data-show-faces="true"></div>
+												</cfif>
+											</td>
+										</tr>
+									</table>
+								</cfcachecontent>
 							</div>
 							<cfif cs.tab_razuna_support>
 								<div class="pane" id="support">
-									<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-										<cfif !application.razuna.isp>
+									<cfcachecontent name="tab_razuna_support" cachedwithin="#CreateTimeSpan(7,0,0,0)#">
+										<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+											<cfif !application.razuna.isp>
+												<tr>
+													<th>Razuna Support</th>
+												</tr>
+												<tr>
+													<td>#defaultsObj.trans("support_desc")#</td>
+												</tr>
+											</cfif>
 											<tr>
-												<th>Razuna Support</th>
+												<th style="padding-top:15px;">Online Support Tools</th>
 											</tr>
 											<tr>
-												<td>#defaultsObj.trans("support_desc")#</td>
+												<td><a href="##" onClick="feedback_widget.show();">Leave us a Feedback</a></td>
 											</tr>
-										</cfif>
-										<tr>
-											<th style="padding-top:15px;">Online Support Tools</th>
-										</tr>
-										<tr>
-											<td><a href="##" onClick="feedback_widget.show();">Leave us a Feedback</a></td>
-										</tr>
-										<tr>
-											<td><a href="http://wiki.razuna.com/">Documentation (Wiki)</a></td>
-										</tr>
-										<tr>
-											<td><a href="https://getsatisfaction.com/razuna" target="_blank">Join the Razuna Customer Community</a></td>
-										</tr>
-										<tr>
-											<td><a href="http://issues.razuna.com/" target="_blank">Razuna Issue Platform</a></td>
-										</tr>
-									</table>
+											<tr>
+												<td><a href="http://wiki.razuna.com/">Documentation (Wiki)</a></td>
+											</tr>
+											<tr>
+												<td><a href="https://getsatisfaction.com/razuna" target="_blank">Join the Razuna Customer Community</a></td>
+											</tr>
+											<tr>
+												<td><a href="http://issues.razuna.com/" target="_blank">Razuna Issue Platform</a></td>
+											</tr>
+										</table>
+									</cfcachecontent>
 								</div>
 							</cfif>
 							<cfif cs.tab_razuna_blog>

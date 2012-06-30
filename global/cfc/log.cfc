@@ -25,6 +25,9 @@
 --->
 <cfcomponent hint="For logging functionality" output="false" extends="extQueryCaching">
 
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("logs")>
+
 <!--- LOG USERS --->
 <cffunction name="log_users" output="false" access="public">
 	<cfargument name="theuserid" type="string" required="yes" />
@@ -58,9 +61,9 @@
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		)
 		</cfquery>
-		<!--- Flush Cache --->
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#attributes.intstruct.theuserid#_log" />
 	</cfthread>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("logs")>
 	<cfreturn />
 </cffunction>
 
@@ -69,8 +72,8 @@
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
 	<!--- Get all log entries --->
-	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="userstotal#session.hostid##arguments.thestruct.logaction#" cachedomain="#session.theuserid#_log">
-	SELECT log_id
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_log_users */ log_id
 	FROM #session.hostdbprefix#log_users
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
@@ -87,10 +90,10 @@
 	<!--- MySQL Offset --->
 	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_users#session.hostid##arguments.thestruct.logsection##arguments.thestruct.logaction##session.offset_log#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
-			SELECT rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_timestamp, thetotal
+			SELECT /* #variables.cachetoken#get_log_users2 */ rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_timestamp, thetotal
 			FROM (
 				SELECT ROWNUM AS rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_timestamp, thetotal
 				FROM (
@@ -117,7 +120,7 @@
 			WHERE rn > #min#
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, 
+			SELECT /* #variables.cachetoken#get_log_users2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, 
 			l.log_ip, l.log_timestamp, 
 			(
 				SELECT count(log_id)
@@ -161,7 +164,7 @@
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfset variables.cachetoken = resetcachetoken("logs")>
 </cffunction>
 
 <!--- GET LOG ASSETS --->
@@ -169,8 +172,8 @@
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
 	<!--- Get all log entries --->
-	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="assetstotal#session.hostid##arguments.thestruct.logaction#" cachedomain="#session.theuserid#_log">
-	SELECT log_id
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_log_assets */ log_id
 	FROM #session.hostdbprefix#log_assets
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
@@ -191,10 +194,10 @@
 		<cfset arguments.thestruct.id = 0>
 	</cfif>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_assets#session.hostid##arguments.thestruct.logaction##session.offset_log##arguments.thestruct.id#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
-			SELECT rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_file_type, 
+			SELECT /* #variables.cachetoken#get_log_assets2 */ rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_file_type, 
 			log_timestamp, user_first_name, user_last_name, thetotal
 			FROM (
 				SELECT ROWNUM AS rn, 
@@ -231,7 +234,7 @@
 			WHERE rn > <cfqueryparam value="#min#" cfsqltype="cf_sql_numeric">
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, 
+			SELECT /* #variables.cachetoken#get_log_assets2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, 
 			l.log_time, l.log_desc, l.log_browser, l.log_ip, l.log_file_type, l.log_timestamp, u.user_first_name, u.user_last_name, 
 			(
 				SELECT count(log_id)
@@ -288,7 +291,7 @@
 	</cfif>
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfset variables.cachetoken = resetcachetoken("logs")>
 </cffunction>
 
 <!--- GET LOG FOLDERS --->
@@ -296,8 +299,8 @@
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.logaction" default="" />
 	<!--- Get all log entries --->
-	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="folderstotal#session.hostid##arguments.thestruct.logaction#" cachedomain="#session.theuserid#_log">
-	SELECT log_id
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_log_folders */ log_id
 	FROM #session.hostdbprefix#log_folders
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
@@ -314,10 +317,10 @@
 	<!--- MySQL Offset --->
 	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_folders#session.hostid##arguments.thestruct.logaction##session.offset_log#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
-			SELECT rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_timestamp, 
+			SELECT /* #variables.cachetoken#get_log_folders2 */ rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_timestamp, 
 			user_first_name, user_last_name, thetotal
 			FROM (
 				SELECT ROWNUM AS rn, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_timestamp, user_first_name, 
@@ -346,7 +349,7 @@
 			WHERE rn > #min#
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, 
+			SELECT /* #variables.cachetoken#get_log_folders2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, 
 			l.log_ip, l.log_timestamp, u.user_first_name, u.user_last_name, 
 			(
 				SELECT count(log_id)
@@ -391,15 +394,15 @@
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfset variables.cachetoken = resetcachetoken("logs")>
 </cffunction>
 
 <!--- GET LOG SEARCHES --->
 <cffunction name="get_log_searches" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<!--- Get all log entries --->
-	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="searchestotal#session.hostid#" cachedomain="#session.theuserid#_log">
-	SELECT log_id
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_log_searches */ log_id
 	FROM #session.hostdbprefix#log_search
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
@@ -416,10 +419,10 @@
 	<!--- MySQL Offset --->
 	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_searches#session.hostid##session.offset_log#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
-			SELECT rn, log_user, log_date, log_time, log_search_for, log_search_from, log_founditems, log_browser, log_ip, log_timestamp, 
+			SELECT /* #variables.cachetoken#get_log_searches2 */ rn, log_user, log_date, log_time, log_search_for, log_search_from, log_founditems, log_browser, log_ip, log_timestamp, 
 			user_first_name, user_last_name, thetotal
 			FROM (
 				SELECT ROWNUM AS rn, log_user, log_date, log_time, log_search_for, log_search_from, log_founditems, log_browser, log_ip, log_timestamp,
@@ -442,7 +445,7 @@
 			WHERE rn > #min#
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_date, l.log_time, l.log_search_for, l.log_search_from, 
+			SELECT /* #variables.cachetoken#get_log_searches2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_date, l.log_time, l.log_search_for, l.log_search_from, 
 			l.log_founditems, l.log_timestamp, l.log_browser, l.log_ip, u.user_first_name, u.user_last_name, 
 			(
 				SELECT count(log_id)
@@ -478,7 +481,7 @@
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfset variables.cachetoken = resetcachetoken("logs")>
 </cffunction>
 
 <!--- GET LOG SEARCHES SUM --->
@@ -486,8 +489,8 @@
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<cfparam name="arguments.thestruct.what" default="" />
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_searches_sum#session.hostid##arguments.thestruct.what#" cachedomain="#session.theuserid#_log">
-	SELECT log_search_for, count(log_search_for) count_words, sum(log_founditems) found
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_log_searches_sum */ log_search_for, count(log_search_for) count_words, sum(log_founditems) found
 	FROM #session.hostdbprefix#log_search
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	<cfif structkeyexists(arguments.thestruct,"what") AND arguments.thestruct.what NEQ "">
@@ -504,8 +507,8 @@
 <cffunction name="get_log_errors" output="false" access="public">
 	<cfargument name="thestruct" type="struct" required="yes" />
 	<!--- Get all log entries --->
-	<cfquery datasource="#variables.dsn#" name="thetotal" cachename="errorstotal#session.hostid#" cachedomain="#session.theuserid#_log">
-	SELECT id
+	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_log_errors */ id
 	FROM #session.hostdbprefix#errors
 	</cfquery>
 	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
@@ -522,10 +525,10 @@
 	<!--- MySQL Offset --->
 	<cfset var mysqloffset = session.offset_log * session.rowmaxpage_log>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="#session.hostid#get_log_errors#session.hostid##session.offset_log#" cachedomain="#session.theuserid#_log">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
 		<!--- Oracle --->
 		<cfif variables.database EQ "oracle">
-			SELECT rn, id, err_date, thetotal
+			SELECT /* #variables.cachetoken#get_log_errors2 */ rn, id, err_date, thetotal
 			FROM (
 				SELECT ROWNUM AS rn, id, err_date, thetotal
 				FROM (
@@ -545,7 +548,7 @@
 			WHERE rn > #min#
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT<cfif variables.database EQ "mssql"> TOP #max#</cfif> id, err_date, 
+			SELECT /* #variables.cachetoken#get_log_errors2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> id, err_date, 
 			(
 				SELECT count(id)
 				FROM #session.hostdbprefix#errors
@@ -593,7 +596,7 @@
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" />
+	<cfset variables.cachetoken = resetcachetoken("logs")>
 </cffunction>
 
 <!--- SEND ERROR LOG --->
@@ -637,8 +640,8 @@
 		<cfset arguments.thestruct.id = 0>
 	</cfif>
 	<!--- Qry --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachename="searchlog#session.theuserid##session.hostid##arguments.thestruct.searchtext##arguments.thestruct.id#" cachedomain="#session.theuserid#_log">
-	SELECT l.LOG_ACTION, l.LOG_DESC, <cfif arguments.thestruct.logtype EQ "log_assets">l.LOG_FILE_TYPE,</cfif> l.LOG_TIMESTAMP, u.user_first_name, u.user_last_name
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	SELECT /* #variables.cachetoken#log_search */ l.LOG_ACTION, l.LOG_DESC, <cfif arguments.thestruct.logtype EQ "log_assets">l.LOG_FILE_TYPE,</cfif> l.LOG_TIMESTAMP, u.user_first_name, u.user_last_name
 	FROM #session.hostdbprefix##arguments.thestruct.logtype# l LEFT JOIN users u ON l.log_user = u.user_id
 	WHERE lower(l.log_desc) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.thestruct.searchtext)#%">
 	AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

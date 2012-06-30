@@ -23,16 +23,10 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent hint="Default queries within the admin">
+<cfcomponent hint="Default queries within the admin" extends="extQueryCaching">
 
-<!--- FUNCTION: INIT --->
-	<cffunction name="init" returntype="global" access="public" output="false">
-		<cfargument name="dsn" type="string" required="yes" />
-		<cfargument name="database" type="string" required="yes" />
-		<cfset variables.dsn = arguments.dsn />
-		<cfset variables.database = arguments.database />
-		<cfreturn this />
-	</cffunction>
+<!--- Get the cachetoken for here --->
+<cfset variables.cachetoken = getcachetoken("general")>
 
 <!--- Get all hosts --->
 	<cffunction hint="Give back all hosts" name="allhosts">
@@ -58,7 +52,7 @@
 
 <!--- GET THE WISDOM TEXT --->
 	<cffunction hint="GET THE WISDOM TEXT" name="wisdom" output="false">
-		<cfquery datasource="#application.razuna.datasource#" name="wis" cachename="#session.hostid#wisdom" cachedomain="global">
+		<cfquery datasource="#application.razuna.datasource#" name="wis">
 			<!--- Oracle --->
 			<cfif application.razuna.thedatabase EQ "oracle">
 				SELECT wis_text, wis_author
@@ -207,16 +201,7 @@
 			SELECT max(#arguments.theid#)+1 AS id
 			FROM #arguments.thetable#
 			</cfquery>
-			<!---
-			<cfquery datasource="#arguments.dsn#">
-			UPDATE sequences
-			SET thevalue = <cfqueryparam value="#qryseq.id#" cfsqltype="cf_sql_numeric">
-			WHERE lower(theid) = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar">
-			</cfquery>
-			--->
 		</cftransaction>
-		<!--- Flush Cache
-		<cfinvoke component="global" method="clearcache" theaction="flushall" thedomain="#session.theuserid#_log" /> --->
 		<!--- Return --->
 		<cfreturn qryseq>
 	</cffunction>
@@ -360,9 +345,9 @@ Comment:<br>
 		<cfif structkeyexists(arguments.thestruct,"qrybasket")>
 			<cfset var qry = 0>
 			<!--- Loop over basket query --->
-			<cfloop query="arguments.thestruct.qrybasket" cachename="gs#session.hostid##cart_product_id##cart_file_type#" cachedomain="#session.theuserid#_share_options">
-				<cfquery datasource="#application.razuna.datasource#" name="qry_asset">
-				SELECT asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
+			<cfloop query="arguments.thestruct.qrybasket">
+				<cfquery datasource="#application.razuna.datasource#" name="qry_asset" cachedwithin="1">
+				SELECT /* #variables.cachetoken#get_share_options */ asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
 				FROM #session.hostdbprefix#share_options
 				WHERE group_asset_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cart_product_id#">
 				AND asset_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cart_file_type#">
@@ -384,16 +369,16 @@ Comment:<br>
 				<cfset var thelist = valuelist(arguments.thestruct.qry_detail.detail.aud_id) & "," & valuelist(arguments.thestruct.qry_related.aud_id)>
 			</cfif>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="gs#session.hostid##thelist#" cachedomain="#session.theuserid#_share_options">
-			SELECT asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			SELECT /* #variables.cachetoken#get_share_options2 */ asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="Yes">)
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		<cfelse>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachename="gs#session.hostid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_share_options">
-			SELECT asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			SELECT /* #variables.cachetoken#get_share_options3 */ asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -464,7 +449,7 @@ Comment:<br>
 		)
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfinvoke method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfreturn />
 	</cffunction>
 
@@ -478,33 +463,9 @@ Comment:<br>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfinvoke method="clearcache" theaction="flushall" thedomain="#session.theuserid#_share_options" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- Return --->
 		<cfreturn />
-	</cffunction>
-
-<!--- Clear Cache ---------------------------------------------------------------------->
-	<cffunction name="clearcache" output="false" access="remote" returnType="void">
-		<cfargument name="theaction" type="string" required="true">
-		<cfargument name="thedomain" type="string" required="true">
-		<!--- Flush Cache --->
-		<cfif arguments.theaction EQ "flushall">
-			<cfquery datasource="#application.razuna.datasource#" action="flushall" cachedomain="#arguments.thedomain#" />
-		<!--- Nuclear --->
-		<cfelseif arguments.theaction EQ "nuclear">
-			<cfquery datasource="#application.razuna.datasource#" action="flushall" />
-		</cfif>
-		<cfreturn />
-	</cffunction>
-
-<!--- Flush db cache from admin ---------------------------------------------------------------------->
-	<cffunction name="flushcache" output="false" access="public" returnType="void">
-		<cfargument name="tbl" type="string" required="true">
-		<cfloop list="#arguments.tbl#" delimiters="," index="i">
-			<cfif i NEQ "undefined">
-				<cfquery datasource="#application.razuna.datasource#" action="flushall" cachedomain="_#i#" />
-			</cfif>
-		</cfloop>
 	</cffunction>
 
 <!--- Get ALL Upload Templates ---------------------------------------------------------------------->
@@ -645,16 +606,16 @@ Comment:<br>
 		<!--- Param --->
 		<cfset var qry = structnew()>
 		<!--- Query links --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.links" cachename="av#session.hostid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_av">
-		SELECT av_id, av_link_title, av_link_url
+		<cfquery datasource="#application.razuna.datasource#" name="qry.links" cachedwithin="1">
+		SELECT /* #variables.cachetoken#get_versions_link */ av_id, av_link_title, av_link_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
 		<!--- Query links --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachename="ava#session.hostid##arguments.thestruct.file_id#" cachedomain="#session.theuserid#_av">
-		SELECT av_id, av_link_title, av_link_url
+		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1">
+		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, av_link_title, av_link_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -686,7 +647,7 @@ Comment:<br>
 		)
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfinvoke method="clearcache" theaction="flushall" thedomain="#session.theuserid#_av" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfreturn />
 	</cffunction>
 
@@ -701,7 +662,7 @@ Comment:<br>
 		AND av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfinvoke method="clearcache" theaction="flushall" thedomain="#session.theuserid#_av" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfreturn />
 	</cffunction>
 
@@ -734,7 +695,7 @@ Comment:<br>
 		AND av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_id#">
 		</cfquery>
 		<!--- Flush Cache --->
-		<cfinvoke method="clearcache" theaction="flushall" thedomain="#session.theuserid#_av" />
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<cfreturn />
 	</cffunction>
 	
