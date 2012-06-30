@@ -1972,6 +1972,8 @@
 <!--- CREATE QUERY TABLE WITH AMOUNT OF DIFFERENT FILE TYPES FOR TAB DISPLAY --->
 <cffunction name="fileTotalAllTypes" output="false" hint="CREATE QUERY TABLE WITH AMOUNT OF DIFFERENT FILE TYPES FOR TAB DISPLAY">
 	<cfargument name="folder_id" default="" required="yes" type="string">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
 	<cfquery datasource="#variables.dsn#" name="qTab" cachedwithin="1">
 		SELECT /* #variables.cachetoken#fileTotalAllTypes */ 'doc' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_word' as scr
 		FROM #session.hostdbprefix#files
@@ -2028,6 +2030,8 @@
 <!--- SET ACCESS PERMISSION --->
 <cffunction hint="SET ACCESS PERMISSION" name="setaccess" output="true" returntype="string">
 	<cfargument name="folder_id" default="" required="yes" type="string">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Set the access rights for this folder --->
 	<cfset var folderaccess = "n">
 	<!--- Query --->
