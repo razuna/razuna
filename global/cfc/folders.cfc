@@ -1813,6 +1813,8 @@
 <cffunction name="filetotalcount" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
 	<cfargument name="theoverall" default="f" required="no" type="string">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Show assets from subfolders or not --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke method="getfoldersinlist" dsn="#application.razuna.datasource#" folder_id="#arguments.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
