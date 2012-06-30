@@ -39,8 +39,8 @@
 <cffunction name="getcachetoken" output="false" returntype="string">
 	<cfargument name="type" type="string" required="yes">
 	<!--- Query --->
-	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,10)#">
-	SELECT cache_token
+	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	SELECT /* #session.datecachetoken# */ cache_token
 	FROM cache
 	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 	AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
@@ -53,6 +53,8 @@
 	<cfargument name="type" type="string" required="yes">
 	<!--- Create token --->
 	<cfset var t = createuuid('')>
+	<!--- Reset token date --->
+	<cfset session.datecachetoken = t>
 	<!--- Update DB --->
 	<cfquery dataSource="#application.razuna.datasource#">
 	UPDATE cache
@@ -67,6 +69,8 @@
 <cffunction name="resetcachetokenall" output="false" returntype="void">
 	<!--- Create token --->
 	<cfset var t = createuuid('')>
+	<!--- Reset token date --->
+	<cfset session.datecachetoken = t>
 	<!--- Update DB --->
 	<cfquery dataSource="#application.razuna.datasource#">
 	UPDATE cache
