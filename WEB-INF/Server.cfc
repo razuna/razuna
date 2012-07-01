@@ -1,7 +1,7 @@
 <cfcomponent>
 
   <cffunction name="onServerStart">
-    <cfif fileExists("cache.cfm")>
+    <cfif fileExists("WEB-INF/cache.cfm")>
       <cfinclude template="cache.cfm" />
     <cfelse>
       <!--- Create the cache --->
