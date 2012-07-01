@@ -46,7 +46,7 @@
 			</cfif>
 			<!--- Nirvanix Usage --->
 			<cfif application.razuna.isp AND application.razuna.storage EQ "nirvanix" AND structkeyexists(attributes.nvxusage,"limitup")>
-				<cfcachecontent name="nvx_exceeded" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+				<cfcachecontent name="nvx_exceeded" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
 						<tr>
 							<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;color:##900;">
@@ -77,7 +77,7 @@
 							</table>
 						<cfelse>
 							<cfif settingsObj.getconfig("prerelease")>
-								<cfcachecontent name="razunatesters" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+								<cfcachecontent name="razunatesters" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 									<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
 										<tr>
 											<th>Razuna Tester</th>
@@ -100,7 +100,7 @@
 									<br />
 								</cfcachecontent>
 							</cfif>
-							<cfcachecontent name="razunawelcomecache" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+							<cfcachecontent name="razunawelcomecache" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
 									<tr>
 										<th>#defaultsObj.trans("welcome_to_ecp")#</th>
@@ -194,7 +194,7 @@
 							</ul>
 							<!-- tab "panes" -->
 							<div class="pane" id="raztools">
-								<cfcachecontent name="raztools" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+								<cfcachecontent name="raztools" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 									<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 										<tr>
 											<td>Hi there. Thank you for using Razuna. In order for you to enjoy Razuna even more we have some additional tools for you available.</td>
@@ -248,7 +248,7 @@
 							</div>
 							<cfif cs.tab_razuna_support>
 								<div class="pane" id="support">
-									<cfcachecontent name="tab_razuna_support" cachedwithin="#CreateTimeSpan(7,0,0,0)#">
+									<cfcachecontent name="tab_razuna_support" cachedwithin="#CreateTimeSpan(7,0,0,0)#" region="razcache">
 										<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 											<cfif !application.razuna.isp>
 												<tr>

@@ -40,7 +40,7 @@
 			</a>
 		</div>
 		<!--- Search --->
-		<cfcachecontent name="quicksearch" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+		<cfcachecontent name="quicksearch" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 			<div style="width:auto;float:right;padding-top:3px;">
 				<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >

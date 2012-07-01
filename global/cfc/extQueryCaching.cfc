@@ -39,7 +39,7 @@
 <cffunction name="getcachetoken" output="false" returntype="string">
 	<cfargument name="type" type="string" required="yes">
 	<!--- Query --->
-	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #session.datecachetoken# */ cache_token
 	FROM cache
 	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">

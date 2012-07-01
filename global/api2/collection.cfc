@@ -37,7 +37,7 @@
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- Query which file are in this collection --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry_col" cachedwithin="1">
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry_col" cachedwithin="1" region="razcache">
 			SELECT /* #session.cachetoken#getassets1 */ file_id_r
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct
 			WHERE ct.col_id_r = <cfqueryparam value="#arguments.collectionid#" cfsqltype="CF_SQL_VARCHAR">
@@ -45,7 +45,7 @@
 			<!--- If above qry return records --->
 			<cfif qry_col.recordcount NEQ 0>
 				<!--- Query the files --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				SELECT  /* #session.cachetoken#getassets2 */
 				i.img_id id, 
 				i.img_filename filename, 
@@ -215,7 +215,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1">
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
 			SELECT /* #session.cachetoken#getcollections */ c.col_id, c.change_date, ct.col_name, 
 				(
 					SELECT count(file_id_r) 

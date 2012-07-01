@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcachecontent name="razunablogcache" cachedwithin="#CreateTimeSpan(0,6,0,0)#">
+<cfcachecontent name="razunablogcache" cachedwithin="#CreateTimeSpan(0,6,0,0)#" region="razcache">
 	<cfoutput>
 	<!--- Fetch the Razuna Blog Feed --->
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">

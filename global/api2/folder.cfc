@@ -56,7 +56,7 @@
 				<cfset thefolderlist = arguments.folderid>
 			</cfif>	
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				<!--- Images --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "img">
 					SELECT  /* #session.cachetoken#getassetsfolder1 */

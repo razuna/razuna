@@ -62,7 +62,7 @@
 			<cfset var thepass = hash(arguments.pass, "MD5", "UTF-8")>
 		</cfif>
 		<!--- Check for the user --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
 		FROM users u<cfif arguments.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
@@ -136,7 +136,7 @@
 		<cfset arguments.cachetoken = variables.cachetoken>
 		<cfthread intstruct="#arguments#">
 			<!--- Query customization DB --->
-			<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #attributes.intstruct.cachetoken#createmyfolder */ custom_id, custom_value
 			FROM #session.hostdbprefix#custom
 			WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
@@ -355,7 +355,7 @@ Password: #randompassword#
 	<cffunction name="checkhost" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="theuser" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="theuser" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#checkhost */ h.host_name, h.host_name_custom, h.host_id
 		FROM users u, ct_users_hosts ct, hosts h
 		WHERE (
@@ -431,7 +431,7 @@ Password: #randompassword#
 				<cfset var providerName = auth_info_json.profile.providerName>
 				<cfset var preferredUsername = auth_info_json.profile.preferredUsername>
 				<!--- Now check DB --->
-				<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachedwithin="1">
+				<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachedwithin="1" region="razcache">
 				SELECT /* #variables.cachetoken#login_janrain */ uc.jr_identifier, uc.user_id_r, u.user_first_name, u.user_last_name
 				FROM #session.hostdbprefix#users_accounts uc, users u
 				WHERE uc.jr_identifier = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#identifier#">
@@ -440,7 +440,7 @@ Password: #randompassword#
 				</cfquery>
 				<!--- If we don't have an identifier yet then compare by eMail or preferredUsername --->
 				<cfif qryaccount.recordcount EQ 0>
-					<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachedwithin="1">
+					<cfquery datasource="#application.razuna.datasource#" name="qryaccount" cachedwithin="1" region="razcache">
 					SELECT /* #variables.cachetoken#login_janrain2 */ uc.identifier, uc.user_id_r, u.user_first_name, u.user_last_name
 					FROM #session.hostdbprefix#users_accounts uc, users u
 					WHERE (

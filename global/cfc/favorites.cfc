@@ -84,7 +84,7 @@
 <!--- LIST FAVORITES FOR THIS USER --->
 <cffunction name="readfavorites" output="false">
 	<!--- select the favorites --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#readfavorites */ f.fav_id cart_product_id, f.fav_type, f.fav_kind, f.fav_order,
 		CASE
 			WHEN f.fav_type = 'file'

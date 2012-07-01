@@ -147,7 +147,7 @@
 <!--- Get Details from this User --->
 <cffunction name="details">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin, user_create_date,
 	user_active,USER_COMPANY,USER_PHONE,USER_MOBILE,USER_FAX,user_in_dam, user_salutation
 	from users
@@ -158,7 +158,7 @@
 
 <!--- GET EMAIL FROM THIS USER --->
 <cffunction name="user_email">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#user_emailuser */ user_email
 	FROM users
 	WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
@@ -169,7 +169,7 @@
 <!--- Get hosts of this user --->
 <cffunction name="userhosts">
 	<cfargument name="thestruct" type="Struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#userhosts */ h.host_id, h.host_name, h.host_db_prefix, h.host_shard_group, h.host_path
 		FROM ct_users_hosts ct, hosts h
 		WHERE ct.ct_u_h_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
@@ -452,7 +452,7 @@
 <!--- Get social accounts for this user --->
 <cffunction name="getsocial">
 	<cfargument name="thestruct" type="Struct">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsocial */ identifier, provider
 	FROM #session.hostdbprefix#users_accounts
 	WHERE user_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">

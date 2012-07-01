@@ -87,7 +87,7 @@
 
 <!--- READ BASKET --->
 <cffunction name="readbasket" output="false" returnType="query">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#readbasket */ c.cart_product_id, c.cart_file_type, c.cart_order_done, c.cart_order_email, c.cart_order_message, 
 			CASE 
 				WHEN c.cart_file_type = 'doc' 
@@ -277,7 +277,7 @@
 			<!--- Create thread  --->
 			<cfset ttd = createuuid()>
 			<!--- Query --->
-			<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qry" cachedwithin="1">
+			<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#writefiles */ file_extension, file_name, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset, cloud_url_org
 			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.theid#" cfsqltype="CF_SQL_VARCHAR">
@@ -705,7 +705,7 @@
 <!--- Read Orders --->
 <cffunction name="get_orders" output="false">
 	<!--- Read orders --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_orders */ cart_id, cart_order_date, cart_order_done
 	FROM #session.hostdbprefix#cart
 	WHERE cart_order_done IS NOT NULL

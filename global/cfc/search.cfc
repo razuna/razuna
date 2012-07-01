@@ -100,7 +100,7 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1">
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r, 
 		f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
@@ -287,7 +287,7 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1">
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, 
 		i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 		i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
@@ -453,7 +453,7 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1">
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#search_videos */ v.vid_id id, v.vid_filename filename, v.folder_id_r, 
 		v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 		v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,

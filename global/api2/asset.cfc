@@ -44,7 +44,7 @@
 			<!--- Images --->
 			<cfif arguments.assettype EQ "img">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				SELECT /* #session.cachetoken#getassetimg */
 				i.img_id id, 
 				i.img_filename filename, 
@@ -80,7 +80,7 @@
 			<!--- Videos --->
 			<cfelseif arguments.assettype EQ "vid">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				SELECT /* #session.cachetoken#getassetvid */
 				v.vid_id id, 
 				v.vid_filename filename, 
@@ -117,7 +117,7 @@
 			<!--- Audios --->
 			<cfelseif arguments.assettype EQ "aud">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				SELECT /* #session.cachetoken#getassetaud */
 				a.aud_id id, 
 				a.aud_name filename, 
@@ -151,7 +151,7 @@
 			<!--- Documents --->
 			<cfelseif arguments.assettype EQ "doc">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				SELECT /* #session.cachetoken#getassetfile */
 				f.file_id id, 
 				f.file_name filename, 
@@ -428,7 +428,7 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1">
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
 				<cfif arguments.assettype EQ "img">
 					SELECT /* #session.cachetoken#getrenditionsimg */
 					img_id id, 

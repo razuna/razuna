@@ -208,7 +208,7 @@
 		<cfset var st = structnew()>
 		<cfset var l = "">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getalllabels */ label_text, label_path, label_id
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
@@ -233,7 +233,7 @@
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
 		<!--- Query ct table --->
-		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlabels */ ct_label_id
 		FROM ct_labels
 		WHERE ct_id_r = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
@@ -242,7 +242,7 @@
 		</cfquery>
 		<!--- Query --->
 		<cfif qryct.recordcount NEQ 0>
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getlabels2 */ label_id
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
@@ -289,7 +289,7 @@
 	<!--- Build labels drop down menu --->
 	<cffunction name="labels_dropdown" output="true" access="public">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#labels_dropdown */ label_id, label_id_r, label_path, label_text
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
@@ -304,7 +304,7 @@
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="id" type="string" required="true">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#labels_query */ l.label_text, l.label_id,
 			(
 				SELECT count(ct.ct_label_id)
@@ -341,7 +341,7 @@
 	<cffunction name="getlabeltext" output="false" access="public">
 		<cfargument name="theid" type="string">
 		<!--- Query ct table --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlabeltext */ label_text
 		FROM #session.hostdbprefix#labels
 		WHERE label_id = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
@@ -355,7 +355,7 @@
 	<cffunction name="labels_count" output="false" access="public">
 		<cfargument name="label_id" type="string">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT  /* #variables.cachetoken#labels_count */
 			(
 				SELECT count(ct_label_id)
@@ -394,7 +394,7 @@
 		<cfargument name="fromapi" required="false" default="false">
 		<!--- Get assets --->
 		<cfif arguments.label_kind EQ "assets">
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#labels_assets */ i.img_id id, i.img_filename filename, 
 			i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
@@ -545,7 +545,7 @@
 			</cfquery>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getlabelsfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection
 			<cfif !arguments.fromapi>
 				,
@@ -591,7 +591,7 @@
 		<!--- Get collections --->
 		<cfelseif arguments.label_kind EQ "collections">
 			<!--- Query for collections and get permissions --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getlabelscol */ c.col_id, c.folder_id_r, ct.col_name
 			<cfif !arguments.fromapi>	
 				,

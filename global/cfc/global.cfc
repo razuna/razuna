@@ -346,7 +346,7 @@ Comment:<br>
 			<cfset var qry = 0>
 			<!--- Loop over basket query --->
 			<cfloop query="arguments.thestruct.qrybasket">
-				<cfquery datasource="#application.razuna.datasource#" name="qry_asset" cachedwithin="1">
+				<cfquery datasource="#application.razuna.datasource#" name="qry_asset" cachedwithin="1" region="razcache">
 				SELECT /* #variables.cachetoken#get_share_options */ asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
 				FROM #session.hostdbprefix#share_options
 				WHERE group_asset_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#cart_product_id#">
@@ -369,7 +369,7 @@ Comment:<br>
 				<cfset var thelist = valuelist(arguments.thestruct.qry_detail.detail.aud_id) & "," & valuelist(arguments.thestruct.qry_related.aud_id)>
 			</cfif>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#get_share_options2 */ asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="Yes">)
@@ -377,7 +377,7 @@ Comment:<br>
 			</cfquery>
 		<cfelse>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#get_share_options3 */ asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -606,7 +606,7 @@ Comment:<br>
 		<!--- Param --->
 		<cfset var qry = structnew()>
 		<!--- Query links --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.links" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry.links" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#get_versions_link */ av_id, av_link_title, av_link_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -614,7 +614,7 @@ Comment:<br>
 		AND av_link = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
 		</cfquery>
 		<!--- Query links --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, av_link_title, av_link_url
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">

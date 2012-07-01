@@ -39,7 +39,7 @@
 		<!--- set cache token --->
 		<cfparam name="session.cachetoken" default="#arguments.api_key##createuuid()#">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1">
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #session.cachetoken#checkdb */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
 		FROM users u, ct_users_hosts ct, ct_groups_users gu
 		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
@@ -63,7 +63,7 @@
 			<!--- Set --->
 			<cfset var status = true>
 			<!--- Get Host prefix --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1">
+			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
 			SELECT /* #session.cachetoken#checkdb2 */ host_shard_group
 			FROM hosts
 			WHERE host_id = <cfqueryparam value="#qry.hostid#" cfsqltype="cf_sql_numeric">

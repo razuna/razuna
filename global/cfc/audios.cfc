@@ -95,7 +95,7 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
@@ -116,7 +116,7 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, a.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, att.*</cfif>, 
@@ -137,7 +137,7 @@
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>
 		#thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description</cfif>,
 		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_date date_change
@@ -174,7 +174,7 @@
 	<!--- Params --->
 	<cfset var qry = structnew()>
 	<!--- Get details --->
-	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailaud */ a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner, a.cloud_url, a.cloud_url_org,
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
@@ -188,7 +188,7 @@
 	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>	
 	<!--- Get descriptions and keywords --->
-	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detaildescaud */ aud_description, aud_keywords, lang_id_r
 	FROM #session.hostdbprefix#audios_text
 	WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -634,7 +634,7 @@
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<!--- Qry. We take the query and do a IN --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketaud */ aud_id, aud_name, aud_extension, aud_group, folder_id_r, aud_size, link_kind, link_path_url, path_to_asset
 	FROM #session.hostdbprefix#audios
 	WHERE 
@@ -986,7 +986,7 @@
 <!--- GET RELATED AUDIOS --->
 <cffunction name="relatedaudios" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedaudios */ aud_id, folder_id_r, aud_name, aud_extension, aud_size, path_to_asset, aud_group
 	FROM #session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -1122,7 +1122,7 @@
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#gettextaud */ aud_id_r tid, aud_description description, aud_keywords keywords
 	FROM #session.hostdbprefix#audios_text
 	WHERE aud_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
@@ -1151,7 +1151,7 @@
 <!--- Check for existing MD5 mash records --->
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#checkmd5 */ aud_id
 	FROM #session.hostdbprefix#audios
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">

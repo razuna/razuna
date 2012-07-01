@@ -29,7 +29,7 @@
 		<td width="1%" nowrap>#totalcount.thetotal#</td>
 	</tr>
 	<cfif NOT application.razuna.isp>
-		<cfcachecontent name="damsysteminfo2" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
+		<cfcachecontent name="damsysteminfo2" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 			<tr>
 				<td width="100%">#defaultsObj.trans("database_in_use")#</td>
 				<td width="1%" nowrap>#application.razuna.thedatabase#</td>

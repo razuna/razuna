@@ -34,7 +34,7 @@
 	<cfargument name="file_extension" required="false" type="string" default="">
 	<!--- init local vars --->
 	<cfset var qLocal = 0>
-	<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+	<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderCountimg */ COUNT(*) AS folderCount
 		FROM #session.hostdbprefix#images
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
@@ -111,7 +111,7 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"i.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsimg */ rn, #thecolumnlist#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT ROWNUM AS rn, #thecolumnlist#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, filename_forsort, size, hashtag, date_create, date_change
@@ -133,7 +133,7 @@
 		<!--- Clean columnlist --->
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"i.","","all")>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #thecolumnlist#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,it.img_keywords keywords, it.img_description description</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, i.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, it.*</cfif>,
@@ -154,7 +154,7 @@
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsimg */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,it.img_keywords keywords, it.img_description description</cfif>, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_date date_change
 		FROM #session.hostdbprefix#images i<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -204,7 +204,7 @@
 	<cfargument name="ColumnList" required="false" type="string" hint="the column list for the selection" default="*">
 	<!--- init local vars --->
 	<cfset qLocal = 0>
-	<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1">
+	<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getAssetDetailsimg */ #Arguments.ColumnList#
 	FROM #session.hostdbprefix#images
 	WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.file_id#">
@@ -217,7 +217,7 @@
 <cffunction name="filedetail" access="public" output="false" returntype="query">
 	<cfargument name="theid" type="string" required="true">
 	<cfargument name="thecolumn" type="string" required="true">
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#filedetailimg */ #arguments.thecolumn#
 		FROM #session.hostdbprefix#images
 		WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theid#">
@@ -433,7 +433,7 @@
 	<cfset var theprevsize = 0>
 	<cfset var qry = structnew()>
 	<!--- Get details --->
-	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, 
 	i.img_owner, i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
 	i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org,
@@ -451,7 +451,7 @@
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Get descriptions and keywords --->
-	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detaildescimg */ img_description, img_keywords, lang_id_r
 	FROM #session.hostdbprefix#images_text
 	WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -476,7 +476,7 @@
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
 	<!--- Qry. We take the query and do a IN --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketimg */ i.img_id, i.img_extension, i.thumb_extension, i.img_group, i.folder_id_r, i.path_to_asset,
 	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.cloud_url, 
 	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url
@@ -958,7 +958,7 @@
 <!--- GET RELATED IMAGES --->
 <cffunction name="relatedimages" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1">
+	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, i.img_owner,
 	i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
 	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, 
@@ -1183,7 +1183,7 @@
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
 	<!--- Query --->
-	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#gettextimg */ img_id_r tid, img_description description, img_keywords keywords
 	FROM #session.hostdbprefix#images_text
 	WHERE img_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
@@ -1213,7 +1213,7 @@
 <!--- Check for existing MD5 mash records --->
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#checkmd5 */ img_id
 	FROM #session.hostdbprefix#images
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
