@@ -39,12 +39,17 @@
 <cffunction name="getcachetoken" output="false" returntype="string">
 	<cfargument name="type" type="string" required="yes">
 	<!--- Query --->
-	<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #session.datecachetoken# */ cache_token
-	FROM cache
-	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
-	AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
-	</cfquery>
+	<cftry>
+		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #session.datecachetoken# */ cache_token
+		FROM cache
+		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
+		</cfquery>
+		<cfcatch type="database">
+			<cfset qry.cache_token = session.datecachetoken>
+		</cfcatch>
+	</cftry>
 	<cfreturn qry.cache_token />
 </cffunction>
 
