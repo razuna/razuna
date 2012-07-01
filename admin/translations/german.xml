@@ -2893,7 +2893,7 @@
 		<transtext>Rendering Farm</transtext>
 	</transid>
 	<transid name="header_rf_desc">
-		<transtext><![CDATA[By default Razuna, transcodes all your assets on the local server. If you enable the rendering farm feature, you will be able to transcode your videos, images and audio assets on an external server farm. This will free up the ressources on this server and is the recommended way for large encoding transactions.<br /><br />Enter below the server(s) and their individual settings. It doesn't matter if your rendering server(s) are within your local network or instances on the cloud (Amazon EC2, VMWare, etc.).]]></transtext>
+		<transtext><![CDATA[By default Razuna, transcodes all your assets on the local server. If you enable the rendering farm feature, you will be able to transcode your videos, images and audio assets on an external server farm. This will free up the ressources on this server and is the recommended way for large encoding transactions.<br /><br /><strong>To use the external Rendering Farm feature you will need to buy the "Rendering Farm Server" from Razuna or have a Enterprise PLUS subscription. Please contact <a href="mailto:sales@razuna.com">sales@razuna.com</a> for a license.</strong><br /><br />Enter below the server(s) and their individual settings. It doesn't matter if your rendering server(s) are within your local network or instances on the cloud (Amazon EC2, VMWare, etc.).]]></transtext>
 	</transid>
 	<transid name="header_rf_enable">
 		<transtext>Enable a rendering farm</transtext>
