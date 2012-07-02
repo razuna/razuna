@@ -43,7 +43,7 @@
 	<cfargument name="type" type="string" required="yes">
 	<!--- Query --->
 	<cftry>
-		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,10)#">
+		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,10)#">
 		SELECT cache_token
 		FROM cache
 		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
@@ -64,7 +64,7 @@
 	<!--- Reset token date --->
 	<!--- <cfset session.datecachetoken = t> --->
 	<!--- Update DB --->
-	<cfquery dataSource="#variables.dsn#">
+	<cfquery dataSource="#application.razuna.datasource#">
 	UPDATE cache
 	SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
 	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
@@ -80,7 +80,7 @@
 	<!--- Reset token date --->
 	<!--- <cfset session.datecachetoken = t> --->
 	<!--- Update DB --->
-	<cfquery dataSource="#variables.dsn#">
+	<cfquery dataSource="#application.razuna.datasource#">
 	UPDATE cache
 	SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
 	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
