@@ -1551,7 +1551,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Get signed URLS for the file --->
 						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 						<!--- Update DB  --->
-						<cfquery datasource="#arguments.thestruct.datasource#">
+						<cfquery datasource="#application.razuna.datasource#">
 						UPDATE #session.hostdbprefix#files
 						SET 
 						cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
