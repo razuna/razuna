@@ -741,7 +741,7 @@
 				</cfif>
 			</cfif>
 			<!--- Remove the Collection --->
-			<cfset CollectionDelete(arguments.thestruct.id)>
+			<!--- <cfset CollectionDelete(arguments.thestruct.id)> --->
 			<!--- Remove the Host entry --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			DELETE FROM hosts
