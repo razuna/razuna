@@ -752,6 +752,11 @@
 			DELETE FROM ct_users_hosts
 			WHERE ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
 			</cfquery>
+			<!--- Remove from cache --->
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			DELETE FROM cache
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
+			</cfquery>
 			<!--- REMOVE DATA RELATED TO HOST FROM groups, permissions, modules --->
 			<!--- groups-permissions --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
