@@ -47,7 +47,7 @@
 		AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
 		</cfquery>
 		<cfcatch type="database">
-			<cfset qry.cache_token = session.datecachetoken>
+			<cfset qry.cache_token = createuuid('')>
 		</cfcatch>
 	</cftry>
 	<cfreturn qry.cache_token />
