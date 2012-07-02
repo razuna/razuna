@@ -26,7 +26,7 @@
 <cfcomponent hint="Serves as parent only!" output="false">
 
 <!--- Set global variable for caching cache_token --->
-<cfparam name="session.datecachetoken" default="#createuuid('')#" />
+<!--- <cfparam name="session.datecachetoken" default="#createuuid('')#" /> --->
 
 <!--- FUNCTION: INIT --->
 <cffunction name="init" returntype="extQueryCaching" access="public" output="false">
@@ -40,8 +40,8 @@
 	<cfargument name="type" type="string" required="yes">
 	<!--- Query --->
 	<cftry>
-		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #session.datecachetoken# */ cache_token
+		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,10)#">
+		SELECT cache_token
 		FROM cache
 		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
@@ -59,7 +59,7 @@
 	<!--- Create token --->
 	<cfset var t = createuuid('')>
 	<!--- Reset token date --->
-	<cfset session.datecachetoken = t>
+	<!--- <cfset session.datecachetoken = t> --->
 	<!--- Update DB --->
 	<cfquery dataSource="#application.razuna.datasource#">
 	UPDATE cache
@@ -75,7 +75,7 @@
 	<!--- Create token --->
 	<cfset var t = createuuid('')>
 	<!--- Reset token date --->
-	<cfset session.datecachetoken = t>
+	<!--- <cfset session.datecachetoken = t> --->
 	<!--- Update DB --->
 	<cfquery dataSource="#application.razuna.datasource#">
 	UPDATE cache
