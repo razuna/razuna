@@ -32,13 +32,10 @@
 <cffunction name="init" returntype="extQueryCaching" access="public" output="false">
 	<cfargument name="dsn" type="string" required="yes" />
 	<cfargument name="database" type="string" required="yes" />
-	<cfargument name="setid" type="string" required="yes" />
+	<cfargument name="setid" type="numeric" required="no" default="#application.razuna.setid#" />
 	<cfset variables.dsn = arguments.dsn />
 	<cfset variables.database = arguments.database />
 	<cfset variables.setid = arguments.setid />
-	<cfset application.razuna.datasource = variables.dsn />
-	<cfset application.razuna.thedatabase = variables.database />
-	<cfset application.razuna.setid = variables.setid />
 	<cfreturn this />
 </cffunction>
 
@@ -46,7 +43,7 @@
 	<cfargument name="type" type="string" required="yes">
 	<!--- Query --->
 	<cftry>
-		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,10)#">
+		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,10)#">
 		SELECT cache_token
 		FROM cache
 		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
@@ -67,7 +64,7 @@
 	<!--- Reset token date --->
 	<!--- <cfset session.datecachetoken = t> --->
 	<!--- Update DB --->
-	<cfquery dataSource="#application.razuna.datasource#">
+	<cfquery dataSource="#variables.dsn#">
 	UPDATE cache
 	SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
 	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
@@ -83,7 +80,7 @@
 	<!--- Reset token date --->
 	<!--- <cfset session.datecachetoken = t> --->
 	<!--- Update DB --->
-	<cfquery dataSource="#application.razuna.datasource#">
+	<cfquery dataSource="#variables.dsn#">
 	UPDATE cache
 	SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
 	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
