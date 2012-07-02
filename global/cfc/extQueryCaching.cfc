@@ -31,7 +31,7 @@
 <!--- FUNCTION: INIT --->
 <cffunction name="init" returntype="extQueryCaching" access="public" output="false">
 	<cfargument name="dsn" type="string" required="yes" />
-	<cfset variables.dsn = arguments.datasource />
+	<cfset variables.dsn = arguments.dsn />
 	<cfset application.razuna.datasource = variables.dsn />
 	<cfreturn this />
 </cffunction>
