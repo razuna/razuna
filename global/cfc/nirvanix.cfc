@@ -548,9 +548,24 @@
 			<cfset UBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
 			<cfset TSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
 			<!--- Set the Usage Amount into struct --->
-			<cfset x.DBU = #DBU[1].TotalUsageAmount.xmlText#>
-			<cfset x.UBU = #UBU[1].TotalUsageAmount.xmlText#>
-			<cfset x.TSU = #TSU[1].TotalUsageAmount.xmlText#>
+			<cftry>
+				<cfset x.DBU = DBU[1].TotalUsageAmount.xmlText>
+				<cfcatch type="any">
+					<cfset x.DBU = 0>
+				</cfcatch>
+			</cftry>
+			<cftry>
+				<cfset x.UBU = UBU[1].TotalUsageAmount.xmlText>
+				<cfcatch type="any">
+					<cfset x.UBU = 0>
+				</cfcatch>
+			</cftry>
+			<cftry>
+				<cfset x.TSU = TSU[1].TotalUsageAmount.xmlText>
+				<cfcatch type="any">
+					<cfset x.TSU = 0>
+				</cfcatch>
+			</cftry>
 			<!--- Add bandwidth together --->
 			<cfset x.band = x.DBU + x.UBU>
 			<!--- According to host type set the alert --->
