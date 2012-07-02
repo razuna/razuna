@@ -3250,7 +3250,24 @@
 		END: MOVING FOLDER AND FILES
 	-->
 	
-	
+	<!-- external calls -->
+	<fuseaction name="w_hosts_remove">
+		<set name="attributes.theschema" value="#application.razuna.theschema#" />
+		<set name="attributes.dsn" value="#application.razuna.datasource#" />
+		<set name="attributes.database" value="#application.razuna.thedatabase#" />
+		<set name="attributes.storage" value="#application.razuna.storage#" />
+		<!-- CFC: Remove host -->
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="remove(attributes)" />
+	</fuseaction>
+	<!-- default values -->
+	<fuseaction name="w_insert_default_values">
+		<set name="attributes.dsn" value="#application.razuna.datasource#" />
+		<set name="attributes.database" value="#application.razuna.thedatabase#" />
+		<set name="attributes.storage" value="#application.razuna.storage#" />
+		<!-- CFC: insert_default_values -->
+		<invoke object="myFusebox.getApplicationData().hosts" methodcall="insert_default_values(attributes)" />
+	</fuseaction>
+
 	<!--
 		START: BATCHING OF MANY FILES
 	-->

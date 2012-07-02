@@ -212,29 +212,6 @@
 	<cfreturn  />
 </cffunction>
 
-<cffunction name="insert_default_values_remote" access="remote" output="true" returntype="Any">
-	<cfargument name="dsn" type="string" required="true">
-	<cfargument name="host_db_prefix" type="string" required="true">
-	<cfargument name="host_path" type="string" required="true">
-	<cfargument name="host_id" type="numeric" required="true">
-	<!--- Params --->
-	<cfset arguments.thestruct = structnew()>
-	<cfset arguments.thestruct.dsn = arguments.dsn>
-	<cfset arguments.thestruct.host_db_prefix = arguments.host_db_prefix>
-	<cfset arguments.thestruct.host_id = arguments.host_id>
-	<cfset arguments.thestruct.folder_in = "">
-	<cfset arguments.thestruct.folder_in_batch = "">
-	<cfset arguments.thestruct.folder_out = "">
-	<cfset arguments.thestruct.email_from = "razuna@razuna.com">
-	<cfset arguments.thestruct.langs_selected = "1_English">
-	<cfset arguments.thestruct.set_lang_1 = "English">
-	<!--- <cfset arguments.thestruct.url_website = "http://#cgi.server_name#/#arguments.host_path#/web"> --->
-	<!--- Get application paths
-	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" /> --->
-	<!--- insert default values --->
-	<cfinvoke method="insert_default_values" thestruct="#arguments.thestruct#">
-</cffunction>
-
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Insert Default Values --->
 <cffunction name="insert_default_values" access="public" output="false">
@@ -245,7 +222,7 @@
 		<cfparam default="" name="arguments.thestruct.oracle_url">
 		<cfparam default="" name="arguments.thestruct.path_assets">
 		<cfparam default="1_English" name="arguments.thestruct.langs_selected">
-		<cfparam default="" name="arguments.thestruct.email_from">
+		<cfparam default="razuna@razuna.com" name="arguments.thestruct.email_from">
 		<!--- Now add selected languages --->
 		<cfloop list="#arguments.thestruct.langs_selected#" delimiters="," index="x">
 			<!--- Grab lang name --->
