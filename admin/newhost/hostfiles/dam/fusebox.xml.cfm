@@ -58,6 +58,7 @@
 		<class alias="labels" classpath="global.cfc.labels" type="component" constructor="init"/>
 		<class alias="rfs" classpath="global.cfc.rfs" type="component" constructor="init"/>
 		<class alias="import" classpath="global.cfc.import" type="component" constructor="init"/>
+		<class alias="extQueryCaching" classpath="global.cfc.extQueryCaching" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>

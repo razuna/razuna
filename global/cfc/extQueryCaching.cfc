@@ -30,9 +30,12 @@
 
 <!--- FUNCTION: INIT --->
 <cffunction name="init" returntype="extQueryCaching" access="public" output="false">
-	<cfset variables.dsn = application.razuna.datasource />
-	<cfset variables.database = application.razuna.thedatabase />
-	<cfset variables.setid = application.razuna.setid />
+	<cfargument name="dsn" type="string" required="yes" />
+	<cfargument name="database" type="string" required="yes" />
+	<cfset variables.dsn = arguments.datasource />
+	<cfset variables.database = arguments.thedatabase />
+	<cfset application.razuna.datasource = variables.dsn />
+	<cfset application.razuna.thedatabase = variables.database />
 	<cfreturn this />
 </cffunction>
 
