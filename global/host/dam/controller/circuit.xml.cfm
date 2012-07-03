@@ -2781,6 +2781,7 @@
 		<set name="attributes.kind" value="search" />
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
+		<set name="session.file_id" value="" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />
