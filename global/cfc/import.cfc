@@ -1727,7 +1727,7 @@
 			<cfquery dataSource="#application.razuna.datasource#" name="labhere">
 			SELECT label_id
 			FROM #session.hostdbprefix#labels
-			WHERE lower(label_text) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(i)#">
+			WHERE lower(label_path) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(i)#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- If not we add it or else we simply update the ct db --->

@@ -232,6 +232,8 @@
 	<cffunction name="getlabels" output="false" access="public">
 		<cfargument name="theid" type="string">
 		<cfargument name="thetype" type="string">
+		<!--- Param --->
+		<cfset var l = "">
 		<!--- Query ct table --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlabels */ ct_label_id
@@ -251,8 +253,36 @@
 			</cfquery>
 			<!--- Param --->
 			<cfset var l = valuelist(qry.label_id)>
-		<cfelse>
-			<cfset var l = "">
+		</cfif>
+		<!--- Return --->
+		<cfreturn l />
+	</cffunction>
+
+	<!--- Get label of record --->
+	<cffunction name="getlabelstextexport" output="false" access="public">
+		<cfargument name="theid" type="string">
+		<cfargument name="thetype" type="string">
+		<!--- Param --->
+		<cfset var l = "">
+		<!--- Query ct table --->
+		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#getlabelstextexport */ ct_label_id
+		FROM ct_labels
+		WHERE ct_id_r = <cfqueryparam value="#arguments.theid#" cfsqltype="cf_sql_varchar" />
+		AND ct_type = <cfqueryparam value="#arguments.thetype#" cfsqltype="cf_sql_varchar" />
+		AND ct_label_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="" cfsqltype="cf_sql_varchar" />
+		</cfquery>
+		<!--- Query --->
+		<cfif qryct.recordcount NEQ 0>
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#getlabelstextexport2 */ label_path
+			FROM #session.hostdbprefix#labels
+			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
+			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+			ORDER BY label_text
+			</cfquery>
+			<!--- Param --->
+			<cfset var l = valuelist(qry.label_path)>
 		</cfif>
 		<!--- Return --->
 		<cfreturn l />

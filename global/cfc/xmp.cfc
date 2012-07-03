@@ -1606,7 +1606,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename" returnVariable="qry_image" />
 			<cfset arguments.thestruct.filename = qry_image.img_filename>
 			<!--- Get Lables --->
-			<cfinvoke component="labels" method="getlabels" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
+			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
@@ -1622,7 +1622,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename" returnVariable="qry_video" />
 			<cfset arguments.thestruct.filename = qry_video.vid_filename>
 			<!--- Get Lables --->
-			<cfinvoke component="labels" method="getlabels" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
+			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
@@ -1648,7 +1648,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			</cftry>
 			<cfset arguments.thestruct.qry_text = qry_audio.desc>
 			<!--- Get Lables --->
-			<cfinvoke component="labels" method="getlabels" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
+			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Add Values to total query --->
@@ -1660,7 +1660,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfinvoke component="files" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="file_name" returnVariable="qry_doc" />
 			<cfset arguments.thestruct.filename = qry_doc.file_name>
 			<!--- Get Lables --->
-			<cfinvoke component="labels" method="getlabels" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
+			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
