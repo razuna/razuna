@@ -570,6 +570,8 @@
 			<cfset x.band = x.DBU + x.UBU>
 			<!--- According to host type set the alert --->
 			<cfif session.hosttype NEQ 149>
+				<cfset var storage = 16106127360 - 10485760>
+				<cfset var bandud = 8053063680 - 10485760>
 				<!--- 0 --->
 				<cfif session.hosttype EQ 0>
 					<cfset var storage = 524288000 - 10485760>
@@ -604,7 +606,7 @@
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#cfcatch#"><cfdump var="#session#"></cfmail>
+				<cfmail from="server@razuna.com" to="support@razuna.com" subject="Error in GetAccountUsage" type="html"><cfdump var="#cfcatch#"><cfdump var="#session#"></cfmail>
 				<cfset x = structnew()>
 				<cfset x.DBU = 0>
 				<cfset x.UBU = 0>
