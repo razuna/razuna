@@ -40,7 +40,7 @@
 	<cfargument name="type" type="string" required="yes">
 	<!--- Query --->
 	<cftry>
-		<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="#CreateTimeSpan(0,0,0,10)#">
+		<cfquery dataSource="#application.razuna.datasource#" name="qry">
 		SELECT cache_token
 		FROM cache
 		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
