@@ -14,7 +14,7 @@
     <component-cfc>/WEB-INF/bluedragon/component.cfc</component-cfc>
     <scriptsrc>/bluedragon/scripts</scriptsrc>
     <resourcepath>/WEB-INF/resources</resourcepath>
-    <servercfc>/WEB-INF/Server.cfc</servercfc>
+    <servercfc>/Server.cfc</servercfc>
     <debug>false</debug>
     <legacyformvalidation>false</legacyformvalidation>
     <scriptprotect>false</scriptprotect>
