@@ -2982,4 +2982,7 @@
 	<transid name="installation_checklist_mp4box">
 		<transtext>Set path to MP4Box</transtext>
 	</transid>
+	<transid name="add_new">
+		<transtext>Add new</transtext>
+	</transid>
 </translations>

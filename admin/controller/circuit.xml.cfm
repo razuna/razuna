@@ -504,6 +504,26 @@
 	<!--  -->
 
 	<!--  -->
+	<!-- START: PLUGINS -->
+	<!--  -->
+
+
+
+	<!--  -->
+	<!-- END: PLUGINS -->
+	<!--  -->
+
+	<!-- Load -->
+	<fuseaction name="plugins">
+		<!-- Assetpath -->
+		<set name="attributes.pathoneup" value="#pathoneup#" />
+		<!-- Get all hosts -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getall(attributes.pathoneup)" returnvariable="qry_plugins" />
+		<!-- Show -->
+		<do action="ajax.plugins" />
+	</fuseaction>
+
+	<!--  -->
 	<!-- START: PREFERENCES -->
 	<!--  -->
 

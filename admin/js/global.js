@@ -43,7 +43,11 @@ function jqtabs(tabs){
 // Load Content with JQuery
 function loadcontent(ele,url){
 	// Load the page
-	$("#" + ele).load(url);
+	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+	// Load the page
+	$("#" + ele).load(url, function() {
+  		$("#bodyoverlay").remove();
+	});
 }
 
 // Form: Get Action URL
