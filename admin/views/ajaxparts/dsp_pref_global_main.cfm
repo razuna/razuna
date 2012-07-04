@@ -100,19 +100,19 @@
 					<th colspan="2">Memory Allocation</th>
 				</tr>
 				<tr>
-					<td width="100%">SystemMemory Total</td>
+					<td width="100%">Memory Total</td>
 					<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.total))# MB</td>
 				</tr>
 				<tr>
-					<td width="100%">SystemMemory Free</td>
+					<td width="100%">Memory Free</td>
 					<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.free))# MB</td>
 				</tr>
 				<tr>
-					<td width="100%">SystemMemory Max</td>
+					<td width="100%">Memory Max</td>
 					<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.max))# MB</td>
 				</tr>
 				<tr>
-					<td width="100%">SystemMemory Used</td>
+					<td width="100%">Memory Used</td>
 					<td width="1%" nowrap>#int(defaultsObj.converttomb(variables.mem.used))# MB</td>
 				</tr>
 			</table>

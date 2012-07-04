@@ -298,5 +298,9 @@
 	<fuseaction name="plugins">
   		<include template="dsp_plugins" />
 	</fuseaction>
+	<!-- Plugins Hosts -->
+	<fuseaction name="plugins_hosts">
+  		<include template="dsp_plugins_hosts" />
+	</fuseaction>
 	
 </circuit>

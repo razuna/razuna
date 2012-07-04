@@ -32,14 +32,29 @@
 				<li><a href="##plugins">Plugins</a></li>
 				<!--- plugins_add --->
 				<li><a href="##plugins_add">#defaultsObj.trans("add_new")#</a></li>
+				<!--- Host Plugins --->
+				<li><a href="##plugins_hosts" onclick="loadcontent('plugins_hosts','#myself#c.plugins_hosts');">#defaultsObj.trans("plugins_hosts_tab")#</a></li>
 				
 			</ul>
 			<!--- Plugins Main page --->
 			<div id="plugins">
-				List them here
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+					<tr>
+						<th>Plugin</th>
+						<th>#defaultsObj.trans("desc")#</th>
+					</tr>
+					<cfloop query="qry_plugins">
+						<tr>
+							<td nowrap="nowrap" valign="top"><strong>#p_name#</strong><br /><cfif p_active><a href="##" onclick="loadcontent('rightside','#myself#c.plugins_onoff&active=false&pid=#p_id#');">#defaultsObj.trans("deactivate")#</a><cfelse><a href="##" onclick="loadcontent('rightside','#myself#c.plugins_onoff&active=true&pid=#p_id#');">#defaultsObj.trans("activate")#</a> | <a href="##" onclick="showwindow('#myself#ajax.remove_record&what=plugins&id=#p_id#&loaddiv=rightside','#defaultsObj.trans("remove_selected")#',400,1);return false">Delete</a></cfif></td>
+							<td valign="top">#p_description#</td>
+						</tr>
+					</cfloop>
+				</table>
 			</div>
 			<!--- New --->
 			<div id="plugins_add"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
+			<!--- Plugin activate per tenant list --->
+			<div id="plugins_hosts"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 			
 		</div>
 	</form>
