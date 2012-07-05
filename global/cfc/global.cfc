@@ -29,7 +29,7 @@
 <cfset variables.cachetoken = getcachetoken("general")>
 
 	<!--- Clearcache --->
-	<cffunction name="clearcache" returntype="void">
+	<cffunction name="clearcache" access="public" returntype="void">
 		<!--- Reset the cache of this host --->
 		<cfset resetcachetokenall()>
 	</cffunction>

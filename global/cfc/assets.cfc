@@ -1157,9 +1157,9 @@ This is the main function called directly by a single upload else from addassets
 		<!--- thread --->
 		<cfthread intstruct="#arguments.thestruct#" priority="LOW">
 			<!--- Params --->
-			<cfset var cloud_url = structnew()>
-			<cfset var cloud_url_org = structnew()>
-			<cfset var cloud_url_2 = structnew()>
+			<cfset cloud_url = structnew()>
+			<cfset cloud_url_org = structnew()>
+			<cfset cloud_url_2 = structnew()>
 			<cfset cloud_url_org.theurl = "">
 			<cfset cloud_url.theurl = "">
 			<cfset cloud_url_2.theurl = "">
@@ -3081,9 +3081,9 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var tt = Createuuid("")>
 		<cfthread name="#tt#" audstruct="#arguments.thestruct#" priority="LOW">
 			<!--- Params --->
-			<cfset var cloud_url = structnew()>
-			<cfset var cloud_url_2 = structnew()>
-			<cfset var cloud_url_org = structnew()>
+			<cfset cloud_url = structnew()>
+			<cfset cloud_url_2 = structnew()>
+			<cfset cloud_url_org = structnew()>
 			<cfset cloud_url_org.theurl = "">
 			<cfset cloud_url.theurl = "">
 			<cfset cloud_url_2.theurl = "">
