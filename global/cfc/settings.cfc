@@ -213,8 +213,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_storage */ set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket
 	FROM #session.hostdbprefix#settings_2
-	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
