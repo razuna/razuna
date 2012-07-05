@@ -129,7 +129,7 @@ The permissions and the users access to them must not be requested again every t
 	<cfset var localquery = 0>
 	<cfset var returnstruct = StructNew()>
 	<!--- function body --->
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
 	SELECT m.mod_short, p.per_key,
 		CASE
 			WHEN EXISTS(
@@ -182,7 +182,7 @@ The permissions and the users access to them must not be requested again every t
 	<cfabort> --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
 		SELECT CASE
 					WHEN EXISTS(
 						SELECT groups.grp_id
@@ -219,7 +219,7 @@ The permissions and the users access to them must not be requested again every t
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function body --->
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
 		SELECT grp_id
 		FROM groups
 		WHERE grp_host_id IS NULL
