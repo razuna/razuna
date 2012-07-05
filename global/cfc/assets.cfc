@@ -1639,7 +1639,10 @@ This is the main function called directly by a single upload else from addassets
 	<cfelse>
 		<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
 		<!--- Call the import/imagemagick method --->
-		<cfinvoke method="importimages" thestruct="#arguments.thestruct#">
+		<!--- <cfinvoke method="importimages" thestruct="#arguments.thestruct#"> --->
+		<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+			<cfinvoke method="importimagesthread" thestruct="#attributes.intstruct#" />
+		</cfthread>
 		<!--- If above return x we failed for the image --->
 		<cfif arguments.thestruct.newid EQ 0>
 			<cfinvoke component="email" method="send_email" subject="Image #arguments.thestruct.qryfile.filename# not added" themessage="Unfortunately, we could not add your image #arguments.thestruct.qryfile.filename# to the system because we can't recognize it as an image!">
@@ -1647,65 +1650,65 @@ This is the main function called directly by a single upload else from addassets
 			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Error',logdesc='Error: #arguments.thestruct.qryfile.filename# not recognized as image!',logfiletype='img')#>
 		<cfelse>
 			<!--- Add remaining data to the image table --->
-			<cfthread name="processImgFile#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" priority="HIGH">
+			<!--- <cfthread name="processImgFile#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" priority="HIGH"> --->
 				<cftransaction>
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#images
 					SET
 					img_filename = 
-					<cfif structkeyexists(attributes.intstruct, "theoriginalfilename")>
-						<cfqueryparam value="#attributes.intstruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+					<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+						<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
 					<cfelse>
-						<cfqueryparam value="#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+						<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 					</cfif>,
 					img_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
-					img_owner = <cfqueryparam value="#attributes.intstruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					img_owner = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 					img_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					img_create_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 					img_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-					img_custom_id = <cfqueryparam value="#attributes.intstruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">,
+					img_custom_id = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">,
 					img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">,
-					img_extension = <cfqueryparam value="#attributes.intstruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
-					thumb_extension = <cfqueryparam value="#attributes.intstruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
-					link_path_url = <cfqueryparam value="#attributes.intstruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
-					link_kind = <cfqueryparam value="#attributes.intstruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
-					path_to_asset = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#" cfsqltype="cf_sql_varchar">
+					img_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
+					thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
+					link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
+					link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
+					path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
 					<cfif !application.razuna.rfs>
 						,
 						is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 					</cfif>
-					<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
+					<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 						,
-						img_filename_org = <cfqueryparam value="#attributes.intstruct.lanorgname#" cfsqltype="cf_sql_varchar">
+						img_filename_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
 					<cfelse>
 						,
-						img_filename_org = <cfqueryparam value="#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+						img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 					</cfif>
-					<cfif structkeyexists(attributes.intstruct.qryfile,"groupid") AND attributes.intstruct.qryfile.groupid NEQ "">
+					<cfif structkeyexists(arguments.thestruct.qryfile,"groupid") AND arguments.thestruct.qryfile.groupid NEQ "">
 						,
-						img_group = <cfqueryparam value="#attributes.intstruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
+						img_group = <cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
 					</cfif>
 					<!--- For Nirvanix --->
-					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND attributes.intstruct.qryfile.link_kind EQ "">
+					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND arguments.thestruct.qryfile.link_kind EQ "">
 						,
-						lucene_key = <cfqueryparam value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+						lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 					</cfif>
-					WHERE img_id = <cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">
+					WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 					</cfquery>
 				</cftransaction>
 				<!--- Remove records in temp db --->
 				<cftransaction>
 					<cfquery datasource="#application.razuna.datasource#">
 					DELETE FROM #session.hostdbprefix#temp
-					WHERE tmp_token = <cfqueryparam value="#attributes.intstruct.CFToken#" cfsqltype="cf_sql_varchar">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">
+					WHERE tmp_token = <cfqueryparam value="#arguments.thestruct.CFToken#" cfsqltype="cf_sql_varchar">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 					</cfquery>
 				</cftransaction>
 				<!--- Add to Lucene --->
-				<cfif NOT structkeyexists(attributes.intstruct,"fromconverting")>
-					<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.newid#" category="img">
+				<cfif NOT structkeyexists(arguments.thestruct,"fromconverting")>
+					<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="img">
 				</cfif>
 				<!--- Add to shared options --->
 				<cftransaction>
@@ -1713,10 +1716,10 @@ This is the main function called directly by a single upload else from addassets
 					INSERT INTO #session.hostdbprefix#share_options
 					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 					VALUES(
-					<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
-					<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="thumb" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
@@ -1730,10 +1733,10 @@ This is the main function called directly by a single upload else from addassets
 					INSERT INTO #session.hostdbprefix#share_options
 					(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
 					VALUES(
-					<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
-					<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
@@ -1743,41 +1746,41 @@ This is the main function called directly by a single upload else from addassets
 					</cfquery>
 				</cftransaction>
 				<!--- If there are metadata fields then add them here --->
-				<cfif attributes.intstruct.metadata EQ 1>
+				<cfif arguments.thestruct.metadata EQ 1>
 					<!--- Check if API is called the old way --->
-					<cfif structkeyexists(attributes.intstruct,"sessiontoken")>
+					<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
 						<cfinvoke component="global.api.asset" method="setmetadata">
-							<cfinvokeargument name="sessiontoken" value="#attributes.intstruct.sessiontoken#">
-							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+							<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
+							<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 							<cfinvokeargument name="assettype" value="img">
-							<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
+							<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
 						</cfinvoke>
 					<cfelse>
 						<!--- API2 --->
 						<cfinvoke component="global.api2.asset" method="setmetadata">
-							<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#">
-							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+							<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+							<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 							<cfinvokeargument name="assettype" value="img">
-							<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
+							<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
 						</cfinvoke>
 					</cfif>
 				</cfif>
 				<!--- Log --->
 				<cfinvoke component="extQueryCaching" method="log_assets">
-					<cfinvokeargument name="theuserid" value="#attributes.intstruct.theuserid#">
+					<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
 					<cfinvokeargument name="logaction" value="Add">
-					<cfinvokeargument name="logdesc" value="Added: #attributes.intstruct.qryfile.filename#">
+					<cfinvokeargument name="logdesc" value="Added: #arguments.thestruct.qryfile.filename#">
 					<cfinvokeargument name="logfiletype" value="img">
-					<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 				</cfinvoke>
 				<!--- RFS --->
 				<cfif application.razuna.rfs>
-					<cfset attributes.intstruct.assettype = "img">
-					<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
+					<cfset arguments.thestruct.assettype = "img">
+					<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
 				</cfif>
-			</cfthread>
+			<!--- </cfthread>
 			<!--- Wait for thread --->
-			<cfthread action="join" name="processImgFile#arguments.thestruct.newid#" timeout="90" />
+			<cfthread action="join" name="processImgFile#arguments.thestruct.newid#" timeout="90" /> --->
 			<!--- Flush Cache --->
 			<cfset variables.cachetoken = resetcachetoken("images")>
 			<cfset variables.cachetoken = resetcachetoken("folders")>
@@ -1950,114 +1953,105 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
 		<!--- storing assets on file system --->
 		<cfset arguments.thestruct.storage = application.razuna.storage>
+		<!--- DB update --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		UPDATE #session.hostdbprefix#images
+		SET
+		img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
+		img_meta = <cfqueryparam value="#arguments.thestruct.img_meta#" cfsqltype="cf_sql_varchar">
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Write the Keywords and Description to the DB (if we are JPG we parse XMP and add them together) --->
+		<cftry>
+			<!--- Set Variable --->
+			<cfset arguments.thestruct.assetpath = arguments.thestruct.qrysettings.set2_path_to_assets>
+			<!--- Store XMP values in DB --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			UPDATE #session.hostdbprefix#images
-			SET
-			img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
-			img_meta = <cfqueryparam value="#arguments.thestruct.img_meta#" cfsqltype="cf_sql_varchar">
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+			INSERT INTO #session.hostdbprefix#xmp
+			(id_r, asset_type, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, supplementalcategories, urgency,
+			description, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, intellectualgenre, instructions, source, 
+			usageterms, copyrightstatus, transmissionreference, webstatement, headline, datecreated, city, ciadrregion, country, countrycode, 
+			scene, state, credit, rights, colorspace, xres, yres, resunit, host_id)
+			VALUES(
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="img">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsubjectcode#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.creator#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.title#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.authorstitle#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.descwriter#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcaddress#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.category#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.categorysub#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.urgency#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.description#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccity#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccountry#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptclocation#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptczip#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcemail#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcwebsite#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcphone#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcintelgenre#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcinstructions#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsource#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcusageterms#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copystatus#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcjobidentifier#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copyurl#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcheadline#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcdatecreated#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecity#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagestate#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecountry#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecountrycode#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcscene#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcstate#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccredit#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copynotice#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.colorspace#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.xres#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.yres#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.resunit#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			)
 			</cfquery>
-			<!--- Write the Keywords and Description to the DB (if we are JPG we parse XMP and add them together) --->
-			<!--- <cfif attributes.intstruct.qryfile.extension EQ "jpg" OR attributes.intstruct.qryfile.filename EQ "jpeg"> --->
-				<cftry>
-					<!--- Set Variable --->
-					<cfset arguments.thestruct.assetpath = arguments.thestruct.qrysettings.set2_path_to_assets>
-					<!--- Store XMP values in DB --->
-					<cfquery datasource="#arguments.thestruct.dsn#">
-					INSERT INTO #session.hostdbprefix#xmp
-					(id_r, asset_type, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, supplementalcategories, urgency,
-					description, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, intellectualgenre, instructions, source, 
-					usageterms, copyrightstatus, transmissionreference, webstatement, headline, datecreated, city, ciadrregion, country, countrycode, 
-					scene, state, credit, rights, colorspace, xres, yres, resunit, host_id)
-					VALUES(
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="img">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsubjectcode#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.creator#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.title#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.authorstitle#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.descwriter#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcaddress#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.category#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.categorysub#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.urgency#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.description#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccity#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccountry#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptclocation#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptczip#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcemail#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcwebsite#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcphone#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcintelgenre#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcinstructions#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsource#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcusageterms#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copystatus#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcjobidentifier#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copyurl#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcheadline#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcdatecreated#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecity#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagestate#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecountry#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcimagecountrycode#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcscene#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcstate#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptccredit#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.copynotice#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.colorspace#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.xres#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.yres#">,
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.resunit#">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					)
-					</cfquery>
-					<cfcatch type="any">
-						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in images text table for jpg">
-							<cfdump var="#cfcatch#" />
-						</cfmail>
-					</cfcatch>
-				</cftry>
-			<!--- Move or upload to the right places --->
-			<!--- If we are local --->
-			<cfif arguments.thestruct.storage EQ "local">
-				<!--- <cftry> --->
-					<!--- Create folder with the asset id --->
-					<cfif NOT directoryexists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#")>
-						<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" mode="775">
-					</cfif>
-					<!--- Move original image --->
-					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-						<cfif application.razuna.rfs OR arguments.thestruct.importpath>
-							<cfset var fileaction = "copy">
-						<cfelse>
-							<cfset var fileaction = "move">
-						</cfif>
-						<cffile action="#fileaction#" source="#arguments.thestruct.thesourceraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
-					</cfif>
-					<!--- Move thumbnail --->
-					<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
-						<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
-					<cfelseif !application.razuna.rfs>
-						<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
-					</cfif>
-					<!--- Get size of original and thumnail --->
-					<cfset orgsize = arguments.thestruct.qryfile.thesize>
-					<cfif !application.razuna.rfs>
-						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
-					<cfelse>
-						<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
-						<cfset thumbsize = 1>
-					</cfif>
-					<!---
-<cfcatch type="any">
-						<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in moving local image">
-							<cfdump var="#cfcatch#" />
-						</cfmail>
-					</cfcatch>
-				</cftry>
---->
+			<cfcatch type="any">
+				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in images text table for jpg">
+					<cfdump var="#cfcatch#" />
+				</cfmail>
+			</cfcatch>
+		</cftry>
+		<!--- Move or upload to the right places --->
+		<!--- If we are local --->
+		<cfif arguments.thestruct.storage EQ "local">
+			<!--- Create folder with the asset id --->
+			<cfif NOT directoryexists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" mode="775">
+			</cfif>
+			<!--- Move original image --->
+			<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+				<cfif application.razuna.rfs OR arguments.thestruct.importpath>
+					<cfset var fileaction = "copy">
+				<cfelse>
+					<cfset var fileaction = "move">
+				</cfif>
+				<cffile action="#fileaction#" source="#arguments.thestruct.thesourceraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
+			</cfif>
+			<!--- Move thumbnail --->
+			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
+			<cfelseif !application.razuna.rfs>
+				<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
+			</cfif>
+			<!--- Get size of original and thumnail --->
+			<cfset orgsize = arguments.thestruct.qryfile.thesize>
+			<cfif !application.razuna.rfs>
+				<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
+			<cfelse>
+				<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
+				<cfset thumbsize = 1>
+			</cfif>
 			<!--- NIRVANIX --->
 			<cfelseif arguments.thestruct.storage EQ "nirvanix">
 				<cfset uplt = "u" & Createuuid("")>
@@ -2171,8 +2165,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 				</cfquery>
 			</cftransaction>
-	</cfif>
-	<!--- return the new id nr --->
+		</cfif>
+	<!--- return --->
 	<cfreturn />
 </cffunction>
 
@@ -2354,9 +2348,9 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 		</cftransaction>
 		<cfcatch type="any">
-			<!--- <cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="assets.cfc resizeImage">
+			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="assets.cfc resizeImage">
 				<cfdump var="#cfcatch#" />
-			</cfmail> --->
+			</cfmail>
 		</cfcatch>
 	</cftry>
 	<!--- Return --->
