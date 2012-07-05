@@ -51,7 +51,7 @@
 				<tr class="list">
 					<td>
 					Razuna keeps an internal cache of the host application. If you feel that there is an error or have been instructed by us to do so, you can re-built the cache with the link below.<br /><br />
-					<a href="http://#cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true" target="_blank">Re-built Cache</a>
+					<a href="http://#cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" target="_blank">Re-built Cache</a>
 					<br /><br />
 					</td>
 				</tr>
