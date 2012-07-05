@@ -1932,10 +1932,11 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 			<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
 		<cfelse>
+			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination," ","\ ","all")>
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"&","\&","all")>
 			<cfset arguments.thestruct.destination = replacenocase(arguments.thestruct.destination,"'","\'","all")>
-			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
+			
 		</cfif>
 		<!--- Parse keywords and description from XMP --->
 		<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
@@ -2767,6 +2768,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfquery>
 		<!--- set root folder id to keep top folder during creating folder out of zip archive --->
 		<cfset rootfolderId = arguments.thestruct.qryfile.folder_id>
+		<cfset folderIdr = arguments.thestruct.qryfile.folder_id>
 		<cfset folderId = arguments.thestruct.qryfile.folder_id>
 		<cfset folderlevel = folders.folder_level>
 		<cfset loopname = "">
@@ -2777,59 +2779,67 @@ This is the main function called directly by a single upload else from addassets
 		</cfthread>
 		<cfthread action="join" name="#ttf#" />
 		<!--- Get directory again since the directory names could have changed from above --->
-		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedir" recurse="true" sort="name" type="dir">
+		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedir" recurse="true" type="dir">
+		<!--- Sort the above list in a query because cfdirectory sorting sucks --->
+		<cfquery dbtype="query" name="thedir">
+		SELECT *
+		FROM thedir
+		ORDER BY name
+		</cfquery>
 		<!--- Get folders within the unzip RECURSIVE --->
-		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedirfiles" recurse="true" sort="name" type="file">
+		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedirfiles" recurse="true" type="file">
+		<!--- Sort the above list in a query because cfdirectory sorting sucks --->
+		<cfquery dbtype="query" name="thedirfiles">
+		SELECT *
+		FROM thedirfiles
+		ORDER BY name
+		</cfquery>
 		<!--- Create Directories --->
-		<cfset arguments.thestruct.theid = folderId>
-		<cfset arguments.thestruct.folderlevel = folderlevel>
-		<cfset arguments.thestruct.rid = rootfolderId>
-		<cfset arguments.thestruct.fidr = 0>
 		<cfloop query="thedir">
-			<cfif thedir.attributes NEQ "H" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
-				<cfset arguments.thestruct.foldername = listlast(name,FileSeparator())>
-				<cfset arguments.thestruct.thepathtofolder = replacenocase(name,arguments.thestruct.foldername,"","one")>
-				<cfif arguments.thestruct.thepathtofolder NEQ arguments.thestruct.foldername AND arguments.thestruct.thepathtofolder NEQ "">
-					<cfset f = arguments.thestruct.thepathtofolder & arguments.thestruct.foldername>
-				<cfelse>
-					<cfset f = arguments.thestruct.foldername>
-				</cfif>
-				<!--- Check to see if there are other folders in here --->
-				<cfdirectory action="list" directory="#directory#/#f#" name="thedirsub" recurse="false" type="dir" sort="name">
-				<!--- Get the folder id of the last directory --->
-				<cfquery datasource="#variables.dsn#" name="lastfolderid">
-				SELECT folder_id, folder_id_r
+			<!--- Check how long the folder list is --->
+			<cfset namelistlen = listlen(name,FileSeparator())>
+			<!--- If longer then 1 we need to get the folder_id_r of the previous folder --->
+			<cfif namelistlen GT 1>
+				<!--- Get the list entry at one higher then the current len --->
+				<cfset lenminusone = namelistlen - 1>
+				<cfset fnameforqry = ListGetAt(name, lenminusone, FileSeparator())>
+				<!--- Query to get the folder_id_r --->
+				<cfquery datasource="#variables.dsn#" name="qryfidr">
+				SELECT folder_id
 				FROM #session.hostdbprefix#folders
-				WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast(arguments.thestruct.thepathtofolder,FileSeparator()))#">
-				AND folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.rid#"> 
-				<cfif arguments.thestruct.fidr NEQ 0>
-					AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.fidr#">
-				</cfif>
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fnameforqry)#" cfsqltype="cf_sql_varchar">
+				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 				</cfquery>
-				<!--- If there are records found then assign the folder_id to theid else take the one given below --->
-				<cfif lastfolderid.recordcount NEQ 0>
-					<cfset arguments.thestruct.theid = lastfolderid.folder_id>
-				</cfif>
-				<cfif thedirsub.recordcount GT 1>
-					<cfset arguments.thestruct.folderlevel = arguments.thestruct.folderlevel>
-				<cfelse>
-					<cfset arguments.thestruct.folderlevel = arguments.thestruct.folderlevel + 1>
-				</cfif>
-				<!--- Call CFC folders to create the new folder --->
-				<cfinvoke method="createfolderfromzip" thestruct="#arguments.thestruct#" returnvariable="thenewfid" />
-				<cfif thedirsub.recordcount EQ 1>
-					<cfset arguments.thestruct.theid = thenewfid>
-					<cfset arguments.thestruct.folderlevel = arguments.thestruct.folderlevel + 1>
-					<cfset arguments.thestruct.fidr = lastfolderid.folder_id_r>
-				</cfif>
+				<!--- Set the folder_id_r in var --->
+				<cfset fidr = qryfidr.folder_id>
+				<cfset fname = listlast(name, FileSeparator())>
+			<cfelse>
+				<cfset fname = name>
+				<cfset fidr = folderIdr>
 			</cfif>
+			<!--- Add the Folder to DB --->
+			<cfquery datasource="#variables.dsn#">
+			INSERT INTO #session.hostdbprefix#folders
+			(folder_id, folder_name, folder_id_r, folder_main_id_r, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
+			values (
+			<cfqueryparam value="#createuuid("")#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#fname#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#fidr#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			)
+			</cfquery>
 		</cfloop>
 		<cfset variables.cachetoken = resetcachetoken("folders")>
 		<cfpause interval="5" />
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
-			<cfif size NEQ 0 AND fileexists("#directory#/#name#") AND attributes NEQ "H" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
+			<cfif size NEQ 0 AND fileexists("#directory#/#name#") AND attributes NEQ "H" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS ".DS_STORE" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
 				<cfset md5hash = "">
 				<!--- Set Original FileName --->
 				<cfset arguments.thestruct.theoriginalfilename = listlast(name,FileSeparator())>
@@ -2887,7 +2897,10 @@ This is the main function called directly by a single upload else from addassets
 					END AS ISHERE
 					FROM #session.hostdbprefix#folders f
 					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast("#directory#/#arguments.thestruct.thepathtoname#",FileSeparator()))#">
+					AND folder_main_id_r = <cfqueryparam value="#rootfolderId#" cfsqltype="cf_sql_varchar">
+					<!---
 					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
+					--->
 					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 					<!--- Subselect --->
