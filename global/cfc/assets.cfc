@@ -1639,6 +1639,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfelse>
 		<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
 		<!--- Call the import/imagemagick method --->
+		<!--- Puttin the below method call NOT in a thread solves some issues we have seen were some images are not added --->
 		<cfinvoke method="importimagesthread" thestruct="#arguments.thestruct#">
 		<!--- <cfthread intstruct="#arguments.thestruct#" priority="LOW">
 			<cfinvoke method="importimagesthread" thestruct="#attributes.intstruct#" />
@@ -2757,8 +2758,15 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="extractFromZip" output="true" access="private">
 	<cfargument name="thestruct" type="struct">	
 	<cftry>
+		<!--- Params --->
 		<cfparam default="0" name="arguments.thestruct.upl_template">
-		<cfzip action="extract" zipfile="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.qryfile.path#" timeout="900" charset="utf-8">
+		<cfset var thetemp = Createuuid("")>
+		<!--- Extract ZIP --->
+		<cfset var tzip = "zip" & thetemp>
+		<cfthread name="#tzip#" intstruct="#arguments.thestruct#">
+			<cfzip action="extract" zipfile="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" destination="#attributes.intstruct.qryfile.path#" timeout="9000" charset="utf-8">
+		</cfthread>
+		<cfthread action="join" name="#tzip#" />
 		<!--- Get folder level of the folder we are in to create new folder --->
 		<cfquery datasource="#variables.dsn#" name="folders">
 		SELECT folder_level, folder_main_id_r
@@ -2772,7 +2780,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset folderlevel = folders.folder_level>
 		<cfset loopname = "">
 		<!--- Loop over the zip directories and rename them if needed --->
-		<cfset var ttf = Createuuid("")>
+		<cfset var ttf = "rec" & thetemp>
 		<cfthread name="#ttf#" intstruct="#arguments.thestruct#">
 			<cfinvoke method="rec_renamefolders" thedirectory="#attributes.intstruct.qryfile.path#" />
 		</cfthread>
@@ -2827,7 +2835,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfloop>
 		<cfset variables.cachetoken = resetcachetoken("folders")>
-		<cfpause interval="2" />
+		<cfpause interval="5" />
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
 			<cfif size NEQ 0 AND fileexists("#directory#/#name#") AND attributes NEQ "H" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
