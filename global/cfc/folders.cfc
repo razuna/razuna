@@ -1286,6 +1286,8 @@
 			<cfinvoke method="remove_folder_thread" thestruct="#attributes.intstruct#" />
 		</cfthread>
 		<cfthread action="join" name="#tt#" />
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
@@ -1365,8 +1367,6 @@
 				<!--- Delete all files which have the same folder_id_r, meaning they have not been moved --->
 				<cfinvoke method="deleteassetsinfolder" thefolderid="#thefolderid#" thestruct="#arguments.thestruct#" />
 			</cfloop>
-			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("folders")>
 			<!--- Log --->
 			<cfset log = #log_folders(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#, Level: #foldername.folder_level#)')#>
 		</cfif>
@@ -2170,6 +2170,7 @@
 	SELECT folder_id, folder_level
 	FROM #session.hostdbprefix#folders
 	WHERE folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+	AND folder_id != folder_id_r
 	<!--- AND folder_level <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 	AND folder_level <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thelevel#" cfsqltype="cf_sql_numeric"> --->
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
