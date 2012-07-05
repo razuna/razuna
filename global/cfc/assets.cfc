@@ -1628,7 +1628,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfparam name="arguments.thestruct.storage"  		 default="#application.razuna.storage#">
 	<cfparam name="arguments.thestruct.database"  		 default="#variables.database#">
 	<cfparam name="arguments.thestruct.hostdbprefix"  	 default="#session.hostdbprefix#">
-	<cfparam name="arguments.thestruct.cftoken"		  	 default="#cftoken#">
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
 		<!--- Call versions component to do the versions thingy --->
@@ -1696,14 +1695,6 @@ This is the main function called directly by a single upload else from addassets
 						lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 					</cfif>
 					WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-					</cfquery>
-				</cftransaction>
-				<!--- Remove records in temp db --->
-				<cftransaction>
-					<cfquery datasource="#application.razuna.datasource#">
-					DELETE FROM #session.hostdbprefix#temp
-					WHERE tmp_token = <cfqueryparam value="#arguments.thestruct.CFToken#" cfsqltype="cf_sql_varchar">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 					</cfquery>
 				</cftransaction>
@@ -2896,7 +2887,7 @@ This is the main function called directly by a single upload else from addassets
 					END AS ISHERE
 					FROM #session.hostdbprefix#folders f
 					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast("#directory#/#arguments.thestruct.thepathtoname#",FileSeparator()))#">
-					AND f.folder_main_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
+					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
 					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 					<!--- Subselect --->

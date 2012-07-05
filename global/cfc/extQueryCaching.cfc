@@ -46,7 +46,7 @@
 		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
 		</cfquery>
-		<cfcatch type="database">
+		<cfcatch type="any">
 			<cfset qry.cache_token = createuuid('')>
 		</cfcatch>
 	</cftry>
