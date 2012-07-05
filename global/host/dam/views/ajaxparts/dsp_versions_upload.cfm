@@ -34,7 +34,7 @@
     $(function() {
         $("##yourID").makeAsyncUploader({
         	flash_url: '#dynpath#/global/js/upload/swfupload.swf',
-            upload_url: "#myself#c.asset_upload&tempid=#attributes.tempid#&thepath=#urlencodedformat(thisPath)#&thefieldname=filedata&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&#Session.URLToken#",
+            upload_url: "#myself#c.asset_upload&tempid=#attributes.tempid#&thepath=#urlencodedformat(thisPath)#&thefieldname=filedata&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#",
             button_image_url: '#dynpath#/global/js/upload/blankButton.png',
             file_size_limit: "2000 MB",
             file_types: "*.*",

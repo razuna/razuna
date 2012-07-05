@@ -33,7 +33,7 @@
     $(function() {
         $("##yourID").makeAsyncUploader({
         	flash_url: '#dynpath#/global/js/upload/swfupload.swf',
-            upload_url: "#myself#c.meta_imp_upload_do&tempid=#attributes.tempid#&thefieldname=filedata&#Session.URLToken#",
+            upload_url: "#myself#c.meta_imp_upload_do&tempid=#attributes.tempid#&thefieldname=filedata",
             button_image_url: '#dynpath#/global/js/upload/blankButton.png',
             file_size_limit: "2000 MB",
             file_types: "*.csv;*.xls;*.xlsx",
