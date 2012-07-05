@@ -69,7 +69,7 @@
 		<cfif checkformd5>
 			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
 		<cfelse>
-			<cfset var md5here = 0>
+			<cfset md5here = 0>
 		</cfif>
 		<!--- If file does not exsist continue else send user an eMail --->
 		<cfif md5here EQ 0>
@@ -1170,7 +1170,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset theapplekeywords = "">
 			<cfset attributes.intstruct.pathorg = attributes.intstruct.qryfile.path>
 			<!--- Random ID for script --->
-			<cfset var ttpdf = Createuuid("")>
+			<cfset ttpdf = Createuuid("")>
 			<!--- Set some more vars but only for PDF --->
 			<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND attributes.intstruct.qryfile.link_kind NEQ "url">
 				<!--- If this is a linked asset --->
@@ -1459,7 +1459,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.newid#" category="doc">
 				<!--- NIRVANIX --->
 				<cfelseif application.razuna.storage EQ "nirvanix" AND attributes.intstruct.qryfile.link_kind NEQ "url">
-					<cfset var ttu = createuuid("")>
+					<cfset ttu = createuuid("")>
 					<cfthread name="#ttu#" upstruct="#attributes.intstruct#" priority="HIGH">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.upstruct.qryfile.folder_id#/doc/#attributes.upstruct.newid#">
@@ -3137,7 +3137,7 @@ This is the main function called directly by a single upload else from addassets
 						<cfset attributes.audstruct.qryfile.filenamenoext = replace(attributes.audstruct.qryfile.filenamenoext,"'","\'","all")>
 					</cfif>
 					<!--- Write the script --->
-					<cfset var thescript = Createuuid("")>
+					<cfset thescript = Createuuid("")>
 					<cfset attributes.audstruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 					<!--- On Windows a .bat --->
 					<cfif attributes.audstruct.iswindows>
@@ -3182,7 +3182,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 				<!--- If link_kind is url --->
 				<cfelse>
-					<cfset var idtags = "">
+					<cfset idtags = "">
 				</cfif>
 				<!--- append to the DB --->
 				<cftransaction>
@@ -3270,9 +3270,9 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Move the file from the temp path to this folder --->
 						<cfif attributes.audstruct.qryfile.link_kind NEQ "lan">
 							<cfif attributes.audstruct.importpath>
-								<cfset var theaction = "copy">
+								<cfset theaction = "copy">
 							<cfelse>
-								<cfset var theaction = "move">
+								<cfset theaction = "move">
 							</cfif>
 							<cffile action="#theaction#" source="#attributes.audstruct.theorgfileraw#" destination="#attributes.audstruct.qrysettings.set2_path_to_assets#/#attributes.audstruct.hostid#/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filename#" mode="775">
 						</cfif>
