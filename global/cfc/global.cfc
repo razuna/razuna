@@ -28,6 +28,12 @@
 <!--- Get the cachetoken for here --->
 <cfset variables.cachetoken = getcachetoken("general")>
 
+	<!--- Clearcache --->
+	<cffunction name="clearcache" returntype="void">
+		<!--- Reset the cache of this host --->
+		<cfset resetcachetokenall()>
+	</cffunction>
+
 <!--- Get all hosts --->
 	<cffunction hint="Give back all hosts" name="allhosts">
 		<cfquery datasource="#application.razuna.datasource#" name="hostslist">

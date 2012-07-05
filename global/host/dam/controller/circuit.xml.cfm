@@ -4427,10 +4427,7 @@
 	</fuseaction>
 	<!-- Flush database cache -->
 	<fuseaction name="admin_flush_db">
-		<invoke object="myFusebox.getApplicationData().global" method="clearcache">
-			<argument name="theaction" value="nuclear" />
-			<argument name="thedomain" value="x" />
-		</invoke>
+		<invoke object="myFusebox.getApplicationData().global" methodcall="clearcache()" />
 	</fuseaction>
 	<!-- For loading maintenance cloud -->
 	<fuseaction name="admin_maintenance_cloud">
