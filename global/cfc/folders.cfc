@@ -1280,12 +1280,12 @@
 <!--- REMOVE THIS FOLDER ALL SUBFOLDER AND FILES WITHIN --->
 <cffunction name="remove" output="true">
 	<cfargument name="thestruct" type="struct">
-		<!--- <cfinvoke method="remove_folder_thread" thestruct="#arguments.thestruct#" /> --->
-		<cfset var tt = createuuid()>
+		<cfinvoke method="remove_folder_thread" thestruct="#arguments.thestruct#" />
+		<!--- <cfset var tt = createuuid()>
 		<cfthread name="#tt#" intstruct="#arguments.thestruct#">
 			<cfinvoke method="remove_folder_thread" thestruct="#attributes.intstruct#" />
 		</cfthread>
-		<cfthread action="join" name="#tt#" />
+		<cfthread action="join" name="#tt#" /> --->
 	<cfreturn />
 </cffunction>
 
@@ -1318,57 +1318,59 @@
 			<cfset parentid.folder_id_r = 0>
 		</cfif>
 		<cfif foldername.recordcount NEQ 0>
-			<!--- Call to get the recursive folder ids --->
-			<cfinvoke method="recfolder" returnvariable="folderids">
-				<cfinvokeargument name="thelist" value="#arguments.thestruct.folder_id#">
-				<cfinvokeargument name="thelevel" value="#foldername.folder_level#">
-			</cfinvoke>
-			<!--- no looping through sub-folders or deleting in related tables, all is done by cascading foreing-keys in DB --->
-			<!--- MSSQL: Drop all constraints --->
-			<cfif application.razuna.thedatabase EQ "mssql">
-				<cfquery datasource="#application.razuna.datasource#">
-				ALTER TABLE #application.razuna.theschema#.#session.hostdbprefix#folders DROP CONSTRAINT
-				</cfquery>
-			<!--- MySQL --->
-			<cfelseif application.razuna.thedatabase EQ "mysql">
-				<cfquery datasource="#application.razuna.datasource#">
-				SET foreign_key_checks = 0
-				</cfquery>
-			<!--- H2 --->
-			<cfelseif application.razuna.thedatabase EQ "h2">
-				<cfquery datasource="#application.razuna.datasource#">
-				ALTER TABLE #session.hostdbprefix#folders SET REFERENTIAL_INTEGRITY false
-				</cfquery>
-			</cfif>
+			<!--- Delete main folder --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM	#session.hostdbprefix#folders
 			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Delete labels --->
-			<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.folder_id#" />
-			<!--- Delete files in this folder --->
-			<cfinvoke method="deleteassetsinfolder" thefolderid="#arguments.thestruct.folder_id#" thestruct="#arguments.thestruct#" />
-			<!--- Loop to remove folder --->
-			<cfloop list="#folderids#" index="thefolderid" delimiters=",">
-				<cfset arguments.thestruct.folder_id = thefolderid>
-				<!--- Delete in Lucene --->
-				<cfinvoke component="lucene" method="index_delete_folder" thestruct="#arguments.thestruct#" dsn="#application.razuna.datasource#">
-				<!--- Delete folder in DB --->
-				<cfquery datasource="#application.razuna.datasource#">
-				DELETE FROM	#session.hostdbprefix#folders
-				WHERE folder_id = <cfqueryparam value="#thefolderid#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- Delete labels --->
-				<cfinvoke component="labels" method="label_ct_remove" id="#thefolderid#" />
-				<!--- Delete all files which have the same folder_id_r, meaning they have not been moved --->
-				<cfinvoke method="deleteassetsinfolder" thefolderid="#thefolderid#" thestruct="#arguments.thestruct#" />
-			</cfloop>
-			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("folders")>
 			<!--- Log --->
 			<cfset log = #log_folders(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#, Level: #foldername.folder_level#)')#>
+			<!--- Flush Cache --->
+			<cfset variables.cachetoken = resetcachetoken("folders")>
+			<!--- The rest goes in a thread since it can run in the background --->
+			<cfthread intstruct="#arguments.thestruct#">
+				<!--- Call to get the recursive folder ids --->
+				<cfinvoke method="recfolder" returnvariable="folderids">
+					<cfinvokeargument name="thelist" value="#attributes.intstruct.folder_id#">
+				</cfinvoke>
+				<!--- MSSQL: Drop all constraints --->
+				<cfif application.razuna.thedatabase EQ "mssql">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE #application.razuna.theschema#.#session.hostdbprefix#folders DROP CONSTRAINT
+					</cfquery>
+				<!--- MySQL --->
+				<cfelseif application.razuna.thedatabase EQ "mysql">
+					<cfquery datasource="#application.razuna.datasource#">
+					SET foreign_key_checks = 0
+					</cfquery>
+				<!--- H2 --->
+				<cfelseif application.razuna.thedatabase EQ "h2">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE #session.hostdbprefix#folders SET REFERENTIAL_INTEGRITY false
+					</cfquery>
+				</cfif>
+				<!--- Delete labels --->
+				<cfinvoke component="labels" method="label_ct_remove" id="#attributes.intstruct.folder_id#" />
+				<!--- Delete files in this folder --->
+				<cfinvoke method="deleteassetsinfolder" thefolderid="#attributes.intstruct.folder_id#" thestruct="#attributes.intstruct#" />
+				<!--- Loop to remove folder --->
+				<cfloop list="#folderids#" index="thefolderid" delimiters=",">
+					<cfset attributes.intstruct.folder_id = thefolderid>
+					<!--- Delete in Lucene --->
+					<cfinvoke component="lucene" method="index_delete_folder" thestruct="#attributes.intstruct#" dsn="#application.razuna.datasource#">
+					<!--- Delete folder in DB --->
+					<cfquery datasource="#application.razuna.datasource#">
+					DELETE FROM	#session.hostdbprefix#folders
+					WHERE folder_id = <cfqueryparam value="#thefolderid#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- Delete labels --->
+					<cfinvoke component="labels" method="label_ct_remove" id="#thefolderid#" />
+					<!--- Delete all files which have the same folder_id_r, meaning they have not been moved --->
+					<cfinvoke method="deleteassetsinfolder" thefolderid="#thefolderid#" thestruct="#attributes.intstruct#" />
+				</cfloop>
+			</cfthread>
 		</cfif>
 		<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error removing folder - #cgi.http_host#">
@@ -1462,6 +1464,10 @@
 	</cfif>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset variables.cachetoken = resetcachetoken("images")>
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset variables.cachetoken = resetcachetoken("files")>
+	<cfset variables.cachetoken = resetcachetoken("audios")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2170,6 +2176,7 @@
 	SELECT folder_id, folder_level
 	FROM #session.hostdbprefix#folders
 	WHERE folder_id_r IN (<cfqueryparam value="#arguments.thelist#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+	AND folder_id != folder_id_r
 	<!--- AND folder_level <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 	AND folder_level <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thelevel#" cfsqltype="cf_sql_numeric"> --->
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

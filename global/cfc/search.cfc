@@ -619,7 +619,7 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="#1#">
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1">
 		SELECT /* #variables.cachetoken#search_audios */ a.aud_id id, a.aud_name filename, a.folder_id_r, 
 		a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 		a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,

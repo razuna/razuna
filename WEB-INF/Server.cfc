@@ -1,20 +1,48 @@
 <cfcomponent>
 
   <cffunction name="onServerStart">
-    <cfif fileExists("WEB-INF/cache.cfm")>
-      <cfinclude template="cache.cfm" />
-    <cfelse>
-      <!--- Create the cache --->
-      <cfset cacheregionnew(
-        region="razcache",
-        props=
+    <!--- Create the cache --->
+    <cfset cacheregionnew(
+      region="razcache",
+      props=
+      {
+      type : 'memorydisk',
+      diskpersistent : true,
+      diskmaxsizemb : 500
+    }
+    )>
+
+    <!--- READ the documentation at http://wiki.razuna.com/display/ecp/Configure+Caching !!! --->
+
+    <!--- Memcached / CouchBase --->
+    <!--- 
+    <cfset cacheregionnew(
+    region="razcache",
+    props=
         {
-        type : 'memorydisk',
-        diskpersistent : true,
-        diskmaxsizemb : 500
+        type : 'memcached',
+        server : '127.0.0.1:11211',
+        waittimeseconds : 5
+        }
+    )>
+    --->
+    
+    <!--- MongoDB --->
+    <!--- 
+    <cfset cacheregionnew(
+    region="razcache",
+    props=
+        {
+      type : 'mongo',
+      server : '10.0.0.1:27017 10.0.0.2:27017',
+      db : 'razcache',
+      collection : 'nameofregion',
+      user : 'username',
+      password : 'password'
       }
-      )>
-    </cfif>
+    )>
+    --->
+
   </cffunction>
 
 </cfcomponent>

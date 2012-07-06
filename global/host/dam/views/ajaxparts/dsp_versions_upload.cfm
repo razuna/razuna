@@ -34,7 +34,7 @@
     $(function() {
         $("##yourID").makeAsyncUploader({
         	flash_url: '#dynpath#/global/js/upload/swfupload.swf',
-            upload_url: "#myself#c.asset_upload&tempid=#attributes.tempid#&thepath=#urlencodedformat(thisPath)#&thefieldname=filedata&folder_id=#attributes.folder_id#&cfid=#cfid#&cftoken=#cftoken#&file_id=#attributes.file_id#",
+            upload_url: "#myself#c.asset_upload&tempid=#attributes.tempid#&thepath=#urlencodedformat(thisPath)#&thefieldname=filedata&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#",
             button_image_url: '#dynpath#/global/js/upload/blankButton.png',
             file_size_limit: "2000 MB",
             file_types: "*.*",
@@ -53,22 +53,6 @@ SPAN.asyncUploader OBJECT { position: relative; top: 5px; left: 10px; z-index: 7
 </head>
 <body>
 <form action="#self#" name="upme" method="post" enctype="multipart/form-data">
-<!--- If this is a windows firefox browser we can not show the flash within the extjs window --->
-<!---
-<cfif structkeyexists(attributes,"extjs") AND cgi.http_user_agent CONTAINS "windows" AND cgi.http_user_agent CONTAINS "firefox">
-<input type="hidden" name="fa" value="c.asset_upload">
-<input type="hidden" name="tempid" value="#attributes.tempid#">
-<input type="hidden" name="thepath" value="#thisPath#">
-<input type="hidden" name="thefieldname" value="filedata">
-<input type="hidden" name="folder_id" value="#attributes.folder_id#">
-<input type="hidden" name="cfid" value="#cfid#">
-<input type="hidden" name="cftoken" value="#cftoken#">
-<input type="hidden" name="file_id" value="#attributes.file_id#">
-<input type="hidden" name="extjs" value="T">
-<input type="file" id="filedata" name="filedata"> <input type="submit" name="submit" value="Upload" class="button">
-<cfif structkeyexists(form,"submit")>File is uploaded!</cfif>
-<cfelse>
---->
 <input type="file" id="yourID" name="yourID" />
 <!--- </cfif> --->
 </form>

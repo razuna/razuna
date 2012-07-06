@@ -2393,13 +2393,10 @@
 	<!-- Basket include -->
 	<fuseaction name="basket_put_include">
 		<!-- Put session file_id into attributes -->
-		<if condition="#session.file_id# NEQ ''">
+		<if condition="!structkeyexists(attributes,'file_id')">
 			<true>
 				<set name="attributes.file_id" value="#session.file_id#" />
 			</true>
-			<false>
-				<set name="attributes.file_id" value="0" />
-			</false>
 		</if>
 		<!-- CFC: Put file into basket -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="tobasket(attributes)" />
@@ -4427,10 +4424,7 @@
 	</fuseaction>
 	<!-- Flush database cache -->
 	<fuseaction name="admin_flush_db">
-		<invoke object="myFusebox.getApplicationData().global" method="clearcache">
-			<argument name="theaction" value="nuclear" />
-			<argument name="thedomain" value="x" />
-		</invoke>
+		<invoke object="myFusebox.getApplicationData().global" methodcall="clearcache()" />
 	</fuseaction>
 	<!-- For loading maintenance cloud -->
 	<fuseaction name="admin_maintenance_cloud">

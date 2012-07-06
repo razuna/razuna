@@ -28,6 +28,12 @@
 <!--- Get the cachetoken for here --->
 <cfset variables.cachetoken = getcachetoken("general")>
 
+	<!--- Clearcache --->
+	<cffunction name="clearcache" access="public" returntype="void">
+		<!--- Reset the cache of this host --->
+		<cfset resetcachetokenall()>
+	</cffunction>
+
 <!--- Get all hosts --->
 	<cffunction hint="Give back all hosts" name="allhosts">
 		<cfquery datasource="#application.razuna.datasource#" name="hostslist">
@@ -844,7 +850,7 @@ Comment:<br>
 	</cffunction>
 	
 	<!--- Call Account --->
-	<cffunction name="getaccount" output="true">
+	<cffunction name="getaccount" output="true" region="razcache" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
 		<cfargument name="thecgi" type="string">
 		<cfargument name="thehostid" type="string">
 		<!--- Call Remote CFC --->

@@ -27,7 +27,7 @@
 
 	<!--- Check if collection exists for this host --->
 	<cffunction name="exists" access="public" output="false">
-		<cfthread>
+		<cfthread priority="LOW">
 			<cftry>
 				<!--- Get the collection --->
 				<cfset CollectionStatus(session.hostid)>
@@ -314,8 +314,17 @@
 				<cftry>
 					<!--- Nirvanix or Amazon --->
 					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon")>
+						<!--- Check if windows or not --->
+						<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
+						<cfif !isWindows>
+							<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key," ","\ ","all")>
+							<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key,"&","\&","all")>
+							<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key,"'","\'","all")>
+						</cfif>
 						<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						<cfif fileExists(qry_all.lucene_key)>
+							<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						</cfif>
 					<!--- Local Storage --->
 					<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 						<!--- Index: Update file --->
@@ -478,16 +487,16 @@
 	</cffunction>
 	
 	<!--- SEARCH --->
-	<cffunction name="search" access="public" output="true">
+	<cffunction name="search" access="public" output="false">
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
 		<!--- If criteria is empty --->
-<!---
+		<!---
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "*">
 		</cfif>
---->
+		--->
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfif NOT arguments.criteria CONTAINS ":">
 			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)">

@@ -41,6 +41,8 @@
 	<!--- FUNCTION: LOGIN --->
 	<cffunction name="login" returntype="string" access="remote" output="false">
 		<cfargument name="thestruct" type="struct" required="false" />
+		<!--- Params --->
+		<cfset var nvxsession = 0>
 		<cfif !isstruct(arguments.thestruct)>
 			<cfset arguments.thestruct = structnew()>
 		</cfif>
@@ -78,10 +80,6 @@
 			<cfset var thexml = xmlparse(cfhttp.FileContent)>
 			<cfset var nvxsession = thexml.Response.Sessiontoken[1].XmlText>
 			<cfcatch type="any">
-				<cfmail to="nitai@razuna.com" from="server@razuna.com" subject="nvx error during login" type="html">
-					<cfdump var="#cfcatch#">
-					<cfdump var="#arguments.thestruct#">
-				</cfmail>
 				<cfset var nvxsession = 0>
 			</cfcatch>
 		</cftry>
@@ -518,7 +516,7 @@
 	</cffunction>
 	
 	<!--- FUNCTION: GET ACCOUNT USAGE --->
-	<cffunction name="GetAccountUsage" access="public" output="false">
+	<cffunction name="GetAccountUsage" access="public" output="false" region="razcache" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
 		<cftry>
