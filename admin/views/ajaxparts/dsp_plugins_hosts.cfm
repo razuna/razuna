@@ -24,28 +24,37 @@
 *
 --->
 <cfoutput>
-	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
+	<div>#defaultsObj.trans("plugins_hosts_tab_desc")#</div>
+	<br />
+	<table border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
-			<td colspan="2">#defaultsObj.trans("plugins_hosts_tab_desc")#</td>
+			<th width="1%" nowrap="nowrap" style="padding-right:20px;">Host Name</th>
+			<cfloop query="qry_plugins">
+				<th width="1%" nowrap="nowrap" style="text-align:center;border-left:1px solid grey;padding-left:15px;">#p_name#</th>
+			</cfloop>
+			<th width="100%"></th>
 		</tr>
 		<tr>
-			<th>Host Name</th>
-			<th>All</th>
+			<td></td>
 			<cfloop query="qry_plugins">
-				<th nowrap="nowrap">#p_name#</th>
+				<td align="center"><a href="##">Select all</a></td>
 			</cfloop>
+			<td></td>
 		</tr>
 		<cfloop query="qry_allhosts">
 			<cfset hostid = host_id>
-			<tr>
+			<tr class="list">
 				<td>#host_name#</td>
 				<cfloop query="qry_plugins">
-					<td><input type="checkbox" name="all" value="#p_id#" />#currentRow#</td>
-					<td><input type="checkbox" name="pl_host" value="#hostid#-#p_id#" /></td>
+					<td align="center"><input type="checkbox" name="pl_host" value="#hostid#-#p_id#" /></td>
 				</cfloop>
+				<td></td>
 			</tr>
 		</cfloop>
-		<cfdump var="#qry_plugins#">
-		<cfdump var="#qry_allhosts#">
 	</table>
+	<div style="clear:both;"></div>
+	<div style="padding-top:5px;padding-bottom:10px;">
+		<input type="button" name="savebutton" value="#defaultsObj.trans("save")#" class="button" /> 
+	</div>
+	<div id="plfeedback" style="display:none;float:left;font-weight:bold;color:green;"></div>
 </cfoutput>
