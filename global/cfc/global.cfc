@@ -850,7 +850,7 @@ Comment:<br>
 	</cffunction>
 	
 	<!--- Call Account --->
-	<cffunction name="getaccount" output="true">
+	<cffunction name="getaccount" output="true" region="razcache" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
 		<cfargument name="thecgi" type="string">
 		<cfargument name="thehostid" type="string">
 		<!--- Call Remote CFC --->
