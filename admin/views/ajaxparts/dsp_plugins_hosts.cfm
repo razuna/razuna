@@ -32,15 +32,16 @@
 			<th>Host Name</th>
 			<th>All</th>
 			<cfloop query="qry_plugins">
-				<th>#p_name#</th>
+				<th nowrap="nowrap">#p_name#</th>
 			</cfloop>
 		</tr>
 		<cfloop query="qry_allhosts">
+			<cfset hostid = host_id>
 			<tr>
 				<td>#host_name#</td>
-				<td><input type="checkbox" name="all" value="true" /></td>
 				<cfloop query="qry_plugins">
-					<td><input type="checkbox" name="all" value="true" /></td>
+					<td><input type="checkbox" name="all" value="#p_id#" />#currentRow#</td>
+					<td><input type="checkbox" name="pl_host" value="#hostid#-#p_id#" /></td>
 				</cfloop>
 			</tr>
 		</cfloop>
