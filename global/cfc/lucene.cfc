@@ -487,7 +487,7 @@
 	</cffunction>
 	
 	<!--- SEARCH --->
-	<cffunction name="search" access="public" output="true" region="razcache" cachedwithin="#CreateTimeSpan(0,0,0,10)#">
+	<cffunction name="search" access="public" output="false">
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
