@@ -2393,13 +2393,10 @@
 	<!-- Basket include -->
 	<fuseaction name="basket_put_include">
 		<!-- Put session file_id into attributes -->
-		<if condition="#session.file_id# NEQ ''">
+		<if condition="!structkeyexists(attributes,'file_id')">
 			<true>
 				<set name="attributes.file_id" value="#session.file_id#" />
 			</true>
-			<false>
-				<set name="attributes.file_id" value="0" />
-			</false>
 		</if>
 		<!-- CFC: Put file into basket -->
 		<invoke object="myFusebox.getApplicationData().basket" methodcall="tobasket(attributes)" />

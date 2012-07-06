@@ -78,10 +78,10 @@
 </cfif>
 			</cfloop>
 --->
-			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("general")>
 		</cfif>
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
