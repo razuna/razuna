@@ -2165,7 +2165,7 @@
 </cffunction>
 
 <!--- RECURSIVE SUBQUERY TO READ FOLDERS --->
-<cffunction name="recfolder" output="false" access="public" returntype="string">
+<cffunction name="recfolder" output="false" access="public" returntype="string" region="razcache" cachedwithin="#CreateTimeSpan(0,0,10,0)#">
 	<cfargument name="thelist" required="yes" hint="list of parent folder-ids">
 	<cfargument name="thelevel" required="false" hint="the level">
 	<!--- function internal vars --->
