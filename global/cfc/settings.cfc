@@ -27,7 +27,9 @@
 
 <!--- Get the cachetoken for here --->
 <cfif structKeyExists(session, "hostid")>
-<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset variables.cachetoken = getcachetoken("settings")>
+<cfelse>
+	<cfset variables.cachetoken = createuuid("")>
 </cfif>
 
 <!--- Get all languages for this host for the Settings --->
