@@ -322,7 +322,9 @@
 							<cfset qry_all.lucene_key = replacenocase(qry_all.lucene_key,"'","\'","all")>
 						</cfif>
 						<!--- Index: Update file --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						<cfif fileExists(qry_all.lucene_key)>
+							<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						</cfif>
 					<!--- Local Storage --->
 					<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 						<!--- Index: Update file --->
