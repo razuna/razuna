@@ -182,19 +182,19 @@
 									<th><a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Razuna Desktop</a></th>
 								</tr>
 								<tr>
-									<td>Razuna Desktop enables you to add any asset from your desktop to Razuna by simply dragging and dropping it into your Razuna Desktop application. <a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Read more >>></a></td>
+									<td>Razuna Desktop enables you to add any asset from your desktop to Razuna by simply dragging and dropping it into your Razuna Desktop application. <a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Read more</a></td>
 								</tr>
 								<tr>
 									<th><a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Razuna Wordpress Plugin</a></th>
 								</tr>
 								<tr>
-									<td>With the Razuna Wordpress plugin you simply choose assets within Razuna on your Wordpress powered site. There is no need to upload or import them to Wordpress. <a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Read more >>></a></td>
+									<td>With the Razuna Wordpress plugin you simply choose assets within Razuna on your Wordpress powered site. There is no need to upload or import them to Wordpress. <a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Read more</a></td>
 								</tr>
 								<tr>
 									<th><a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Razuna Google Chrome Extension</a></th>
 								</tr>
 								<tr>
-									<td>With the Razuna Google Chrome Extension installed you can browse your assets directly within Chrome. <a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Read more >>></a></td>
+									<td>With the Razuna Google Chrome Extension installed you can browse your assets directly within Chrome. <a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Read more</a></td>
 								</tr>
 								<tr>
 									<th><a href="http://razuna.org/getinvolved/developers" target="_blank">Razuna API</a></th>

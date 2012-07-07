@@ -516,7 +516,7 @@
 	</cffunction>
 	
 	<!--- FUNCTION: GET ACCOUNT USAGE --->
-	<cffunction name="GetAccountUsage" access="public" output="false">
+	<cffunction name="GetAccountUsage" access="public" output="false" region="razcache" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
 		<cftry>
@@ -526,12 +526,10 @@
 			<cfset x = structnew()>
 			<!--- Call --->
 			<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
-			<cfcachecontent name="GetAccountUsage#arguments.username#" cachedwithin="#CreateTimeSpan(0,3,0,0)#" region="razcache">
-				<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
-					<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
-					<cfhttpparam name="userName" value="#arguments.username#" type="url">
-				</cfhttp>
-			</cfcachecontent>
+			<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
+				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+				<cfhttpparam name="userName" value="#arguments.username#" type="url">
+			</cfhttp>
 			<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
 			<!---
 	<cfset trimxml = trim(cfhttp.FileContent)>
