@@ -134,7 +134,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<!--- Set Active/Inactive --->
+	<!--- Remove plugin --->
 	<cffunction name="remove" returntype="void">
 		<cfargument name="p_id" type="string" required="true">
 		<!--- Query --->
@@ -147,6 +147,47 @@
 
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+
+	<!--- setpluginshosts --->
+	<cffunction name="setpluginshosts" returntype="void">
+		<cfargument name="listpluginshost" type="string" required="true">
+		<cftransaction>
+			<!--- Since this is the general list we remove all values first --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_plugins_hosts
+			</cfquery>
+			<!--- Loop over the passed in list and add one by one --->
+			<cfloop list="#arguments.listpluginshost#" index="i" delimiters=",">
+				<!--- Get the first value (host) --->
+				<cfset hostid = listFirst(i,"-")>
+				<!--- Get last value (pluginid) --->
+				<cfset plid = listLast(i,"-")>
+				<!--- And insert to DB --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO ct_plugins_hosts
+				(ct_pl_id_r, ct_host_id_r, rec_uuid)
+				VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#plid#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+				)
+				</cfquery>
+			</cfloop>
+		</cftransaction>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- getpluginshosts --->
+	<cffunction name="getpluginshosts" returntype="query">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT ct_pl_id_r, ct_host_id_r
+		FROM ct_plugins_hosts
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
 	</cffunction>
 
 </cfcomponent>

@@ -542,8 +542,15 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
 		<!-- CFC: Get all plugins from DB only -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb('true')" returnvariable="qry_plugins" />
+		<!-- CFC: Get all plugins who are selected for the hosts -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getpluginshosts()" returnvariable="qry_plugins_hosts" />
 		<!-- Show -->
 		<do action="ajax.plugins_hosts" />
+	</fuseaction>
+	<!-- Get Plugins Host -->
+	<fuseaction name="plugins_hosts_saves">
+		<!-- CFC: Save host plugins -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setpluginshosts(attributes.listpluginshost)" />
 	</fuseaction>
 	<!--  -->
 	<!-- START: PREFERENCES -->

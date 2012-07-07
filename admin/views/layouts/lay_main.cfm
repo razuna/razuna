@@ -79,6 +79,8 @@
   feedback_widget_options.style = "question";
   var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
 </script>
+<!--- Dummy div --->
+<div id="loaddummy" style="display:none;"></div>
 <!--- Twitter --->
 <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
 </body>

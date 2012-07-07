@@ -37,7 +37,7 @@
 		<tr>
 			<td></td>
 			<cfloop query="qry_plugins">
-				<td align="center"><a href="##">Select all</a></td>
+				<td align="center"><a href="##" onclick="plchkall('#p_id#');">Select all</a></td>
 			</cfloop>
 			<td></td>
 		</tr>
@@ -46,7 +46,8 @@
 			<tr class="list">
 				<td>#host_name#</td>
 				<cfloop query="qry_plugins">
-					<td align="center"><input type="checkbox" name="pl_host" value="#hostid#-#p_id#" /></td>
+					<cfset pid = p_id>
+					<td align="center"><input type="checkbox" class="#pid#" name="pl_host" value="#hostid#-#pid#"<cfloop query="qry_plugins_hosts"><cfif ct_pl_id_r EQ pid AND ct_host_id_r EQ hostid> checked="checked"</cfif></cfloop> /></td>
 				</cfloop>
 				<td></td>
 			</tr>
@@ -54,7 +55,26 @@
 	</table>
 	<div style="clear:both;"></div>
 	<div style="padding-top:5px;padding-bottom:10px;">
-		<input type="button" name="savebutton" value="#defaultsObj.trans("save")#" class="button" /> 
+		<input type="button" name="savebutton" value="#defaultsObj.trans("save")#" class="button" onclick="saveplhost();" /> 
 	</div>
-	<div id="plfeedback" style="display:none;float:left;font-weight:bold;color:green;"></div>
+	<div id="plfeedback" style="font-weight:bold;color:green;"></div>
 </cfoutput>
+<!--- JS --->
+<script type="text/javascript">
+	function saveplhost(){
+		// Get selected in an array
+		var selected = new Array();
+			$('input[type=checkbox]:checked').each(function() {
+			    selected.push($(this).val());
+			});
+		// convert to a string
+		var listpluginshost = selected.join(",");
+		// Save
+		loadcontent('loaddummy','index.cfm?fa=c.plugins_hosts_saves&listpluginshost=' + listpluginshost);
+		// Feedback
+		$('#plfeedback').html('Saved your selection successfully!');
+	}
+	function plchkall(pid){
+		$('input:checkbox.' + pid).attr('checked','checked');
+	}
+</script>
