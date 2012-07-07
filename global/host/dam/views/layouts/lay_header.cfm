@@ -23,6 +23,11 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<cfif !cgi.http_user_agent CONTAINS "iphone" AND !cgi.http_user_agent CONTAINS "ipad">
+	<cfset w = 300>
+<cfelse>
+	<cfset w = 100>
+</cfif>
 <cfoutput>
 	<form name="form_account" id="form_account" action="https://secure.razuna.com/account.cfm" method="post">
 		<input type="hidden" name="userid" value="#session.theuserid#">
@@ -40,13 +45,13 @@
 			</a>
 		</div>
 		<!--- Search --->
-		<cfcachecontent name="quicksearch" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
+		<cfcachecontent name="quicksearch#w#" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 			<div style="width:auto;float:right;padding-top:3px;">
 				<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
 				<div style="float:left;background-color:##ddd;padding:2px 4px 2px 2px;">
 					<div style="float:left;">
-						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:300px;" value="Quick Search">
+						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="Quick Search">
 					</div>
 					<div style="float:left;padding:5px 5px 0px 5px;">
 						<div style="float:left;text-decoration:none;"><a href="##" id="searchselectionlink" onclick="$('##searchselection').toggle();" class="ddicon" style="text-decoration:none;">#defaultsObj.trans("search_for_allassets")#</a></div>
@@ -100,6 +105,10 @@
 						<p><a href="#myself##xfa.switchlang#&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a></p>
 					</cfloop>
 				</cfif>
+				<cfif w EQ 100>
+					<p><hr></p>
+					<p><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></p>
+				</cfif>
 				<p><hr></p>
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#defaultsObj.trans("logoff")#</a></p>
 			</div>
@@ -112,10 +121,12 @@
 				</div>
 			</cfif>
 			<!--- Feedback --->
-			<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_feedback)>
-				<div style="float:left;"><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></div>
+			<cfif w EQ 300>
+				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_feedback)>
+					<div style="float:left;"><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></div>
+				</cfif>
 			</cfif>
-		</div>	
+		</div>
 	</div>
 </cfoutput>
 
