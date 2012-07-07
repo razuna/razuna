@@ -2982,4 +2982,19 @@
 	<transid name="installation_checklist_mp4box">
 		<transtext>Pfad zu MP4Box gesetzt</transtext>
 	</transid>
+	<transid name="add_new">
+		<transtext>Neu hinzuügen</transtext>
+	</transid>
+	<transid name="activate">
+		<transtext>Activieren</transtext>
+	</transid>
+	<transid name="deactivate">
+		<transtext>Deaktivieren</transtext>
+	</transid>
+	<transid name="plugins_hosts_tab">
+		<transtext>Plugin für Hosts aktivieren</transtext>
+	</transid>
+	<transid name="plugins_hosts_tab_desc">
+		<transtext><![CDATA[Hier finden Sie eine List aller <strong>aktivierten</strong> Plugins. Jedes Plugin kann selektiv für jeden Host aktiviert/deaktiviert werden.]]></transtext>
+	</transid>
 </translations>
