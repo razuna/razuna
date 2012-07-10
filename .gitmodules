@@ -1,3 +1,0 @@
-[submodule "openbdadmin"]
-	path = openbdadmin
-	url = git@github.com:OpenBD/openbd-administrator.git
