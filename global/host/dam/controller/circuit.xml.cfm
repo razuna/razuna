@@ -378,6 +378,8 @@
 		User switches language
 	 -->
 	<fuseaction name="switchlang">
+		<!-- Param -->
+		<set name="attributes.to" value="" overwrite="false" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="switchlang(attributes.thelang)" />
 		<!-- Where to go -->
