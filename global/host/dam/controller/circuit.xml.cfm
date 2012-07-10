@@ -2460,6 +2460,8 @@
 		<set name="attributes.artofaudio" value="" />
 		<set name="attributes.artoffile" value="" />
 		<set name="attributes.email" value="" />
+		<!-- Set the sessions for the art -->
+		<do action="store_art_values" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Get user email -->
