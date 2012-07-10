@@ -201,11 +201,6 @@
 
 <!--- GET THE DATE FORMAT OF THIS HOST --->
 <cffunction hint="GET THE DATE FORMAT OF THIS HOST" name="getdateformat" output="false" returntype="string">
-	<cfargument name="dsn" required="false" type="string">
-	<!--- If we call this method within and not trough fusebox we dont have variables --->
-	<cfif NOT structkeyexists(variables,"dsn")>
-		<cfset application.razuna.datasource = arguments.dsn>
-	</cfif>
 	<!--- init function internal vars --->
 	<cfset var qDateFormat = 0>
 	<cfset var mydate = "">
