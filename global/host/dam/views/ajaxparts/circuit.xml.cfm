@@ -489,6 +489,15 @@
 	<fuseaction name="groups_list_users">
   		<include template="dsp_groups_list_users" />
 	</fuseaction>
+	<!-- ADMIN: Plugin -->
+	<fuseaction name="plugin_info">
+  		<include template="win_plugin_info" />
+	</fuseaction>
+
+	<!-- Plugin: settings loader -->
+	<fuseaction name="plugin_settings_loader">
+  		<include template="dsp_plugin_settings_loader" />
+	</fuseaction>
 	
 	<!-- Gears -->
 	<fuseaction name="gears">

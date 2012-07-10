@@ -3486,6 +3486,28 @@
 	<!-- ADMIN SECTION -->
 	<!--  -->
 	
+	<!-- Calling the main admin -->
+	<fuseaction name="admin">
+		<!-- Check on activated plugins here -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb('true')" returnvariable="qry_plugins" />
+		<!-- Do -->
+		<do action="ajax.admin" />
+	</fuseaction>
+	<!-- Showing plugin information page -->
+	<fuseaction name="admin_plugin_one">
+		<!-- Get this one plugin -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getone(attributes.p_id)" returnvariable="qry_plugin" />
+		<!-- Do -->
+		<do action="ajax.plugin_info" />
+	</fuseaction>
+	<!-- Load the plugin settings page -->
+	<fuseaction name="plugin_settings">
+		<!-- Get this one plugin -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getone(attributes.p_id)" returnvariable="qry_plugin" />
+		<!-- Do -->
+		<do action="ajax.plugin_settings_loader" />
+	</fuseaction>
+
 	<!--  -->
 	<!-- ADMIN: USERS -->
 	<!--  -->

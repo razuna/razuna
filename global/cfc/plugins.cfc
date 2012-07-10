@@ -49,10 +49,11 @@
 					<cfset plugAuthor = getProfileString("#directory#/#name#/config/config.ini", "information", "author")>
 					<cfset plugAuthorURL = getProfileString("#directory#/#name#/config/config.ini", "information", "authorURL")>
 					<cfset plugDesc = getProfileString("#directory#/#name#/config/config.ini", "information", "description")>
+					<cfset plugLicense = getProfileString("#directory#/#name#/config/config.ini", "information", "license")>
 					<!--- Put path into var --->
 					<cfset plugPath = "#name#">
 					<!--- Insert into DB --->
-					<cfset setplugin(plugID,plugName,plugURL,plugVersion,plugAuthor,plugAuthorURL,plugPath,plugDesc)>
+					<cfset setplugin(plugID,plugName,plugURL,plugVersion,plugAuthor,plugAuthorURL,plugPath,plugDesc,plugLicense)>
 				</cfif>
 			</cfif>
 		</cfloop>
@@ -83,7 +84,7 @@
 		<cfargument name="p_id" type="string" required="true">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT p_id
+		SELECT p_id,p_name,p_url,p_version,p_author,p_author_url,p_path,p_active,p_description,p_license
 		FROM plugins
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
 		</cfquery>
@@ -101,10 +102,11 @@
 		<cfargument name="p_authorurl" type="string" required="true">
 		<cfargument name="p_path" type="string" required="true">
 		<cfargument name="p_desc" type="string" required="true">
+		<cfargument name="p_license" type="string" required="true">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		INSERT INTO plugins
-		(p_id,p_name,p_url,p_version,p_author,p_author_url,p_path,p_description)
+		(p_id,p_name,p_url,p_version,p_author,p_author_url,p_path,p_description,p_license)
 		VALUES(
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_name#">,
@@ -113,7 +115,8 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_author#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_authorurl#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_path#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_desc#">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_desc#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_license#">
 		)
 		</cfquery>
 		<!--- Return --->
