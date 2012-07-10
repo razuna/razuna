@@ -27,7 +27,7 @@
 	<div>
 		<p><strong>#qry_plugin.p_name#</strong></p>
 		<p>#qry_plugin.p_description#</p>
-		<p>Version: #qry_plugin.p_version# | #qry_plugin.p_url#</p>
-		<p>Author: #qry_plugin.p_author# | #qry_plugin.p_author_url#</p>
+		<p>Version: #qry_plugin.p_version# | <a href="#qry_plugin.p_url#" target="_blank">#qry_plugin.p_url#</a></p>
+		<p>Author: #qry_plugin.p_author# | <a href="#qry_plugin.p_author_url#" target="_blank">#qry_plugin.p_author_url#</a></p>
 		<p>#qry_plugin.p_license#</p>
 </cfoutput>

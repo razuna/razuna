@@ -25,6 +25,8 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 	
+	<cfset variables.cachetoken = getcachetoken("settings")>
+
 	<!--- Get all plugins --->
 	<cffunction name="getall">
 		<cfargument name="pathoneup" type="string" required="true">
@@ -132,18 +134,32 @@
 		<cfargument name="pathup" type="string" required="true">
 		<!--- Param --->
 		<cfset var listCFC = "">
+		<cfset session.thisPluginId = arguments.p_id>
 		<!--- Get path of plugin from db --->
 		<cfset var qryPlugin = getone("#arguments.p_id#")>
 		<cfset var pluginPathName = qryPlugin.p_path>
 		<cfset var pluginDir = arguments.pathup & "global/plugins/" & pluginPathName & "/cfc/">
-		<!--- Get all cfc and put into DB --->
-		<cfif directoryExists(pluginDir)>
-			<!--- List the CFC directory --->
-			<cfdirectory directory="#pluginDir#" action="list" name="lCFC" type="file" recurse="false" />
-			<!--- create a list --->
-			<cfset listCFC = valuelist(lCFC.name)>
-			<!--- Remove the .cfc from the name --->
-			<cfset listCFC = replaceNoCase(listCFC, ".cfc", "", "all")>
+		<!--- Do below only on activate --->
+		<cfif p_active>
+			<!--- First remove all actions for this plugin --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM plugins_actions
+			WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
+			</cfquery>
+			<!--- Execute the main.cfc which will add all the actions of the plugin to the DB --->
+			<cfinvoke component="global.plugins.#pluginPathName#.cfc.main" method="load" />
+			<!--- Now look into the plugins_action table and execute any database related tasks --->
+			<!--- Look for table_do actions --->
+
+			<!--- Get all cfc and put into DB (not really needed for now) --->
+			<cfif directoryExists(pluginDir)>
+				<!--- List the CFC directory --->
+				<cfdirectory directory="#pluginDir#" action="list" name="lCFC" type="file" recurse="false" />
+				<!--- create a list --->
+				<cfset listCFC = valuelist(lCFC.name)>
+				<!--- Remove the .cfc from the name --->
+				<cfset listCFC = replaceNoCase(listCFC, ".cfc", "", "all")>
+			</cfif>
 		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -216,6 +232,34 @@
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
+	</cffunction>
+
+	<!--- getpluginactions --->
+	<cffunction name="getactions">
+		<cfargument name="theaction" required="true" />
+		<!--- Params --->
+		<cfset var result = structnew()>
+		<cfset result.pcfc = "">
+		<cfset result.pview = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" region="razcache" cachedwithin="1">
+		SELECT /* #variables.cachetoken# */ pa.comp, pa.func, pa.args, p.p_path
+		FROM plugins_actions pa, plugins p
+		WHERE lower(pa.action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theaction#">
+		AND pa.p_id = p.p_id
+		</cfquery>
+		<!--- Execute actions --->
+		<cfloop query="qry">
+			<!--- 1. CFC --->
+			<cfinvoke component="global.plugins.#p_path#.cfc.#comp#" method="#func#" returnvariable="result.cfc.#p_path#.#func#" />
+			<!--- 2. include the page --->
+			<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#comp#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
+			<!--- Put this in the list --->
+			<cfset result.pcfc = result.pcfc & "," & "pl.cfc.#p_path#.#func#">
+			<cfset result.pview = result.pview & "," & "pl.view.#p_path#.#func#">
+		</cfloop>
+		<!--- Return --->
+		<cfreturn result />
 	</cffunction>
 
 </cfcomponent>

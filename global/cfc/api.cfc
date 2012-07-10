@@ -25,6 +25,28 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
+	<!--- Add action --->
+	<cffunction name="add_action" access="public">
+		<cfargument name="action" required="true" />
+		<cfargument name="comp" required="true" />
+		<cfargument name="func" required="true" />
+		<cfargument name="args" required="false" default="" />
+		<!--- Add this action to DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO plugins_actions
+		(action, comp, func, args, p_id)
+		VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.action#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.comp#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thisPluginId#">
+		)
+		</cfquery>
+		<!--- Reset cache --->
+		<cfset resetcachetoken("settings")>
+	</cffunction>
+
 	<!--- Get datasource --->
 	<cffunction name="getDatasource" access="public" returntype="String">
 		<cfreturn application.razuna.datasource />

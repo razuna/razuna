@@ -283,6 +283,8 @@
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 				<!-- CFC: Get config -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('prerelease')" returnvariable="prerelease" />
+				<!-- CFC: Get plugin actions -->
+				<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_main_page')" returnvariable="pl" />
 				<!-- Get the Cache tag -->
 				<do action="cachetag" />
 				<!-- Show main page -->
@@ -3522,6 +3524,8 @@
 	<fuseaction name="plugin_settings">
 		<!-- Get this one plugin -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getone(attributes.p_id)" returnvariable="qry_plugin" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('settings')" returnvariable="pl" />
 		<!-- Do -->
 		<do action="ajax.plugin_settings_loader" />
 	</fuseaction>

@@ -29,6 +29,5 @@
 	<div style="clear:both;"></div>
 	<hr />
 	<!--- Do the include of the plugin setting page --->
-	<cfinclude template="/global/plugins/workflow/settings.cfm" />
-	<cfdump var="#qry_plugin#"><cfabort>
+	#pl.view.workflow.getSettings#
 </cfoutput>
