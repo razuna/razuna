@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<div id="tab_admin" style="width:720px;">
+	<div id="tab_admin">
 		<ul>
 			<li><a href="##admin_users" onclick="loadcontent('admin_users','#myself#c.users');">#defaultsObj.trans("users")#</a></li>
 			<li><a href="##admin_groups" onclick="loadcontent('admin_groups','#myself#c.groups_list&kind=ecp&loaddiv=admin_groups');">#defaultsObj.trans("groups")#</a></li>
