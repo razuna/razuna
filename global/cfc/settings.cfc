@@ -961,13 +961,11 @@
 <cffunction name="savesetting" output="false" returntype="void">
 	<cfargument name="thefield" type="string" default="" required="yes">
 	<cfargument name="thevalue" type="string" default="" required="yes">
-	<!--- Delete --->
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#settings
 	WHERE lower(set_id) = <cfqueryparam value="#lcase(arguments.thefield)#" cfsqltype="cf_sql_varchar">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<!--- Save --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#settings
 	(set_pref, set_id, host_id, rec_uuid)
@@ -978,8 +976,6 @@
 	<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 	)
 	</cfquery>
-	<!--- Reset cache --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1182,7 +1178,7 @@
 	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
-	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
+	<!--- Now put config values into application scope --->
 	<cfset application.razuna.thedatabase = qry.conf_database>
 	<cfset application.razuna.datasource = qry.conf_datasource>
 	<cfset application.razuna.theschema = qry.conf_schema>

@@ -281,6 +281,8 @@
 				<invoke object="myFusebox.getApplicationData().basket" methodcall="get_orders()" returnvariable="qry_orders" />
 				<!-- CFC: Get customization -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+				<!-- CFC: Get config -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('prerelease')" returnvariable="prerelease" />
 				<!-- Get the Cache tag -->
 				<do action="cachetag" />
 				<!-- Show main page -->
@@ -951,6 +953,8 @@
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="getcollectiongroupszero(attributes.col_id)" returnvariable="qry_col_groups_zero" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- Show -->
 		<do action="ajax.collection_detail" />
 	</fuseaction>
@@ -1362,6 +1366,8 @@
 		<do action="labels" />
 		<!-- Get labels for this record -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.folder_id,'folder')" returnvariable="qry_labels" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
 		<!-- Reset folder id again  -->
@@ -2065,6 +2071,8 @@
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- Show the folder listing -->
 		<do action="ajax.files_detail" />
 	</fuseaction>
@@ -2139,6 +2147,8 @@
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'vid')" returnvariable="qry_labels" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- Show the folder listing -->
 		<do action="ajax.videos_detail" />
 	</fuseaction>
@@ -2227,6 +2237,8 @@
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- Show the image detail window -->
 		<do action="ajax.images_detail" />
 	</fuseaction>
@@ -2320,6 +2332,8 @@
 		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
 		<!-- Show the folder listing -->
 		<do action="ajax.audios_detail" />
 	</fuseaction>
