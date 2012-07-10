@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false" extends="extQueryCaching">
-
+	
 	<!--- Get all plugins --->
 	<cffunction name="getall">
 		<cfargument name="pathoneup" type="string" required="true">

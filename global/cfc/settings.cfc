@@ -27,7 +27,11 @@
 
 <!--- Get the cachetoken for here --->
 <cfif structKeyExists(session, "hostid")>
-<cfset variables.cachetoken = getcachetoken("settings")>
+	<cfset variables.cachetoken = getcachetoken("settings")>
+<cfelse>
+	<cfset consoleoutput(true)>
+	<cfset variables.cachetoken = createuuid()>
+	<cfset console(variables.cachetoken)>
 </cfif>
 
 <!--- Get all languages for this host for the Settings --->
@@ -397,8 +401,8 @@
 <!--- GET GLOBAL Settings --->
 <cffunction name="get_global" access="remote" returnType="query">
 	<!--- Select --->
-	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, 
+	<cfquery datasource="razuna_default" name="qry" region="razcache" cachedwithin="1">
+	SELECT /* #variables.cachetoken#get_global */ conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, 
 	conf_nirvanix_master_pass, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
@@ -531,6 +535,8 @@
 		)
 		</cfquery>
 	</cfif>
+	<!--- Reset cache --->
+	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>
 
 <!--- Update TOOLS --->
@@ -1146,8 +1152,9 @@
 <cffunction name="getconfigdefaultapi" output="false">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_nirvanix_url_services,
-	conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_isp
+	SELECT /* #variables.cachetoken#getconfigdefaultapi */ conf_database, conf_datasource, conf_setid, conf_storage, 
+	conf_nirvanix_appkey, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
+	conf_rendering_farm, conf_isp
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -1169,7 +1176,7 @@
 <cffunction name="getconfigdefault" output="false">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
+	SELECT /* #variables.cachetoken#getconfigdefault */ conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
 	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
@@ -1528,6 +1535,8 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	UPDATE razuna_config
 	SET conf_firsttime = #arguments.theboolean#
 	</cfquery>
+	<!--- Reset cache --->
+	<cfset variables.cachetoken = resetcachetoken("settings")>
 	<cfreturn />
 </cffunction>
 
