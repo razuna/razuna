@@ -63,7 +63,7 @@
 		<cfreturn qryall>
 	</cffunction>
 	
-	<!--- Get one plugin --->
+	<!--- Get all plugins --->
 	<cffunction name="getalldb" returntype="query">
 		<cfargument name="active" default="false" type="string" required="false">
 		<!--- Query --->
@@ -92,7 +92,7 @@
 		<cfreturn qry>
 	</cffunction>
 
-	<!--- Get one plugin --->
+	<!--- Set plugin --->
 	<cffunction name="setplugin" returntype="void">
 		<cfargument name="p_id" type="string" required="true">
 		<cfargument name="p_name" type="string" required="true">
@@ -119,6 +119,8 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_license#">
 		)
 		</cfquery>
+		<!--- Reset cache --->
+		<cfset resetcachetoken("settings")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -127,12 +129,32 @@
 	<cffunction name="setactive" returntype="void">
 		<cfargument name="p_id" type="string" required="true">
 		<cfargument name="p_active" type="string" required="true">
+		<cfargument name="pathup" type="string" required="true">
+		<!--- Param --->
+		<cfset var listCFC = "">
+		<!--- Get path of plugin from db --->
+		<cfset var qryPlugin = getone("#arguments.p_id#")>
+		<cfset var pluginPathName = qryPlugin.p_path>
+		<cfset var pluginDir = arguments.pathup & "global/plugins/" & pluginPathName & "/cfc/">
+		<!--- Get all cfc and put into DB --->
+		<cfif directoryExists(pluginDir)>
+			<!--- List the CFC directory --->
+			<cfdirectory directory="#pluginDir#" action="list" name="lCFC" type="file" recurse="false" />
+			<!--- create a list --->
+			<cfset listCFC = valuelist(lCFC.name)>
+			<!--- Remove the .cfc from the name --->
+			<cfset listCFC = replaceNoCase(listCFC, ".cfc", "", "all")>
+		</cfif>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE plugins
-		SET p_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_active#">
+		SET 
+		p_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_active#">,
+		p_cfc_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#listCFC#">
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
 		</cfquery>
+		<!--- Reset cache --->
+		<cfset resetcachetoken("settings")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -147,7 +169,8 @@
 		</cfquery>
 		<!--- Also delete plugin on the system here --->
 
-
+		<!--- Reset cache --->
+		<cfset resetcachetoken("settings")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -178,6 +201,8 @@
 				</cfquery>
 			</cfloop>
 		</cftransaction>
+		<!--- Reset cache --->
+		<cfset resetcachetoken("settings")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

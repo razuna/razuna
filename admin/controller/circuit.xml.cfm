@@ -507,12 +507,6 @@
 	<!-- START: PLUGINS -->
 	<!--  -->
 
-
-
-	<!--  -->
-	<!-- END: PLUGINS -->
-	<!--  -->
-
 	<!-- Load -->
 	<fuseaction name="plugins">
 		<!-- Assetpath -->
@@ -525,7 +519,7 @@
 	<!-- Activate/Deactivate -->
 	<fuseaction name="plugins_onoff">
 		<!-- CFC: Activate or not -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setactive(attributes.pid,attributes.active)" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setactive(attributes.pid,attributes.active,'#pathoneup#')" />
 		<!-- Reload the page -->
 		<do action="plugins" />
 	</fuseaction>
@@ -552,6 +546,11 @@
 		<!-- CFC: Save host plugins -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setpluginshosts(attributes.listpluginshost)" />
 	</fuseaction>
+
+	<!--  -->
+	<!-- END: PLUGINS -->
+	<!--  -->
+
 	<!--  -->
 	<!-- START: PREFERENCES -->
 	<!--  -->
