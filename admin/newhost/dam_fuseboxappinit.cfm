@@ -1,3 +1,2 @@
-<cfoutput>#('
-<cfinvoke component="global.cfc.settings" method="getconfigdefault" />
+<cfoutput>#('<cfinvoke component="global.cfc.settings" method="getconfigdefault" />
 ')#</cfoutput>

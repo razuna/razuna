@@ -91,11 +91,9 @@ WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase
 <cfset session.audtable="#arguments.host_db_prefix_replace#audios">
 <cfset session.imgtable="#arguments.host_db_prefix_replace#images">
 </cfif>
+
 <!--- Cart Session --->
 <cfparam name="session.thecart" default="##createuuid("")##">
-
-<!--- Call the default components which we need on every page. To do this the FB way is quite cubersome --->
-<cfset defaultsObj = createObject("component","global.cfc.defaults")>
 
 <cfif StructKeyExists(session, "theuserid") AND session.theuserid NEQ "" AND StructKeyExists(Session, "hostid") AND isnumeric(session.hostid)>
 	<!--- Component : SECURITY : stored in request scope for better performance--->
