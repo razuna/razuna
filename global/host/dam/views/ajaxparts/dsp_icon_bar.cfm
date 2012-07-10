@@ -59,24 +59,24 @@
 					<!--- Upload --->
 					<cfif attributes.folderaccess NEQ "R"> 
 						<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
-							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;" title="#defaultsObj.trans("add_file")#">
+							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
 								<div style="float:left;">
 									<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:2px;" />
 								</div>
-								<div style="float:left;padding-right:15px;">#defaultsObj.trans("add_file")#</div>
+								<div style="float:left;padding-right:15px;">#myFusebox.getApplicationData().defaults.trans("add_file")#</div>
 							</a>
 						<cfelseif cs.myfolder_upload>
-							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;" title="#defaultsObj.trans("add_file")#">
+							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
 								<div style="float:left;">
 									<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:2px;" />
 								</div>
-								<div style="float:left;padding-right:15px;">#defaultsObj.trans("add_file")#</div>
+								<div style="float:left;padding-right:15px;">#myFusebox.getApplicationData().defaults.trans("add_file")#</div>
 							</a>
 						</cfif>
 					</cfif>
 					<!--- Select --->
 					<cfif cs.icon_select>
-						<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" title="#defaultsObj.trans("tooltip_select_desc")#">
+						<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 							<div style="float:left;">
 								<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
 							</div>
@@ -85,11 +85,11 @@
 					</cfif>
 					<!--- Search --->
 					<cfif cs.icon_search>
-						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#defaultsObj.trans("folder_search")#',500,1);" title="#defaultsObj.trans("folder_search")#">
+						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
 							<div style="float:left;">
 								<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" />
 							</div>
-							<div style="float:left;padding-right:15px;">#defaultsObj.trans("folder_search")#</div>
+							<div style="float:left;padding-right:15px;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
 						</a>
 					</cfif>
 					<div style="float:left;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
@@ -101,22 +101,22 @@
 						<!--- Refresh --->
 						<cfif cs.icon_refresh>
 							<p>
-								<a href="##" onclick="loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#');return false;" title="#defaultsObj.trans("tooltip_refresh_desc")#">
+								<a href="##" onclick="loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_desc")#">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" />
 									</div>
-									<div style="padding-top:2px;">#defaultsObj.trans("tooltip_refresh")#</div>
+									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("tooltip_refresh")#</div>
 								</a>
 							</p>
 						</cfif>
 						<!--- Add Subfolder --->
 						<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder>
 							<p>
-								<a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#defaultsObj.trans("folder_new")#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">
+								<a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#myFusebox.getApplicationData().defaults.trans("folder_new")#',750,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/folder-new-7.png" width="16" height="16" border="0" />
 									</div>
-									<div style="padding-top:2px;">#defaultsObj.trans("folder_new")#</div>
+									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("folder_new")#</div>
 								</a>
 							</p>
 						</cfif>
@@ -146,7 +146,7 @@
 						<!--- Exporting icons --->
 						<cfif cs.icon_print>
 							<p>
-								<a href="##" target="_blank" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#url.folder_id#&kind=#url.kind#','#defaultsObj.trans("pdf_window_title")#',500,1);$('##drop#thediv#').toggle();return false;">
+								<a href="##" target="_blank" onclick="showwindow('#myself#ajax.topdf_window&folder_id=#url.folder_id#&kind=#url.kind#','#myFusebox.getApplicationData().defaults.trans("pdf_window_title")#',500,1);$('##drop#thediv#').toggle();return false;">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/preferences-desktop-printer-2.png" border="0" width="16" height="16" />
 									</div>
@@ -178,22 +178,22 @@
 						<!--- Import Metadata --->
 						<cfif attributes.folderaccess NEQ "R" AND cs.icon_metadata_import>
 							<p>
-								<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#defaultsObj.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#defaultsObj.trans("header_import_metadata_desc")#">
+								<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("header_import_metadata_desc")#">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/package-add.png" border="0" width="16" height="16" />
 									</div>
-									<div style="padding-top:2px;">#defaultsObj.trans("header_import_metadata")#</div>
+									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#</div>
 								</a>
 							</p>
 						</cfif>
 						<!--- Export Metadata --->
 						<cfif cs.icon_metadata_export>
 							<p>
-								<a href="##" onclick="showwindow('#myself#c.meta_export&folder_id=#url.folder_id#&what=folder','#defaultsObj.trans("header_export_metadata")#',500,1);$('##drop#thediv#').toggle();return false;">
+								<a href="##" onclick="showwindow('#myself#c.meta_export&folder_id=#url.folder_id#&what=folder','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',500,1);$('##drop#thediv#').toggle();return false;">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/document-export-4.png" border="0" width="16" height="16" />
 									</div>
-									<div style="padding-top:2px;">#defaultsObj.trans("header_export_metadata")#</div>
+									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
 								</a>
 							</p>
 						</cfif>
@@ -201,7 +201,7 @@
 						<cfif attributes.folderaccess NEQ "R" AND cs.icon_download_folder>
 							<p><hr></p>
 							<p>
-								<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=#url.folder_id#','#defaultsObj.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
+								<a href="##" onclick="showwindow('#myself#ajax.download_folder&folder_id=#url.folder_id#','#myFusebox.getApplicationData().defaults.trans("header_download_folder")#',500,1);$('##drop#thediv#').toggle();return false;">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/folder-download.png" border="0" width="16" />
 									</div>
@@ -219,7 +219,7 @@
 			<cfif session.offset GTE 1>
 				<!--- For Back --->
 				<cfset newoffset = session.offset - 1>
-				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">&lt; #defaultsObj.trans("back")#</a> |
+				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</a> |
 			</cfif>
 			<cfset showoffset = session.offset * session.rowmaxpage>
 			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -227,7 +227,7 @@
 			<cfif qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry_filecount.thetotal> | 
 				<!--- For Next --->
 				<cfset newoffset = session.offset + 1>
-				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">#defaultsObj.trans("next")# &gt;</a>
+				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
 			</cfif>
 			<!--- Pages --->
 			<cfif qry_filecount.thetotal GT session.rowmaxpage>
@@ -279,13 +279,13 @@
 	</div>
 	<div style="clear:both;"></div>
 	<!--- Actions with selection icons --->
-	<div style="float:left;padding-right:5px;"><strong>#defaultsObj.trans("action_with_selection")#: </strong></div>
+	<div style="float:left;padding-right:5px;"><strong>#myFusebox.getApplicationData().defaults.trans("action_with_selection")#: </strong></div>
 	<cfif cs.show_bottom_part>
 		<a href="##" onclick="sendtobasket('#kind#form');">
 			<div style="float:left;">
 				<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>
-			<div style="float:left;padding-right:5px;">#defaultsObj.trans("put_in_basket")#</div>
+			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</div>
 		</a> 
 	</cfif>
 	<cfif attributes.folderaccess IS NOT "R">
@@ -293,34 +293,34 @@
 			<div style="float:left;padding-left:5px;">
 				<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>
-			<div style="float:left;padding-right:5px;">#defaultsObj.trans("move")#</div>
+			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("move")#</div>
 		</a>
 		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','batch');">
 			<div style="float:left;padding-left:5px;">
 				<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>
-			<div style="float:left;padding-right:5px;">#defaultsObj.trans("batch")#</div>
+			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("batch")#</div>
 		</a>
 		<cfif cs.tab_collections>
 			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','chcoll');">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/picture-link.png" width="16" height="16" border="0" style="padding-right:3px;" />
 				</div>
-				<div style="float:left;padding-right:5px;">#defaultsObj.trans("add_to_collection")#</div>
+				<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("add_to_collection")#</div>
 			</a>
 		</cfif>
 		<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','exportmeta');">
 			<div style="float:left;padding-left:5px;">
 				<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>
-			<div style="float:left;padding-right:5px;">#defaultsObj.trans("header_export_metadata")#</div>
+			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
 		</a>
 		<cfif kind EQ "img" OR kind EQ "vid">
 			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','prev');">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/picture-go.png" width="16" height="16" border="0" style="padding-right:2px;" />
 				</div>
-				<div style="float:left;">#defaultsObj.trans("batch_recreate_preview")#</div>
+				<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("batch_recreate_preview")#</div>
 			</a>
 		</cfif>
 		<cfif attributes.folderaccess EQ "X">
@@ -328,7 +328,7 @@
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
 				</div>
-				<div style="float:left;">#defaultsObj.trans("delete")#</div>
+				<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("delete")#</div>
 			</a>
 		</cfif>
 	</cfif>

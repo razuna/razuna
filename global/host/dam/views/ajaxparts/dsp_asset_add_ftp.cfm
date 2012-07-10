@@ -27,29 +27,29 @@
 	<form name="assetftp" id="assetftp">
 	<table border="0" cellpadding="0" cellspacing="0" width="600">
 		<tr>
-			<td colspan="2">#defaultsObj.trans("ftp_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("ftp_desc")#</td>
 		</tr>
 		<tr>
 			<td colspan="2" style="padding-top:15px;"></td>
 		</tr>
 		<tr>
-			<td nowrap="true" width="120">#defaultsObj.trans("ftp_server")#</td>
+			<td nowrap="true" width="120">#myFusebox.getApplicationData().defaults.trans("ftp_server")#</td>
 			<td width="480"><input name="ftp_server" type="text" size="40" tabindex="1" value="<cfif structkeyexists(session,"ftp_server")>#session.ftp_server#</cfif>"></td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("username")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("username")#</td>
 			<td><input name="ftp_user" type="text" size="40" tabindex="2" value="<cfif structkeyexists(session,"ftp_user")>#session.ftp_user#</cfif>"></td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("password")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("password")#</td>
 			<td><input name="ftp_pass" type="password" size="40" tabindex="3"></td>
 		</tr>
 		<tr>
-			<td nowrap="true" style="padding-bottom:15px;">#defaultsObj.trans("ftp_passive")#</td>
-			<td style="padding-bottom:15px;"><input name="ftp_passive" type="radio" value="no" checked="true">#defaultsObj.trans("no")# <input name="ftp_passive" type="radio" value="yes">#defaultsObj.trans("yes")#</td>
+			<td nowrap="true" style="padding-bottom:15px;">#myFusebox.getApplicationData().defaults.trans("ftp_passive")#</td>
+			<td style="padding-bottom:15px;"><input name="ftp_passive" type="radio" value="no" checked="true">#myFusebox.getApplicationData().defaults.trans("no")# <input name="ftp_passive" type="radio" value="yes">#myFusebox.getApplicationData().defaults.trans("yes")#</td>
 		</tr>
 		<tr>
-			<td colspan="2"><div style="float:left;"><input type="button" name="cancel" value="#defaultsObj.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><div id="ftplogin" style="float:left;padding-right:10px;padding-top:4px;"></div><input type="button" name="submitbutton" id="submitbutton" value="#defaultsObj.trans("button_show_ftp")#" class="button" onclick="submitassetftpshow();"></div></td>
+			<td colspan="2"><div style="float:left;"><input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><div id="ftplogin" style="float:left;padding-right:10px;padding-top:4px;"></div><input type="button" name="submitbutton" id="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_show_ftp")#" class="button" onclick="submitassetftpshow();"></div></td>
 		</tr>
 	</table>
 	</form>
@@ -66,7 +66,7 @@
 	    	// Get Values
 	    	var items = formserialize("assetftp");
 	    	// Change Button
-		   	$('##ftplogin').html('#defaultsObj.trans("please_wait")#...(sometimes minutes)');
+		   	$('##ftplogin').html('#myFusebox.getApplicationData().defaults.trans("please_wait")#...(sometimes minutes)');
 	    	// Load the FTP site
 	    	loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&' + items);
 	    	return false;

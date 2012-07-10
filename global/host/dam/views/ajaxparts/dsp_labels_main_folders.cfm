@@ -27,7 +27,7 @@
 	<cfif qry_labels_folders.recordcount NEQ 0>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("label")#: #qry_labels_text#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("label")#: #qry_labels_text#</th>
 			</tr>
 			<tr>
 				<td style="border:0px;">

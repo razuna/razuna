@@ -35,7 +35,7 @@
 <input type="hidden" name="folderpath" value="#attributes.folderpath#">
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
 	<tr>
-		<th colspan="3">#defaultsObj.trans("content_of_folder")#: #listlast("#attributes.folderpath#","/\")#</th>
+		<th colspan="3">#myFusebox.getApplicationData().defaults.trans("content_of_folder")#: #listlast("#attributes.folderpath#","/\")#</th>
 	</tr>
 	<tr>
 		<td colspan="3"><input type="checkbox" id="checkall" onclick="selectallserver(this.checked);"> Check all</td>
@@ -45,7 +45,7 @@
 			<td width="1%" class="td2" nowrap="true"><input type="checkbox" class="thefiles" name="thefile" value="#name#" onClick="enablesubserver('assetserverform');"></td>
 			<td width="100%" class="td2" nowrap="true" style="padding-left:0px;">#name#</td>
 			<cfif currentRow EQ 1>
-			<td width="1%" class="td2" nowrap="true"><input type="submit" name="submitbutton" value="#defaultsObj.trans("add_file")#" class="button" disabled></td>
+			<td width="1%" class="td2" nowrap="true"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("add_file")#" class="button" disabled></td>
 			</cfif>
 		</tr>
 	</cfloop>
@@ -53,7 +53,7 @@
 <br>
 <div>
 	<div style="float:left;">
-		<input type="checkbox" name="zip_extract" value="1" checked="checked"> #defaultsObj.trans("header_zip_desc")#
+		<input type="checkbox" name="zip_extract" value="1" checked="checked"> #myFusebox.getApplicationData().defaults.trans("header_zip_desc")#
 	</div>
 	<!--- Load upload templates here --->
 	<cfif qry_templates.recordcount NEQ 0>
@@ -72,27 +72,27 @@
 
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
 	<tr>
-		<td class="td2"><input type="checkbox" name="zip_extract" value="1" checked> #defaultsObj.trans("header_zip_desc")#</td>
+		<td class="td2"><input type="checkbox" name="zip_extract" value="1" checked> #myFusebox.getApplicationData().defaults.trans("header_zip_desc")#</td>
 	</tr>
 	<!---
 <tr>
-		<th>#defaultsObj.trans("header_thumbnail_size")#</th>
+		<th>#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size")#</th>
 	</tr>
 	<tr>
-		<td class="td2">#defaultsObj.trans("header_thumbnail_size_desc")#</td>
+		<td class="td2">#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size_desc")#</td>
 	</tr>
 	<tr>
-		<td class="td2">#defaultsObj.trans("width")# <input type="text" name="img_thumb_width" size="4" maxlength="3" value="#settings_image.set2_img_thumb_width#"> #defaultsObj.trans("heigth")# <input type="text" name="img_thumb_heigth" size="4" maxlength="3" value="#settings_image.set2_img_thumb_heigth#"></td>
+		<td class="td2">#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="img_thumb_width" size="4" maxlength="3" value="#settings_image.set2_img_thumb_width#"> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="img_thumb_heigth" size="4" maxlength="3" value="#settings_image.set2_img_thumb_heigth#"></td>
 	</tr>
 --->
 	<!--- <tr>
-		<th>#defaultsObj.trans("header_video_preview_size")#</th>
+		<th>#myFusebox.getApplicationData().defaults.trans("header_video_preview_size")#</th>
 	</tr>
 	<tr>
-		<td class="td2">#defaultsObj.trans("header_video_preview_size_desc")#</td>
+		<td class="td2">#myFusebox.getApplicationData().defaults.trans("header_video_preview_size_desc")#</td>
 	</tr>
 	<tr>
-		<td class="td2">#defaultsObj.trans("width")# <input type="text" name="vid_preview_width" size="4" maxlength="3" value="#settings_video.set2_vid_preview_width#" onchange="aspectheight(this,'vid_preview_heigth','assetserverform');"> #defaultsObj.trans("heigth")# <input type="text" name="vid_preview_heigth" size="4" maxlength="3" value="#settings_video.set2_vid_preview_heigth#" onchange="aspectwidth(this,'vid_preview_width','assetserverform');"></td>
+		<td class="td2">#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="vid_preview_width" size="4" maxlength="3" value="#settings_video.set2_vid_preview_width#" onchange="aspectheight(this,'vid_preview_heigth','assetserverform');"> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="vid_preview_heigth" size="4" maxlength="3" value="#settings_video.set2_vid_preview_heigth#" onchange="aspectwidth(this,'vid_preview_width','assetserverform');"></td>
 	</tr> --->
 </table>
 --->
@@ -105,14 +105,14 @@
 		var items = formserialize("assetserverform");
 		// Show loading message in upload window
 		$("##uploadstatus").css("display","");
-		$("##uploadstatus").html('<div style="padding:10px"><img src="#dynpath#/global/host/dam/images/loading.gif" border="0" width="16" height="16"><br><br>#JSStringFormat(defaultsObj.trans("upload_wait_message"))#</div>');
+		$("##uploadstatus").html('<div style="padding:10px"><img src="#dynpath#/global/host/dam/images/loading.gif" border="0" width="16" height="16"><br><br>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("upload_wait_message"))#</div>');
 		// Submit Form
         $.ajax({
 			type: "POST",
 			url: url,
 		   	data: items,
 		   	success: function(){
-		   		$("##uploadstatus").html('<div style="padding:10px;font-weight:bold;color:##900;">#JSStringFormat(defaultsObj.trans("upload_success_email"))#</div>');
+		   		$("##uploadstatus").html('<div style="padding:10px;font-weight:bold;color:##900;">#JSStringFormat(myFusebox.getApplicationData().defaults.trans("upload_success_email"))#</div>');
 		   		$("##uploadstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 		   	}
 		});

@@ -26,10 +26,10 @@
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
-			<td style="padding-top:10px;">#defaultsObj.trans("delete_email")#</td>
+			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("delete_email")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("remove")#" onclick="destroywindow(2);loadcontent('addemail','#myself#c.asset_add_email_delete&mailid=#attributes.mailid#&folder_id=#attributes.folder_id#');" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="destroywindow(2);loadcontent('addemail','#myself#c.asset_add_email_delete&mailid=#attributes.mailid#&folder_id=#attributes.folder_id#');" class="button"></td>
 		</tr>
 	</table>
 </cfoutput>

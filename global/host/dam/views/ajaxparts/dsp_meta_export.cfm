@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-#defaultsObj.trans("header_export_metadata_desc")# <br /><br />
+#myFusebox.getApplicationData().defaults.trans("header_export_metadata_desc")# <br /><br />
 <div>
 	<div style="float:left;padding-top:7px;">
 		<cfif attributes.what EQ "folder">
@@ -38,7 +38,7 @@
 			<input type="hidden" name="expwhat" id="expwhat" value="" />
 		</cfif>
 	</div> 
-	<div style="float:right;"><select id="export_format"><option value="">#defaultsObj.trans("choose_format")#</option><option value="csv" selected="selected">CSV</option><option value="xls">XLS</option><option value="xlsx">XLSX</option></select><span style="padding-right:7px;"></span><input type="button" value="#defaultsObj.trans("export")#" onclick="exportfile()" />
+	<div style="float:right;"><select id="export_format"><option value="">#myFusebox.getApplicationData().defaults.trans("choose_format")#</option><option value="csv" selected="selected">CSV</option><option value="xls">XLS</option><option value="xlsx">XLSX</option></select><span style="padding-right:7px;"></span><input type="button" value="#myFusebox.getApplicationData().defaults.trans("export")#" onclick="exportfile()" />
 	</div>
 </div>
 <script type="text/javascript">

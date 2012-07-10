@@ -27,12 +27,12 @@
 <cfif qry_related.recordcount NEQ 0>
 	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("converted_videos")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("converted_videos")#</th>
 		</tr>
 		<tr>
 			<td width="100%" nowrap="true" valign="top" colspan="2">
 				<cfloop query="qry_related">
-					<cfif attributes.s EQ "F"><a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#" target="_blank"></cfif>#ucase(img_extension)#<cfif ilength NEQ ""> (#defaultsObj.converttomb("#ilength#")# MB)</cfif> #defaultsObj.trans("size")#: #orgwidth#x#orgheight# pixel</a> <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a> 
+					<cfif attributes.s EQ "F"><a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#" target="_blank"></cfif>#ucase(img_extension)#<cfif ilength NEQ ""> (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB)</cfif> #myFusebox.getApplicationData().defaults.trans("size")#: #orgwidth#x#orgheight# pixel</a> <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a> 
 					<a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');"><img src="#dynpath#/global/host/dam/images/emblem-symbolic-link.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
 					<cfif attributes.folderaccess NEQ "R">
 						<a href="##" onclick="loadcontent('relatedimages','#myself#c.images_remove_related&id=#img_id#&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>

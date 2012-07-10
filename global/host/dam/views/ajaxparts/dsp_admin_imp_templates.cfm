@@ -25,24 +25,24 @@
 --->
 <cfoutput>
 	<cfif session.hosttype EQ 0>
-		#defaultsObj.trans("admin_import_templates_intro")#<br><br>
+		#myFusebox.getApplicationData().defaults.trans("admin_import_templates_intro")#<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
 				<th colspan="4">
-					<div style="float:right;"><a href="##" onclick="showwindow('#myself#c.imp_template_detail&imp_temp_id=0','#defaultsObj.trans("admin_import_templates_new")#',650,1);">#defaultsObj.trans("admin_import_templates_new")#</a></div>
+					<div style="float:right;"><a href="##" onclick="showwindow('#myself#c.imp_template_detail&imp_temp_id=0','#myFusebox.getApplicationData().defaults.trans("admin_import_templates_new")#',650,1);">#myFusebox.getApplicationData().defaults.trans("admin_import_templates_new")#</a></div>
 				</th>
 			</tr>
 			<tr>
-				<td colspan="4">#defaultsObj.trans("admin_import_templates_intro")#</td>
+				<td colspan="4">#myFusebox.getApplicationData().defaults.trans("admin_import_templates_intro")#</td>
 			</tr>
 		</table>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<cfif qry_templates.recordcount NEQ 0>
 				<tr>
-					<th width="50%" nowrap="true">#defaultsObj.trans("import_templates")#</th>
-					<th width="50%" nowrap="true">#defaultsObj.trans("description")#</th>
+					<th width="50%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("import_templates")#</th>
+					<th width="50%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("description")#</th>
 					<th width="1%" nowrap="true"></th>
 					<th width="1%" nowrap="true"></th>
 				</tr>
@@ -53,7 +53,7 @@
 					<td nowrap="true" valign="top"><a href="##" onclick="showwindow('#myself#c.imp_template_detail&imp_temp_id=#imp_temp_id#','#imp_name#',650,1);">#imp_name#</a></td>
 					<td nowrap="true" valign="top">#imp_description#</td>
 					<td nowrap="true" valign="top" align="center"><cfif imp_active EQ 1><img src="#dynpath#/global/host/dam/images/checked.png" width="16" height="16" border="0"></cfif></td>
-					<td nowrap="true" valign="top" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=imp_templates&id=#imp_temp_id#&loaddiv=admin_imp_templates','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
+					<td nowrap="true" valign="top" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=imp_templates&id=#imp_temp_id#&loaddiv=admin_imp_templates','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 				</tr>
 			</cfloop>
 		</table>

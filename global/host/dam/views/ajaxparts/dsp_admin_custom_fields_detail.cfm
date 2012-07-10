@@ -34,8 +34,8 @@
 			<td valign="top" width="1%" nowrap="true">
 				<table border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("enabled")#</td>
-						<td><input type="radio" name="cf_enabled" value="T"<cfif qry_field.cf_enabled EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" name="cf_enabled" value="F"<cfif qry_field.cf_enabled EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("enabled")#</td>
+						<td><input type="radio" name="cf_enabled" value="T"<cfif qry_field.cf_enabled EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf_enabled" value="F"<cfif qry_field.cf_enabled EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<!--- The text in the languages --->					
 					<cfloop query="qry_langs">
@@ -56,7 +56,7 @@
 			<td valign="top" width="100%" style="padding-left:10px;">
 				<table border="0" cellpadding="0" cellspacing="0">
 					<tr>
-						<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("custom_field_type")#</td>
+						<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("custom_field_type")#</td>
 						<td width="100%">
 							<select name="cf_type" style="width:150px;">
 								<option value="text"<cfif qry_field.cf_type EQ "text"> selected="true"</cfif>>Text</option>
@@ -67,14 +67,14 @@
 						</td>
 					</tr>
 					<tr>
-						<td width="120" nowrap="true" style="padding-right:10px;">#defaultsObj.trans("custom_field_for")#</td>
+						<td width="120" nowrap="true" style="padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("custom_field_for")#</td>
 						<td width="100%">
 							<select name="cf_show" style="width:150px;">
 								<option value="all"<cfif qry_field.cf_show EQ "all"> selected="true"</cfif>>All</option>
-								<option value="img"<cfif qry_field.cf_show EQ "img"> selected="true"</cfif>>#defaultsObj.trans("only_images")#</option>
-								<option value="vid"<cfif qry_field.cf_show EQ "vid"> selected="true"</cfif>>#defaultsObj.trans("only_videos")#</option>
-								<option value="vid"<cfif qry_field.cf_show EQ "aud"> selected="true"</cfif>>#defaultsObj.trans("only_audios")#</option>
-								<option value="doc"<cfif qry_field.cf_show EQ "doc"> selected="true"</cfif>>#defaultsObj.trans("only_documents")#</option>
+								<option value="img"<cfif qry_field.cf_show EQ "img"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_images")#</option>
+								<option value="vid"<cfif qry_field.cf_show EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_videos")#</option>
+								<option value="vid"<cfif qry_field.cf_show EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
+								<option value="doc"<cfif qry_field.cf_show EQ "doc"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("only_documents")#</option>
 							</select>
 						</td>
 					</tr>
@@ -94,7 +94,7 @@
 		</tr>
 	</table>
 	<div style="float:right;padding-top:10px;">
-		<input type="submit" name="submit" value="#defaultsObj.trans("button_update")#" class="button">
+		<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button">
 	</div>
 	</form>
 </cfoutput>

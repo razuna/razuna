@@ -27,13 +27,13 @@
 	<!--- Save as a Zip --->
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
-			<th>#defaultsObj.trans("basket_save_as_zip")#</th>
+			<th>#myFusebox.getApplicationData().defaults.trans("basket_save_as_zip")#</th>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("basket_save_as_zip_desc")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("basket_save_as_zip_desc")#</td>
 		</tr>
 		<tr>
-			<td align="right"><input type="button" name="saveaszip" value="#defaultsObj.trans("basket_save_as_zip_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_zip','#defaultsObj.trans("basket_save_as_zip_button")#',600,1);" /></td>
+			<td align="right"><input type="button" name="saveaszip" value="#myFusebox.getApplicationData().defaults.trans("basket_save_as_zip_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_zip','#myFusebox.getApplicationData().defaults.trans("basket_save_as_zip_button")#',600,1);" /></td>
 		</tr>
 	</table>
 	<!--- Save as a Collection --->
@@ -41,26 +41,26 @@
 		<hr class="theline" />
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("basket_save_as_collection")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("basket_save_as_collection")#</th>
 			</tr>
 			<tr>
-				<td>#defaultsObj.trans("basket_save_as_collection_desc")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("basket_save_as_collection_desc")#</td>
 			</tr>
 			<tr>
-				<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_collection','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
+				<td align="right"><input type="button" name="saveascol" value="#myFusebox.getApplicationData().defaults.trans("basket_save_as_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_saveas_collection','#myFusebox.getApplicationData().defaults.trans("basket_save_as_collection_button")#',600,1);" /></td>
 			</tr>
 		</table>
 		<hr class="theline" />
 		<!--- Save into existing Collection --->
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("basket_save_as_ext_collection")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("basket_save_as_ext_collection")#</th>
 			</tr>
 			<tr>
-				<td>#defaultsObj.trans("basket_save_as_ext_collection_desc")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("basket_save_as_ext_collection_desc")#</td>
 			</tr>
 				<tr>
-					<td align="right"><input type="button" name="saveascol" value="#defaultsObj.trans("basket_save_as_ext_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_choose_collection','#defaultsObj.trans("basket_save_as_collection_button")#',600,1);" /></td>
+					<td align="right"><input type="button" name="saveascol" value="#myFusebox.getApplicationData().defaults.trans("basket_save_as_ext_collection_button")#" class="button" onclick="showwindow('#myself#c.basket_choose_collection','#myFusebox.getApplicationData().defaults.trans("basket_save_as_collection_button")#',600,1);" /></td>
 				</tr>
 		</table>
 	</cfif>

@@ -26,13 +26,13 @@
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
 	<tr>
-		<th colspan="2">#defaultsObj.trans("header_serverfolders")#</th>
+		<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_serverfolders")#</th>
 	</tr>
 	<cfif attributes.folderpath NEQ #thispath#>
 		<cfset thef = listlast("#attributes.folderpath#","/\")>
 		<cfset backpath = replacenocase("#attributes.folderpath#","/#thef#","","ALL")>
 		<tr>
-			<td colspan="2"><a href="##" onclick="loadcontent('browse','#myself##xfa.serverfolders#&folder_id=#attributes.folder_id#&folderpath=#urlencodedformat(backpath)#');return false;">#defaultsObj.trans("back")#</a></td>
+			<td colspan="2"><a href="##" onclick="loadcontent('browse','#myself##xfa.serverfolders#&folder_id=#attributes.folder_id#&folderpath=#urlencodedformat(backpath)#');return false;">#myFusebox.getApplicationData().defaults.trans("back")#</a></td>
 		</tr>
 	</cfif>
 	<cfloop query="qry_filefolders">
@@ -45,10 +45,10 @@
 		</tr>
 	</cfloop>
 	<tr>
-		<td colspan="2">#defaultsObj.trans("header_serverfolders_desc")#</td>
+		<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_serverfolders_desc")#</td>
 	</tr>
 	<tr>
-		<td colspan="2"><a href="##" onclick="destroywindow(2);return false;">#defaultsObj.trans("scheduler_close_cap")#</a></td>
+		<td colspan="2"><a href="##" onclick="destroywindow(2);return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_close_cap")#</a></td>
 	</tr>
 </table>
 </cfoutput>

@@ -31,7 +31,7 @@
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 	<input type="hidden" name="tempid" value="#attributes.tempid#">
 	<!--- Desc --->
-	<p>#defaultsObj.trans("import_metadata_desc")#</p>
+	<p>#myFusebox.getApplicationData().defaults.trans("import_metadata_desc")#</p>
 	<p><hr /></p>
 	<div>
 		<div style="float:left;width:150px;font-weight:bold;">Apply to...</div>
@@ -87,7 +87,7 @@
 	<div style="clear:both;padding-bottom:20px;"></div>
 		<!--- Loading Bars --->
 	<div style="float:left;padding:10px;color:green;font-weight:bold;display:none;" id="importstatus"></div>
-	<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("header_import_metadata")#" class="button"></div>
+	<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#" class="button"></div>
 	</form>
 </div>
 	<!--- JS --->

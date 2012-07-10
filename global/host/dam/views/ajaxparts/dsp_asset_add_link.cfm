@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<cfif session.hosttype EQ 0>
-		#defaultsObj.trans("link_desc")#<br><br>
+		#myFusebox.getApplicationData().defaults.trans("link_desc")#<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
 		<form name="formassetlink" id="formassetlink" action="#self#" method="post" onsubmit="addlink();return false;">
@@ -33,37 +33,37 @@
 		<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 		<table border="0" cellpadding="0" cellspacing="0" width="600">
 			<tr>
-				<td>#defaultsObj.trans("link_desc")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("link_desc")#</td>
 			</tr>
 			<tr>
 				<td colspan="2" style="padding-top:15px;"><hr></td>
 			</tr>
 			<tr>
-				<td nowrap="true" style="padding-top:10px;"><strong>#defaultsObj.trans("link_asset_store")#</strong></td>
+				<td nowrap="true" style="padding-top:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_asset_store")#</strong></td>
 			</tr>
 			<tr>
 				<td><input name="link_kind" type="radio" value="url" checked="true"> On public URL <input name="link_kind" type="radio" value="urlvideo"> Video with embedded player <cfif NOT application.razuna.isp><input name="link_kind" type="radio" value="lan"> Available on my local network</cfif></td>
 			</tr>
 			<tr>
-				<td width="1%" nowrap="true" style="padding-top:7px;"><strong>#defaultsObj.trans("link_path_url")#</strong></td>
+				<td width="1%" nowrap="true" style="padding-top:7px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_path_url")#</strong></td>
 			</tr>
 			<tr>
 				<td width="100%"><textarea name="link_path_url" style="width:550px;height:35px;"></textarea></td>
 			</tr>
 			<!--- <tr>
-				<td nowrap="true" style="padding-top:7px;"><strong>#defaultsObj.trans("link_download")#</strong><br /><i>(#defaultsObj.trans("link_download_desc")#)</i></td>
+				<td nowrap="true" style="padding-top:7px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_download")#</strong><br /><i>(#myFusebox.getApplicationData().defaults.trans("link_download_desc")#)</i></td>
 			</tr>
 			<tr>
-				<td><input type="radio" name="link_download" value="no" checked="true">#defaultsObj.trans("no")# <input type="radio" name="link_download" value="yes">#defaultsObj.trans("yes")#</td>
+				<td><input type="radio" name="link_download" value="no" checked="true">#myFusebox.getApplicationData().defaults.trans("no")# <input type="radio" name="link_download" value="yes">#myFusebox.getApplicationData().defaults.trans("yes")#</td>
 			</tr> --->
 			<tr>
-				<td width="1%" nowrap="true" style="padding-top:7px;"><strong>#defaultsObj.trans("file_name")#</strong></td>
+				<td width="1%" nowrap="true" style="padding-top:7px;"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
 			</tr>
 			<tr>
 				<td width="100%"><input name="link_file_name" type="text" style="width:550px;"></td>
 			</tr>
 			<tr>
-				<td colspan="2" style="padding-top:20px;"><div style="float:left;"><input type="button" name="cancel" value="#defaultsObj.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><input type="button" name="submit" value="#defaultsObj.trans("header_add_asset")#" class="button" onclick="addlink();"></div></td>
+				<td colspan="2" style="padding-top:20px;"><div style="float:left;"><input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div style="float:right;"><input type="button" name="submit" value="#myFusebox.getApplicationData().defaults.trans("header_add_asset")#" class="button" onclick="addlink();"></div></td>
 			</tr>
 		</table>
 		<div id="addlinkstatus" style="display:none;"></div>
@@ -84,7 +84,7 @@
 				   	success: function(){
 						// Update Text
 						$("##addlinkstatus").css({'color':'green','font-weight':'bold','padding-top':'10px'});
-						$("##addlinkstatus").html("#defaultsObj.trans("link_added")#");
+						$("##addlinkstatus").html("#myFusebox.getApplicationData().defaults.trans("link_added")#");
 						$("##addlinkstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 				   	}
 				});

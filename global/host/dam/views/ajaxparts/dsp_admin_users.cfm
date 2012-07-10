@@ -26,26 +26,26 @@
 <cfoutput>
 	<form name="usearch" onsubmit="usersearch();return false;">
 	<div style="padding-bottom:10px;">
-		<div style="float:left;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#defaultsObj.trans("user_add")#',600,1);"><img src="#dynpath#/global/host/dam/images/user-new-3.png" width="22" height="22" border="0"></a></div>
-		<div style="padding-top:4px;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#defaultsObj.trans("user_add")#',600,1);" style="text-decoration:none;font-weight:bold;padding-left:5px;">#defaultsObj.trans("user_add")#</a></div>
+		<div style="float:left;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);"><img src="#dynpath#/global/host/dam/images/user-new-3.png" width="22" height="22" border="0"></a></div>
+		<div style="padding-top:4px;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:none;font-weight:bold;padding-left:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a></div>
 	</div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
 		<th colspan="4">
-			<div style="float:left;">#defaultsObj.trans("quicksearch")#</div>
+			<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("quicksearch")#</div>
 			<!--- <div style="float:right;"></div> --->
 		</th>
 	</tr>
 	<tr>
-		<td>#defaultsObj.trans("username")#</td>
-		<td>#defaultsObj.trans("user_company")#</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("username")#</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("user_company")#</td>
 		<td colspan="2">eMail</td>
 	</tr>
 	<tr>
 		<td><input type="text" size="25" name="user_login_name" id="user_login_name2" /></td>
 		<td><input type="text" size="25" name="user_company" id="user_company2" /></td>
 		<td><input type="text" size="25" name="user_email" id="user_email2" /></td>
-		<td><input type="submit" name="Button" value="#defaultsObj.trans("user_search")#" class="button" onclick="javascript:usersearch();" /></td>
+		<td><input type="submit" name="Button" value="#myFusebox.getApplicationData().defaults.trans("user_search")#" class="button" onclick="javascript:usersearch();" /></td>
 	</tr>
 	</table>
 	</form>
@@ -57,9 +57,9 @@
 			</tr>
 			<tr>
 				<th></th>
-				<th>#defaultsObj.trans("username")#</th>
-				<th nowrap="true">#defaultsObj.trans("user_first_name")# #defaultsObj.trans("user_last_name")#</th>
-				<th>#defaultsObj.trans("user_company")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
+				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
 				<th>eMail</th>
 				<th colspan="2"></th>
 			</tr>
@@ -72,7 +72,7 @@
 					<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_email#</a></td>
 					<td valign="top" nowrap width="1%"><cfif #user_active# EQ "T"><img src="#dynpath#/global/host/dam/images/im-user.png" width="16" height="16" border="0" /><cfelse><img src="#dynpath#/global/host/dam/images/im-user-busy.png" width="16" height="16" border="0" /></cfif></td>
 					<!--- If we are admins we don't enable the trash function --->
-					<td align="center" valign="top" nowrap width="1%"><cfif ct_g_u_grp_id NEQ 2><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=admin_users','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></cfif></td>
+					<td align="center" valign="top" nowrap width="1%"><cfif ct_g_u_grp_id NEQ 2><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=admin_users','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></cfif></td>
 				</tr>
 			</cfoutput>
 		</table>

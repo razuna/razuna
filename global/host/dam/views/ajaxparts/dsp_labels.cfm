@@ -32,7 +32,7 @@
 		<div id="labeltools" class="ddselection_header" style="top:18px;width:250px;z-index:6;">
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 				<p>Add Label</p>
-				<p><input type="text" name="label_text" id="label_text" style="width:120px;"> <input type="button" value="#defaultsObj.trans("labels_add")#" class="button" onclick="addlabel();"></p>
+				<p><input type="text" name="label_text" id="label_text" style="width:120px;"> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("labels_add")#" class="button" onclick="addlabel();"></p>
 				<p>Nest label under:<br />
 					<select name="sublabelof" id="sublabelof" style="width:240px;">
 					<option value="0" selected="selected">Please select a parent...</option>
@@ -42,7 +42,7 @@
 				</select></p>
 				<p><hr></p>
 			</cfif>
-			<p><a href="##" onclick="loadcontent('labels','#myself#c.labels_list');return false;" title="#defaultsObj.trans("tooltip_refresh_tree")#">#defaultsObj.trans("reload")#</a></p>
+			<p><a href="##" onclick="loadcontent('labels','#myself#c.labels_list');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 		</div>
 	</div>
 	<div style="clear:both;"></div>

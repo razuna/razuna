@@ -103,10 +103,10 @@
 							<cfcachecontent name="razunawelcomecache" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
 									<tr>
-										<th>#defaultsObj.trans("welcome_to_ecp")#</th>
+										<th>#myFusebox.getApplicationData().defaults.trans("welcome_to_ecp")#</th>
 									</tr>
 									<tr>
-										<td>#defaultsObj.trans("welcome_text")#</td>
+										<td>#myFusebox.getApplicationData().defaults.trans("welcome_text")#</td>
 									</tr>
 								</table>
 							</cfcachecontent>
@@ -124,7 +124,7 @@
 											<th>Administrator Panel</th>
 										</tr>
 										<tr>
-											<td><a href="##" onclick="loadcontent('rightside','#myself#ajax.admin');$('##userselection').toggle();return false;" style="width:100%;">Go to Administration</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="http://getsatisfaction.razuna" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#defaultsObj.trans("logoff")#</a></td>
+											<td><a href="##" onclick="loadcontent('rightside','#myself#ajax.admin');$('##userselection').toggle();return false;" style="width:100%;">Go to Administration</a> <cfif qry_langs.recordcount NEQ 1>| <cfloop query="qry_langs"><a href="#myself#c.switchlang&thelang=#lang_name#&_v=#createuuid('')#">#lang_name#</a> | </cfloop> </cfif> <a href="http://getsatisfaction.razuna" target="_blank">Razuna Help</a> | <a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></td>
 										</tr>
 									</table>
 								</div>
@@ -144,11 +144,11 @@
 												<img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##searchselection').toggle();">
 											</div>
 											<div id="searchselection" class="ddselection_header">
-												<p><a href="##" onclick="selectsearchtype('all');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#defaultsObj.trans("search_for_allassets")#</a></p>
-												<p><a href="##" onclick="selectsearchtype('img');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_images")#</a></p>
-												<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_documents")#</a></p>
-												<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_videos")#</a></p>
-												<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_audios")#</a></p>
+												<p><a href="##" onclick="selectsearchtype('all');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></p>
+												<p><a href="##" onclick="selectsearchtype('img');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</a></p>
+												<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
+												<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
+												<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
 												<p><hr></p>
 												<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">Help with Search</a></p>
 											</div>
@@ -159,7 +159,7 @@
 												<img src="#dynpath#/global/host/dam/images/search_16.png" width="16" height="16" border="0" onclick="checkentry();" class="ddicon">
 											</div>
 											<div style="float:right;padding-left:20px;padding-top:4px;">
-												<a href="##" onclick="showwindow('#myself#c.search_advanced','#defaultsObj.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#defaultsObj.trans("link_adv_search")#</a>
+												<a href="##" onclick="showwindow('#myself#c.search_advanced','#myFusebox.getApplicationData().defaults.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a>
 											</div>
 											</form>
 										
@@ -255,7 +255,7 @@
 													<th>Razuna Support</th>
 												</tr>
 												<tr>
-													<td>#defaultsObj.trans("support_desc")#</td>
+													<td>#myFusebox.getApplicationData().defaults.trans("support_desc")#</td>
 												</tr>
 											</cfif>
 											<tr>
@@ -278,7 +278,7 @@
 								</div>
 							</cfif>
 							<cfif cs.tab_razuna_blog>
-								<div class="pane" id="blog">#defaultsObj.loadinggif("#dynpath#")#</div>
+								<div class="pane" id="blog">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 							</cfif>
 							<div class="pane" id="twitter"></div>
 							<div class="pane" id="facebook">

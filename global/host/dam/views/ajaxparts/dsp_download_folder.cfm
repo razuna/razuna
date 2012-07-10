@@ -29,10 +29,10 @@
 	<input type="hidden" name="#theaction#" value="c.download_folder_do">
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 	<!--- Desc --->
-	<p>#defaultsObj.trans("header_download_folder_desc")#</p>
+	<p>#myFusebox.getApplicationData().defaults.trans("header_download_folder_desc")#</p>
 	<p><hr /></p>
 	<div>
-		<div style="float:left;font-weight:bold;">#defaultsObj.trans("download_folder_what")#</div>
+		<div style="float:left;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("download_folder_what")#</div>
 		<div style="float:left;">
 			<input type="checkbox" name="download_thumbnails" value="true" checked="checked" /> Thumbnails
 			<input type="checkbox" name="download_originals" value="true" checked="checked" /> Originals
@@ -41,7 +41,7 @@
 		</div>
 	</div>
 	<div style="clear:both;padding-bottom:20px;"></div>
-	<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("header_download_folder")#" class="button"></div>
+	<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("header_download_folder")#" class="button"></div>
 	</form>
 </div>
 <script type="text/javascript">

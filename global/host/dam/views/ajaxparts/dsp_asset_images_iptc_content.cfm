@@ -32,11 +32,11 @@
 	<cfloop query="qry_langs">
 		<cfset thisid = lang_id>
 		<tr>
-			<td class="td2" valign="top" width="1%" nowrap="true" width="200"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
+			<td class="td2" valign="top" width="1%" nowrap="true" width="200"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
 			<td class="td2" width="100%"><textarea name="iptc_content_description_#thisid#" class="text" style="width:350px;height:40px;" onchange="javascript:document.form#attributes.file_id#.img_desc_#thisid#.value = document.form#attributes.file_id#.iptc_content_description_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
 		</tr>
 		<tr>
-			<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
+			<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
 			<td class="td2" width="100%"><textarea name="iptc_content_keywords_#thisid#" class="text" style="width:350px;height:40px;" onchange="javascript:document.form#attributes.file_id#.img_keywords_#thisid#.value = document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
 		</tr>
 	</cfloop>
@@ -46,7 +46,7 @@
 	</tr>
 	<tr>
 		<td class="td2" valign="top"></td>
-		<td class="td2">#defaultsObj.trans("comma_seperated")#. Subject Codes are defined at <a href="http://www.newscodes.org" target="_blank">http://www.newscodes.org</a></td>
+		<td class="td2">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#. Subject Codes are defined at <a href="http://www.newscodes.org" target="_blank">http://www.newscodes.org</a></td>
 	</tr>
 	<tr>
 		<td class="td2" nowrap="nowrap"><strong>Description Writer</strong></td>
@@ -56,7 +56,7 @@
 	<cfif attributes.folderaccess NEQ "R">
 		<tr>
 			<td colspan="2">
-				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 			</td>
 		</tr>
 	</cfif>

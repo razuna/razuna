@@ -26,8 +26,8 @@
 <cfoutput>
 <div id="tabs_footer">
 	<ul>
-		<li><a href="##thedropbasket" id="div_link_basket" onclick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">Show #defaultsObj.trans("header_basket")#</a></li>
-		<li><a href="##thedropfav" id="div_link_fav" onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');">Show #defaultsObj.trans("header_favorites")#</a></li>
+		<li><a href="##thedropbasket" id="div_link_basket" onclick="tooglefooter('0');loadcontent('thedropbasket','#myself#c.basket');">Show #myFusebox.getApplicationData().defaults.trans("header_basket")#</a></li>
+		<li><a href="##thedropfav" id="div_link_fav" onclick="tooglefooter('1');loadcontent('thedropfav','#myself#c.favorites');">Show #myFusebox.getApplicationData().defaults.trans("header_favorites")#</a></li>
 		<cfif qry_orders.recordcount NEQ 0>
 			<li><a href="##thedroporders" id="div_link_orders" onclick="tooglefooter('2');loadcontent('thedroporders','#myself#c.orders');">Show Orders</a></li>
 		</cfif>
@@ -95,11 +95,11 @@ function tooglefooter(what){
 		// Resize and show
 		thefooterslider.css('height','160px');
 		if(what == 0){
-			$('##div_link_basket').html('Hide #defaultsObj.trans("header_basket")#');
+			$('##div_link_basket').html('Hide #myFusebox.getApplicationData().defaults.trans("header_basket")#');
 			//loadcontent('thedropbasket','#myself#c.basket');
 		}
 		else if (what == 1){
-			$('##div_link_fav').html('Hide #defaultsObj.trans("header_favorites")#');
+			$('##div_link_fav').html('Hide #myFusebox.getApplicationData().defaults.trans("header_favorites")#');
 			//loadcontent('thedropfav','#myself#c.favorites');
 		}
 		else if (what == 2){
@@ -110,8 +110,8 @@ function tooglefooter(what){
 	else {
 		// Resize and Hide
 		if(selected == what){
-			$('##div_link_basket').html('Show #defaultsObj.trans("header_basket")#');
-			$('##div_link_fav').html('Show #defaultsObj.trans("header_favorites")#');
+			$('##div_link_basket').html('Show #myFusebox.getApplicationData().defaults.trans("header_basket")#');
+			$('##div_link_fav').html('Show #myFusebox.getApplicationData().defaults.trans("header_favorites")#');
 			$('##div_link_orders').html('Show Orders');
 			thefooterslider.css('height','30px');
 		}

@@ -31,7 +31,7 @@
 		<td align="left" width="1%" nowrap="true">
 			<div id="tooltip" style="float:left;width:300px;">
 				<!--- Select --->
-				<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" title="#defaultsObj.trans("tooltip_select_desc")#">
+				<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 					<div style="float:left;">
 						<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
 					</div>
@@ -39,7 +39,7 @@
 				</a>
 				<!--- Search --->
 				<cfif attributes.folder_id NEQ 0>
-					<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#defaultsObj.trans("folder_search")#',500,1);" title="#defaultsObj.trans("folder_search")#">
+					<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
 						<div style="float:left;">
 							<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" style="padding-left:2px;" />
 						</div>
@@ -56,7 +56,7 @@
 			<cfif session.offset GTE 1>
 				<!--- For Back --->
 				<cfset newoffset = session.offset - 1>
-				<a href="##" onclick="backforth(#newoffset#);">&lt; #defaultsObj.trans("back")#</a> |
+				<a href="##" onclick="backforth(#newoffset#);">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</a> |
 			</cfif>
 			<cfset showoffset = session.offset * session.rowmaxpage>
 			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -64,7 +64,7 @@
 			<cfif qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry_filecount.thetotal> | 
 				<!--- For Next --->
 				<cfset newoffset = session.offset + 1>
-				<a href="##" onclick="backforth(#newoffset#);">#defaultsObj.trans("next")# &gt;</a>
+				<a href="##" onclick="backforth(#newoffset#);">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
 			</cfif>
 			<!--- Pages --->
 			<cfif qry_filecount.thetotal GT session.rowmaxpage>
@@ -119,13 +119,13 @@
 	</div>
 	<div style="clear:both;"></div>
 	<!--- Actions with selection icons --->
-	<div style="float:left;padding-right:5px;"><strong>#defaultsObj.trans("action_with_selection")#: </strong></div>
+	<div style="float:left;padding-right:5px;"><strong>#myFusebox.getApplicationData().defaults.trans("action_with_selection")#: </strong></div>
 	<cfif cs.show_bottom_part>
 		<a href="##" onclick="sendtobasket('searchform#attributes.thetype#');">
 			<div style="float:left;">
 				<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>
-			<div style="float:left;padding-right:5px;">#defaultsObj.trans("put_in_basket")#</div>
+			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</div>
 		</a> 
 	</cfif>
 	<cfif (attributes.folder_id NEQ 0 AND attributes.folderaccess IS NOT "R") OR (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
@@ -133,34 +133,34 @@
 			<div style="float:left;padding-left:5px;">
 				<img src="#dynpath#/global/host/dam/images/application-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>
-			<div style="float:left;padding-right:5px;">#defaultsObj.trans("move")#</div>
+			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("move")#</div>
 		</a>
 		<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','batch');">
 			<div style="float:left;padding-left:5px;">
 				<img src="#dynpath#/global/host/dam/images/page-white_stack.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>
-			<div style="float:left;padding-right:5px;">#defaultsObj.trans("batch")#</div>
+			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("batch")#</div>
 		</a>
 		<cfif cs.tab_collections>
 			<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','chcoll');">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/picture-link.png" width="16" height="16" border="0" style="padding-right:3px;" />
 				</div>
-				<div style="float:left;padding-right:5px;">#defaultsObj.trans("add_to_collection")#</div>
+				<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("add_to_collection")#</div>
 			</a>
 		</cfif>
 		<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','exportmeta');">
 			<div style="float:left;padding-left:5px;">
 				<img src="#dynpath#/global/host/dam/images/report-go.png" width="16" height="16" border="0" style="padding-right:3px;" />
 			</div>
-			<div style="float:left;padding-right:5px;">#defaultsObj.trans("header_export_metadata")#</div>
+			<div style="float:left;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
 		</a>
 		<cfif attributes.folderaccess EQ "X">
 			<a href="##" onclick="batchaction('searchform#attributes.thetype#','all','#attributes.kind#','#attributes.folder_id#','delete');">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
 				</div>
-				<div style="float:left;">#defaultsObj.trans("delete")#</div>
+				<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("delete")#</div>
 			</a>
 		</cfif>
 	</cfif>

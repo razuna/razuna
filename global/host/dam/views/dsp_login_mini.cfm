@@ -38,7 +38,7 @@
 		<input type="hidden" name="mini" value="T">
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		    <tr>
-		        <td width="100%" nowrap>#defaultsObj.trans("email_address")#</td>
+		        <td width="100%" nowrap>#myFusebox.getApplicationData().defaults.trans("email_address")#</td>
 			</tr>
 			<tr>
 				<td width="100%" nowrap style="padding-bottom:10px;">
@@ -47,7 +47,7 @@
 				</td>
 		    </tr>
 		    <tr>
-		        <td>#defaultsObj.trans("password")#</td>
+		        <td>#myFusebox.getApplicationData().defaults.trans("password")#</td>
 			</tr>
 			<tr>
 		        <td>
@@ -56,16 +56,16 @@
 				</td>
 		    </tr>
 		     <tr>
-				<td><input type="checkbox" name="rem_login" id="rem_login" value="T" checked="true"> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="color:##000000;text-decoration:none;">#defaultsObj.trans("remember_login")#</a></td>
+				<td><input type="checkbox" name="rem_login" id="rem_login" value="T" checked="true"> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="color:##000000;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("remember_login")#</a></td>
 			</tr>
 		    <tr>
-		        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
+		        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="button" /></td>
 		    </tr>
 			<cfif qry_langs.recordcount NEQ 1>
 				<tr>
 			        <td style="padding-bottom:10px;">
 						<select name="app_lang" onChange="javascript:changelang('form_login_share');">
-							<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
+							<option value="javascript:void();" selected>#myFusebox.getApplicationData().defaults.trans("changelang")#</option>
 							<cfloop query="qry_langs">
 							<option value="#myself##xfa.switchlang#&thelang=#lang_name#&to=mini">#lang_name#</option>
 							</cfloop>
@@ -78,11 +78,11 @@
 	</div>
 </div>
 <cfif structkeyexists(attributes,"e")>
-	<div style="padding-top:10px;" class="alert">#defaultsObj.trans("login_error")#</div>
+	<div style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
 </cfif>
 <div id="login_loading"></div>
-<div id="alertbox" style="padding-top:10px;display:none;" class="alert">#defaultsObj.trans("login_error")#</div>
-<div id="alertgroupbox" style="padding-top:10px;display:none;" class="alert">#defaultsObj.trans("share_error_group")#</div>
+<div id="alertbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
+<div id="alertgroupbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("share_error_group")#</div>
 </cfoutput>
 
 <script type="text/javascript">

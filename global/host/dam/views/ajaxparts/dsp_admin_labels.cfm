@@ -27,12 +27,12 @@
 	<!--- Labels --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr class="list">
-			<td colspan="2">#defaultsObj.trans("admin_labels_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("admin_labels_desc")#</td>
 		</tr>
 		<tr class="list">
-			<td colspan="2" style="padding-top:15px;">#defaultsObj.trans("admin_labels_allow")#
+			<td colspan="2" style="padding-top:15px;">#myFusebox.getApplicationData().defaults.trans("admin_labels_allow")#
 			<br /><br />
-			<input type="radio" name="labels_public" value="t" onclick="save_setting('t');"<cfif qry_labels_setting.set2_labels_users EQ "t"> checked="true"</cfif>> #defaultsObj.trans("yes")# <input type="radio" name="labels_public" value="f" onclick="save_setting('f');"<cfif qry_labels_setting.set2_labels_users EQ "f"> checked="true"</cfif>> #defaultsObj.trans("no")# <span id="save_status_label" style="padding:10px;color:green;display:none;"></span><div id="save_status_hidden_label" style="display:none;"></div>
+			<input type="radio" name="labels_public" value="t" onclick="save_setting('t');"<cfif qry_labels_setting.set2_labels_users EQ "t"> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="labels_public" value="f" onclick="save_setting('f');"<cfif qry_labels_setting.set2_labels_users EQ "f"> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")# <span id="save_status_label" style="padding:10px;color:green;display:none;"></span><div id="save_status_hidden_label" style="display:none;"></div>
 			<br />
 			</td>
 		</tr>
@@ -46,13 +46,13 @@
 						<option value="#label_id#">#label_path#</option>
 					</cfloop>
 				</select>
-				<input type="button" value="#defaultsObj.trans("labels_add")#" class="button" onclick="addlabeladmin();">
+				<input type="button" value="#myFusebox.getApplicationData().defaults.trans("labels_add")#" class="button" onclick="addlabeladmin();">
 			</th>
 		</tr>
 		<cfloop query="qry_labels">
 			<tr class="list">
 				<td width="100%"><a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=#label_id#','#Jsstringformat(label_text)#',450,1);return false"><cfif listlen(label_path,"/") NEQ 1><cfloop from="1" to="#listlen(label_path,"/")#" index="i">-</cfloop></cfif> #label_text#</a></td>
-				<td width="1%" nowrap="true" align="right"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=labels&id=#label_id#&loaddiv=admin_labels','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
+				<td width="1%" nowrap="true" align="right"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=labels&id=#label_id#&loaddiv=admin_labels','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 			</tr>
 		</cfloop>
 	</table>

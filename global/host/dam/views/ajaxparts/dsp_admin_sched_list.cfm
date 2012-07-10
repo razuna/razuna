@@ -25,32 +25,32 @@
 --->
 <cfoutput>
 	<cfif session.hosttype EQ 0>
-		#defaultsObj.trans("sched_task_intro")#<br><br>
+		#myFusebox.getApplicationData().defaults.trans("sched_task_intro")#<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
 				<th colspan="4">
-					<div style="float:right;"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&add=T&sched_id=0','#defaultsObj.trans("scheduled_uploads_new")#',650,1);">#defaultsObj.trans("scheduled_uploads_new")#</a></div>
+					<div style="float:right;"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&add=T&sched_id=0','#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_new")#',650,1);">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_new")#</a></div>
 				</th>
 			</tr>
 			<tr>
-				<td colspan="4">#defaultsObj.trans("sched_task_intro")#</td>
+				<td colspan="4">#myFusebox.getApplicationData().defaults.trans("sched_task_intro")#</td>
 			</tr>
 			<cfif qry_schedules.recordcount NEQ 0>
 				<tr>
-					<th width="100%" nowrap="true">#defaultsObj.trans("scheduled_uploads_task_name")#</th>
-					<th width="1%" nowrap="true">#defaultsObj.trans("scheduled_uploads_method")#</th>
-					<th width="1%" nowrap="true">#defaultsObj.trans("log")#</th>
-					<th width="1%" nowrap="true">#defaultsObj.trans("scheduled_uploads_actions")#</th>
+					<th width="100%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_name")#</th>
+					<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_method")#</th>
+					<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("log")#</th>
+					<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_actions")#</th>
 				</tr>
 			</cfif>
 			<!--- Loop over all scheduled events in database table --->
 			<cfloop query="qry_schedules">
 				<tr class="list">
 					<td nowrap="true"><a href="##" onclick="showwindow('#myself#c.scheduler_detail&sched_id=#sched_id#','#sched_name#',650,1);">#sched_name#</a></td>
-					<td nowrap="true" align="center">#defaultsObj.trans("scheduled_uploads_#sched_method#")#</td>
-					<td nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#c.scheduler_log&sched_id=#sched_id#','#defaultsObj.trans("log")#: #sched_name#',650,1);">#defaultsObj.trans("log")#</a></td>
+					<td nowrap="true" align="center">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_#sched_method#")#</td>
+					<td nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#c.scheduler_log&sched_id=#sched_id#','#myFusebox.getApplicationData().defaults.trans("log")#: #sched_name#',650,1);">#myFusebox.getApplicationData().defaults.trans("log")#</a></td>
 					<td nowrap="true">
 						<a href="##" onclick="loadcontent('sched_status','#myself#c.scheduler_run&sched_id=#sched_id#');document.getElementById('sched_status').style.visibility = 'visible';"><img src="#dynpath#/global/host/dam/images/run.png" border="0" /></a>
 						<!--- <cfif sched_status>
@@ -59,7 +59,7 @@
 							<a href=""><img src="#dynpath#/global/host/dam/images/resume.png" border="0" /></a>
 						</cfif>
 						<a href="##" onclick="showwindow('#myself#c.scheduler_detail&sched_id=#sched_id#','#sched_name#',650,1);"><img src="#dynpath#/global/host/dam/images/edit.png" border="0" /></a> --->
-						<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=scheduler&id=#sched_id#&loaddiv=admin_schedules','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" border="0" /></a>
+						<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=scheduler&id=#sched_id#&loaddiv=admin_schedules','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" border="0" /></a>
 					</td>
 				</tr>
 			</cfloop>

@@ -36,18 +36,18 @@
 		<input type="hidden" name="folderpath" value="#folderpath#">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
 			<tr>
-				<th colspan="3">#defaultsObj.trans("ftp_server")#</th>
+				<th colspan="3">#myFusebox.getApplicationData().defaults.trans("ftp_server")#</th>
 			</tr>
 			<!--- Back --->
 			<cfif structkeyexists(attributes,"folderpath")>
 				<tr>
-					<td colspan="3"><a href="##" onclick="loadcontent('addftp','#myself##xfa.reloadftp#&folderpath=#URLEncodedFormat(qry_ftp.backpath)#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("back")#</a></td>
+					<td colspan="3"><a href="##" onclick="loadcontent('addftp','#myself##xfa.reloadftp#&folderpath=#URLEncodedFormat(qry_ftp.backpath)#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("back")#</a></td>
 				</tr>
 			</cfif>
 			<!--- output directory name --->
 			<tr>
 				<td width="1%" nowrap="true" class="td2"><img src="#dynpath#/global/host/dam/images/folder_open.png" width="16" height="16" border="0"></td>
-				<td colspan="2" width="100%" nowrap="true" class="td2">#qry_ftp.dirname# - <a href="##" onClick="CheckAll('assetftpform');" title="#defaultsObj.trans("tooltip_select_desc")#">#defaultsObj.trans("tooltip_select")#</a></td>
+				<td colspan="2" width="100%" nowrap="true" class="td2">#qry_ftp.dirname# - <a href="##" onClick="CheckAll('assetftpform');" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">#myFusebox.getApplicationData().defaults.trans("tooltip_select")#</a></td>
 			</tr>
 			<!--- list the files --->
 			<cfloop query="qry_ftp.ftplist">
@@ -64,34 +64,34 @@
 				</tr>
 			</cfloop>
 				<tr>
-					<td colspan="3"><input type="button" name="back" value="#defaultsObj.trans("back")#" onclick="loadcontent('addftp','#myself#c.asset_add_ftp&folder_id=#attributes.folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&ftp_server=#session.ftp_server#&ftp_user=#session.ftp_user#&ftp_pass=#URLEncodedFormat(session.ftp_pass)#&ftp_passive=#session.ftp_passive#<cfif structkeyexists(attributes,'folderpath')>&folderpath=#URLEncodedFormat(attributes.folderpath)#</cfif>');"> <input type="submit" name="submit" value="#defaultsObj.trans("button_add_selected")#" class="button"> <div id="ftpuploadstatus" style="background-color:##FFFFE0;display:none;"></div></td>
+					<td colspan="3"><input type="button" name="back" value="#myFusebox.getApplicationData().defaults.trans("back")#" onclick="loadcontent('addftp','#myself#c.asset_add_ftp&folder_id=#attributes.folder_id#');return false;" class="button"> <input type="button" name="button" value="Refresh" class="button" onClick="loadcontent('addftp','#myself#c.asset_add_ftp_show&folder_id=#attributes.folder_id#&ftp_server=#session.ftp_server#&ftp_user=#session.ftp_user#&ftp_pass=#URLEncodedFormat(session.ftp_pass)#&ftp_passive=#session.ftp_passive#<cfif structkeyexists(attributes,'folderpath')>&folderpath=#URLEncodedFormat(attributes.folderpath)#</cfif>');"> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_add_selected")#" class="button"> <div id="ftpuploadstatus" style="background-color:##FFFFE0;display:none;"></div></td>
 				</tr>
 			</table>
 			<br>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
 				<tr>
-					<th colspan="2">#defaultsObj.trans("header_zip")#</th>
+					<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_zip")#</th>
 				</tr>
 				<tr>
-					<td colspan="2" class="td2"><input type="checkbox" name="zip_extract" value="1" checked> #defaultsObj.trans("header_zip_desc")#</td>
+					<td colspan="2" class="td2"><input type="checkbox" name="zip_extract" value="1" checked> #myFusebox.getApplicationData().defaults.trans("header_zip_desc")#</td>
 				</tr>
 				<tr>
-					<th colspan="2">#defaultsObj.trans("header_thumbnail_size")#</th>
+					<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size")#</th>
 				</tr>
 				<tr>
-					<td colspan="2" class="td2">#defaultsObj.trans("header_thumbnail_size_desc")#</td>
+					<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size_desc")#</td>
 				</tr>
 				<tr>
-					<td class="td2" colspan="2">#defaultsObj.trans("width")# <input type="text" name="img_thumb_width" size="4" maxlength="3" value="#settings_image.set2_img_thumb_width#"> #defaultsObj.trans("heigth")# <input type="text" name="img_thumb_heigth" size="4" maxlength="3" value="#settings_image.set2_img_thumb_heigth#"></td>
+					<td class="td2" colspan="2">#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="img_thumb_width" size="4" maxlength="3" value="#settings_image.set2_img_thumb_width#"> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="img_thumb_heigth" size="4" maxlength="3" value="#settings_image.set2_img_thumb_heigth#"></td>
 				</tr>
 				<!--- <tr>
-					<th colspan="2">#defaultsObj.trans("header_video_preview_size")#</th>
+					<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_video_preview_size")#</th>
 				</tr>
 				<tr>
-					<td colspan="2" class="td2">#defaultsObj.trans("header_video_preview_size_desc")#</td>
+					<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("header_video_preview_size_desc")#</td>
 				</tr>
 				<tr>
-					<td class="td2" colspan="2">#defaultsObj.trans("width")# <input type="text" name="vid_preview_width" size="4" maxlength="3" value="#settings_video.set2_vid_preview_width#" onchange="aspectheight(this,'vid_preview_heigth','assetftpform');"> #defaultsObj.trans("heigth")# <input type="text" name="vid_preview_heigth" size="4" maxlength="3" value="#settings_video.set2_vid_preview_heigth#" onchange="aspectwidth(this,'vid_preview_width','assetftpform');"></td>
+					<td class="td2" colspan="2">#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="vid_preview_width" size="4" maxlength="3" value="#settings_video.set2_vid_preview_width#" onchange="aspectheight(this,'vid_preview_heigth','assetftpform');"> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="vid_preview_heigth" size="4" maxlength="3" value="#settings_video.set2_vid_preview_heigth#" onchange="aspectwidth(this,'vid_preview_width','assetftpform');"></td>
 				</tr> --->
 		</table>
 		</form>
@@ -110,7 +110,7 @@
 				if (arehere == 'T'){
 					// Show loading message in upload window
 					$('##ftpuploadstatus').css("display","");
-					$("##ftpuploadstatus").html('<div style="padding:10px"><img src="#dynpath#/global/host/dam/images/loading.gif" border="0" width="16" height="16"><br><br>#JSStringFormat(defaultsObj.trans("upload_wait_message"))#</div>');
+					$("##ftpuploadstatus").html('<div style="padding:10px"><img src="#dynpath#/global/host/dam/images/loading.gif" border="0" width="16" height="16"><br><br>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("upload_wait_message"))#</div>');
 					// Get values
 					var url = formaction("assetftpform");
 					var items = formserialize("assetftpform");
@@ -120,7 +120,7 @@
 						url: url,
 					   	data: items,
 					   	success: function(){
-					   		$("##ftpuploadstatus").html('<div style="padding:10px;font-weight:bold;color:green;">#JSStringFormat(defaultsObj.trans("upload_success_email"))#</div>');
+					   		$("##ftpuploadstatus").html('<div style="padding:10px;font-weight:bold;color:green;">#JSStringFormat(myFusebox.getApplicationData().defaults.trans("upload_success_email"))#</div>');
 					   		$("##ftpuploadstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 					   	}
 					});

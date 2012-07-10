@@ -32,10 +32,10 @@
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##explorertools').toggle();" class="ddicon"></div>
 		<div id="explorertools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
-				<p><a href="##" onclick="showwindow('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=F','#defaultsObj.trans("folder_new")#',750,1);$('##explorertools').toggle();return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">#defaultsObj.trans("folder_new")# (on root level)</a></p>
+				<p><a href="##" onclick="showwindow('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=F','#myFusebox.getApplicationData().defaults.trans("folder_new")#',750,1);$('##explorertools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">#myFusebox.getApplicationData().defaults.trans("folder_new")# (on root level)</a></p>
 				<p><hr></p>
 			</cfif>
-			<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer');return false;" title="#defaultsObj.trans("tooltip_refresh_tree")#">#defaultsObj.trans("reload")#</a></p>
+			<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 				<p><hr></p>
 				<cfif session.showmyfolder EQ "F">
@@ -45,7 +45,7 @@
 				</cfif>
 				<!--- <p><hr></p> --->
 			</cfif>
-			<!--- <p><a href="##" onclick="javascript:PicLensLite.start({feedUrl:'#myself#c.cooliris_folder&folder_id=0'});$('##explorertools').toggle();return false;">#defaultsObj.trans("tooltip_cooliris")#</a></p> --->
+			<!--- <p><a href="##" onclick="javascript:PicLensLite.start({feedUrl:'#myself#c.cooliris_folder&folder_id=0'});$('##explorertools').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("tooltip_cooliris")#</a></p> --->
 		</div>
 	</div>
 	<div style="clear:both;"></div>

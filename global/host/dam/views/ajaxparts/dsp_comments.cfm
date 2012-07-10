@@ -26,10 +26,10 @@
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 	<tr>
-		<td>#defaultsObj.trans("comment")#<br />
+		<td>#myFusebox.getApplicationData().defaults.trans("comment")#<br />
 			<textarea id="assetComment" name="assetComment" style="width:400px;height:50px;"></textarea> <br />
 			<br />
-			<input type="button" class="button" onclick="addcomment('#attributes.file_id#','#attributes.type#','#attributes.folder_id#');" value="#defaultsObj.trans("comments_submit")#" />
+			<input type="button" class="button" onclick="addcomment('#attributes.file_id#','#attributes.type#','#attributes.folder_id#');" value="#myFusebox.getApplicationData().defaults.trans("comments_submit")#" />
 		</td>
 	</tr>
 </table>

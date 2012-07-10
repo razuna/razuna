@@ -26,10 +26,10 @@
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
-			<td style="padding-top:10px;">#defaultsObj.trans("header_preview_image_recreate_desc")#</td>
+			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("header_preview_image_recreate_desc")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("batch_recreate_preview")#" onclick="recreatepreviews();" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("batch_recreate_preview")#" onclick="recreatepreviews();" class="button"></td>
 		</tr>
 	</table>
 	<div id="previewimages"></div>
@@ -37,7 +37,7 @@
 	<script type="text/javascript">
 		function recreatepreviews(){
 			loadcontent('previewimagesstatus','#myself#c.recreatepreview&thetype=#attributes.thetype#');
-			$('##previewimages').html('<div style="color:green;font-weight:bold;">#defaultsObj.trans("header_preview_image_recreate_status")#</div>');
+			$('##previewimages').html('<div style="color:green;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("header_preview_image_recreate_status")#</div>');
 		}
 	</script>
 	

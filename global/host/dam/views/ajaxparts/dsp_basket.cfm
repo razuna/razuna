@@ -36,7 +36,7 @@
 		<div style="text-align:center;width:100%;color:grey;"><h2>Drag asset here to add to your basket</h2></div>
 	<cfelse>
 		<div style="padding-top:5px;">
-			<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','30px');">#defaultsObj.trans("checkout_basket")#</a> | <a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_full_remove_all_footer');">#defaultsObj.trans("clear_basket")#</a> | <a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket');">#defaultsObj.trans("reload_basket")#</a> | <a href="##" onclick="showwindow('#myself#c.meta_export&what=basket','#defaultsObj.trans("header_export_metadata")#',600,1);return false;">#defaultsObj.trans("header_export_metadata")#</a>
+			<a href="##" onclick="tooglefooter('0');loadcontent('rightside','#myself#c.basket_full');$('##footer_drop').css('height','30px');">#myFusebox.getApplicationData().defaults.trans("checkout_basket")#</a> | <a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_full_remove_all_footer');">#myFusebox.getApplicationData().defaults.trans("clear_basket")#</a> | <a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket');">#myFusebox.getApplicationData().defaults.trans("reload_basket")#</a> | <a href="##" onclick="showwindow('#myself#c.meta_export&what=basket','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',600,1);return false;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</a>
 		</div>
 		<div style="overflow:auto;">
 		<table border="0">

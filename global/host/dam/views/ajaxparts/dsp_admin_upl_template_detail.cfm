@@ -32,27 +32,27 @@
 <input type="hidden" name="upl_temp_id" value="#attributes.upl_temp_id#">
 <div id="tab_upl_temp">
 	<ul>
-		<li><a href="##tab_upl_temp_all">#defaultsObj.trans("settings")#</a></li>
-		<li><a href="##tab_upl_temp_img">#defaultsObj.trans("header_img")#</a></li>
-		<li><a href="##tab_upl_temp_vid">#defaultsObj.trans("header_vid")#</a></li>
-		<li><a href="##tab_upl_temp_aud">#defaultsObj.trans("header_aud")#</a></li>
+		<li><a href="##tab_upl_temp_all">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
+		<li><a href="##tab_upl_temp_img">#myFusebox.getApplicationData().defaults.trans("header_img")#</a></li>
+		<li><a href="##tab_upl_temp_vid">#myFusebox.getApplicationData().defaults.trans("header_vid")#</a></li>
+		<li><a href="##tab_upl_temp_aud">#myFusebox.getApplicationData().defaults.trans("header_aud")#</a></li>
 	</ul>
 	<!--- User --->
 	<div id="tab_upl_temp_all">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("settings")#</td>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("settings")#</td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#defaultsObj.trans("admin_upload_templates_active")#</td>
+				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("admin_upload_templates_active")#</td>
 				<td><input type="checkbox" name="upl_active" value="1"<cfif qry_detail.upl.upl_active EQ 1> checked="checked"</cfif>></td>
 			</tr>
 			<tr>
-				<td>#defaultsObj.trans("admin_upload_templates_name")#*</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("admin_upload_templates_name")#*</td>
 				<td><input type="text" name="upl_name" id="upl_name" class="text" value="#qry_detail.upl.upl_name#" style="width:300px;"><label for="upl_name" class="error" style="color:red;"><br>Enter a name for the template!</label></td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap" valign="top">#defaultsObj.trans("description")#</td>
+				<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("description")#</td>
 				<td><textarea name="upl_description" style="width:300px;height:60px;">#qry_detail.upl.upl_description#</textarea></td>
 			</tr>
 		</table>
@@ -61,10 +61,10 @@
 	<div id="tab_upl_temp_img">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="3">#defaultsObj.trans("header_img")#</td>
+				<th colspan="3">#myFusebox.getApplicationData().defaults.trans("header_img")#</td>
 			</tr>
 			<tr>
-				<td colspan="3">#defaultsObj.trans("admin_upload_templates_desc")#</td>
+				<td colspan="3">#myFusebox.getApplicationData().defaults.trans("admin_upload_templates_desc")#</td>
 			</tr>
 			<tr>
 				<td width="1%" nowrap="true"><input type="checkbox" name="convert_to" value="img-jpg"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "jpg"> checked="checked"</cfif></cfloop>></td>
@@ -98,16 +98,16 @@
 	<div id="tab_upl_temp_vid">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="4">#defaultsObj.trans("header_vid")#</td>
+				<th colspan="4">#myFusebox.getApplicationData().defaults.trans("header_vid")#</td>
 			</tr>
 			<tr>
-				<td colspan="4">#defaultsObj.trans("admin_upload_templates_vid_desc")#</td>
+				<td colspan="4">#myFusebox.getApplicationData().defaults.trans("admin_upload_templates_vid_desc")#</td>
 			</tr>
 			<tr>
 				<td></td>
 				<td></td>
 				<td><strong>Choose Preset</strong></td>
-				<td><strong>#defaultsObj.trans("size")#</strong></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("size")#</strong></td>
 				<td><strong>BitRate</strong></td>
 			</tr>
 			<!--- OGV --->
@@ -252,10 +252,10 @@
 	<div id="tab_upl_temp_aud">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="4">#defaultsObj.trans("header_aud")#</td>
+				<th colspan="4">#myFusebox.getApplicationData().defaults.trans("header_aud")#</td>
 			</tr>
 			<tr>
-				<td colspan="4">#defaultsObj.trans("admin_upload_templates_desc")#</td>
+				<td colspan="4">#myFusebox.getApplicationData().defaults.trans("admin_upload_templates_desc")#</td>
 			</tr>
 			<tr>
 				<td></td>
@@ -317,7 +317,7 @@
 </div>
 <div id="submit" style="float:right;padding:10px;">
 	<div id="upltempfeedback" style="color:green;padding:10px;display:none;float:left;font-weight:bold;"></div>
-	<input type="submit" name="SubmitUser" value="#defaultsObj.trans("button_save")#" class="button" style="float:right;">
+	<input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" style="float:right;">
 </div>
 
 </form>
@@ -342,7 +342,7 @@
 	// Feedback when saving form
 	function formupltempfeedback() {
 		$("##upltempfeedback").css("display","");
-		$("##upltempfeedback").html("#JSStringFormat(defaultsObj.trans("success"))#");
+		$("##upltempfeedback").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#");
 		loadcontent('admin_upl_templates', '#myself#c.upl_templates');
 	}
 	// Emtpy the width or the height and make it read only

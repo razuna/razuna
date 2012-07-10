@@ -26,12 +26,12 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th>#defaultsObj.trans("edit")#</th>
+			<th>#myFusebox.getApplicationData().defaults.trans("edit")#</th>
 		</tr>
 		<!--- Edit --->
 		<tr>
 			<td style="border:0px;">
-				<input type="text" name="label_text" id="label_text_update" style="width:200px;" value="#qry_label.label_text#"> <input type="button" value="#defaultsObj.trans("button_update")#" class="button" onclick="updatelabel();">
+				<input type="text" name="label_text" id="label_text_update" style="width:200px;" value="#qry_label.label_text#"> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button" onclick="updatelabel();">
 				<br /><br />
 				Nest label under:<br />
 				<select name="sublabelofedit" id="sublabelofedit" style="width:240px;">
@@ -75,7 +75,7 @@
 			// Submit
 			if (thelab != "") {
 				$('##label_dummy').load('#myself#c.admin_labels_update', {label_id:'#attributes.label_id#', label_text: thelab, label_parent: theparent});
-				$('##label_feedback').html('#defaultsObj.trans("success")#');
+				$('##label_feedback').html('#myFusebox.getApplicationData().defaults.trans("success")#');
 				loadcontent('labels','#myself#c.labels_list');
 			}
 			else {

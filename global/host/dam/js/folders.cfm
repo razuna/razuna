@@ -10,7 +10,7 @@
 		   	data: items,
 		   	success: function(theid,iscol){
 				// Feedback
-				$('#updatetextshare').html('<cfoutput>#JSStringFormat(defaultsObj.trans("success"))#</cfoutput>');
+				$('#updatetextshare').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
 				$("#updatetextshare").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 		   	}
 		});
@@ -36,7 +36,7 @@
 					// Hide Window
 					destroywindow(1);
 					// Feedback
-					$('#updatetext').html('<cfoutput>#JSStringFormat(defaultsObj.trans("success"))#</cfoutput>');
+					$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
 					$("#updatetext").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 			   	}
 			});
@@ -66,7 +66,7 @@
 		loadcontent('explorer','index.cfm?fa=c.explorer');
 		// Show the update feedback
 		document.getElementById('updatetext').style.visibility = "visible";
-		$("#updatetext").html('<cfoutput>#JSStringFormat(defaultsObj.trans("success"))#</cfoutput>');
+		$("#updatetext").html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
 		$("#updatetext").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 	}
 	// Set today date into form fields

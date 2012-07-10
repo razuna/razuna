@@ -26,19 +26,19 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th width="1%" nowrap="true">#defaultsObj.trans("date")#</th>
-			<th width="1%" nowrap="true">#defaultsObj.trans("time")#</th>
-			<th width="100%">#defaultsObj.trans("searched_for")#</th>
-			<th width="1%" nowrap="true">#defaultsObj.trans("assets_found")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("time")#</th>
+			<th width="100%">#myFusebox.getApplicationData().defaults.trans("searched_for")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("assets_found")#</th>
 			<cfif attributes.logtype EQ "log_assets">
-				<th width="1%" nowrap="true">#defaultsObj.trans("assets_type")#</th>
+				<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("assets_type")#</th>
 			</cfif>
-			<th width="1%" nowrap="true">#defaultsObj.trans("theuser")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("theuser")#</th>
 		</tr>
 		<!--- Loop over all found log records --->
 		<cfloop query="qry_log">
 			<tr class="list">
-				<td nowrap="true" valign="top">#dateformat(log_timestamp, "#defaultsObj.getdateformat()#")#</td>
+				<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				<td nowrap="true" valign="top">#timeFormat(log_timestamp, 'HH:mm:ss')#</td>
 				<td valign="top">#log_desc#</td>
 				<td nowrap="true" align="center" valign="top">#log_action#</td>

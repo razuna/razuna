@@ -43,7 +43,7 @@
 			loadcontent('coldummy','#myself#' + xfa + '&col_id=' + colid);
 			$("##colfeedback").fadeTo("fast", 100);
 			$("##colfeedback").css("display","");
-			$("##colfeedback").html('#JSStringFormat(defaultsObj.trans("choose_collection_done"))#');
+			$("##colfeedback").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("choose_collection_done"))#');
 			$("##colfeedback").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 		}
 	</script>

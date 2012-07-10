@@ -34,7 +34,7 @@
 						<b>#dateformat(com_date,"mmmm dd yyyy")# #timeformat(com_date,"hh:mm:ss")#</b><br />
 						#com_text#<br />
 						<cfif attributes.folderaccess NEQ "R">
-							<a href="##" onclick="showwindow('#myself#c.comments_edit&com_id=#com_id#&file_id=#attributes.file_id#&type=#attributes.type#&folder_id=#attributes.folder_id#','#defaultsObj.trans("edit")#',500,2);return false;">#defaultsObj.trans("edit")#</a> | <a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#com_id#&what=comments&loaddiv=comlist&file_id=#attributes.file_id#&iswin=two&type=#attributes.type#&folder_id=#attributes.folder_id#','#defaultsObj.trans("remove")#',400,2);return false;">#defaultsObj.trans("remove")#</a>
+							<a href="##" onclick="showwindow('#myself#c.comments_edit&com_id=#com_id#&file_id=#attributes.file_id#&type=#attributes.type#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("edit")#',500,2);return false;">#myFusebox.getApplicationData().defaults.trans("edit")#</a> | <a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#com_id#&what=comments&loaddiv=comlist&file_id=#attributes.file_id#&iswin=two&type=#attributes.type#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("remove")#',400,2);return false;">#myFusebox.getApplicationData().defaults.trans("remove")#</a>
 						</cfif>
 					</div>
 				</div>

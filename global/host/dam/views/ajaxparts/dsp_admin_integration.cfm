@@ -31,17 +31,17 @@
 		<!--- Integration --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("header_integration_social_login")#</th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_integration_social_login")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("header_integration_social_login_desc")#<br /><br /></td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_integration_social_login_desc")#<br /><br /></td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#defaultsObj.trans("header_integration_social_login_enable")#</td>
-				<td width="100%"><input type="radio" name="janrain_enable" id="janrain_enable" value="true"<cfif jr_enable> checked="true"</cfif>> #defaultsObj.trans("yes")# <input type="radio" name="janrain_enable" id="janrain_enable" value="false"<cfif !jr_enable> checked="true"</cfif>> #defaultsObj.trans("no")#</td>
+				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("header_integration_social_login_enable")#</td>
+				<td width="100%"><input type="radio" name="janrain_enable" id="janrain_enable" value="true"<cfif jr_enable> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="janrain_enable" id="janrain_enable" value="false"<cfif !jr_enable> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#</td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#defaultsObj.trans("header_integration_social_login_apikey")#</td>
+				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("header_integration_social_login_apikey")#</td>
 				<td width="100%"><input type="text" name="janrain_apikey" id="janrain_apikey" style="width:300px;" value="#jr_apikey#" /></td>
 			</tr>
 			<tr>
@@ -49,7 +49,7 @@
 				<td width="100%"><input type="text" name="janrain_appurl" id="janrain_appurl" style="width:300px;" value="#jr_appurl#" /></td>
 			</tr>
 		</table>
-		<div id="status_integration" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="button" value="#defaultsObj.trans("save_changes")#" class="button" onclick="save_integr();" /></div>
+		<div id="status_integration" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" onclick="save_integr();" /></div>
 		<div style="clear:both;"></div>
 		<div id="dummy_integration" style="display:none;"></div>
 	</cfif>

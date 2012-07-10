@@ -41,7 +41,7 @@
 		<td><input type="text" name="description" style="width:300px;" class="textbold"></td>
 	</tr>
 	<tr>
-		<td>#defaultsObj.trans("labels")#</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 		<td>
 			<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="search_labels_#myvar.thetype#" multiple="multiple">
 				<option value=""></option>
@@ -71,7 +71,7 @@
 					<input type="text" style="width:300px;" name="cf#cfid#">
 				<!--- Radio --->
 				<cfelseif cf_type EQ "radio">
-					<input type="radio" name="cf#cfid#" value="T">#defaultsObj.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#defaultsObj.trans("no")#
+					<input type="radio" name="cf#cfid#" value="T">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf#cfid#" value="F">#myFusebox.getApplicationData().defaults.trans("no")#
 				<!--- Select --->
 				<cfelseif cf_type EQ "select">
 					<select name="cf#cfid#" style="width:300px;">

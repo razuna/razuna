@@ -28,9 +28,9 @@
 		<tr>
 			<td>
 				<div style="width:400px;">
-				#defaultsObj.trans("comment")#
+				#myFusebox.getApplicationData().defaults.trans("comment")#
 				<textarea id="commentup" name="commentup" style="width:400px;height:50px;">#qry_comment.com_text#</textarea>
-				<div style="float:right;"><input type="button" value="#defaultsObj.trans("button_update")#" name="savecomment" class="button" onclick="updatecomment<cfif attributes.fa CONTAINS "share_">share</cfif>('#attributes.file_id#','#attributes.com_id#','#attributes.type#','#attributes.folder_id#');"></div>
+				<div style="float:right;"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" name="savecomment" class="button" onclick="updatecomment<cfif attributes.fa CONTAINS "share_">share</cfif>('#attributes.file_id#','#attributes.com_id#','#attributes.type#','#attributes.folder_id#');"></div>
 				</div>
 			</td>
 		</tr>

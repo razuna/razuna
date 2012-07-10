@@ -26,18 +26,18 @@
 <cfoutput>
 	<div id="labels_tab">
 		<ul>	
-			<li><a href="##lab_content" onclick="loadcontent('lab_content','#myself#c.labels_main_assets&label_id=#attributes.label_id#&label_kind=assets');">#defaultsObj.trans("labels_content")# (#qry_labels_count.count_assets#)</a></li>
-			<li><a href="##lab_folders" onclick="loadcontent('lab_folders','#myself#c.labels_main_folders&label_id=#attributes.label_id#&label_kind=folders');">#defaultsObj.trans("log_header_folders")# (#qry_labels_count.count_folders#)</a></li>
-			<li><a href="##lab_collections" onclick="loadcontent('lab_collections','#myself#c.labels_main_collections&label_id=#attributes.label_id#&label_kind=collections');">#defaultsObj.trans("header_collections")# (#qry_labels_count.count_collections#)</a></li>
+			<li><a href="##lab_content" onclick="loadcontent('lab_content','#myself#c.labels_main_assets&label_id=#attributes.label_id#&label_kind=assets');">#myFusebox.getApplicationData().defaults.trans("labels_content")# (#qry_labels_count.count_assets#)</a></li>
+			<li><a href="##lab_folders" onclick="loadcontent('lab_folders','#myself#c.labels_main_folders&label_id=#attributes.label_id#&label_kind=folders');">#myFusebox.getApplicationData().defaults.trans("log_header_folders")# (#qry_labels_count.count_folders#)</a></li>
+			<li><a href="##lab_collections" onclick="loadcontent('lab_collections','#myself#c.labels_main_collections&label_id=#attributes.label_id#&label_kind=collections');">#myFusebox.getApplicationData().defaults.trans("header_collections")# (#qry_labels_count.count_collections#)</a></li>
 			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
-				<li><a href="##lab_prop" onclick="loadcontent('lab_prop','#myself#c.labels_main_properties&label_id=#attributes.label_id#');">Label #defaultsObj.trans("settings")#</a></li>
+				<li><a href="##lab_prop" onclick="loadcontent('lab_prop','#myself#c.labels_main_properties&label_id=#attributes.label_id#');">Label #myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
 			</cfif>
 		</ul>
 		<!--- The divs loading the content		 --->
-		<div id="lab_content">#defaultsObj.loadinggif("#dynpath#")#</div>
-		<div id="lab_folders">#defaultsObj.loadinggif("#dynpath#")#</div>
-		<div id="lab_collections">#defaultsObj.loadinggif("#dynpath#")#</div>
-		<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()><div id="lab_prop">#defaultsObj.loadinggif("#dynpath#")#</div></cfif>
+		<div id="lab_content">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+		<div id="lab_folders">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+		<div id="lab_collections">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+		<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()><div id="lab_prop">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
 	</div>
 
 	<script type="text/javascript">

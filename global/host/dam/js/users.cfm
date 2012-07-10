@@ -1,12 +1,12 @@
 <script language="javascript">
 	function usersearch(){
 		if (document.getElementById('user_login_name2').value == "" && document.getElementById('user_company2').value == "" && document.getElementById('user_email2').value == ""){
-			alert('<cfoutput>#JSStringFormat(defaultsObj.trans("one_field_fill"))#</cfoutput>');
+			alert('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("one_field_fill"))#</cfoutput>');
 			return false;
 		}
 		else {
 		// Disable Button
-		parent.document.usearch.Button.value = "<cfoutput>#JSStringFormat(defaultsObj.trans("please_wait"))#...</cfoutput>";
+		parent.document.usearch.Button.value = "<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("please_wait"))#...</cfoutput>";
 		parent.document.usearch.Button.disabled = true;
 		// Show the div
 		// document.getElementById('uresults').style.visibility = "visible";
@@ -17,7 +17,7 @@
 		}
 	}
 	function thedelay(){
-		parent.document.usearch.Button.value = "<cfoutput>#JSStringFormat(defaultsObj.trans("user_search"))#</cfoutput>";
+		parent.document.usearch.Button.value = "<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("user_search"))#</cfoutput>";
         parent.document.usearch.Button.disabled = false;
 	}
 	// Check eMail

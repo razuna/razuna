@@ -39,35 +39,35 @@
 		<tr>
 			<th colspan="4">
 				<cfif attributes.fromshare EQ "F">
-					<div style="float:left;">#defaultsObj.trans("files_in_basket")#</div>
+					<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("files_in_basket")#</div>
 					<cfif qry_basket.recordcount NEQ 0>
 						<div style="float:right;">
-							<div style="float:left;"><a href="##" onclick="$('##basketaction').toggle();" style="text-decoration:none;" class="ddicon">#defaultsObj.trans("basket_actions")#</a></div>
+							<div style="float:left;"><a href="##" onclick="$('##basketaction').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("basket_actions")#</a></div>
 							<div style="float:right;padding-left:2px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##basketaction').toggle();" class="ddicon"></div>
 							<div id="basketaction" class="ddselection_header" style="top:22px;">
-								<p><a href="##" onclick="$('##thebasket').submit();return false;">#defaultsObj.trans("download")#</a></p>
-								<p><a href="##" onclick="basketemail('#qry_basket.cart_order_email#');return false;">#defaultsObj.trans("send_basket_email")#</a></p>
-								<p><a href="##" onclick="basketftp();return false;">#defaultsObj.trans("send_basket_ftp")#</a></p>
-								<p><a href="##" onclick="basketsave();return false;">#defaultsObj.trans("save_basket")#</a></p>
-								<p><a href="##" onclick="showwindow('#myself#c.meta_export&what=basket','#defaultsObj.trans("header_export_metadata")#',600,1);return false;">#defaultsObj.trans("header_export_metadata")#</a></p>
-								<p><a href="##" onclick="showwindow('#myself#ajax.remove_basket','#Jsstringformat(defaultsObj.trans("delete_basket"))#',400,1);return false;">#defaultsObj.trans("delete_basket")#</a></p>
+								<p><a href="##" onclick="$('##thebasket').submit();return false;">#myFusebox.getApplicationData().defaults.trans("download")#</a></p>
+								<p><a href="##" onclick="basketemail('#qry_basket.cart_order_email#');return false;">#myFusebox.getApplicationData().defaults.trans("send_basket_email")#</a></p>
+								<p><a href="##" onclick="basketftp();return false;">#myFusebox.getApplicationData().defaults.trans("send_basket_ftp")#</a></p>
+								<p><a href="##" onclick="basketsave();return false;">#myFusebox.getApplicationData().defaults.trans("save_basket")#</a></p>
+								<p><a href="##" onclick="showwindow('#myself#c.meta_export&what=basket','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',600,1);return false;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</a></p>
+								<p><a href="##" onclick="showwindow('#myself#ajax.remove_basket','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("delete_basket"))#',400,1);return false;">#myFusebox.getApplicationData().defaults.trans("delete_basket")#</a></p>
 							</div>
 						</div>
 					</cfif>
 				<cfelse>
-					<div style="float:left;"><cfif qry_basket.recordcount NEQ 0><cfif qry_folder.share_order EQ "F"><a href="##" onclick="$('##thebasket').submit();return false;">#defaultsObj.trans("download")#</a><cfelse><a href="##" onclick="showwindow('#myself#ajax.share_order','Order',500,1);return false;">Order Assets in Basket</a></cfif></div>
-					<div style="float:right;"><a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket_all');">#defaultsObj.trans("delete_basket")#</a></cfif></div>
+					<div style="float:left;"><cfif qry_basket.recordcount NEQ 0><cfif qry_folder.share_order EQ "F"><a href="##" onclick="$('##thebasket').submit();return false;">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse><a href="##" onclick="showwindow('#myself#ajax.share_order','Order',500,1);return false;">Order Assets in Basket</a></cfif></div>
+					<div style="float:right;"><a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket_all');">#myFusebox.getApplicationData().defaults.trans("delete_basket")#</a></cfif></div>
 				</cfif>
 			</th>
 		</tr>
 		<cfif qry_basket.recordcount EQ 0>
 			<tr>
-				<td>#defaultsObj.trans("empty_basket")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("empty_basket")#</td>
 			</tr>
 		<cfelse>
 			<cfif attributes.fromshare EQ "T" AND qry_folder.share_order EQ "T">
 				<tr>
-					<td colspan="4">#defaultsObj.trans("basket_order")#</td>
+					<td colspan="4">#myFusebox.getApplicationData().defaults.trans("basket_order")#</td>
 				</tr>
 			</cfif>
 			<!--- Show order desc --->
@@ -126,7 +126,7 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#img_id#-org-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
-														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#defaultsObj.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
 												<cfelse>
 													<tr>
@@ -136,14 +136,14 @@
 											<cfelse>
 												<tr>
 													<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
-													<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#defaultsObj.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+													<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 												</tr>
 											</cfif>
 											<!--- Thumbnail --->
 											<cfif link_kind EQ "">
 												<tr>
 													<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
-													<td width="100%">#defaultsObj.trans("preview")# #ucase(thumb_extension)# (#defaultsObj.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)</td>
+													<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)</td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -155,13 +155,13 @@
 												<cfif qry_share_options CONTAINS "#img_id#-#img_extension#-1" OR qry_share_options DOES NOT CONTAIN "#img_id#-#img_extension#">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="#myid#-#img_id#" value="#myid#-#img_id#" onchange="checksel('#myid#','#myid#-#img_id#','img');" /></td>
-														<td width="100%">#ucase(img_extension)# #defaultsObj.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</td>
+														<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</td>
 													</tr>
 												</cfif>
 											<cfelse>
 												<tr>
 													<td><input type="checkbox" name="artofimage" id="#myid#-#img_id#" value="#myid#-#img_id#" onchange="checksel('#myid#','#myid#-#img_id#','img');" /></td>
-													<td width="100%">#ucase(img_extension)# #defaultsObj.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</td>
+													<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -205,7 +205,7 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#vid_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#defaultsObj.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
 												<cfelse>
 													<tr>
@@ -215,7 +215,7 @@
 											<cfelse>
 												<tr>
 													<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#defaultsObj.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -227,13 +227,13 @@
 												<cfif qry_share_options CONTAINS "#vid_id#-#vid_extension#-1" OR qry_share_options DOES NOT CONTAIN "#vid_id#-#vid_extension#">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="#myid#-#vid_id#" value="#myid#-#vid_id#" onchange="checksel('#myid#','#myid#-#vid_id#','vid');" /></td>
-														<td width="100%">#ucase(vid_extension)# #defaultsObj.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel)</td>
+														<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel)</td>
 													</tr>
 												</cfif>
 											<cfelse>
 												<tr>
 													<td width="1%"><input type="checkbox" name="artofvideo" id="#myid#-#vid_id#" value="#myid#-#vid_id#" onchange="checksel('#myid#','#myid#-#vid_id#','vid');" /></td>
-													<td width="100%">#ucase(vid_extension)# #defaultsObj.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel)</td>
+													<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel)</td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -269,7 +269,7 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#aud_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#defaultsObj.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
 												<cfelse>
 													<tr>
@@ -279,7 +279,7 @@
 											<cfelse>
 												<tr>
 													<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#defaultsObj.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -291,13 +291,13 @@
 												<cfif qry_share_options CONTAINS "#aud_id#-#aud_extension#-1" OR qry_share_options DOES NOT CONTAIN "#aud_id#-#aud_extension#">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="#myid#-#aud_id#" value="#myid#-#aud_id#" onchange="checksel('#myid#','#myid#-#aud_id#','aud');" checked="checked" /></td>
-														<td width="100%">#ucase(aud_extension)# #defaultsObj.converttomb("#aud_size#")# MB</td>
+														<td width="100%">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB</td>
 													</tr>
 												</cfif>
 											<cfelse>
 												<tr>
 													<td width="1%"><input type="checkbox" name="artofaudio" id="#myid#-#aud_id#" value="#myid#-#aud_id#" onchange="checksel('#myid#','#myid#-#aud_id#','aud');" checked="checked" /></td>
-													<td width="100%">#ucase(aud_extension)# #defaultsObj.converttomb("#aud_size#")# MB</td>
+													<td width="100%">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB</td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -345,7 +345,7 @@
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#file_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
-														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#defaultsObj.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
 												<cfelse>
 													<tr>
@@ -355,7 +355,7 @@
 											<cfelse>
 												<tr>
 													<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#defaultsObj.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 												</tr>
 											</cfif>
 										</cfif>
@@ -366,7 +366,7 @@
 				</cfswitch>
 				<td width="1%" align="center" nowrap="nowrap" valign="top">
 					<cfif attributes.fromshare EQ "F">
-						<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">
+						<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#myid#&what=basket_full&loaddiv=rightside','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">
 					<cfelse>
 						<a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket&id=#myid#&fromshare=T');">
 					</cfif>	
@@ -377,7 +377,7 @@
 			</cfloop>
 		</cfif>
 	</table>
-	<cfif qry_basket.recordcount NEQ 0><div>* <em>#defaultsObj.trans("link_url_basket")#</em></div></cfif>
+	<cfif qry_basket.recordcount NEQ 0><div>* <em>#myFusebox.getApplicationData().defaults.trans("link_url_basket")#</em></div></cfif>
 	</form>
 </cfoutput>
 
@@ -400,7 +400,7 @@
 		// Show
 		$("#basketstatus").fadeTo("fast", 100);
 		$("#basketstatus").css("display","");
-		$("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#defaultsObj.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email once the basket is complete.');
+		$("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#myFusebox.getApplicationData().defaults.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email once the basket is complete.');
 		// Submit Form
 		$.ajax({
 			type: "POST",

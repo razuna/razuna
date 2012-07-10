@@ -27,12 +27,12 @@
 <cfif qry_related.recordcount NEQ 0>
 	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("converted_videos")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("converted_videos")#</th>
 		</tr>
 		<tr>
 			<td width="100%" nowrap="true" valign="top" colspan="2">
 				<cfloop query="qry_related">
-					<cfif attributes.s EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name#" target="_blank"></cfif>#ucase(aud_extension)# (#defaultsObj.converttomb("#aud_size#")# MB)</a> <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a> 
+					<cfif attributes.s EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name#" target="_blank"></cfif>#ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</a> <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a> 
 					<a href="##" onclick="toggleslide('divo#aud_id#','inputo#aud_id#');"><img src="#dynpath#/global/host/dam/images/emblem-symbolic-link.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
 					<cfif attributes.folderaccess NEQ "R">
 						<a href="##" onclick="loadcontent('relatedaudios','#myself#c.audios_remove_related&id=#aud_id#&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>

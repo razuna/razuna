@@ -31,7 +31,7 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>
-					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, except #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif attributes.folderaccess NEQ "R"><cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a> | <cfelseif cs.myfolder_upload><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(defaultsObj.trans("add_file"))#',650,1);return false;">Add assets to this folder</a> | </cfif></cfif><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(defaultsObj.trans("folder_new"))#',750,1);return false;" title="#defaultsObj.trans("tooltip_folder_desc")#">Create a sub folder</a></cfif>
+					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, except #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif attributes.folderaccess NEQ "R"><cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">Add assets to this folder</a> | <cfelseif cs.myfolder_upload><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">Add assets to this folder</a> | </cfif></cfif><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("folder_new"))#',750,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">Create a sub folder</a></cfif>
 				</td>
 			</tr>
 			<tr>
@@ -130,14 +130,14 @@
 									<input type="checkbox" name="file_id" value="#id#-img" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
-									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=img','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=img','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
-										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=img','#defaultsObj.trans("send_with_email")#',600,2);return false;" title="#defaultsObj.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=img','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 								<br>
@@ -145,10 +145,10 @@
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br>
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- Videos --->
@@ -181,19 +181,19 @@
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif><cfelse><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
-							<!--- <br><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#attributes.folder_id#','#filename#',800,600);return false;">#defaultsObj.trans("file_detail")#</a> --->
+							<!--- <br><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#attributes.folder_id#','#filename#',800,600);return false;">#myFusebox.getApplicationData().defaults.trans("file_detail")#</a> --->
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-vid") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
-									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=vid','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-vid&thetype=#id#-vid');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=vid','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-vid&thetype=#id#-vid');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
-										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=vid','#defaultsObj.trans("send_with_email")#',600,2);return false;" title="#defaultsObj.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=vid','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 								<br /><br />
@@ -201,10 +201,10 @@
 							<cfelse>					
 								We are still working on the asset "#filename#"...
 								<br /><br>
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- Audios --->
@@ -237,14 +237,14 @@
 									<input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-aud") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
-									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=aud','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-aud&thetype=#id#-aud');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=aud','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-aud&thetype=#id#-aud');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
-										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=aud','#defaultsObj.trans("send_with_email")#',600,2);return false;" title="#defaultsObj.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=aud','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 								<br>
@@ -252,10 +252,10 @@
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br>
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- All other files --->
@@ -309,13 +309,13 @@
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<a href="#myself#c.serve_file&file_id=#id#&type=doc"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-doc&thetype=#id#-doc');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-doc&thetype=#id#-doc');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
-										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=doc','#defaultsObj.trans("send_with_email")#',600,2);return false;" title="#defaultsObj.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=doc','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 								</cfif>
 								</div>
 								<br>
@@ -323,10 +323,10 @@
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br>
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					</cfif>
@@ -337,7 +337,7 @@
 		<cfelseif session.view EQ "combined">
 			<cfif attributes.folderaccess NEQ "R">
 				<tr>
-					<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
+					<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
 				</tr>
 			</cfif>
 			<cfloop query="qry_files">
@@ -385,26 +385,26 @@
 								</cfif>
 							</div>
 							</a><br />
-							#defaultsObj.trans("date_created")#: #dateformat(date_create, "#defaultsObj.getdateformat()#")#<!--- <br />
-							#defaultsObj.trans("date_changed")#: #dateformat(img_change_date, "#defaultsObj.getdateformat()#")# --->
+							#myFusebox.getApplicationData().defaults.trans("date_created")#: #dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#<!--- <br />
+							#myFusebox.getApplicationData().defaults.trans("date_changed")#: #dateformat(img_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# --->
 						</td>
 						<td valign="top" width="100%">
 							<!--- User has Write access --->
 							<cfif attributes.folderaccess NEQ "R">
 								<input type="text" name="#id#_img_filename" value="#filename#" style="width:300px;"><br />
-								#defaultsObj.trans("description")#:<br />
+								#myFusebox.getApplicationData().defaults.trans("description")#:<br />
 								<textarea name="#id#_img_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
-								#defaultsObj.trans("keywords")#:<br />
+								#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
 								<textarea name="#id#_img_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 							<cfelse>
-								#defaultsObj.trans("file_name")#: #filename#<br />
-								#defaultsObj.trans("description")#: #description#<br />
-								#defaultsObj.trans("keywords")#: #keywords#
+								#myFusebox.getApplicationData().defaults.trans("file_name")#: #filename#<br />
+								#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
+								#myFusebox.getApplicationData().defaults.trans("keywords")#: #keywords#
 							</cfif>
 						</td>
 						<cfif attributes.folderaccess EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -444,26 +444,26 @@
 								</div>
 							</a>
 							<br />
-							#defaultsObj.trans("date_created")#: #dateformat(date_create, "#defaultsObj.getdateformat()#")#<!--- <br />
-							#defaultsObj.trans("date_changed")#: #dateformat(vid_change_date, "#defaultsObj.getdateformat()#")# --->
+							#myFusebox.getApplicationData().defaults.trans("date_created")#: #dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#<!--- <br />
+							#myFusebox.getApplicationData().defaults.trans("date_changed")#: #dateformat(vid_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# --->
 						</td>
 						<td valign="top" width="100%">
 							<!--- User has Write access --->
 							<cfif attributes.folderaccess NEQ "R">
 								<input type="text" name="#id#_vid_filename" value="#filename#" style="width:300px;"><br />
-								#defaultsObj.trans("description")#:<br />
+								#myFusebox.getApplicationData().defaults.trans("description")#:<br />
 								<textarea name="#id#_vid_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
-								#defaultsObj.trans("keywords")#:<br />
+								#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
 								<textarea name="#id#_vid_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 							<cfelse>
-								#defaultsObj.trans("file_name")#: #filename#<br />
-								#defaultsObj.trans("description")#: #description#<br />
-								#defaultsObj.trans("keywords")#: #keywords#
+								#myFusebox.getApplicationData().defaults.trans("file_name")#: #filename#<br />
+								#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
+								#myFusebox.getApplicationData().defaults.trans("keywords")#: #keywords#
 							</cfif>
 						</td>
 						<cfif attributes.folderaccess EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -499,26 +499,26 @@
 								</div>
 							</a>
 							<br />
-							#defaultsObj.trans("date_created")#: #dateformat(date_create, "#defaultsObj.getdateformat()#")#<!--- <br />
-							#defaultsObj.trans("date_changed")#: #dateformat(aud_change_date, "#defaultsObj.getdateformat()#")# --->
+							#myFusebox.getApplicationData().defaults.trans("date_created")#: #dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#<!--- <br />
+							#myFusebox.getApplicationData().defaults.trans("date_changed")#: #dateformat(aud_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# --->
 						</td>
 						<td valign="top" width="100%">
 							<!--- User has Write access --->
 							<cfif attributes.folderaccess NEQ "R">
 								<input type="text" name="#id#_aud_filename" value="#filename#" style="width:300px;"><br />
-								#defaultsObj.trans("description")#:<br />
+								#myFusebox.getApplicationData().defaults.trans("description")#:<br />
 								<textarea name="#id#_aud_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
-								#defaultsObj.trans("keywords")#:<br />
+								#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
 								<textarea name="#id#_aud_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 							<cfelse>
-								#defaultsObj.trans("file_name")#: #filename#<br />
-								#defaultsObj.trans("description")#: #description#<br />
-								#defaultsObj.trans("keywords")#: #keywords#
+								#myFusebox.getApplicationData().defaults.trans("file_name")#: #filename#<br />
+								#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
+								#myFusebox.getApplicationData().defaults.trans("keywords")#: #keywords#
 							</cfif>
 						</td>
 						<cfif attributes.folderaccess EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -570,26 +570,26 @@
 								</div>
 							</a>
 							<br />
-							#defaultsObj.trans("date_created")#: #dateformat(date_create, "#defaultsObj.getdateformat()#")#<!--- <br />
-							#defaultsObj.trans("date_changed")#: #dateformat(file_change_date, "#defaultsObj.getdateformat()#")# --->
+							#myFusebox.getApplicationData().defaults.trans("date_created")#: #dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#<!--- <br />
+							#myFusebox.getApplicationData().defaults.trans("date_changed")#: #dateformat(file_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# --->
 						</td>
 						<td valign="top" width="100%">
 							<!--- User has Write access --->
 							<cfif attributes.folderaccess NEQ "R">
 								<input type="text" name="#id#_doc_filename" value="#filename#" style="width:300px;"><br />
-								#defaultsObj.trans("description")#:<br />
+								#myFusebox.getApplicationData().defaults.trans("description")#:<br />
 								<textarea name="#id#_doc_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
-								#defaultsObj.trans("keywords")#:<br />
+								#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
 								<textarea name="#id#_doc_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 							<cfelse>
-								#defaultsObj.trans("file_name")#: #filename#<br />
-								#defaultsObj.trans("description")#: #description#<br />
-								#defaultsObj.trans("keywords")#: #keywords#
+								#myFusebox.getApplicationData().defaults.trans("file_name")#: #filename#<br />
+								#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
+								#myFusebox.getApplicationData().defaults.trans("keywords")#: #keywords#
 							</cfif>
 						</td>
 						<cfif attributes.folderaccess EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -597,7 +597,7 @@
 			</cfloop>
 			<cfif attributes.folderaccess NEQ "R">
 				<tr>
-					<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall2" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
+					<td colspan="4" align="right" style="border:0px;"><div id="updatestatusall2" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveall();return false;" class="button"></td>
 				</tr>
 			</cfif>
 		<!--- List view --->
@@ -610,10 +610,10 @@
 			--->
 			<tr>
 				<td></td>
-				<td width="100%"><b>#defaultsObj.trans("file_name")#</b></td>
-				<td nowrap="true" align="center"><b>#defaultsObj.trans("assets_type")#</b></td>
-				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_created")#</b></td>
-				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_changed")#</b></td>
+				<td width="100%"><b>#myFusebox.getApplicationData().defaults.trans("file_name")#</b></td>
+				<td nowrap="true" align="center"><b>#myFusebox.getApplicationData().defaults.trans("assets_type")#</b></td>
+				<td nowrap="true" align="center"><b>#myFusebox.getApplicationData().defaults.trans("date_created")#</b></td>
+				<td nowrap="true" align="center"><b>#myFusebox.getApplicationData().defaults.trans("date_changed")#</b></td>
 				<cfif attributes.folderaccess EQ "X">
 					<td></td>
 				</cfif>
@@ -627,10 +627,10 @@
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-img" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>></td>
 						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<td nowrap="true" width="1%" align="center">Image</td>
-						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#defaultsObj.getdateformat()#")#</td>
-						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#defaultsObj.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<cfif attributes.folderaccess EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- Videos --->
@@ -639,10 +639,10 @@
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-vid") NEQ 0> checked="checked"</cfif>></td>
 						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<td nowrap="true" width="1%" align="center">Video</td>
-						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#defaultsObj.getdateformat()#")#</td>
-						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#defaultsObj.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<cfif attributes.folderaccess EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- Audios --->
@@ -651,10 +651,10 @@
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-aud") NEQ 0> checked="checked"</cfif>></td>
 						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<td nowrap="true" width="1%" align="center">Audio</td>
-						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#defaultsObj.getdateformat()#")#</td>
-						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#defaultsObj.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<cfif attributes.folderaccess EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- All other files --->
@@ -663,10 +663,10 @@
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-doc" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-doc") NEQ 0> checked="checked"</cfif>></td>
 						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<td nowrap="true" width="1%" align="center">Document</td>
-						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#defaultsObj.getdateformat()#")#</td>
-						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#defaultsObj.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<cfif attributes.folderaccess EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				</cfif>
@@ -706,8 +706,8 @@
 					$("##updatestatusall2").css('color','green');
 					$("##updatestatusall").css('font-weight','bold');
 					$("##updatestatusall2").css('font-weight','bold');
-					$("##updatestatusall").html("#defaultsObj.trans("success")#");
-					$("##updatestatusall2").html("#defaultsObj.trans("success")#");
+					$("##updatestatusall").html("#myFusebox.getApplicationData().defaults.trans("success")#");
+					$("##updatestatusall2").html("#myFusebox.getApplicationData().defaults.trans("success")#");
 					$("##updatestatusall").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 					$("##updatestatusall2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 			   	}

@@ -28,15 +28,15 @@
 		<cfinclude template="dsp_admin_log_backnext.cfm">
 		<tr>
 			<th width="1%" nowrap="true">Detail</th>
-			<th width="1%" nowrap="true">#defaultsObj.trans("date")#</th>
-			<th width="1%" nowrap="true">#defaultsObj.trans("time")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("time")#</th>
 			<th width="1%" nowrap="true">eMail to Razuna</th>
 		</tr>
 		<!--- Loop over all scheduled log entries in database table --->
 		<cfloop query="qry_log">
 			<tr class="list">
 				<td nowrap="true"><a href="#myself#c.log_errors_detail&id=#id#" target="_blank">View Detail</a></td>
-				<td nowrap="true">#dateformat(err_date, "#defaultsObj.getdateformat()#")#</td>
+				<td nowrap="true">#dateformat(err_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				<td nowrap="true">#TimeFormat(err_date, 'HH:mm:ss')#</td>
 				<td nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#c.log_errors_win&id=#id#','Send Report',450,1);return false;">Send report to Razuna</a></td>
 			</tr>

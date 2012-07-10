@@ -34,7 +34,7 @@
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 	<div id="tabs_batch">
 		<ul>
-			<li tabindex="0"><a href="##batch_desc">#defaultsObj.trans("asset_desc")#</a></li>
+			<li tabindex="0"><a href="##batch_desc">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</a></li>
 			<cfif attributes.what EQ "img" OR session.thefileid CONTAINS "-img">
 				<li tabindex="1"><a href="##batch_xmp">XMP Description</a></li>
 				<li tabindex="2"><a href="##iptc_contact">IPTC Contact</a></li>
@@ -43,19 +43,19 @@
 				<li tabindex="5"><a href="##iptc_status">IPTC Status</a></li>
 				<li tabindex="6"><a href="##iptc_origin">Origin</a></li>
 			</cfif>
-			<cfif cs.tab_labels><li tabindex="7"><a href="##batch_labels">#defaultsObj.trans("labels")#</a></li></cfif>
-			<!--- <li tabindex="8"><a href="##batch_custom">#defaultsObj.trans("custom_fields_header")#</a></li> --->
+			<cfif cs.tab_labels><li tabindex="7"><a href="##batch_labels">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li></cfif>
+			<!--- <li tabindex="8"><a href="##batch_custom">#myFusebox.getApplicationData().defaults.trans("custom_fields_header")#</a></li> --->
 		</ul>
 		<!--- Descriptions & Keywords --->
 		<div id="batch_desc">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<cfloop query="qry_langs">
 					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
+						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
 						<td class="td2" width="100%"><textarea name="<cfif what EQ "doc">file<cfelseif what EQ "vid">vid<cfelseif what EQ "img">img<cfelseif what EQ "aud">aud<cfelseif what EQ "all">all</cfif>_desc_#lang_id#" class="text" rows="2" cols="50"<cfif attributes.what EQ "img"> onchange="javascript:document.form#attributes.file_id#.iptc_content_description_#lang_id#.value = document.form#attributes.file_id#.img_desc_#lang_id#.value"</cfif>></textarea></td>
 					</tr>
 					<tr>
-						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
+						<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
 						<td class="td2" width="100%"><textarea name="<cfif what EQ "doc">file<cfelseif what EQ "vid">vid<cfelseif what EQ "img">img<cfelseif what EQ "aud">aud<cfelseif what EQ "all">all</cfif>_keywords_#lang_id#" class="text" rows="2" cols="50"<cfif attributes.what EQ "img"> onchange="javascript:document.form#attributes.file_id#.iptc_content_keywords_#lang_id#.value = document.form#attributes.file_id#.img_keywords_#lang_id#.value"</cfif>></textarea></td>
 					</tr>
 				</cfloop>
@@ -90,7 +90,7 @@
 		<!--- Labels --->
 		<cfif cs.tab_labels>
 			<div id="batch_labels" style="min-height:200px;">
-				<strong>Choose #defaultsObj.trans("labels")#</strong><br />
+				<strong>Choose #myFusebox.getApplicationData().defaults.trans("labels")#</strong><br />
 				<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="batch_labels" multiple="multiple">
 					<option value=""></option>
 					<cfloop query="qry_labels">
@@ -105,7 +105,7 @@
 		<!--- <div id="batch_custom"></div> --->
 	</div>
 	<!--- Submit Button --->
-	<div id="updatebatch" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+	<div id="updatebatch" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 	</form>
 	<!--- Activate the Tabs --->
 	<script language="JavaScript" type="text/javascript">
@@ -127,7 +127,7 @@
 				url: url,
 			   	data: items,
 			   	success: function(){
-			   		$("##updatebatch").html('#JSStringFormat(defaultsObj.trans("batch_done"))#');
+			   		$("##updatebatch").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("batch_done"))#');
 					$("##updatebatch").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 			   	}
 			});

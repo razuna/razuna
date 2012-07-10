@@ -43,9 +43,9 @@
 		<tr>
 			<td colspan="4">
 				<div style="float:left;padding-top:3px;">
-					#defaultsObj.trans("show_only")#
+					#myFusebox.getApplicationData().defaults.trans("show_only")#
 					<select id="showthis" onchange="loadcontent('log_show','#myself#c.log_users&logaction=' + document.getElementById('showthis').options[document.getElementById('showthis').selectedIndex].value);">
-						<option selected="true" value="0">#defaultsObj.trans("action")#</option>
+						<option selected="true" value="0">#myFusebox.getApplicationData().defaults.trans("action")#</option>
 						<option value="0">-------</option>
 						<option value="login">Login</option>
 						<option value="error">Error</option>
@@ -54,24 +54,24 @@
 						<option value="add">Add</option>
 						<option value="update">Update</option>
 					</select>
-					<a href="##" onclick="loadcontent('log_show','#myself#c.log_users');">#defaultsObj.trans("reset")#</a>
+					<a href="##" onclick="loadcontent('log_show','#myself#c.log_users');">#myFusebox.getApplicationData().defaults.trans("reset")#</a>
 				</div>
 				<div style="float:right;padding-top:9px;">
-					<a href="##" onclick="showsearch();">#defaultsObj.trans("header_search")#</a>
+					<a href="##" onclick="showsearch();">#myFusebox.getApplicationData().defaults.trans("header_search")#</a>
 				</div>
 			</td>
 		</tr>
 		<cfinclude template="dsp_admin_log_backnext.cfm">
 		<tr>
-			<th width="1%" nowrap="nowrap">#defaultsObj.trans("date")#</th>
-			<th width="1%" nowrap="nowrap">#defaultsObj.trans("time")#</th>
-			<th width="100%">#defaultsObj.trans("description")#</th>
-			<th width="1%" nowrap="nowrap">#defaultsObj.trans("action")#</th>
+			<th width="1%" nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("date")#</th>
+			<th width="1%" nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("time")#</th>
+			<th width="100%">#myFusebox.getApplicationData().defaults.trans("description")#</th>
+			<th width="1%" nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("action")#</th>
 		</tr>
 		<!--- Loop over all scheduled log entries in database table --->
 		<cfloop query="qry_log">
 			<tr class="list">
-				<td nowrap="true">#dateformat(log_date, "#defaultsObj.getdateformat()#")#</td>
+				<td nowrap="true">#dateformat(log_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				<td nowrap="true">#TimeFormat(log_timestamp, 'HH:mm:ss')#</td>
 				<td>#log_desc#</td>
 				<td nowrap="true">#log_action#</td>

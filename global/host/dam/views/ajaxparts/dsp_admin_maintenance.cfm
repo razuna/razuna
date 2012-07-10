@@ -32,12 +32,12 @@
 		<div style="background-color:yellow;font-weight:bold;height:40px;padding:10px;">During a rebuild of the search index or while conducting a Backup operation your server might become unresponsive to any requests! Do these operation when no one is accessing your server.</div>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("admin_maintenance_searchsync")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</th>
 			</tr>
 			<tr class="list">
-				<td>#defaultsObj.trans("admin_maintenance_desc")#
+				<td>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_desc")#
 				<br /><br />
-				<div id="thea"><a href="##" onclick="doreindexassets();">#defaultsObj.trans("admin_maintenance_do")#</a></div>
+				<div id="thea"><a href="##" onclick="doreindexassets();">#myFusebox.getApplicationData().defaults.trans("admin_maintenance_do")#</a></div>
 				<br />
 				</td>
 			</tr>
@@ -78,12 +78,12 @@ Please choose the database cache to flush:<br />
 		<!--- Database Cleaner --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("admin_maintenance_db_cleaner")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner")#</th>
 			</tr>
 			<tr class="list">
 				<td>
-				#defaultsObj.trans("admin_maintenance_db_cleaner_desc")#<br /><br />
-				<a href="##" onclick="docleaner();">#defaultsObj.trans("admin_maintenance_db_cleaner_link")#</a>
+				#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner_desc")#<br /><br />
+				<a href="##" onclick="docleaner();">#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner_link")#</a>
 				<br /><br />
 				</td>
 			</tr>
@@ -91,10 +91,10 @@ Please choose the database cache to flush:<br />
 		<!--- Backup --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("admin_maintenance_backup_desc")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_backup_desc")#</th>
 			</tr>
 			<tr class="list">
-				<td>#defaultsObj.trans("admin_maintenance_backup_desc2")#<br /><br />
+				<td>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_backup_desc2")#<br /><br />
 				Save to: <input type="radio" name="tofiletype" id="tofiletype" value="sql" checked="checked"> SQL file <input type="radio" name="tofiletype" id="tofiletype" value="xml"> XML file <input type="button" name="backup" value="Export Now" class="button" onclick="dobackup();" style="margin-left:30px;"><div id="backup_progress"></div><div id="backup_dummy"></div></td>
 			</tr>
 		</table>

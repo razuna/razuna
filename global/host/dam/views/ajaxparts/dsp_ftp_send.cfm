@@ -38,49 +38,49 @@
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<cfif attributes.frombasket EQ "T">
 		<tr>
-			<td colspan="2">#defaultsObj.trans("basket_email_send_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("basket_email_send_desc")#</td>
 		</tr>
 	</cfif>
 	<tr>
-		<td>#defaultsObj.trans("ftp_server")#</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("ftp_server")#</td>
 		<td><input type="text" name="ftp_server" id="ftp_server" size="60" value="#session.ftp_server#"></td>
 	</tr>
 	<tr>
-		<td>#defaultsObj.trans("username")#</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("username")#</td>
 		<td><input type="text" name="ftp_user" id="ftp_user" size="60" value="#session.ftp_user#"></td>
 	</tr>
 	<tr>
-		<td>#defaultsObj.trans("password")#</td>
+		<td>#myFusebox.getApplicationData().defaults.trans("password")#</td>
 		<td><input type="password" name="ftp_pass" id="ftp_pass" size="60"></td>
 	</tr>
 	<tr>
-		<td nowrap="true" style="padding-bottom:15px;">#defaultsObj.trans("ftp_passive")#</td>
-		<td><input name="ftp_passive" type="radio" value="no" checked="true">#defaultsObj.trans("no")# <input name="ftp_passive" type="radio" value="yes">#defaultsObj.trans("yes")#</td>
+		<td nowrap="true" style="padding-bottom:15px;">#myFusebox.getApplicationData().defaults.trans("ftp_passive")#</td>
+		<td><input name="ftp_passive" type="radio" value="no" checked="true">#myFusebox.getApplicationData().defaults.trans("no")# <input name="ftp_passive" type="radio" value="yes">#myFusebox.getApplicationData().defaults.trans("yes")#</td>
 	</tr>
 	<cfif attributes.frombasket EQ "F">
 		<!--- Videos --->
 		<cfif attributes.thetype EQ "vid">
 			<tr>
-				<td width="1%" nowrap="nowrap" valign="top">#defaultsObj.trans("format")#</td>
+				<td width="1%" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("format")#</td>
 				<td>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- The Original video --->
 						<input type="hidden" name="artofimage" id="artofimage" value="">
 						<tr>
 							<td width="1%"><input type="checkbox" name="artofimage" id="artofimage" value="video" checked="true" /></td>
-							<td width="100%"><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.vid_extension)# (#defaultsObj.converttomb("#qry_asset.vlength#")# MB) (#qry_asset.vwidth#x#qry_asset.vheight# pixel)</a></td>
+							<td width="100%"><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.vlength#")# MB) (#qry_asset.vwidth#x#qry_asset.vheight# pixel)</a></td>
 						</tr>
 						<!--- The preview video
 						<tr>
 							<td><input type="checkbox" name="artofimage" value="video_preview"/></td>
-							<td><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">#defaultsObj.trans("preview")# #ucase(qry_asset.vid_extension)# (#defaultsObj.converttomb("#qry_asset.vprevlength#")# MB) (#qry_asset.vid_preview_width#x#qry_asset.vid_preview_heigth# pixel)</a></td>
+							<td><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.vprevlength#")# MB) (#qry_asset.vid_preview_width#x#qry_asset.vid_preview_heigth# pixel)</a></td>
 						</tr> --->
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>
 						<cfloop query="qry_related">
 							<tr>
 								<td><input type="checkbox" name="artofimage" id="artofimage" value="#vid_id#"/></td>
-								<td><a href="##" onclick="clickcbk('sendftpform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(vid_extension)# #defaultsObj.converttomb("#vlength#")# MB (#vid_width#x#vid_height# pixel)</a></td>
+								<td><a href="##" onclick="clickcbk('sendftpform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_width#x#vid_height# pixel)</a></td>
 							</tr>
 							<cfset thecounter = thecounter + 1>
 						</cfloop>
@@ -90,25 +90,25 @@
 		<!--- Get related images --->
 		<cfelseif attributes.thetype EQ "img">
 			<tr>
-				<td width="1%" nowrap="nowrap" valign="top">#defaultsObj.trans("format")#</td>
+				<td width="1%" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("format")#</td>
 				<td>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- Thumbnail --->
 						<tr>
 							<td width="1%"><input type="checkbox" name="artofimage" id="artofimage" value="thumb" checked="true" /></td>
-							<td width="100%"><a href="##" onclick="clickcbk('sendftpform','artofimage',0)" style="text-decoration:none;">#defaultsObj.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#defaultsObj.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)</a></td>
+							<td width="100%"><a href="##" onclick="clickcbk('sendftpform','artofimage',0)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)</a></td>
 						</tr>
 						<!--- Original --->
 						<tr>
 							<td><input type="checkbox" name="artofimage" id="artofimage" value="original"/></td>
-							<td><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.img_extension)# (#defaultsObj.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
+							<td><a href="##" onclick="clickcbk('sendftpform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
 						</tr>
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>
 						<cfloop query="qry_related">
 							<tr>
 								<td><input type="checkbox" name="artofimage" id="artofimage" value="#img_id#"/></td>
-								<td><a href="##" onclick="clickcbk('sendftpform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(img_extension)# #defaultsObj.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</a></td>
+								<td><a href="##" onclick="clickcbk('sendftpform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</a></td>
 							</tr>
 							<cfset thecounter = thecounter + 1>
 						</cfloop>
@@ -118,21 +118,21 @@
 		<!--- Get related audios --->
 		<cfelseif attributes.thetype EQ "aud">
 			<tr>
-				<td width="1%" nowrap="nowrap" valign="top">#defaultsObj.trans("format")#</td>
+				<td width="1%" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("format")#</td>
 				<td>
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- The Original --->
 						<input type="hidden" name="artofimage" value="">
 						<tr>
 							<td width="1%"><input type="checkbox" name="artofimage" value="audio"/></td>
-							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.aud_extension)# (#defaultsObj.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
+							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
 						</tr>
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>
 						<cfloop query="qry_related">
 							<tr>
 								<td><input type="checkbox" name="artofimage" value="#aud_id#"/></td>
-								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(aud_extension)# #defaultsObj.converttomb("#aud_size#")# MB</a></td>
+								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB</a></td>
 							</tr>
 							<cfset thecounter = thecounter + 1>
 						</cfloop>
@@ -141,7 +141,7 @@
 			</tr>
 		</cfif>
 		<tr>
-			<td valign="top">#defaultsObj.trans("attachment")#</td>
+			<td valign="top">#myFusebox.getApplicationData().defaults.trans("attachment")#</td>
 			<td>
 				<table border="0" cellpadding="0" cellspacing="0" class="gridno">
 					<tr>
@@ -153,7 +153,7 @@
 		</tr>
 	</cfif>
 	<tr>
-		<td colspan="2" align="right"><input type="button" name="submitbutton" id="submitbutton" value="#defaultsObj.trans("button_show_ftp")#" class="button" onclick="loadftpsite();"></td>
+		<td colspan="2" align="right"><input type="button" name="submitbutton" id="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_show_ftp")#" class="button" onclick="loadftpsite();"></td>
 	</tr>
 </table>
 </form>
@@ -187,7 +187,7 @@
 			   	}
 		   	</cfif>
 		   	// Change Button
-		   	document.getElementById('submitbutton').value='#defaultsObj.trans("please_wait")#...(sometime minutes)';
+		   	document.getElementById('submitbutton').value='#myFusebox.getApplicationData().defaults.trans("please_wait")#...(sometime minutes)';
 	    	// Load the FTP site
 			<cfif attributes.frombasket NEQ "T">
 				// Submit the values so we put them into sessions

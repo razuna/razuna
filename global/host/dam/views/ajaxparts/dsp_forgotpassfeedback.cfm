@@ -27,12 +27,12 @@
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		<cfif attributes.emailnotfound EQ "T">
 			<tr>
-		        <td class="alert">#defaultsObj.trans("errorretrievingpassword")#</td>
+		        <td class="alert">#myFusebox.getApplicationData().defaults.trans("errorretrievingpassword")#</td>
 			</tr>
 		</cfif>
 		<cfif attributes.passsend EQ "T">
 			<tr>
-		        <td class="alert">#defaultsObj.trans("passwordsent")#</td>
+		        <td class="alert">#myFusebox.getApplicationData().defaults.trans("passwordsent")#</td>
 			</tr>
 		</cfif>
 	</table>

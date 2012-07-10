@@ -37,7 +37,7 @@ Page output starts here
 	</span>
 	<cfif attributes.shared EQ "T">
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("share_header_login")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("share_header_login")#</span>
 		<br />
 		<br />
 		<form action="#self#" method="post" name="form_login_<cfif attributes.wid EQ 0>share<cfelse>widget</cfif>" id="form_login_<cfif attributes.wid EQ 0>share<cfelse>widget</cfif>">
@@ -48,7 +48,7 @@ Page output starts here
 		    <!--- If this is a normal group access login --->
 		    <cfif attributes.perm_password EQ "F">
 			    <tr>
-			        <td width="100%" nowrap>#defaultsObj.trans("username")#</td>
+			        <td width="100%" nowrap>#myFusebox.getApplicationData().defaults.trans("username")#</td>
 				</tr>
 				<tr>
 					<td width="100%" nowrap style="padding-bottom:10px;">
@@ -57,7 +57,7 @@ Page output starts here
 					</td>
 			    </tr>
 			    <tr>
-			        <td>#defaultsObj.trans("password")#</td>
+			        <td>#myFusebox.getApplicationData().defaults.trans("password")#</td>
 				</tr>
 				<tr>
 			        <td>
@@ -66,7 +66,7 @@ Page output starts here
 					</td>
 			    </tr>
 			    <tr>
-			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
+			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="button" /></td>
 			    </tr>
 			     <cfif jr_enable EQ "true">
 				    <tr>
@@ -77,7 +77,7 @@ Page output starts here
 					<tr>
 				        <td style="padding-bottom:10px;">
 							<select name="app_lang" onChange="javascript:changelang('form_login_share');">
-								<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
+								<option value="javascript:void();" selected>#myFusebox.getApplicationData().defaults.trans("changelang")#</option>
 								<cfloop query="qry_langs">
 								<option value="#myself##xfa.switchlang#&thelang=#lang_name#&to=share">#lang_name#</option>
 								</cfloop>
@@ -88,10 +88,10 @@ Page output starts here
 		   	<!--- This is protected with a normal password --->
 		   	<cfelse>
 		   		<tr>
-			        <td width="100%" colspan="2" style="padding-bottom:15px;">#defaultsObj.trans("widget_password")#</td>
+			        <td width="100%" colspan="2" style="padding-bottom:15px;">#myFusebox.getApplicationData().defaults.trans("widget_password")#</td>
 				</tr>
 				<tr>
-					<td valign="top">#defaultsObj.trans("password")#</td>
+					<td valign="top">#myFusebox.getApplicationData().defaults.trans("password")#</td>
 				</tr>
 				<tr>
 			        <td>
@@ -100,7 +100,7 @@ Page output starts here
 					</td>
 			    </tr>
 			    <tr>
-			        <td colspan="2" style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
+			        <td colspan="2" style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="button" /></td>
 			    </tr>
 		   	</cfif>
 		</table>
@@ -108,17 +108,17 @@ Page output starts here
 	<cfelse>
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		    <tr>
-		        <td width="100%">#defaultsObj.trans("share_error_nothing")#</td>
+		        <td width="100%">#myFusebox.getApplicationData().defaults.trans("share_error_nothing")#</td>
 			</tr>
 		</table>
 	</cfif>
 </div>
 <div id="login_loading"></div>
 <cfif structkeyexists(attributes,"le")>
-<div id="alertbox" style="padding-top:10px;" class="alert">#defaultsObj.trans("login_error")#</div>
+<div id="alertbox" style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
 </cfif>
 <cfif structkeyexists(attributes,"se")>
-<div id="alertgroupbox" style="padding-top:10px;" class="alert">#defaultsObj.trans("share_error_group")#</div>
+<div id="alertgroupbox" style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("share_error_group")#</div>
 </cfif>
 </cfoutput>
 

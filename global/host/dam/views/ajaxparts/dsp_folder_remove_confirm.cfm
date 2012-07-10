@@ -26,10 +26,10 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
 		<tr>
-			<th>#defaultsObj.trans("remove_folder_confirm")#</th>
+			<th>#myFusebox.getApplicationData().defaults.trans("remove_folder_confirm")#</th>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("remove_folder_confirm_desc")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("remove_folder_confirm_desc")#</td>
 		</tr>
 	</table>
 </cfoutput>

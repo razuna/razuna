@@ -29,14 +29,14 @@
 <cfelse>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("versions_upload")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("versions_upload")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("versions_upload_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("versions_upload_desc")#</td>
 		</tr>
 		<tr class="list">
 			<td><iframe src="#myself#ajax.versions_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#" frameborder="false" scrolling="false" style="border:0px;width:500px;height:35px;" id="ifupload"></iframe></td>
-			<td><input type="button" value="#defaultsObj.trans("versions_upload_button")#" class="button" name="upversion" onclick="vercreate('#attributes.file_id#','#attributes.type#','#attributes.tempid#');return false;"></td>
+			<td><input type="button" value="#myFusebox.getApplicationData().defaults.trans("versions_upload_button")#" class="button" name="upversion" onclick="vercreate('#attributes.file_id#','#attributes.type#','#attributes.tempid#');return false;"></td>
 		</tr>
 	</table>
 	<div id="status" style="width:95%;padding:10px;color:green;background-color:##FFFFE0;display:none;"></div>

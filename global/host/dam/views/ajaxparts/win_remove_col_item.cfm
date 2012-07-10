@@ -28,10 +28,10 @@
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
-			<td style="padding-top:10px;">#defaultsObj.trans("collection_remove_desc")#</td>
+			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("collection_remove_desc")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("collection_remove_button")#" onclick="loadcontent('rightside','#myself#c.collection_item_remove&id=#attributes.id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#attributes.order#');destroywindow(1);" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("collection_remove_button")#" onclick="loadcontent('rightside','#myself#c.collection_item_remove&id=#attributes.id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#attributes.order#');destroywindow(1);" class="button"></td>
 		</tr>
 	</table>
 </cfoutput>
