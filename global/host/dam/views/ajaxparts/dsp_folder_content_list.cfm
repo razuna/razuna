@@ -155,8 +155,8 @@
 			<tr>
 				<th></th>
 				<th></th>
-				<th align="left">#defaultsObj.trans("file_name")#</th> 
-				<th align="left">#defaultsObj.trans("assets_type")#</th>
+				<th align="left">#myFusebox.getApplicationData().defaults.trans("file_name")#</th> 
+				<th align="left">#myFusebox.getApplicationData().defaults.trans("assets_type")#</th>
 			</tr> 
 		</thead> 
 		<tbody> 

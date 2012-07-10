@@ -32,15 +32,15 @@
 			<cfloop query="qry_share_options">
 				<cfif asset_format EQ "thumb" AND asset_dl>
 					<tr>
-						<td><strong>Preview</strong><br>(#attributes.qry_detail.theprevsize# MB) #defaultsObj.trans("format")#: #ucase(attributes.qry_detail.detail.thumb_extension)# #defaultsObj.trans("size")#: #attributes.qry_detail.detail.thumbwidth#x#attributes.qry_detail.detail.thumbheight# pixel</td>
-						<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p">#defaultsObj.trans("download")#</a></td>
+						<td><strong>Preview</strong><br>(#attributes.qry_detail.theprevsize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.thumb_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.thumbwidth#x#attributes.qry_detail.detail.thumbheight# pixel</td>
+						<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p">#myFusebox.getApplicationData().defaults.trans("download")#</a></td>
 					</tr>
 				</cfif>
 				<!--- Show original if allowed --->
 				<cfif asset_format EQ "org" AND asset_dl>
 					<tr>
-						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #defaultsObj.trans("format")#: #ucase(attributes.qry_detail.detail.img_extension)# #defaultsObj.trans("size")#: #attributes.qry_detail.detail.orgwidth#x#attributes.qry_detail.detail.orgheight# pixel</td>
-						<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o">#defaultsObj.trans("download")#</a></td>
+						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.img_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.orgwidth#x#attributes.qry_detail.detail.orgheight# pixel</td>
+						<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a></td>
 					</tr>
 				</cfif>
 			</cfloop>
@@ -54,8 +54,8 @@
 				<cfloop query="qry_share_options">
 					<cfif asset_format EQ theid AND asset_dl>
 						<tr>
-							<td><strong>#ucase(theext)#</strong><br><cfif theilength NEQ ""> (#defaultsObj.converttomb("#theilength#")# MB)</cfif> #defaultsObj.trans("size")#: #theorgwidth#x#theorgheight# pixel</td>
-							<td valign="top"><a href="#myself#c.serve_file&file_id=#theid#&type=img&v=o">#defaultsObj.trans("download")#</a></td>
+							<td><strong>#ucase(theext)#</strong><br><cfif theilength NEQ ""> (#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB)</cfif> #myFusebox.getApplicationData().defaults.trans("size")#: #theorgwidth#x#theorgheight# pixel</td>
+							<td valign="top"><a href="#myself#c.serve_file&file_id=#theid#&type=img&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a></td>
 						</tr>
 					</cfif>
 				</cfloop>
@@ -67,8 +67,8 @@
 			<cfloop query="qry_share_options">
 				<cfif asset_format EQ "org" AND asset_dl>
 					<tr>
-						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #defaultsObj.trans("format")#: #ucase(attributes.qry_detail.detail.vid_extension)# #defaultsObj.trans("size")#: #attributes.qry_detail.detail.vwidth#x#attributes.qry_detail.detail.vheight# pixel</td>
-						<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid">#defaultsObj.trans("download")#</a></td>
+						<td><strong>Original</strong><br>(#attributes.qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.vid_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #attributes.qry_detail.detail.vwidth#x#attributes.qry_detail.detail.vheight# pixel</td>
+						<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid">#myFusebox.getApplicationData().defaults.trans("download")#</a></td>
 					</tr>
 				</Cfif>
 			</cfloop>
@@ -82,8 +82,8 @@
 				<cfloop query="qry_share_options">
 					<cfif asset_format EQ theid AND asset_dl>
 						<tr>
-							<td><strong>#ucase(theext)#</strong><br>(#defaultsObj.converttomb("#theilength#")# MB) #defaultsObj.trans("size")#: #theorgwidth#x#theorgheight# pixel</td>
-							<td valign="top"><a href="#myself#c.serve_file&file_id=#theid#&type=vid&v=o">#defaultsObj.trans("download")#</a></td>
+							<td><strong>#ucase(theext)#</strong><br>(#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB) #myFusebox.getApplicationData().defaults.trans("size")#: #theorgwidth#x#theorgheight# pixel</td>
+							<td valign="top"><a href="#myself#c.serve_file&file_id=#theid#&type=vid&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a></td>
 						</tr>
 					</cfif>
 				</cfloop>
@@ -95,8 +95,8 @@
 			<cfloop query="qry_share_options">
 				<cfif asset_format EQ "org" AND asset_dl>
 					<tr>
-						<td><strong>Original</strong><br>#defaultsObj.trans("format")#: #ucase(attributes.qry_detail.detail.aud_extension)#</td>
-						<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud">#defaultsObj.trans("download")#</a></td>
+						<td><strong>Original</strong><br>#myFusebox.getApplicationData().defaults.trans("format")#: #ucase(attributes.qry_detail.detail.aud_extension)#</td>
+						<td valign="top"><a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud">#myFusebox.getApplicationData().defaults.trans("download")#</a></td>
 					</tr>
 				</cfif>
 			</cfloop>			
@@ -108,8 +108,8 @@
 				<cfloop query="qry_share_options">
 					<cfif asset_format EQ theid AND asset_dl>
 						<tr>
-							<td><strong>#ucase(theext)#</strong><br>(#defaultsObj.converttomb("#theilength#")# MB)</td>
-							<td valign="top"><a href="#myself#c.serve_file&file_id=#theid#&type=aud">#defaultsObj.trans("download")#</a></td>
+							<td><strong>#ucase(theext)#</strong><br>(#myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB)</td>
+							<td valign="top"><a href="#myself#c.serve_file&file_id=#theid#&type=aud">#myFusebox.getApplicationData().defaults.trans("download")#</a></td>
 						</tr>
 					</cfif>
 				</cfloop>

@@ -29,9 +29,7 @@
 <cfif structKeyExists(session, "hostid")>
 	<cfset variables.cachetoken = getcachetoken("settings")>
 <cfelse>
-	<cfset consoleoutput(true)>
 	<cfset variables.cachetoken = createuuid()>
-	<cfset console(variables.cachetoken)>
 </cfif>
 
 <!--- Get all languages for this host for the Settings --->
@@ -1194,20 +1192,6 @@
 	<cfset application.razuna.isp = qry.conf_isp>
 	<cfset application.razuna.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
-	<cfset consoleoutput(true)>
-	<cfset console(application.razuna)>
-</cffunction>
-
-<!--- Load plugin cfcs --->
-<cffunction name="getPluginsCFC" output="false">
-	<!--- Query all active plugins --->
-	<cfquery datasource="#application.razuna.datasource#" name="qrypls">
-	SELECT /* #variables.cachetoken#getconfigdefaultplugins */ p_path, p_cfc_list
-	FROM plugins, ct_plugins_hosts
-	WHERE ct_host_id_r = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
-	</cfquery>
-	
-
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->

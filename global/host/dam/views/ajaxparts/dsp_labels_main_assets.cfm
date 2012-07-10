@@ -27,7 +27,7 @@
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("label")#: #qry_labels_text#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("label")#: #qry_labels_text#</th>
 			</tr>
 			<tr>
 				<td style="border:0px;">
@@ -75,9 +75,9 @@
 									</a>
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_tiff.png" width="16" height="16" border="0" />
-										<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=img','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=img','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									</div>
 									<br /><br />
 									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
@@ -102,10 +102,10 @@
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br>
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- Videos --->
@@ -136,9 +136,9 @@
 									</script>
 									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>								<div style="float:right;padding:6px 0px 0px 0px;">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" width="16" height="16" border="0" />
-										<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=vid','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=vid','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-vid&thetype=#id#-vid');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-vid&thetype=#id#-vid');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									</div>
 									<br /><br />
 									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
@@ -155,10 +155,10 @@
 							<cfelse>					
 								We are still working on the asset "#filename#"...
 								<br /><br>
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>							
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>							
 							</cfif>
 						</div>
 					<!--- Audios --->
@@ -190,9 +190,9 @@
 									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#-all" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
 									<div style="float:right;padding:6px 0px 0px 0px;">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_aud.png" width="16" height="16" border="0" />
-										<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=aud','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#id#&kind=aud','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-aud&thetype=#id#-aud');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-aud&thetype=#id#-aud');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									</div>
 									<br /><br />
 									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
@@ -209,10 +209,10 @@
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br />
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- All other files --->
@@ -262,7 +262,7 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="16" height="16" border="0" />
 										<a href="#myself#c.serve_file&file_id=#id#&type=doc"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
-										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-doc&thetype=#id#-doc');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-doc&thetype=#id#-doc');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a>
 									</div>
 									<br /><br />
 									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a>
@@ -291,10 +291,10 @@
 							<cfelse>
 								We are still working on the asset "#filename#"...
 								<br /><br />
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(date_create, "#defaultsObj.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br /><br />
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=content&folder_id=#folder_id_r#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					</cfif>

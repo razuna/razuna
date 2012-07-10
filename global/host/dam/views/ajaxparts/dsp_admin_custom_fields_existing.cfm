@@ -28,9 +28,9 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<th></th>
-				<th nowrap="true">#defaultsObj.trans("custom_field_type")#</th>
-				<th nowrap="true">#defaultsObj.trans("show_only_for")#</th>
-				<th nowrap="true">#defaultsObj.trans("enabled")#</th>
+				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("custom_field_type")#</th>
+				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("show_only_for")#</th>
+				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("enabled")#</th>
 				<th></th>
 			</tr>
 			<cfoutput query="qry_fields" group="cf_id">
@@ -39,19 +39,19 @@
 					<td width="1%" nowrap="true">#cf_type#</td>
 					<td width="1%" nowrap="true">
 						<cfif cf_show EQ "vid">
-							#defaultsObj.trans("search_for_videos")#
+							#myFusebox.getApplicationData().defaults.trans("search_for_videos")#
 						<cfelseif cf_show EQ "img">
-							#defaultsObj.trans("search_for_images")#
+							#myFusebox.getApplicationData().defaults.trans("search_for_images")#
 						<cfelseif cf_show EQ "aud">
-							#defaultsObj.trans("search_for_audios")#
+							#myFusebox.getApplicationData().defaults.trans("search_for_audios")#
 						<cfelseif cf_show EQ "doc">
-							#defaultsObj.trans("search_for_documents")#
+							#myFusebox.getApplicationData().defaults.trans("search_for_documents")#
 						<cfelse>
-							#defaultsObj.trans("search_for_allassets")#
+							#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#
 						</cfif>
 					</td>
 					<td width="1%" nowrap="true" align="center"><cfif cf_enabled EQ "T"><img src="#dynpath#/global/host/dam/images/checked.png" width="16" height="16" border="0"></cfif></td>
-					<td width="1%" nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=custom_fields&id=#cf_id#&loaddiv=thefields&order=#cf_order#','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
+					<td width="1%" nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=custom_fields&id=#cf_id#&loaddiv=thefields&order=#cf_order#','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 				</tr>
 			</cfoutput>
 		</table>

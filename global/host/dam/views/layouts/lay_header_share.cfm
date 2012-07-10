@@ -43,11 +43,11 @@
 				<img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##searchselection').toggle();">
 			</div>
 			<div id="searchselection" class="ddselection_header">
-				<p><a href="##" onclick="selectsearchtype('all');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#defaultsObj.trans("search_for_allassets")#</a></p>
-				<p><a href="##" onclick="selectsearchtype('img');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_images")#</a></p>
-				<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_documents")#</a></p>
-				<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_videos")#</a></p>
-				<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#defaultsObj.trans("search_for_audios")#</a></p>
+				<p><a href="##" onclick="selectsearchtype('all');"><div id="markall" style="float:left;padding-right:2px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></p>
+				<p><a href="##" onclick="selectsearchtype('img');"><div id="markimg" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</a></p>
+				<p><a href="##" onclick="selectsearchtype('doc');"><div id="markdoc" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</a></p>
+				<p><a href="##" onclick="selectsearchtype('vid');"><div id="markvid" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</a></p>
+				<p><a href="##" onclick="selectsearchtype('aud');"><div id="markaud" style="float:left;padding-right:14px;">&nbsp;</div>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</a></p>
 				<p><hr></p>
 				<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">Help with Search</a></p>
 			</div>
@@ -61,14 +61,14 @@
 		</div> --->
 		<cfif shared.everyone NEQ "T">
 			<div style="width:auto;float:right;padding-top:12px;padding-left:20px;">
-				<a href="#myself#c.share_logout&fid=#attributes.fid#" style="padding-left:10px;padding-right:10px;">#defaultsObj.trans("logoff")#</a>
+				<a href="#myself#c.share_logout&fid=#attributes.fid#" style="padding-left:10px;padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("logoff")#</a>
 			</div>
 		</cfif>
 		<cfif qry_langs.recordcount NEQ 1>
 			<div style="width:auto;float:right;padding-top:8px;padding-left:20px;">
 				<form name="f_lang">
 					<select name="app_lang" size=1 class="text" onChange="javascript:changelang('f_lang');">
-						<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
+						<option value="javascript:void();" selected>#myFusebox.getApplicationData().defaults.trans("changelang")#</option>
 						<cfloop query="qry_langs">
 						<option value="#myself##xfa.switchlang#&thelang=#lang_name#&fid=#session.fid#&to=sharep">#lang_name#</option>
 						</cfloop>

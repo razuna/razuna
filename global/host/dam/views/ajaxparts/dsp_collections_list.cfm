@@ -28,14 +28,14 @@
 		<cfif attributes.folderaccess NEQ "R">
 			<tr>
 				<th width="100%" colspan="6">
-					<div style="float:left;height:30px;"><a href="##" onclick="showwindow('#myself#c.saveascollection_form&folder_id=#attributes.folder_id#&coladd=T','#defaultsObj.trans("collection_create")#',600,1);">#defaultsObj.trans("collection_create")#</a><cfif attributes.folderaccess EQ "X"> | <a href="##" onclick="showwindow('#myself#c.folder_new&theid=#qry_folder.folder_id#&level=#qry_folder.folder_level#&rid=#qry_folder.rid#&iscol=#qry_folder.folder_is_collection#','#defaultsObj.trans("folder_new")#',750,1);return false;">#defaultsObj.trans("folder_new")#</a></cfif></div>
+					<div style="float:left;height:30px;"><a href="##" onclick="showwindow('#myself#c.saveascollection_form&folder_id=#attributes.folder_id#&coladd=T','#myFusebox.getApplicationData().defaults.trans("collection_create")#',600,1);">#myFusebox.getApplicationData().defaults.trans("collection_create")#</a><cfif attributes.folderaccess EQ "X"> | <a href="##" onclick="showwindow('#myself#c.folder_new&theid=#qry_folder.folder_id#&level=#qry_folder.folder_level#&rid=#qry_folder.rid#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("folder_new")#',750,1);return false;">#myFusebox.getApplicationData().defaults.trans("folder_new")#</a></cfif></div>
 				</th>
 			</tr>
 		</cfif>
 		<tr>
-			<td nowrap="true" width="50%"><b>#defaultsObj.trans("header_collection_name")#</b></td>
-			<td nowrap="true" width="500%"><b>#defaultsObj.trans("description")#</b></td>
-			<td nowrap="true" align="center" width="1%"><b>#defaultsObj.trans("date_changed")#</b></td>
+			<td nowrap="true" width="50%"><b>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</b></td>
+			<td nowrap="true" width="500%"><b>#myFusebox.getApplicationData().defaults.trans("description")#</b></td>
+			<td nowrap="true" align="center" width="1%"><b>#myFusebox.getApplicationData().defaults.trans("date_changed")#</b></td>
 			<cfif attributes.folderaccess EQ "X">
 				<td></td>
 			</cfif>
@@ -51,9 +51,9 @@
 						</cfif>
 					</cfloop>
 				</td>
-				<td valign="top" align="center">#dateformat(change_date, "#defaultsObj.getdateformat()#")#</td>
+				<td valign="top" align="center">#dateformat(change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				<cfif attributes.folderaccess EQ "X">
-					<td align="center" width="1%" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&loaddiv=#kind#&folder_id=#folder_id#','#defaultsObj.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+					<td align="center" width="1%" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&loaddiv=#kind#&folder_id=#folder_id#','#myFusebox.getApplicationData().defaults.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 				</cfif>
 			</tr>
 		</cfloop>

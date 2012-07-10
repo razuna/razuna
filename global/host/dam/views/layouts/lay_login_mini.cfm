@@ -28,7 +28,7 @@
 	    #body#
 	  	<div style="padding-left:10px;">
 	  		<cfif NOT application.razuna.isp>
-				<a href="http://www.razuna.com" target="_blank">Razuna</a> #settingsObj.getconfig("version")#
+				<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#
 				<br>Licensed under <a href="#dynpath#/licenses/agpl.txt" target="_blank">AGPL</a>
 			<br>
 			</cfif>

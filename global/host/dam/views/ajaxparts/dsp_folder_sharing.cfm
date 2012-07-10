@@ -37,17 +37,17 @@
 				<!--- Share Options --->
 				<cfif qry_folder.folder_is_collection EQ "F" OR qry_folder.folder_is_collection EQ "">
 					<tr>
-						<th colspan="2">#defaultsObj.trans("share_folder")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("share_folder")#</th>
 					</tr>
 					<tr>
-						<td colspan="2">#defaultsObj.trans("share_folder_desc")#</td>
+						<td colspan="2">#myFusebox.getApplicationData().defaults.trans("share_folder_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_folder_boolean")#</td>
-						<td class="td2"><input type="radio" value="T" name="folder_shared"<cfif qry_folder.folder_shared EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="folder_shared"<cfif qry_folder.folder_shared EQ "F" OR qry_folder.folder_shared EQ ""> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_folder_boolean")#</td>
+						<td class="td2"><input type="radio" value="T" name="folder_shared"<cfif qry_folder.folder_shared EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="folder_shared"<cfif qry_folder.folder_shared EQ "F" OR qry_folder.folder_shared EQ ""> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<tr>
-						<td class="td2" valign="top">#defaultsObj.trans("folder")# URL</td>
+						<td class="td2" valign="top">#myFusebox.getApplicationData().defaults.trans("folder")# URL</td>
 						<td class="td2"><!--- http://#cgi.http_host##replacenocase(cgi.script_name,"/index.cfm","","ALL")#/share/#attributes.theid#/<input type="text" id="folder_name_shared" name="folder_name_shared" size="20" value="#qry_folder.folder_name_shared#"><br /> ---><a href="http://#cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#&v=#createuuid()#" target="_blank">http://#cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#</a></td>
 					</tr>
 					<!--- Download Original --->
@@ -55,16 +55,16 @@
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<th colspan="2">#defaultsObj.trans("share_allow_download_original")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</th>
 					</tr>
 					<tr>
-						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_download_desc")#</td>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_download_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2" nowrap="nowrap" valign="top">#defaultsObj.trans("share_allow_download_original")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#
+						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 						<br><br>
-						<a href="##" onclick="resetdl();return false;">#defaultsObj.trans("share_folder_download_reset")#</a>
+						<a href="##" onclick="resetdl();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 						<div id="reset_dl" style="color:green;font-weight:bold;padding-top:5px;"></div>
 						</td>
 					</tr>
@@ -73,45 +73,45 @@
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<th colspan="2">#defaultsObj.trans("share_allow_commenting")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("share_allow_commenting")#</th>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_allow_commenting")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_comments"<cfif qry_folder.share_comments EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_comments"<cfif qry_folder.share_comments EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_commenting")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_comments"<cfif qry_folder.share_comments EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_comments"<cfif qry_folder.share_comments EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<!--- Upload --->
 					<tr>
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<th colspan="2">#defaultsObj.trans("share_allow_upload")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("share_allow_upload")#</th>
 					</tr>
 					<tr>
-						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_upload_desc")#</td>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_upload_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_allow_upload")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_upload"<cfif qry_folder.share_upload EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_upload"<cfif qry_folder.share_upload EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_upload")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_upload"<cfif qry_folder.share_upload EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_upload"<cfif qry_folder.share_upload EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<!--- Order --->
 					<tr>
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<th colspan="2">#defaultsObj.trans("share_allow_order")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("share_allow_order")#</th>
 					</tr>
 					<tr>
-						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_order_desc")#</td>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_allow_order")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_order"<cfif qry_folder.share_order EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_order"<cfif qry_folder.share_order EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_order"<cfif qry_folder.share_order EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_order"<cfif qry_folder.share_order EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<tr>
-						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_order_email_desc")#</td>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_email_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_allow_order_email")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_email")#</td>
 						<td class="td2">
 							<select data-placeholder="Choose a User" class="chzn-select" style="width:250px;" name="share_order_user">
 								<option value=""></option>
@@ -126,7 +126,7 @@
 		</div>
 		
 		<div style="float:right;padding-top:10px;padding-bottom:10px;">
-			<input type="submit" name="submit" value="#defaultsObj.trans("button_update")#" class="button">
+			<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" class="button">
 			<div id="updatetextshare" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 		</div>
 	</div>

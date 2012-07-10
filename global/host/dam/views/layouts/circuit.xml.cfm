@@ -20,6 +20,8 @@
 	This is the layout for the login screen. We load the index page and within that we load the login layout
 	-->
 	<fuseaction name="lay_loginpage">
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('version')" returnvariable="version" />
   		<include template="lay_login" contentvariable="thecontent" />
 		<!-- <include template="lay_footer" contentvariable="footercontent" /> -->
   		<include template="lay_index" />
@@ -31,6 +33,8 @@
 	<fuseaction name="lay_mainpage">
 		<xfa name="switchlang" value="c.switchlang" />
 		<do action="c.languages" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('version')" returnvariable="version" />
 		<include template="lay_header" contentvariable="headercontent" />
   		<!-- <include template="lay_menu_top" contentvariable="menucontent" /> -->
 		<include template="lay_left" contentvariable="leftcontent" />
@@ -66,6 +70,8 @@
 	Mini: Login Page
 	-->
 	<fuseaction name="lay_loginpage_mini">
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('version')" returnvariable="version" />
   		<include template="lay_login_mini" contentvariable="thecontent" />
   		<include template="lay_index_mini" />
 	</fuseaction>

@@ -37,7 +37,7 @@ Page output starts here
 	</span>
 	<cfif nohost EQ "F">
 		<br />
-		<span class="loginform_header">#defaultsObj.trans("headerlogin")#</span>
+		<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("headerlogin")#</span>
 		<br />
 		<br />
 		<div id="login_feedback">
@@ -46,7 +46,7 @@ Page output starts here
 			<input type="hidden" name="tl" value="t">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
 			    <tr>
-			        <td width="100%" nowrap>#defaultsObj.trans("username")#</td>
+			        <td width="100%" nowrap>#myFusebox.getApplicationData().defaults.trans("username")#</td>
 				</tr>
 				<tr>
 					<td width="100%" nowrap style="padding-bottom:10px;">
@@ -60,7 +60,7 @@ Page output starts here
 					</td>
 			    </tr>
 			    <tr>
-			        <td>#defaultsObj.trans("password")#</td>
+			        <td>#myFusebox.getApplicationData().defaults.trans("password")#</td>
 				</tr>
 				<tr>
 			        <td style="padding-bottom:10px;">
@@ -69,10 +69,10 @@ Page output starts here
 					</td>
 			    </tr>
 			    <tr>
-					<td><input type="checkbox" name="rem_login" id="rem_login" value="T"<cfif structkeyexists(cookie,"loginrem") AND cookie.loginrem EQ "t"> checked="checked"</cfif>> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="color:##000000;text-decoration:none;">#defaultsObj.trans("remember_login")#</a></td>
+					<td><input type="checkbox" name="rem_login" id="rem_login" value="T"<cfif structkeyexists(cookie,"loginrem") AND cookie.loginrem EQ "t"> checked="checked"</cfif>> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="color:##000000;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("remember_login")#</a></td>
 				</tr>
 			    <tr>
-			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_login")#" class="button" /></td>
+			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="button" /></td>
 			    </tr>
 			    <cfif jr_enable EQ "true">
 				    <tr>
@@ -83,7 +83,7 @@ Page output starts here
 					<tr>
 				        <td style="padding-bottom:10px;padding-top:10px;">
 							<select name="app_lang" onChange="javascript:changelang('form_login');">
-								<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
+								<option value="javascript:void();" selected>#myFusebox.getApplicationData().defaults.trans("changelang")#</option>
 								<cfloop query="qry_langs">
 								<option value="#myself##xfa.switchlang#&to=index&thelang=#lang_name#">#lang_name#</option>
 								</cfloop>
@@ -98,7 +98,7 @@ Page output starts here
 				    </tr>
 				</cfif>
 			    <tr>
-					<td nowrap="true"><a href="##" onclick="loadcontent('login_div','#myself##xfa.forgotpass#');$('##alertbox').html('');return false;">#defaultsObj.trans("forgot_password")#</a> | <a href="##" onclick="loadcontent('login_div','#myself##xfa.req_access#');$('##alertbox').html('');return false;">#defaultsObj.trans("request_access")#</a></td>
+					<td nowrap="true"><a href="##" onclick="loadcontent('login_div','#myself##xfa.forgotpass#');$('##alertbox').html('');return false;">#myFusebox.getApplicationData().defaults.trans("forgot_password")#</a> | <a href="##" onclick="loadcontent('login_div','#myself##xfa.req_access#');$('##alertbox').html('');return false;">#myFusebox.getApplicationData().defaults.trans("request_access")#</a></td>
 				</tr>
 			</table>
 			</form>
@@ -111,11 +111,11 @@ Page output starts here
 		</table>
 	</cfif>
 	<cfif attributes.loginerror EQ "T">
-		<div id="alertbox" style="padding-top:10px;" class="alert">#defaultsObj.trans("login_error")#</div>
+		<div id="alertbox" style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
 	</cfif>
 </div>
 <div id="login_loading" style="display:none;text-align:center;padding-top:20px;"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" width="128" height="15" border="0" /></div>
-<!--- <div id="alertbox" style="padding-top:10px;display:none;" class="alert">#defaultsObj.trans("login_error")#</div> --->
+<!--- <div id="alertbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div> --->
 </cfoutput>
 <script type="text/javascript">
 	$('#name').focus();

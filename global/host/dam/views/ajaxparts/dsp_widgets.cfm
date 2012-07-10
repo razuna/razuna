@@ -26,10 +26,10 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th colspan="4">#defaultsObj.trans("header_widget")#</th>
+			<th colspan="4">#myFusebox.getApplicationData().defaults.trans("header_widget")#</th>
 		</tr>
 		<tr>
-			<td colspan="4">#defaultsObj.trans("widget_desc")#</td>
+			<td colspan="4">#myFusebox.getApplicationData().defaults.trans("widget_desc")#</td>
 		</tr>
 		<tr class="list">
 			<td></td>
@@ -38,26 +38,26 @@
 			<cfinclude template="dsp_host_upgrade.cfm">
 		<cfelse>
 			<tr>
-				<td colspan="4" align="right"><input type="button" value="#defaultsObj.trans("widget_new")#" class="button" onclick="showwindow('#myself#c.widget_detail&widget_id=0&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#defaultsObj.trans("widget_new")#',600,1);return false;" /></td>
+				<td colspan="4" align="right"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("widget_new")#" class="button" onclick="showwindow('#myself#c.widget_detail&widget_id=0&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("widget_new")#',600,1);return false;" /></td>
 			</tr>
 			<cfif qry_widgets.recordcount EQ 0>
 				<tr>
-					<td colspan="3">#defaultsObj.trans("widgets_not_found")#</td>
+					<td colspan="3">#myFusebox.getApplicationData().defaults.trans("widgets_not_found")#</td>
 				</tr>
 			<cfelse>
 				<tr>
-					<th nowrap="nowrap">#defaultsObj.trans("widget_name")#</th>
-					<th width="40%">#defaultsObj.trans("description")#</th>
+					<th nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("widget_name")#</th>
+					<th width="40%">#myFusebox.getApplicationData().defaults.trans("description")#</th>
 					<th width="100%" nowrap="nowrap"></th>
 					<th></th>
 				</tr>
 				<cfloop query="qry_widgets">
 					<tr class="list">
-						<td valign="top" nowrap="nowrap"><a href="##" onclick="showwindow('#myself#c.widget_detail&widget_id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#defaultsObj.trans("widget_update")#',600,1);return false;">#widget_name#</a></td>
+						<td valign="top" nowrap="nowrap"><a href="##" onclick="showwindow('#myself#c.widget_detail&widget_id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("widget_update")#',600,1);return false;">#widget_name#</a></td>
 						<td>#widget_description#</td>
 						<td valign="top"><a href="http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=#widget_id#" target="_blank">Show Widget</a></td>
 						<!--- trash --->
-						<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&what=widget&loaddiv=widgets','#defaultsObj.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+						<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&what=widget&loaddiv=widgets','#myFusebox.getApplicationData().defaults.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 					</tr>
 				</cfloop>
 			</cfif>

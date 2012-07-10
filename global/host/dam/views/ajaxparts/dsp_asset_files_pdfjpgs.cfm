@@ -36,7 +36,7 @@
 </cfif>
 <table border="0" cellpadding="0" cellspacing="0" width="100%">
 	<tr>
-		<td align="center"><a name="top"></a>#defaultsObj.trans("pages")#: #qry_pdfjpgs.qry_pdfjpgs.recordcount#</td>
+		<td align="center"><a name="top"></a>#myFusebox.getApplicationData().defaults.trans("pages")#: #qry_pdfjpgs.qry_pdfjpgs.recordcount#</td>
 	</tr>
 	<cfif qry_pdfjpgs.qry_pdfjpgs.recordcount NEQ 1>
 		<tr>

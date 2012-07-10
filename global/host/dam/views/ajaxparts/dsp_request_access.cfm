@@ -24,45 +24,45 @@
 *
 --->
 <cfoutput>
-<span class="loginform_header">#defaultsObj.trans("request_access")#</span>
+<span class="loginform_header">#myFusebox.getApplicationData().defaults.trans("request_access")#</span>
 <br />
 <br />
 <form action="#self#" method="post" id="form_reqaccess" id="form_reqaccess">
 <input type="hidden" name="#theaction#" value="#xfa.submitform#">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
 	    <tr>
-	        <td>#defaultsObj.trans("email")#</td>
+	        <td>#myFusebox.getApplicationData().defaults.trans("email")#</td>
 		</tr>
 		<tr>
 	        <td><input type="text" name="user_email" id="user_email" size="40" /><br><label for="user_email" class="error" style="display:none;">Enter a valid eMail address!</label></td>
 	    </tr>
 	    <tr>
-			<td>#defaultsObj.trans("user_first_name")#*</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("user_first_name")#*</td>
 		</tr>
 		<tr>
 			<td><input type="text" name="user_first_name" id="user_first_name" size="40" class="text"><br><label for="user_first_name" class="error">Enter your Firstname!</label></td>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("user_last_name")#*</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("user_last_name")#*</td>
 		</tr>
 		<tr>
 			<td><input type="text" name="user_last_name" id="user_last_name" size="40" class="text"><br><label for="user_last_name" class="error">Enter your Lastname!</label></td>
 		</tr>
 	    <tr>
-			<td>#defaultsObj.trans("password")#*</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("password")#*</td>
 		</tr>
 		<tr>
 			<td><input type="password" name="user_pass" id="user_pass" size="40" class="text"><br><label for="user_pass" class="error">Enter Password!</label></td>
 		</tr>
 		<tr>
-			<td nowrap="nowrap">#defaultsObj.trans("password_confirm")#*</td>
+			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("password_confirm")#*</td>
 		</tr>
 		<tr>
 			<td><input type="password" name="user_pass_confirm" id="user_pass_confirm" size="40" class="text"><br><label for="user_pass_confirm" class="error">Enter password or password does not match!</label></td>
 		</tr>
 	    
 	    <tr>
-	        <td align="right" style="padding:10px 0px 10px 0px;"><input type="button" name="cancel" value="#defaultsObj.trans("cancel")#" onclick="location.href='#myself##xfa.linkback#'" class="button" /> <input type="submit" name="submit" value="#defaultsObj.trans("request_access")#" class="button" /></td>
+	        <td align="right" style="padding:10px 0px 10px 0px;"><input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="location.href='#myself##xfa.linkback#'" class="button" /> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("request_access")#" class="button" /></td>
 	    </tr>
 	</table>
 </form>

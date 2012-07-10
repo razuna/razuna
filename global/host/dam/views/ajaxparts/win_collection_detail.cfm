@@ -40,11 +40,11 @@
 	<input type="hidden" name="assetids" value="#valuelist(qry_assets.cart_product_id)#">
 	<div id="col_detail#col_id#">
 		<ul>
-			<li><a href="##colassets">#defaultsObj.trans("collection_assets")# (<cfif qry_assets.recordcount EQ "">0<cfelse>#qry_assets.recordcount#</cfif>)</a></li>
+			<li><a href="##colassets">#myFusebox.getApplicationData().defaults.trans("collection_assets")# (<cfif qry_assets.recordcount EQ "">0<cfelse>#qry_assets.recordcount#</cfif>)</a></li>
 			<cfif attributes.folderaccess NEQ "R">
-				<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
-				<li><a href="##settings">#defaultsObj.trans("settings")# & #defaultsObj.trans("share_header")#</a></li>
-				<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("header_widget")#</a></li>
+				<li><a href="##detaildesc">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</a></li>
+				<li><a href="##settings">#myFusebox.getApplicationData().defaults.trans("settings")# & #myFusebox.getApplicationData().defaults.trans("share_header")#</a></li>
+				<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
 			</cfif>
 		</ul>
 		<div id="colassets">
@@ -84,13 +84,13 @@
 												<!--- Original --->
 												<tr>
 													<td><input type="radio" name="artofimage#myid#" value="#myid#-original"<cfif theart EQ "original" OR qry_theimage_related.recordcount EQ 0> checked="true"</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(img_extension)# (#defaultsObj.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 												<!--- Thumbnail --->
 												<cfif link_kind NEQ "url">
 													<tr>
 														<td width="1%"><input type="radio" name="artofimage#myid#" value="#myid#-thumb"<cfif theart EQ "thumb"> checked</cfif> /></td>
-														<td width="100%">#defaultsObj.trans("preview")# #ucase(thumb_extension)# (#thumbwidth#x#thumbheight# pixel)</td>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#thumbwidth#x#thumbheight# pixel)</td>
 													</tr>
 												</cfif>
 											</cfif>
@@ -100,7 +100,7 @@
 											<cfif myid EQ img_group>
 												<tr>
 													<td><input type="radio" name="artofimage#myid#" value="#myid#-#img_id#"<cfif theart EQ img_id> checked</cfif> /></td>
-													<td width="100%">#ucase(img_extension)# #defaultsObj.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</td>
+													<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</td>
 												</tr>
 											</cfif>
 										</cfloop>
@@ -109,7 +109,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- VIDEOS --->
@@ -142,12 +142,12 @@
 												<!--- The Original video --->
 												<tr>
 													<td width="1%"><input type="radio" name="artofvideo#myid#" value="#myid#-video"<cfif theart EQ "video" OR qry_thevideo_related.recordcount EQ 0> checked</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#defaultsObj.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 												<!--- The preview video --->
 												<tr>
 													<td width="1%"><input type="radio" name="artofvideo#myid#" value="#myid#-video_preview"<cfif theart EQ "video_preview"> checked</cfif> /></td>
-													<td width="100%">#defaultsObj.trans("preview")# #ucase(vid_extension)# (#vid_preview_width#x#vid_preview_heigth# pixel)</td>
+													<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(vid_extension)# (#vid_preview_width#x#vid_preview_heigth# pixel)</td>
 												</tr>
 											</cfif>
 										</cfloop>
@@ -156,7 +156,7 @@
 											<cfif myid EQ vid_group>
 												<tr>
 													<td width="1%"><input type="radio" name="artofvideo#myid#" value="#myid#-#vid_id#"<cfif theart EQ vid_id> checked</cfif> /></td>
-													<td width="100%">#ucase(vid_extension)# #defaultsObj.converttomb("#vlength#")# MB (#vwidth#x#vheight# pixel)</td>
+													<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vwidth#x#vheight# pixel)</td>
 												</tr>
 											</cfif>
 										</cfloop>
@@ -165,7 +165,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- AUDIOS --->
@@ -187,7 +187,7 @@
 											<cfif myid EQ aud_id>
 												<tr>
 													<td width="1%"><input type="radio" name="artofaudio#myid#" value="#myid#-audio"<cfif theart EQ "audio" OR qry_theaudio_related.recordcount EQ 0> checked</cfif> /></td>
-													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#defaultsObj.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#)</em></cfif></td>
+													<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em></cfif></td>
 												</tr>
 											</cfif>
 										</cfloop>
@@ -196,7 +196,7 @@
 											<cfif myid EQ aud_group>
 												<tr>
 													<td width="1%"><input type="radio" name="artofaudio#myid#" value="#myid#-#aud_id#"<cfif theart EQ aud_id> checked</cfif> /></td>
-													<td width="100%">#ucase(aud_extension)# (#defaultsObj.converttomb("#aud_size#")# MB)</td>
+													<td width="100%">#ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</td>
 												</tr>
 											</cfif>
 										</cfloop>
@@ -205,7 +205,7 @@
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfcase>
 						<!--- FILES --->
@@ -236,21 +236,21 @@
 								<strong>#filename#</strong>
 								<cfloop query="qry_thefile">
 									<cfif myid EQ file_id AND link_kind EQ "url">
-										<br /><em>(#defaultsObj.trans("link_is_url")#)</em>
+										<br /><em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#)</em>
 									</cfif>
 								</cfloop>
 								</td>
 								<!--- move --->
 								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif col_item_order NEQ 1><cfset moveto=col_item_order - 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_up.gif" width="15" height="15" border="0" align="middle"></a></cfif><cfif col_item_order NEQ qry_assets.recordcount><cfset moveto=col_item_order + 1><a href="##" onclick="colupdate();loadcontent('rightside','#myself##xfa.move#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&currentorder=#col_item_order#&moveto=#moveto#');return false;"><img src="#dynpath#/global/host/dam/images/arrow_down.gif" width="15" height="15" border="0" align="middle"></a></cfif></td>
 								<!--- trash --->
-								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td width="1%" align="center" nowrap="nowrap" valign="top"><cfif attributes.folderaccess EQ "X"><a href="##" onclick="colupdate();showwindow('#myself##xfa.remove#&id=#myid#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#col_item_order#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></cfif></td>
 							</tr>
 						</cfdefaultcase>
 					</cfswitch>
 				</cfloop>
 				<cfif attributes.folderaccess NEQ "R">
 					<tr>
-						<td colspan="5"><div style="float:right;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
+						<td colspan="5"><div style="float:right;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div></td>
 					</tr>
 				</cfif>
 			</table>
@@ -260,10 +260,10 @@
 			<div id="detaildesc">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
-						<th colspan="2">#defaultsObj.trans("header_collection_name")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</th>
 					</tr>
 					<tr>
-						<td>#defaultsObj.trans("header_collection_name")#</td>
+						<td>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
 						<td><input type="text" name="collectionname" style="width:400px;" value="#qry_detail.col_name#"></td>
 					</tr>
 					<tr>
@@ -274,23 +274,23 @@
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<th colspan="2">#defaultsObj.trans("asset_desc")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</th>
 					</tr>
 					<cfloop query="qry_langs">
 					<cfset thisid = lang_id>
 						<tr>
-							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("description")#</td>
+							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</td>
 							<td class="td2" width="100%"><textarea name="col_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_desc#</cfif></cfloop></textarea></td>
 						</tr>
 						<tr>
-							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("keywords")#</td>
+							<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</td>
 							<td class="td2" width="100%"><textarea name="col_keywords_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_detail"><cfif lang_id_r EQ thisid>#col_keywords#</cfif></cfloop></textarea></td>
 						</tr>
 					</cfloop>
 					<!--- Labels --->
 					<cfif cs.tab_labels>
 						<tr>
-							<td>#defaultsObj.trans("labels")#</td>
+							<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 							<td width="100%" nowrap="true" colspan="5">
 								<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_col" onchange="razaddlabels('tags_col','#attributes.col_id#','collection');" multiple="multiple">
 									<option value=""></option>
@@ -298,14 +298,14 @@
 										<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 									</cfloop>
 								</select>
-								<cfif settingsobj.get_label_set().set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+								<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 									<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 								</cfif>
 							</td>
 						</tr>
 					</cfif>
 					<tr>
-						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
+						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div></td>
 					</tr>
 				</table>
 			</div>
@@ -314,14 +314,14 @@
 				<!--- Groups and Permission --->
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<tr>
-						<th width="100%" colspan="2">#defaultsObj.trans("access_for")#</th>
-						<th width="1%" nowrap align="center">#defaultsObj.trans("per_read")#</th>
-						<th width="1%" nowrap align="center">#defaultsObj.trans("per_read_write")#</th>
-						<th width="1%" nowrap align="center">#defaultsObj.trans("per_all")#</th>
+						<th width="100%" colspan="2">#myFusebox.getApplicationData().defaults.trans("access_for")#</th>
+						<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_read")#</th>
+						<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_read_write")#</th>
+						<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_all")#</th>
 					</tr>
 					<tr class="list">
 						<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_0" value="0" <cfif qry_col_groups_zero.grp_id_r EQ 0> checked</cfif> onclick="checkradio(0);"></td>
-						<td width="100%" nowrap class="textbold" style="padding:4px;">#defaultsObj.trans("everybody")#</td>
+						<td width="100%" nowrap class="textbold" style="padding:4px;">#myFusebox.getApplicationData().defaults.trans("everybody")#</td>
 						<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="R" name="per_0" id="per_0"<cfif (qry_col_groups_zero.grp_permission EQ "R") OR (qry_col_groups_zero.grp_permission EQ "")> checked</cfif>></td>
 						<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="W" name="per_0"<cfif qry_col_groups_zero.grp_permission EQ "W"> checked</cfif>></td>
 						<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="X" name="per_0"<cfif qry_col_groups_zero.grp_permission EQ "X"> checked</cfif>></td>
@@ -340,17 +340,17 @@
 				<!--- Share Collection --->
 				<table border="0" cellpadding="0" cellspacing="0" style="width:660px;" class="grid">
 					<tr>
-						<th colspan="2">#defaultsObj.trans("share_folder")#</th>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("share_folder")#</th>
 					</tr>
 					<tr>
-						<td colspan="2">#defaultsObj.trans("share_collection_desc")#</td>
+						<td colspan="2">#myFusebox.getApplicationData().defaults.trans("share_collection_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_collection")#</td>
-						<td class="td2"><input type="radio" value="T" name="col_shared"<cfif qry_detail.col_shared EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="col_shared"<cfif qry_detail.col_shared EQ "F" OR qry_detail.col_shared EQ ""> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_collection")#</td>
+						<td class="td2"><input type="radio" value="T" name="col_shared"<cfif qry_detail.col_shared EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="col_shared"<cfif qry_detail.col_shared EQ "F" OR qry_detail.col_shared EQ ""> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<tr>
-						<td class="td2" valign="top">#defaultsObj.trans("collection")# URL</td>
+						<td class="td2" valign="top">#myFusebox.getApplicationData().defaults.trans("collection")# URL</td>
 						<td class="td2"><!--- http://#cgi.http_host##replacenocase(cgi.script_name,"/index.cfm","","ALL")#/sharec/#attributes.col_id#/<input type="text" id="col_name_shared" name="col_name_shared" size="20" value="#qry_detail.col_name_shared#"><br /> ---><a href="http://#cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#&v=#createuuid()#" target="_blank">http://#cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#</a></td>
 					</tr>
 					<!--- Download Original --->
@@ -358,16 +358,16 @@
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<td colspan="2"><strong>#defaultsObj.trans("share_allow_download_original")#</strong></td>
+						<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_download_desc")#</td>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_download_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2" nowrap="nowrap" valign="top">#defaultsObj.trans("share_allow_download_original")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#
+						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 						<br><br>
-						<a href="##" onclick="resetdl();return false;">#defaultsObj.trans("share_folder_download_reset")#</a>
+						<a href="##" onclick="resetdl();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 						<div id="reset_dl" style="color:green;font-weight:bold;padding-top:5px;"></div>
 						</td>
 					</tr>
@@ -376,45 +376,45 @@
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<td colspan="2"><strong>#defaultsObj.trans("share_allow_commenting")#</strong></td>
+						<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_commenting")#</strong></td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_allow_commenting")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_comments"<cfif qry_detail.share_comments EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_comments"<cfif qry_detail.share_comments EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_commenting")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_comments"<cfif qry_detail.share_comments EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_comments"<cfif qry_detail.share_comments EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<!--- Upload --->
 					<tr>
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<td colspan="2"><strong>#defaultsObj.trans("share_allow_upload")#</strong></td>
+						<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_upload")#</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_upload_desc")#</td>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_upload_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_allow_upload")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_upload"<cfif qry_detail.share_upload EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_upload"<cfif qry_detail.share_upload EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_upload")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_upload"<cfif qry_detail.share_upload EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_upload"<cfif qry_detail.share_upload EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<!--- Order --->
 					<tr>
 						<td colspan="2" class="list"></td>
 					</tr>
 					<tr>
-						<td colspan="2"><strong>#defaultsObj.trans("share_allow_order")#</strong></td>
+						<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_order")#</strong></td>
 					</tr>
 					<tr>
-						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_order_desc")#</td>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_allow_order")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_order"<cfif qry_detail.share_order EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="F" name="share_order"<cfif qry_detail.share_order EQ "F"> checked="true"</cfif>>#defaultsObj.trans("no")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_order"<cfif qry_detail.share_order EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_order"<cfif qry_detail.share_order EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 					</tr>
 					<tr>
-						<td colspan="2" class="td2">#defaultsObj.trans("share_allow_order_email_desc")#</td>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_email_desc")#</td>
 					</tr>
 					<tr>
-						<td class="td2">#defaultsObj.trans("share_allow_order_email")#</td>
+						<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_email")#</td>
 						<td class="td2">
 							<select data-placeholder="Choose a User" class="chzn-select" style="width:250px;" name="share_order_user">
 								<option value=""></option>
@@ -425,7 +425,7 @@
 						</td>
 					</tr>
 					<tr>
-						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div></td>
+						<td colspan="2"><div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div></td>
 					</tr>
 				</table>
 			</div>
@@ -453,7 +453,7 @@
 				url: url,
 			   	data: items,
 			   	success: function(){
-					$("##updatecol").html('#JSStringFormat(defaultsObj.trans("update_collection_done"))#');
+					$("##updatecol").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("update_collection_done"))#');
 					$("##updatecol").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 			   	}
 			});

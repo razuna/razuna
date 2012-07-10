@@ -28,63 +28,63 @@
 		<ul>
 			<!--- If we are a collection show the list of collections else the content of folder --->
 			<cfif attributes.iscol EQ "F">
-				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all');" rel="prefetch prerender">#defaultsObj.trans("folder_content")# (#arraySum(qry_fileTotalAllTypes['cnt'])#)</a></li>
+				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("folder_content")# (#arraySum(qry_fileTotalAllTypes['cnt'])#)</a></li>
 				<cfloop query="qry_fileTotalAllTypes">
 					<cfif qry_fileTotalAllTypes.cnt GT 0>
 						<cfif ext EQ "img">
 							<cfif cs.tab_images>
-								<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img');" rel="prefetch prerender">#defaultsObj.trans("folder_images")# (#cnt#)</a></li>
+								<li><a href="##img" onclick="loadcontent('img','#myself##xfa.fimages#&folder_id=#attributes.folder_id#&kind=img');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("folder_images")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "vid">
 							<cfif cs.tab_videos>
-								<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid');" rel="prefetch">#defaultsObj.trans("folder_videos")# (#cnt#)</a></li>
+								<li><a href="##vid" onclick="loadcontent('vid','#myself##xfa.fvideos#&folder_id=#attributes.folder_id#&kind=vid');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_videos")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "aud">
 							<cfif cs.tab_audios>
-								<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud');" rel="prefetch">#defaultsObj.trans("folder_audios")# (#cnt#)</a></li>
+								<li><a href="##aud" onclick="loadcontent('aud','#myself##xfa.faudios#&folder_id=#attributes.folder_id#&kind=aud');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_audios")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "doc">
 							<cfif cs.tab_doc>
-								<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc');" rel="prefetch">#defaultsObj.trans("folder_word")# (#cnt#)</a></li>
+								<li><a href="##doc" onclick="loadcontent('doc','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=doc');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_word")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "xls">
 							<cfif cs.tab_xls>
-								<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls');" rel="prefetch">#defaultsObj.trans("folder_excel")# (#cnt#)</a></li>
+								<li><a href="##xls" onclick="loadcontent('xls','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=xls');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_excel")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "pdf">
 							<cfif cs.tab_pdf>
-								<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf');" rel="prefetch">#defaultsObj.trans("folder_pdf")# (#cnt#)</a></li>
+								<li><a href="##pdf" onclick="loadcontent('pdf','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=pdf');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_pdf")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 						<cfif ext EQ "other">
 							<cfif cs.tab_other>
-								<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other');" rel="prefetch">#defaultsObj.trans("folder_others")# (#cnt#)</a></li>
+								<li><a href="##other" onclick="loadcontent('other','#myself##xfa.ffiles#&folder_id=#attributes.folder_id#&kind=other');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_others")# (#cnt#)</a></li>
 							</cfif>
 						</cfif>
 					</cfif>
 				</cfloop>
 			<cfelse>
-				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content');" rel="prefetch">#defaultsObj.trans("header_collections")#</a></li>
+				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_collections")#</a></li>
 			</cfif>
 			<!--- If user or admin has folderaccess x --->
 			<cfif attributes.folderaccess EQ "x">
 				<!--- Folder properties --->
-				<li><a href="##properties" onclick="loadcontent('properties','#myself##xfa.fproperties#&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#defaultsObj.trans("folder_properties")#</a></li>
+				<li><a href="##properties" onclick="loadcontent('properties','#myself##xfa.fproperties#&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_properties")#</a></li>
 				<cfif attributes.iscol EQ "F">
 					<!--- Sharing --->
-					<li><a href="##sharing" onclick="loadcontent('sharing','#myself##xfa.fsharing#&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#defaultsObj.trans("tab_sharing_options")#</a></li>
+					<li><a href="##sharing" onclick="loadcontent('sharing','#myself##xfa.fsharing#&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
 					<!--- Widgets --->
-					<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');" rel="prefetch">#defaultsObj.trans("header_widget")#</a></li>
+					<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
 				</cfif>
 			</cfif>
 		</ul>
 		
-		<div id="content">#defaultsObj.loadinggif("#dynpath#")#</div>
+		<div id="content">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		<cfif attributes.iscol EQ "F">
 			<cfloop query="qry_fileTotalAllTypes">
 				<cfif qry_fileTotalAllTypes.cnt GT 0>
@@ -115,14 +115,14 @@
 		<!--- If user or admin has folderaccess x --->
 		<cfif attributes.folderaccess EQ "x">
 			<!--- Properties --->
-			<div id="properties">#defaultsObj.loadinggif("#dynpath#")#</div>
+			<div id="properties">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 			<cfif attributes.iscol EQ "F">
 				<!--- Sharing --->
-				<div id="sharing">#defaultsObj.loadinggif("#dynpath#")#</div>
-				<div id="widgets">#defaultsObj.loadinggif("#dynpath#")#</div>
+				<div id="sharing">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+				<div id="widgets">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 			</cfif>
 		</cfif>
-		<div id="content_search_all" style="display:none;">#defaultsObj.loadinggif("#dynpath#")#</div>
+		<div id="content_search_all" style="display:none;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 	</div>
 
 <script type="text/javascript">

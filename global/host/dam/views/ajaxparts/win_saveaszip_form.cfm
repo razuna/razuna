@@ -30,31 +30,31 @@
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("basket_save_as_zip")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("basket_save_as_zip")#</th>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("name_of_zip")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("name_of_zip")#</td>
 			<td><input type="text" name="zipname" size="40" value="basket-#createuuid('')#">.zip</td>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("save_in_this_folder")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("save_in_this_folder")#</td>
 			<td>#attributes.folder_name#</td>
 		</tr>
 		<tr>
-			<th colspan="2">#defaultsObj.trans("asset_desc")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</th>
 		</tr>
 		<cfloop query="qry_langs">
 			<tr>
-				<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("description")#</td>
+				<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</td>
 				<td class="td2" width="100%"><textarea name="file_desc_#lang_id#" class="text" rows="2" cols="50"></textarea></td>
 			</tr>
 			<tr>
-				<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("keywords")#</td>
+				<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</td>
 				<td class="td2" width="100%"><textarea name="file_keywords_#lang_id#" class="text" rows="2" cols="50"></textarea></td>
 			</tr>
 		</cfloop>
 		<tr>
-			<td colspan="2"><div id="zipupdate" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="save" value="#defaultsObj.trans("button_save")#" class="button" /></div></td>
+			<td colspan="2"><div id="zipupdate" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" /></div></td>
 		</tr>
 	</table>
 	</form>
@@ -72,7 +72,7 @@
 				url: url,
 			   	data: items,
 			   	success: function(){
-			   		$("##zipupdate").html("#JSStringFormat(defaultsObj.trans("save_zip_done"))#");
+			   		$("##zipupdate").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("save_zip_done"))#");
 			   		$("##zipupdate").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 			   	}
 			});

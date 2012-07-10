@@ -24,5 +24,5 @@
 *
 --->
 <cfoutput>
-#defaultsObj.trans("#qry_sched_status#")#
+#myFusebox.getApplicationData().defaults.trans("#qry_sched_status#")#
 </cfoutput>

@@ -30,11 +30,11 @@
 	<form name="grpdamadd" onsubmit="addgrp();return false;">
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("groupnumber_header_new")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</th>
 		</tr>
 		<tr>
 			<td width="100%"><input type="text" size="40" name="grpnew" id="grpnew" /></td>
-			<td width="1%" nowrap="true"><input type="Button" name="Button" value="#defaultsObj.trans("button_add")#" class="button" onclick="javascript:addgrp('ecp');" /></td>
+			<td width="1%" nowrap="true"><input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="javascript:addgrp('ecp');" /></td>
 		</tr>
 	</table>
 	</form>
@@ -42,12 +42,12 @@
 	<div id="grpdamlist">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("group_list")#</th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("group_list")#</th>
 			</tr>
 			<cfloop query="qry_groups">
 				<tr class="list">
 					<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#grp_name#',500,1);return false;">#grp_name#</a> (#usercount# members)</td>
-					<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=groups&id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
+					<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=groups&id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 				</tr>
 			</cfloop>
 		</table>

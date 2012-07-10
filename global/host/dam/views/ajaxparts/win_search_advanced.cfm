@@ -28,7 +28,7 @@
 <cfoutput>
 	<div id="searchadvanced">
 		<ul>
-			<li><a href="##all_assets">#defaultsObj.trans("search_for_allassets")#</a></li>
+			<li><a href="##all_assets">#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</a></li>
 			<li><a href="##adv_files">Documents</a></li>
 			<li><a href="##adv_images">Images</a></li>
 			<li><a href="##adv_videos">Videos</a></li>
@@ -46,8 +46,8 @@
 					<cfset lastyear = #year(now())# - 10>
 					<cfset newyear = #year(now())# + 3>
 					<tr>
-						<td nowrap="true">#defaultsObj.trans("date_created")#</td>
-						<td><select name="on_day" class="text"><option value="">#defaultsObj.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#defaultsObj.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#defaultsObj.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_all');">#defaultsObj.trans("today")#</a></td>
+						<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
+						<td><select name="on_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_all');">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 					</tr>
 					<tr>
 						<td>And/Or</td>
@@ -60,7 +60,7 @@
 					</tr>
 					<tr>
 						<td></td>
-						<td><input type="submit" name="submit" value="#defaultsObj.trans("button_find")#" class="button"></td>
+						<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 					</tr>
 				</table>
 			</form>
@@ -73,22 +73,22 @@
 				<cfset myvar.thetype = "files">
 				<cfinclude template="inc_search_fields.cfm" myvar="#myvar#" />
 				<tr>
-					<td nowrap="true" width="1%">#defaultsObj.trans("search_for_type")#</td>
+					<td nowrap="true" width="1%">#myFusebox.getApplicationData().defaults.trans("search_for_type")#</td>
 					<td>
 						<select name="doctype">
-							<option value="all" selected="selected">#defaultsObj.trans("all_documents")#</option>
-							<option value="doc">#defaultsObj.trans("folder_word")#</option>
-							<option value="xls">#defaultsObj.trans("folder_excel")#</option>
-							<option value="pdf">#defaultsObj.trans("folder_pdf")#</option>
-							<option value="other">#defaultsObj.trans("folder_others")#</option>
+							<option value="all" selected="selected">#myFusebox.getApplicationData().defaults.trans("all_documents")#</option>
+							<option value="doc">#myFusebox.getApplicationData().defaults.trans("folder_word")#</option>
+							<option value="xls">#myFusebox.getApplicationData().defaults.trans("folder_excel")#</option>
+							<option value="pdf">#myFusebox.getApplicationData().defaults.trans("folder_pdf")#</option>
+							<option value="other">#myFusebox.getApplicationData().defaults.trans("folder_others")#</option>
 						</select>
 					</td>
 				</tr>
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
 				<tr>
-					<td nowrap="true">#defaultsObj.trans("date_created")#</td>
-					<td><select name="on_day" class="text"><option value="">#defaultsObj.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#defaultsObj.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#defaultsObj.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_files');">#defaultsObj.trans("today")#</a></td>
+					<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
+					<td><select name="on_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_files');">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 				</tr>
 				<tr>
 					<td>And/Or</td>
@@ -146,7 +146,7 @@
 				
 				<tr>
 					<td></td>
-					<td><input type="submit" name="submit" value="#defaultsObj.trans("button_find")#" class="button"></td>
+					<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 				</tr>
 			</table>
 			</form>
@@ -161,8 +161,8 @@
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
 				<tr>
-					<td nowrap="true">#defaultsObj.trans("date_created")#</td>
-					<td><select name="on_day" class="text"><option value="">#defaultsObj.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#defaultsObj.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#defaultsObj.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_images');">#defaultsObj.trans("today")#</a></td>
+					<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
+					<td><select name="on_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_images');">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 				</tr>
 				<tr>
 					<td>And/Or</td>
@@ -327,7 +327,7 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="submit" value="#defaultsObj.trans("button_find")#" class="button"></td>
+					<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 				</tr>
 			</table>
 			</form>
@@ -342,8 +342,8 @@
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
 				<tr>
-					<td nowrap="true">#defaultsObj.trans("date_created")#</td>
-					<td><select name="on_day" class="text"><option value="">#defaultsObj.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#defaultsObj.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#defaultsObj.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_videos');">#defaultsObj.trans("today")#</a></td>
+					<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
+					<td><select name="on_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_videos');">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 				</tr>
 				<tr>
 					<td>And/Or</td>
@@ -356,7 +356,7 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="submit" value="#defaultsObj.trans("button_find")#" class="button"></td>
+					<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 				</tr>
 			</table>
 			</form>
@@ -371,8 +371,8 @@
 				<cfset lastyear = #year(now())# - 10>
 				<cfset newyear = #year(now())# + 3>
 				<tr>
-					<td nowrap="true">#defaultsObj.trans("date_created")#</td>
-					<td><select name="on_day" class="text"><option value="">#defaultsObj.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#defaultsObj.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#defaultsObj.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_audios');">#defaultsObj.trans("today")#</a></td>
+					<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
+					<td><select name="on_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="#theday#">#theday#</option></cfloop></select> <select name="on_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="#themonth#">#themonth#</option></cfloop></select> <select name="on_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_audios');">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 				</tr>
 				<tr>
 					<td>And/Or</td>
@@ -385,7 +385,7 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="submit" value="#defaultsObj.trans("button_find")#" class="button"></td>
+					<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 				</tr>
 			</table>
 			</form>

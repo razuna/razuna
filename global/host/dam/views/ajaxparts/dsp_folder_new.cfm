@@ -36,8 +36,8 @@
 	<div id="folder#attributes.theid#-#attributes.isdetail#" style="width:<cfif attributes.isdetail EQ "T">660px<cfelse>690px</cfif>;padding-bottom:60px;">
 		<cfif attributes.isdetail NEQ "T" AND NOT application.razuna.isp AND attributes.iscol NEQ "T">
 			<ul>
-				<li><a href="##folder_new#attributes.theid#">#defaultsObj.trans("folder_new")#</a></li>
-				<cfif NOT application.razuna.isp><li><a href="##folder_link#attributes.theid#">#defaultsObj.trans("link_folder_header")#</a></li></cfif>
+				<li><a href="##folder_new#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("folder_new")#</a></li>
+				<cfif NOT application.razuna.isp><li><a href="##folder_link#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("link_folder_header")#</a></li></cfif>
 			</ul>
 		</cfif>
 		<div id="folder_new#attributes.theid#">
@@ -45,12 +45,12 @@
 				<!---
 <tr>
 					<th colspan="2">
-						<div style="float:left;"><cfif attributes.isdetail EQ "T">#defaultsObj.trans("folder_properties")#<cfelse>#defaultsObj.trans("folder_new")#</cfif></div>
+						<div style="float:left;"><cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("folder_properties")#<cfelse>#myFusebox.getApplicationData().defaults.trans("folder_new")#</cfif></div>
 					</th>
 				</tr>
 --->
 				<tr>
-					<td><strong>#defaultsObj.trans("folder_name")#</strong></td>
+					<td><strong>#myFusebox.getApplicationData().defaults.trans("folder_name")#</strong></td>
 					<td>
 						<cfif qry_folder.folder_name EQ "My Folder">
 							<input type="hidden" name="folder_name" id="folder_name" value="#qry_folder.folder_name#">
@@ -63,7 +63,7 @@
 				<cfloop query="qry_langs">
 					<cfset thisid = lang_id>
 					<tr>
-						<td valign="top" width="1%" nowrap="true" class="td2">#defaultsObj.trans("description")# #lang_name#</td>
+						<td valign="top" width="1%" nowrap="true" class="td2">#myFusebox.getApplicationData().defaults.trans("description")# #lang_name#</td>
 						<td width="100%" class="td2"><textarea name="folder_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_folder_desc"><cfif thisid EQ #lang_id_r#><cfif folder_desc NEQ "">#folder_desc#</cfif></cfif></cfloop></textarea></td>
 					</tr>
 				</cfloop>
@@ -71,7 +71,7 @@
 				<cfif attributes.isdetail EQ "T">
 					<cfif cs.tab_labels>
 						<tr>
-							<td>#defaultsObj.trans("labels")#</td>
+							<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 							<td width="100%" nowrap="true" colspan="5">
 								<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_folder" onchange="razaddlabels('tags_folder','#attributes.folder_id#','folder');" multiple="multiple">
 									<option value=""></option>
@@ -79,7 +79,7 @@
 										<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 									</cfloop>
 								</select>
-								<cfif settingsobj.get_label_set().set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+								<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 									<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 								</cfif>
 							</td>
@@ -99,14 +99,14 @@
 					<td valign="top" class="td2" style="padding:0;margin:0;">
 						<table width="420" cellpadding="0" cellspacing="0" border="0" class="grid">
 							<tr>
-								<th width="100%" colspan="2">#defaultsObj.trans("access_for")#</th>
-								<th width="1%" nowrap align="center">#defaultsObj.trans("per_read")#</th>
-								<th width="1%" nowrap align="center">#defaultsObj.trans("per_read_write")#</th>
-								<th width="1%" nowrap align="center">#defaultsObj.trans("per_all")#</th>
+								<th width="100%" colspan="2">#myFusebox.getApplicationData().defaults.trans("access_for")#</th>
+								<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_read")#</th>
+								<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_read_write")#</th>
+								<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_all")#</th>
 							</tr>
 							<tr class="list">
 								<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_0" value="0" <cfif qry_folder_groups_zero.grp_id_r EQ 0> checked</cfif> onclick="checkradio(0);"></td>
-								<td width="100%" nowrap class="textbold" style="padding:4px;">#defaultsObj.trans("everybody")#</td>
+								<td width="100%" nowrap class="textbold" style="padding:4px;">#myFusebox.getApplicationData().defaults.trans("everybody")#</td>
 								<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="R" name="per_0" id="per_0"<cfif (qry_folder_groups_zero.grp_permission EQ "R") OR (qry_folder_groups_zero.grp_permission EQ "")> checked</cfif>></td>
 								<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="W" name="per_0"<cfif qry_folder_groups_zero.grp_permission EQ "W"> checked</cfif>></td>
 								<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="X" name="per_0"<cfif qry_folder_groups_zero.grp_permission EQ "X"> checked</cfif>></td>
@@ -133,7 +133,7 @@
 				<cfif attributes.isdetail EQ "T">
 					<tr>
 						<td></td>
-						<td style="padding-bottom:7px;"><input type="checkbox" name="perm_inherit" value="T"> #defaultsObj.trans("group_inherit")#</td>
+						<td style="padding-bottom:7px;"><input type="checkbox" name="perm_inherit" value="T"> #myFusebox.getApplicationData().defaults.trans("group_inherit")#</td>
 					</tr>
 				</cfif>
 			</table>
@@ -143,13 +143,13 @@
 			<div id="folder_link#attributes.theid#">
 				<table border="0" cellpadding="0" cellspacing="0" class="grid" style="width:660px;">
 					<tr>
-						<td>#defaultsObj.trans("link_folder_desc")#</td>
+						<td>#myFusebox.getApplicationData().defaults.trans("link_folder_desc")#</td>
 					</tr>
 					<tr>
 						<td class="td2"><hr></td>
 					</tr>
 					<tr>
-						<td class="td2" width="1%" nowrap="true" style="padding-top:7px;"><strong>#defaultsObj.trans("link_folder_path_header")#</strong></td>
+						<td class="td2" width="1%" nowrap="true" style="padding-top:7px;"><strong>#myFusebox.getApplicationData().defaults.trans("link_folder_path_header")#</strong></td>
 					</tr>
 					<tr>
 						<td class="td2" width="100%">
@@ -163,21 +163,21 @@
 		</cfif>
 		<div style="float:left;padding-top:10px;padding-bottom:10px;">
 			<cfif attributes.isdetail EQ "T" AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder")>
-				<input type="button" name="movefolder" value="#defaultsObj.trans("move_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=movefolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#defaultsObj.trans("move_folder")#',600,1);"> 
+				<input type="button" name="movefolder" value="#myFusebox.getApplicationData().defaults.trans("move_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=movefolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("move_folder")#',600,1);"> 
 			</cfif>
 			<cfif attributes.isdetail EQ "T">
 				<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
-					<input type="button" name="removefolder" value="#defaultsObj.trans("remove_folder")#" class="button" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#defaultsObj.trans("remove_folder")#',400,1);" style="margin-right:20px;">
+					<input type="button" name="removefolder" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" class="button" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("remove_folder")#',400,1);" style="margin-right:20px;">
 				<cfelseif qry_folder.folder_name NEQ "my folder" AND qry_folder.folder_owner EQ session.theuserid>
-					<input type="button" name="removefolder" value="#defaultsObj.trans("remove_folder")#" class="button" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#defaultsObj.trans("remove_folder")#',400,1);" style="margin-right:20px;">
+					<input type="button" name="removefolder" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" class="button" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("remove_folder")#',400,1);" style="margin-right:20px;">
 				</cfif>
 			</cfif>
 			<cfif attributes.isdetail NEQ "T">
-				<input type="button" name="cancel" value="#defaultsObj.trans("cancel")#" onclick="destroywindow(1);return false;" class="button"> 
+				<input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="destroywindow(1);return false;" class="button"> 
 			</cfif>
 		</div>
 		<div style="float:right;padding-top:10px;padding-bottom:10px;">
-			<input type="submit" name="submit" value="<cfif attributes.isdetail EQ "T">#defaultsObj.trans("button_update")#<cfelse>#defaultsObj.trans("button_add")#</cfif>" class="button">
+			<input type="submit" name="submit" value="<cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("button_update")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_add")#</cfif>" class="button">
 			<div id="updatetext" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 		</div>
 	</div>

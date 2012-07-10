@@ -64,7 +64,7 @@
 			url: url,
 		   	data: items,
 		   	success: function(){
-		   		$("##successemail").html('#JSStringFormat(defaultsObj.trans("message_sent"))#');
+		   		$("##successemail").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');
 		   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 		   	}
 		});

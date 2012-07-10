@@ -29,11 +29,11 @@
 		<form name="grpedit" onsubmit="updategrp(#attributes.grp_id#,'#attributes.kind#','#attributes.loaddiv#');return false;">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("groups_edit")#</th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groups_edit")#</th>
 			</tr>
 			<tr>
 				<td width="100%"><input type="text" size="40" name="grpname" id="grpname" value="#qry_detail.grp_name#" tabindex="1" /></td>
-				<td width="1%" nowrap="true"><input type="Button" name="Button" value="#defaultsObj.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></td>
+				<td width="1%" nowrap="true"><input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></td>
 			</tr>
 		</table>
 		</form>

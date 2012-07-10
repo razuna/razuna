@@ -79,7 +79,7 @@
 	</cfif>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<td colspan="4">#defaultsObj.trans("sharing_options_desc")#</td>
+			<td colspan="4">#myFusebox.getApplicationData().defaults.trans("sharing_options_desc")#</td>
 		</tr>
 		<tr>
 			<td colspan="4">
@@ -89,7 +89,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="4">#defaultsObj.trans("sharing_options_desc_2")#</td>
+			<td colspan="4">#myFusebox.getApplicationData().defaults.trans("sharing_options_desc_2")#</td>
 		</tr>
 		<tr>
 			<th></th>
@@ -99,14 +99,14 @@
 		</tr>
 		<cfif attributes.type EQ "img">
 			<tr class="list">
-				<td width="100%">#defaultsObj.trans("preview")# #ucase(thumbext)# (#defaultsObj.converttomb("#thumbsize#")# MB) (#thumbw#x#thumbh# pixel)</td>
+				<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumbext)# (#myFusebox.getApplicationData().defaults.converttomb("#thumbsize#")# MB) (#thumbw#x#thumbh# pixel)</td>
 				<td width="1%" align="center"><input type="checkbox" name="thumb_dl" id="thumb_dl" value="1" onclick="save_share('thumb','#attributes.file_id#','thumb','#attributes.type#','dl','#attributes.file_id#');" <cfif thumbdl>checked</cfif> /></td>
 				<td width="1%" align="center"><input type="checkbox" name="thumb_or" id="thumb_or" value="1" onclick="save_share('thumb','#attributes.file_id#','thumb','#attributes.type#','or','#attributes.file_id#');" <cfif thumbor>checked</cfif> /></td>
 				<td width="1%" align="center"><input type="radio" name="#attributes.file_id#_selected" id="#attributes.file_id#_selected" value="1" onclick="save_share('thumb','#attributes.file_id#','thumb','#attributes.type#','se','#attributes.file_id#');" <cfif thumbsel>checked</cfif> /></td>
 			</tr>
 		</cfif>
 		<tr>
-			<td width="100%">Original<cfif qry_detail.link_kind EQ ""> #ucase(orgext)# (#defaultsObj.converttomb("#orgsize#")# MB) <cfif attributes.type NEQ "aud" AND attributes.type NEQ "doc">(#orgw#x#orgh# pixel)</cfif></cfif><cfif qry_detail.link_kind EQ "url"> <em>(#defaultsObj.trans("link_is_url")#*)</em></cfif></td>
+			<td width="100%">Original<cfif qry_detail.link_kind EQ ""> #ucase(orgext)# (#myFusebox.getApplicationData().defaults.converttomb("#orgsize#")# MB) <cfif attributes.type NEQ "aud" AND attributes.type NEQ "doc">(#orgw#x#orgh# pixel)</cfif></cfif><cfif qry_detail.link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 			<td width="1%" align="center"><input type="checkbox" name="org_dl" id="org_dl" value="1" onclick="save_share('org','#attributes.file_id#','org','#attributes.type#','dl','#attributes.file_id#');" <cfif orgdl>checked</cfif> /></td>
 			<td align="center"><input type="checkbox" name="org_or" id="org_or" value="1" onclick="save_share('org','#attributes.file_id#','org','#attributes.type#','or','#attributes.file_id#');" <cfif orgor>checked</cfif> /></td>
 			<td align="center"><input type="radio" name="#attributes.file_id#_selected" id="#attributes.file_id#_selected" value="1" onclick="save_share('org','#attributes.file_id#','org','#attributes.type#','se','#attributes.file_id#');" <cfif orgsel>checked</cfif> /></td>
@@ -151,7 +151,7 @@
 					</cfif>
 				</cfloop>
 				<tr class="list">
-					<td width="100%">#ucase(thef)# #defaultsObj.converttomb("#thesize#")# MB <cfif attributes.type NEQ "aud">(#thew#x#theh# pixel)</cfif></td>
+					<td width="100%">#ucase(thef)# #myFusebox.getApplicationData().defaults.converttomb("#thesize#")# MB <cfif attributes.type NEQ "aud">(#thew#x#theh# pixel)</cfif></td>
 					<td align="center"><input type="checkbox" name="#theid#_dl" id="#theid#_dl" value="1" onclick="save_share('#theid#','#theid#','#theid#','#attributes.type#','dl','#thegroupid#');" <cfif dl>checked</cfif> /></td>
 					<td align="center"><input type="checkbox" name="#theid#_or" id="#theid#_or" value="1" onclick="save_share('#theid#','#theid#','#theid#','#attributes.type#','or','#thegroupid#');" <cfif order>checked</cfif> /></td>
 					<td align="center"><input type="radio" name="#thegroupid#_selected" id="#thegroupid#_selected" value="1" onclick="save_share('#theid#','#theid#','#theid#','#attributes.type#','se','#thegroupid#');" <cfif selected>checked</cfif> /></td>

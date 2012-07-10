@@ -39,7 +39,7 @@
 	</tr>
 	<tr>
 		<td class="td2" valign="top"></td>
-		<td class="td2" width="100%">#defaultsObj.trans("comma_seperated")#. Scene values are defined at <a href="http://www.newscodes.org" target="_blank">http://www.newscodes.org</a></td>
+		<td class="td2" width="100%">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#. Scene values are defined at <a href="http://www.newscodes.org" target="_blank">http://www.newscodes.org</a></td>
 	</tr>
 	<tr>
 		<td class="td2"><strong>Location</strong></td>
@@ -69,7 +69,7 @@
 	<cfif attributes.folderaccess NEQ "R">
 		<tr>
 			<td colspan="2">
-				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 			</td>
 		</tr>
 	</cfif>

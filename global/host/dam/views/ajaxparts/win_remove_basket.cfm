@@ -28,10 +28,10 @@
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
-			<td style="padding-top:10px;">#defaultsObj.trans("remove_basket_desc")#</td>
+			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("remove_basket_desc")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("delete_basket")#" onclick="emptybasket();" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("delete_basket")#" onclick="emptybasket();" class="button"></td>
 		</tr>
 	</table>
 </cfoutput>

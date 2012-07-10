@@ -26,25 +26,25 @@
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 	<tr>
-		<td colspan="3">#defaultsObj.trans("images_conversion_desc")#</td>
+		<td colspan="3">#myFusebox.getApplicationData().defaults.trans("images_conversion_desc")#</td>
 	</tr>
 	<tr>
-		<th colspan="3">#defaultsObj.trans("images_original")#</th>
+		<th colspan="3">#myFusebox.getApplicationData().defaults.trans("images_original")#</th>
 	</tr>
 	<tr>
-		<td width="1%" nowrap="true">#defaultsObj.trans("file_name")#</td>
+		<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
 		<td width="100%" colspan="2">#qry_detail.detail.img_filename#</td>
 	</tr>
 	<tr>
-		<td width="1%" nowrap="true">#defaultsObj.trans("format")#</td>
+		<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("format")#</td>
 		<td width="100%" colspan="2">#ucase(qry_detail.detail.img_extension)#</td>
 	</tr>
 	<tr>
-		<td width="1%" nowrap="true">#defaultsObj.trans("size")#</td>
+		<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("size")#</td>
 		<td width="100%" colspan="2">#qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel</td>
 	</tr>
 	<tr>
-		<td width="1%" nowrap="true">#defaultsObj.trans("data_size")#</td>
+		<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("data_size")#</td>
 		<td width="100%" colspan="2">#qry_detail.thesize# MB</td>
 	</tr>
 	<tr>
@@ -64,8 +64,8 @@
 		<td width="100%" colspan="2">#qry_xmp.resunit#</td>
 	</tr>
 	<tr>
-		<th colspan="2">#defaultsObj.trans("video_convert_to")#</th>
-		<th>#defaultsObj.trans("size")#</th>
+		<th colspan="2">#myFusebox.getApplicationData().defaults.trans("video_convert_to")#</th>
+		<th>#myFusebox.getApplicationData().defaults.trans("size")#</th>
 	</tr>
 	<cftry>
 		<cfset theaspectratio = #qry_detail.detail.orgwidth# / #qry_detail.detail.orgheight#>
@@ -99,7 +99,7 @@
 		<td><input type="text" size="4" name="convert_width_bmp" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_bmp','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_bmp" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_bmp','form#attributes.file_id#',#theaspectratio#);"></td>
 	</tr>
 	<tr>
-		<td colspan="3"><input type="button" name="convertbutton" value="#defaultsObj.trans("convert_button")#" class="button" onclick="convertimages('form#attributes.file_id#');"> <div id="statusconvert" style="padding:10px;color:green;background-color:##FFFFE0;visibility:hidden;"></div><div id="statusconvertdummy"></div></td>
+		<td colspan="3"><input type="button" name="convertbutton" value="#myFusebox.getApplicationData().defaults.trans("convert_button")#" class="button" onclick="convertimages('form#attributes.file_id#');"> <div id="statusconvert" style="padding:10px;color:green;background-color:##FFFFE0;visibility:hidden;"></div><div id="statusconvertdummy"></div></td>
 	</tr>
 </table>
 </cfoutput>

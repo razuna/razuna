@@ -2,12 +2,6 @@
 <cfset myself = myFusebox.getMyself() />
 <cfset theaction = application.fusebox.fuseactionVariable />
 
-<!--- Set the name of the default datasource --->
-<cfobject component="global.cfc.settings" name="settingsobj">
-
-<!--- Check Config --->
-<cfset settingsObj.getconfigdefault()>
-
 <!--- The WEBROOT --->
 <cfset webroot = rereplacenocase(cgi.PATH_INFO, "[a-z_]+.cfm", "", "ALL")>
 
@@ -97,13 +91,9 @@ WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase
 <cfset session.audtable="#arguments.host_db_prefix_replace#audios">
 <cfset session.imgtable="#arguments.host_db_prefix_replace#images">
 </cfif>
+
 <!--- Cart Session --->
 <cfparam name="session.thecart" default="##createuuid("")##">
-
-<!--- Call the default components which we need on every page. To do this the FB way is quite cubersome --->
-<cfinvoke component="global.cfc.defaults" method="init" returnvariable="defaultsObj">
-	<cfinvokeargument name="dsn" value="##application.razuna.datasource##">
-</cfinvoke>
 
 <cfif StructKeyExists(session, "theuserid") AND session.theuserid NEQ "" AND StructKeyExists(Session, "hostid") AND isnumeric(session.hostid)>
 	<!--- Component : SECURITY : stored in request scope for better performance--->

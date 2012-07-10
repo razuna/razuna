@@ -42,7 +42,7 @@
 					</cfloop>
 				</select>
 				<br /><br />
-				<input type="button" value="#defaultsObj.trans("button_update")#" name="savecomment" class="button" onclick="updatelabel();">
+				<input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" name="savecomment" class="button" onclick="updatelabel();">
 			</td>
 		</tr>
 	</table>

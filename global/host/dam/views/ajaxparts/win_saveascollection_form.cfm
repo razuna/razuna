@@ -36,37 +36,37 @@
 		<tr>
 			<th colspan="2">
 				<cfif NOT structkeyexists(attributes,"coladd")>
-				#defaultsObj.trans("basket_save_as_collection")#
+				#myFusebox.getApplicationData().defaults.trans("basket_save_as_collection")#
 				<cfelse>
-				#defaultsObj.trans("collection_create")#
+				#myFusebox.getApplicationData().defaults.trans("collection_create")#
 				</cfif>
 			</th>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("header_collection_name")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
 			<td><input type="text" name="collectionname" size="50"></td>
 		</tr>
 		<cfif NOT structkeyexists(attributes,"coladd")>
 		<tr>
-			<td>#defaultsObj.trans("save_in_this_folder")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("save_in_this_folder")#</td>
 			<td>#attributes.folder_name#</td>
 		</tr>
 		</cfif>
 		<tr>
-			<th colspan="2">#defaultsObj.trans("asset_desc")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</th>
 		</tr>
 		<cfloop query="qry_langs">
 			<tr>
-				<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("description")#</td>
+				<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</td>
 				<td class="td2" width="100%"><textarea name="col_desc_#lang_id#" class="text" rows="2" cols="50"></textarea></td>
 			</tr>
 			<tr>
-				<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #defaultsObj.trans("keywords")#</td>
+				<td class="td2" valign="top" width="1%" nowrap="true">#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</td>
 				<td class="td2" width="100%"><textarea name="col_keywords_#lang_id#" class="text" rows="2" cols="50"></textarea></td>
 			</tr>
 		</cfloop>
 		<tr>
-			<td colspan="2"><div id="collectionupdate" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="save" value="#defaultsObj.trans("button_save")#" class="button" /></div></td>
+			<td colspan="2"><div id="collectionupdate" style="width:80%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div><div style="float:right;padding:10px;"><input type="submit" name="save" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" /></div></td>
 		</tr>
 	</table>
 	</form>
@@ -89,7 +89,7 @@
 		})
 		function colfeedback() {
 			<cfif NOT structkeyexists(attributes,"coladd")>
-				$("##collectionupdate").html("#JSStringFormat(defaultsObj.trans("save_collection_done"))#");
+				$("##collectionupdate").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("save_collection_done"))#");
 			   	$("##collectionupdate").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 			<cfelse>
 				// Hide Window

@@ -28,10 +28,10 @@
 		This section allows you to customize Razuna to your needs like hiding tabs, or other aspects or it.<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
-		<div>#defaultsObj.trans("header_customization_desc")#<br /><br /><a href="http://wiki.razuna.com/display/ecp/Tenant+Customization" target="_blank">Read the documentation!</a></div>
+		<div>#myFusebox.getApplicationData().defaults.trans("header_customization_desc")#<br /><br /><a href="http://wiki.razuna.com/display/ecp/Tenant+Customization" target="_blank">Read the documentation!</a></div>
 		<form name="form_admin_custom" id="form_admin_custom" method="post" action="#self#?#theaction#=c.admin_customization_save">
 		<input type="hidden" name="folder_redirect" value="#qry_customization.folder_redirect#" >
-		<div id="status_custom_1" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="submit" value="#defaultsObj.trans("save_changes")#" class="button" /></div>
+		<div id="status_custom_1" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
 		<div style="clear:both;"></div>
 		<div><hr /></div>
 		<!--- User --->
@@ -41,29 +41,29 @@
 			</tr>
 			<tr class="list">
 				<td>
-					#defaultsObj.trans("custom_users_desc")#
+					#myFusebox.getApplicationData().defaults.trans("custom_users_desc")#
 					<br /><br />
-					<strong>#defaultsObj.trans("custom_users_redirect")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("custom_users_redirect")#</strong>
 					<br />
-					#defaultsObj.trans("custom_users_redirect_desc")#
+					#myFusebox.getApplicationData().defaults.trans("custom_users_redirect_desc")#
 					<br />
 					<div>
-					<input type="text" name="folder_name" size="25" disabled="true" value="#qry_foldername#" /> <a href="##" onclick="showwindow('#myself#c.admin_customization_choose_folder','#defaultsObj.trans("choose_location")#',600,1);">#defaultsObj.trans("scheduled_uploads_task_folder_cap")#</a>
+					<input type="text" name="folder_name" size="25" disabled="true" value="#qry_foldername#" /> <a href="##" onclick="showwindow('#myself#c.admin_customization_choose_folder','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,1);">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_folder_cap")#</a>
 					<br />
-					<input type="checkbox" name="folder_redirect_off" value="true"> #defaultsObj.trans("custom_users_redirect_off")#
+					<input type="checkbox" name="folder_redirect_off" value="true"> #myFusebox.getApplicationData().defaults.trans("custom_users_redirect_off")#
 					</div>
 					<br />
-					<strong>#defaultsObj.trans("custom_users_myfolder")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("custom_users_myfolder")#</strong>
 					<br />
-					#defaultsObj.trans("custom_users_myfolder_desc")#
+					#myFusebox.getApplicationData().defaults.trans("custom_users_myfolder_desc")#
 					<br />
-					<div><input type="radio" name="myfolder_create" value="true"<cfif qry_customization.myfolder_create> checked="checked"</cfif> />#defaultsObj.trans("enabled")# <input type="radio" name="myfolder_create" value="false"<cfif !qry_customization.myfolder_create> checked="checked"</cfif> />#defaultsObj.trans("disabled")#</div>
+					<div><input type="radio" name="myfolder_create" value="true"<cfif qry_customization.myfolder_create> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("enabled")# <input type="radio" name="myfolder_create" value="false"<cfif !qry_customization.myfolder_create> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("disabled")#</div>
 					<br />
-					<strong>#defaultsObj.trans("custom_users_myfolder_upload")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("custom_users_myfolder_upload")#</strong>
 					<br />
-					#defaultsObj.trans("custom_users_myfolder_upload_desc")#
+					#myFusebox.getApplicationData().defaults.trans("custom_users_myfolder_upload_desc")#
 					<br />
-					<div><input type="radio" name="myfolder_upload" value="true"<cfif qry_customization.myfolder_upload> checked="checked"</cfif> />#defaultsObj.trans("enabled")# <input type="radio" name="myfolder_upload" value="false"<cfif !qry_customization.myfolder_upload> checked="checked"</cfif> />#defaultsObj.trans("disabled")#</div>
+					<div><input type="radio" name="myfolder_upload" value="true"<cfif qry_customization.myfolder_upload> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("enabled")# <input type="radio" name="myfolder_upload" value="false"<cfif !qry_customization.myfolder_upload> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("disabled")#</div>
 					<br />
 				</td>
 			</tr>
@@ -75,19 +75,19 @@
 			</tr>
 			<tr class="list">
 				<td>
-					#defaultsObj.trans("header_customization_design_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_design_desc")#
 					<br /><br />
-					<strong>#defaultsObj.trans("header_customization_design_top_part")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_design_top_part")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_design_top_part_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_design_top_part_desc")#
 					<br />
-					<div><input type="radio" name="show_top_part" value="true"<cfif qry_customization.show_top_part> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="show_top_part" value="false"<cfif !qry_customization.show_top_part> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="show_top_part" value="true"<cfif qry_customization.show_top_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_top_part" value="false"<cfif !qry_customization.show_top_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_design_bottom_part")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_design_bottom_part")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_design_bottom_part_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_design_bottom_part_desc")#
 					<br />
-					<div><input type="radio" name="show_bottom_part" value="true"<cfif qry_customization.show_bottom_part> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="show_bottom_part" value="false"<cfif !qry_customization.show_bottom_part> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="show_bottom_part" value="true"<cfif qry_customization.show_bottom_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_bottom_part" value="false"<cfif !qry_customization.show_bottom_part> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
 				</td>
 			</tr>
@@ -95,47 +95,47 @@
 		<!--- General --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("header_customization_general")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("header_customization_general")#</th>
 			</tr>
 			<tr class="list">
 				<td>
-					#defaultsObj.trans("header_customization_general_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_general_desc")#
 					<br /><br />
-					<strong>#defaultsObj.trans("header_customization_general_twitter")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_general_twitter")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_general_twitter_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_general_twitter_desc")#
 					<br />
-					<div><input type="radio" name="show_twitter" value="true"<cfif qry_customization.show_twitter> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="show_twitter" value="false"<cfif !qry_customization.show_twitter> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="show_twitter" value="true"<cfif qry_customization.show_twitter> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_twitter" value="false"<cfif !qry_customization.show_twitter> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_general_twitter_tab")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_general_twitter_tab")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_general_twitter_tab_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_general_twitter_tab_desc")#
 					<br />
-					<div><input type="radio" name="tab_twitter" value="true"<cfif qry_customization.tab_twitter> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_twitter" value="false"<cfif !qry_customization.tab_twitter> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_twitter" value="true"<cfif qry_customization.tab_twitter> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_twitter" value="false"<cfif !qry_customization.tab_twitter> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_general_fb")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_general_fb")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_general_fb_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_general_fb_desc")#
 					<br />
-					<div><input type="radio" name="show_facebook" value="true"<cfif qry_customization.show_facebook> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="show_facebook" value="false"<cfif !qry_customization.show_facebook> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="show_facebook" value="true"<cfif qry_customization.show_facebook> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="show_facebook" value="false"<cfif !qry_customization.show_facebook> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_general_fb_tab")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_general_fb_tab")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_general_fb_tab_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_general_fb_tab_desc")#
 					<br />
-					<div><input type="radio" name="tab_facebook" value="true"<cfif qry_customization.tab_facebook> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_facebook" value="false"<cfif !qry_customization.tab_facebook> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_facebook" value="true"<cfif qry_customization.tab_facebook> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_facebook" value="false"<cfif !qry_customization.tab_facebook> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_general_raz_blog")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_general_raz_blog")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_general_raz_blog_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_general_raz_blog_desc")#
 					<br />
-					<div><input type="radio" name="tab_razuna_blog" value="true"<cfif qry_customization.tab_razuna_blog> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_razuna_blog" value="false"<cfif !qry_customization.tab_razuna_blog> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_razuna_blog" value="true"<cfif qry_customization.tab_razuna_blog> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_razuna_blog" value="false"<cfif !qry_customization.tab_razuna_blog> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_general_raz_support")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_general_raz_support")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_general_raz_support_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_general_raz_support_desc")#
 					<br />
-					<div><input type="radio" name="tab_razuna_support" value="true"<cfif qry_customization.tab_razuna_support> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_razuna_support" value="false"<cfif !qry_customization.tab_razuna_support> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_razuna_support" value="true"<cfif qry_customization.tab_razuna_support> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_razuna_support" value="false"<cfif !qry_customization.tab_razuna_support> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
 				</td>
 			</tr>
@@ -143,23 +143,23 @@
 		<!--- Explorer --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("header_customization_explorer")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("header_customization_explorer")#</th>
 			</tr>
 			<tr class="list">
 				<td>
-					#defaultsObj.trans("header_customization_explorer_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_desc")#
 					<br /><br />
-					<strong>#defaultsObj.trans("header_customization_explorer_collections")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_collections")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_explorer_collections_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_collections_desc")#
 					<br />
-					<div><input type="radio" name="tab_collections" value="true"<cfif qry_customization.tab_collections> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_collections" value="false"<cfif !qry_customization.tab_collections> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_collections" value="true"<cfif qry_customization.tab_collections> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_collections" value="false"<cfif !qry_customization.tab_collections> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_explorer_labels")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_labels")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_explorer_labels_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_labels_desc")#
 					<br />
-					<div><input type="radio" name="tab_labels" value="true"<cfif qry_customization.tab_labels> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_labels" value="false"<cfif !qry_customization.tab_labels> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_labels" value="true"<cfif qry_customization.tab_labels> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_labels" value="false"<cfif !qry_customization.tab_labels> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
 				</td>
 			</tr>
@@ -167,35 +167,35 @@
 		<!--- Upload --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("header_customization_upload")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("header_customization_upload")#</th>
 			</tr>
 			<tr class="list">
 				<td>
-					#defaultsObj.trans("header_customization_upload_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_upload_desc")#
 					<br /><br />
-					<strong>#defaultsObj.trans("header_customization_upload_from_server")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_server")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_upload_from_server_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_server_desc")#
 					<br />
-					<div><input type="radio" name="tab_add_from_server" value="true"<cfif qry_customization.tab_add_from_server> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_add_from_server" value="false"<cfif !qry_customization.tab_add_from_server> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_add_from_server" value="true"<cfif qry_customization.tab_add_from_server> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_add_from_server" value="false"<cfif !qry_customization.tab_add_from_server> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_upload_from_email")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_email")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_upload_from_email_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_email_desc")#
 					<br />
-					<div><input type="radio" name="tab_add_from_email" value="true"<cfif qry_customization.tab_add_from_email> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_add_from_email" value="false"<cfif !qry_customization.tab_add_from_email> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_add_from_email" value="true"<cfif qry_customization.tab_add_from_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_add_from_email" value="false"<cfif !qry_customization.tab_add_from_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_upload_from_ftp")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_ftp")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_upload_from_ftp_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_ftp_desc")#
 					<br />
-					<div><input type="radio" name="tab_add_from_ftp" value="true"<cfif qry_customization.tab_add_from_ftp> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_add_from_ftp" value="false"<cfif !qry_customization.tab_add_from_ftp> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_add_from_ftp" value="true"<cfif qry_customization.tab_add_from_ftp> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_add_from_ftp" value="false"<cfif !qry_customization.tab_add_from_ftp> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_upload_from_link")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_link")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_upload_from_link_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_upload_from_link_desc")#
 					<br />
-					<div><input type="radio" name="tab_add_from_link" value="true"<cfif qry_customization.tab_add_from_link> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_add_from_link" value="false"<cfif !qry_customization.tab_add_from_link> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_add_from_link" value="true"<cfif qry_customization.tab_add_from_link> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_add_from_link" value="false"<cfif !qry_customization.tab_add_from_link> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
 				</td>
 			</tr>
@@ -203,125 +203,125 @@
 		<!--- Folder View --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("header_customization_folderview")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview")#</th>
 			</tr>
 			<tr class="list">
 				<td>
-					#defaultsObj.trans("header_customization_folderview_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_desc")#
 					<br /><br />
-					<strong>#defaultsObj.trans("header_customization_folderview_tab_images")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_images")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_tab_images_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_images_desc")#
 					<br />
-					<div><input type="radio" name="tab_images" value="true"<cfif qry_customization.tab_images> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_images" value="false"<cfif !qry_customization.tab_images> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_images" value="true"<cfif qry_customization.tab_images> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_images" value="false"<cfif !qry_customization.tab_images> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_tab_videos")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_videos")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_tab_videos_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_videos_desc")#
 					<br />
-					<div><input type="radio" name="tab_videos" value="true"<cfif qry_customization.tab_videos> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_videos" value="false"<cfif !qry_customization.tab_videos> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_videos" value="true"<cfif qry_customization.tab_videos> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_videos" value="false"<cfif !qry_customization.tab_videos> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_tab_audios")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_audios")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_tab_audios_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_audios_desc")#
 					<br />
-					<div><input type="radio" name="tab_audios" value="true"<cfif qry_customization.tab_audios> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_audios" value="false"<cfif !qry_customization.tab_audios> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_audios" value="true"<cfif qry_customization.tab_audios> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_audios" value="false"<cfif !qry_customization.tab_audios> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_tab_other")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_other")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_tab_other_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_other_desc")#
 					<br />
-					<div><input type="radio" name="tab_other" value="true"<cfif qry_customization.tab_other> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_other" value="false"<cfif !qry_customization.tab_other> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_other" value="true"<cfif qry_customization.tab_other> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_other" value="false"<cfif !qry_customization.tab_other> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_tab_pdf")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_pdf")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_tab_pdf_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_pdf_desc")#
 					<br />
-					<div><input type="radio" name="tab_pdf" value="true"<cfif qry_customization.tab_pdf> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_pdf" value="false"<cfif !qry_customization.tab_pdf> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_pdf" value="true"<cfif qry_customization.tab_pdf> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_pdf" value="false"<cfif !qry_customization.tab_pdf> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_tab_doc")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_doc")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_tab_doc_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_doc_desc")#
 					<br />
-					<div><input type="radio" name="tab_doc" value="true"<cfif qry_customization.tab_doc> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_doc" value="false"<cfif !qry_customization.tab_doc> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_doc" value="true"<cfif qry_customization.tab_doc> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_doc" value="false"<cfif !qry_customization.tab_doc> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_tab_xls")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_xls")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_tab_xls_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_xls_desc")#
 					<br />
-					<div><input type="radio" name="tab_xls" value="true"<cfif qry_customization.tab_xls> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_xls" value="false"<cfif !qry_customization.tab_xls> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_xls" value="true"<cfif qry_customization.tab_xls> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_xls" value="false"<cfif !qry_customization.tab_xls> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_select")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_select")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_select_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_select_desc")#
 					<br />
-					<div><input type="radio" name="icon_select" value="true"<cfif qry_customization.icon_select> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_select" value="false"<cfif !qry_customization.icon_select> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_select" value="true"<cfif qry_customization.icon_select> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_select" value="false"<cfif !qry_customization.icon_select> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_refresh")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_refresh")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_refresh_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_refresh_desc")#
 					<br />
-					<div><input type="radio" name="icon_refresh" value="true"<cfif qry_customization.icon_refresh> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_refresh" value="false"<cfif !qry_customization.icon_refresh> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_refresh" value="true"<cfif qry_customization.icon_refresh> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_refresh" value="false"<cfif !qry_customization.icon_refresh> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_show_subfolder")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_show_subfolder")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_show_subfolder_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_show_subfolder_desc")#
 					<br />
-					<div><input type="radio" name="icon_show_subfolder" value="true"<cfif qry_customization.icon_show_subfolder> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_show_subfolder" value="false"<cfif !qry_customization.icon_show_subfolder> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_show_subfolder" value="true"<cfif qry_customization.icon_show_subfolder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_show_subfolder" value="false"<cfif !qry_customization.icon_show_subfolder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_create_subfolder")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_create_subfolder")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_create_subfolder_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_create_subfolder_desc")#
 					<br />
-					<div><input type="radio" name="icon_create_subfolder" value="true"<cfif qry_customization.icon_create_subfolder> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_create_subfolder" value="false"<cfif !qry_customization.icon_create_subfolder> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_create_subfolder" value="true"<cfif qry_customization.icon_create_subfolder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_create_subfolder" value="false"<cfif !qry_customization.icon_create_subfolder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_favorite_folder")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_favorite_folder")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_favorite_folder_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_favorite_folder_desc")#
 					<br />
-					<div><input type="radio" name="icon_favorite_folder" value="true"<cfif qry_customization.icon_favorite_folder> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_favorite_folder" value="false"<cfif !qry_customization.icon_favorite_folder> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_favorite_folder" value="true"<cfif qry_customization.icon_favorite_folder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_favorite_folder" value="false"<cfif !qry_customization.icon_favorite_folder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_search")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_search")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_search_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_search_desc")#
 					<br />
-					<div><input type="radio" name="icon_search" value="true"<cfif qry_customization.icon_search> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_search" value="false"<cfif !qry_customization.icon_search> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_search" value="true"<cfif qry_customization.icon_search> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_search" value="false"<cfif !qry_customization.icon_search> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_print")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_print")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_print_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_print_desc")#
 					<br />
-					<div><input type="radio" name="icon_print" value="true"<cfif qry_customization.icon_print> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_print" value="false"<cfif !qry_customization.icon_print> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_print" value="true"<cfif qry_customization.icon_print> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_print" value="false"<cfif !qry_customization.icon_print> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_rss")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_rss")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_rss_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_rss_desc")#
 					<br />
-					<div><input type="radio" name="icon_rss" value="true"<cfif qry_customization.icon_rss> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_rss" value="false"<cfif !qry_customization.icon_rss> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_rss" value="true"<cfif qry_customization.icon_rss> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_rss" value="false"<cfif !qry_customization.icon_rss> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_word")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_word")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_word_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_word_desc")#
 					<br />
-					<div><input type="radio" name="icon_word" value="true"<cfif qry_customization.icon_word> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_word" value="false"<cfif !qry_customization.icon_word> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_word" value="true"<cfif qry_customization.icon_word> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_word" value="false"<cfif !qry_customization.icon_word> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_metadata_import")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_import")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_metadata_import_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_import_desc")#
 					<br />
-					<div><input type="radio" name="icon_metadata_import" value="true"<cfif qry_customization.icon_metadata_import> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_metadata_import" value="false"<cfif !qry_customization.icon_metadata_import> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_metadata_import" value="true"<cfif qry_customization.icon_metadata_import> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_metadata_import" value="false"<cfif !qry_customization.icon_metadata_import> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_metadata_export")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_export")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_metadata_export_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_metadata_export_desc")#
 					<br />
-					<div><input type="radio" name="icon_metadata_export" value="true"<cfif qry_customization.icon_metadata_export> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_metadata_export" value="false"<cfif !qry_customization.icon_metadata_export> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_metadata_export" value="true"<cfif qry_customization.icon_metadata_export> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_metadata_export" value="false"<cfif !qry_customization.icon_metadata_export> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_folderview_icon_download_folder")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_download_folder")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_folderview_icon_download_folder_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_download_folder_desc")#
 					<br />
-					<div><input type="radio" name="icon_download_folder" value="true"<cfif qry_customization.icon_download_folder> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="icon_download_folder" value="false"<cfif !qry_customization.icon_download_folder> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="icon_download_folder" value="true"<cfif qry_customization.icon_download_folder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="icon_download_folder" value="false"<cfif !qry_customization.icon_download_folder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
 				</td>
 			</tr>
@@ -329,157 +329,157 @@
 		<!--- Asset View --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#defaultsObj.trans("header_customization_assetview")#</th>
+				<th>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview")#</th>
 			</tr>
 			<tr class="list">
 				<td>
-					#defaultsObj.trans("header_customization_assetview_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_desc")#
 					<br /><br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_description_keywords")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_description_keywords")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_description_keywords_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_description_keywords_desc")#
 					<br />
-					<div><input type="radio" name="tab_description_keywords" value="true"<cfif qry_customization.tab_description_keywords> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_description_keywords" value="false"<cfif !qry_customization.tab_description_keywords> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_description_keywords" value="true"<cfif qry_customization.tab_description_keywords> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_description_keywords" value="false"<cfif !qry_customization.tab_description_keywords> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_custom_fields")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_custom_fields")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_custom_fields_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_custom_fields_desc")#
 					<br />
-					<div><input type="radio" name="tab_custom_fields" value="true"<cfif qry_customization.tab_custom_fields> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_custom_fields" value="false"<cfif !qry_customization.tab_custom_fields> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_custom_fields" value="true"<cfif qry_customization.tab_custom_fields> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_custom_fields" value="false"<cfif !qry_customization.tab_custom_fields> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_convert_files")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_convert_files")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_convert_files_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_convert_files_desc")#
 					<br />
-					<div><input type="radio" name="tab_convert_files" value="true"<cfif qry_customization.tab_convert_files> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_convert_files" value="false"<cfif !qry_customization.tab_convert_files> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_convert_files" value="true"<cfif qry_customization.tab_convert_files> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_convert_files" value="false"<cfif !qry_customization.tab_convert_files> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_comments")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_comments")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_comments_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_comments_desc")#
 					<br />
-					<div><input type="radio" name="tab_comments" value="true"<cfif qry_customization.tab_comments> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_comments" value="false"<cfif !qry_customization.tab_comments> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_comments" value="true"<cfif qry_customization.tab_comments> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_comments" value="false"<cfif !qry_customization.tab_comments> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_metadata")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_metadata")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_metadata_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_metadata_desc")#
 					<br />
-					<div><input type="radio" name="tab_metadata" value="true"<cfif qry_customization.tab_metadata> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_metadata" value="false"<cfif !qry_customization.tab_metadata> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_metadata" value="true"<cfif qry_customization.tab_metadata> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_metadata" value="false"<cfif !qry_customization.tab_metadata> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_xmp_description")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_xmp_description")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_xmp_description_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_xmp_description_desc")#
 					<br />
-					<div><input type="radio" name="tab_xmp_description" value="true"<cfif qry_customization.tab_xmp_description> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_xmp_description" value="false"<cfif !qry_customization.tab_xmp_description> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_xmp_description" value="true"<cfif qry_customization.tab_xmp_description> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_xmp_description" value="false"<cfif !qry_customization.tab_xmp_description> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_iptc_contact")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_iptc_contact")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_iptc_contact_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_iptc_contact_desc")#
 					<br />
-					<div><input type="radio" name="tab_iptc_contact" value="true"<cfif qry_customization.tab_iptc_contact> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_iptc_contact" value="false"<cfif !qry_customization.tab_iptc_contact> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_iptc_contact" value="true"<cfif qry_customization.tab_iptc_contact> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_iptc_contact" value="false"<cfif !qry_customization.tab_iptc_contact> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_iptc_contact")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_iptc_contact")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_iptc_contact_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_iptc_contact_desc")#
 					<br />
-					<div><input type="radio" name="tab_iptc_image" value="true"<cfif qry_customization.tab_iptc_image> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_iptc_image" value="false"<cfif !qry_customization.tab_iptc_image> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_iptc_image" value="true"<cfif qry_customization.tab_iptc_image> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_iptc_image" value="false"<cfif !qry_customization.tab_iptc_image> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_iptc_content")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_iptc_content")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_iptc_content_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_iptc_content_desc")#
 					<br />
-					<div><input type="radio" name="tab_iptc_content" value="true"<cfif qry_customization.tab_iptc_content> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_iptc_content" value="false"<cfif !qry_customization.tab_iptc_content> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_iptc_content" value="true"<cfif qry_customization.tab_iptc_content> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_iptc_content" value="false"<cfif !qry_customization.tab_iptc_content> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_iptc_content")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_iptc_content")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_iptc_content_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_iptc_content_desc")#
 					<br />
-					<div><input type="radio" name="tab_iptc_status" value="true"<cfif qry_customization.tab_iptc_status> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_iptc_status" value="false"<cfif !qry_customization.tab_iptc_status> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_iptc_status" value="true"<cfif qry_customization.tab_iptc_status> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_iptc_status" value="false"<cfif !qry_customization.tab_iptc_status> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_origin")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_origin")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_origin_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_origin_desc")#
 					<br />
-					<div><input type="radio" name="tab_origin" value="true"<cfif qry_customization.tab_origin> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_origin" value="false"<cfif !qry_customization.tab_origin> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_origin" value="true"<cfif qry_customization.tab_origin> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_origin" value="false"<cfif !qry_customization.tab_origin> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_versions")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_versions")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_versions_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_versions_desc")#
 					<br />
-					<div><input type="radio" name="tab_versions" value="true"<cfif qry_customization.tab_versions> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_versions" value="false"<cfif !qry_customization.tab_versions> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_versions" value="true"<cfif qry_customization.tab_versions> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_versions" value="false"<cfif !qry_customization.tab_versions> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_sharing_options")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_sharing_options")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_sharing_options_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_sharing_options_desc")#
 					<br />
-					<div><input type="radio" name="tab_sharing_options" value="true"<cfif qry_customization.tab_sharing_options> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_sharing_options" value="false"<cfif !qry_customization.tab_sharing_options> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_sharing_options" value="true"<cfif qry_customization.tab_sharing_options> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_sharing_options" value="false"<cfif !qry_customization.tab_sharing_options> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_preview_images")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_preview_images")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_preview_images_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_preview_images_desc")#
 					<br />
-					<div><input type="radio" name="tab_preview_images" value="true"<cfif qry_customization.tab_preview_images> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_preview_images" value="false"<cfif !qry_customization.tab_preview_images> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_preview_images" value="true"<cfif qry_customization.tab_preview_images> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_preview_images" value="false"<cfif !qry_customization.tab_preview_images> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_additional_renditions")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_additional_renditions")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_additional_renditions_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_additional_renditions_desc")#
 					<br />
-					<div><input type="radio" name="tab_additional_renditions" value="true"<cfif qry_customization.tab_additional_renditions> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_additional_renditions" value="false"<cfif !qry_customization.tab_additional_renditions> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_additional_renditions" value="true"<cfif qry_customization.tab_additional_renditions> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_additional_renditions" value="false"<cfif !qry_customization.tab_additional_renditions> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_tab_history")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_history")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_tab_history_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_history_desc")#
 					<br />
-					<div><input type="radio" name="tab_history" value="true"<cfif qry_customization.tab_history> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="tab_history" value="false"<cfif !qry_customization.tab_history> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="tab_history" value="true"<cfif qry_customization.tab_history> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_history" value="false"<cfif !qry_customization.tab_history> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_button_send_email")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_send_email")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_button_send_email_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_send_email_desc")#
 					<br />
-					<div><input type="radio" name="button_send_email" value="true"<cfif qry_customization.button_send_email> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="button_send_email" value="false"<cfif !qry_customization.button_send_email> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="button_send_email" value="true"<cfif qry_customization.button_send_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_send_email" value="false"<cfif !qry_customization.button_send_email> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_button_send_ftp")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_send_ftp")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_button_send_ftp_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_send_ftp_desc")#
 					<br />
-					<div><input type="radio" name="button_send_ftp" value="true"<cfif qry_customization.button_send_ftp> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="button_send_ftp" value="false"<cfif !qry_customization.button_send_ftp> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="button_send_ftp" value="true"<cfif qry_customization.button_send_ftp> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_send_ftp" value="false"<cfif !qry_customization.button_send_ftp> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_button_basket")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_basket")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_button_basket_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_basket_desc")#
 					<br />
-					<div><input type="radio" name="button_basket" value="true"<cfif qry_customization.button_basket> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="button_basket" value="false"<cfif !qry_customization.button_basket> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="button_basket" value="true"<cfif qry_customization.button_basket> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_basket" value="false"<cfif !qry_customization.button_basket> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_button_add_to_collection")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_add_to_collection")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_button_add_to_collection_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_add_to_collection_desc")#
 					<br />
-					<div><input type="radio" name="button_add_to_collection" value="true"<cfif qry_customization.button_add_to_collection> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="button_add_to_collection" value="false"<cfif !qry_customization.button_add_to_collection> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="button_add_to_collection" value="true"<cfif qry_customization.button_add_to_collection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_add_to_collection" value="false"<cfif !qry_customization.button_add_to_collection> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_button_print")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_print")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_button_print_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_print_desc")#
 					<br />
-					<div><input type="radio" name="button_print" value="true"<cfif qry_customization.button_print> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="button_print" value="false"<cfif !qry_customization.button_print> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="button_print" value="true"<cfif qry_customization.button_print> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_print" value="false"<cfif !qry_customization.button_print> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
 					<!---
-<strong>#defaultsObj.trans("header_customization_assetview_button_move")#</strong>
+<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_move")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_button_move_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_move_desc")#
 					<br />
-					<div><input type="radio" name="button_move" value="true"<cfif qry_customization.button_move> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="button_move" value="false"<cfif !qry_customization.button_move> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="button_move" value="true"<cfif qry_customization.button_move> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_move" value="false"<cfif !qry_customization.button_move> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
-					<strong>#defaultsObj.trans("header_customization_assetview_button_delete")#</strong>
+					<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_delete")#</strong>
 					<br />
-					#defaultsObj.trans("header_customization_assetview_button_delete_desc")#
+					#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_button_delete_desc")#
 					<br />
-					<div><input type="radio" name="button_delete" value="true"<cfif qry_customization.button_delete> checked="checked"</cfif> />#defaultsObj.trans("show")# <input type="radio" name="button_delete" value="false"<cfif !qry_customization.button_delete> checked="checked"</cfif> />#defaultsObj.trans("hide")#</div>
+					<div><input type="radio" name="button_delete" value="true"<cfif qry_customization.button_delete> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_delete" value="false"<cfif !qry_customization.button_delete> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 					<br />
 --->
 				</td>
 			</tr>
 		</table>
 
-		<div id="status_custom_2" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="submit" value="#defaultsObj.trans("save_changes")#" class="button" /></div>
+		<div id="status_custom_2" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
 		</form>
 		<div style="clear:both;"></div>
 		<div id="dummy_maintenance"></div>

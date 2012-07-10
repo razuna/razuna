@@ -85,14 +85,14 @@
 									<input type="checkbox" name="file_id" value="#aud_id#-aud" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#aud_id#-aud") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
-									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#aud_id#&kind=aud','#JSStringFormat(defaultsObj.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#aud_id#-aud&thetype=#aud_id#-aud');flash_footer();return false;" title="#defaultsObj.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+									<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#aud_id#&kind=aud','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#aud_id#-aud&thetype=#aud_id#-aud');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
-										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#aud_id#&thetype=aud','#defaultsObj.trans("send_with_email")#',600,2);return false;" title="#defaultsObj.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#aud_id#&thetype=aud','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#aud_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 								<br>
@@ -100,10 +100,10 @@
 							<cfelse>
 								We are still working on the asset "#aud_name#"...
 								<br /><br>
-								#defaultsObj.trans("date_created")#:<br>
-								#dateformat(aud_create_date, "#defaultsObj.getdateformat()#")# #timeformat(aud_create_date, "HH:mm")#
+								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+								#dateformat(aud_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(aud_create_date, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					</cfloop>
@@ -113,7 +113,7 @@
 		<cfelseif session.view EQ "combined">
 			<cfif attributes.folderaccess NEQ "R">
 				<tr>
-					<td colspan="4" align="right"><div id="updatestatusaud" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsaveaud();return false;" class="button"></td>
+					<td colspan="4" align="right"><div id="updatestatusaud" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveaud();return false;" class="button"></td>
 				</tr>
 			</cfif>
 			<cfloop query="qry_files">
@@ -148,42 +148,42 @@
 							</div>
 						</a>
 						<br />
-						#defaultsObj.trans("date_created")#: #dateformat(aud_create_date, "#defaultsObj.getdateformat()#")#<!--- <br />
-						#defaultsObj.trans("date_changed")#: #dateformat(aud_change_date, "#defaultsObj.getdateformat()#")# --->
+						#myFusebox.getApplicationData().defaults.trans("date_created")#: #dateformat(aud_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#<!--- <br />
+						#myFusebox.getApplicationData().defaults.trans("date_changed")#: #dateformat(aud_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# --->
 					</td>
 					<td valign="top" width="100%">
 						<!--- User has Write access --->
 						<cfif attributes.folderaccess NEQ "R">
 							<input type="text" name="#aud_id#_aud_filename" value="#aud_name#" style="width:300px;"><br />
-							#defaultsObj.trans("description")#:<br />
+							#myFusebox.getApplicationData().defaults.trans("description")#:<br />
 							<textarea name="#aud_id#_aud_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
-							#defaultsObj.trans("keywords")#:<br />
+							#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
 							<textarea name="#aud_id#_aud_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 						<cfelse>
-							#defaultsObj.trans("file_name")#: #aud_name#<br />
-							#defaultsObj.trans("description")#: #description#<br />
-							#defaultsObj.trans("keywords")#: #keywords#
+							#myFusebox.getApplicationData().defaults.trans("file_name")#: #aud_name#<br />
+							#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
+							#myFusebox.getApplicationData().defaults.trans("keywords")#: #keywords#
 						</cfif>
 					</td>
 					<cfif attributes.folderaccess EQ "X">
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 						</td>
 					</cfif>
 				</tr>
 			</cfloop>
 			<cfif attributes.folderaccess NEQ "R">
 				<tr>
-					<td colspan="4" align="right"><div id="updatestatusaud2" style="float:left;"></div><input type="button" value="#defaultsObj.trans("save_changes")#" onclick="combinedsaveaud();return false;" class="button"></td>
+					<td colspan="4" align="right"><div id="updatestatusaud2" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsaveaud();return false;" class="button"></td>
 				</tr>
 			</cfif>
 		<!--- List view --->
 		<cfelseif session.view EQ "list">
 			<tr>
 				<td></td>
-				<td width="100%"><b>#defaultsObj.trans("file_name")#</b></td>
-				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_created")#</b></td>
-				<td nowrap="true" align="center"><b>#defaultsObj.trans("date_changed")#</b></td>
+				<td width="100%"><b>#myFusebox.getApplicationData().defaults.trans("file_name")#</b></td>
+				<td nowrap="true" align="center"><b>#myFusebox.getApplicationData().defaults.trans("date_created")#</b></td>
+				<td nowrap="true" align="center"><b>#myFusebox.getApplicationData().defaults.trans("date_changed")#</b></td>
 				<cfif attributes.folderaccess EQ "X">
 					<td></td>
 				</cfif>
@@ -195,10 +195,10 @@
 					<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#aud_id#-aud" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#aud_id#-aud") NEQ 0> checked="checked"</cfif>></td>
 					<!--- <td align="center" nowrap="true" width="1%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#aud_name#',1000,1);return false;"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="20" height="20" border="0"></a></td> --->
 					<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;"><strong>#aud_name#</strong></a></td>
-					<td nowrap="true" width="1%" align="center">#dateformat(aud_create_date, "#defaultsObj.getdateformat()#")#</td>
-					<td nowrap="true" width="1%" align="center">#dateformat(aud_change_date, "#defaultsObj.getdateformat()#")#</td>
+					<td nowrap="true" width="1%" align="center">#dateformat(aud_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+					<td nowrap="true" width="1%" align="center">#dateformat(aud_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 					<cfif attributes.folderaccess EQ "X">
-						<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(defaultsObj.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+						<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 					</cfif>
 				</tr>
 			</cfloop>
@@ -234,8 +234,8 @@
 					$("##updatestatusaud2").css('color','green');
 					$("##updatestatusaud").css('font-weight','bold');
 					$("##updatestatusaud2").css('font-weight','bold');
-					$("##updatestatusaud").html("#defaultsObj.trans("success")#");
-					$("##updatestatusaud2").html("#defaultsObj.trans("success")#");
+					$("##updatestatusaud").html("#myFusebox.getApplicationData().defaults.trans("success")#");
+					$("##updatestatusaud2").html("#myFusebox.getApplicationData().defaults.trans("success")#");
 					$("##updatestatusaud").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 					$("##updatestatusaud2").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 			   	}

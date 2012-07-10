@@ -27,35 +27,35 @@
 	<!--- Set Languages --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridlist">
 		<tr>
-			<td width="100%" style="padding:5px;">#defaultsObj.trans("folder_count_total")#</td>
+			<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("folder_count_total")#</td>
 			<td width="1%" nowrap style="padding:5px;">#totalcount.thetotal#</td>
 		</tr>
 		<cfif NOT application.razuna.isp>
 			<cfcachecontent name="damsysteminfo" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
 				<tr>
-					<td width="100%" style="padding:5px;">#defaultsObj.trans("database_in_use")#</td>
+					<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("database_in_use")#</td>
 					<td width="1%" nowrap style="padding:5px;">#application.razuna.thedatabase#</td>
 				</tr>
 				<tr>
-					<td width="100%" style="padding:5px;">#defaultsObj.trans("server_platform")#</td>
+					<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("server_platform")#</td>
 					<td width="1%" nowrap style="padding:5px;">#server.OS.Name#</td>
 				</tr>
 				<tr>
-					<td width="100%" style="padding:5px;">#defaultsObj.trans("server_platform_version")#</td>
+					<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("server_platform_version")#</td>
 					<td width="1%" nowrap style="padding:5px;">#server.os.version#</td>
 				</tr>
 				<tr>
-					<td width="100%" style="padding:5px;">#defaultsObj.trans("coldfusion_product")#</td>
+					<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("coldfusion_product")#</td>
 					<td width="1%" nowrap style="padding:5px;">#server.ColdFusion.ProductName#</td>
 				</tr>
 				<tr>
-					<td width="100%" style="padding:5px;">#defaultsObj.trans("coldfusion_version")#</td>
+					<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("coldfusion_version")#</td>
 					<td width="1%" nowrap style="padding:5px;"><cfif server.ColdFusion.ProductName CONTAINS "bluedragon">#server.bluedragon.edition#<cfelse>#server.ColdFusion.ProductVersion#</cfif></td>
 				</tr>
 			</cfcachecontent>
 		</cfif>
 		<tr>
-			<td width="100%" style="padding:5px;">#defaultsObj.trans("server_url")#</td>
+			<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("server_url")#</td>
 			<td width="1%" nowrap style="padding:5px;">#cgi.HTTP_HOST#</td>
 		</tr>
 	</table>

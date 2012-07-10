@@ -32,32 +32,32 @@
 <!--- Output --->
 <div id="tab_imp_temp">
 	<ul>
-		<li><a href="##tab_imp_temp_all">#defaultsObj.trans("settings")#</a></li>
-		<li><a href="##tab_imp_temp_fields">#defaultsObj.trans("mapping")#</a></li>
+		<li><a href="##tab_imp_temp_all">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
+		<li><a href="##tab_imp_temp_fields">#myFusebox.getApplicationData().defaults.trans("mapping")#</a></li>
 	</ul>
 	<!--- Settings --->
 	<div id="tab_imp_temp_all">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("settings")#</td>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("settings")#</td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#defaultsObj.trans("admin_import_templates_active")#</td>
+				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("admin_import_templates_active")#</td>
 				<td><input type="checkbox" name="imp_active" value="1"<cfif qry_detail.imp.imp_active EQ 1> checked="checked"</cfif>></td>
 			</tr>
 			<tr>
-				<td>#defaultsObj.trans("admin_upload_templates_name")#*</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("admin_upload_templates_name")#*</td>
 				<td><input type="text" name="imp_name" id="imp_name" class="text" value="#qry_detail.imp.imp_name#" style="width:300px;"><label for="imp_name" class="error" style="color:red;"><br>Enter a name for the template!</label></td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap" valign="top">#defaultsObj.trans("description")#</td>
+				<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("description")#</td>
 				<td><textarea name="imp_description" style="width:300px;height:60px;">#qry_detail.imp.imp_description#</textarea></td>
 			</tr>
 		</table>
 	</div>
 	<!--- Fields --->
 	<div id="tab_imp_temp_fields">
-		<div>#defaultsObj.trans("admin_import_templates_desc")#</div>
+		<div>#myFusebox.getApplicationData().defaults.trans("admin_import_templates_desc")#</div>
 		<br />
 		<!--- List the mapped fields --->
 		<cfloop query="qry_detail.impval">
@@ -101,7 +101,7 @@
 </div>
 <div id="submit" style="float:right;padding:10px;">
 	<div id="imptempfeedback" style="color:green;padding:10px;display:none;float:left;font-weight:bold;"></div>
-	<input type="submit" name="SubmitUser" value="#defaultsObj.trans("button_save")#" class="button" style="float:right;">
+	<input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" style="float:right;">
 </div>
 
 </form>
@@ -128,7 +128,7 @@
 	// Feedback when saving form
 	function formimptempfeedback() {
 		$("##imptempfeedback").css("display","");
-		$("##imptempfeedback").html("#JSStringFormat(defaultsObj.trans("success"))#");
+		$("##imptempfeedback").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#");
 		loadcontent('admin_imp_templates', '#myself#c.imp_templates');
 	}
 	$(document).ready(function() {

@@ -29,29 +29,29 @@
 		<input type="hidden" name="fa" value="c.asset_add_email_show">
 		<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 		<tr>
-			<td colspan="2">#defaultsObj.trans("email_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("email_desc")#</td>
 		</tr>
 		<tr>
 			<td colspan="2" style="padding-top:15px;"></td>
 		</tr>
 		<tr>
-			<td nowrap="true" width="120">#defaultsObj.trans("email_mail_server")#</td>
+			<td nowrap="true" width="120">#myFusebox.getApplicationData().defaults.trans("email_mail_server")#</td>
 			<td width="480"><input name="email_server" id="email_server" type="text" size="40" tabindex="1" value="<cfif structkeyexists(session,"email_server")>#session.email_server#</cfif>"></td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("email_address")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("email_address")#</td>
 			<td><input name="email_address" id="email_address" type="text" size="40" tabindex="2" value="<cfif structkeyexists(session,"email_address")>#session.email_address#</cfif>"></td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("password")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("password")#</td>
 			<td><input name="email_pass" id="email_pass" type="password" size="40" tabindex="3"></td>
 		</tr>
 		<tr>
-			<td nowrap="true" style="padding-bottom:15px;">#defaultsObj.trans("email_subject")#</td>
+			<td nowrap="true" style="padding-bottom:15px;">#myFusebox.getApplicationData().defaults.trans("email_subject")#</td>
 			<td style="padding-bottom:15px;"><input name="email_subject" id="email_subject" type="text" size="40" tabindex="4" value="<cfif structkeyexists(session,"email_subject")>#session.email_subject#</cfif>"></td>
 		</tr>
 		<tr>
-			<td colspan="2"><div style="float:left;"><input type="button" name="cancel" value="#defaultsObj.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div id="subemail" style="float:right;"><input type="button" name="submit" value="#defaultsObj.trans("button_show_emails")#" class="button" onclick="submitassetemailshow();"></div></td>
+			<td colspan="2"><div style="float:left;"><input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("back_to_folder")#" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#attributes.folder_id#');return false;" class="button"></div><div id="subemail" style="float:right;"><input type="button" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_show_emails")#" class="button" onclick="submitassetemailshow();"></div></td>
 		</tr>
 	</table>
 	</form>

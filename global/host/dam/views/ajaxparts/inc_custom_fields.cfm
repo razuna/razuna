@@ -34,7 +34,7 @@
 						<input type="text" style="width:300px;" id="cf_#cf_id#" name="cf_#cf_id#" value="#cf_value#">
 					<!--- Radio --->
 					<cfelseif cf_type EQ "radio">
-						<input type="radio" name="cf_#cf_id#" value="T"<cfif cf_value EQ "T"> checked="true"</cfif>>#defaultsObj.trans("yes")# <input type="radio" name="cf_#cf_id#" value="F"<cfif cf_value EQ "F" OR cf_value EQ ""> checked="true"</cfif>>#defaultsObj.trans("no")#
+						<input type="radio" name="cf_#cf_id#" value="T"<cfif cf_value EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf_#cf_id#" value="F"<cfif cf_value EQ "F" OR cf_value EQ ""> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 					<!--- Textarea --->
 					<cfelseif cf_type EQ "textarea">
 						<textarea name="cf_#cf_id#" style="width:300px;height:60px;">#cf_value#</textarea>
@@ -55,7 +55,7 @@
 		<cfif attributes.folderaccess NEQ "R">
 			<tr>
 				<td colspan="2">
-					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 				</td>
 			</tr>
 		</cfif>

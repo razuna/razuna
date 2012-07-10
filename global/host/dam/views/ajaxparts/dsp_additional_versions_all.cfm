@@ -27,7 +27,7 @@
 <cfif qry_av.assets.recordcount NEQ 0 OR qry_av.links.recordcount NEQ 0>
 	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("adiver_header")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("adiver_header")#</th>
 		</tr>
 		<tr>
 			<td width="100%" nowrap="true" valign="top" colspan="2">

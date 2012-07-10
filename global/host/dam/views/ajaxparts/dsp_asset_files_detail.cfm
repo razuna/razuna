@@ -36,31 +36,31 @@
 	<input type="hidden" name="file_extension" value="#qry_detail.detail.file_extension#">
 	<div id="tab_detail#file_id#">
 		<ul>
-			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#defaultsObj.trans("asset_information")#</a></li>
+			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<cfif cs.tab_description_keywords>
-				<li><a href="##detaildesc">#defaultsObj.trans("asset_desc")#</a></li>
+				<li><a href="##detaildesc">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</a></li>
 			</cfif>
 			<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-				<li><a href="##customfields">#defaultsObj.trans("custom_fields_asset")#</a></li>
+				<li><a href="##customfields">#myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</a></li>
 			</cfif>
 			<!--- Comments --->
 			<cfif cs.tab_comments>
-				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#');">#defaultsObj.trans("comments")# (#qry_comments_total#)</a></li>
+				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#qry_detail.detail.folder_id_r#');">#myFusebox.getApplicationData().defaults.trans("comments")# (#qry_comments_total#)</a></li>
 			</cfif>
 			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_metadata>
 				<li><a href="##filemeta">Meta Data</a></li>
 			</cfif>
 			<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind EQ "">
 				<cfif cs.tab_versions>
-					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#defaultsObj.trans("versions_header")#</a></li>
+					<li><a href="##divversions" onclick="loadcontent('divversions','#myself#c.versions&file_id=#attributes.file_id#&type=#attributes.cf_show#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("versions_header")#</a></li>
 				</cfif>
 			</cfif>
 			<cfif attributes.folderaccess NEQ "R">
 				<cfif cs.tab_sharing_options>
-					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("tab_sharing_options")#</a></li>
+					<li><a href="##shareoptions" onclick="loadcontent('shareoptions','#myself#c.share_options&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
 				</cfif>
 				<cfif cs.tab_additional_renditions>
-					<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#defaultsObj.trans("adiver_header")#</a></li>
+					<li><a href="##moreversions" onclick="loadcontent('moreversions','#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');">#myFusebox.getApplicationData().defaults.trans("adiver_header")#</a></li>
 				</cfif>
 				<cfif cs.tab_history>
 					<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
@@ -75,7 +75,7 @@
 				<!--- Description when url is a link --->
 				<cfif qry_detail.detail.link_kind NEQ "">
 					<tr>
-						<td colspan="2"><strong>#defaultsObj.trans("link_url_desc")#</strong></td>
+						<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("link_url_desc")#</strong></td>
 					</tr>
 				</cfif>
 				<!--- If cloud url is empty --->
@@ -95,10 +95,10 @@
 										<div id="divo#attributes.file_id#" style="display:none;">Link: <input type="text" id="inputo#attributes.file_id#" style="width:270px;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#&v=o" /></div>
 										<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url">
 											<br />
-											<a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">#defaultsObj.trans("pdf_image_desc")#</a></strong>
+											<a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">#myFusebox.getApplicationData().defaults.trans("pdf_image_desc")#</a></strong>
 										</cfif>
 									<cfelse>
-										<a href="#qry_detail.detail.link_path_url#" target="_blank">#defaultsObj.trans("link_to_original")#</a>
+										<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
 									</cfif>
 								</td>
 							</tr>
@@ -140,7 +140,7 @@
 						<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 							<cfif cs.tab_labels>
 								<tr>
-									<td>#defaultsObj.trans("labels")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("labels")#</td>
 									<td width="100%" nowrap="true" colspan="5">
 										<select data-placeholder="Choose a label" class="chzn-select" style="width:400px;" id="tags_doc" onchange="razaddlabels('tags_doc','#attributes.file_id#','doc');" multiple="multiple">
 											<option value=""></option>
@@ -148,26 +148,26 @@
 												<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
 											</cfloop>
 										</select>
-										<cfif settingsobj.get_label_set().set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+										<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 											<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
 										</cfif>
 									</td>
 								</tr>
 							</cfif>
 							<tr>
-								<td width="1%" nowrap="true">#defaultsObj.trans("file_name")#</td>
+								<td width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
 								<td width="100%"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.file_name#"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
-								<td nowrap="true">#defaultsObj.trans("date_created")#</td>
-								<td>#dateformat(qry_detail.detail.file_create_date, "#defaultsObj.getdateformat()#")#</td>
-								<td nowrap="true">#defaultsObj.trans("file_size")#</td>
+								<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
+								<td>#dateformat(qry_detail.detail.file_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+								<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("file_size")#</td>
 								<td><cfif qry_detail.detail.link_kind EQ "url">n/a<cfelse>#qry_detail.thesize# MB</cfif></td>
 							</tr>
 							<tr>
-								<td nowrap="true" valign="top">#defaultsObj.trans("located_in")#</td>
+								<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>
 								<td valign="top">#qry_detail.detail.folder_name# <a href="" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#qry_detail.detail.folder_id_r#&favtype=folder&favkind=');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
-								<td nowrap="true" valign="top">#defaultsObj.trans("date_changed")#</td>
-								<td valign="top">#dateformat(qry_detail.detail.file_change_date, "#defaultsObj.getdateformat()#")#</td>
-								<td nowrap="true" valign="top">#defaultsObj.trans("created_by")#</td>
+								<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("date_changed")#</td>
+								<td valign="top">#dateformat(qry_detail.detail.file_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+								<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("created_by")#</td>
 								<td valign="top" nowrap="nowrap">#qry_detail.detail.user_first_name# #qry_detail.detail.user_last_name#</td>
 							</tr>
 							<tr>
@@ -184,13 +184,13 @@
 						<td colspan="2" class="td2">
 							<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 								<tr>
-									<td class="td2"><b>#defaultsObj.trans("share_header")#</b></td>
+									<td class="td2"><b>#myFusebox.getApplicationData().defaults.trans("share_header")#</b></td>
 								</tr>
 								<tr>
-									<td class="td2">#defaultsObj.trans("share_desc")#</td>
+									<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_desc")#</td>
 								</tr>
 								<tr>
-									<td class="td2"><input type="radio" name="shared" value="F"<cfif qry_detail.detail.shared EQ "F"> checked="true"</cfif>> #defaultsObj.trans("no")# <input type="radio" name="shared" value="T"<cfif qry_detail.detail.shared EQ "T"> checked="true"</cfif>> #defaultsObj.trans("yes")#</td>
+									<td class="td2"><input type="radio" name="shared" value="F"<cfif qry_detail.detail.shared EQ "F"> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")# <input type="radio" name="shared" value="T"<cfif qry_detail.detail.shared EQ "T"> checked="true"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")#</td>
 								</tr>
 							</table>
 						</td>
@@ -201,7 +201,7 @@
 				<tr>
 					<td colspan="2">
 						<cfif attributes.folderaccess NEQ "R">
-							<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+							<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 						<cfelse>
 							<div style="float:right;padding:20px;"></div>
 						</cfif>
@@ -222,11 +222,11 @@
 									<cfloop query="qry_langs">
 										<cfset thisid = lang_id>
 										<tr>
-											<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("description")#</strong></td>
+											<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
 											<td class="td2" width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:300px;height:40px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
 										</tr>
 										<tr>
-											<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #defaultsObj.trans("keywords")#</strong></td>
+											<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
 											<td class="td2" width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:300px;height:40px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
 										</tr>
 									</cfloop>
@@ -275,7 +275,7 @@
 					<cfif attributes.folderaccess NEQ "R">
 						<tr>
 							<td>
-								<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+								<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 							</td>
 						</tr>
 					</cfif>
@@ -330,7 +330,7 @@
 		   	data: items,
 		   	success: function(){
 				// Update Text
-				$("##updatefile").html("#defaultsObj.trans("success")#");
+				$("##updatefile").html("#myFusebox.getApplicationData().defaults.trans("success")#");
 				$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 		   	}
 		});

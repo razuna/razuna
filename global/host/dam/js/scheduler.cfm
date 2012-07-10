@@ -12,7 +12,7 @@ function validateMethodInput(myform,kind) {
 	
 	//----- No folder selected -----
 	if (document.schedulerform.folder_id.value == ""){
-		alert('<cfoutput>#JSStringFormat(defaultsObj.trans("sched_msg_choose_folder"))#</cfoutput>');
+		alert('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("sched_msg_choose_folder"))#</cfoutput>');
 		return false;
 	}
 	//----- Folder is selected -----
@@ -22,7 +22,7 @@ function validateMethodInput(myform,kind) {
 			var folder = document.getElementsByName("serverFolder")[nr];
 			var selected = folder[folder.selectedIndex].value;
 			if (selected == "") {
-				alert("<cfoutput>#JSStringFormat(defaultsObj.trans("sched_msg_server"))#</cfoutput>");
+				alert("<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("sched_msg_server"))#</cfoutput>");
 				return false;
 			} else {
 				// Get values
@@ -42,7 +42,7 @@ function validateMethodInput(myform,kind) {
 			var ftpUser   = document.getElementsByName("ftpUser")[nr].value;
 			var ftpPass   = document.getElementsByName("ftpPass")[nr].value;
 			if (ftpServer == "" || ftpUser == "" || ftpPass == "") {
-				alert("<cfoutput>#JSStringFormat(defaultsObj.trans("sched_msg_ftp"))#</cfoutput>");
+				alert("<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("sched_msg_ftp"))#</cfoutput>");
 				return false;
 			} else {
 				// Get values
@@ -62,7 +62,7 @@ function validateMethodInput(myform,kind) {
 			var mailUser = document.getElementsByName("mailUser")[nr].value;
 			var mailPass = document.getElementsByName("mailPass")[nr].value;
 			if (mailPop == "" || mailUser == "" || mailPass == "") {
-				alert("<cfoutput>#JSStringFormat(defaultsObj.trans("sched_msg_mail"))#</cfoutput>");
+				alert("<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("sched_msg_mail"))#</cfoutput>");
 				return false;
 			} else {
 				// Get values
@@ -81,7 +81,7 @@ function validateMethodInput(myform,kind) {
 }
 <!--- Open window to select folder from Digital Asset Management-System ---------------------- --->
 function doDelete() {
-	var deleteTask = "<cfoutput>#JSStringFormat(defaultsObj.trans("delete"))#</cfoutput>";
+	var deleteTask = "<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("delete"))#</cfoutput>";
 	if (confirm(deleteTask))
 		return true;
 	else

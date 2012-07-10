@@ -45,9 +45,9 @@
 		<tr>
 			<td colspan="6">
 				<div style="float:left;padding-top:3px;">
-					#defaultsObj.trans("show_only")#
+					#myFusebox.getApplicationData().defaults.trans("show_only")#
 					<select id="actionsassets" onchange="loadcontent('history','#myself#c.log_history&id=#attributes.id#&logaction=' + document.getElementById('actionsassets').options[document.getElementById('actionsassets').selectedIndex].value);">
-						<option selected="true" value="0">#defaultsObj.trans("action")#</option>
+						<option selected="true" value="0">#myFusebox.getApplicationData().defaults.trans("action")#</option>
 						<option value="0">-------</option>
 						<option value="add">Add</option>
 						<option value="update">Update</option>
@@ -55,10 +55,10 @@
 						<option value="move">Move</option>
 						<option value="convert">Convert</option>
 					</select>
-					<a href="##" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.id#');">#defaultsObj.trans("reset")#</a>
+					<a href="##" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.id#');">#myFusebox.getApplicationData().defaults.trans("reset")#</a>
 				</div>
 				<div style="float:right;padding-top:9px;">
-					<a href="##" onclick="showsearch();">#defaultsObj.trans("header_search")#</a>
+					<a href="##" onclick="showsearch();">#myFusebox.getApplicationData().defaults.trans("header_search")#</a>
 				</div>
 			</td>
 		</tr>
@@ -67,17 +67,17 @@
 			<cfinclude template="dsp_admin_log_backnext.cfm">
 		</cfif>
 		<tr>
-			<th width="1%" nowrap="true">#defaultsObj.trans("date")#</th>
-			<th width="1%" nowrap="true">#defaultsObj.trans("time")#</th>
-			<th width="100%">#defaultsObj.trans("description")#</th>
-			<th width="1%" nowrap="true">#defaultsObj.trans("action")#</th>
-			<th width="1%" nowrap="true">#defaultsObj.trans("log_type_of_file")#</th>
-			<th width="1%" nowrap="true">#defaultsObj.trans("theuser")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("date")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("time")#</th>
+			<th width="100%">#myFusebox.getApplicationData().defaults.trans("description")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("action")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("log_type_of_file")#</th>
+			<th width="1%" nowrap="true">#myFusebox.getApplicationData().defaults.trans("theuser")#</th>
 		</tr>
 		<!--- Loop over all scheduled log entries in database table --->
 		<cfloop query="qry_log">
 			<tr class="list">
-				<td nowrap="true" valign="top">#dateformat(log_timestamp, "#defaultsObj.getdateformat()#")#</td>
+				<td nowrap="true" valign="top">#dateformat(log_timestamp, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				<td nowrap="true" valign="top">#timeFormat(log_timestamp, 'HH:mm:ss')#</td>
 				<td valign="top">#log_desc#</td>
 				<td nowrap="true" align="center" valign="top">#log_action#</td>

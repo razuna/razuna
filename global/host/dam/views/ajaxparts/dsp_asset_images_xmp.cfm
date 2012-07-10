@@ -61,7 +61,7 @@
 	<cfif attributes.folderaccess NEQ "R">
 		<tr>
 			<td colspan="2">
-				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></div>
+				<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 			</td>
 		</tr>
 	</cfif>

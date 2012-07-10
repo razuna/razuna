@@ -34,10 +34,10 @@
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
-			<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#defaultsObj.trans("delete_record_desc")#<cfelse>#defaultsObj.trans("delete_record_desc_many")#</cfif></td>
+			<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#myFusebox.getApplicationData().defaults.trans("delete_record_desc")#<cfelse>#myFusebox.getApplicationData().defaults.trans("delete_record_desc_many")#</cfif></td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#defaultsObj.trans("remove")#" onclick="loadcontent('thewindowcontent1','#myself#c.#attributes.what#&id=#attributes.id#&file_id=#attributes.file_id#&type=#attributes.type#');destroywindow(2);" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="loadcontent('thewindowcontent1','#myself#c.#attributes.what#&id=#attributes.id#&file_id=#attributes.file_id#&type=#attributes.type#');destroywindow(2);" class="button"></td>
 		</tr>
 	</table>
 </cfoutput>

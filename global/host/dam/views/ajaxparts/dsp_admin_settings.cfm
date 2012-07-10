@@ -40,10 +40,10 @@
 			</tr>
 			<!--- Image Formats --->
 			<tr>
-				<th class="textbold" colspan="2">#defaultsObj.trans("header_img_format")#</th>
+				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_img_format")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("header_img_format_desc")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_img_format_desc")#</td>
 			</tr>
 			<tr>
 				<td colspan="2"><select name="set2_img_format" class="text">
@@ -54,28 +54,28 @@
 			</tr>
 			<!--- Image Sizes --->
 			<tr>
-				<th class="textbold" colspan="2">#defaultsObj.trans("header_img_size")#</th>
+				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_img_size")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("header_thumbnail_size_desc")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size_desc")#</td>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("width")# <input type="text" name="set2_img_thumb_width" size="4" maxlength="3" value="#prefs.set2_img_thumb_width#" /> #defaultsObj.trans("heigth")# <input type="text" name="set2_img_thumb_heigth" size="4" maxlength="3" value="#prefs.set2_img_thumb_heigth#" /></td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="set2_img_thumb_width" size="4" maxlength="3" value="#prefs.set2_img_thumb_width#" /> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="set2_img_thumb_heigth" size="4" maxlength="3" value="#prefs.set2_img_thumb_heigth#" /></td>
 			</tr>
 			<!--- Date --->
 			<tr>
-				<th class="textbold" colspan="2">#defaultsObj.trans("date")#</th>
+				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("date")#</th>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#defaultsObj.trans("date_format")#</td>
+				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("date_format")#</td>
 				<td colspan="2"><select name="set2_date_format" class="text">
-				<option value="euro"<cfif #prefs.set2_date_format# EQ "euro"> selected</cfif>>#defaultsObj.trans("date_euro")#</option>
-				<option value="us"<cfif #prefs.set2_date_format# EQ "us"> selected</cfif>>#defaultsObj.trans("date_us")#</option>
-				<option value="sql"<cfif #prefs.set2_date_format# EQ "sql"> selected</cfif>>#defaultsObj.trans("date_sql")#</option>
+				<option value="euro"<cfif #prefs.set2_date_format# EQ "euro"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_euro")#</option>
+				<option value="us"<cfif #prefs.set2_date_format# EQ "us"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_us")#</option>
+				<option value="sql"<cfif #prefs.set2_date_format# EQ "sql"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("date_sql")#</option>
 				</select></td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#defaultsObj.trans("date_delimiter")#</td>
+				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("date_delimiter")#</td>
 				<td colspan="2"><select name="set2_date_format_del" class="text">
 				<option value="/"<cfif #prefs.set2_date_format_del# EQ "/"> selected</cfif>>/</option>
 				<option value="."<cfif #prefs.set2_date_format_del# EQ "."> selected</cfif>>.</option>
@@ -86,29 +86,29 @@
 			</tr>
 			<!--- email settings for new registration from site --->
 			<tr>
-				<th colspan="2" class="textbold">#defaultsObj.trans("intranet_new_registration")#</th>
+				<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("intranet_new_registration_desc")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_desc")#</td>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("intranet_new_registration_emails")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_emails")#</td>
 			</tr>
 			<tr>
-				<td colspan="2"><input type="text" name="set2_intranet_reg_emails" size="60" value="#prefs.set2_intranet_reg_emails#" /><br /><i>#defaultsObj.trans("multiple_emails")#</i></td>
+				<td colspan="2"><input type="text" name="set2_intranet_reg_emails" size="60" value="#prefs.set2_intranet_reg_emails#" /><br /><i>#myFusebox.getApplicationData().defaults.trans("multiple_emails")#</i></td>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("intranet_new_registration_email_subject")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_email_subject")#</td>
 			</tr>
 			<tr>
 				<td colspan="2"><input type="text" name="set2_intranet_reg_emails_sub" size="60" value="#prefs.set2_intranet_reg_emails_sub#" /></td>
 			</tr>
 			<!--- Languages --->
 			<tr>
-				<th colspan="2">#defaultsObj.trans("choose_language")# - <a href="##" onclick="loadcontent('admin_settings','#myself#c.isp_settings_updatelang');">#defaultsObj.trans("language_update")#</a></th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("choose_language")# - <a href="##" onclick="loadcontent('admin_settings','#myself#c.isp_settings_updatelang');">#myFusebox.getApplicationData().defaults.trans("language_update")#</a></th>
 			</tr>
 			<tr>
-				<td colspan="2">#defaultsObj.trans("language_update_desc")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("language_update_desc")#</td>
 			</tr>
 			<cfloop query="qry_langs">
 				<tr>
@@ -117,7 +117,7 @@
 				</tr>
 			</cfloop>
 			<tr>
-				<td colspan="2" align="right"><div id="form_admin_settings_status" style="float:left;font-weight:bold;color:green;"></div><input type="submit" name="submit" value="#defaultsObj.trans("button_save")#" class="button"></td>
+				<td colspan="2" align="right"><div id="form_admin_settings_status" style="float:left;font-weight:bold;color:green;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></td>
 			</tr>
 			<tr class="list">
 				<td colspan="2"><br /></td>
@@ -128,10 +128,10 @@
 	<!--- Upload Logo --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th>#defaultsObj.trans("logo_header")#</th>
+			<th>#myFusebox.getApplicationData().defaults.trans("logo_header")#</th>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("logo_desc")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("logo_desc")#</td>
 		</tr>
 		<tr>
 			<td>
@@ -162,7 +162,7 @@
 				url: url,
 			   	data: items,
 			   	success: function(){
-			   		$('##form_admin_settings_status').html('#defaultsObj.trans("success")#').animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+			   		$('##form_admin_settings_status').html('#myFusebox.getApplicationData().defaults.trans("success")#').animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 			   	}
 			});
 			return false;

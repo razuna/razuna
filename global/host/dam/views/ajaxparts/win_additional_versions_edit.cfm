@@ -26,7 +26,7 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<th>#defaultsObj.trans("title")#</th>
+			<th>#myFusebox.getApplicationData().defaults.trans("title")#</th>
 		</tr>
 		<tr>
 			<td><input type="text" style="width:500px;" name="av_link_title" id="ave_link_title" value="#qry_av.av_link_title#" /></td>
@@ -40,7 +40,7 @@
 			</tr>
 		</cfif>
 		<tr>
-			<td style="padding-top:15px;"><input type="button" value="#defaultsObj.trans("button_update")#" name="savecomment" class="button" onclick="updateav();"></td>
+			<td style="padding-top:15px;"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_update")#" name="savecomment" class="button" onclick="updateav();"></td>
 		</tr>
 	</table>
 	<script type="text/javascript">

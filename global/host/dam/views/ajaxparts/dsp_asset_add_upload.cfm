@@ -135,7 +135,7 @@ $('##uploader').pluploadQueue().bind('QueueChanged',
 <cfif attributes.nopreview EQ 0>
 <div>
 	<div style="float:left;">
-		<input type="checkbox" name="zip_extract_plupl" id="zip_extract_plupl" value="1" checked="checked"> #defaultsObj.trans("header_zip_desc")#
+		<input type="checkbox" name="zip_extract_plupl" id="zip_extract_plupl" value="1" checked="checked"> #myFusebox.getApplicationData().defaults.trans("header_zip_desc")#
 	</div>
 	<!--- Load upload templates here --->
 	<cfif qry_templates.recordcount NEQ 0>

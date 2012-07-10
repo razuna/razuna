@@ -75,7 +75,7 @@
 			</true>
 			<false>
 		   		<!-- <set name="attributes.loginerror" value="T" /> -->
-		   		<relocate url="#myself#c.logout&amp;loginerror=T" />
+		   		<relocate url="#myself#c.logoff&amp;loginerror=T" />
 		   	</false>
 		</if>
 	</fuseaction>

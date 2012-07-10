@@ -691,7 +691,7 @@
 				<cfset var theurl = d.Response.Download.DownloadURL[1].XmlText>
 			<cfelse>
 				<!--- Set Downloadtoken --->
-				<cfset var theurl = "">
+				<cfset var theurl = "node1.nirvanix.com">
 				<!--- Send us eMail --->
 				<!--- <cfmail from="server@razuna.com" to="nitai@razuna.com" subject="Nirvanix signedurl reponsecode" type="html">
 					<cfdump var="#respcode#">
@@ -720,6 +720,8 @@
 					<cfdump var="#cfcatch#">
 					<cfdump var="#arguments.thestruct#">
 				</cfmail>
+				<!--- Set Downloadtoken --->
+				<cfset var theurl = "node1.nirvanix.com">
 			</cfcatch>
 		</cftry>
 		<!--- Return --->

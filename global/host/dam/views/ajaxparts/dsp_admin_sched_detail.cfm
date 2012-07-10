@@ -30,39 +30,39 @@
 <input type="hidden" name="folder_id" value="#qry_detail.SCHED_FOLDER_ID_R#" />
 <table width="600" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
-		<th colspan="2">#defaultsObj.trans("scheduled_uploads")#</th>
+		<th colspan="2">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads")#</th>
 	</tr>
 		<!--- Details of scheduled Event --->
 		<tr>
-			<td colspan="2">#defaultsObj.trans("scheduled_uploads_info_text1")#
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_info_text1")#
 				<ul>
-					<li>#defaultsObj.trans("scheduled_uploads_info_text2")#</li>
-					<li>#defaultsObj.trans("scheduled_uploads_info_text3")#</li>
+					<li>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_info_text2")#</li>
+					<li>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_info_text3")#</li>
 				</ul>
-				#defaultsObj.trans("scheduled_uploads_info_text4")#
+				#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_info_text4")#
 			</td>
 		</tr>
 		<tr>
-			<td width="150">#defaultsObj.trans("scheduled_uploads_task_name")#</td>
+			<td width="150">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_name")#</td>
 			<td><input type="text" name="taskName" size="50" value="#qry_detail.sched_name#" /></td>
 		</tr>
 		<tr>
-			<td valign="top">#defaultsObj.trans("scheduled_uploads_method")#</td>
+			<td valign="top">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_method")#</td>
 			<td>
 				<table border="0" cellspacing="0" cellpadding="0" class="gridno">
 					<tr>
 						<td width="100" valign="top">
 							<select name="method" class="text" onChange="showConnectDetail(this, 'new')">
-								<cfif NOT application.razuna.isp><option value="server"<cfif qry_detail.sched_method EQ "server"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_server")#</option></cfif>
-								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_ftp")#</option>
-								<option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_mail")#</option>
+								<cfif NOT application.razuna.isp><option value="server"<cfif qry_detail.sched_method EQ "server"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_server")#</option></cfif>
+								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp")#</option>
+								<option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail")#</option>
 							</select>
 						</td>
 						<td>
 							<!--- Display fields for Server folder upload --->							
 							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsServer_new" style="display: <cfif qry_detail.sched_method EQ "server" OR qry_detail.sched_method EQ "">block<cfelse>none</cfif>">
 								<tr>
-									<td width="90" nowrap>#defaultsObj.trans("scheduled_uploads_server_folder")#</td>
+									<td width="90" nowrap>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_server_folder")#</td>
 									<td><select name="serverFolder" class="text">
 											<option value="">Select folder...</option>
 											<option value="">---</option>
@@ -77,36 +77,36 @@
 									</td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("sched_server_recursive")#</td>
-									<td><input type="checkbox" name="serverFolderRecurse" value="1" <cfif qry_detail.sched_server_recurse EQ "" OR qry_detail.sched_server_recurse> checked</cfif>> #defaultsObj.trans("scheduled_uploads_server_recurse")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("sched_server_recursive")#</td>
+									<td><input type="checkbox" name="serverFolderRecurse" value="1" <cfif qry_detail.sched_server_recurse EQ "" OR qry_detail.sched_server_recurse> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("scheduled_uploads_server_recurse")#</td>
 								</tr>
 								<tr>
-									<td colspan="2">#defaultsObj.trans("sched_server_deletemove")#</td>
+									<td colspan="2">#myFusebox.getApplicationData().defaults.trans("sched_server_deletemove")#</td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("sched_server_files")#</td>
-									<td><input type="radio" name="serverFiles" value="0" <cfif qry_detail.sched_server_files EQ 0 OR qry_detail.sched_server_files EQ ""> checked</cfif>> #defaultsObj.trans("sched_server_delete")# &nbsp;  
-										<input type="radio" name="serverFiles" value="1" <cfif qry_detail.sched_server_files EQ 1> checked</cfif>> #defaultsObj.trans("sched_server_move")#
+									<td>#myFusebox.getApplicationData().defaults.trans("sched_server_files")#</td>
+									<td><input type="radio" name="serverFiles" value="0" <cfif qry_detail.sched_server_files EQ 0 OR qry_detail.sched_server_files EQ ""> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("sched_server_delete")# &nbsp;  
+										<input type="radio" name="serverFiles" value="1" <cfif qry_detail.sched_server_files EQ 1> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("sched_server_move")#
 									</td>
 								</tr>
 							</table>
 							<!--- Display fields for eMail upload --->
 							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsMail_new" style="display: <cfif qry_detail.sched_method EQ "mail">block<cfelse>none</cfif>">
 								<tr>
-									<td width="90" nowrap>#defaultsObj.trans("scheduled_uploads_mail_server")#</td>
+									<td width="90" nowrap>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail_server")#</td>
 									<td><input type="text" name="mailPop" size="25" value="#qry_detail.sched_mail_pop#" /></td>
 									<td></td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_mail_user")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail_user")#</td>
 									<td><input type="text" name="mailUser" size="25" value="#qry_detail.sched_mail_user#" /></td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_mail_pass")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail_pass")#</td>
 									<td><input type="password" name="mailPass" size="25" value="#qry_detail.sched_mail_pass#" /></td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_mail_subject")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail_subject")#</td>
 									<td><input type="text" name="mailSubject" size="25" value="#qry_detail.sched_mail_subject#" /></td>
 								</tr>
 							</table>
@@ -114,26 +114,26 @@
 							<!--- Display fields for FTP upload --->
 							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsFtp_new" style="display: <cfif qry_detail.sched_method EQ "ftp">block<cfelse>none</cfif>">
 								<tr>
-									<td width="90" nowrap>#defaultsObj.trans("scheduled_uploads_ftp_server")#</td>
+									<td width="90" nowrap>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp_server")#</td>
 									<td><input type="text" name="ftpServer" size="25" value="#qry_detail.sched_ftp_server#" /></td>
-									<td rowspan="5" valign="top"><a href="##" onclick="javascript:openFtp('Add');return false;">#defaultsObj.trans("scheduler_ftp_desc")#</a></td>
+									<td rowspan="5" valign="top"><a href="##" onclick="javascript:openFtp('Add');return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_ftp_desc")#</a></td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_ftp_user")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp_user")#</td>
 									<td><input type="text" name="ftpUser" size="25" value="#qry_detail.sched_ftp_user#" /></td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_ftp_pass")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp_pass")#</td>
 									<td><input type="password" name="ftpPass" size="25" value="#qry_detail.sched_ftp_pass#" /></td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_ftp_passive")#</td>
-									<td><input type="radio" name="ftpPassive" value="0" <cfif qry_detail.sched_ftp_passive EQ 0 OR qry_detail.sched_ftp_passive EQ ""> checked="yes"</cfif>> #defaultsObj.trans("no")#
-										<input type="radio" name="ftpPassive" value="1" <cfif qry_detail.sched_ftp_passive EQ 1> checked="yes"</cfif>> #defaultsObj.trans("yes")#
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp_passive")#</td>
+									<td><input type="radio" name="ftpPassive" value="0" <cfif qry_detail.sched_ftp_passive EQ 0 OR qry_detail.sched_ftp_passive EQ ""> checked="yes"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#
+										<input type="radio" name="ftpPassive" value="1" <cfif qry_detail.sched_ftp_passive EQ 1> checked="yes"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")#
 									</td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_ftp_folder")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp_folder")#</td>
 									<td><input type="text" name="ftpFolder" size="25" value="#qry_detail.sched_ftp_folder#" /></td>
 								</tr>
 							</table>
@@ -143,20 +143,20 @@
 			</td>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("scheduled_uploads_duration")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_duration")#</td>
 			<td>
 				<table border="0" cellspacing="0" cellpadding="0" class="gridno">
 					<tr>
-						<td>#defaultsObj.trans("scheduled_uploads_start_date")#</td>
+						<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_start_date")#</td>
 						<td><input type="datefield" name="startDate" size="10" value="<cfif qry_detail.sched_start_date EQ "">#LSDateFormat(Now(), 'mm/dd/yyyy')#<cfelse>#LSDateFormat(qry_detail.sched_start_date, 'mm/dd/yyyy')#</cfif>" /></td>
-						<td>#defaultsObj.trans("scheduled_uploads_end_date")#</td>
+						<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_end_date")#</td>
 						<td><input type="datefield" name="endDate" size="10" value="<cfif qry_detail.sched_end_date EQ "">#LSDateFormat(Now(), 'mm/dd/yyyy')#<cfelse>#LSDateFormat(qry_detail.sched_end_date, 'mm/dd/yyyy')#</cfif>" /></td>
 					</tr>
 				</table>
 			</td>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("scheduled_uploads_frequency")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency")#</td>
 			<td>
 				<table border="0" cellspacing="0" cellpadding="0" class="gridno">
 					<tr>
@@ -184,16 +184,16 @@
 								</cfdefaultcase>
 							</cfswitch>
 							<select name="frequency" class="text" onChange="showFrequencyDetail(this, 'new')">
-							<!--- 	<option value="server"<cfif #set2_date_format# EQ "server"> selected</cfif>>#defaultsObj.trans("server")#</option> --->
-								<option value="1"<cfif #frequency# EQ "1"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_frequency_onetime")#</option>
-								<option value="2"<cfif #frequency# EQ "2"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_frequency_recurring")#</option>
-								<option value="3"<cfif #frequency# EQ "3"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_frequency_daily_every")#</option>
+							<!--- 	<option value="server"<cfif #set2_date_format# EQ "server"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("server")#</option> --->
+								<option value="1"<cfif #frequency# EQ "1"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_onetime")#</option>
+								<option value="2"<cfif #frequency# EQ "2"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_recurring")#</option>
+								<option value="3"<cfif #frequency# EQ "3"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_daily_every")#</option>
 							</select>
 						</td>
 						<td>
 							<table border="0" cellspacing="0" cellpadding="5" class="gridno" id="detailsOneTime_new" style="display: <cfif #frequency# EQ "1">block<cfelse>none</cfif>">
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_frequency_at")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_at")#</td>
 									<td><input type="text" name="startTime1" size="6" onBlur="fixTime(this)" value="<cfif qry_detail.sched_start_time EQ "">#LSTimeFormat(DateAdd("n", 10, Now()), 'HH:mm')#<cfelse>#LSTimeFormat(qry_detail.sched_start_time, 'HH:mm')#</cfif>" /></td>
 								</tr>
 
@@ -202,28 +202,28 @@
 								<tr>
 									<td>
 										<select name="recurring" class="text">
-											<option value="daily"<cfif qry_detail.sched_interval EQ "daily"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_frequency_daily")#</option>
-											<option value="weekly"<cfif qry_detail.sched_interval EQ "weekly"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_frequency_weekly")#</option>
-											<option value="monthly"<cfif qry_detail.sched_interval EQ "monthly"> selected</cfif>>#defaultsObj.trans("scheduled_uploads_frequency_monthly")#</option>
+											<option value="daily"<cfif qry_detail.sched_interval EQ "daily"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_daily")#</option>
+											<option value="weekly"<cfif qry_detail.sched_interval EQ "weekly"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_weekly")#</option>
+											<option value="monthly"<cfif qry_detail.sched_interval EQ "monthly"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_monthly")#</option>
 										</select>
 									</td>
-									<td>#defaultsObj.trans("scheduled_uploads_frequency_at")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_at")#</td>
 									<td><input type="text" name="startTime2" size="6" onBlur="fixTime(this)" value="<cfif qry_detail.sched_start_time EQ "">#LSTimeFormat(Now(), 'HH:mm')#<cfelse>#LSTimeFormat(qry_detail.sched_start_time, 'HH:mm')#</cfif>" /></td>
 								</tr>
 							</table>
 							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsDaily_new" style="display: <cfif #frequency# EQ "3">block<cfelse>none</cfif>">
 								<tr>
-									<td>#defaultsObj.trans("hours")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("hours")#</td>
 									<td><input type="text" name="hours" size="2" maxlength="2" value="#hours#" /></td>
-									<td>#defaultsObj.trans("minutes")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("minutes")#</td>
 									<td><input type="text" name="minutes" size="2" maxlength="2" value="#minutes#" /></td>
-									<td>#defaultsObj.trans("seconds")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("seconds")#</td>
 									<td><input type="text" name="seconds" size="2" maxlength="2" value="#seconds#" /></td>
 								</tr>
 								<tr>
-									<td>#defaultsObj.trans("scheduled_uploads_start_time")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_start_time")#</td>
 									<td colspan="3"><input type="text" name="startTime3" size="6" onBlur="fixTime(this)" value="<cfif qry_detail.sched_start_time EQ "">#LSTimeFormat(Now(), 'HH:mm')#<cfelse>#LSTimeFormat(qry_detail.sched_start_time, 'HH:mm')#</cfif>" /></td>
-									<td>#defaultsObj.trans("scheduled_uploads_end_time")#</td>
+									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_end_time")#</td>
 									<td><input type="text" name="endTime" size="6" onBlur="fixTime(this)" value="<cfif qry_detail.sched_end_time EQ "">#LSTimeFormat(Now(), 'HH:mm')#<cfelse>#LSTimeFormat(qry_detail.sched_end_time, 'HH:mm')#</cfif>" /></td>
 								</tr>
 							</table>
@@ -236,17 +236,17 @@
 			</td>
 		</tr>
 		<tr>
-			<td nowrap="true">#defaultsObj.trans("choose_location")#</td>
+			<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("choose_location")#</td>
 			<td>
-				<input type="text" name="folder_name" size="25" disabled="true" value="#qry_detail.folder_name#" /> <a href="##" onclick="showwindow('#myself#c.scheduler_choose_folder','#defaultsObj.trans("choose_location")#',600,2);">#defaultsObj.trans("scheduled_uploads_task_folder_cap")#</a>
+				<input type="text" name="folder_name" size="25" disabled="true" value="#qry_detail.folder_name#" /> <a href="##" onclick="showwindow('#myself#c.scheduler_choose_folder','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,2);">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_folder_cap")#</a>
 			</td>
 		</tr>
 		<tr>
-			<td>#defaultsObj.trans("scheduled_uploads_zip_archive")#</td>
-			<td><input type="checkbox" name="zipExtract" value="1" <cfif qry_detail.sched_zip_extract EQ 1 OR qry_detail.sched_zip_extract EQ ""> checked</cfif>> #defaultsObj.trans("scheduled_uploads_extract_zip")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_zip_archive")#</td>
+			<td><input type="checkbox" name="zipExtract" value="1" <cfif qry_detail.sched_zip_extract EQ 1 OR qry_detail.sched_zip_extract EQ ""> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("scheduled_uploads_extract_zip")#</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right"><input type="submit" value="#defaultsObj.trans("button_save")#" class="button"></td>
+			<td colspan="2" align="right"><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></td>
 		</tr>
 </table>
 </form>

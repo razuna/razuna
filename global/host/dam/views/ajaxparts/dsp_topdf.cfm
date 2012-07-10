@@ -63,7 +63,7 @@ table {
 					<cfelseif kind EQ "vid">
 						<tr>
 							<td height="100%" colspan="2" align="center"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0" width="160"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#" border="0" width="160"></cfif>
-							<br>#defaultsObj.trans("file_detail")#</td>
+							<br>#myFusebox.getApplicationData().defaults.trans("file_detail")#</td>
 							</tr>
 						<tr>
 							<td colspan="2">#left(filename,25)#</td>
@@ -75,7 +75,7 @@ table {
 					<cfelseif kind EQ "aud">
 						<tr>
 							<td height="100%" colspan="2" align="center"><img src="#thisurl#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
-							<br>#defaultsObj.trans("file_detail")#</td>
+							<br>#myFusebox.getApplicationData().defaults.trans("file_detail")#</td>
 							</tr>
 						<tr>
 							<td colspan="2">#left(filename,25)#</td>
@@ -161,8 +161,8 @@ table {
 							</cfif>
 						</cfloop>
 					</cfif>
-					#defaultsObj.trans("description")#: #description#<br />
-					#defaultsObj.trans("keywords")#: #keywords#
+					#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
+					#myFusebox.getApplicationData().defaults.trans("keywords")#: #keywords#
 				</td>
 			</tr>
 		</cfloop>
@@ -250,25 +250,25 @@ table {
 			</td>
 		</tr>
 		<tr>
-			<td nowrap="true" style="padding-right:10px;"><strong>#defaultsObj.trans("file_name")#</strong></td>
+			<td nowrap="true" style="padding-right:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
 			<td width="100%">#filename#</td>
 		</tr>
 		<tr>
-			<td valign="top" nowrap="true" style="padding-right:10px;"><strong>#defaultsObj.trans("description")#</strong></td>
+			<td valign="top" nowrap="true" style="padding-right:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
 			<td width="100%">#description#</td>
 		</tr>
 		<tr>
-			<td valign="top" nowrap="true" style="padding-right:10px;"><strong>#defaultsObj.trans("keywords")#</strong></td>
+			<td valign="top" nowrap="true" style="padding-right:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
 			<td width="100%">#keywords#</td>
 		</tr>
 		<cfif attributes.thetype NEQ "doc">
 			<tr>
-				<td nowrap="true" style="padding-right:10px;"><strong>#defaultsObj.trans("size")#</strong></td>
+				<td nowrap="true" style="padding-right:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("size")#</strong></td>
 				<td width="100%">#qry_detail.thesize# MB<cfif attributes.thetype NEQ "aud"> (#width#x#heigth#)</cfif></td>
 			</tr>
 		</cfif>
 		<tr>
-			<td nowrap="true" style="padding-right:10px;"><strong>#defaultsObj.trans("format")#</strong></td>
+			<td nowrap="true" style="padding-right:10px;"><strong>#myFusebox.getApplicationData().defaults.trans("format")#</strong></td>
 			<td width="100%">#ucase(format)#</td>
 		</tr>
 	</table>

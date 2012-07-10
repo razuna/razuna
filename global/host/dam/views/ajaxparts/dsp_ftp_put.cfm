@@ -43,12 +43,12 @@
 		</cfif>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
 			<tr>
-				<th colspan="2">#defaultsObj.trans("ftp_server")#</th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("ftp_server")#</th>
 			</tr>
 			<!--- Back --->
 			<cfif structkeyexists(attributes,"folderpath")>
 				<tr>
-					<td colspan="2"><a href="##" onclick="loadcontent('thewindowcontent<cfif session.frombasket EQ "F">2<cfelseif session.frombasket EQ "S">3<cfelse>1</cfif>','#myself##xfa.reloadftp#&folderpath=#qry_ftp.backpath#&foldername=#attributes.foldername#');">#defaultsObj.trans("back")#</a></td>
+					<td colspan="2"><a href="##" onclick="loadcontent('thewindowcontent<cfif session.frombasket EQ "F">2<cfelseif session.frombasket EQ "S">3<cfelse>1</cfif>','#myself##xfa.reloadftp#&folderpath=#qry_ftp.backpath#&foldername=#attributes.foldername#');">#myFusebox.getApplicationData().defaults.trans("back")#</a></td>
 				</tr>
 			</cfif>
 			<!--- output directory name --->
@@ -77,9 +77,9 @@
 				<tr>
 					<td colspan="2">
 						<cfif session.frombasket EQ "S">
-							<input type="button" name="submit" value="#defaultsObj.trans("scheduler_folder_select_cap")# (#attributes.foldername#)" class="button" onclick="document.schedulerform.ftpFolder.value='#attributes.folderpath#';destroywindow(3);">
+							<input type="button" name="submit" value="#myFusebox.getApplicationData().defaults.trans("scheduler_folder_select_cap")# (#attributes.foldername#)" class="button" onclick="document.schedulerform.ftpFolder.value='#attributes.folderpath#';destroywindow(3);">
 						<cfelse>
-							<input type="submit" name="submit" value="#defaultsObj.trans("ftp_upload_here")#" class="button">
+							<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("ftp_upload_here")#" class="button">
 						</cfif>
 					</td>
 				</tr>
@@ -110,7 +110,7 @@
 		var trimmed = responseText.replace(/^\s+|\s+$/g, '') ;
 		if(trimmed == 'success'){
 			$("##ftpuploadstatus").css("display","");
-			$("##ftpuploadstatus").html('<cfoutput>#JSStringFormat(defaultsObj.trans("ftp_message_sent"))#</cfoutput>');
+			$("##ftpuploadstatus").html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("ftp_message_sent"))#</cfoutput>');
 			$("##ftpuploadstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 		}
 		else{

@@ -24,5 +24,5 @@
 *
 --->
 <cfoutput>
-<div style="padding-top:10px;" class="alert">#defaultsObj.trans("login_error")#</div>
+<div style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
 </cfoutput>

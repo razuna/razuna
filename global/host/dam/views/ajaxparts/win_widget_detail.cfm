@@ -27,9 +27,9 @@
 <cfoutput>
 	<div id="widget_tab">
 		<ul>
-			<li><a href="##widget_start" onclick="$('##form_widget').submit();">#defaultsObj.trans("widget")#</a></li>
-			<li><a href="##widget_settings" onclick="$('##form_widget').submit();">#defaultsObj.trans("widget_settings")#</a></li>
-			<li><a href="##widget_code" onclick="$('##form_widget').submit();">#defaultsObj.trans("widget")# Code</a></li>
+			<li><a href="##widget_start" onclick="$('##form_widget').submit();">#myFusebox.getApplicationData().defaults.trans("widget")#</a></li>
+			<li><a href="##widget_settings" onclick="$('##form_widget').submit();">#myFusebox.getApplicationData().defaults.trans("widget_settings")#</a></li>
+			<li><a href="##widget_code" onclick="$('##form_widget').submit();">#myFusebox.getApplicationData().defaults.trans("widget")# Code</a></li>
 		</ul>
 		<form name="form_widget" id="form_widget" method="post" action="#self#">
 		<input type="hidden" name="#theaction#" value="c.widget_update">
@@ -40,34 +40,34 @@
 		<div id="widget_start">
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr>
-					<td nowrap="nowrap" width="1%"><strong>#defaultsObj.trans("widget_name")#</strong></td>
+					<td nowrap="nowrap" width="1%"><strong>#myFusebox.getApplicationData().defaults.trans("widget_name")#</strong></td>
 					<td><input type="text" name="widget_name" style="width:300px;" class="textbold" value="#qry_widget.widget_name#"></td>
 				</tr>
 				<tr>
-					<td nowrap="nowrap" valign="top"><strong>#defaultsObj.trans("description")#</strong></td>
+					<td nowrap="nowrap" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
 					<td><textarea name="widget_description" style="width:300px;height:50px;">#qry_widget.widget_description#</textarea></td>
 				</tr>
 				<tr>
-					<td nowrap="nowrap" colspan="2"><strong>#defaultsObj.trans("widget_access_header")#</strong></td>
+					<td nowrap="nowrap" colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("widget_access_header")#</strong></td>
 				</tr>
 				<tr>
 					<td colspan="2">
 						<table border="0" width="100%" class="grid">
 							<tr>
 								<td valign="top" align="center"><input type="radio" name="widget_permission" value="f"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_permission EQ "f"> checked="checked"</cfif>></td>
-								<td>#defaultsObj.trans("widget_access_public")#</td>
+								<td>#myFusebox.getApplicationData().defaults.trans("widget_access_public")#</td>
 							</tr>
 							<tr>
 								<td valign="top" align="center"><input type="radio" name="widget_permission" value="g"<cfif qry_widget.widget_permission EQ "g"> checked="checked"</cfif>></td>
-								<td>#defaultsObj.trans("widget_access_permissions")#</td>
+								<td>#myFusebox.getApplicationData().defaults.trans("widget_access_permissions")#</td>
 							</tr>
 							<tr>
 								<td valign="top" align="center"><input type="radio" name="widget_permission" value="p"<cfif qry_widget.widget_permission EQ "p"> checked="checked"</cfif>></td>
-								<td>#defaultsObj.trans("widget_access_password")#</td>
+								<td>#myFusebox.getApplicationData().defaults.trans("widget_access_password")#</td>
 							</tr>
 							<tr>
 								<td></td>
-								<td>#defaultsObj.trans("password")# <input type="text" name="widget_password" style="width:300px;" class="textbold" value="#qry_widget.widget_password#"></td>
+								<td>#myFusebox.getApplicationData().defaults.trans("password")# <input type="text" name="widget_password" style="width:300px;" class="textbold" value="#qry_widget.widget_password#"></td>
 							</tr>
 						</table>
 					</td>
@@ -79,18 +79,18 @@
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<!--- Widget Style --->
 				<tr>
-					<td colspan="2"><strong>#defaultsObj.trans("widget_style")#</strong></td>
+					<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("widget_style")#</strong></td>
 				</tr>
 				<tr>
 					<td colspan="2">
 						<table border="0" width="100%">
 							<tr>
 								<td valign="top"><input type="radio" name="widget_style" value="d"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_style EQ "d"> checked="checked"</cfif>></td>
-								<td>#defaultsObj.trans("widget_style_default")#</td>
+								<td>#myFusebox.getApplicationData().defaults.trans("widget_style_default")#</td>
 							</tr>
 							<tr>
 								<td valign="top"><input type="radio" name="widget_style" value="s"<cfif qry_widget.widget_style EQ "s"> checked="checked"</cfif>></td>
-								<td>#defaultsObj.trans("widget_style_slideshow")#</td>
+								<td>#myFusebox.getApplicationData().defaults.trans("widget_style_slideshow")#</td>
 							</tr>
 						</table>
 					</td>
@@ -100,16 +100,16 @@
 				</tr>
 				<!--- Download Original --->
 				<tr>
-					<td colspan="2"><strong>#defaultsObj.trans("share_allow_download_original")#</strong></td>
+					<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</strong></td>
 				</tr>
 				<tr>
-					<td colspan="2">#defaultsObj.trans("share_allow_download_desc")#</td>
+					<td colspan="2">#myFusebox.getApplicationData().defaults.trans("share_allow_download_desc")#</td>
 				</tr>
 				<tr>
-					<td nowrap="nowrap" valign="top">#defaultsObj.trans("share_allow_download_original")#</td>
-					<td ><input type="radio" value="t" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_dl_org EQ "t"> checked="checked"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="f" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_org EQ "f"> checked="checked"</cfif>>#defaultsObj.trans("no")#
+					<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
+					<td ><input type="radio" value="t" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_dl_org EQ "t"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="f" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_org EQ "f"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 					<br><br>
-					<a href="##" onclick="resetdlw();return false;">#defaultsObj.trans("share_folder_download_reset")#</a>
+					<a href="##" onclick="resetdlw();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 					<div id="reset_dl_w" style="color:green;font-weight:bold;padding-top:5px;"></div>
 					</td>
 				</tr>
@@ -118,14 +118,14 @@
 					<td colspan="2" class="list"></td>
 				</tr>
 				<tr>
-					<td colspan="2"><strong>#defaultsObj.trans("share_allow_upload")#</strong></td>
+					<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_upload")#</strong></td>
 				</tr>
 				<tr>
-					<td colspan="2">#defaultsObj.trans("share_allow_upload_desc")#</td>
+					<td colspan="2">#myFusebox.getApplicationData().defaults.trans("share_allow_upload_desc")#</td>
 				</tr>
 				<tr>
-					<td>#defaultsObj.trans("share_allow_upload")#</td>
-					<td><input type="radio" value="t" name="widget_uploading"<cfif qry_widget.widget_uploading EQ "t"> checked="checked"</cfif>>#defaultsObj.trans("yes")# <input type="radio" value="f" name="widget_uploading"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_uploading EQ "f"> checked="checked"</cfif>>#defaultsObj.trans("no")#</td>
+					<td>#myFusebox.getApplicationData().defaults.trans("share_allow_upload")#</td>
+					<td><input type="radio" value="t" name="widget_uploading"<cfif qry_widget.widget_uploading EQ "t"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="f" name="widget_uploading"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_uploading EQ "f"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#</td>
 				</tr>
 			</table>
 		</div>
@@ -138,7 +138,7 @@
 		</div>
 		<!--- Loading Bars --->
 		<div style="float:left;padding:10px;color:green;font-weight:bold;display:none;" id="widgetstatus"></div>
-		<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#defaultsObj.trans("button_save")#" class="button"></div>
+		<div style="float:right;padding:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 		</form>
 	</div>
 	<!--- JS --->
@@ -156,7 +156,7 @@
 				url: url,
 			   	data: items,
 			   	success: function(data){
-					$("##widgetstatus").html('#JSStringFormat(defaultsObj.trans("success"))#');
+					$("##widgetstatus").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#');
 					$("##widgetstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 					widgetreload(data);
 			   	}

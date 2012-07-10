@@ -40,23 +40,23 @@
 	</cfif>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th colspan="2">#defaultsObj.trans("pdf_window_title")#</th>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("pdf_window_title")#</th>
 		</tr>
 		<tr>
-			<td colspan="2">#defaultsObj.trans("pdf_window_desc")#</td>
+			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("pdf_window_desc")#</td>
 		</tr>
 		<cfif attributes.kind NEQ "detail">
 			<tr>
-				<td valign="top">#defaultsObj.trans("pdf_pages")#</td>
+				<td valign="top">#myFusebox.getApplicationData().defaults.trans("pdf_pages")#</td>
 				<td>
-					<input type="radio" name="pages" value="current" checked="true"> #defaultsObj.trans("current")#<br />
-					<input type="radio" name="pages" value="all"> #defaultsObj.trans("all")#<br />
-					<!--- <input type="radio" name="pages" value="custom"> #defaultsObj.trans("from")#: <input type="text" name="pages_from" size="2"> #defaultsObj.trans("to")#: <input type="text" name="pages_to" size="2"> --->
+					<input type="radio" name="pages" value="current" checked="true"> #myFusebox.getApplicationData().defaults.trans("current")#<br />
+					<input type="radio" name="pages" value="all"> #myFusebox.getApplicationData().defaults.trans("all")#<br />
+					<!--- <input type="radio" name="pages" value="custom"> #myFusebox.getApplicationData().defaults.trans("from")#: <input type="text" name="pages_from" size="2"> #myFusebox.getApplicationData().defaults.trans("to")#: <input type="text" name="pages_to" size="2"> --->
 				</td>
 			</tr>
 		</cfif>
 		<tr>
-			<td>#defaultsObj.trans("pdf_pagetype")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("pdf_pagetype")#</td>
 			<td>
 				<select name="pagetype" style="width:150px;font-size:11px;">
 					<option value="letter">US Letter</option>
@@ -70,32 +70,32 @@
 		</tr>
 		<cfif attributes.kind NEQ "detail">
 			<tr>
-				<td>#defaultsObj.trans("view")#</td>
-				<td><input type="radio" name="view" value="thumbnails" checked="true"> #defaultsObj.trans("thumbnails")# <input type="radio" name="view" value="list"> #defaultsObj.trans("list")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("view")#</td>
+				<td><input type="radio" name="view" value="thumbnails" checked="true"> #myFusebox.getApplicationData().defaults.trans("thumbnails")# <input type="radio" name="view" value="list"> #myFusebox.getApplicationData().defaults.trans("list")#</td>
 			</tr>
 			<tr>
-				<td>#defaultsObj.trans("pdf_format")#</td>
+				<td>#myFusebox.getApplicationData().defaults.trans("pdf_format")#</td>
 				<td>
 					<select name="format" style="width:200px;font-size:11px;">
-						<option value="9">3 x 3 (9 #defaultsObj.trans("pdf_assetspage")#)</option>
-						<option value="12">4 x 3 (12 #defaultsObj.trans("pdf_assetspage")#)</option>
-						<option value="16">4 x 4 (16 #defaultsObj.trans("pdf_assetspage")#)</option>
-						<option value="25">5 x 5 (25 #defaultsObj.trans("pdf_assetspage")#)</option>
+						<option value="9">3 x 3 (9 #myFusebox.getApplicationData().defaults.trans("pdf_assetspage")#)</option>
+						<option value="12">4 x 3 (12 #myFusebox.getApplicationData().defaults.trans("pdf_assetspage")#)</option>
+						<option value="16">4 x 4 (16 #myFusebox.getApplicationData().defaults.trans("pdf_assetspage")#)</option>
+						<option value="25">5 x 5 (25 #myFusebox.getApplicationData().defaults.trans("pdf_assetspage")#)</option>
 						<!--- <option value="custom">Custom</option> --->
 					</select>
 				</td>
 			</tr>
 		</cfif>
 		<tr>
-			<td valign="top">#defaultsObj.trans("pdf_header")#</td>
-			<td><textarea name="header" style="width:250px;height;40px;"></textarea><br />#defaultsObj.trans("pdf_header_desc")#</td>
+			<td valign="top">#myFusebox.getApplicationData().defaults.trans("pdf_header")#</td>
+			<td><textarea name="header" style="width:250px;height;40px;"></textarea><br />#myFusebox.getApplicationData().defaults.trans("pdf_header_desc")#</td>
 		</tr>
 		<tr>
-			<td valign="top">#defaultsObj.trans("pdf_footer")#</td>
-			<td><textarea name="footer" style="width:250px;height;40px;"></textarea><br />#defaultsObj.trans("pdf_footer_desc")#</td>
+			<td valign="top">#myFusebox.getApplicationData().defaults.trans("pdf_footer")#</td>
+			<td><textarea name="footer" style="width:250px;height;40px;"></textarea><br />#myFusebox.getApplicationData().defaults.trans("pdf_footer_desc")#</td>
 		</tr>
 		<tr>
-			<td colspan="2" align="right"><input type="submit" value="#defaultsObj.trans("pdf_create_button")#" class="button"></td>
+			<td colspan="2" align="right"><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("pdf_create_button")#" class="button"></td>
 		</tr>
 	</table>
 	</form>	
