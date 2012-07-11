@@ -3068,7 +3068,7 @@
 	<!-- Search: AJAX -->
 	<fuseaction name="search_suggest">
 		<!-- CFC: Search Files -->
-		<invoke object="myFusebox.getApplicationData().search" methodcall="search_suggest(attributes.suggest)" returnvariable="qry_suggest" />
+		<invoke object="myFusebox.getApplicationData().search" methodcall="search_suggest(attributes.term)" returnvariable="qry_suggest" />
 	</fuseaction>
 	
 	<!-- Search: Advanced -->
