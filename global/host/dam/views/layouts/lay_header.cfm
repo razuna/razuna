@@ -45,7 +45,7 @@
 			</a>
 		</div>
 		<!--- Search --->
-		<cfcachecontent name="quicksearch#w#" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
+		<!--- <cfcachecontent name="quicksearch#w#" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache"> --->
 			<div style="width:auto;float:right;padding-top:3px;">
 				<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
@@ -78,7 +78,7 @@
 				</div>
 				</form>
 			</div>
-		</cfcachecontent>
+		<!--- </cfcachecontent> --->
 	</div>
 	<div style="float:right;">
 		<!--- User Name with drop down --->
@@ -128,13 +128,40 @@
 			</cfif>
 		</div>
 	</div>
-</cfoutput>
 
-<script language="javascript">
-	function showaccount(){
-		win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
-		document.form_account.target='myWin';
-		document.form_account.submit();
-	}
-	
-</script>
+	<script language="javascript">
+		function showaccount(){
+			win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
+			document.form_account.target='myWin';
+			document.form_account.submit();
+		}
+		<!---
+		$( "##simplesearchtext" ).autocomplete({
+			source: "#myself#c.search_suggest",
+			minLength: 2
+		});
+		--->
+		$(function() {
+			var cache = {}, lastXhr;
+			$( "##simplesearchtext" ).autocomplete({
+				minLength: 3,
+				source: function( request, response ) {
+					var term = request.term;
+					if ( term in cache ) {
+						response( cache[ term ] );
+						return;
+					}
+
+					lastXhr = $.getJSON( "#myself#c.search_suggest", request, function( data, status, xhr ) {
+						cache[ term ] = data;
+						if ( xhr === lastXhr ) {
+							response( data );
+						}
+					});
+				}
+			});
+		});
+
+	</script>
+
+</cfoutput>
