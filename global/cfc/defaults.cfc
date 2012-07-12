@@ -26,7 +26,7 @@
 <cfcomponent extends="extQueryCaching">
 
 <!--- Get the cachetoken for here --->
-<cfset variables.cachetoken = getcachetoken("general")>
+<cfset variables.cachetoken = getcachetoken("settings")>
 
 <!--- GET THE LANGUAGES --->
 <cffunction name="getlangs" output="false">
