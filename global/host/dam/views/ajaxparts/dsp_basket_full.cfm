@@ -24,15 +24,10 @@
 *
 --->
 <!--- Storage Decision --->
-<!---
-<cfif application.razuna.storage EQ "nirvanix">
-	<cfset thestorage = "#application.razuna.nvxurlservices#/#attributes.nvxsession#/razuna/#session.hostid#/">
-<cfelse>
---->
-	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <!--- </cfif> --->
 <cfoutput>
-	<div id="basketstatus" style="display:none;padding:10px;color:red;font-weight:bold;"></div>
+	<div id="basketstatus" style="display:none;padding:10px;font-weight:bold;"></div>
 	<form name="thebasket" id="thebasket" method="post" action="#self#">
 	<input type="hidden" name="#theaction#" value="c.basket_download">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid thumbview">
@@ -398,17 +393,17 @@
 			return false;
 		}
 		// Show
-		$("#basketstatus").fadeTo("fast", 100);
+		// $("#basketstatus").fadeTo("fast", 100);
 		$("#basketstatus").css("display","");
-		$("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#myFusebox.getApplicationData().defaults.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email once the basket is complete.');
+		$("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#myFusebox.getApplicationData().defaults.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email with the download link once the basket is complete.');
 		// Submit Form
 		$.ajax({
 			type: "POST",
 			url: url,
 		   	data: items,
 		   	success: function(data){
-		   		$("#basketstatus").html('Your basket is ready. <a href="'+ trim(data) +'">Click on this link to download the basket now!</a>');
-				$("#basketstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+		   		$("#basketstatus").html('<span style="color:green;">Your basket is ready.</span> <a href="'+ trim(data) +'">Click on this link to download the basket now!</a>');
+				// $("#basketstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 		   	}
 		});
 		return false;
