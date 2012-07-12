@@ -261,7 +261,7 @@
 		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->
-	<!--- <cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput> --->
+	<cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput>
 	<cfreturn arguments.thestruct.zipname>
 </cffunction>
 
