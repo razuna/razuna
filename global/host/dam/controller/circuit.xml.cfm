@@ -3529,6 +3529,11 @@
 		<!-- Do -->
 		<do action="ajax.plugin_settings_loader" />
 	</fuseaction>
+	<!-- Save the plugin settings page -->
+	<fuseaction name="plugin_save">
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions(attributes.p_action,attributes)" returnvariable="pl" />
+	</fuseaction>
 
 	<!--  -->
 	<!-- ADMIN: USERS -->

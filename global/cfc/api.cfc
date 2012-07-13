@@ -25,6 +25,9 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
+	<!--- Settings Object --->
+	<cfobject component="global.cfc.settings" name="settingsObj">
+
 	<!--- Add action --->
 	<cffunction name="add_action" access="public">
 		<cfargument name="action" required="true" />
@@ -49,22 +52,26 @@
 
 	<!--- Get datasource --->
 	<cffunction name="getDatasource" access="public" returntype="String">
-		<cfreturn application.razuna.datasource />
+		<cfset var t = settingsObj.get_global().conf_datasource>
+		<cfreturn t />
 	</cffunction>
 
 	<!--- Get database --->
 	<cffunction name="getDatabase" access="public" returntype="String">
-		<cfreturn application.razuna.thedatabase />
+		<cfset var t = settingsObj.get_global().conf_database>
+		<cfreturn t />
 	</cffunction>
 
 	<!--- Get schema --->
 	<cffunction name="getSchema" access="public" returntype="String">
-		<cfreturn application.razuna.theschema />
+		<cfset var t = settingsObj.get_global().conf_schema>
+		<cfreturn t />
 	</cffunction>
 
 	<!--- Get storage --->
 	<cffunction name="getStorage" access="public" returntype="String">
-		<cfreturn application.razuna.storage />
+		<cfset var t = settingsObj.get_global().conf_storage>
+		<cfreturn t />
 	</cffunction>
 
 

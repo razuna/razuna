@@ -148,8 +148,8 @@
 			</cfquery>
 			<!--- Execute the main.cfc which will add all the actions of the plugin to the DB --->
 			<cfinvoke component="global.plugins.#pluginPathName#.cfc.main" method="load" />
-			<!--- Now look into the plugins_action table and execute any database related tasks --->
-			<!--- Look for table_do actions --->
+			<!--- Execute table actions --->
+			<cfinvoke component="global.plugins.#pluginPathName#.cfc.main" method="db" />
 
 			<!--- Get all cfc and put into DB (not really needed for now) --->
 			<cfif directoryExists(pluginDir)>
@@ -237,6 +237,7 @@
 	<!--- getpluginactions --->
 	<cffunction name="getactions">
 		<cfargument name="theaction" required="true" />
+		<cfargument name="args" default="#structnew()#" required="false" />
 		<!--- Params --->
 		<cfset var result = structnew()>
 		<cfset result.pcfc = "">
@@ -246,17 +247,31 @@
 		SELECT /* #variables.cachetoken# */ pa.comp, pa.func, pa.args, p.p_path
 		FROM plugins_actions pa, plugins p
 		WHERE lower(pa.action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theaction#">
+		<cfif structKeyExists(arguments.args, "p_id")>
+			AND p.p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args.p_id#">
+		</cfif>
 		AND pa.p_id = p.p_id
 		</cfquery>
 		<!--- Execute actions --->
 		<cfloop query="qry">
 			<!--- 1. CFC --->
-			<cfinvoke component="global.plugins.#p_path#.cfc.#comp#" method="#func#" returnvariable="result.cfc.#p_path#.#func#" />
-			<!--- 2. include the page --->
-			<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#comp#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
-			<!--- Put this in the list --->
+			<cfinvoke component="global.plugins.#p_path#.cfc.#comp#" method="#func#" args="#arguments.args#" returnvariable="result.cfc.#p_path#.#func#" />
+			<!--- Set the page value always to true if not defined --->
+			<cfset s = evaluate("result.cfc.#p_path#.#func#")>
+			<cfif !isStruct(s) OR !structKeyExists(s, "page")>
+				<cfset page = true>
+			<cfelse>
+				<cfset page = false>
+			</cfif>
+			<!--- 2. include the page just not if dev set the page value to false (like coming from a save or alike) --->
+			<cfif fileExists("#expandpath("../../")#global/plugins/#p_path#/view/#comp#.cfm") AND page>
+				<!--- Parse view page --->
+				<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#comp#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
+				<!--- Put into variable --->
+				<cfset result.pview = result.pview & "," & "pl.view.#p_path#.#func#">
+			</cfif>
+			<!--- Put cfc path into list for easier retrieval in the Razuna --->
 			<cfset result.pcfc = result.pcfc & "," & "pl.cfc.#p_path#.#func#">
-			<cfset result.pview = result.pview & "," & "pl.view.#p_path#.#func#">
 		</cfloop>
 		<!--- Return --->
 		<cfreturn result />
