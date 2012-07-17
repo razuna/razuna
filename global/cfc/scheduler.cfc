@@ -473,10 +473,14 @@
 <cffunction name="doit" output="true" access="public">
 	<cfargument name="sched_id" type="string" required="yes" default="">
 	<cfset var doit = structnew()>
-	<cfset doit.dirlist = "">
+	<!--- <cfset doit.dirlist = ""> --->
 	<!--- <cfset var tempid = "sched-" & createuuid()> --->
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
+	<!--- If no record found simply abort --->
+	<cfif doit.qry_detail.recordcount EQ 0>
+		<cfabort>
+	</cfif>
 	<!--- List all files from the server directory --->
 	<!---
 <cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#doit.qry_detail#"></cfmail>
