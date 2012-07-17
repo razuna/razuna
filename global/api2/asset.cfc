@@ -474,7 +474,7 @@
 				av_id id, 
 				0 AS width, 
 				0 AS height, 
-				"" AS path_to_asset, 
+				'' AS path_to_asset, 
 				av_link_url AS cloud_url_org,
 				av_link_title AS filename_org,
 				av_type AS extension,
