@@ -277,4 +277,11 @@
 		<cfreturn result />
 	</cffunction>
 
+	<!--- saveDirect --->
+	<cffunction name="saveDirect">
+		<cfargument name="args" required="true" />
+		<!--- Just invoke the cfc --->
+		<cfinvoke component="global.plugins.#arguments.args.comp#" method="#arguments.args.func#" args="#arguments.args#" returnvariable="result.cfc.#arguments.args.func#" />
+	</cffunction>
+
 </cfcomponent>

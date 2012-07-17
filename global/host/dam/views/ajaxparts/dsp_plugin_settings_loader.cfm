@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<!--- Link back to the Administration --->
-	<div style="padding-left:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.admin');">Back to the Administration</a></div>
+	<div style="padding-left:10px;"><a href="##" onclick="$('##rightside').load('#myself#c.admin', function(){$('##tab_admin').tabs('select','##admin_plugins')});">Back to the Administration</a></div>
 	<div style="clear:both;"></div>
 	<hr />
 	<!--- Do the include of the plugin setting page --->

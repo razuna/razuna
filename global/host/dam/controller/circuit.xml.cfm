@@ -3535,6 +3535,12 @@
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions(attributes.p_action,attributes)" returnvariable="pl" />
 	</fuseaction>
 
+	<!-- Save called from plugin -->
+	<fuseaction name="plugin_save_direct">
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="saveDirect(attributes)" returnvariable="pl" />
+	</fuseaction>
+
 	<!--  -->
 	<!-- ADMIN: USERS -->
 	<!--  -->

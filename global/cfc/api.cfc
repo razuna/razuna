@@ -74,6 +74,11 @@
 		<cfreturn t />
 	</cffunction>
 
+	<!--- Get Sessions --->
+	<cffunction name="getHostID" access="public" returntype="String">
+		<cfset var t = session.hostid>
+		<cfreturn t />
+	</cffunction>
 
 
 </cfcomponent>
