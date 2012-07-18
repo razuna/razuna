@@ -529,90 +529,87 @@
 	<cffunction name="GetAccountUsage" access="public" output="false" region="razcache" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<cftry>
-			<!--- Get session --->
-			<cfset var nvxsession = login()>
-			<!--- Set Structure --->
-			<cfset x = structnew()>
-			<cfset x.DBU = 0>
-			<cfset x.UBU = 0>
-			<cfset x.TSU = 0>
-			<!--- Call --->
-			<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
-			<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
-				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
-				<cfhttpparam name="userName" value="#arguments.username#" type="url">
-			</cfhttp>
-			<!--- Parse XML --->
-			<cfset xmlVar = xmlParse(cfhttp.FileContent)/>
-			<!--- Set values --->
-			<cfset nvxDBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
-			<cfset nvxUBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
-			<cfset nvxTSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
-			<!--- Set the Usage Amount into struct --->
+		<!--- Set Structure --->
+		<cfset x = structnew()>
+		<cfset x.DBU = 0>
+		<cfset x.UBU = 0>
+		<cfset x.TSU = 0>
+		<cfset x.band = 0>
+		<cfif application.razuna.isp>
 			<cftry>
-				<cfset x.DBU = nvxDBU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
-			<cftry>
-				<cfset x.UBU = nvxUBU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
-			<cftry>
-				<cfset x.TSU = nvxTSU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any"></cfcatch>
-			</cftry>
-			<!--- Add bandwidth together --->
-			<cfset x.band = x.DBU + x.UBU>
-			<!--- According to host type set the alert --->
-			<cfif session.hosttype NEQ 149>
-				<!--- <cfset var storage = 16106127360 - 10485760>
-				<cfset var bandud = 8053063680 - 10485760> --->
-				<!--- Total minus the variable value where we want to warn the user (currently when 2GB are left) --->
-				<cfset var minusvalue = 2147483648>
-				<!--- 0 --->
-				<cfif session.hosttype EQ 0>
-					<cfset var storage = 524288000 - 104857600>
-					<cfset var bandud = 524288000 - 104857600>
-				</cfif>
-				<!--- 8 --->
-				<cfif session.hosttype EQ 8>
-					<cfset var storage = 2147483648 - 524288000>
-					<cfset var bandud = 2147483648 - 524288000>
-				</cfif>
-				<!--- 24 --->
-				<cfif session.hosttype EQ 24>
-					<cfset var storage = 16106127360 - minusvalue>
-					<cfset var bandud = 16106127360 - minusvalue>
-				</cfif>
-				<!--- 49 --->
-				<cfif session.hosttype EQ 49>
-					<cfset var storage = 53687091200 - minusvalue>
-					<cfset var bandud = 53687091200 - minusvalue>
-				</cfif>
-				<!--- 99 --->
-				<cfif session.hosttype EQ 99>
-					<cfset var storage = 161061273600 - minusvalue>
-					<cfset var bandud = 161061273600 - minusvalue>
-				</cfif>
-				<!--- If storage or bandwidth is full then set variable and email user --->
-				<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
-					<!--- Send eMail --->
-					<cfinvoke component="email" method="send_email" subject="Razuna: Your account needs upgrading" themessage="You have exceeded the total amount of storage or traffic for your account for this month!<br /><br />If you want to add any more files you need upgrade your Razuna plan to allow for more storage and bandwidth traffic!<br /><br />Please login to Razuna and then go to your Account Settings in order to upgrade your plan now.">
-					<!--- Set var --->
-					<cfset x.limitup = true>
-				</cfif>
-			</cfif>
-			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="Error in GetAccountUsage" type="html"><cfdump var="#cfcatch#"><cfdump var="#session#"></cfmail>
-				<cfset x = structnew()>
-				<cfset x.DBU = 0>
-				<cfset x.UBU = 0>
-				<cfset x.TSU = 0>
+				<!--- Get session --->
+				<cfset var nvxsession = login()>
+				<!--- Call --->
+				<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
+				<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
+					<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+					<cfhttpparam name="userName" value="#arguments.username#" type="url">
+				</cfhttp>
+				<!--- Parse XML --->
+				<cfset xmlVar = xmlParse(cfhttp.FileContent)/>
+				<!--- Set values --->
+				<cfset nvxDBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
+				<cfset nvxUBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
+				<cfset nvxTSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
+				<!--- Set the Usage Amount into struct --->
+				<cftry>
+					<cfset x.DBU = nvxDBU[1].TotalUsageAmount.xmlText>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+				<cftry>
+					<cfset x.UBU = nvxUBU[1].TotalUsageAmount.xmlText>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+				<cftry>
+					<cfset x.TSU = nvxTSU[1].TotalUsageAmount.xmlText>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
 				<!--- Add bandwidth together --->
-				<cfset x.band = 0>
-			</cfcatch>
-		</cftry>
+				<cfset x.band = x.DBU + x.UBU>
+				<!--- According to host type set the alert --->
+				<cfif session.hosttype NEQ 149>
+					<!--- <cfset var storage = 16106127360 - 10485760>
+					<cfset var bandud = 8053063680 - 10485760> --->
+					<!--- Total minus the variable value where we want to warn the user (currently when 2GB are left) --->
+					<cfset var minusvalue = 2147483648>
+					<!--- 0 --->
+					<cfif session.hosttype EQ 0>
+						<cfset var storage = 524288000 - 104857600>
+						<cfset var bandud = 524288000 - 104857600>
+					</cfif>
+					<!--- 8 --->
+					<cfif session.hosttype EQ 8>
+						<cfset var storage = 2147483648 - 524288000>
+						<cfset var bandud = 2147483648 - 524288000>
+					</cfif>
+					<!--- 24 --->
+					<cfif session.hosttype EQ 24>
+						<cfset var storage = 16106127360 - minusvalue>
+						<cfset var bandud = 16106127360 - minusvalue>
+					</cfif>
+					<!--- 49 --->
+					<cfif session.hosttype EQ 49>
+						<cfset var storage = 53687091200 - minusvalue>
+						<cfset var bandud = 53687091200 - minusvalue>
+					</cfif>
+					<!--- 99 --->
+					<cfif session.hosttype EQ 99>
+						<cfset var storage = 161061273600 - minusvalue>
+						<cfset var bandud = 161061273600 - minusvalue>
+					</cfif>
+					<!--- If storage or bandwidth is full then set variable and email user --->
+					<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
+						<!--- Send eMail --->
+						<cfinvoke component="email" method="send_email" subject="Razuna: Your account needs upgrading" themessage="You have exceeded the total amount of storage or traffic for your account for this month!<br /><br />If you want to add any more files you need upgrade your Razuna plan to allow for more storage and bandwidth traffic!<br /><br />Please login to Razuna and then go to your Account Settings in order to upgrade your plan now.">
+						<!--- Set var --->
+						<cfset x.limitup = true>
+					</cfif>
+				</cfif>
+				<cfcatch type="any">
+					<cfmail from="server@razuna.com" to="support@razuna.com" subject="Error in GetAccountUsage" type="html"><cfdump var="#cfcatch#"><cfdump var="#session#"></cfmail>
+				</cfcatch>
+			</cftry>
+		</cfif>
 		<!--- Return --->
 		<cfreturn x>
 	</cffunction>
