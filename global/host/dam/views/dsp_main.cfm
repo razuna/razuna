@@ -46,7 +46,7 @@
 			</cfif>
 			<!--- Nirvanix Usage --->
 			<cfif application.razuna.isp AND application.razuna.storage EQ "nirvanix" AND structkeyexists(attributes.nvxusage,"limitup")>
-				<cfcachecontent name="nvx_exceeded" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
+				<cfcachecontent name="nvx_exceeded#session.hostid#" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
 						<tr>
 							<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;color:##900;">

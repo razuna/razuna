@@ -240,25 +240,26 @@
 	<cfargument name="theuserid"  default="0" required="no"  type="string">
 	<cfargument name="theaction"  default=""  required="yes" type="string">
 	<cfargument name="thedesc"    default=""  required="yes" type="string">
-	<!--- get next id --->
-	<cfset var newid = createuuid()>
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#schedules_log
-	(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
-	sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id)
-	VALUES 
-	(
-	<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">, 
-	<cfqueryparam value="#arguments.theschedid#" cfsqltype="CF_SQL_VARCHAR">, 
-	<cfqueryparam value="#arguments.theaction#" cfsqltype="cf_sql_varchar">, 
-	<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-	<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-	<cfqueryparam value="#arguments.thedesc#" cfsqltype="cf_sql_varchar">
-	<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
-	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	)
-	</cfquery>
-	<cfset variables.cachetoken = resetcachetoken("logs")>
+	<cftry>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#schedules_log
+		(sched_log_id, sched_id_r, sched_log_action, sched_log_date, 
+		sched_log_time, sched_log_desc<cfif structkeyexists(arguments,"theuserid")>, sched_log_user</cfif>, host_id)
+		VALUES 
+		(
+		<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
+		<cfqueryparam value="#arguments.theschedid#" cfsqltype="CF_SQL_VARCHAR">, 
+		<cfqueryparam value="#arguments.theaction#" cfsqltype="cf_sql_varchar">, 
+		<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+		<cfqueryparam value="#arguments.thedesc#" cfsqltype="cf_sql_varchar">
+		<cfif structkeyexists(arguments,"theuserid")>,<cfqueryparam value="#arguments.theuserid#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		)
+		</cfquery>
+		<cfset variables.cachetoken = resetcachetoken("logs")>
+		<cfcatch type="database"></cfcatch>
+	</cftry>
 </cffunction>
 
 <!--- DELETE SCHEDULED EVENT --------------------------------------------------------------------->
@@ -472,10 +473,14 @@
 <cffunction name="doit" output="true" access="public">
 	<cfargument name="sched_id" type="string" required="yes" default="">
 	<cfset var doit = structnew()>
-	<cfset doit.dirlist = "">
+	<!--- <cfset doit.dirlist = ""> --->
 	<!--- <cfset var tempid = "sched-" & createuuid()> --->
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
+	<!--- If no record found simply abort --->
+	<cfif doit.qry_detail.recordcount EQ 0>
+		<cfabort>
+	</cfif>
 	<!--- List all files from the server directory --->
 	<!---
 <cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#doit.qry_detail#"></cfmail>

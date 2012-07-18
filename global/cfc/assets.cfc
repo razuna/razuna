@@ -673,7 +673,7 @@
 			<cfif structkeyexists(arguments.thestruct,"redirectto")>
 				<cflocation url="#arguments.thestruct.redirectto#?responsecode=1&message=htmleditformat(Upload failed #xmlformat(cfcatch.Detail)# #xmlformat(cfcatch.Message)#)" addToken="yes">
 			<cfelse>
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from API upload" dump="#cfcatch#">
+				<!--- <cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from API upload" dump="#cfcatch#"> --->
 				<!--- Return Message --->
 				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 	<Response>
@@ -1062,58 +1062,50 @@ This is the main function called directly by a single upload else from addassets
 <!--- DELETE IN DB AND FILE SYSTEM -------------------------------------------------------------------->
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfset var ts = structnew()>
-	<cfset ts.thepath = arguments.thestruct.thepath>
-	<cfset ts.assetpath = arguments.thestruct.assetpath>
-	<cfset ts.database = arguments.thestruct.database>
-	<cfset ts.dsn = application.razuna.datasource>
-	<cfthread intvars="#ts#" priority="LOW">
+	<cfthread intvars="#arguments.thestruct#" priority="LOW">
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -6, "#now()#")>
 		<!--- Clear assets dbs from records which have no path_to_asset --->
 		<cftransaction>
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#images
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#videos
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#files
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#audios
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 			</cfquery>
 		</cftransaction>
 		<!--- Select temp assets which are older then 6 hours --->
-		<cfquery datasource="#attributes.intvars.dsn#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT path as temppath, tempid
 		FROM #session.hostdbprefix#assets_temp
 		WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-		<!--- AND link_kind <cfif attributes.intvars.database EQ "oracle" OR attributes.intvars.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="lan">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->
 		</cfquery>
 		<!--- Loop trough the found records --->
 		<cfloop query="qry">
 			<!--- Delete in the DB --->
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#assets_temp
 			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
-			<!--- AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->
 			</cfquery>
 			<!--- Delete on the file system --->
 			<cfif directoryexists(temppath)>
