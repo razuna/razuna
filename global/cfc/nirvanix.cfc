@@ -159,7 +159,7 @@
 			<!--- Get session --->
 			<cfset var nvxsession = login()>
 			<!--- Get Storage Node Stuff --->
-			<cfset var storagenode = getstoragenode(nvxsession)>
+			<cfset var storagenode = getstoragenode(nvxsession,arguments.destFolderPath)>
 			<!--- Upload Asset --->
 			<cftry>
 				<cfhttp url="#storagenode.uploadhost#/Upload.ashx" method="post" throwonerror="yes" timeout="900">
@@ -194,11 +194,15 @@
 	<!--- FUNCTION: GETSTORAGENODE --->
 	<cffunction name="GetStorageNode" returntype="struct" access="public" output="false">
 		<cfargument name="nvxsession" type="string" required="false">
+		<cfargument name="thepath" type="string" required="true">
+		<!--- Init struct --->
 		<cfset var thenode = structnew()>
 		<!--- Call --->
-		<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
+		<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
 			<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
-			<cfhttpparam name="sizeBytes" value="15000" type="url">
+			<cfhttpparam name="sizeBytes" value="50000" type="url">
+			<cfhttpparam name="fileOverwrite" value="true" type="url">
+			<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
 		</cfhttp>
 		<!--- Parse --->
 		<cfset xmlVar = xmlParse(cfhttp.filecontent)/>
