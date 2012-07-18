@@ -42,6 +42,8 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Cachetoken --->
+			<cfset var cachetoken = arguments.api_key & application.razuna.api.hostid["#arguments.api_key#"]>
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- If the folderid is empty then set it to 0 --->
@@ -56,10 +58,10 @@
 				<cfset thefolderlist = arguments.folderid>
 			</cfif>	
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
 				<!--- Images --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "img">
-					SELECT  /* #session.cachetoken#getassetsfolder1 */
+					SELECT  /* #cachetoken#getassetsfolder1 */
 					i.img_id id, 
 					i.img_filename filename, 
 					i.folder_id_r folder_id, 
@@ -99,7 +101,7 @@
 				</cfif>
 				<!--- Videos --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "vid">
-					SELECT /* #session.cachetoken#getassetsfolder2 */
+					SELECT /* #cachetoken#getassetsfolder2 */
 					v.vid_id id, 
 					v.vid_filename filename, 
 					v.folder_id_r folder_id, 
@@ -139,7 +141,7 @@
 				</cfif>
 				<!--- Audios --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "aud">
-					SELECT /* #session.cachetoken#getassetsfolder3 */ 
+					SELECT /* #cachetoken#getassetsfolder3 */ 
 					a.aud_id id, 
 					a.aud_name filename, 
 					a.folder_id_r folder_id, 
@@ -179,7 +181,7 @@
 				</cfif>
 				<!--- Docs --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "doc">
-					SELECT /* #session.cachetoken#getassetsfolder4 */
+					SELECT /* #cachetoken#getassetsfolder4 */
 					f.file_id id, 
 					f.file_name filename, 
 					f.folder_id_r folder_id, 
@@ -428,7 +430,7 @@
 			)
 			</cfquery>
 			<!--- Flush cache --->
-			<cfset session.cachetoken = "#arguments.api_key##createuuid()#">
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="folders" />
 			<!--- Feedback --->
 			<cfset thexml.responsecode = 0>

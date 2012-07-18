@@ -179,7 +179,7 @@
 				</cftry>
 			</cfloop>
 			<!--- Flush cache --->
-			<cfset session.cachetoken = "#arguments.api_key##createuuid()#">
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="labels" />
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
@@ -210,7 +210,7 @@
 				</cfquery>
 			</cfloop>
 			<!--- Flush cache --->
-			<cfset session.cachetoken = "#arguments.api_key##createuuid()#">
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="labels" />
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>

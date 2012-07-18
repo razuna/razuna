@@ -39,13 +39,15 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Cachetoken --->
+			<cfset var cachetoken = arguments.api_key & application.razuna.api.hostid["#arguments.api_key#"]>
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- Images --->
 			<cfif arguments.assettype EQ "img">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-				SELECT /* #session.cachetoken#getassetimg */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+				SELECT /* #cachetoken#getassetimg */
 				i.img_id id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
@@ -80,8 +82,8 @@
 			<!--- Videos --->
 			<cfelseif arguments.assettype EQ "vid">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-				SELECT /* #session.cachetoken#getassetvid */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+				SELECT /* #cachetoken#getassetvid */
 				v.vid_id id, 
 				v.vid_filename filename, 
 				v.folder_id_r folder_id, 
@@ -117,8 +119,8 @@
 			<!--- Audios --->
 			<cfelseif arguments.assettype EQ "aud">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-				SELECT /* #session.cachetoken#getassetaud */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+				SELECT /* #cachetoken#getassetaud */
 				a.aud_id id, 
 				a.aud_name filename, 
 				a.folder_id_r folder_id, 
@@ -151,8 +153,8 @@
 			<!--- Documents --->
 			<cfelseif arguments.assettype EQ "doc">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-				SELECT /* #session.cachetoken#getassetfile */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+				SELECT /* #cachetoken#getassetfile */
 				f.file_id id, 
 				f.file_name filename, 
 				f.folder_id_r folder_id, 
@@ -340,7 +342,7 @@
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" dsn="#application.razuna.api.dsn#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" assetid="#i#" assetcategory="#lucenecategory#" userid="#application.razuna.api.userid["#arguments.api_key#"]#">
 			</cfloop>
 			<!--- Flush cache --->
-			<cfset session.cachetoken = "#arguments.api_key##createuuid()#">
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="#cachetype#" />
 			<!--- Feedback --->
 			<cfset thexml.responsecode = 0>
@@ -427,10 +429,12 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Cachetoken --->
+			<cfset var cachetoken = arguments.api_key & application.razuna.api.hostid["#arguments.api_key#"]>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
 				<cfif arguments.assettype EQ "img">
-					SELECT /* #session.cachetoken#getrenditionsimg */
+					SELECT /* #cachetoken#getrenditionsimg */
 					img_id id, 
 					img_width width, 
 					img_height height, 
@@ -443,7 +447,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
 					WHERE img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "vid">
-					SELECT /* #session.cachetoken#getrenditionsvid */
+					SELECT /* #cachetoken#getrenditionsvid */
 					vid_id id, 
 					vid_width width, 
 					vid_height height, 
@@ -456,7 +460,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					WHERE vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "aud">
-					SELECT /* #session.cachetoken#getrenditionsaud */
+					SELECT /* #cachetoken#getrenditionsaud */
 					aud_id id, 
 					0 AS width, 
 					0 AS height, 
