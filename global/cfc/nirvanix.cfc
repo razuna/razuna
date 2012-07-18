@@ -524,76 +524,66 @@
 			<cfset var nvxsession = login()>
 			<!--- Set Structure --->
 			<cfset x = structnew()>
+			<cfset x.DBU = 0>
+			<cfset x.UBU = 0>
+			<cfset x.TSU = 0>
 			<!--- Call --->
 			<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
 			<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
 				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 				<cfhttpparam name="userName" value="#arguments.username#" type="url">
 			</cfhttp>
-			<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
-			<!---
-	<cfset trimxml = trim(cfhttp.FileContent)>
-			<cfset thelen = len(trimxml)>
-			<cfset findit = findoneof("<",cfhttp.FileContent)>
-			<cfset thexml = mid(cfhttp.FileContent, findit, thelen)>
-	--->
+			<!--- Parse XML --->
 			<cfset xmlVar = xmlParse(cfhttp.FileContent)/>
-			<!--- Get the XML node for each setting --->
-			<!--- <cfset x.DBU = nvxusage[1].usage>
-			<cfset x.UBU = nvxusage[3].usage>
-			<cfset x.TSU = nvxusage[2].usage> --->
-			<cfset DBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
-			<cfset UBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
-			<cfset TSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
+			<!--- Set values --->
+			<cfset nvxDBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
+			<cfset nvxUBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
+			<cfset nvxTSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
 			<!--- Set the Usage Amount into struct --->
 			<cftry>
-				<cfset x.DBU = DBU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any">
-					<cfset x.DBU = 0>
-				</cfcatch>
+				<cfset x.DBU = nvxDBU[1].TotalUsageAmount.xmlText>
+				<cfcatch type="any"></cfcatch>
 			</cftry>
 			<cftry>
-				<cfset x.UBU = UBU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any">
-					<cfset x.UBU = 0>
-				</cfcatch>
+				<cfset x.UBU = nvxUBU[1].TotalUsageAmount.xmlText>
+				<cfcatch type="any"></cfcatch>
 			</cftry>
 			<cftry>
-				<cfset x.TSU = TSU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any">
-					<cfset x.TSU = 0>
-				</cfcatch>
+				<cfset x.TSU = nvxTSU[1].TotalUsageAmount.xmlText>
+				<cfcatch type="any"></cfcatch>
 			</cftry>
 			<!--- Add bandwidth together --->
 			<cfset x.band = x.DBU + x.UBU>
 			<!--- According to host type set the alert --->
 			<cfif session.hosttype NEQ 149>
-				<cfset var storage = 16106127360 - 10485760>
-				<cfset var bandud = 8053063680 - 10485760>
+				<!--- <cfset var storage = 16106127360 - 10485760>
+				<cfset var bandud = 8053063680 - 10485760> --->
+				<!--- Total minus the variable value where we want to warn the user (currently when 2GB are left) --->
+				<cfset var minusvalue = 2147483648>
 				<!--- 0 --->
 				<cfif session.hosttype EQ 0>
-					<cfset var storage = 524288000 - 10485760>
-					<cfset var bandud = 262144000 - 10485760>
+					<cfset var storage = 524288000 - 104857600>
+					<cfset var bandud = 524288000 - 104857600>
 				</cfif>
 				<!--- 8 --->
 				<cfif session.hosttype EQ 8>
-					<cfset var storage = 2147483648 - 10485760>
-					<cfset var bandud = 1073741824 - 10485760>
+					<cfset var storage = 2147483648 - 524288000>
+					<cfset var bandud = 2147483648 - 524288000>
 				</cfif>
 				<!--- 24 --->
 				<cfif session.hosttype EQ 24>
-					<cfset var storage = 16106127360 - 10485760>
-					<cfset var bandud = 8053063680 - 10485760>
+					<cfset var storage = 16106127360 - minusvalue>
+					<cfset var bandud = 16106127360 - minusvalue>
 				</cfif>
 				<!--- 49 --->
 				<cfif session.hosttype EQ 49>
-					<cfset var storage = 53687091200 - 10485760>
-					<cfset var bandud = 26843545600 - 10485760>
+					<cfset var storage = 53687091200 - minusvalue>
+					<cfset var bandud = 53687091200 - minusvalue>
 				</cfif>
 				<!--- 99 --->
 				<cfif session.hosttype EQ 99>
-					<cfset var storage = 161061273600 - 10485760>
-					<cfset var bandud = 80530636800 - 10485760>
+					<cfset var storage = 161061273600 - minusvalue>
+					<cfset var bandud = 161061273600 - minusvalue>
 				</cfif>
 				<!--- If storage or bandwidth is full then set variable and email user --->
 				<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
