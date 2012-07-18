@@ -173,7 +173,7 @@
 				<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80021">
 					<cfinvoke component="email" method="send_email" subject="Razuna: Could not add your file!" themessage="Please note that you have exceeded your upload/download limit for your plan.<br /><br />If you want to add your file now you need upgrade your Razuna plan to allow for more storage and bandwidth traffic! You can do so within the Account Settings of Razuna.">
 					<cfabort>
-				<cfelse>
+				<cfelseif xmlvar.Response.Responsecode[1].XmlText NEQ 0>
 					<!--- Send customer email with the fail --->
 					<cfinvoke component="email" method="send_email" subject="Razuna: Error during adding your file!" themessage="Unfortunately something went wrong during uploading your file to the storage. Thus your file is not available on Razuna.<br /><br />The Razuna support team has been notified of this and will look into it immediately.">
 					<!--- Send us the error --->
