@@ -2503,7 +2503,9 @@ This is the main function called directly by a single upload else from addassets
 				<cfset orgheight = trim(listlast(orgheight," "))>
 				<cfpause interval=2 />
 			</cfif>
-			<cfexecute name="#arguments.thestruct.theshex#" timeout="60" variable="vid_meta" />
+			<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
+				<cfexecute name="#arguments.thestruct.theshex#" timeout="60" variable="vid_meta" />
+			</cfif>
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<cffile action="delete" file="#arguments.thestruct.thesht#">
@@ -2589,6 +2591,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var ts = 1>
 			<cfset var tw = 1>
 			<cfset var th = 1>
+			<cfset var vid_meta = "">
 		</cfif>
 		<!--- Set shared options --->
 		<cfquery datasource="#variables.dsn#">
