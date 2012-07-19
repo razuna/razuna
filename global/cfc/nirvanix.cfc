@@ -170,8 +170,8 @@
 				<!--- Parse the response --->
 				<cfset xmlVar = xmlParse(cfhttp.filecontent) />
 				<!--- If we get a message the limit is exceeded then... --->
-				<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80021">
-					<cfinvoke component="email" method="send_email" subject="Razuna: Could not add your file!" themessage="Please note that you have exceeded your upload/download limit for your plan.<br /><br />If you want to add your file now you need upgrade your Razuna plan to allow for more storage and bandwidth traffic! You can do so within the Account Settings of Razuna.">
+				<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80019" OR xmlvar.Response.Responsecode[1].XmlText EQ "80020" OR xmlvar.Response.Responsecode[1].XmlText EQ "80021" OR xmlvar.Response.Responsecode[1].XmlText EQ "80022">
+					<cfinvoke component="email" method="send_email" subject="Razuna: Could not add your file!" themessage="Hello.<br /><br />It looks like that you have exceeded your upload/download limit for your plan.<br /><br />If you want to add more files, you will need upgrade your Razuna plan to allow for more storage and bandwidth traffic! You can do so within the Account Settings of Razuna (upper right corner).<br /><br />Thank you for using Razuna.">
 					<cfabort>
 				<cfelseif xmlvar.Response.Responsecode[1].XmlText NEQ 0>
 					<!--- Send customer email with the fail --->
