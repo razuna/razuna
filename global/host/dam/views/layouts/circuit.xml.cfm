@@ -59,6 +59,7 @@
 	<fuseaction name="lay_share">
 		<xfa name="switchlang" value="c.switchlang" />
 		<do action="c.languages" />
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('version')" returnvariable="version" />
 		<include template="lay_header_share" contentvariable="headercontent" />
 		<include template="lay_left" contentvariable="leftcontent" />
 		<include template="lay_right" contentvariable="maincontent" />

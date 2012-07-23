@@ -121,5 +121,7 @@ Page output starts here
 <div id="alertgroupbox" style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("share_error_group")#</div>
 </cfif>
 </cfoutput>
-
+<script type="text/javascript">
+	$('#name').focus();
+</script>
 
