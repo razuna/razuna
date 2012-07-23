@@ -710,7 +710,7 @@
 				FROM users
 				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 				</cfquery>
-				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#arguments.thestruct.theasset#) could not be added to our system. Most likely this means you have exceeded your storage or bandwidth quota. Please upgrade within your account settings!">
+				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" bcc="nitai@razuna.com" subject="Error on adding your asset" themessage="Your asset (#arguments.thestruct.theasset#) could not be added to the system. The error message is:<br />Code: #respcode# <br />Message: #d.Response.ErrorMessage[1].XmlText# <br />We have been notified of this and will look into it asap.">
 			</cfif>
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug signedurl" type="html">
