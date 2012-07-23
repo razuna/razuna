@@ -704,13 +704,18 @@
 					<cfdump var="//razuna/#session.hostid#/#arguments.thestruct.theasset#">
 					<cfdump var="#cfhttp#">
 				</cfmail> --->
-				<!--- Send user an eMail --->
-				<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-				SELECT user_email
-				FROM users
-				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
-				</cfquery>
-				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" bcc="nitai@razuna.com" subject="Error on adding your asset" themessage="Your asset (#arguments.thestruct.theasset#) could not be added to the system. The error message is:<br />Code: #respcode# <br />Message: #d.Response.ErrorMessage[1].XmlText# <br />We have been notified of this and will look into it asap.">
+				<!--- Get last part of asset --->
+				<cfset var lp = listlast(arguments.thestruct.theasset,"/")>
+				<!--- Send eMail --->
+				<cfif lp DOES NOT CONTAIN "thumb_">
+					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+					SELECT user_email
+					FROM users
+					WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+					</cfquery>
+					<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#lp#) could not be added to the system. The error message is:<br />Code: #respcode# <br />Message: #d.Response.ErrorMessage[1].XmlText# <br /><br />We have been notified of this and will look into it asap.">
+					<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="signedURL error" type="html"><cfdump var="#d#" label="thexml"><cfdump var="#session.hostid#"></cfmail>
+				</cfif>
 			</cfif>
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug signedurl" type="html">
