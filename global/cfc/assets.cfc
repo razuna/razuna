@@ -1240,7 +1240,7 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Create folder to hold the images --->
 					<cfdirectory action="create" directory="#attributes.intstruct.thepdfdirectory#" mode="775">
 					<!--- Script: Create thumbnail --->
-					<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfileflat# -thumbnail 128x -strip -colorspace sRGB -flatten #attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
+					<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfileflat# -thumbnail 128x -strip -colorspace sRGB -background none -flatten #attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 					<!--- Script: Create images --->
 					<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thepdfdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 					<!--- Execute --->
@@ -2266,7 +2266,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfswitch expression="#arguments.thestruct.qryfile.extension#">
 			<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 			<cfcase value="psd,eps,ai,png">
-				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.theimconvert# #arguments.thestruct.thesource#[0] #theImgConvertParams# -flatten #Arguments.thestruct.destination#">
+				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.theimconvert# #arguments.thestruct.thesource#[0] #theImgConvertParams# -background none -flatten #Arguments.thestruct.destination#">
 			</cfcase>
 			<!--- For RAW images we take dcraw --->
 			<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
