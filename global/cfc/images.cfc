@@ -726,7 +726,7 @@
 	<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 	<cfif arguments.thestruct.qry_detail.img_extension EQ "psd" OR arguments.thestruct.qry_detail.img_extension EQ "eps" OR arguments.thestruct.qry_detail.img_extension EQ "ai" OR arguments.thestruct.qry_detail.img_extension EQ "png">
 		<cfset theargument = "#arguments.thestruct.thesource#[0]">
-		<cfset theflatten = "-background none -flatten ">
+		<cfset theflatten = "-background white -flatten ">
 	<cfelse>
 		<cfset theargument = "#arguments.thestruct.thesource#">
 		<cfset theflatten = "">
