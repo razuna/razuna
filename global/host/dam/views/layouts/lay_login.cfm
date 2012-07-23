@@ -41,13 +41,12 @@
 	    	#body#
   		</div>
 	  	<div id="loginformfooter">
-	  		<cfif NOT application.razuna.isp>
-				<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#
+	  		Powered by <a href="http://razuna.com" target="_blank">Razuna</a> <cfif NOT application.razuna.isp>#version#<br />
 				<br>Licensed under <a href="#dynpath#/licenses/agpl.txt" target="_blank">AGPL</a>
-			<br>
+				<br>
 			</cfif>
-			Powered by <a href="http://razuna.com" target="_blank">Razuna</a>
-			<br><a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
+			<br />
+			<a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
 		</div>
 	</div>
 </cfoutput>
