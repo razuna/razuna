@@ -498,6 +498,10 @@
 	<fuseaction name="plugin_settings_loader">
   		<include template="dsp_plugin_settings_loader" />
 	</fuseaction>
+	<!-- Plugin: loader -->
+	<fuseaction name="plugin_loader">
+  		<include template="dsp_plugin_loader" />
+	</fuseaction>
 	
 	<!-- Gears -->
 	<fuseaction name="gears">

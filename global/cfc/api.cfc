@@ -52,33 +52,32 @@
 
 	<!--- Get datasource --->
 	<cffunction name="getDatasource" access="public" returntype="String">
-		<cfset var t = settingsObj.get_global().conf_datasource>
-		<cfreturn t />
+		<cfreturn settingsObj.get_global().conf_datasource />
 	</cffunction>
 
 	<!--- Get database --->
 	<cffunction name="getDatabase" access="public" returntype="String">
-		<cfset var t = settingsObj.get_global().conf_database>
-		<cfreturn t />
+		<cfreturn settingsObj.get_global().conf_database />
 	</cffunction>
 
 	<!--- Get schema --->
 	<cffunction name="getSchema" access="public" returntype="String">
-		<cfset var t = settingsObj.get_global().conf_schema>
-		<cfreturn t />
+		<cfreturn settingsObj.get_global().conf_schema />
 	</cffunction>
 
 	<!--- Get storage --->
 	<cffunction name="getStorage" access="public" returntype="String">
-		<cfset var t = settingsObj.get_global().conf_storage>
-		<cfreturn t />
+		<cfreturn settingsObj.get_global().conf_storage />
 	</cffunction>
 
 	<!--- Get Sessions --->
 	<cffunction name="getHostID" access="public" returntype="String">
-		<cfset var t = session.hostid>
-		<cfreturn t />
+		<cfreturn session.hostid />
 	</cffunction>
 
+	<!--- Get HostDBPrefix --->
+	<cffunction name="getHostPrefix" access="public" returntype="String">
+		<cfreturn session.HostDBPrefix />
+	</cffunction>
 
 </cfcomponent>

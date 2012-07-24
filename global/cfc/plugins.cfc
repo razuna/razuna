@@ -235,7 +235,7 @@
 	</cffunction>
 
 	<!--- getpluginactions --->
-	<cffunction name="getactions">
+	<cffunction name="getactions" returntype="Struct">
 		<cfargument name="theaction" required="true" />
 		<cfargument name="args" default="#structnew()#" required="false" />
 		<!--- Params --->
@@ -259,18 +259,18 @@
 			<!--- Set the page value always to true if not defined --->
 			<cfset s = evaluate("result.cfc.#p_path#.#func#")>
 			<cfif !isStruct(s) OR !structKeyExists(s, "page")>
-				<cfset page = true>
+				<cfset var page = true>
 			<cfelse>
-				<cfset page = false>
+				<cfset var page = false>
 			</cfif>
 			<!--- 2. include the page just not if dev set the page value to false (like coming from a save or alike) --->
-			<cfif fileExists("#expandpath("../../")#global/plugins/#p_path#/view/#comp#.cfm") AND page>
+			<cfif fileExists("#expandpath("../../")#global/plugins/#p_path#/view/#lcase(comp)#.cfm") AND page>
 				<!--- Parse view page --->
-				<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#comp#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
+				<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#lcase(comp)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
 				<!--- Put into variable --->
 				<cfset result.pview = result.pview & "," & "pl.view.#p_path#.#func#">
 			</cfif>
-			<!--- Put cfc path into list for easier retrieval in the Razuna --->
+			<!--- Put cfc path into list for easier retrieval --->
 			<cfset result.pcfc = result.pcfc & "," & "pl.cfc.#p_path#.#func#">
 		</cfloop>
 		<!--- Return --->
@@ -278,10 +278,30 @@
 	</cffunction>
 
 	<!--- saveDirect --->
-	<cffunction name="saveDirect">
+	<cffunction name="callDirect" returntype="Struct">
 		<cfargument name="args" required="true" />
+		<!--- Params --->
+		<cfset var result = structnew()>
+		<!--- Take comp path apart --->
+		<cfset var fcomp = listFirst(arguments.args.comp, ".")>
 		<!--- Just invoke the cfc --->
-		<cfinvoke component="global.plugins.#arguments.args.comp#" method="#arguments.args.func#" args="#arguments.args#" returnvariable="result.cfc.#arguments.args.func#" />
+		<cfinvoke component="global.plugins.#arguments.args.comp#" method="#arguments.args.func#" args="#arguments.args#" returnvariable="result.cfc.#fcomp#.#arguments.args.func#" />
+		<!--- Set the page value always to true if not defined --->
+		<cfset s = evaluate("result.cfc.#fcomp#.#arguments.args.func#")>
+		<cfif !isStruct(s) OR !structKeyExists(s, "page")>
+			<cfset var page = true>
+		<cfelse>
+			<cfset var page = false>
+		</cfif>
+		<!--- Include the page just not if dev set the page value to false (like coming from a save or alike) --->
+		<cfif fileExists("#expandpath("../../")#global/plugins/#fcomp#/view/#lcase(arguments.args.func)#.cfm") AND page>
+			<!--- Parse view page --->
+			<cfsavecontent variable="result.view.#fcomp#.#arguments.args.func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#fcomp#/view/#lcase(arguments.args.func)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
+			<!--- Put into variable --->
+			<cfset result.pview = "pl.view.#fcomp#.#arguments.args.func#">
+		</cfif>
+		<!--- Return --->
+		<cfreturn result />
 	</cffunction>
 
 </cfcomponent>
