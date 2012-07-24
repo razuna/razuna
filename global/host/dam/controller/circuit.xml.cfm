@@ -268,7 +268,7 @@
 						<!-- Get News -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
 						<!-- Get Invoices -->
-						<invoke object="myFusebox.getApplicationData().global" methodcall="getaccount(cgi.HTTP_X_FORWARDED_SERVER,session.hostid)" returnvariable="res_account" />
+						<invoke object="myFusebox.getApplicationData().global" methodcall="getaccount(session.hostid)" returnvariable="res_account" />
 					</true>
 				</if>
 				<!-- CFC: Get languages -->
