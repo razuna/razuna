@@ -1248,6 +1248,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfif application.razuna.storage NEQ "amazon">
 						<cfexecute name="#attributes.intstruct.thesht#" timeout="900" />
 					</cfif>
+					<cfabort>
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#attributes.intstruct.thesh#">
 					<cffile action="delete" file="#attributes.intstruct.thesht#">
@@ -3002,15 +3003,24 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thedirectory" type="string">
 	<!--- Get folders within the unzip --->
 	<cfdirectory action="list" directory="#arguments.thedirectory#" name="thedir" recurse="true" type="dir">
+	<!--- Sort the above list in a query because cfdirectory sorting sucks --->
+	<cfquery dbtype="query" name="thedir">
+	SELECT *
+	FROM thedir
+	WHERE name LIKE '% %'
+	ORDER BY name
+	</cfquery>
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
 	<cfloop query="thedir">
 		<cfif thedir.attributes NEQ "H" AND NOT name CONTAINS "__MACOSX">
 			<!--- All foreign chars are now converted, except the FileSeparator and - --->
-			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","","ALL")>
+			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","-","ALL")>
 			<!--- Rename --->
-			<cfif "#directory#/#name#" NEQ "#directory#/#d#">
+			<!--- <cfif "#directory#/#name#" NEQ "#directory#/#d#"> --->
 				<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
-			</cfif>
+			<!--- </cfif> --->
+			<!--- Call this method again since the folder name on the disk could have changed --->
+			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thedirectory#">
 		</cfif>
 	</cfloop>
 	<cfreturn />
