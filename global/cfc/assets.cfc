@@ -1248,7 +1248,6 @@ This is the main function called directly by a single upload else from addassets
 					<cfif application.razuna.storage NEQ "amazon">
 						<cfexecute name="#attributes.intstruct.thesht#" timeout="900" />
 					</cfif>
-					<cfabort>
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#attributes.intstruct.thesh#">
 					<cffile action="delete" file="#attributes.intstruct.thesht#">
