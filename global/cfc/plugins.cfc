@@ -277,7 +277,7 @@
 		<cfreturn result />
 	</cffunction>
 
-	<!--- saveDirect --->
+	<!--- callDirect --->
 	<cffunction name="callDirect" returntype="Struct">
 		<cfargument name="args" required="true" />
 		<!--- Params --->

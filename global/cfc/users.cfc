@@ -510,5 +510,18 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Get all users who are active --->
+<cffunction name="getallactive">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getallactive */ u.user_email, u.user_first_name, u.user_last_name
+	FROM users u, ct_users_hosts uh
+	WHERE (
+		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		AND uh.ct_u_h_user_id = u.user_id
+		)
+	WHERE lower(u.user_active) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="t">
+	</cfquery>
+	<cfreturn qry>
+</cffunction>
 
 </cfcomponent>
