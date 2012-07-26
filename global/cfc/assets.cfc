@@ -1798,6 +1798,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset var theDBurl = "">
 	<cfset var iLoop = "">
 	<cfset var thenewnr = 0>
+	<cfparam name="arguments.thestruct.img_meta" default="" />
 	<cfset arguments.thestruct.dsn = variables.dsn>
 	<cfset arguments.thestruct.database = variables.database>
 	<cfset arguments.thestruct.hostid = session.hostid>

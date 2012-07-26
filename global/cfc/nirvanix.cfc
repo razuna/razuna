@@ -64,9 +64,9 @@
 			<cfelse>
 				<!--- If this is a Squid request then the ip is not in the remote_addr cgi variable --->
 				<cfif structkeyexists(cgi,"http_x_forwarded_for")>
-					<cfset theremoteip = cgi.http_x_forwarded_for>
+					<cfset var theremoteip = cgi.http_x_forwarded_for>
 				<cfelse>
-					<cfset theremoteip = cgi.remote_addr>
+					<cfset var theremoteip = cgi.remote_addr>
 				</cfif>
 				<!--- Get the SessionToken --->
 				<cfhttp url="https://services.nirvanix.com/ws/Authentication/LoginProxy.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
@@ -105,10 +105,10 @@
 				<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
 			</cfhttp>
 			<!--- Get the XML node for each setting --->
-			<cfset xmlfound = xmlSearch(cfhttp.FileContent, "//SessionToken")>
-			<cfset nvxsession = xmlfound[1].xmlText>
+			<cfset var xmlfound = xmlSearch(cfhttp.FileContent, "//SessionToken")>
+			<cfset var nvxsession = xmlfound[1].xmlText>
 			<cfcatch type="any">
-				<cfset nvxsession = 0>
+				<cfset var nvxsession = 0>
 			</cfcatch>
 		</cftry>
 		<!--- Return --->
@@ -131,7 +131,7 @@
 			<cfset var thexml = xmlparse(cfhttp.FileContent)>
 			<cfset var nvxsession = thexml.Response.ResponseCode[1].XmlText>
 			<cfcatch type="any">
-				<cfset nvxsession = 1>
+				<cfset var nvxsession = 1>
 			</cfcatch>
 		</cftry>
 		<cfoutput><br>
@@ -168,7 +168,7 @@
 					<cfhttpparam name="uploadFile" file="#arguments.uploadfile#" type="file">
 				</cfhttp>
 				<!--- Parse the response --->
-				<cfset xmlVar = xmlParse(cfhttp.filecontent) />
+				<cfset var xmlVar = xmlParse(cfhttp.filecontent) />
 				<!--- If we get a message the limit is exceeded then... --->
 				<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80019" OR xmlvar.Response.Responsecode[1].XmlText EQ "80020" OR xmlvar.Response.Responsecode[1].XmlText EQ "80021" OR xmlvar.Response.Responsecode[1].XmlText EQ "80022">
 					<cfinvoke component="email" method="send_email" subject="Razuna: Could not add your file!" themessage="Hello.<br /><br />It looks like that you have exceeded your upload/download limit for your plan.<br /><br />If you want to add more files, you will need upgrade your Razuna plan to allow for more storage and bandwidth traffic! You can do so within the Account Settings of Razuna (upper right corner).<br /><br />Thank you for using Razuna.">
@@ -182,6 +182,8 @@
 				</cfif>
 				<cfcatch type="any">
 					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
+						<cfdump var="#storagenode#" label="storagenode">
+						<cfdump var="#arguments#" label="arguments">
 						<cfdump var="#cfcatch#" />
 					</cfmail>
 					<cfabort>
@@ -198,17 +200,29 @@
 		<!--- Init struct --->
 		<cfset var thenode = structnew()>
 		<!--- Call --->
-		<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
-			<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
-			<cfhttpparam name="sizeBytes" value="50000" type="url">
-			<cfhttpparam name="fileOverwrite" value="true" type="url">
-			<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
-		</cfhttp>
-		<!--- Parse --->
-		<cfset xmlVar = xmlParse(cfhttp.filecontent)/>
-		<!--- Get the XML node for each setting --->
-		<cfset thenode.uploadhost = xmlvar.Response.GetStorageNode.UploadHost[1].XmlText>
-		<cfset thenode.uploadtoken = xmlvar.Response.GetStorageNode.UploadToken[1].XmlText>
+		<cftry>
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
+				<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
+				<cfhttpparam name="sizeBytes" value="50000" type="url">
+				<cfhttpparam name="fileOverwrite" value="true" type="url">
+				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
+			</cfhttp>
+			<!--- Parse --->
+			<cfset var xmlVar = xmlParse(cfhttp.filecontent)/>
+			<!--- Get the XML node for each setting --->
+			<cfset thenode.uploadhost = xmlvar.Response.GetStorageNode.UploadHost[1].XmlText>
+			<cfset thenode.uploadtoken = xmlvar.Response.GetStorageNode.UploadToken[1].XmlText>
+			<cfcatch type="any">
+				<!--- Send customer email with the fail --->
+				<cfinvoke component="email" method="send_email" subject="Razuna: Error during adding your file!" themessage="Unfortunately something went wrong during uploading your file to the storage. Thus your file is not available on Razuna.<br /><br />The Razuna support team has been notified of this and will look into it immediately.">
+				<!--- Send us the error --->
+				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="GetStorageNode nirvanix error">
+					<cfdump var="#arguments#" label="arguments">
+					<cfdump var="#cfcatch#" />
+				</cfmail>
+				<cfabort>
+			</cfcatch>
+		</cftry>
 		<!--- Return --->
 		<cfreturn thenode>
 	</cffunction>
@@ -546,11 +560,11 @@
 					<cfhttpparam name="userName" value="#arguments.username#" type="url">
 				</cfhttp>
 				<!--- Parse XML --->
-				<cfset xmlVar = xmlParse(cfhttp.FileContent)/>
+				<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
 				<!--- Set values --->
-				<cfset nvxDBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
-				<cfset nvxUBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
-				<cfset nvxTSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
+				<cfset var nvxDBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
+				<cfset var nvxUBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
+				<cfset var nvxTSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
 				<!--- Set the Usage Amount into struct --->
 				<cftry>
 					<cfset x.DBU = nvxDBU[1].TotalUsageAmount.xmlText>

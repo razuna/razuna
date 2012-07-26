@@ -448,7 +448,7 @@
 				<cfthread action="join" name="#thethreadid#" />
 			</cfif>
 			<!--- Rename the file --->
-			<cfif structkeyexists(arguments.thestruct.qry, "link_kind") AND arguments.thestruct.qry.link_kind NEQ "url">
+			<cfif structkeyexists(arguments.thestruct.qry, "link_kind") AND arguments.thestruct.qry.link_kind NEQ "url" AND fileExists("#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#")>
 				<cffile action="move" source="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#" destination="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#thenewname#">
 			</cfif>
 		</cfif>
