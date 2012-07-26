@@ -47,12 +47,15 @@ body {
 }
 </style>
 <script type="text/javascript">
+function S4() {
+   return Math.random();
+}
 // Convert divs to queue widgets when the DOM is ready
 $(function() {
 	$("##uploader").pluploadQueue({
 		// General settings
 		runtimes : '#session.pluploadruntimes#',
-		url : '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&_v=#createuuid()#',
+		url : '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#',
 		max_file_size : '2000mb',
 		unique_names : false,
 		multipart : true,
@@ -80,6 +83,7 @@ $(function() {
 			,		
 			preinit : function(up) {
 				up.bind('UploadFile', function() {
+					up.settings.url = '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&_v=' + S4();
 					up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), upl_template: $('##upl_template_chooser').val() };
 				});
 			}
@@ -87,6 +91,11 @@ $(function() {
 		
 	});
 	
+	$("##uploader").pluploadQueue.bind('UploadFile', function(up, file){
+	    uploader.settings.url = uploader.settings.url.split('&filename')[0] + '&filename='+file.name;
+	    return true;
+	});
+
 	// Extend global multipart_params for each UploadFile dynamically
 	/*
 $('##uploader').pluploadQueue().bind('QueueChanged',
