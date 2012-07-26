@@ -1556,7 +1556,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		</cfquery>
-		<!--- Loop over items in basket --->
+		<!--- Loop over items --->
 		<cfloop query="qry">
 			<!--- Set query --->
 			<cfset QueryAddRow(arguments.thestruct.qry,1)>
@@ -1789,8 +1789,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<!--- Add keywords and description --->
 	<cfif arguments.thestruct.qry_text.recordcount NEQ 0>
 		<cfloop query="arguments.thestruct.qry_text">
+			<cfif tid EQ arguments.thestruct.file_id>
 			<cfset QuerySetCell(arguments.thestruct.tq, "keywords", keywords)>
 			<cfset QuerySetCell(arguments.thestruct.tq, "description", description)>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Add XMP --->
