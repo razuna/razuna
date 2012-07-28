@@ -3,7 +3,7 @@
   <system>
     <buffersize>0</buffersize>
     <strictarraypassbyreference>true</strictarraypassbyreference>
-    <functionscopedvariables>true</functionscopedvariables>
+    <functionscopedvariables>false</functionscopedvariables>
     <password>admin</password>
     <licensekey></licensekey>
     <assert>true</assert>
