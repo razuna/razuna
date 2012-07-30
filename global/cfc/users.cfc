@@ -108,7 +108,8 @@
 
 <!--- Get all users --->
 <cffunction name="getall">
-	<cfargument name="thestruct" type="Struct">
+	<cfargument name="thestruct" type="Struct" required="false">
+	<cfparam name="arguments.thestruct" default="#structnew()#">
 	<cfset var localquery = 0>
 	<cfquery datasource="#application.razuna.datasource#" name="localquery">
 	SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 

@@ -80,4 +80,16 @@
 		<cfreturn session.HostDBPrefix />
 	</cffunction>
 
+	<!--- Get Groups --->
+	<cffunction name="getGroups" access="public" returntype="query">
+		<cfinvoke component="groups" method="getall" returnvariable="qrygrp" />
+		<cfreturn qrygrp />
+	</cffunction>
+
+	<!--- Get Users --->
+	<cffunction name="getUsers" access="public" returntype="query">
+		<cfinvoke component="users" method="getall" returnvariable="qryusers" />
+		<cfreturn qryusers />
+	</cffunction>
+
 </cfcomponent>
