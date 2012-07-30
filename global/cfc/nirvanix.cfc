@@ -685,6 +685,8 @@
 		<cfargument name="thestruct" type="struct" required="true" />
 		<!--- Get session --->
 		<cfset var nvxsession = login()>
+		<!--- Wait for 5 seconds --->
+		<cfpause interval="5" />
 		<!--- Get Signed URL --->
 		<cftry>
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetOptimalUrls.ashx" method="get" throwonerror="no">
