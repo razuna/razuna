@@ -689,7 +689,7 @@
 		<cftry>
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetOptimalUrls.ashx" method="get" throwonerror="no">
 				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
-				<cfhttpparam name="filePath" value="/#arguments.thestruct.theasset#" type="url">
+				<cfhttpparam name="filePath" value="//razuna/#session.hostid#/#arguments.thestruct.theasset#" type="url">
 				<cfhttpparam name="expiration" value="#arguments.thestruct.newepoch#" type="url">
 			</cfhttp>
 			<!--- Parse XML --->
