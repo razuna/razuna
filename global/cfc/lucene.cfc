@@ -52,7 +52,7 @@
 			</cftry>
 			<!--- Delete path on disk --->
 			<cftry>
-				<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" />
+				<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
 				<cfcatch type="any">
 					<cfmail from="server@razuna.com" to="support@razuna.com" subject="collection error remove directory #arguments.colname#" type="html"><cfdump var="#cfcatch#"></cfmail>
 				</cfcatch>
