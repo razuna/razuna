@@ -3112,6 +3112,12 @@
 				<set name="session.savehere" value="" />
 			</true>
 		</if>
+		<!-- For scheduled uploads do... -->
+		<if condition="session.type EQ 'plugin'">
+			<true>
+				<set name="session.savehere" value="" />
+			</true>
+		</if>
 		<!-- If we save the basket as zip in this folder do... -->
 		<if condition="session.type EQ 'saveaszip'">
 			<true>
@@ -3541,6 +3547,14 @@
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="callDirect(attributes)" returnvariable="pl" />
 		<!-- Do -->
 		<do action="ajax.plugin_loader" />
+	</fuseaction>
+
+	<!-- If we call the choose folder within the plugin -->
+	<fuseaction name="plugin_choose_folder">
+		<!-- Param -->
+		<set name="session.type" value="plugin" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
 	</fuseaction>
 
 	<!--  -->
