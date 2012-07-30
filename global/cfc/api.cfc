@@ -92,4 +92,10 @@
 		<cfreturn qryusers />
 	</cffunction>
 
+	<!--- Get UploadTemplates --->
+	<cffunction name="getUploadTemplates" access="public" returntype="query">
+		<cfinvoke component="global" method="upl_templates" theactive="true" returnvariable="qryuptemp" />
+		<cfreturn qryuptemp />
+	</cffunction>
+
 </cfcomponent>

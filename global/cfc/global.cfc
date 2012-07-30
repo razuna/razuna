@@ -476,13 +476,13 @@ Comment:<br>
 
 <!--- Get ALL Upload Templates ---------------------------------------------------------------------->
 	<cffunction name="upl_templates" output="false">
-		<cfargument name="theactive" type="boolean" required="false" default="0">
+		<cfargument name="theactive" type="boolean" required="false" default="false">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT upl_temp_id, upl_active, upl_name, upl_description
 		FROM #session.hostdbprefix#upload_templates
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif arguments.theactive EQ "T">
+		<cfif arguments.theactive>
 			AND upl_active = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 		</cfif>
 		</cfquery>
