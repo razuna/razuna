@@ -662,6 +662,7 @@
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="minutesValid" type="string" required="false" default="5259600">
 		<cfargument name="nvxsession" type="string" required="false">
+		<cfpause interval="5"></cfpause>
 		<!--- Create Epoc time --->
 		<cfset arguments.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
 		<!--- Create thread --->
