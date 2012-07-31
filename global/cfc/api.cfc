@@ -98,4 +98,10 @@
 		<cfreturn qryuptemp />
 	</cffunction>
 
+	<!--- Get Labels --->
+	<cffunction name="getLabels" access="public" returntype="query">
+		<cfinvoke component="labels" method="labels_dropdown" returnvariable="qrylabels" />
+		<cfreturn qrylabels />
+	</cffunction>
+
 </cfcomponent>

@@ -331,6 +331,7 @@
 		SELECT /* #variables.cachetoken#labels_dropdown */ label_id, label_id_r, label_path, label_text
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
+		AND label_path IS NOT NULL
 		ORDER BY label_path
 		</cfquery>
 		<!--- Return --->
