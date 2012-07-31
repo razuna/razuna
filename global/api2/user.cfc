@@ -132,7 +132,7 @@
 		<cfif thesession>
 			<!--- Query the user --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT user_id, user_login_name, user_email, user_first_name, user_last_name
+			SELECT user_id, user_login_name, user_email, user_first_name, user_last_name, user_api_key
 			FROM users
 			WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.api_key#"]#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
