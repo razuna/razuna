@@ -38,6 +38,9 @@
 			<tr>
 				<td colspan="2"><input type="radio" name="set2_md5check" value="true"<cfif prefs.set2_md5check> checked="checked"</cfif> />Check for duplicate assets (recommended)<br /><input type="radio" name="set2_md5check" value="false"<cfif !prefs.set2_md5check> checked="checked"</cfif> />Do not check for duplicate records (allow to store the same asset within Razuna, even multiple times)</td>
 			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
 			<!--- Image Formats --->
 			<tr>
 				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_img_format")#</th>
@@ -52,6 +55,9 @@
 				<option value="png"<cfif prefs.set2_img_format EQ "PNG"> selected</cfif>>PNG</option>
 				</select></td>
 			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
 			<!--- Image Sizes --->
 			<tr>
 				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_img_size")#</th>
@@ -61,6 +67,57 @@
 			</tr>
 			<tr>
 				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="set2_img_thumb_width" size="4" maxlength="3" value="#prefs.set2_img_thumb_width#" /> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="set2_img_thumb_heigth" size="4" maxlength="3" value="#prefs.set2_img_thumb_heigth#" /></td>
+			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
+			<!--- Set the FROM address for emails --->
+			<tr>
+				<th colspan="2" class="textbold">Set FROM address for eMail messages</th>
+			</tr>
+			<tr>
+				<td colspan="2">Razuna will send out notification, statuses or other relevant eMails to you and your users. By default those message come from "server@razuna.com". If you need to change this you can do so below.</td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="text" name="set2_email_from" size="60" value="#prefs.set2_email_from#" /></td>
+			</tr>
+			<!--- email settings for new registration from site --->
+			<tr>
+				<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_desc")#</td>
+			</tr>
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_emails")#</td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="text" name="set2_intranet_reg_emails" size="60" value="#prefs.set2_intranet_reg_emails#" /><br /><i>#myFusebox.getApplicationData().defaults.trans("multiple_emails")#</i></td>
+			</tr>
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_email_subject")#</td>
+			</tr>
+			<tr>
+				<td colspan="2"><input type="text" name="set2_intranet_reg_emails_sub" size="60" value="#prefs.set2_intranet_reg_emails_sub#" /></td>
+			</tr>
+			<tr class="list">
+				<td colspan="2"><br /></td>
+			</tr>
+			<!--- Languages --->
+			<tr>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("choose_language")# - <a href="##" onclick="loadcontent('admin_settings','#myself#c.isp_settings_updatelang');">#myFusebox.getApplicationData().defaults.trans("language_update")#</a></th>
+			</tr>
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("language_update_desc")#</td>
+			</tr>
+			<cfloop query="qry_langs">
+				<tr>
+					<td width="1%" nowrap="true" aling="center"><input type="checkbox" name="lang_active_#lang_id#" value="t"<cfif lang_active EQ "t"> checked</cfif>></td>
+					<td width="100%">#lang_name#</td>
+				</tr>
+			</cfloop>
+			<tr class="list">
+				<td colspan="2"><br /></td>
 			</tr>
 			<!--- Date --->
 			<tr>
@@ -84,38 +141,6 @@
 				<option value=":"<cfif #prefs.set2_date_format_del# EQ ":"> selected</cfif>>:</option>
 				</select></td>
 			</tr>
-			<!--- email settings for new registration from site --->
-			<tr>
-				<th colspan="2" class="textbold">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration")#</th>
-			</tr>
-			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_desc")#</td>
-			</tr>
-			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_emails")#</td>
-			</tr>
-			<tr>
-				<td colspan="2"><input type="text" name="set2_intranet_reg_emails" size="60" value="#prefs.set2_intranet_reg_emails#" /><br /><i>#myFusebox.getApplicationData().defaults.trans("multiple_emails")#</i></td>
-			</tr>
-			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("intranet_new_registration_email_subject")#</td>
-			</tr>
-			<tr>
-				<td colspan="2"><input type="text" name="set2_intranet_reg_emails_sub" size="60" value="#prefs.set2_intranet_reg_emails_sub#" /></td>
-			</tr>
-			<!--- Languages --->
-			<tr>
-				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("choose_language")# - <a href="##" onclick="loadcontent('admin_settings','#myself#c.isp_settings_updatelang');">#myFusebox.getApplicationData().defaults.trans("language_update")#</a></th>
-			</tr>
-			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("language_update_desc")#</td>
-			</tr>
-			<cfloop query="qry_langs">
-				<tr>
-					<td width="1%" nowrap="true" aling="center"><input type="checkbox" name="lang_active_#lang_id#" value="t"<cfif lang_active EQ "t"> checked</cfif>></td>
-					<td width="100%">#lang_name#</td>
-				</tr>
-			</cfloop>
 			<tr>
 				<td colspan="2" align="right"><div id="form_admin_settings_status" style="float:left;font-weight:bold;color:green;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></td>
 			</tr>
