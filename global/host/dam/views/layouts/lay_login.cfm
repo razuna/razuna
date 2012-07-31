@@ -42,8 +42,7 @@
   		</div>
 	  	<div id="loginformfooter">
 	  		Powered by <a href="http://razuna.com" target="_blank">Razuna</a> <cfif NOT application.razuna.isp>#version#<br />
-				<br>Licensed under <a href="#dynpath#/licenses/agpl.txt" target="_blank">AGPL</a>
-				<br>
+				Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a>
 			</cfif>
 			<br />
 			<a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>

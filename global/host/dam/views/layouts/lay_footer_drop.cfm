@@ -72,7 +72,7 @@
 			<br>
 			<cfif NOT application.razuna.isp>
 				<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#<br>
-				Licensed under <a href="#dynpath#/licenses/agpl.txt" target="_blank">AGPL</a><br>
+				Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a><br>
 			</cfif>
 			<a href="http://razuna.com" target="_blank">Razuna Hosted Platform</a> and <a href="http://razuna.org" target="_blank">Razuna Open Source</a><br>
 			<a href="http://blog.razuna.com" target="_blank">Visit the Razuna Blog for latest news.</a>
