@@ -104,4 +104,10 @@
 		<cfreturn qrylabels />
 	</cffunction>
 
+	<!--- Get CustomFields --->
+	<cffunction name="getCustomFields" access="public" returntype="query">
+		<cfinvoke component="custom_fields" method="get" fieldsenabled="true" returnvariable="qrycf" />
+		<cfreturn qrycf />
+	</cffunction>
+
 </cfcomponent>

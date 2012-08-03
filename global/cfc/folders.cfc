@@ -2800,7 +2800,7 @@
 			<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
 		<!--- Plugin --->
 		<cfelseif session.type EQ "plugin">
-			<a href="##" onclick="$('##hidden_folder_id').val('#folder_id#'); $('##folder_name').val('#folder_name#');destroywindow(1);">
+			<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">
 		</cfif>
 		<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif></a>
 		</li>

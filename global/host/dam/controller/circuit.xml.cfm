@@ -4199,7 +4199,7 @@
 	<!-- Get existing custom fields -->
 	<fuseaction name="custom_fields_existing">
 		<!-- CFC: Get fields -->
-		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get(attributes)" returnvariable="qry_fields" />
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get()" returnvariable="qry_fields" />
 		<!-- Show -->
 		<do action="ajax.custom_fields_existing" />
 	</fuseaction>
