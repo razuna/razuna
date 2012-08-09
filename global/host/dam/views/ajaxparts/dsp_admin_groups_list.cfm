@@ -33,8 +33,7 @@
 			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</th>
 		</tr>
 		<tr>
-			<td width="100%"><input type="text" size="40" name="grpnew" id="grpnew" /></td>
-			<td width="1%" nowrap="true"><input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="javascript:addgrp('ecp');" /></td>
+			<td width="100%" colspan="2"><input type="text" size="40" name="grpnew" id="grpnew" /> <input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="javascript:addgrp('ecp');" /></td>
 		</tr>
 	</table>
 	</form>

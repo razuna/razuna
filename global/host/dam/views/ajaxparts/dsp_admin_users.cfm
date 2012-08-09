@@ -25,36 +25,29 @@
 --->
 <cfoutput>
 	<form name="usearch" onsubmit="usersearch();return false;">
-	<div style="padding-bottom:10px;">
-		<div style="float:left;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);"><img src="#dynpath#/global/host/dam/images/user-new-3.png" width="22" height="22" border="0"></a></div>
-		<div style="padding-top:4px;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:none;font-weight:bold;padding-left:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a></div>
+	<div style="padding-bottom:10px;float:right;">
+		<div style="padding-top:4px;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a> | <a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Import</a> | <a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Export</a></div>
 	</div>
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-	<tr>
-		<th colspan="4">
-			<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("quicksearch")#</div>
-			<!--- <div style="float:right;"></div> --->
-		</th>
-	</tr>
-	<tr>
-		<td>#myFusebox.getApplicationData().defaults.trans("username")#</td>
-		<td>#myFusebox.getApplicationData().defaults.trans("user_company")#</td>
-		<td colspan="2">eMail</td>
-	</tr>
-	<tr>
-		<td><input type="text" size="25" name="user_login_name" id="user_login_name2" /></td>
-		<td><input type="text" size="25" name="user_company" id="user_company2" /></td>
-		<td><input type="text" size="25" name="user_email" id="user_email2" /></td>
-		<td><input type="submit" name="Button" value="#myFusebox.getApplicationData().defaults.trans("user_search")#" class="button" onclick="javascript:usersearch();" /></td>
-	</tr>
+	<table border="0" cellspacing="0" cellpadding="0" class="grid">
+		<tr>
+			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("quicksearch")#</th>
+		</tr>
+		<tr>
+			<td>#myFusebox.getApplicationData().defaults.trans("username")#</td>
+			<td>#myFusebox.getApplicationData().defaults.trans("user_company")#</td>
+			<td colspan="2">eMail</td>
+		</tr>
+		<tr>
+			<td><input type="text" size="25" name="user_login_name" id="user_login_name2" /></td>
+			<td><input type="text" size="25" name="user_company" id="user_company2" /></td>
+			<td><input type="text" size="25" name="user_email" id="user_email2" /></td>
+			<td><input type="submit" name="Button" value="#myFusebox.getApplicationData().defaults.trans("user_search")#" class="button" onclick="javascript:usersearch();" /></td>
+		</tr>
 	</table>
 	</form>
 	<!--- The results --->
 	<div id="uresults">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-			<tr>
-				<td colspan="7">Users in the group "SystemAdministrator" are not being shown in the list below!</td>
-			</tr>
 			<tr>
 				<th></th>
 				<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
