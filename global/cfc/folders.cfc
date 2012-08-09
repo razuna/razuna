@@ -304,6 +304,10 @@
 	<!--- Params --->
 	<cfparam default="" name="arguments.thestruct.coll_folder">
 	<cfparam default="" name="arguments.thestruct.link_path">
+	<!--- If level is empty make it a 2 --->
+	<cfif arguments.thestruct.level EQ "">
+		<cfset arguments.thestruct.level = 2>
+	</cfif>
 	<!--- If this is NOT a link to a folder --->
 	<cfif arguments.thestruct.link_path EQ "">
 		<cftry>
@@ -360,7 +364,8 @@
 				<cfreturn this.action2>
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in adding folder" dump="#cfcatch#">
+				<cfdump var="#cfcatch#">
+				<cfabort>
 			</cfcatch>
 		</cftry>
 	<!--- This is a link --->
