@@ -30,6 +30,9 @@
 		<form id="#kind#form"></form>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
+				<td><cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/<a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a></cfloop></td>
+			</tr>
+			<tr>
 				<td>
 					No assets found in here<cfif qry_subfolders.recordcount NEQ 0>, except #qry_subfolders.recordcount# subfolder(s)</cfif>. <cfif attributes.folderaccess NEQ "R"><cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">Add assets to this folder</a> | <cfelseif cs.myfolder_upload><a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">Add assets to this folder</a> | </cfif></cfif><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("folder_new"))#',750,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">Create a sub folder</a></cfif>
 				</td>
@@ -59,7 +62,7 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<!--- Header --->
 		<tr>
-			<th colspan="6">
+			<td colspan="6">
 				<!--- Show notification of folder is being shared --->
 				<cfinclude template="inc_folder_header.cfm">
 				<div style="float:right;">
@@ -69,7 +72,7 @@
 					<cfset thediv = "content">
 					<cfinclude template="dsp_folder_navigation.cfm">
 				</div>
-			</th>
+			</td>
 		</tr>
 		<!--- Icon Bar --->
 		<tr>
