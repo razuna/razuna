@@ -98,7 +98,7 @@
 								<br>
 								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;"><strong>#left(aud_name,50)#</strong></a>
 							<cfelse>
-								We are still working on the asset "#aud_name#"...
+								The upload of "#aud_name#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(aud_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(aud_create_date, "HH:mm")#

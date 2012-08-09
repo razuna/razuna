@@ -118,7 +118,7 @@
 									<br>
 									<strong>#filename#</strong>
 								<cfelse>
-									We are still working on the asset "#filename#"...
+									The upload of "#filename#" is still in progress!
 								</cfif>
 							<!--- Videos --->
 							<cfelseif kind EQ "vid">
@@ -133,7 +133,7 @@
 									<br>
 									<strong>#filename#</strong>
 								<cfelse>
-									We are still working on the asset "#filename#"...
+									The upload of "#filename#" is still in progress!
 								</cfif>
 							<!--- Audios --->
 							<cfelseif kind EQ "aud">
@@ -148,7 +148,7 @@
 									<br>
 									<strong>#filename#</strong>
 								<cfelse>
-									We are still working on the asset "#filename#"...
+									The upload of "#filename#" is still in progress!
 								</cfif>
 							<!--- All other files --->
 							<cfelse>
@@ -174,7 +174,7 @@
 									<br>
 									<strong>#filename#</strong>
 								<cfelse>
-									We are still working on the asset "#filename#"...
+									The upload of "#filename#" is still in progress!
 								</cfif>
 							</cfif>
 						</div>
