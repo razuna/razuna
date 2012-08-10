@@ -642,7 +642,7 @@
 	<fuseaction name="meta_export">
   		<include template="dsp_meta_export" />
 	</fuseaction>
-	
+
 	<!-- Meta: Import -->
 	<fuseaction name="meta_imp">
   		<include template="dsp_meta_import" />
@@ -657,4 +657,17 @@
   		<include template="dsp_download_folder" />
 	</fuseaction>
 	
+	<!-- User: Export -->
+	<fuseaction name="users_export">
+  		<include template="dsp_admin_users_export" />
+	</fuseaction>
+	<!-- User: Import -->
+	<fuseaction name="users_import">
+  		<include template="dsp_admin_users_import" />
+	</fuseaction>
+	<!-- User: Import -->
+	<fuseaction name="users_import_upload">
+  		<include template="dsp_admin_users_import_upload" />
+	</fuseaction>
+
 </circuit>

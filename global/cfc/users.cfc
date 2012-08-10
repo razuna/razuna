@@ -185,6 +185,11 @@
 	<cfparam default="F" name="arguments.thestruct.adminuser">
 	<cfparam default="F" name="arguments.thestruct.intrauser">
 	<cfparam default="F" name="arguments.thestruct.vpuser">
+	<cfparam default="" name="arguments.thestruct.user_company">
+	<cfparam default="" name="arguments.thestruct.user_phone">
+	<cfparam default="" name="arguments.thestruct.user_mobile">
+	<cfparam default="" name="arguments.thestruct.user_fax">
+	<cfparam default="" name="arguments.thestruct.user_salutation">
 	<!--- Check that there is no user already with the same email address --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 	SELECT u.user_email, u.user_login_name
@@ -407,8 +412,6 @@
 		</cfquery>
 		<!--- Set var --->
 		<cfset arguments.thestruct.id = arguments.thestruct.id>
-		
-		
 	<cfelse>
 		<!--- Set var --->
 		<cfset arguments.thestruct.id = 0>
@@ -510,5 +513,217 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Export users --->
+<cffunction name="users_export" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
+	<cfflush>
+	<!--- Query users --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	SELECT u.user_id, u.user_login_name as login_name, u.user_first_name as first_name, u.user_last_name  as last_name , u.user_email as email, u.user_active as active
+	FROM ct_users_hosts uh, users u LEFT JOIN ct_groups_users gu ON gu.ct_g_u_user_id = u.user_id AND gu.ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '1'
+	WHERE (
+		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		AND uh.ct_u_h_user_id = u.user_id
+		)
+	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+	GROUP BY u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active
+	</cfquery>
+	<!--- Add column to qry --->
+	<cfset var MyArray = ArrayNew(1)>
+	<cfset MyArray[1] = "">
+	<cfset QueryAddcolumn(qry, "groupid", "varchar", MyArray)>
+	<cfset QueryAddcolumn(qry, "password", "varchar", MyArray)>
+	<!--- Loop over records and update each record with the groupid --->
+	<cfloop query="qry">
+		<!--- Get groupid --->
+		<cfquery datasource="#application.razuna.datasource#" name="qrygrp">
+		SELECT ct_g_u_grp_id
+		FROM ct_groups_users
+		WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#user_id#">
+		</cfquery>
+		<!--- Now update record --->
+		<cfset QuerySetcell(qry, "groupid", valuelist(qrygrp.ct_g_u_grp_id), currentrow )>
+	</cfloop>
+	<!--- Remove the user_id column --->
+	<cfset QueryDeletecolumn( qry, "user_id" )>
+	<!--- We got the query ready, continue export --->
+	<!--- CVS --->
+	<cfif arguments.thestruct.format EQ "csv">
+		<cfinvoke method="export_csv" thepath="#arguments.thestruct.thepath#" theqry="#qry#" />
+	<!--- XLS --->
+	<cfelse>
+		<!--- Add custom fields to meta fields --->
+		<cfinvoke method="export_xls" thepath="#arguments.thestruct.thepath#" theqry="#qry#" theformat="#arguments.thestruct.format#" />
+	</cfif>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Export CSV --->
+<cffunction name="export_csv" output="false">
+	<cfargument name="thepath" type="string">
+	<cfargument name="theqry" type="query">
+	<!--- Create CSV --->
+	<cfset var csv = csvwrite(arguments.theqry)>
+	<!--- Write file to file system --->
+	<cffile action="write" file="#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameConflict="MakeUnique">
+	<!--- Feedback --->
+	<cfoutput><p><a href="outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<cfflush>
+	<!--- Call function to remove older files --->
+	<cfinvoke method="remove_files" thepath="#arguments.thepath#" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Export XLS --->
+<cffunction name="export_xls" output="true">
+	<cfargument name="thepath" type="string">
+	<cfargument name="theqry" type="query">
+	<cfargument name="theformat" type="string">
+	<!--- Create Spreadsheet --->
+	<cfif arguments.theformat EQ "xls">
+		<cfset var sxls = spreadsheetnew()>
+	<cfelseif arguments.theformat EQ "xlsx">
+		<cfset var sxls = spreadsheetnew(true)>
+	</cfif>
+	<!--- Create header row --->
+	<cfset var therows = "login_name,first_name,last_name,email,active,groupid,password">
+	<cfset SpreadsheetAddrow(sxls, therows, 1)>
+	<cfset SpreadsheetFormatRow(sxls, {bold=TRUE, alignment="left"}, 1)>
+	<cfset SpreadsheetColumnfittosize(sxls, "1-#len(therows)#")>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 1, 5000)>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 2, 5000)>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 3, 5000)>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 4, 10000)>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 5, 3000)>
+	<cfset SpreadsheetSetcolumnwidth(sxls, 6, 10000)>
+	<!--- Add orders from query --->
+	<cfset SpreadsheetAddRows(sxls, arguments.theqry, 2)> 
+	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
+	<!--- Write file to file system --->
+	<cfset SpreadsheetWrite(sxls,"#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#",true)>
+	<!--- Feedback --->
+	<cfoutput><p><a href="outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#"><strong style="color:green;">Here is your downloadable file</strong></a></p></cfoutput>
+	<cfflush>
+	<!--- Call function to remove older files --->
+	<cfinvoke method="remove_files" thepath="#arguments.thepath#" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Remove old export files --->
+<cffunction name="remove_files" output="no">
+	<cfargument name="thepath" type="string">
+	<cftry>
+		<!--- Set time for remove --->
+		<cfset removetime = DateAdd("h", -6, "#now()#")>
+		<!--- Now check directory on the hard drive. This will fix issue with files that were not successfully uploaded thus missing in the temp db --->
+		<cfdirectory action="list" directory="#arguments.thepath#/outgoing" name="thefiles" type="file">
+		<!--- Loop over dirs --->
+		<cfloop query="thefiles">
+			<cfif datelastmodified LT removetime AND FileExists("#arguments.thepath#/outgoing/#name#")>
+				<cffile action="delete" file="#arguments.thepath#/outgoing/#name#">
+			</cfif>
+		</cfloop>
+		<cfcatch type="any"></cfcatch>
+	</cftry>
+</cffunction>
+
+<!--- Do the Import ---------------------------------------------------------------------->
+<cffunction name="users_import" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>Starting the import</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- CSV and XML --->
+	<cfif arguments.thestruct.file_format EQ "csv">
+		<!--- Read the file --->
+		<cffile action="read" file="#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#" charset="utf-8" variable="thefile" />
+		<!--- Read CSV --->
+		<cfset var theimport = csvread(string=thefile,headerline=true)>
+	<!--- XLS and XLSX --->
+	<cfelse>
+		<!--- Read the file --->
+		<cfset var thexls = SpreadsheetRead("#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#")>
+		<cfset var theimport = SpreadsheetQueryread(spreadsheet=thexls,sheet=0,headerrow=1)>
+	</cfif>
+	<!--- Feedback --->
+	<cfoutput>We could read your file. We assume the first row has headers. Continuing...<br><br></cfoutput>
+	<cfflush>
+	<!--- Do the import. Start loop --->
+	<cfloop query="theimport">
+		<!--- check for same record according to email --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT u.user_email
+		FROM users u, ct_users_hosts ct
+		WHERE lower(user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(email)#">
+		AND u.user_id = ct.ct_u_h_user_id
+		AND ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- If record is found simply check if password column is empty. If so, skip record else update password --->
+		<cfif qry.recordcount EQ 1>
+			<!--- check for password column --->
+			<cfif password NEQ "">
+				<!--- Feedback --->
+				<cfoutput>The user with the eMail address "#email#" exists. But as requested we are changing his password now.<br></cfoutput>
+				<cfflush>
+				<!--- Grab password and hash it --->
+				<cfset thepass = hash(password, "MD5", "UTF-8")>
+				<!--- Update DB --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE users
+				SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thepass#">
+				WHERE lower(user_email) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(email)#">
+				</cfquery>
+			<cfelse>
+				<!--- Feedback --->
+				<cfoutput>The user with the eMail address "#email#" exists. Skipping record update.<br></cfoutput>
+				<cfflush>
+			</cfif>
+		<!--- Users does not exists, append to DB --->
+		<cfelseif email NEQ "">
+			<!--- Feedback --->
+			<cfoutput>Found new user with the eMail address "#email#". Adding record now.<br></cfoutput>
+			<cfflush>
+			<!--- Create structure for function --->
+			<cfset arguments.thestruct.user_login_name = login_name>
+			<cfset arguments.thestruct.user_email = email>
+			<cfset arguments.thestruct.user_pass = password>
+			<cfset arguments.thestruct.user_first_name = first_name>
+			<cfset arguments.thestruct.user_last_name = last_name>
+			<cfset arguments.thestruct.user_active = active>
+			<cfset arguments.thestruct.hostid = session.hostid>
+			<!--- Call function --->
+			<cfinvoke method="add" thestruct="#arguments.thestruct#" returnvariable="userid" />
+			<!--- Add to groups --->
+			<cfif groupid NEQ "">
+				<cfloop list="#groupid#" delimiters="," index="i">
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO	ct_groups_users
+					(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+					VALUES(
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#userid#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+					)
+					</cfquery>
+				</cfloop>
+			</cfif>
+		</cfif>
+	</cfloop>
+	<!--- Feedback --->
+	<cfoutput>Cleaning up...<br><br></cfoutput>
+	<cfflush>
+	<!--- Remove the file --->
+	<cffile action="delete" file="#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#" />
+	<!--- Feedback --->
+	<cfoutput><strong style="color:green;">Your users have been successully imported!</strong><br><br></cfoutput>
+	<cfflush>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
 
 </cfcomponent>

@@ -26,7 +26,7 @@
 <cfoutput>
 	<form name="usearch" onsubmit="usersearch();return false;">
 	<div style="padding-bottom:10px;float:right;">
-		<div style="padding-top:4px;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a> | <a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Import</a> | <a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Export</a></div>
+		<div style="padding-top:4px;"><a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a> | <a href="##" onclick="showwindow('#myself#ajax.users_import','Import',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Import</a> | <a href="##" onclick="showwindow('#myself#ajax.users_export','Export',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Export</a></div>
 	</div>
 	<table border="0" cellspacing="0" cellpadding="0" class="grid">
 		<tr>
@@ -49,7 +49,7 @@
 	<div id="uresults">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
-				<th></th>
+				<!--- <th></th> --->
 				<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
 				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
 				<th>#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
@@ -58,7 +58,7 @@
 			</tr>
 			<cfoutput query="qry_users" group="user_id">
 				<tr class="list">
-					<td valign="top" nowrap width="1%"><input type="checkbox" name="theuserid" value="#user_id#" /></td>
+					<!--- <td valign="top" nowrap width="1%"><input type="checkbox" name="theuserid" value="#user_id#" /></td> --->
 					<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_login_name#</a></td>
 					<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_first_name# #user_last_name#</a></td>
 					<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_company#</a></td>

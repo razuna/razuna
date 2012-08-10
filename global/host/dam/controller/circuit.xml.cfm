@@ -3651,6 +3651,20 @@
 		<!-- Show -->
 		<do action="ajax.admin_user_api" />
 	</fuseaction>
+	<!-- Export DO -->
+	<fuseaction name="users_export_do">
+		<!-- Param -->
+		<set name="attributes.thepath" value="#thispath#" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="users_export(attributes)" />
+	</fuseaction>
+	<!-- Import DO -->
+	<fuseaction name="users_import_do">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="users_import(attributes)" />
+	</fuseaction>
 	
 	<!--  -->
 	<!-- ADMIN: USERS END -->
