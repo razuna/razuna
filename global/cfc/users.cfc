@@ -256,6 +256,7 @@
 		<cfset log = #log_users(theuserid=newid,logaction='Add',logsection='#logsection#',logdesc='Added: UserID: #newid# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')#>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("users")>
+		<cfset resetcachetoken("general")>
 	<cfelse>
 		<cfset newid = 0>
 	</cfif>
@@ -304,6 +305,7 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("users")>
+	<cfset resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
@@ -388,6 +390,7 @@
 	</cfif>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("users")>
+	<cfset resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
@@ -509,6 +512,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("users")>
+	<cfset resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -729,6 +733,9 @@
 	<!--- Feedback --->
 	<cfoutput><strong style="color:green;">Your users have been successully imported!</strong><br><br></cfoutput>
 	<cfflush>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("users")>
+	<cfset resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
