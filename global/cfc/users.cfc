@@ -701,15 +701,22 @@
 			<!--- Add to groups --->
 			<cfif groupid NEQ "">
 				<cfloop list="#groupid#" delimiters="," index="i">
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO	ct_groups_users
-					(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
-					VALUES(
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#userid#">,
-						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
-					)
-					</cfquery>
+					<cftry>
+						<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO	ct_groups_users
+						(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+						VALUES(
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#userid#">,
+							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+						)
+						</cfquery>
+						<cfcatch type="database">
+							<!--- Feedback --->
+							<cfoutput><span style="color:red;">The groupid (#i#) does not exists.</span><br></cfoutput>
+							<cfflush>
+						</cfcatch>
+					</cftry>
 				</cfloop>
 			</cfif>
 		</cfif>
