@@ -3534,6 +3534,7 @@
 	</fuseaction>
 	<!-- Get Details -->
 	<fuseaction name="users_detail">
+		<set name="attributes.myinfo" value="false" overwrite="false" />
 		<set name="attributes.add" value="F" overwrite="false" />
 		<!-- CFC: Get the user -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="details(attributes)" returnvariable="qry_detail" />

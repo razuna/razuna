@@ -88,6 +88,10 @@
 			<div style="float:left;min-width:150px;"><a href="##" onclick="$('##userselection').toggle();" style="text-decoration:none;" class="ddicon">#session.firstlastname#</a></div>
 			<!--- UserName DropDown --->
 			<div id="userselection" class="ddselection_header">
+				<!--- Profile --->
+				<p><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#session.theuserid#&myinfo=true','#session.firstlastname#',600,1);$('##userselection').toggle();return false;">My info</a></p>
+				<p><hr></p>
+				<!--- Administration --->
 				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#ajax.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
@@ -99,17 +103,20 @@
 					<p><hr></p>
 					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">Account Settings</a></p>
 				</cfif>
+				<!--- Languages --->
 				<cfif qry_langs.recordcount NEQ 1>
 					<p><hr></p>
 					<cfloop query="qry_langs">
 						<p><a href="#myself##xfa.switchlang#&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a></p>
 					</cfloop>
 				</cfif>
+				<!--- Feedback --->
 				<cfif w EQ 100>
 					<p><hr></p>
 					<p><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></p>
 				</cfif>
 				<p><hr></p>
+				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
 			</div>
 		</div>

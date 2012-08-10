@@ -43,10 +43,15 @@
 			<tr>
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("user_name")# / #myFusebox.getApplicationData().defaults.trans("email")#</td>
 			</tr>
-			<tr>
-				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("user_active")#</td>
-				<td><input type="checkbox" name="user_active" value="T"<cfif qry_detail.user_active EQ "T"> checked</cfif>></td>
-			</tr>
+			<!--- Don't show if from myinfo --->
+			<cfif attributes.myinfo>
+				<input type="hidden" name="user_active" value="#qry_detail.user_active#">
+			<cfelse>
+				<tr>
+					<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("user_active")#</td>
+					<td><input type="checkbox" name="user_active" value="T"<cfif qry_detail.user_active EQ "T"> checked</cfif>></td>
+				</tr>
+			</cfif>
 			<tr>
 				<td>#myFusebox.getApplicationData().defaults.trans("email")#*</td>
 				<td><input type="text" name="user_email" id="user_email" size="45" class="text" value="#qry_detail.user_email#" onkeyup="checkemail();"><cfif attributes.add EQ "F"> <a href="mailto:#qry_detail.user_email#" title="Opens your email app to send email to user"><img src="#dynpath#/global/host/dam/images/mail.png" border="0" name="email_2" align="top"></a></cfif><div id="checkemaildiv"></div><label for="user_email" class="error">Enter your eMail address!</label></td>
@@ -113,30 +118,38 @@
 		<!--- WEB GROUPS --->
 			<tr>
 				<td valign="top">
-					<table width="100%" cellpadding="0" cellspacing="0" border="0" class="gridno">
-					<!--- If SysAdmin or Admin --->
-					<cfif Request.securityobj.CheckSystemAdminUser(qry_groups_admin.grp_id) OR Request.securityobj.CheckAdministratorGroup(qry_groups_admin.grp_id)>
-						<cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id>
-							<input type="hidden" name="admin_group_2" value="2">
+					<!--- Since this can now be viewed by the user himself we only show selection for admins --->
+					<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+						<!--- If SysAdmin or Admin --->
+						<cfif Request.securityobj.CheckSystemAdminUser(qry_groups_admin.grp_id) OR Request.securityobj.CheckAdministratorGroup(qry_groups_admin.grp_id)>
+							<cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id>
+								<input type="hidden" name="admin_group_2" value="2">
+							</cfif>
+							<cfif Request.securityobj.CheckSystemAdminUser() AND attributes.myinfo>
+								<input type="hidden" name="admin_group_1" value="1">
+								You are a System-Administrator. Full access granted!
+							</cfif>
+							<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND !attributes.myinfo>
+								<input type="checkbox" name="admin_group_2" value="2"<cfif grpnrlist EQ 2> checked</cfif><cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id> disabled</cfif>> Administrator
+								<br /><br />
+							</cfif>
 						</cfif>
-						<tr>
-							<td style="padding-bottom:10px;"><input type="checkbox" name="admin_group_2" value="2"<cfif grpnrlist EQ 2> checked</cfif><cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id> disabled</cfif>></td>
-							<td style="padding-bottom:10px;" colspan="2">Administrator</td>
-						</tr>
+						<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND !attributes.myinfo>
+							<cfloop query="qry_groups">
+								<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
+								<br />
+							</cfloop>
+						</cfif>
+					<!--- simply show the names of the groups for non admin users --->
+					<cfelse>
+						You are a member of the following group(s):<br /><br />
+						<cfloop query="qry_groups">
+							<cfif listfind(webgrpnrlist, #grp_id#, ",")>
+								<input type="hidden" name="webgroup_#qry_groups.grp_id#" value="#grp_id#">
+								#qry_groups.grp_name#<br />
+							</cfif>
+						</cfloop>
 					</cfif>
-					<cfloop query="qry_groups">
-						<tr>
-							<td width="1%" nowrap="nowrap"><input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>></td>
-							<td nowrap="nowrap">#qry_groups.grp_name#</td>
-							<td width="100%">
-								<cfif Len(qry_groups.grp_translation_key)>
-									&nbsp;:&nbsp;
-									#myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#
-								</cfif>
-							</td>
-						</tr>
-					</cfloop>
-					</table>
 				</td>
 			</tr>
 		</table>
@@ -148,8 +161,6 @@
 				<tr class="list">
 					<td>#myFusebox.getApplicationData().defaults.trans("tab_users_social_accounts_desc")#</td>
 				</tr>
-				
-				
 				<tr>
 					<td style="padding-top:10px;">
 						<!--- List accounts found --->
@@ -263,7 +274,9 @@
 			$("##updatetext").css("display","");
 			$("##updatetext").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#");
 		</cfif>
-		loadcontent('admin_users', '#myself#c.users');
+		<cfif !attributes.myinfo>
+			loadcontent('admin_users', '#myself#c.users');
+		</cfif>
 	}
 	// Load Pass
 	function loadpass(){
