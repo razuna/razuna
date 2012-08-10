@@ -49,6 +49,9 @@
 	<div id="uresults">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
+				<td colspan="6" align="right"><a href="##" onclick="loadcontent('admin_users','#myself#c.users');">#myFusebox.getApplicationData().defaults.trans("reload_list")#</a></td>
+			</tr>
+			<tr>
 				<!--- <th></th> --->
 				<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
 				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
