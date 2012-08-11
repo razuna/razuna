@@ -4,7 +4,7 @@
 		<thetext>1.5</thetext>
 	</configid>
 	<configid name="prerelease">
-		<thetext>true</thetext>
+		<thetext>false</thetext>
 	</configid>
 	<configid name="global_im">
 		<thetext>/usr/bin</thetext>
