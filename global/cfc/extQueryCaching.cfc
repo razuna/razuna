@@ -25,9 +25,6 @@
 --->
 <cfcomponent hint="Serves as parent only!" output="false">
 
-<!--- Set global variable for caching cache_token --->
-<!--- <cfparam name="session.datecachetoken" default="#createuuid('')#" /> --->
-
 <!--- FUNCTION: INIT --->
 <cffunction name="init" returntype="extQueryCaching" access="public" output="false">
 	<cfset variables.dsn = application.razuna.datasource />
@@ -38,6 +35,8 @@
 
 <cffunction name="getcachetoken" output="false" returntype="string">
 	<cfargument name="type" type="string" required="yes">
+	<!--- Param --->
+	<cfset var qry = queryNew("cache_token")>
 	<!--- Query --->
 	<cftry>
 		<cfquery dataSource="#application.razuna.datasource#" name="qry">
@@ -46,8 +45,9 @@
 		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
 		</cfquery>
-		<cfcatch type="any">
-			<cfset qry.cache_token = createuuid('')>
+		<cfcatch type="database">
+			<cfset queryAddRow(qry, 1)>
+			<cfset querySetCell(qry, "cache_token", createuuid(''))>
 		</cfcatch>
 	</cftry>
 	<cfreturn qry.cache_token />

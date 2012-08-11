@@ -26,7 +26,7 @@
 <cfcomponent output="false" extends="extQueryCaching">
 
 <!--- Get the cachetoken for here --->
-<cfset variables.cachetoken = getcachetoken("general")>
+		<cfset variables.cachetoken = getcachetoken("users")>
 
 <!--- FUNCTION: INIT --->
 	<cffunction name="init" returntype="login" access="public" output="false">
@@ -38,7 +38,7 @@
 	</cffunction>
 
 <!--- FUNCTION: LOGIN --->
-	<cffunction name="login" displayname="login" hint="Handels login" access="public" output="false" returntype="Any">
+	<cffunction name="login" access="public" output="false" returntype="struct">
 		<cfargument name="name" required="yes" type="string">
 		<cfargument name="pass" required="yes" type="string">
 		<cfargument name="loginto" required="yes" type="string">
@@ -61,6 +61,7 @@
 			<!--- Hash password --->
 			<cfset var thepass = hash(arguments.pass, "MD5", "UTF-8")>
 		</cfif>
+		
 		<!--- Check for the user --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
@@ -133,7 +134,8 @@
 <!--- Create my folder --->
 	<cffunction name="createmyfolder" access="private">
 		<cfargument name="userid" required="yes" type="string">
-		<cfset arguments.cachetoken = variables.cachetoken>
+		<!--- Get the cachetoken for here --->
+		<cfset arguments.cachetoken = getcachetoken("general")>
 		<cfthread intstruct="#arguments#">
 			<!--- Query customization DB --->
 			<cfquery dataSource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -354,6 +356,8 @@ Password: #randompassword#
 	<!--- Check user and host. This is if login form is only the email and pass --->
 	<cffunction name="checkhost" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="theuser" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#checkhost */ h.host_name, h.host_name_custom, h.host_id
@@ -397,6 +401,8 @@ Password: #randompassword#
 	<!--- Janrain --->
 	<cffunction name="login_janrain" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Param --->
 		<cfset var razgo = false>
 		<cfparam name="arguments.thestruct.shared" default="F">
@@ -461,7 +467,7 @@ Password: #randompassword#
 						AND lower(provider) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(providerName)#">
 						</cfquery>
 						<!--- Flush Cache --->
-						<cfset variables.cachetoken = resetcachetoken("general")>
+						<cfset variables.cachetoken = resetcachetoken("users")>
 						<!--- and let him in --->
 						<cfset razgo = true>
 					</cfif>
