@@ -119,11 +119,20 @@
 										<td>
 											In order for you to get up to speed quickly with Razuna, we've put together a couple of introduction videos.<br />
 											<br />
-											<a href="http://youtu.be/AALswnbaIXI" target="_blank">How to Add Assets to Razuna</a><br />
+											<a href="">How to Add Assets to Razuna</a><br />
 											This will show you how to add assets (images, videos, audio and documents) to Razuna. You can add assets directly from you harddrive, from email or via FTP. The tutorial will also show you some basic metadata handling and how to convert and transcode images and video.
-											<br />
-											<a href="http://youtu.be/AALswnbaIXI" target="_blank">How to Add Assets to Razuna</a><br />
-											This will show you how to add assets (images, videos, audio and documents) to Razuna. You can add assets directly from you harddrive, from email or via FTP. The tutorial will also show you some basic metadata handling and how to convert and transcode images and video.
+											<br /><br />
+											<a href="">How to Share Assets with Razuna</a><br />
+											This short tutorial video will give you a quick walkthrough of some of the options you have for sharing assets from Razuna with your business partners, customers or colleagues. After watching this video, you will be able to master the basic techniques of sharing.
+											<br /><br />
+											<a href="">Make good use of widgets</a><br />
+											The widget functionality is a very powerful way to embed your assets on your website, blog, etc. Watch the video to see how easy it is to use widgets.
+											<br /><br />
+											<a href="">Razuna Users and Groups</a><br />
+											Another video that will guide you through the process of adding and managing users on your Razuna DAM solution. You will also see how you create user groups and manage the folder permissions for users and groups.
+											<br /><br />
+											<a href="">Real world example of using Razuna</a><br />
+											Last but not least, here is a real world example how a golf shop struggled to keep assets up-to-date. After the shift to Razuna, finding and downloading the right image becomes a breeze.
 										</td>
 									</tr>
 								</table>
