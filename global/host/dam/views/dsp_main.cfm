@@ -110,6 +110,23 @@
 									</tr>
 								</table>
 							</cfcachecontent>
+								<br />
+								<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
+									<tr>
+										<th>Introduction video tutorials</th>
+									</tr>
+									<tr>
+										<td>
+											In order for you to get up to speed quickly with Razuna, we've put together a couple of introduction videos.<br />
+											<br />
+											<a href="http://youtu.be/AALswnbaIXI" target="_blank">How to Add Assets to Razuna</a><br />
+											This will show you how to add assets (images, videos, audio and documents) to Razuna. You can add assets directly from you harddrive, from email or via FTP. The tutorial will also show you some basic metadata handling and how to convert and transcode images and video.
+											<br />
+											<a href="http://youtu.be/AALswnbaIXI" target="_blank">How to Add Assets to Razuna</a><br />
+											This will show you how to add assets (images, videos, audio and documents) to Razuna. You can add assets directly from you harddrive, from email or via FTP. The tutorial will also show you some basic metadata handling and how to convert and transcode images and video.
+										</td>
+									</tr>
+								</table>
 						</cfif>
 						</div>
 					</td>
