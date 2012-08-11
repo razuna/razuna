@@ -25,9 +25,6 @@
 --->
 <cfcomponent output="false" extends="extQueryCaching">
 
-<!--- Get the cachetoken for here --->
-		<cfset variables.cachetoken = getcachetoken("users")>
-
 <!--- FUNCTION: INIT --->
 	<cffunction name="init" returntype="login" access="public" output="false">
 		<cfargument name="dsn" type="string" required="yes" />
@@ -61,7 +58,8 @@
 			<!--- Hash password --->
 			<cfset var thepass = hash(arguments.pass, "MD5", "UTF-8")>
 		</cfif>
-		
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Check for the user --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
