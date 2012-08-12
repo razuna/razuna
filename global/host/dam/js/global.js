@@ -1594,3 +1594,33 @@ function toggleslide(theclickid,thefield){
 		this.select(); 
 	});
 };
+function SetVideo(source, title) {
+	$('#videoPlayerDiv').dialog('destroy');
+	$('#videoPlayerDiv').dialog({
+		title: title,
+		modal: true,
+		autoOpen: false,
+		width: 830,
+		height: 'auto',
+		position: 'top',
+		//minHeight: 600,
+		overlay: {
+			backgroundColor: '#000',
+			opacity: 0.5
+		}
+	});
+	$('#introRazVideo').attr('src', source);
+	// Open window
+	$('#videoPlayerDiv').dialog('open');
+	$('#videoPlayerDiv').dialog({
+		close: function(event, ui) {
+	   		$('#introRazVideo').attr('src','');
+			$('#videoPlayerDiv').dialog('destroy');
+	   	}
+	});
+	// $('.ui-widget-overlay').click(function(){
+		
+	// 	$('#introRazVideo').attr('src','');
+	// 	$('#videoPlayerDiv').dialog('destroy');
+	// });
+}

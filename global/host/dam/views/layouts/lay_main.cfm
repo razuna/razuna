@@ -151,6 +151,9 @@
 <div id="thewindowcontent1" style="padding:10px;display:none;"></div>
 <div id="thewindowcontent2" style="padding:10px;display:none;"></div>
 <div id="thewindowcontent3" style="padding:10px;display:none;"></div>
+<div id="videoPlayerDiv" style="display:none;">
+<iframe id="introRazVideo" src="" width="800" height="450" frameborder="0" webkitallowfullscreen="" allowfullscreen="" mozallowfullscreen=""></iframe>
+</div>
 <!--- Tooltip Div --->
 <div id="demotip">&nbsp;</div>
 <div id="div_forall" style="display:none;"></div>
