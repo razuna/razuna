@@ -162,9 +162,9 @@
 			<cfset var storagenode = getstoragenode(nvxsession,arguments.destFolderPath)>
 			<!--- Upload Asset --->
 			<cftry>
-				<cfhttp url="#storagenode.uploadhost#/Upload.ashx" method="post" throwonerror="yes" timeout="900">
-					<cfhttpparam name="uploadtoken" value="#storagenode.uploadtoken#" type="url">
-					<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
+				<cfhttp url="http://#storagenode.uploadhost#/Upload.ashx" method="post" throwonerror="yes" timeout="900">
+					<cfhttpparam name="uploadToken" value="#storagenode.uploadtoken#" type="formfield">
+					<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="formfield">
 					<cfhttpparam name="uploadFile" file="#arguments.uploadfile#" type="file">
 				</cfhttp>
 				<!--- Parse the response --->
