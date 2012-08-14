@@ -1595,8 +1595,8 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfthread>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("files")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("files")>
+	<cfset resetcachetoken("folders")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- The return --->
 	<cfif isnumeric(arguments.thestruct.newid)>
@@ -1771,8 +1771,8 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Wait for thread --->
 			<cfthread action="join" name="processImgFile#arguments.thestruct.newid#" timeout="90" /> --->
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("images")>
-			<cfset variables.cachetoken = resetcachetoken("folders")>
+			<cfset resetcachetoken("images")>
+			<cfset resetcachetoken("folders")>
 			<cfset variables.cachetoken = resetcachetoken("general")>
 		</cfif>
 	</cfif>
@@ -2733,8 +2733,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Log --->
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid='#arguments.thestruct.thisvid.newid#')#>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("videos")>
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("folders")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- RFS --->
 		<cfif application.razuna.rfs>
@@ -2836,7 +2836,7 @@ This is the main function called directly by a single upload else from addassets
 			)
 			</cfquery>
 		</cfloop>
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken("folders")>
 		<cfpause interval="5" />
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
@@ -3495,8 +3495,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Join above thread --->
 		<cfthread action="join" name="#tt#" />
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("audios")>
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("folders")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.newid />
@@ -3609,8 +3609,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("videos")>
-				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset resetcachetoken("videos")>
+				<cfset resetcachetoken("folders")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
@@ -3620,8 +3620,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("images")>
-				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset resetcachetoken("images")>
+				<cfset resetcachetoken("folders")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		<!--- Amazon --->
@@ -3646,8 +3646,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("videos")>
-				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset resetcachetoken("videos")>
+				<cfset resetcachetoken("folders")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
@@ -3657,8 +3657,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("images")>
-				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset resetcachetoken("images")>
+				<cfset resetcachetoken("folders")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		</cfif>
@@ -3873,9 +3873,9 @@ This is the main function called directly by a single upload else from addassets
 		</cftry>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("images")>
-	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("images")>
+	<cfset resetcachetoken("videos")>
+	<cfset resetcachetoken("folders")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
