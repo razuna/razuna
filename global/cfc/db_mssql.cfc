@@ -1864,7 +1864,7 @@
 			cf_enabled 		VARCHAR(2), 
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
-			cf_select_list	VARCHAR(2000),
+			cf_select_list	nvarchar(max),
 			HOST_ID			INT,
 			PRIMARY KEY (cf_id),
 		)
@@ -1876,7 +1876,7 @@
 			lang_id_r 		INT, 
 			cf_text			nvarchar(max),
 			HOST_ID			INT,
-			rec_uuid			VARCHAR(100),
+			rec_uuid		VARCHAR(100),
 			PRIMARY KEY (rec_uuid),
 			FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)

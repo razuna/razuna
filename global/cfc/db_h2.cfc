@@ -1513,7 +1513,7 @@
 			cf_enabled 		VARCHAR(2), 
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
-			cf_select_list	VARCHAR(2000),
+			cf_select_list	VARCHAR(4000),
 			host_id			BIGINT
 		)
 		</cfquery>

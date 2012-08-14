@@ -945,7 +945,7 @@
 			cf_enabled 		VARCHAR(2), 
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
-			cf_select_list	VARCHAR(2000),
+			cf_select_list	VARCHAR(4000),
 			host_id			BIGINT
 		)
 		</cfquery>
@@ -956,7 +956,7 @@
 			lang_id_r 		bigint, 
 			cf_text			VARCHAR(500),
 			HOST_ID			BIGINT,
-			rec_uuid			VARCHAR(100)
+			rec_uuid		VARCHAR(100)
 			
 		)
 		</cfquery>
@@ -1222,7 +1222,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.tschema#.#arguments.thestruct.host_db_prefix#custom (
 	  	custom_id			varchar(200),
-		custom_value		varchar(100),
+		custom_value		varchar(500),
 		host_id				bigint
 		)
 		</cfquery>
