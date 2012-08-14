@@ -1495,7 +1495,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		LIMIT 1
 	<cfelse>
 		ORDER BY news_date DESC
-		LIMIT 4
+		LIMIT 7
 	</cfif>
 	</cfquery>
 	<!--- Return --->
