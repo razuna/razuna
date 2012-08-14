@@ -1244,10 +1244,15 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Script: Create images --->
 					<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thepdfdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 					<!--- Execute --->
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="900" />
-					<cfif application.razuna.storage NEQ "amazon">
-						<cfexecute name="#attributes.intstruct.thesht#" timeout="900" />
-					</cfif>
+					<cfset var ttpdf = createUUID("")>
+					<cfthread name="#ttpdf#" pdfintstruct="#attributes.intstruct#" priority="LOW">
+						<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
+						<cfif application.razuna.storage NEQ "amazon">
+							<cfexecute name="#attributes.pdfintstruct.thesht#" timeout="900" />
+						</cfif>
+					</cfthread>
+					<!--- Wait for thread to finish --->
+					<cfthread action="join" name="#ttpdf#" />						
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#attributes.intstruct.thesh#">
 					<cffile action="delete" file="#attributes.intstruct.thesht#">
