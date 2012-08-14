@@ -1244,7 +1244,7 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Script: Create images --->
 					<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thepdfdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 					<!--- Execute --->
-					<cfset var ttpdf = createUUID("")>
+					<cfset ttpdf = createUUID("")>
 					<cfthread name="#ttpdf#" pdfintstruct="#attributes.intstruct#" priority="LOW">
 						<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
 						<cfif application.razuna.storage NEQ "amazon">
