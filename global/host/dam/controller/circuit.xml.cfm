@@ -3467,7 +3467,7 @@
 		<!-- Params -->
 		<set name="attributes.file_id" value="#attributes.f#" />
 		<!-- Action: Check storage -->
-		<!-- <set name="attributes.isbrowser" value="#session.isbrowser#" /> -->
+		<set name="attributes.isbrowser" value="T" />
 		<do action="storage" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
@@ -3475,9 +3475,6 @@
 		<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="qry_detail" />
 		<!-- CFC: Get images -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="pdfjpgs(attributes)" returnvariable="qry_pdfjpgs" />
-		<!-- Action: Check storage -->
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" />
 		<!-- Do -->
 		<do action="ajax.serve_pdfjpgs" />
 	</fuseaction>
