@@ -26,6 +26,12 @@
 
 <cfcomponent output="false">
 	
+	<!--- Set Values --->
+	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
+	<cfset application.razuna.datasource = application.razuna.api.dsn>
+	<cfset application.razuna.storage = application.razuna.api.storage>
+	<cfset application.razuna.setid = application.razuna.api.setid>
+
 	<!--- Retrieve assets from a folder --->
 	<cffunction name="getassets" access="remote" output="false" returntype="string">
 		<cfargument name="sessiontoken" type="string">
@@ -371,10 +377,14 @@
 			<!--- AND lower(f.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="f"> --->
 			ORDER BY f.folder_name
 			</cfquery>
+			<cfset session.showsubfolders = "F">
+			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.sessiontoken#"]>
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.sessiontoken#"]>
+			<cfset session.theuserid = application.razuna.api.hostid["#arguments.sessiontoken#"]>
 			<!--- Query total count --->
-			<cfinvoke component="global.cfc.folders" method="apifiletotalcount" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.sessiontoken#"]#" folder_id="#arguments.folderid#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.sessiontoken#"]#" returnvariable="totalassets">
+			<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#arguments.folderid#" returnvariable="totalassets">
 			<!--- Query total count for individual files --->
-			<cfinvoke component="global.cfc.folders" method="apifiletotaltype" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.sessiontoken#"]#" folder_id="#arguments.folderid#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.sessiontoken#"]#" returnvariable="totaltypes">
+			<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#arguments.folderid#" returnvariable="totaltypes">
 			<!--- Create the XML --->
 			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 <Response>
@@ -500,6 +510,10 @@
 		<cfinvoke component="authentication" method="checkdb" sessiontoken="#arguments.sessiontoken#" returnvariable="thesession">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<cfset session.showsubfolders = "F">
+			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.sessiontoken#"]>
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.sessiontoken#"]>
+			<cfset session.theuserid = application.razuna.api.hostid["#arguments.sessiontoken#"]>
 			<!--- Call the internal function to get the tree --->
 			<cfinvoke method="intgetfolderstree" returnvariable="qry">
 				<cfinvokeargument name="sessiontoken" value="#arguments.sessiontoken#">
@@ -511,9 +525,9 @@
 <listfolders>
 <cfloop query="qry">
 <!--- Query total count --->
-<cfinvoke component="global.cfc.folders" method="apifiletotalcount" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.sessiontoken#"]#" folder_id="#folder_id#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.sessiontoken#"]#" returnvariable="totalassets">
+<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#folder_id#" returnvariable="totalassets">
 <!--- Query total count for individual files --->
-<cfinvoke component="global.cfc.folders" method="apifiletotaltype" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.sessiontoken#"]#" folder_id="#folder_id#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.sessiontoken#"]#" returnvariable="totaltypes">
+<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#folder_id#" returnvariable="totaltypes">
 <cfif arguments.e4x EQ "0">
 <cfif folder_level EQ 1><folder>
 <folderid>#xmlformat(folder_id)#</folderid>
@@ -554,6 +568,10 @@
 		<!--- Set params --->
 		<cfset curlevel = arguments.thefolderlevel + 1>
 		<cfset curid = arguments.thecurrentid>
+		<cfset session.showsubfolders = "F">
+		<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.sessiontoken#"]>
+		<cfset session.hostid = application.razuna.api.hostid["#arguments.sessiontoken#"]>
+		<cfset session.theuserid = application.razuna.api.hostid["#arguments.sessiontoken#"]>
 		<!--- Query --->
 		<cfquery dbtype="query" name="qsub">
 		SELECT * 
@@ -565,9 +583,9 @@
 		<cfsavecontent variable="subxml"><cfoutput>
 <cfloop query="qsub">
 <!--- Query total count --->
-<cfinvoke component="global.cfc.folders" method="apifiletotalcount" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.sessiontoken#"]#" folder_id="#folder_id#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.sessiontoken#"]#" returnvariable="totalassets">
+<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#folder_id#" returnvariable="totalassets">
 <!--- Query total count for individual files --->
-<cfinvoke component="global.cfc.folders" method="apifiletotaltype" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.sessiontoken#"]#" folder_id="#folder_id#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.sessiontoken#"]#" returnvariable="totaltypes">
+<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#folder_id#" returnvariable="totaltypes">
 <cfif arguments.e4x EQ "0">
 <subfolder>
 <folderid>#xmlformat(folder_id)#</folderid>

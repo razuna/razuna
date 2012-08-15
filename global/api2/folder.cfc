@@ -283,10 +283,14 @@
 			</cfquery>
 			<!--- If this is NOT for a collection --->
 			<cfif arguments.collectionfolder EQ "false">
+				<cfset session.showsubfolders = "F">
+				<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
 				<!--- Query total count --->
-				<cfinvoke component="global.cfc.folders" method="apifiletotalcount" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.api_key#"]#" folder_id="#arguments.folderid#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.api_key#"]#" returnvariable="totalassets">
+				<cfinvoke component="global.cfc.folders" method="apifiletotalcount" folder_id="#arguments.folderid#" returnvariable="totalassets">
 				<!--- Query total count for individual files --->
-				<cfinvoke component="global.cfc.folders" method="apifiletotaltype" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.api_key#"]#" folder_id="#arguments.folderid#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.api_key#"]#" returnvariable="totaltypes">
+				<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#arguments.folderid#" returnvariable="totaltypes">
 				<!--- Create additional query fields --->
 				<cfset q = querynew("totalassets,totalimg,totalvid,totaldoc,totalaud")>
 				<cfset queryaddrow(q,1)>
@@ -326,6 +330,9 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+			<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
 			SELECT folder_id, folder_id_r folder_related_to, folder_name
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders
@@ -333,9 +340,9 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 			</cfquery>
 			<!--- Query total count --->
-			<cfinvoke component="global.cfc.folders" method="apifiletotalcount" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.api_key#"]#" folder_id="#arguments.folderid#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.api_key#"]#" returnvariable="totalassets">
+			<cfinvoke component="global.cfc.folders" method="apifiletotalcount"folder_id="#arguments.folderid#" returnvariable="totalassets">
 			<!--- Query total count for individual files --->
-			<cfinvoke component="global.cfc.folders" method="apifiletotaltype" apidsn="#application.razuna.api.dsn#" apiprefix="#application.razuna.api.prefix["#arguments.api_key#"]#" folder_id="#arguments.folderid#" apidatabase="#application.razuna.api.thedatabase#" host_id="#application.razuna.api.hostid["#arguments.api_key#"]#" returnvariable="totaltypes">
+			<cfinvoke component="global.cfc.folders" method="apifiletotaltype" folder_id="#arguments.folderid#" returnvariable="totaltypes">
 			<!--- Create additional query fields --->
 			<cfset q = querynew("totalassets,totalimg,totalvid,totaldoc,totalaud")>
 			<cfset queryaddrow(q,1)>

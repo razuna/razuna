@@ -712,19 +712,11 @@
 	<cffunction name="index_update_api" access="public" output="false">
 		<cfargument name="assetid" type="string" required="true">
 		<cfargument name="assetcategory" type="string" required="true">
-		<cfargument name="dsn" type="string" required="true">
-		<cfargument name="prefix" type="string" required="true">
-		<cfargument name="hostid" type="numeric" required="true">
-		<cfargument name="userid" type="string" required="true">
-		<!--- Param --->
-		<cfset session.theuserid = arguments.userid>
-		<cfset session.hostid = arguments.hostid>
-		<cfset session.hostdbprefix = arguments.prefix>
 		<!--- Call to update asset --->
 		<cfinvoke method="index_update">
 			<cfinvokeargument name="assetid" value="#arguments.assetid#">
 			<cfinvokeargument name="category" value="#arguments.assetcategory#">
-			<cfinvokeargument name="dsn" value="#arguments.dsn#">
+			<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
 			<cfinvokeargument name="fromapi" value="t">
 			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				<cfinvokeargument name="notfile" value="f">

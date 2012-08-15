@@ -282,6 +282,9 @@
 		<cfinvoke component="authentication" method="checkdb" sessiontoken="#arguments.sessiontoken#" returnvariable="thesession">
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.sessiontoken#"]>
+			<cfset session.hostid = application.razuna.api.hostid["#arguments.sessiontoken#"]>
+			<cfset session.theuserid = application.razuna.api.userid["#arguments.sessiontoken#"]>
 			<!--- Set db and id --->
 			<cfif arguments.assettype EQ "img">
 				<cfset var thedb = "images_text">
@@ -369,7 +372,7 @@
 					</cfloop>
 				</cfif>
 				<!--- Initiate the index --->
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" dsn="#application.razuna.api.dsn#" hostid="#application.razuna.api.hostid["#arguments.sessiontoken#"]#" prefix="#application.razuna.api.prefix["#arguments.sessiontoken#"]#" assetid="#i#" assetcategory="#lucenecategory#">
+				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="#lucenecategory#">
 			</cfloop>
 			<!--- Feedback --->
 			<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>

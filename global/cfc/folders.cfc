@@ -1764,17 +1764,6 @@
 <!--- Call from API to filetotalcount --->
 <cffunction name="apifiletotalcount" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
-	<cfargument name="apidsn" default="F" required="yes" type="string">
-	<cfargument name="apiprefix" default="F" required="yes" type="string">
-	<cfargument name="apidatabase" default="F" required="yes" type="string">
-	<cfargument name="host_id" default="" required="yes" type="numeric">
-	<!--- Set Values --->
-	<cfset session.showsubfolders = "F">
-	<cfset session.hostdbprefix = arguments.apiprefix>
-	<cfset session.hostid = arguments.host_id>
-	<cfset session.theuserid = arguments.host_id>
-	<cfset application.razuna.datasource = arguments.apidsn>
-	<cfset application.razuna.thedatabase = arguments.apidatabase>
 	<!--- Call function --->
 	<cfinvoke method="filetotalcount" folder_id="#arguments.folder_id#" theoverall="F" returnvariable="total">
 	<!--- Return --->
@@ -1784,17 +1773,6 @@
 <!--- Call from API to filetotaltype --->
 <cffunction name="apifiletotaltype" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
-	<cfargument name="apidsn" default="F" required="yes" type="string">
-	<cfargument name="apiprefix" default="F" required="yes" type="string">
-	<cfargument name="apidatabase" default="F" required="yes" type="string">
-	<cfargument name="host_id" default="" required="yes" type="numeric">
-	<!--- Set Values --->
-	<cfset session.showsubfolders = "F">
-	<cfset session.hostdbprefix = arguments.apiprefix>
-	<cfset session.hostid = arguments.host_id>
-	<cfset session.theuserid = arguments.host_id>
-	<cfset application.razuna.datasource = arguments.apidsn>
-	<cfset application.razuna.thedatabase = arguments.apidatabase>
 	<!--- Set struct --->
 	<cfset totaltypes = structnew()>
 	<cfset arguments.thestruct = structnew()>
@@ -2591,9 +2569,6 @@
 	<cfargument name="prefix" default="" type="string" required="false">
 	<cfif arguments.prefix EQ "">
 		<cfset arguments.prefix = session.hostdbprefix>
-	</cfif>
-	<cfif NOT structkeyexists(session, "theuserid")>
-		<cfset session.theuserid = 0>
 	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
