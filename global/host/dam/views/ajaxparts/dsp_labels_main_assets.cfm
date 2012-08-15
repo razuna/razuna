@@ -100,7 +100,7 @@
 									<strong>#filename#</strong>
 								</cfif>
 							<cfelse>
-								We are still working on the asset "#filename#"...
+								The upload of "#filename#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
@@ -153,7 +153,7 @@
 									<strong>#filename#</strong>
 								</cfif>
 							<cfelse>					
-								We are still working on the asset "#filename#"...
+								The upload of "#filename#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
@@ -207,7 +207,7 @@
 									<strong>#filename#</strong>
 								</cfif>
 							<cfelse>
-								We are still working on the asset "#filename#"...
+								The upload of "#filename#" is still in progress!
 								<br /><br />
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
@@ -289,7 +289,7 @@
 									<strong>#filename#</strong>
 								</cfif>
 							<cfelse>
-								We are still working on the asset "#filename#"...
+								The upload of "#filename#" is still in progress!
 								<br /><br />
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#

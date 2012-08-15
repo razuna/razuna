@@ -45,7 +45,7 @@
 			</a>
 		</div>
 		<!--- Search --->
-		<cfcachecontent name="quicksearch#w#" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
+		<!--- <cfcachecontent name="quicksearch#w#" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache"> --->
 			<div style="width:auto;float:right;padding-top:3px;">
 				<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
@@ -78,7 +78,7 @@
 				</div>
 				</form>
 			</div>
-		</cfcachecontent>
+		<!--- </cfcachecontent> --->
 	</div>
 	<div style="float:right;">
 		<!--- User Name with drop down --->
@@ -88,6 +88,10 @@
 			<div style="float:left;min-width:150px;"><a href="##" onclick="$('##userselection').toggle();" style="text-decoration:none;" class="ddicon">#session.firstlastname#</a></div>
 			<!--- UserName DropDown --->
 			<div id="userselection" class="ddselection_header">
+				<!--- Profile --->
+				<p><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#session.theuserid#&myinfo=true','#session.firstlastname#',600,1);$('##userselection').toggle();return false;">My info</a></p>
+				<p><hr></p>
+				<!--- Administration --->
 				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 					<p><a href="##" onclick="loadcontent('rightside','#myself#c.admin');$('##userselection').toggle();return false;" style="width:100%;">#myFusebox.getApplicationData().defaults.trans("header_administration")#</a></p>
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
@@ -99,17 +103,20 @@
 					<p><hr></p>
 					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">Account Settings</a></p>
 				</cfif>
+				<!--- Languages --->
 				<cfif qry_langs.recordcount NEQ 1>
 					<p><hr></p>
 					<cfloop query="qry_langs">
 						<p><a href="#myself##xfa.switchlang#&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a></p>
 					</cfloop>
 				</cfif>
+				<!--- Feedback --->
 				<cfif w EQ 100>
 					<p><hr></p>
 					<p><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></p>
 				</cfif>
 				<p><hr></p>
+				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
 			</div>
 		</div>
@@ -128,13 +135,40 @@
 			</cfif>
 		</div>
 	</div>
-</cfoutput>
 
-<script language="javascript">
-	function showaccount(){
-		win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
-		document.form_account.target='myWin';
-		document.form_account.submit();
-	}
-	
-</script>
+	<script language="javascript">
+		function showaccount(){
+			win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
+			document.form_account.target='myWin';
+			document.form_account.submit();
+		}
+		<!---
+		$( "##simplesearchtext" ).autocomplete({
+			source: "#myself#c.search_suggest",
+			minLength: 2
+		});
+		--->
+		$(function() {
+			var cache = {}, lastXhr;
+			$( "##simplesearchtext" ).autocomplete({
+				minLength: 3,
+				source: function( request, response ) {
+					var term = request.term;
+					if ( term in cache ) {
+						response( cache[ term ] );
+						return;
+					}
+
+					lastXhr = $.getJSON( "#myself#c.search_suggest", request, function( data, status, xhr ) {
+						cache[ term ] = data;
+						if ( xhr === lastXhr ) {
+							response( data );
+						}
+					});
+				}
+			});
+		});
+
+	</script>
+
+</cfoutput>

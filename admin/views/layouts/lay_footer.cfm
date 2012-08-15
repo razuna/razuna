@@ -23,4 +23,4 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<a href="http://www.razuna.com" target="_blank">Razuna</a> <cfoutput>#settingsObj.getconfig("version")#</cfoutput> | Licenced under <a href="<cfoutput>#dynpath#</cfoutput>/licenses/agpl.txt" target="_blank">AGPL</a> | Powered by <a href="http://razuna.com" target="_blank">Razuna</a> | <a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
+<a href="http://www.razuna.com" target="_blank">Razuna</a> <cfoutput>#settingsObj.getconfig("version")#</cfoutput> | Licenced under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a> | Powered by <a href="http://razuna.com" target="_blank">Razuna</a> | <a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>

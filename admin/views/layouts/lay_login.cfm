@@ -37,7 +37,7 @@
 	<cfif NOT application.razuna.firsttime>
 	  	<div id="loginformfooter">
 		<a href="http://www.razuna.com" target="_blank">Razuna</a> #settingsObj.getconfig("version")#
-		<br>Licenced under <a href="#dynpath#/licenses/agpl.txt" target="_blank">AGPL</a>
+		<br>Licenced under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a>
 		<br><a href="http://razuna.com" target="_blank">Razuna Website</a>
 		<br><a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
 		</div>

@@ -48,6 +48,10 @@
 				<td><input type="checkbox" name="upl_active" value="1"<cfif qry_detail.upl.upl_active EQ 1> checked="checked"</cfif>></td>
 			</tr>
 			<tr>
+				<td>ID</td>
+				<td>#attributes.upl_temp_id#</td>
+			</tr>
+			<tr>
 				<td>#myFusebox.getApplicationData().defaults.trans("admin_upload_templates_name")#*</td>
 				<td><input type="text" name="upl_name" id="upl_name" class="text" value="#qry_detail.upl.upl_name#" style="width:300px;"><label for="upl_name" class="error" style="color:red;"><br>Enter a name for the template!</label></td>
 			</tr>

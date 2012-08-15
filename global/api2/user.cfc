@@ -85,15 +85,26 @@
 				</cfquery>
 				<!--- Insert into group --->
 				<cfif arguments.groupid NEQ 0>
-					<cfquery datasource="#application.razuna.api.dsn#">
-					INSERT INTO	ct_groups_users
-					(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
-					VALUES(
-					<cfqueryparam value="#arguments.groupid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">
-					)
-					</cfquery>
+					<cfif application.razuna.api.isp AND arguments.groupid NEQ 1>
+						<cfquery datasource="#application.razuna.api.dsn#">
+						INSERT INTO	ct_groups_users
+						(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+						VALUES(
+						<cfqueryparam value="#arguments.groupid#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">
+						)
+						</cfquery>
+					</cfif>
+					<!--- If the groupid is 2 --->
+					<cfif arguments.groupid EQ 2>
+						<cfset thexml.apikey = createuuid("")>
+						<cfquery datasource="#application.razuna.api.dsn#">
+						UPDATE users
+						SET user_api_key = <cfqueryparam value="#thexml.apikey#" cfsqltype="CF_SQL_VARCHAR">
+						WHERE user_id = <cfqueryparam value="#newuserid#" cfsqltype="CF_SQL_VARCHAR">
+						</cfquery>
+					</cfif>
 				</cfif>
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "User has been added successfully">
@@ -121,7 +132,7 @@
 		<cfif thesession>
 			<!--- Query the user --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT user_id, user_login_name, user_email, user_first_name, user_last_name
+			SELECT user_id, user_login_name, user_email, user_first_name, user_last_name, user_api_key
 			FROM users
 			WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.api_key#"]#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>

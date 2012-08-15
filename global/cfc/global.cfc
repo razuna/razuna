@@ -851,17 +851,23 @@ Comment:<br>
 	
 	<!--- Call Account --->
 	<cffunction name="getaccount" output="true" region="razcache" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
-		<cfargument name="thecgi" type="string">
-		<cfargument name="thehostid" type="string">
+		<cfargument name="thehostid" type="string" required="true">
+		<cfargument name="thecgi" type="string" required="false">
 		<!--- Call Remote CFC --->
-		<cfinvoke webservice="http://razuna.com/includes/accounts.cfc?wsdl" 
+		<cfhttp url="http://razuna.com/includes/accounts.cfc">
+			<cfhttpparam type="url" name="method" value="checkaccount" />
+			<cfhttpparam type="url" name="thehostid" value="#arguments.thehostid#" />
+		</cfhttp>
+		<!--- Convert WDDX --->
+		<cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="account" />
+		<!--- <cfinvoke webservice="http://razuna.com/includes/accounts.cfc?wsdl" 
 			method="checkaccount"
 			thehostid="#arguments.thehostid#"
 			thecgi="#arguments.thecgi#" 
 			returnVariable="qry_account"
-			timeout="3">
+			timeout="3"> --->
 		<!--- If there is a record then the user is in debt --->
-		<cfif qry_account.recordcount NEQ 0>
+		<cfif account.recordcount NEQ 0>
 			<cfset session.indebt = true>
 		<cfelse>
 			<cfset session.indebt = false>
@@ -870,7 +876,7 @@ Comment:<br>
 			<cfset session.indebt = false>
 		</cfif>
 		<!--- Return --->
-		<cfreturn qry_account>
+		<cfreturn account>
 	</cffunction>
 	
 	<!--- Rebuild URL --->

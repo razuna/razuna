@@ -17,6 +17,10 @@ commons-vfs-2.0-SNAPSHOT.jar
 core-renderer.jar
 dnsjava-2.1.0.jar
 h2-1.2.128.jar
+httpclient-4.2.1.jar
+httpclient-cache-4.2.1.jar
+httpcore-4.2.1.jar
+httpmime-4.2.1.jar
 iText-2.0.8.jar
 jackson-all-1.8.3-openbd.jar
 jai_imageio.jar

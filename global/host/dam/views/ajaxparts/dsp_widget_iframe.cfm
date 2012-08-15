@@ -163,7 +163,7 @@
 								<br>
 								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=img','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 							<cfelse>
-								We are still working on the asset "#filename#"...
+								The upload of "#filename#" is still in progress!
 							</cfif>
 						<!--- Videos --->
 						<cfelseif kind EQ "vid">
@@ -191,7 +191,7 @@
 								<br>
 								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=vid','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 							<cfelse>
-								We are still working on the asset "#filename#"...
+								The upload of "#filename#" is still in progress!
 							</cfif>
 						<!--- Audios --->
 						<cfelseif kind EQ "aud">
@@ -210,7 +210,7 @@
 								<br>
 								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=aud','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 							<cfelse>
-								We are still working on the asset "#filename#"...
+								The upload of "#filename#" is still in progress!
 							</cfif>
 						<!--- All other files --->
 						<cfelse>
@@ -236,7 +236,7 @@
 									<a href="#myself#c.serve_file&file_id=#id#&type=doc">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 								<!--- </cfif> --->
 							<cfelse>
-								We are still working on the asset "#filename#"...
+								The upload of "#filename#" is still in progress!
 							</cfif>
 						</cfif>
 					</div>

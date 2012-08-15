@@ -268,7 +268,7 @@
 						<!-- Get News -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
 						<!-- Get Invoices -->
-						<invoke object="myFusebox.getApplicationData().global" methodcall="getaccount(cgi.HTTP_X_FORWARDED_SERVER,session.hostid)" returnvariable="res_account" />
+						<invoke object="myFusebox.getApplicationData().global" methodcall="getaccount(session.hostid)" returnvariable="res_account" />
 					</true>
 				</if>
 				<!-- CFC: Get languages -->
@@ -682,6 +682,11 @@
 	<!-- Basket eMail Form -->
 	<fuseaction name="basket_email_send">
 		<!-- Params -->
+		<!-- Put session into attributes -->
+		<set name="attributes.artofimage" value="#session.artofimage#" />
+		<set name="attributes.artofvideo" value="#session.artofvideo#" />
+		<set name="attributes.artofaudio" value="#session.artofaudio#" />
+		<set name="attributes.artoffile" value="#session.artoffile#" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
@@ -3070,7 +3075,7 @@
 	<!-- Search: AJAX -->
 	<fuseaction name="search_suggest">
 		<!-- CFC: Search Files -->
-		<invoke object="myFusebox.getApplicationData().search" methodcall="search_suggest(attributes.suggest)" returnvariable="qry_suggest" />
+		<invoke object="myFusebox.getApplicationData().search" methodcall="search_suggest(attributes.term)" returnvariable="qry_suggest" />
 	</fuseaction>
 	
 	<!-- Search: Advanced -->
@@ -3470,7 +3475,7 @@
 		<!-- Params -->
 		<set name="attributes.file_id" value="#attributes.f#" />
 		<!-- Action: Check storage -->
-		<!-- <set name="attributes.isbrowser" value="#session.isbrowser#" /> -->
+		<set name="attributes.isbrowser" value="T" />
 		<do action="storage" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
@@ -3478,9 +3483,6 @@
 		<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="qry_detail" />
 		<!-- CFC: Get images -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="pdfjpgs(attributes)" returnvariable="qry_pdfjpgs" />
-		<!-- Action: Check storage -->
-		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" />
 		<!-- Do -->
 		<do action="ajax.serve_pdfjpgs" />
 	</fuseaction>
@@ -3582,6 +3584,7 @@
 	</fuseaction>
 	<!-- Get Details -->
 	<fuseaction name="users_detail">
+		<set name="attributes.myinfo" value="false" overwrite="false" />
 		<set name="attributes.add" value="F" overwrite="false" />
 		<!-- CFC: Get the user -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="details(attributes)" returnvariable="qry_detail" />
@@ -3698,6 +3701,20 @@
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getapikey(attributes.user_id,attributes.reset)" returnvariable="qry_api_key" />
 		<!-- Show -->
 		<do action="ajax.admin_user_api" />
+	</fuseaction>
+	<!-- Export DO -->
+	<fuseaction name="users_export_do">
+		<!-- Param -->
+		<set name="attributes.thepath" value="#thispath#" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="users_export(attributes)" />
+	</fuseaction>
+	<!-- Import DO -->
+	<fuseaction name="users_import_do">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="users_import(attributes)" />
 	</fuseaction>
 	
 	<!--  -->

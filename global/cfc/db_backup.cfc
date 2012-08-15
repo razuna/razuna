@@ -475,7 +475,7 @@
 		  LINK_PATH_URL		   VARCHAR(2000),
 		  FILE_META			   CLOB,
 		  HOST_ID			   BIGINT,
-		  PATH_TO_ASSET		   VARCHAR(100),
+		  PATH_TO_ASSET		   VARCHAR(500),
 		  CLOUD_URL			   VARCHAR(500),
 		  CLOUD_URL_ORG		   VARCHAR(500),
 		  HASHTAG			   VARCHAR(100),
@@ -512,7 +512,7 @@
 		  COMP_UW             VARCHAR(1),
 		  IMG_GROUP           VARCHAR(100) DEFAULT NULL,
 		  IMG_PUBLISHER       VARCHAR(200),
-		  IMG_FILENAME        VARCHAR(200),
+		  IMG_FILENAME        VARCHAR(500),
 		  FOLDER_ID_R         VARCHAR(100) DEFAULT NULL,
 		  IMG_CUSTOM_ID       VARCHAR(100),
 		  IMG_ONLINE          VARCHAR(2),
@@ -537,7 +537,7 @@
 		  THUMB_EXTENSION	  VARCHAR(20),
 		  THUMB_WIDTH         BIGINT,
 		  THUMB_HEIGHT        BIGINT,
-		  IMG_FILENAME_ORG    VARCHAR(200),
+		  IMG_FILENAME_ORG    VARCHAR(500),
 		  IMG_WIDTH           BIGINT,
   		  IMG_HEIGHT          BIGINT,
 	 	  IMG_SIZE            BIGINT,
@@ -548,7 +548,7 @@
 		  LINK_PATH_URL		  VARCHAR(2000),
 		  IMG_META			  CLOB,
 		  HOST_ID			  BIGINT,
-		  PATH_TO_ASSET		  VARCHAR(100),
+		  PATH_TO_ASSET		  VARCHAR(500),
 		  CLOUD_URL			   VARCHAR(500),
 		  CLOUD_URL_ORG		   VARCHAR(500),
 		  HASHTAG			   VARCHAR(100),
@@ -864,7 +864,7 @@
 		LINK_PATH_URL		    VARCHAR(2000),
 		VID_META				CLOB,
 		HOST_ID					BIGINT,
-		PATH_TO_ASSET		  	VARCHAR(100),
+		PATH_TO_ASSET		  	VARCHAR(500),
 		CLOUD_URL		   	    VARCHAR(500),
 		CLOUD_URL_ORG		    VARCHAR(500),
 		HASHTAG			   		VARCHAR(100),
@@ -945,7 +945,7 @@
 			cf_enabled 		VARCHAR(2), 
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
-			cf_select_list	VARCHAR(2000),
+			cf_select_list	VARCHAR(4000),
 			host_id			BIGINT
 		)
 		</cfquery>
@@ -956,7 +956,7 @@
 			lang_id_r 		bigint, 
 			cf_text			VARCHAR(500),
 			HOST_ID			BIGINT,
-			rec_uuid			VARCHAR(100)
+			rec_uuid		VARCHAR(100)
 			
 		)
 		</cfquery>
@@ -1053,7 +1053,7 @@
 			LINK_KIND			VARCHAR(20),
 		 	LINK_PATH_URL		VARCHAR(2000),
 		 	HOST_ID				BIGINT,
-		 	PATH_TO_ASSET		VARCHAR(100),
+		 	PATH_TO_ASSET		VARCHAR(500),
 		 	CLOUD_URL			VARCHAR(500),
 		 	CLOUD_URL_2		    VARCHAR(500),
 		    CLOUD_URL_ORG		VARCHAR(500),
@@ -1222,7 +1222,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.tschema#.#arguments.thestruct.host_db_prefix#custom (
 	  	custom_id			varchar(200),
-		custom_value		varchar(100),
+		custom_value		varchar(500),
 		host_id				bigint
 		)
 		</cfquery>

@@ -64,9 +64,9 @@
 			<cfelse>
 				<!--- If this is a Squid request then the ip is not in the remote_addr cgi variable --->
 				<cfif structkeyexists(cgi,"http_x_forwarded_for")>
-					<cfset theremoteip = cgi.http_x_forwarded_for>
+					<cfset var theremoteip = cgi.http_x_forwarded_for>
 				<cfelse>
-					<cfset theremoteip = cgi.remote_addr>
+					<cfset var theremoteip = cgi.remote_addr>
 				</cfif>
 				<!--- Get the SessionToken --->
 				<cfhttp url="https://services.nirvanix.com/ws/Authentication/LoginProxy.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
@@ -105,10 +105,10 @@
 				<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
 			</cfhttp>
 			<!--- Get the XML node for each setting --->
-			<cfset xmlfound = xmlSearch(cfhttp.FileContent, "//SessionToken")>
-			<cfset nvxsession = xmlfound[1].xmlText>
+			<cfset var xmlfound = xmlSearch(cfhttp.FileContent, "//SessionToken")>
+			<cfset var nvxsession = xmlfound[1].xmlText>
 			<cfcatch type="any">
-				<cfset nvxsession = 0>
+				<cfset var nvxsession = 0>
 			</cfcatch>
 		</cftry>
 		<!--- Return --->
@@ -131,7 +131,7 @@
 			<cfset var thexml = xmlparse(cfhttp.FileContent)>
 			<cfset var nvxsession = thexml.Response.ResponseCode[1].XmlText>
 			<cfcatch type="any">
-				<cfset nvxsession = 1>
+				<cfset var nvxsession = 1>
 			</cfcatch>
 		</cftry>
 		<cfoutput><br>
@@ -159,23 +159,31 @@
 			<!--- Get session --->
 			<cfset var nvxsession = login()>
 			<!--- Get Storage Node Stuff --->
-			<cfset var storagenode = getstoragenode(nvxsession)>
+			<cfset var storagenode = getstoragenode(nvxsession,arguments.destFolderPath)>
 			<!--- Upload Asset --->
 			<cftry>
-				<cfhttp url="#storagenode.uploadhost#/Upload.ashx" method="post" throwonerror="yes" timeout="900">
-					<cfhttpparam name="uploadtoken" value="#storagenode.uploadtoken#" type="url">
-					<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
+				<cfhttp url="http://#storagenode.uploadhost#/Upload.ashx" method="post" throwonerror="yes" timeout="900">
+					<cfhttpparam name="uploadToken" value="#storagenode.uploadtoken#" type="formfield">
+					<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="formfield">
 					<cfhttpparam name="uploadFile" file="#arguments.uploadfile#" type="file">
 				</cfhttp>
 				<!--- Parse the response --->
-				<cfset xmlVar = xmlParse(cfhttp.filecontent) />
-				<!--- Check if all is ok --->
-				<cfif xmlvar.Response.Responsecode[1].XmlText NEQ 0>
-					<cfinvoke component="email" method="send_email" subject="Razuna: Could not add your file!" themessage="#xmlvar.Response.ErrorMessage[1].XmlText#. <br /><br />If you want to add your file now you need upgrade your Razuna plan to allow for more storage and bandwidth traffic! You can do so within the Account Settings of Razuna.">
+				<cfset var xmlVar = xmlParse(cfhttp.filecontent) />
+				<!--- If we get a message the limit is exceeded then... --->
+				<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80019" OR xmlvar.Response.Responsecode[1].XmlText EQ "80020" OR xmlvar.Response.Responsecode[1].XmlText EQ "80021" OR xmlvar.Response.Responsecode[1].XmlText EQ "80022">
+					<cfinvoke component="email" method="send_email" subject="Razuna: Could not add your file!" themessage="Hello.<br /><br />It looks like that you have exceeded your upload/download limit for your plan.<br /><br />If you want to add more files, you will need upgrade your Razuna plan to allow for more storage and bandwidth traffic! You can do so within the Account Settings of Razuna (upper right corner).<br /><br />Thank you for using Razuna.">
+					<cfabort>
+				<cfelseif xmlvar.Response.Responsecode[1].XmlText NEQ 0>
+					<!--- Send customer email with the fail --->
+					<cfinvoke component="email" method="send_email" subject="Razuna: Error during adding your file!" themessage="Unfortunately something went wrong during uploading your file to the storage. Thus your file is not available on Razuna.<br /><br />The Razuna support team has been notified of this and will look into it immediately.">
+					<!--- Send us the error --->
+					<cfmail from="server@razuna.com" to="support@razuna.com" subject="upload nirvanix error" type="html"><cfdump var="#xmlvar#"><cfdump var="#arguments#"><cfdump var="#storagenode#"></cfmail>
 					<cfabort>
 				</cfif>
 				<cfcatch type="any">
 					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
+						<cfdump var="#storagenode#" label="storagenode">
+						<cfdump var="#arguments#" label="arguments">
 						<cfdump var="#cfcatch#" />
 					</cfmail>
 					<cfabort>
@@ -188,17 +196,33 @@
 	<!--- FUNCTION: GETSTORAGENODE --->
 	<cffunction name="GetStorageNode" returntype="struct" access="public" output="false">
 		<cfargument name="nvxsession" type="string" required="false">
+		<cfargument name="thepath" type="string" required="true">
+		<!--- Init struct --->
 		<cfset var thenode = structnew()>
 		<!--- Call --->
-		<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
-			<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
-			<cfhttpparam name="sizeBytes" value="15000" type="url">
-		</cfhttp>
-		<!--- Parse --->
-		<cfset xmlVar = xmlParse(cfhttp.filecontent)/>
-		<!--- Get the XML node for each setting --->
-		<cfset thenode.uploadhost = xmlvar.Response.GetStorageNode.UploadHost[1].XmlText>
-		<cfset thenode.uploadtoken = xmlvar.Response.GetStorageNode.UploadToken[1].XmlText>
+		<cftry>
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
+				<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
+				<cfhttpparam name="sizeBytes" value="50000" type="url">
+				<cfhttpparam name="fileOverwrite" value="true" type="url">
+				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
+			</cfhttp>
+			<!--- Parse --->
+			<cfset var xmlVar = xmlParse(cfhttp.filecontent)/>
+			<!--- Get the XML node for each setting --->
+			<cfset thenode.uploadhost = xmlvar.Response.GetStorageNode.UploadHost[1].XmlText>
+			<cfset thenode.uploadtoken = xmlvar.Response.GetStorageNode.UploadToken[1].XmlText>
+			<cfcatch type="any">
+				<!--- Send customer email with the fail --->
+				<cfinvoke component="email" method="send_email" subject="Razuna: Error during adding your file!" themessage="Unfortunately something went wrong during uploading your file to the storage. Thus your file is not available on Razuna.<br /><br />The Razuna support team has been notified of this and will look into it immediately.">
+				<!--- Send us the error --->
+				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="GetStorageNode nirvanix error">
+					<cfdump var="#arguments#" label="arguments">
+					<cfdump var="#cfcatch#" />
+				</cfmail>
+				<cfabort>
+			</cfcatch>
+		</cftry>
 		<!--- Return --->
 		<cfreturn thenode>
 	</cffunction>
@@ -519,100 +543,87 @@
 	<cffunction name="GetAccountUsage" access="public" output="false" region="razcache" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<cftry>
-			<!--- Get session --->
-			<cfset var nvxsession = login()>
-			<!--- Set Structure --->
-			<cfset x = structnew()>
-			<!--- Call --->
-			<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
-			<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
-				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
-				<cfhttpparam name="userName" value="#arguments.username#" type="url">
-			</cfhttp>
-			<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
-			<!---
-	<cfset trimxml = trim(cfhttp.FileContent)>
-			<cfset thelen = len(trimxml)>
-			<cfset findit = findoneof("<",cfhttp.FileContent)>
-			<cfset thexml = mid(cfhttp.FileContent, findit, thelen)>
-	--->
-			<cfset xmlVar = xmlParse(cfhttp.FileContent)/>
-			<!--- Get the XML node for each setting --->
-			<!--- <cfset x.DBU = nvxusage[1].usage>
-			<cfset x.UBU = nvxusage[3].usage>
-			<cfset x.TSU = nvxusage[2].usage> --->
-			<cfset DBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
-			<cfset UBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
-			<cfset TSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
-			<!--- Set the Usage Amount into struct --->
+		<!--- Set Structure --->
+		<cfset x = structnew()>
+		<cfset x.DBU = 0>
+		<cfset x.UBU = 0>
+		<cfset x.TSU = 0>
+		<cfset x.band = 0>
+		<cfif application.razuna.isp>
 			<cftry>
-				<cfset x.DBU = DBU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any">
-					<cfset x.DBU = 0>
-				</cfcatch>
-			</cftry>
-			<cftry>
-				<cfset x.UBU = UBU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any">
-					<cfset x.UBU = 0>
-				</cfcatch>
-			</cftry>
-			<cftry>
-				<cfset x.TSU = TSU[1].TotalUsageAmount.xmlText>
-				<cfcatch type="any">
-					<cfset x.TSU = 0>
-				</cfcatch>
-			</cftry>
-			<!--- Add bandwidth together --->
-			<cfset x.band = x.DBU + x.UBU>
-			<!--- According to host type set the alert --->
-			<cfif session.hosttype NEQ 149>
-				<cfset var storage = 16106127360 - 10485760>
-				<cfset var bandud = 8053063680 - 10485760>
-				<!--- 0 --->
-				<cfif session.hosttype EQ 0>
-					<cfset var storage = 524288000 - 10485760>
-					<cfset var bandud = 262144000 - 10485760>
-				</cfif>
-				<!--- 8 --->
-				<cfif session.hosttype EQ 8>
-					<cfset var storage = 2147483648 - 10485760>
-					<cfset var bandud = 1073741824 - 10485760>
-				</cfif>
-				<!--- 24 --->
-				<cfif session.hosttype EQ 24>
-					<cfset var storage = 16106127360 - 10485760>
-					<cfset var bandud = 8053063680 - 10485760>
-				</cfif>
-				<!--- 49 --->
-				<cfif session.hosttype EQ 49>
-					<cfset var storage = 53687091200 - 10485760>
-					<cfset var bandud = 26843545600 - 10485760>
-				</cfif>
-				<!--- 99 --->
-				<cfif session.hosttype EQ 99>
-					<cfset var storage = 161061273600 - 10485760>
-					<cfset var bandud = 80530636800 - 10485760>
-				</cfif>
-				<!--- If storage or bandwidth is full then set variable and email user --->
-				<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
-					<!--- Send eMail --->
-					<cfinvoke component="email" method="send_email" subject="Razuna: Your account needs upgrading" themessage="You have exceeded the total amount of storage or traffic for your account for this month!<br /><br />If you want to add any more files you need upgrade your Razuna plan to allow for more storage and bandwidth traffic!<br /><br />Please login to Razuna and then go to your Account Settings in order to upgrade your plan now.">
-					<!--- Set var --->
-					<cfset x.limitup = true>
-				</cfif>
-			</cfif>
-			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="support@razuna.com" subject="Error in GetAccountUsage" type="html"><cfdump var="#cfcatch#"><cfdump var="#session#"></cfmail>
-				<cfset x = structnew()>
-				<cfset x.DBU = 0>
-				<cfset x.UBU = 0>
-				<cfset x.TSU = 0>
+				<!--- Get session --->
+				<cfset var nvxsession = login()>
+				<!--- Call --->
+				<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
+				<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
+					<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+					<cfhttpparam name="userName" value="#arguments.username#" type="url">
+				</cfhttp>
+				<!--- Parse XML --->
+				<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+				<!--- Set values --->
+				<cfset var nvxDBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
+				<cfset var nvxUBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
+				<cfset var nvxTSU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Total Storage Usage' ] ]")>
+				<!--- Set the Usage Amount into struct --->
+				<cftry>
+					<cfset x.DBU = nvxDBU[1].TotalUsageAmount.xmlText>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+				<cftry>
+					<cfset x.UBU = nvxUBU[1].TotalUsageAmount.xmlText>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+				<cftry>
+					<cfset x.TSU = nvxTSU[1].TotalUsageAmount.xmlText>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
 				<!--- Add bandwidth together --->
-				<cfset x.band = 0>
-			</cfcatch>
-		</cftry>
+				<cfset x.band = x.DBU + x.UBU>
+				<!--- According to host type set the alert --->
+				<cfif session.hosttype NEQ 149>
+					<!--- <cfset var storage = 16106127360 - 10485760>
+					<cfset var bandud = 8053063680 - 10485760> --->
+					<!--- Total minus the variable value where we want to warn the user (currently when 2GB are left) --->
+					<cfset var minusvalue = 2147483648>
+					<!--- 0 --->
+					<cfif session.hosttype EQ 0>
+						<cfset var storage = 524288000 - 104857600>
+						<cfset var bandud = 524288000 - 104857600>
+					</cfif>
+					<!--- 8 --->
+					<cfif session.hosttype EQ 8>
+						<cfset var storage = 2147483648 - 524288000>
+						<cfset var bandud = 2147483648 - 524288000>
+					</cfif>
+					<!--- 24 --->
+					<cfif session.hosttype EQ 24>
+						<cfset var storage = 16106127360 - minusvalue>
+						<cfset var bandud = 16106127360 - minusvalue>
+					</cfif>
+					<!--- 49 --->
+					<cfif session.hosttype EQ 49>
+						<cfset var storage = 53687091200 - minusvalue>
+						<cfset var bandud = 53687091200 - minusvalue>
+					</cfif>
+					<!--- 99 --->
+					<cfif session.hosttype EQ 99>
+						<cfset var storage = 161061273600 - minusvalue>
+						<cfset var bandud = 161061273600 - minusvalue>
+					</cfif>
+					<!--- If storage or bandwidth is full then set variable and email user --->
+					<cfif x.tsu GTE storage OR x.DBU GTE bandud OR x.UBU GTE bandud>
+						<!--- Send eMail --->
+						<cfinvoke component="email" method="send_email" subject="Razuna: Your account needs upgrading" themessage="You have exceeded the total amount of storage or traffic for your account for this month!<br /><br />If you want to add any more files you need upgrade your Razuna plan to allow for more storage and bandwidth traffic!<br /><br />Please login to Razuna and then go to your Account Settings in order to upgrade your plan now.">
+						<!--- Set var --->
+						<cfset x.limitup = true>
+					</cfif>
+				</cfif>
+				<cfcatch type="any">
+					<cfmail from="server@razuna.com" to="support@razuna.com" subject="Error in GetAccountUsage" type="html"><cfdump var="#cfcatch#"><cfdump var="#session#"></cfmail>
+				</cfcatch>
+			</cftry>
+		</cfif>
 		<!--- Return --->
 		<cfreturn x>
 	</cffunction>
@@ -651,6 +662,7 @@
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="minutesValid" type="string" required="false" default="5259600">
 		<cfargument name="nvxsession" type="string" required="false">
+		<cfpause interval="5" />
 		<!--- Create Epoc time --->
 		<cfset arguments.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
 		<!--- Create thread --->
@@ -678,7 +690,7 @@
 		<cftry>
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetOptimalUrls.ashx" method="get" throwonerror="no">
 				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
-				<cfhttpparam name="filePath" value="#arguments.thestruct.theasset#" type="url">
+				<cfhttpparam name="filePath" value="//razuna/#session.hostid#/#arguments.thestruct.theasset#" type="url">
 				<cfhttpparam name="expiration" value="#arguments.thestruct.newepoch#" type="url">
 			</cfhttp>
 			<!--- Parse XML --->
@@ -707,13 +719,22 @@
 					<cfdump var="//razuna/#session.hostid#/#arguments.thestruct.theasset#">
 					<cfdump var="#cfhttp#">
 				</cfmail> --->
-				<!--- Send user an eMail --->
-				<cfquery datasource="#application.razuna.datasource#" name="qryuser">
-				SELECT user_email
-				FROM users
-				WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
-				</cfquery>
-				<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#arguments.thestruct.theasset#) could not be added to our system. Most likely this means you have exceeded your storage or bandwidth quota. Please upgrade within your account settings!">
+				<!--- Get last part of asset --->
+				<cfset var lp = listlast(arguments.thestruct.theasset,"/")>
+				<!--- Send eMail --->
+				<cfif lp DOES NOT CONTAIN "thumb_">
+					<cfquery datasource="#application.razuna.datasource#" name="qryuser">
+					SELECT user_email
+					FROM users
+					WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+					</cfquery>
+					<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#lp#) could not be added to the system. The error message is:<br />Code: #respcode# <br />Message: #d.Response.ErrorMessage[1].XmlText# <br /><br />We have been notified of this and will look into it asap.">
+					<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="signedURL error" type="html">
+						<cfdump var="#d#" label="thexml">
+						<cfdump var="#arguments.thestruct#" label="arguments">
+						<cfdump var="#session.hostid#">
+					</cfmail>
+				</cfif>
 			</cfif>
 			<cfcatch type="any">
 				<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug signedurl" type="html">

@@ -113,7 +113,7 @@
 								<br>
 								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;"><strong>#left(file_name,50)#</strong></a>
 							<cfelse>
-								We are still working on the asset "#file_name#"...
+								The upload of "#file_name#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(file_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(file_create_date, "HH:mm")#

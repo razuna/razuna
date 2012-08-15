@@ -46,7 +46,7 @@
 			</cfif>
 			<!--- Nirvanix Usage --->
 			<cfif application.razuna.isp AND application.razuna.storage EQ "nirvanix" AND structkeyexists(attributes.nvxusage,"limitup")>
-				<cfcachecontent name="nvx_exceeded" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
+				<cfcachecontent name="nvx_exceeded#session.hostid#" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
 						<tr>
 							<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;color:##900;">
@@ -61,21 +61,6 @@
 				<tr>
 					<td width="50%" valign="top">
 						<div id="tab_intro">
-						<cfif application.razuna.isp>
-							<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
-								<tr>
-									<th>Important Announcements</th>
-								</tr>
-								<cfloop query="attributes.qry_news">
-									<tr>
-										<td style="font-weight:bold;padding-top:10px;padding-bottom:0px;color:red;"><div style="float:left;">#news_title#</div><div style="float:right;font-style:italic;font-weight:normal;color:black;">(#dateformat(news_date,"mmmm d, yyyy")#)</div></td>
-									</tr>
-									<tr>
-										<td style="padding-top:0px;padding-bottom:0px;">#news_text##news_text_long#</td>
-									</tr>
-								</cfloop>
-							</table>
-						<cfelse>
 							<cfif prerelease>
 								<cfcachecontent name="razunatesters" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 									<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
@@ -100,17 +85,33 @@
 									<br />
 								</cfcachecontent>
 							</cfif>
-							<cfcachecontent name="razunawelcomecache" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
+							<cfcachecontent name="razunastarted" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache">
 								<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
 									<tr>
-										<th>#myFusebox.getApplicationData().defaults.trans("welcome_to_ecp")#</th>
+										<th>Getting started</th>
 									</tr>
 									<tr>
-										<td>#myFusebox.getApplicationData().defaults.trans("welcome_text")#</td>
+										<td>
+											In order for you to get up to speed quickly with Razuna, we've put together a couple of introduction videos.<br />
+											<br />
+											<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to add files to Razuna');return false;"><button class="awesome big green">How to add files to Razuna</button></a><br />
+											This will show you how to add files (images, videos, audio and documents) to Razuna. You can add files directly from your harddrive, from email or via FTP. The tutorial will also show you some basic metadata handling and how to convert and transcode images and video.
+											<br /><br />
+											<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to share files with Razuna');return false;"><button class="awesome big green">How to share files with Razuna</button></a><br />
+											This short tutorial video will give you a quick walkthrough of some of the options you have for sharing files from Razuna with your business partners, customers or colleagues. After watching this video, you will be able to master the basic techniques of sharing.
+											<br /><br />
+											<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Make good use of widgets');return false;"><button class="awesome big green">Make good use of wigets</button></a><br />
+											The widget functionality is a very powerful way to embed your files on your website, blog, etc. Watch the video to see how easy it is to use widgets.
+											<br /><br />
+											<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Manage users and groups');return false;"><button class="awesome big green">Manage users and groups</button></a><br />
+											Another video that will guide you through the process of adding and managing users on your Razuna DAM solution. You will also see how you create user groups and manage the folder permissions for users and groups.
+											<br /><br />
+											<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Real world custom case');return false;"><button class="awesome big green">Real world customer case</button></a><br />
+											Last but not least, here is a real world example how a golf shop struggled to keep assets up-to-date. After the shift to Razuna, finding and downloading the right image becomes a breeze.
+										</td>
 									</tr>
 								</table>
 							</cfcachecontent>
-						</cfif>
 						</div>
 					</td>
 					<td width="50%" valign="top" style="padding-left:10px;">
@@ -169,17 +170,42 @@
 							</div>
 							<br>
 						</cfif>
+						<!--- Announcement for ISP --->
+						<cfif application.razuna.isp>
+							<table width="100%" border="0" cellpadding="0" cellspacing="0" class="tablepanel">
+								<tr>
+									<th>Announcements from Razuna</th>
+								</tr>
+								<tr>
+									<td>
+										<cfloop query="attributes.qry_news">
+											<span style="font-weight:bold;padding-top:10px;padding-bottom:0px;"><cfif currentrow EQ 1>#news_title#<cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a></cfif></span><br />
+											<cfif currentrow EQ 1>
+												#news_text##news_text_long#
+												<br /><br />
+											<cfelse>
+												<div id="slidenews#currentrow#" style="display:none;">
+													#news_text##news_text_long#
+													<br />
+												</div>
+											</cfif>
+										</cfloop>
+									</td>
+								</tr>
+							</table>
+							<br />
+						</cfif>
 						<div id="tab_wisdom">
 							<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablepanel">
-							<tr>
-								<th>Wisdom of Today</th>
-							</tr>
-							<tr>
-								<td>#wisdom.wis_text#</td>
-							</tr>
-							<tr>
-								<td style="padding-top:10px;"><i>#wisdom.wis_author#</i></td>
-							</tr>
+								<tr>
+									<th>Wisdom of Today</th>
+								</tr>
+								<tr>
+									<td>#wisdom.wis_text#</td>
+								</tr>
+								<tr>
+									<td style="padding-top:10px;"><i>#wisdom.wis_author#</i></td>
+								</tr>
 							</table>
 						</div>
 						<br>
@@ -200,28 +226,28 @@
 											<td>Hi there. Thank you for using Razuna. In order for you to enjoy Razuna even more we have some additional tools for you available.</td>
 										</tr>
 										<tr>
-											<th><a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Razuna Desktop</a></th>
-										</tr>
-										<tr>
-											<td>Razuna Desktop enables you to add any asset from your desktop to Razuna by simply dragging and dropping it into your Razuna Desktop application. <a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Read more</a></td>
-										</tr>
-										<tr>
 											<th><a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Razuna Wordpress Plugin</a></th>
 										</tr>
 										<tr>
-											<td>With the Razuna Wordpress plugin you simply choose assets within Razuna on your Wordpress powered site. There is no need to upload or import them to Wordpress. <a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Read more</a></td>
+											<td>With the Razuna Wordpress plugin you simply choose files within Razuna on your Wordpress powered site. There is no need to upload or import them to Wordpress. <a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Read more</a></td>
 										</tr>
 										<tr>
 											<th><a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Razuna Google Chrome Extension</a></th>
 										</tr>
 										<tr>
-											<td>With the Razuna Google Chrome Extension installed you can browse your assets directly within Chrome. <a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Read more</a></td>
+											<td>With the Razuna Google Chrome Extension installed you can browse your files directly within Chrome. <a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Read more</a></td>
 										</tr>
 										<tr>
 											<th><a href="http://razuna.org/getinvolved/developers" target="_blank">Razuna API</a></th>
 										</tr>
 										<tr>
 											<td>Razuna features a extensive API for you to expand on and access your assets Head over to our <a href="http://razuna.org/getinvolved/developers" target="_blank">Developer section</a> or directly to the <a href="http://wiki.razuna.com/display/ecp/API+Developer+Guide" target="_blank">API guide</a>. </a></td>
+										</tr>
+										<tr>
+											<th><a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Razuna Desktop</a></th>
+										</tr>
+										<tr>
+											<td>Razuna Desktop enables you to add any files from your desktop to Razuna by simply dragging and dropping it into your Razuna Desktop application. <a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Read more</a></td>
 										</tr>
 										<tr>
 											<td>
@@ -312,4 +338,3 @@
 <cfinclude template="../js/users.cfm" runonce="true">
 <!--- JS: SCHEDULER --->
 <cfinclude template="../js/scheduler.cfm" runonce="true">
-

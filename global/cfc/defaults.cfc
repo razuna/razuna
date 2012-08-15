@@ -25,12 +25,11 @@
 --->
 <cfcomponent extends="extQueryCaching">
 
-<!--- Get the cachetoken for here --->
-<cfset variables.cachetoken = getcachetoken("general")>
-
 <!--- GET THE LANGUAGES --->
 <cffunction name="getlangs" output="false">
 	<cftry>
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("settings")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="thelangs" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlangs */ lang_id, lang_name

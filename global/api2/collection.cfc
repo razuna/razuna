@@ -34,19 +34,21 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Cachetoken --->
+			<cfset var cachetoken = arguments.api_key & application.razuna.api.hostid["#arguments.api_key#"]>
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- Query which file are in this collection --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qry_col" cachedwithin="1" region="razcache">
-			SELECT /* #session.cachetoken#getassets1 */ file_id_r
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry_col" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+			SELECT /* #cachetoken#getassets1 */ file_id_r
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct
 			WHERE ct.col_id_r = <cfqueryparam value="#arguments.collectionid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- If above qry return records --->
 			<cfif qry_col.recordcount NEQ 0>
 				<!--- Query the files --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-				SELECT  /* #session.cachetoken#getassets2 */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+				SELECT  /* #cachetoken#getassets2 */
 				i.img_id id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
@@ -214,9 +216,11 @@
 		<cfset thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Cachetoken --->
+			<cfset var cachetoken = arguments.api_key & application.razuna.api.hostid["#arguments.api_key#"]>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #session.cachetoken#getcollections */ c.col_id, c.change_date, ct.col_name, 
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+			SELECT /* #cachetoken#getcollections */ c.col_id, c.change_date, ct.col_name, 
 				(
 					SELECT count(file_id_r) 
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files 

@@ -673,7 +673,7 @@
 			<cfif structkeyexists(arguments.thestruct,"redirectto")>
 				<cflocation url="#arguments.thestruct.redirectto#?responsecode=1&message=htmleditformat(Upload failed #xmlformat(cfcatch.Detail)# #xmlformat(cfcatch.Message)#)" addToken="yes">
 			<cfelse>
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from API upload" dump="#cfcatch#">
+				<!--- <cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from API upload" dump="#cfcatch#"> --->
 				<!--- Return Message --->
 				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
 	<Response>
@@ -1062,58 +1062,50 @@ This is the main function called directly by a single upload else from addassets
 <!--- DELETE IN DB AND FILE SYSTEM -------------------------------------------------------------------->
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfset var ts = structnew()>
-	<cfset ts.thepath = arguments.thestruct.thepath>
-	<cfset ts.assetpath = arguments.thestruct.assetpath>
-	<cfset ts.database = arguments.thestruct.database>
-	<cfset ts.dsn = application.razuna.datasource>
-	<cfthread intvars="#ts#" priority="LOW">
+	<cfthread intvars="#arguments.thestruct#" priority="LOW">
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -6, "#now()#")>
 		<!--- Clear assets dbs from records which have no path_to_asset --->
 		<cftransaction>
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#images
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND img_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#videos
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND vid_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#files
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND file_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 			</cfquery>
 		</cftransaction>
 		<cftransaction>
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#audios
 			WHERE (path_to_asset IS NULL OR path_to_asset = '')
 			AND aud_create_time < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
 			</cfquery>
 		</cftransaction>
 		<!--- Select temp assets which are older then 6 hours --->
-		<cfquery datasource="#attributes.intvars.dsn#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT path as temppath, tempid
 		FROM #session.hostdbprefix#assets_temp
 		WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-		<!--- AND link_kind <cfif attributes.intvars.database EQ "oracle" OR attributes.intvars.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="lan">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->
 		</cfquery>
 		<!--- Loop trough the found records --->
 		<cfloop query="qry">
 			<!--- Delete in the DB --->
-			<cfquery datasource="#attributes.intvars.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#assets_temp
 			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
-			<!--- AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> --->
 			</cfquery>
 			<!--- Delete on the file system --->
 			<cfif directoryexists(temppath)>
@@ -1248,14 +1240,19 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Create folder to hold the images --->
 					<cfdirectory action="create" directory="#attributes.intstruct.thepdfdirectory#" mode="775">
 					<!--- Script: Create thumbnail --->
-					<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfileflat# -thumbnail 128x -strip -colorspace sRGB -flatten #attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
+					<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfileflat# -thumbnail 128x +profile '*' -colorspace RGB -background white -flatten #attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 					<!--- Script: Create images --->
 					<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thepdfdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
 					<!--- Execute --->
-					<cfexecute name="#attributes.intstruct.thesh#" timeout="900" />
-					<cfif application.razuna.storage NEQ "amazon">
-						<cfexecute name="#attributes.intstruct.thesht#" timeout="900" />
-					</cfif>
+					<cfset ttpdf = createUUID("")>
+					<cfthread name="#ttpdf#" pdfintstruct="#attributes.intstruct#" priority="LOW">
+						<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
+						<cfif application.razuna.storage NEQ "amazon">
+							<cfexecute name="#attributes.pdfintstruct.thesht#" timeout="900" />
+						</cfif>
+					</cfthread>
+					<!--- Wait for thread to finish --->
+					<cfthread action="join" name="#ttpdf#" />						
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#attributes.intstruct.thesh#">
 					<cffile action="delete" file="#attributes.intstruct.thesht#">
@@ -1598,8 +1595,8 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfthread>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("files")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("files")>
+	<cfset resetcachetoken("folders")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- The return --->
 	<cfif isnumeric(arguments.thestruct.newid)>
@@ -1774,8 +1771,8 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Wait for thread --->
 			<cfthread action="join" name="processImgFile#arguments.thestruct.newid#" timeout="90" /> --->
 			<!--- Flush Cache --->
-			<cfset variables.cachetoken = resetcachetoken("images")>
-			<cfset variables.cachetoken = resetcachetoken("folders")>
+			<cfset resetcachetoken("images")>
+			<cfset resetcachetoken("folders")>
 			<cfset variables.cachetoken = resetcachetoken("general")>
 		</cfif>
 	</cfif>
@@ -1806,6 +1803,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset var theDBurl = "">
 	<cfset var iLoop = "">
 	<cfset var thenewnr = 0>
+	<cfparam name="arguments.thestruct.img_meta" default="" />
 	<cfset arguments.thestruct.dsn = variables.dsn>
 	<cfset arguments.thestruct.database = variables.database>
 	<cfset arguments.thestruct.hostid = session.hostid>
@@ -2224,7 +2222,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
 		<cfset var theimconvert = "">
-		<cfset var theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace sRGB">
+		<cfset var theImgConvertParams = "-thumbnail #arguments.thestruct.width#x +profile '*' -colorspace RGB">
 		<!--- validate input --->
 		<cfif FileExists(arguments.thestruct.destination)>
 			<!--- <cfthrow message="Destination-file already exists!"> --->
@@ -2257,13 +2255,13 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Set correct width or heigth --->
 		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace sRGB">
+			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x +profile '*' -colorspace RGB">
 		<cfelseif arguments.thestruct.thexmp.orgheight LTE arguments.thestruct.height AND arguments.thestruct.thexmp.orgwidth LTE arguments.thestruct.width>
-			<cfset theImgConvertParams = "-strip -colorspace sRGB">
+			<cfset theImgConvertParams = "+profile '*' -colorspace RGB">
 		<cfelseif arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
-			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x -strip -colorspace sRGB">
+			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x +profile '*' -colorspace RGB">
 		<cfelseif arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
-			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# -strip -colorspace sRGB">
+			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# +profile '*' -colorspace RGB">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
@@ -2273,8 +2271,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Switch to create correct arguments to pass for executables --->
 		<cfswitch expression="#arguments.thestruct.qryfile.extension#">
 			<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
-			<cfcase value="psd,eps,ai">
-				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.theimconvert# #arguments.thestruct.thesource#[0] #theImgConvertParams# -flatten #Arguments.thestruct.destination#">
+			<cfcase value="psd,eps,ai,png">
+				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.theimconvert# #arguments.thestruct.thesource#[0] #theImgConvertParams# -background white -flatten #Arguments.thestruct.destination#">
 			</cfcase>
 			<!--- For RAW images we take dcraw --->
 			<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
@@ -2511,7 +2509,9 @@ This is the main function called directly by a single upload else from addassets
 				<cfset orgheight = trim(listlast(orgheight," "))>
 				<cfpause interval=2 />
 			</cfif>
-			<cfexecute name="#arguments.thestruct.theshex#" timeout="60" variable="vid_meta" />
+			<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
+				<cfexecute name="#arguments.thestruct.theshex#" timeout="60" variable="vid_meta" />
+			</cfif>
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<cffile action="delete" file="#arguments.thestruct.thesht#">
@@ -2597,6 +2597,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var ts = 1>
 			<cfset var tw = 1>
 			<cfset var th = 1>
+			<cfset var vid_meta = "">
 		</cfif>
 		<!--- Set shared options --->
 		<cfquery datasource="#variables.dsn#">
@@ -2732,8 +2733,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Log --->
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid='#arguments.thestruct.thisvid.newid#')#>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("videos")>
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("folders")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- RFS --->
 		<cfif application.razuna.rfs>
@@ -2835,7 +2836,7 @@ This is the main function called directly by a single upload else from addassets
 			)
 			</cfquery>
 		</cfloop>
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken("folders")>
 		<cfpause interval="5" />
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
@@ -3007,15 +3008,24 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thedirectory" type="string">
 	<!--- Get folders within the unzip --->
 	<cfdirectory action="list" directory="#arguments.thedirectory#" name="thedir" recurse="true" type="dir">
+	<!--- Sort the above list in a query because cfdirectory sorting sucks --->
+	<cfquery dbtype="query" name="thedir">
+	SELECT *
+	FROM thedir
+	WHERE name LIKE '% %'
+	ORDER BY name
+	</cfquery>
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
 	<cfloop query="thedir">
 		<cfif thedir.attributes NEQ "H" AND NOT name CONTAINS "__MACOSX">
 			<!--- All foreign chars are now converted, except the FileSeparator and - --->
-			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","","ALL")>
+			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","-","ALL")>
 			<!--- Rename --->
-			<cfif "#directory#/#name#" NEQ "#directory#/#d#">
+			<!--- <cfif "#directory#/#name#" NEQ "#directory#/#d#"> --->
 				<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
-			</cfif>
+			<!--- </cfif> --->
+			<!--- Call this method again since the folder name on the disk could have changed --->
+			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thedirectory#">
 		</cfif>
 	</cfloop>
 	<cfreturn />
@@ -3485,8 +3495,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Join above thread --->
 		<cfthread action="join" name="#tt#" />
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("audios")>
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("folders")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.newid />
@@ -3599,8 +3609,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("videos")>
-				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset resetcachetoken("videos")>
+				<cfset resetcachetoken("folders")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
@@ -3610,8 +3620,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("images")>
-				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset resetcachetoken("images")>
+				<cfset resetcachetoken("folders")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		<!--- Amazon --->
@@ -3636,8 +3646,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("videos")>
-				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset resetcachetoken("videos")>
+				<cfset resetcachetoken("folders")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
@@ -3647,8 +3657,8 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("images")>
-				<cfset variables.cachetoken = resetcachetoken("folders")>
+				<cfset resetcachetoken("images")>
+				<cfset resetcachetoken("folders")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		</cfif>
@@ -3752,17 +3762,17 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Create the args for conversion --->
 					<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
 						<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
-						<cfcase value="psd,eps,ai">
-							<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace sRGB -flatten #arguments.thestruct.thumbpath#">
+						<cfcase value="psd,eps,ai,png">
+							<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace RGB -flatten #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For RAW images we take dcraw --->
 						<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
 							<cfset theargs = "#thedcraw# -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
-							<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace sRGB #arguments.thestruct.thumbpath#">
+							<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace RGB #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For everything else --->
 						<cfdefaultcase>
-							<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x -strip -colorspace sRGB #arguments.thestruct.thumbpath#">
+							<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace RGB #arguments.thestruct.thumbpath#">
 						</cfdefaultcase>
 					</cfswitch>
 				</cfif>
@@ -3863,9 +3873,9 @@ This is the main function called directly by a single upload else from addassets
 		</cftry>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("images")>
-	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("images")>
+	<cfset resetcachetoken("videos")>
+	<cfset resetcachetoken("folders")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />

@@ -261,7 +261,7 @@
 		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->
-	<!--- <cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput> --->
+	<cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput>
 	<cfreturn arguments.thestruct.zipname>
 </cffunction>
 
@@ -410,11 +410,15 @@
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
 				</cfthread>
+				<!--- Wait for the thread above until the file is downloaded fully --->
+				<cfthread action="join" name="#thethreadid#" />
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cfhttp url="#attributes.intstruct.thiscloudurl#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
 				</cfthread>
+				<!--- Wait for the thread above until the file is downloaded fully --->
+				<cfthread action="join" name="#thethreadid#" />
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
@@ -424,6 +428,8 @@
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
 				</cfthread>
+				<!--- Wait for the thread above until the file is downloaded fully --->
+				<cfthread action="join" name="#thethreadid#" />
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif arguments.thestruct.qry.link_kind EQ "url">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
@@ -431,16 +437,18 @@
 							
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
+				<!--- Wait for the thread above until the file is downloaded fully --->
+				<cfthread action="join" name="#thethreadid#" />
 			<!--- If this is a linked asset --->
 			<cfelseif arguments.thestruct.qry.link_kind EQ "lan">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
 				</cfthread>
+				<!--- Wait for the thread above until the file is downloaded fully --->
+				<cfthread action="join" name="#thethreadid#" />
 			</cfif>
-			<!--- Wait for the thread above until the file is downloaded fully --->
-			<cfthread action="join" name="#thethreadid#" />
 			<!--- Rename the file --->
-			<cfif structkeyexists(arguments.thestruct.qry, "link_kind") AND arguments.thestruct.qry.link_kind NEQ "url">
+			<cfif structkeyexists(arguments.thestruct.qry, "link_kind") AND arguments.thestruct.qry.link_kind NEQ "url" AND fileExists("#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#")>
 				<cffile action="move" source="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#" destination="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#thenewname#">
 			</cfif>
 		</cfif>

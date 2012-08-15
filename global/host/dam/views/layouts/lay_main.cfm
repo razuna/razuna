@@ -85,6 +85,21 @@
 }
 .ui-widget { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 12px; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 1em; }
+.ui-autocomplete {
+	max-height: 300px;
+	overflow-y: auto;
+	/* prevent horizontal scrollbar */
+	overflow-x: hidden;
+	/* add padding to account for vertical scrollbar */
+	padding-right: 20px;
+}
+/* IE 6 doesn't support max-height
+ * we use height instead, but this forces the menu to always be this tall
+ */
+* html .ui-autocomplete {
+	height: 300px;
+}
+.ui-autocomplete-loading { background: white url('#dynpath#/global/host/dam/images/ui-anim_basic_16x16.gif') right center no-repeat; }
 ##chromebar {
 	height:30px;
 	width:100%;
@@ -136,6 +151,9 @@
 <div id="thewindowcontent1" style="padding:10px;display:none;"></div>
 <div id="thewindowcontent2" style="padding:10px;display:none;"></div>
 <div id="thewindowcontent3" style="padding:10px;display:none;"></div>
+<div id="videoPlayerDiv" style="display:none;">
+<iframe id="introRazVideo" src="" width="800" height="450" frameborder="0" webkitallowfullscreen="" allowfullscreen="" mozallowfullscreen=""></iframe>
+</div>
 <!--- Tooltip Div --->
 <div id="demotip">&nbsp;</div>
 <div id="div_forall" style="display:none;"></div>

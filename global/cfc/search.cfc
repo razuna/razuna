@@ -27,6 +27,7 @@
 
 <!--- Get the cachetoken for here --->
 <cfset variables.cachetoken = getcachetoken("search")>
+<cfset variables.cachetokenlogs = getcachetoken("logs")>
 
 	<!--- SEARCH: FILES --->
 	<cffunction name="search_files">
@@ -715,24 +716,27 @@
 	</cffunction>
 	
 	<!--- Search for suggestion --->
-	<cffunction name="search_suggest" access="remote" output="false">
-	<cfargument name="theterm" required="true">
+	<cffunction name="search_suggest" access="remote" output="true">
+		<cfargument name="searchtext" required="true">
 		<!--- The function must return suggestions as an array. ---> 
 		<cfset var myarray = ArrayNew(1)> 
-		<!--- Get all unique last names that match the typed characters. ---> 
-		<cfquery name="qry" datasource="#application.razuna.datasource#"> 
-		SELECT img_filename
-		FROM #session.hostdbprefix#images
-		WHERE lower(img_filename) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.theterm)#%">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedWithin="1">
+		SELECT /* #variables.cachetokenlogs#search */ log_search_for
+		FROM #session.hostdbprefix#log_search
+		WHERE lower(log_search_for) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.searchtext)#%">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		GROUP BY img_filename
+		AND log_user = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+		AND log_founditems != 0
+		GROUP BY log_search_for
+		ORDER BY log_founditems
 		</cfquery>
-		<!--- Convert the query to an array. ---> 
+		<!--- Append --->
 		<cfloop query="qry"> 
-			<cfset arrayAppend(myarray, img_filename)> 
+			<cfset arrayAppend(myarray, log_search_for)>
 		</cfloop>
-		<cfset myarray = SerializeJSON(myarray)>
-		<cfreturn myarray> 
+		<cfoutput>#SerializeJSON(myarray)#</cfoutput>
+		<cfreturn /> 
 	</cffunction> 
 
 	<!--- Combine searches (needed for new folder search) --->

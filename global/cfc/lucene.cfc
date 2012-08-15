@@ -43,10 +43,25 @@
 	<!--- When adding a new host, creating one on the first time setup --->
 	<cffunction name="setup" access="public" output="false">
 		<cfargument name="colname" type="string">
+			<!--- Delete collection --->
+			<cftry>
+				<cfset CollectionDelete(arguments.colname)>
+				<cfcatch type="any">
+					<!--- <cfmail from="server@razuna.com" to="support@razuna.com" subject="collection delete error #arguments.colname#" type="html"><cfdump var="#cfcatch#"></cfmail> --->
+				</cfcatch>
+			</cftry>
+			<!--- Delete path on disk --->
+			<cftry>
+				<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
+				<cfcatch type="any">
+					<!--- <cfmail from="server@razuna.com" to="support@razuna.com" subject="collection error remove directory #arguments.colname#" type="html"><cfdump var="#cfcatch#"></cfmail> --->
+				</cfcatch>
+			</cftry>
+			<!--- Create collection --->
 			<cftry>
 				<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
-				<cfcatch>
-					<cfmail from="server@razuna.com" to="support@razuna.com" subject="collection create error #arguments.colname#" type="html"><cfdump var="#cfcatch#"></cfmail>
+				<cfcatch type="any">
+					<!--- <cfmail from="server@razuna.com" to="support@razuna.com" subject="collection create error #arguments.colname#" type="html"><cfdump var="#cfcatch#"></cfmail> --->
 				</cfcatch>
 			</cftry>
 	</cffunction>

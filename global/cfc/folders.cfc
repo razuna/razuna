@@ -304,6 +304,10 @@
 	<!--- Params --->
 	<cfparam default="" name="arguments.thestruct.coll_folder">
 	<cfparam default="" name="arguments.thestruct.link_path">
+	<!--- If level is empty make it a 2 --->
+	<cfif arguments.thestruct.level EQ "">
+		<cfset arguments.thestruct.level = 2>
+	</cfif>
 	<!--- If this is NOT a link to a folder --->
 	<cfif arguments.thestruct.link_path EQ "">
 		<cftry>
@@ -360,7 +364,8 @@
 				<cfreturn this.action2>
 			</cfif>
 			<cfcatch type="any">
-				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in adding folder" dump="#cfcatch#">
+				<cfdump var="#cfcatch#">
+				<cfabort>
 			</cfcatch>
 		</cftry>
 	<!--- This is a link --->
@@ -2622,150 +2627,151 @@
 	<cfparam default="F" name="arguments.thestruct.actionismove">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getfoldersfortree */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
-		<!--- Permission follow but not for sysadmin and admin --->
-		<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-			CASE
-				<!--- Check permission on this folder --->
-				WHEN EXISTS(
-					SELECT fg.folder_id_r
-					FROM #session.hostdbprefix#folders_groups fg
-					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND fg.folder_id_r = f.folder_id
-					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-					AND fg.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)
-					) THEN 'unlocked'
-				<!--- When folder is shared for everyone --->
-				WHEN EXISTS(
-					SELECT fg2.folder_id_r
-					FROM #session.hostdbprefix#folders_groups fg2
-					WHERE fg2.grp_id_r = '0'
-					AND fg2.folder_id_r = f.folder_id
-					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-					) THEN 'unlocked'
-				<!--- If this is the user folder or he is the owner --->
-				WHEN ( lower(f.folder_of_user) = 't' OR f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
-				<!--- If this is the upload bin --->
-				WHEN f.folder_id = '1' THEN 'unlocked'
-				<!--- If this is a collection --->
-				<!--- WHEN lower(f.folder_is_collection) = 't' THEN 'unlocked' --->
-				<!--- If nothing meets the above lock the folder --->
-				ELSE 'locked'
-			END AS perm
-		<cfelse>
-			'unlocked' AS perm
-		</cfif>
-		<!--- Check for subfolders --->
-		,
-			CASE
-				<!--- First check if there is a subfolder --->
-				WHEN EXISTS(
-					SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>*
-						FROM #session.hostdbprefix#folders s1 
-						WHERE s1.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
-						AND s1.folder_id_r = f.folder_id
-						AND s1.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						<!--- AND lower(s.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">  --->
-						<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-							AND s1.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-						</cfif>
-						<!--- If this is a move then dont show the folder that we are moving --->
-						<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
-							AND s1.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
-						</cfif>
-						<cfif variables.database EQ "oracle">
-							AND ROWNUM = 1
-						<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
-							LIMIT 1
-						</cfif>
-					) THEN 1
-					<!--- Check permission on this folder --->
-					WHEN EXISTS(
-						SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>*
-						FROM #session.hostdbprefix#folders s2, #session.hostdbprefix#folders_groups fg3
-						WHERE s2.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
-						AND s2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.host_id = s2.host_id
-						AND s2.folder_id_r = f.folder_id
-						AND fg3.folder_id_r = s2.folder_id
-						AND lower(fg3.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users <cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#"></cfif>)
-						<cfif variables.database EQ "oracle">
-							AND ROWNUM = 1
-						<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
-							LIMIT 1
-						</cfif>
-						) THEN 1
-					<!--- When folder is shared for everyone --->
-					WHEN EXISTS(
-						SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>*
-						FROM #session.hostdbprefix#folders s3, #session.hostdbprefix#folders_groups fg4
-						WHERE s3.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
-						AND s3.folder_id_r = f.folder_id
-						AND fg4.grp_id_r = '0'
-						AND fg4.folder_id_r = s3.folder_id
-						AND lower(fg4.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						AND s3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND s3.host_id = fg4.host_id
-						<cfif variables.database EQ "oracle">
-							AND ROWNUM = 1
-						<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
-							LIMIT 1
-						</cfif>
-						) THEN 1
-					<!--- If nothing meets the above lock the folder --->
-					ELSE 0
-				END AS subhere
-		FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
-		WHERE 
-		<cfif theid gt 0>
-			f.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id_r
-			AND
-			f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-		<cfelse>
-			f.folder_id = f.folder_id_r
-		</cfif>
-		<cfif iscol EQ "F">
-			AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
-		<cfelse>
-			AND lower(f.folder_is_collection) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-		</cfif>
-		<!--- filter user folders, but not for collections --->
-		<cfif iscol EQ "F" AND (NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser())>
-			AND
-				(
-				LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(f.folder_of_user,<cfqueryparam cfsqltype="cf_sql_varchar" value="f">)) <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-				OR f.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
-				)
-		</cfif>
-		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		ORDER BY lower(folder_name)
-		</cfquery>
-		<!--- Query to get unlocked folders only --->
-		<cfquery dbtype="query" name="qRet">
-		SELECT *
-		FROM qry
-		WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
-		<!--- If this is a move then dont show the folder that we are moving --->
-		<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
-			AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
-		</cfif>
-		</cfquery>
-		<!--- Create the XML --->
-		<cfif theid EQ 0>
-			<!--- This is the ROOT level  --->
-			<cfif session.showmyfolder EQ "F" AND iscol NEQ "T">
-				<cfquery dbtype="query" name="qRet">
-				SELECT *
-				FROM qRet
-				WHERE folder_of_user = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
-				OR (lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="my folder"> AND folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">)
-				OR folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
-				OR folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
-				</cfquery>
+	SELECT /* #variables.cachetoken#getfoldersfortree */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, 
+	<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
+	<!--- Permission follow but not for sysadmin and admin --->
+	<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+		CASE
+			<!--- Check permission on this folder --->
+			WHEN EXISTS(
+				SELECT fg.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg
+				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg.folder_id_r = f.folder_id
+				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				AND fg.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)
+				) THEN 'unlocked'
+			<!--- When folder is shared for everyone --->
+			WHEN EXISTS(
+				SELECT fg2.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg2
+				WHERE fg2.grp_id_r = '0'
+				AND fg2.folder_id_r = f.folder_id
+				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				) THEN 'unlocked'
+			<!--- If this is the user folder or he is the owner --->
+			WHEN ( lower(f.folder_of_user) = 't' OR f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
+			<!--- If this is the upload bin --->
+			WHEN f.folder_id = '1' THEN 'unlocked'
+			<!--- If this is a collection --->
+			<!--- WHEN lower(f.folder_is_collection) = 't' THEN 'unlocked' --->
+			<!--- If nothing meets the above lock the folder --->
+			ELSE 'locked'
+		END AS perm
+	<cfelse>
+		'unlocked' AS perm
+	</cfif>
+	<!--- Check for subfolders --->
+	,
+	CASE
+		<!--- First check if there is a subfolder --->
+		WHEN EXISTS(
+			SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>*
+			FROM #session.hostdbprefix#folders s1 
+			WHERE s1.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
+			AND s1.folder_id_r = f.folder_id
+			AND s1.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- AND lower(s.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">  --->
+			<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+				AND s1.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
 			</cfif>
+			<!--- If this is a move then dont show the folder that we are moving --->
+			<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
+				AND s1.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+			</cfif>
+			<cfif variables.database EQ "oracle">
+				AND ROWNUM = 1
+			<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
+				LIMIT 1
+			</cfif>
+		) THEN 1
+		<!--- Check permission on this folder --->
+		WHEN EXISTS(
+			SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>*
+			FROM #session.hostdbprefix#folders s2, #session.hostdbprefix#folders_groups fg3
+			WHERE s2.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
+			AND s2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg3.host_id = s2.host_id
+			AND s2.folder_id_r = f.folder_id
+			AND fg3.folder_id_r = s2.folder_id
+			AND lower(fg3.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+			AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users <cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#"></cfif>)
+			<cfif variables.database EQ "oracle">
+				AND ROWNUM = 1
+			<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
+				LIMIT 1
+			</cfif>
+		) THEN 1
+		<!--- When folder is shared for everyone --->
+		WHEN EXISTS(
+			SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>*
+			FROM #session.hostdbprefix#folders s3, #session.hostdbprefix#folders_groups fg4
+			WHERE s3.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
+			AND s3.folder_id_r = f.folder_id
+			AND fg4.grp_id_r = '0'
+			AND fg4.folder_id_r = s3.folder_id
+			AND lower(fg4.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+			AND s3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND s3.host_id = fg4.host_id
+			<cfif variables.database EQ "oracle">
+				AND ROWNUM = 1
+			<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">
+				LIMIT 1
+			</cfif>
+		) THEN 1
+		<!--- If nothing meets the above lock the folder --->
+		ELSE 0
+	END AS subhere
+	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
+	WHERE 
+	<cfif theid gt 0>
+		f.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id_r
+		AND
+		f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+	<cfelse>
+		f.folder_id = f.folder_id_r
+	</cfif>
+	<cfif iscol EQ "F">
+		AND (f.folder_is_collection IS NULL OR folder_is_collection = '')
+	<cfelse>
+		AND lower(f.folder_is_collection) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+	</cfif>
+	<!--- filter user folders, but not for collections --->
+	<cfif iscol EQ "F" AND (NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser())>
+		AND
+			(
+			LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(f.folder_of_user,<cfqueryparam cfsqltype="cf_sql_varchar" value="f">)) <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
+			OR f.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+			)
+	</cfif>
+	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	ORDER BY lower(folder_name)
+	</cfquery>
+	<!--- Query to get unlocked folders only --->
+	<cfquery dbtype="query" name="qRet">
+	SELECT *
+	FROM qry
+	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+	<!--- If this is a move then dont show the folder that we are moving --->
+	<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
+		AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+	</cfif>
+	</cfquery>
+	<!--- Create the XML --->
+	<cfif theid EQ 0>
+		<!--- This is the ROOT level  --->
+		<cfif session.showmyfolder EQ "F" AND iscol NEQ "T">
+			<cfquery dbtype="query" name="qRet">
+			SELECT *
+			FROM qRet
+			WHERE folder_of_user = <cfqueryparam cfsqltype="cf_sql_varchar" value="f">
+			OR (lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="my folder"> AND folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">)
+			OR folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+			OR folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
+			</cfquery>
 		</cfif>
+	</cfif>
 	<!--- Tree for the Explorer --->
 	<cfif arguments.thestruct.actionismove EQ "F">
 		<cfoutput query="qRet">
