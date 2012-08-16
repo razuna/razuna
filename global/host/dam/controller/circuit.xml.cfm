@@ -1053,6 +1053,8 @@
 		<xfa name="foldernew" value="c.folder_new" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_folder_settings',attributes)" returnvariable="pl" />
 		<!-- Show -->
 		<do action="folder_new" />
 	</fuseaction>

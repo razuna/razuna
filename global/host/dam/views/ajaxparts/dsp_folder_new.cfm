@@ -137,6 +137,10 @@
 					</tr>
 				</cfif>
 			</table>
+			<!--- This is the plugin section --->
+			<cfloop list="#pl.pview#" delimiters="," index="i">
+				#evaluate(i)#
+			</cfloop>
 		</div>
 		<!--- Link to Folder --->
 		<cfif attributes.isdetail NEQ "T" AND NOT application.razuna.isp AND attributes.iscol NEQ "T">

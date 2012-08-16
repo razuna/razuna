@@ -242,8 +242,8 @@
 		<cfset var result = structnew()>
 		<cfset result.pcfc = "">
 		<cfset result.pview = "">
-		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" region="razcache" cachedwithin="1">
+		<!--- Query  region="razcache" cachedwithin="1" --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT /* #variables.cachetoken# */ pa.comp, pa.func, pa.args, p.p_path
 		FROM plugins_actions pa, plugins p
 		WHERE lower(pa.action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theaction#">
@@ -264,9 +264,9 @@
 				<cfset var page = false>
 			</cfif>
 			<!--- 2. include the page just not if dev set the page value to false (like coming from a save or alike) --->
-			<cfif fileExists("#expandpath("../../")#global/plugins/#p_path#/view/#lcase(comp)#.cfm") AND page>
+			<cfif fileExists("#expandpath("../../")#global/plugins/#p_path#/view/#lcase(func)#.cfm") AND page>
 				<!--- Parse view page --->
-				<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#lcase(comp)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
+				<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#lcase(func)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
 				<!--- Put into variable --->
 				<cfset result.pview = result.pview & "," & "pl.view.#p_path#.#func#">
 			</cfif>
