@@ -96,6 +96,11 @@
 			<cfset session.theuserid = qryuser.user_id>
 			<!--- Set User First and last name --->
 			<cfset session.firstlastname = "#qryuser.user_first_name# #qryuser.user_last_name#">
+			<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
+			<cfinvoke component="groups_users" method="getGroupsOfUser">
+				<cfinvokeargument name="user_id" value="#qryuser.user_id#" />
+				<cfinvokeargument name="host_id" value="#session.hostid#" />
+			</cfinvoke>
 			<!--- Admin Login: Set the domain ID into a session --->
 			<cfif arguments.loginto EQ "admin">
 				<cfset session.hostid = "0">
@@ -122,8 +127,10 @@
 				</cfif>
 				<!--- Cookie --->
 				<cfset setcookie("loginrem",arguments.rem_login,"never")>
-				<!--- Call internal create my folder function --->
-				<cfinvoke method="createmyfolder" userid="#qryuser.user_id#" />
+				<!--- Call internal create my folder function but not for SystemAdmins --->
+				<cfif !listFind(session.thegroupofuser, "1", ",")>
+					<cfinvoke method="createmyfolder" userid="#qryuser.user_id#" />
+				</cfif>
 			</cfif>
 		</cfif>
 		<cfreturn theuser />

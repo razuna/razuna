@@ -67,12 +67,12 @@
     				<argument name="logdesc" value="Login: User-ID: #logindone.qryuser.user_id# eMail: #logindone.qryuser.user_email# First Name: #logindone.qryuser.user_first_name#  Last Name: #logindone.qryuser.user_last_name#" />
 				</invoke>
 				<!-- check groups -->
-				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" />
-				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" />
-				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser">
+				<!-- <invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('SystemAdmin')" />
+				<invoke object="myFusebox.getApplicationData().groups" methodcall="getdetail('Administrator')" /> -->
+				<!-- <invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser">
 					<argument name="user_id" value="#logindone.qryuser.user_id#" />
 					<argument name="host_id" value="#Session.hostid#" />
-				</invoke>
+				</invoke> -->
 				<!-- CFC: Check for collection -->
 				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
 				<!-- set host again with real value -->
