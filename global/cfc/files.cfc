@@ -690,6 +690,7 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.zipit" default="T">
+		<cfparam name="arguments.thestruct.v" default="o">
 		<cfset var qry = structnew()>
 		<cfset qry.thefilename = "">
 		<!--- Images --->
