@@ -242,7 +242,7 @@
 		<cfset var result = structnew()>
 		<cfset result.pcfc = "">
 		<cfset result.pview = "">
-		<!--- Query  region="razcache" cachedwithin="1" --->
+		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT /* #variables.cachetoken# */ pa.comp, pa.func, pa.args, p.p_path
 		FROM plugins_actions pa, plugins p
