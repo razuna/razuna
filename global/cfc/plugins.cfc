@@ -134,7 +134,6 @@
 		<cfargument name="pathup" type="string" required="true">
 		<!--- Param --->
 		<cfset var listCFC = "">
-		<cfset session.thisPluginId = arguments.p_id>
 		<!--- Get path of plugin from db --->
 		<cfset var qryPlugin = getone("#arguments.p_id#")>
 		<cfset var pluginPathName = qryPlugin.p_path>
@@ -252,6 +251,8 @@
 		</cfif>
 		AND pa.p_id = p.p_id
 		</cfquery>
+		<!--- Put query above into args struct so we have it in the plugin --->
+		<cfset arguments.args.qry_plugins_actions = qry>
 		<!--- Execute actions --->
 		<cfloop query="qry">
 			<!--- 1. CFC --->

@@ -946,16 +946,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- set attributes of file structure --->
 		<cfif fileType.recordCount GT 0>
 			<cfset arguments.thestruct.thefiletype = fileType.type_type>
-			<!---
-<cfset arguments.thestruct.contentType = fileType.type_mimecontent>
-			<cfset arguments.thestruct.contentSubType = fileType.type_mimesubcontent>
---->
 		<cfelse>
 			<cfset arguments.thestruct.thefiletype = "other">
-			<!---
-<cfset arguments.thestruct.contentType = "">
-			<cfset arguments.thestruct.contentSubType = "">
---->
 		</cfif>
 		<!--- Now start the file mumbo jumbo --->
 		<cfif fileType.type_type EQ "img">
@@ -989,33 +981,13 @@ This is the main function called directly by a single upload else from addassets
 			<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
 			<cfinvoke method="processDocFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
 		</cfif>
+		<!--- Check on any plugin that call the on_file_add action --->
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 	</cfif>
-	<!--- Remove record in DB and file system (when we come from converting we call the function in the loop) --->
-<!--- 	<cfif NOT structkeyexists(arguments.thestruct,"fromconverting") AND NOT structkeyexists(arguments.thestruct,"sched")> --->
-		<cfinvoke method="removeasset" thestruct="#arguments.thestruct#">
-<!--- 	</cfif> --->
 	<!--- If we are coming from a scheduled task then... --->
 	<cfif structkeyexists(arguments.thestruct,"sched")>
 		<!--- Log Insert --->
 		<cfinvoke component="scheduler" method="tolog" theschedid="#arguments.thestruct.sched_id#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Added file #arguments.thestruct.qryfile.filename#">
-		<!---
-		<cfquery datasource="#variables.dsn#">
-		INSERT INTO #session.hostdbprefix#schedules_log
-		(sched_log_id, sched_id_r, sched_log_action, sched_log_date, sched_log_time, sched_log_desc,
-		sched_log_user, host_id)
-		VALUES 
-		(
-		<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">, 
-		<cfqueryparam value="#arguments.thestruct.sched_id#" cfsqltype="CF_SQL_VARCHAR">, 
-		<cfqueryparam value="Upload" cfsqltype="cf_sql_varchar">, 
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-		<cfqueryparam value="Added file #arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		)
-		</cfquery>
-		--->
 		<!--- Check if we have to remove or move the asset --->
 		<!--- First only do this for assets with the same sched id --->
 		<cfif arguments.thestruct.sched_id EQ arguments.thestruct.qryfile.sched_id>
@@ -1033,16 +1005,13 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Now move the asset to the done folder --->
 				<cftry>
 					<cffile action="move" source="#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#" destination="#arguments.thestruct.folderpath#/#schedfolder#/#arguments.thestruct.thefilenameoriginal#" mode="775">
-				<cfcatch type="any"></cfcatch>
-			</cftry>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
 			</cfif>
-			<!--- Now remove the record in the DB --->
-			<cfquery datasource="#variables.dsn#">
-			DELETE FROM #session.hostdbprefix#assets_temp
-			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
-			</cfquery>
 		</cfif>
 	</cfif>
+	<!--- Remove record in DB and file system --->
+	<cfinvoke method="removeasset" thestruct="#arguments.thestruct#">
 	<cfif returnid NEQ 0>
 		<!--- Call method to send email --->
 		<cfset arguments.thestruct.emailwhat = "end_adding">

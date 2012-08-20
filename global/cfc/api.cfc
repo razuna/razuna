@@ -29,11 +29,20 @@
 	<cfobject component="global.cfc.settings" name="settingsObj">
 
 	<!--- Add action --->
-	<cffunction name="add_action" access="public">
-		<cfargument name="action" required="true" />
-		<cfargument name="comp" required="true" />
-		<cfargument name="func" required="true" />
-		<cfargument name="args" required="false" default="" />
+	<cffunction name="add_action" access="public" returntype="void">
+		<cfargument name="pid" type="string" required="true" />
+		<cfargument name="action" type="string" required="true" />
+		<cfargument name="comp" type="string" required="true" />
+		<cfargument name="func" type="string" required="true" />
+		<cfargument name="args" type="string" required="false" default="" />
+		<!--- Remove any same action first --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM plugins_actions
+		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
+		AND lower(action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.action)#">
+		AND lower(comp) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.comp)#">
+		AND lower(func) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.func)#">
+		</cfquery>
 		<!--- Add this action to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO plugins_actions
@@ -43,8 +52,36 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.comp#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thisPluginId#">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
 		)
+		</cfquery>
+		<!--- Reset cache --->
+		<cfset resetcachetoken("settings")>
+	</cffunction>
+
+	<!--- Del action --->
+	<cffunction name="del_action" access="public" returntype="void">
+		<cfargument name="pid" required="true" />
+		<cfargument name="action" type="string" required="false" default="" />
+		<cfargument name="comp" type="string" required="false" default="" />
+		<cfargument name="func" type="string" required="false" default="" />
+		<cfargument name="args" type="string" required="false" default="" />
+		<!--- DB --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM plugins_actions
+		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
+		<cfif arguments.action NEQ "">
+			AND lower(action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.action)#">
+		</cfif>
+		<cfif arguments.comp NEQ "">
+			AND lower(comp) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.comp)#">
+		</cfif>
+		<cfif arguments.func NEQ "">
+			AND lower(func) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.func)#">
+		</cfif>
+		<cfif arguments.args NEQ "">
+			AND args LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#arguments.args#%">
+		</cfif>
 		</cfquery>
 		<!--- Reset cache --->
 		<cfset resetcachetoken("settings")>
@@ -109,5 +146,14 @@
 		<cfinvoke component="custom_fields" method="get" fieldsenabled="true" returnvariable="qrycf" />
 		<cfreturn qrycf />
 	</cffunction>
+
+	<!--- Get PluginID --->
+	<cffunction name="getMyID" access="public" returntype="string">
+		<cfargument name="pluginname" type="string" required="true" />
+		<cfset var plugID = getProfileString("#expandPath("../..")#/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
+		<cfreturn plugID />
+	</cffunction>
+
+	
 
 </cfcomponent>
