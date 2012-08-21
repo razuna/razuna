@@ -36,7 +36,7 @@
 		<cfargument name="user_active" type="string" required="false" default="f">
 		<cfargument name="groupid" type="string" required="false" default="0">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Check that we don't have the same user --->
@@ -106,6 +106,11 @@
 						</cfquery>
 					</cfif>
 				</cfif>
+				<!--- Flush cache --->
+				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="users" />
+				<cfset resetcachetoken(arguments.api_key)>
+				<!--- Response --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "User has been added successfully">
 				<cfset thexml.userid = newuserid>
@@ -117,7 +122,7 @@
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
+			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -127,12 +132,12 @@
 	<cffunction name="getuser" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query the user --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT user_id, user_login_name, user_email, user_first_name, user_last_name, user_api_key
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getuser */ user_id, user_login_name, user_email, user_first_name, user_last_name, user_api_key
 			FROM users
 			WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.api_key#"]#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
@@ -145,7 +150,7 @@
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+			<cfset var thexml = timeout()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -159,7 +164,7 @@
 		<cfargument name="useremail" required="false" type="string" default="">
 		<cfargument name="userdata" required="true" type="string" hint="JSON with fields to update">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query the user --->
@@ -217,6 +222,11 @@
 						</cfif>
 					</cfloop>
 				</cfif>
+				<!--- Flush cache --->
+				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="users" />
+				<cfset resetcachetoken(arguments.api_key)>
+				<!--- Response --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "User has been updated successfully">
 				<cfset thexml.userid = qry.user_id>
@@ -227,7 +237,7 @@
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
+			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -240,7 +250,7 @@
 		<cfargument name="userloginname" required="false" type="string" default="">
 		<cfargument name="useremail" required="false" type="string" default="">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query the user --->
@@ -279,7 +289,11 @@
 				DELETE FROM users
 				WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
-				<!--- Create the XML --->
+				<!--- Flush cache --->
+				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+				<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="users" />
+				<cfset resetcachetoken(arguments.api_key)>
+				<!--- Response --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "User has been removed successfully">
 				<cfset thexml.userid = qry.user_id>
@@ -290,7 +304,7 @@
 			</cfif>
 			<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
+			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>

@@ -32,7 +32,7 @@
 		<cfargument name="show" type="string" required="false" default="all">
 		<cfargument name="doctype" type="string" required="false" default="">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Params --->
@@ -269,7 +269,7 @@
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+			<cfset var thexml = timeout()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>

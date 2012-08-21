@@ -36,18 +36,16 @@
 		<cfargument name="assetid" required="true" type="string">
 		<cfargument name="assettype" required="true" type="string">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Cachetoken --->
-			<cfset var cachetoken = arguments.api_key & application.razuna.api.hostid["#arguments.api_key#"]>
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- Images --->
 			<cfif arguments.assettype EQ "img">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
-				SELECT /* #cachetoken#getassetimg */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+				SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassetimg */
 				i.img_id id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
@@ -82,8 +80,8 @@
 			<!--- Videos --->
 			<cfelseif arguments.assettype EQ "vid">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
-				SELECT /* #cachetoken#getassetvid */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+				SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassetvid */
 				v.vid_id id, 
 				v.vid_filename filename, 
 				v.folder_id_r folder_id, 
@@ -119,8 +117,8 @@
 			<!--- Audios --->
 			<cfelseif arguments.assettype EQ "aud">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
-				SELECT /* #cachetoken#getassetaud */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+				SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassetaud */
 				a.aud_id id, 
 				a.aud_name filename, 
 				a.folder_id_r folder_id, 
@@ -153,8 +151,8 @@
 			<!--- Documents --->
 			<cfelseif arguments.assettype EQ "doc">
 				<!--- Query --->
-				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
-				SELECT /* #cachetoken#getassetfile */
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
+				SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassetfile */
 				f.file_id id, 
 				f.file_name filename, 
 				f.folder_id_r folder_id, 
@@ -192,7 +190,7 @@
 				</cfquery>
 			<!--- Qry is null --->
 			<cfelse>
-				<cfset thexml = querynew("responsecode,totalassetscount,calledwith")>
+				<cfset var thexml = querynew("responsecode,totalassetscount,calledwith")>
 				<cfset queryaddrow(thexml,1)>
 				<cfset querysetcell(thexml,"responsecode","1")>
 				<cfset querysetcell(thexml,"totalassetscount",qry.recordcount)>
@@ -200,7 +198,7 @@
 			</cfif>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+			<cfset var thexml = timeout()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -213,7 +211,7 @@
 		<cfargument name="assettype" required="true">
 		<cfargument name="assetmetadata" required="true">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Set db and id --->
@@ -225,14 +223,14 @@
 				<cfset var theidr = "asset_id_r">
 			</cfif>
 			<!--- Loop over the assetid --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="qrymeta">
-			SELECT #arguments.assetmetadata#
+			<cfquery datasource="#application.razuna.api.dsn#" name="qrymeta" cachedwithin="1" region="razcache">
+			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getmetadata */ #arguments.assetmetadata#
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]##thedb#
 			WHERE #theidr# IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#" list="Yes">)
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="qrymeta">
+			<cfset var qrymeta = timeout()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn qrymeta>
@@ -245,7 +243,7 @@
 		<cfargument name="assettype" required="true">
 		<cfargument name="assetmetadata" required="true">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
@@ -347,12 +345,13 @@
 			<!--- Flush cache --->
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="#cachetype#" />
+			<cfset resetcachetoken(arguments.api_key)>
 			<!--- Feedback --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Metadata successfully stored">
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
+			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -363,7 +362,7 @@
 		<cfargument name="api_key" required="true">
 		<cfargument name="assetid" required="true">
     	<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Put values into struct to be compatible with global cfcs --->
@@ -417,7 +416,7 @@
 			<cfset thexml.message = "Asset(s) have been removed successfully">
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
+			<cfset var thexml = timeout("s")>
 		</cfif>
     	<!--- Return --->
 		<cfreturn thexml>
@@ -429,15 +428,13 @@
 		<cfargument name="assetid" type="string" required="true">
 		<cfargument name="assettype" type="string" required="true">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<!--- Cachetoken --->
-			<cfset var cachetoken = arguments.api_key & application.razuna.api.hostid["#arguments.api_key#"]>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
 				<cfif arguments.assettype EQ "img">
-					SELECT /* #cachetoken#getrenditionsimg */
+					SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getrenditionsimg */
 					img_id id, 
 					img_width width, 
 					img_height height, 
@@ -450,7 +447,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
 					WHERE img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "vid">
-					SELECT /* #cachetoken#getrenditionsvid */
+					SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getrenditionsvid */
 					vid_id id, 
 					vid_width width, 
 					vid_height height, 
@@ -463,7 +460,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					WHERE vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "aud">
-					SELECT /* #cachetoken#getrenditionsaud */
+					SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getrenditionsaud */
 					aud_id id, 
 					0 AS width, 
 					0 AS height, 
@@ -492,7 +489,7 @@
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+			<cfset var thexml = timeout()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>

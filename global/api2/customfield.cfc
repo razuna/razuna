@@ -34,7 +34,7 @@
 	<cffunction name="getall" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Set values --->
@@ -50,7 +50,7 @@
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+			<cfset var thexml = timeout()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -65,7 +65,7 @@
 		<cfargument name="field_enabled" required="false" default="t">
 		<cfargument name="field_select_list" required="false" default="">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Set Values --->
@@ -81,13 +81,15 @@
 			<cfset arguments.thestruct.cf_select_list = arguments.field_select_list>
 			<!--- call internal method --->
 			<cfinvoke component="global.cfc.custom_fields" method="add" thestruct="#arguments.thestruct#" returnVariable="theid">
+			<!--- Reset cache --->
+			<cfset resetcachetoken(arguments.api_key)>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Custom field successfully added">
 			<cfset thexml.field_id = theid>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
+			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -99,7 +101,7 @@
 		<cfargument name="assetid" required="true">
 		<cfargument name="field_values" required="true">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Deserialize the JSON back into a struct --->
@@ -139,12 +141,14 @@
 					</cfif>
 				</cfloop>
 			</cfloop>
+			<!--- Reset cache --->
+			<cfset resetcachetoken(arguments.api_key)>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Custom field values successfully added">
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" type="s" returnvariable="thexml">
+			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
@@ -156,11 +160,11 @@
 		<cfargument name="asset_id" required="true">
 		<cfargument name="lang_id" required="false" default="1">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
+			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getfieldsofasset */ ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_text ct, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields c, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values cv
 			WHERE cv.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.asset_id#" list="Yes">)
 			AND ct.cf_id_r = cv.cf_id_r
@@ -171,7 +175,7 @@
 			</cfquery>
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+			<cfset var thexml = timeout()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>

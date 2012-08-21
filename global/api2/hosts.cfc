@@ -28,10 +28,10 @@
 	<cffunction name="gethosts" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
 		<!--- Check key --->
-		<cfset thesession = checkdb(arguments.api_key)>
+		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- If ISP --->
 		<cfif application.razuna.api.isp>
-			<cfset thesession = false>
+			<cfset var thesession = false>
 		</cfif>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
@@ -60,7 +60,7 @@
 --->
 		<!--- No session found --->
 		<cfelse>
-			<cfinvoke component="authentication" method="timeout" returnvariable="thexml">
+			<cfset var thexml = timeout()>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>

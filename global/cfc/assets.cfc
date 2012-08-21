@@ -460,6 +460,7 @@
 				<cfset application.razuna.api.prefix[#theapikey#] = session.hostdbprefix>
 				<cfset application.razuna.api.hostid[#theapikey#] = session.hostid>
 				<cfset application.razuna.api.userid[#theapikey#] = session.theuserid>
+				<cfset application.razuna.api.cachetoken[#theapikey#] = createuuid("")>
 				<!--- Query --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid

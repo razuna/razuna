@@ -37,7 +37,7 @@
 			<cfset var theapikey = arguments.api_key>
 		</cfif>
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+		<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #theapikey##thehostid#checkdb */ u.user_id, gu.ct_g_u_grp_id grpid, ct.ct_u_h_host_id hostid
 		FROM users u, ct_users_hosts ct, ct_groups_users gu
 		WHERE user_api_key = <cfqueryparam value="#theapikey#" cfsqltype="cf_sql_varchar"> 
@@ -61,7 +61,7 @@
 			<!--- Set --->
 			<cfset var status = true>
 			<!--- Get Host prefix --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="#CreateTimeSpan(0,1,0,0)#" region="razcache">
+			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
 			SELECT /* #theapikey##thehostid#checkdb2 */ host_shard_group
 			FROM hosts
 			WHERE host_id = <cfqueryparam value="#qry.hostid#" cfsqltype="cf_sql_numeric">
@@ -70,6 +70,9 @@
 			<cfset application.razuna.api.prefix[#arguments.api_key#] = pre.host_shard_group>
 			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
 			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
+			<cfif !structKeyExists(application.razuna.api, "cachetoken[#arguments.api_key#]")>
+				<cfset application.razuna.api.cachetoken[#arguments.api_key#] = createuuid("")>
+			</cfif>
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>
@@ -77,7 +80,7 @@
 	
 	<!--- Create timeout error --->
 	<cffunction name="timeout" access="public" output="false">
-		<cfargument name="type" required="false" default="q" />
+		<cfargument name="type" required="false" default="q" type="string" />
 		<!--- By default we say this returns a query --->
 		<cfif arguments.type EQ "q">
 			<cfset var thexml = querynew("responsecode,message")>
@@ -91,5 +94,11 @@
 		<!--- Return --->
 		<cfreturn thexml>
 	</cffunction>
-	
+
+	<!--- Reset the cachetoken --->
+	<cffunction name="resetcachetoken" access="public" output="false">
+		<cfargument name="api_key" type="string">
+		<cfreturn application.razuna.api.cachetoken[#arguments.api_key#] = createuuid("")>
+	</cffunction>
+
 </cfcomponent>
