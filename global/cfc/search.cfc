@@ -25,10 +25,6 @@
 --->
 <cfcomponent extends="extQueryCaching">
 
-<!--- Get the cachetoken for here --->
-<cfset variables.cachetoken = getcachetoken("search")>
-<cfset variables.cachetokenlogs = getcachetoken("logs")>
-
 	<!--- SEARCH: FILES --->
 	<cffunction name="search_files">
 		<cfargument name="thestruct" type="struct">
@@ -220,6 +216,9 @@
 	<!--- SEARCH: IMAGES --->
 	<cffunction name="search_images">
 		<cfargument name="thestruct" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("search")>
+		<cfset variables.cachetokenlogs = getcachetoken("logs")>
 		<!--- Default params --->
 		<cfset var qry = 0>
 		<cfparam default="" name="arguments.thestruct.on_day">
