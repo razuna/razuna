@@ -1158,7 +1158,7 @@
 <cffunction name="moverelated" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get all that have the same img_id as related --->
-	<cfquery datasource="#variables.dsn#" name="qryintern">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern">
 	SELECT folder_id_r, img_id
 	FROM #session.hostdbprefix#images
 	WHERE img_group = <cfqueryparam value="#arguments.thestruct.img_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -1168,7 +1168,7 @@
 	<cfif qryintern.recordcount NEQ 0>
 		<cfloop query="qryintern">
 			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
 			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			WHERE img_id = <cfqueryparam value="#img_id#" cfsqltype="CF_SQL_VARCHAR">

@@ -1489,28 +1489,28 @@
 <cffunction name="move" output="false">
 	<cfargument name="thestruct" type="struct">
 		<cftry>
-		<!--- Params --->
-		<cfset arguments.thestruct.qryvid = "">
-		<cfset arguments.thestruct.storage = application.razuna.storage>
-		<!--- Move --->
-		<cfinvoke method="getdetails" vid_id="#arguments.thestruct.vid_id#" ColumnList="v.vid_filename, v.folder_id_r, path_to_asset" returnvariable="arguments.thestruct.qryvid">
-		<!--- Ignore if the folder id is the same --->
-		<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
-			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
-			UPDATE #session.hostdbprefix#videos
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
-			WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
-			<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
-			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.vid_id#')#>
-		</cfif>
-		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">
-		</cfcatch>
+			<!--- Params --->
+			<cfset arguments.thestruct.qryvid = "">
+			<cfset arguments.thestruct.storage = application.razuna.storage>
+			<!--- Move --->
+			<cfinvoke method="getdetails" vid_id="#arguments.thestruct.vid_id#" ColumnList="v.vid_filename, v.folder_id_r, path_to_asset" returnvariable="arguments.thestruct.qryvid">
+			<!--- Ignore if the folder id is the same --->
+			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
+				<!--- Update DB --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#videos
+				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
+				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
+				<!--- Log --->
+				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.vid_id#')#>
+			</cfif>
+			<cfcatch type="any">
+				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">
+			</cfcatch>
 		</cftry>
 	<cfreturn />
 </cffunction>
@@ -1519,7 +1519,7 @@
 <cffunction name="moverelated" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get all that have the same img_id as related --->
-	<cfquery datasource="#variables.dsn#" name="qryintern">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern">
 	SELECT folder_id_r, vid_id
 	FROM #session.hostdbprefix#videos
 	WHERE vid_group = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -1529,7 +1529,7 @@
 	<cfif qryintern.recordcount NEQ 0>
 		<cfloop query="qryintern">
 			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#videos
 			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			WHERE vid_id = <cfqueryparam value="#vid_id#" cfsqltype="CF_SQL_VARCHAR">

@@ -853,7 +853,7 @@
 			<!--- Ignore if the folder id is the same --->
 			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
 				<!--- Update DB --->
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#files
 				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				WHERE file_id = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">

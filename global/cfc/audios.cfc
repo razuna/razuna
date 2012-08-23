@@ -585,7 +585,7 @@
 			<!--- Ignore if the folder id is the same --->
 			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryaud.folder_id_r>
 				<!--- Update DB --->
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
 				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				WHERE aud_id = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -607,7 +607,7 @@
 <cffunction name="moverelated" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get all that have the same aud_id as related --->
-	<cfquery datasource="#variables.dsn#" name="qryintern">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern">
 	SELECT folder_id_r, aud_id
 	FROM #session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -617,7 +617,7 @@
 	<cfif qryintern.recordcount NEQ 0>
 		<cfloop query="qryintern">
 			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#audios
 			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			WHERE aud_id = <cfqueryparam value="#aud_id#" cfsqltype="CF_SQL_VARCHAR">

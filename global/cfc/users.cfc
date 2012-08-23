@@ -111,8 +111,9 @@
 	<cfargument name="thestruct" type="Struct" required="false">
 	<cfparam name="arguments.thestruct" default="#structnew()#">
 	<cfset var localquery = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
-	SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
+	<cfset variables.cachetoken = getcachetoken("users")>
+	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getallusers */ u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
 		(
 		SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>min(ct_g_u_grp_id)
 		FROM ct_groups_users
@@ -148,6 +149,7 @@
 <!--- Get Details from this User --->
 <cffunction name="details">
 	<cfargument name="thestruct" type="Struct">
+	<cfset variables.cachetoken = getcachetoken("users")>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin, user_create_date,
 	user_active,USER_COMPANY,USER_PHONE,USER_MOBILE,USER_FAX,user_in_dam, user_salutation
