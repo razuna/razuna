@@ -28,6 +28,9 @@
 	<!--- SEARCH: FILES --->
 	<cffunction name="search_files">
 		<cfargument name="thestruct" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("search")>
+		<cfset variables.cachetokenlogs = getcachetoken("logs")>
 		<!--- Default params --->
 		<cfset var qry = 0>
 		<cfparam default="" name="arguments.thestruct.on_day">
@@ -385,6 +388,9 @@
 	<!--- SEARCH: VIDEOS --->
 	<cffunction name="search_videos">
 		<cfargument name="thestruct" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("search")>
+		<cfset variables.cachetokenlogs = getcachetoken("logs")>
 		<!--- Default params --->
 		<cfset var qry = 0>
 		<cfparam default="" name="arguments.thestruct.on_day">
@@ -551,6 +557,9 @@
 	<!--- SEARCH: AUDIOS --->
 	<cffunction name="search_audios">
 		<cfargument name="thestruct" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("search")>
+		<cfset variables.cachetokenlogs = getcachetoken("logs")>
 		<!--- Default params --->
 		<cfset var qry = 0>
 		<cfparam default="" name="arguments.thestruct.on_day">
@@ -717,6 +726,8 @@
 	<!--- Search for suggestion --->
 	<cffunction name="search_suggest" access="remote" output="true">
 		<cfargument name="searchtext" required="true">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetokenlogs = getcachetoken("logs")>
 		<!--- The function must return suggestions as an array. ---> 
 		<cfset var myarray = ArrayNew(1)> 
 		<!--- Query --->
