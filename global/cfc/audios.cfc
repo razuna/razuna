@@ -409,7 +409,8 @@
 	</cfthread>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfreturn />
 </cffunction>
 
@@ -484,7 +485,8 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfreturn />
 </cffunction>
 

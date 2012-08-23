@@ -282,8 +282,9 @@
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("folders")>
 		<cfset variables.cachetoken = resetcachetoken("images")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
 	<cfreturn />
 </cffunction>
 
@@ -357,8 +358,9 @@
 		</cfthread>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("folders")>
 	<cfset variables.cachetoken = resetcachetoken("images")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfreturn />
 </cffunction>
 

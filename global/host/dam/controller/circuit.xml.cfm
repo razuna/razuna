@@ -1800,13 +1800,17 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="removefile(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv EQ 'content'">
+		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<do action="folder_content" />
+				<if condition="attributes.loaddiv EQ 'content'">
+					<true>
+						<do action="folder_content" />
+					</true>
+					<false>
+						<do action="folder_files" />
+					</false>
+				</if>
 			</true>
-			<false>
-				<do action="folder_files" />
-			</false>
 		</if>
 	</fuseaction>
 	<!-- Remove images -->
@@ -1818,13 +1822,17 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimage(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv EQ 'content'">
+		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<do action="folder_content" />
+				<if condition="attributes.loaddiv EQ 'content'">
+					<true>
+						<do action="folder_content" />
+					</true>
+					<false>
+						<do action="folder_images" />
+					</false>
+				</if>
 			</true>
-			<false>
-				<do action="folder_images" />
-			</false>
 		</if>
 	</fuseaction>
 	<!-- Remove videos -->
@@ -1847,13 +1855,17 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="removevideo(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv EQ 'content'">
+		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<do action="folder_content" />
+				<if condition="attributes.loaddiv EQ 'content'">
+					<true>
+						<do action="folder_content" />
+					</true>
+					<false>
+						<do action="folder_videos" />
+					</false>
+				</if>
 			</true>
-			<false>
-				<do action="folder_videos" />
-			</false>
 		</if>
 	</fuseaction>
 	<!-- Remove related videos -->
@@ -1876,13 +1888,17 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudio(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv EQ 'content'">
+		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<do action="folder_content" />
+				<if condition="attributes.loaddiv EQ 'content'">
+					<true>
+						<do action="folder_content" />
+					</true>
+					<false>
+						<do action="folder_audios" />
+					</false>
+				</if>
 			</true>
-			<false>
-				<do action="folder_audios" />
-			</false>
 		</if>
 	</fuseaction>
 	<!-- Remove related audios -->
@@ -1916,7 +1932,7 @@
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="removefilemany(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv NEQ 'content'">
+		<if condition="attributes.loaddiv NEQ 'content' AND attributes.loaddiv NEQ ''">
 			<true>
 				<do action="folder_files" />
 			</true>
@@ -1941,7 +1957,7 @@
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimagemany(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv NEQ 'content'">
+		<if condition="attributes.loaddiv NEQ 'content' AND attributes.loaddiv NEQ ''">
 			<true>
 				<do action="folder_images" />
 			</true>
@@ -1966,7 +1982,7 @@
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="removevideomany(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv NEQ 'content'">
+		<if condition="attributes.loaddiv NEQ 'content' AND attributes.loaddiv NEQ ''">
 			<true>
 				<do action="folder_videos" />
 			</true>
@@ -1991,7 +2007,7 @@
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudiomany(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv NEQ 'content'">
+		<if condition="attributes.loaddiv NEQ 'content' AND attributes.loaddiv NEQ ''">
 			<true>
 				<do action="folder_audios" />
 			</true>
@@ -2039,7 +2055,11 @@
 			</true>
 		</if>
 		<!-- Show the folder listing -->
-		<do action="folder" />
+		<if condition="attributes.loaddiv NEQ ''">
+			<true>
+				<do action="folder" />
+			</true>
+		</if>
 	</fuseaction>
 	
 	<!--

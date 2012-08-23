@@ -35,12 +35,25 @@
 <cfparam name="attributes.rowmaxpage" default="">
 <cfparam name="attributes.showsubfolders" default="F">
 <cfoutput>
-	<table border="0" cellpadding="5" cellspacing="5" width="100%">
-		<tr>
-			<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#myFusebox.getApplicationData().defaults.trans("delete_record_desc")#<cfelse>#myFusebox.getApplicationData().defaults.trans("delete_record_desc_many")#</cfif></td>
-		</tr>
-		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#');" class="button"></td>
-		</tr>
-	</table>
+	<div id="div_win_remove_record">
+		<table border="0" cellpadding="5" cellspacing="5" width="100%">
+			<tr>
+				<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#myFusebox.getApplicationData().defaults.trans("delete_record_desc")#<cfelse>#myFusebox.getApplicationData().defaults.trans("delete_record_desc_many")#</cfif></td>
+			</tr>
+			<tr>
+				<td align="right" style="padding-top:10px;">
+					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search">
+						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=');replacewin();" class="button">
+					<cfelse>
+						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#');" class="button">
+					</cfif>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<script type="text/javascript">
+		function replacewin(){
+			$('##div_win_remove_record').html('<div style="padding:10px;">The asset(s) have been successfully removed! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
+		}
+	</script>
 </cfoutput>

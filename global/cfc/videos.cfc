@@ -576,9 +576,6 @@
 	</cfquery>
 	<!--- Delete labels --->
 	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<!--- Delete from file system --->
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
@@ -588,6 +585,10 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfreturn />
 </cffunction>
 
@@ -662,7 +663,8 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfreturn />
 </cffunction>
 
