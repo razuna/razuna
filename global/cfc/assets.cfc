@@ -1940,7 +1940,13 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Parse keywords and description from XMP --->
 		<cfinvoke component="xmp" method="xmpwritekeydesc" thestruct="#arguments.thestruct#" />
 		<!--- Parse the Metadata from the image --->
-		<cfinvoke component="xmp" method="xmpparse" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.thexmp" />
+		<cfthread name="xmp#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+			<cfinvoke component="xmp" method="xmpparse" thestruct="#attributes.intstruct#" returnvariable="thread.thexmp" />
+		</cfthread>
+		<!--- Wait for the parsing --->
+		<cfthread action="join" name="xmp#arguments.thestruct.newid#" />
+		<!--- Put the thread result into general struct --->
+		<cfset arguments.thestruct.thexmp = cfthread["xmp#arguments.thestruct.newid#"].thexmp>
 		<!--- resize original to thumb --->
 		<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
 		<!--- storing assets on file system --->
