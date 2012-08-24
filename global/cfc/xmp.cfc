@@ -1844,4 +1844,137 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfreturn />
 </cffunction>
 
+<!--- Metadata: Add --->
+<cffunction name="setmetadata" access="Public" output="false">
+	<cfargument name="fileid" required="true">
+	<cfargument name="type" required="true">
+	<cfargument name="metadata" required="true">
+	<!--- Set db and id --->
+	<cfif arguments.type EQ "img">
+		<cfset var thedb = "images_text">
+		<cfset var theid = "img_id">
+		<cfset var theidr = "img_id_r">
+		<cfset var lucenecategory = "img">
+		<cfset var cachetype = "images">
+		<cfset var thedesc = "img_description">
+		<cfset var thekeys = "img_keywords">
+	<cfelseif arguments.type EQ "vid">
+		<cfset var thedb = "videos_text">
+		<cfset var theid = "vid_id">
+		<cfset var theidr = "vid_id_r">
+		<cfset var lucenecategory = "vid">
+		<cfset var cachetype = "videos">
+		<cfset var thedesc = "vid_description">
+		<cfset var thekeys = "vid_keywords">
+	<cfelseif arguments.type EQ "aud">
+		<cfset var thedb = "audios_text">
+		<cfset var theid = "aud_id">
+		<cfset var theidr = "aud_id_r">
+		<cfset var lucenecategory = "aud">
+		<cfset var cachetype = "audios">
+		<cfset var thedesc = "aud_description">
+		<cfset var thekeys = "aud_keywords">
+	<cfelse>
+		<cfset var thedb = "files_desc">
+		<cfset var theid = "file_id">
+		<cfset var theidr = "file_id_r">
+		<cfset var lucenecategory = "doc">
+		<cfset var cachetype = "files">
+		<cfset var thedesc = "file_desc">
+		<cfset var thekeys = "file_keywords">
+	</cfif>
+	<!--- Loop over the assetid --->
+	<cfloop list="#arguments.fileid#" index="i" delimiters=",">
+		<!--- check if record is here --->
+		<cfquery datasource="#application.razuna.datasource#" name="textishere">
+		SELECT #theidr# as recid
+		FROM #session.hostdbprefix##thedb#
+		WHERE #theidr# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
+		</cfquery>
+		<!--- NOT found --->
+		<cfif textishere.recordcount EQ 0>
+			<!--- the id --->
+			<cfset theid = i>
+			<!--- Create record --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix##thedb#
+			(id_inc, host_id, lang_id_r, #theidr#)
+			VALUES (
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid("")#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="1">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+			)
+			</cfquery>
+		<cfelse>
+			<cfset theid = i>
+		</cfif>
+		<!--- Add keywords and description to the asset --->
+		<cfloop list="#arguments.metadata#" delimiters=";" index="i">
+			<!--- Get the list items --->
+			<cfset f = listFirst(i,":")>
+			<cfset v = listLast(i,":")>
+			<cfif f EQ "keywords" OR f EQ "description">
+				<cfif f EQ "keywords">
+					<cfset tf = thekeys>
+				<cfelseif f EQ "description">
+					<cfset tf = thedesc>
+				</cfif>
+				<cftry>
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix##thedb#
+					SET #tf# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">
+					WHERE #theidr# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+					</cfquery>
+					<cfcatch type="database">
+						<cfset consoleoutput(true)>
+						<cfset console(cfcatch)>
+					</cfcatch>
+				</cftry>
+			</cfif>
+		</cfloop>
+		<!--- If we are a image then also loop over the XMP fields --->
+		<cfif arguments.type EQ "img">
+			<!--- Check if there is a record for this asset --->
+			<cfquery datasource="#application.razuna.datasource#" name="ishere">
+			SELECT id_r
+			FROM #session.hostdbprefix#xmp
+			WHERE asset_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">
+			AND id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+			</cfquery>
+			<!--- If record is not here then do insert --->
+			<cfif ishere.recordcount EQ 0>	
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#xmp
+				(id_r, asset_type, host_id)
+				VALUES(
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
+			</cfif>
+			<!--- Update records --->
+			<cfloop list="#arguments.metadata#" delimiters=";" index="i">
+				<!--- Get the list items --->
+				<cfset f = listFirst(i,":")>
+				<cfset v = listLast(i,":")>
+				<cfif f NEQ "keywords">
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#xmp
+					SET #f# = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#v#">
+					WHERE id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+					</cfquery>
+				</cfif>
+			</cfloop>
+		</cfif>
+		<!--- Initiate the index --->
+		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" hostid="#session.hostid#" prefix="#session.hostdbprefix#" assetid="#theid#" assetcategory="#lucenecategory#" userid="#session.theuserid#">
+	</cfloop>
+	<!--- Flush cache --->
+	<cfset resetcachetoken(cachetype)>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>	
+
 </cfcomponent>

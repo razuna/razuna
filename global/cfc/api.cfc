@@ -261,7 +261,16 @@
 			<!--- Call function --->
 			<cfinvoke component="files" method="move" thestruct="#arguments#">
 		</cfif>
-		
 	</cffunction>
+
+	<!--- Add Metadata --->
+	<cffunction name="setMetadata" access="public" returntype="void">
+		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
+		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
+		<!--- Call function --->
+		<cfinvoke component="xmp" method="setMetadata" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
+	</cffunction>
+
 
 </cfcomponent>
