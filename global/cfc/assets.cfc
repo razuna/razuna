@@ -1109,7 +1109,7 @@ This is the main function called directly by a single upload else from addassets
 			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
 			</cfquery>
 			<!--- Delete on the file system --->
-			<cfif directoryexists(temppath)>
+			<cfif directoryexists(temppath) AND temppath CONTAINS "dam/incoming">
 				<cfdirectory action="delete" recurse="true" directory="#temppath#">
 			</cfif>
 		</cfloop>
