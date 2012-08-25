@@ -475,7 +475,7 @@
 			<!--- mysql --->
 			<cfcase value="com.mysql.jdbc.Driver">
 				<!--- url format: jdbc:mysql://[host][,failoverhost...][:port]/[database][?propertyName1][=propertyValue1][&propertyName2][=propertyValue2] --->
-				<cfset jdbcURL = "jdbc:mysql://#arguments.server#:#arguments.port#/#arguments.database#?cacheResultSetMetadata=#arguments.cacheResultSetMetadata#&autoReconnect=true" />
+				<cfset jdbcURL = "jdbc:mysql://#arguments.server#:#arguments.port#/#arguments.database#?cacheResultSetMetadata=#arguments.cacheResultSetMetadata#&autoReconnect=true&useEncoding=true&characterEncoding=UTF-8" />
 				
 				<cfif arguments.connectstring is not "">
 					<cfset jdbcURL = jdbcURL & "&" & arguments.connectstring />
