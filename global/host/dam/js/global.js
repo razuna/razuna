@@ -1,10 +1,7 @@
 // JQuery Settings
-// $.ajaxSetup({
-// 	cache: false
-// });
-function randomstring() {
-   return Math.random();
-}
+$.ajaxSetup({
+	cache: false
+});
 // Show Window
 function showwindow(theurl,thetitle,thew,thewin) {
 	destroywindow(thewin);
