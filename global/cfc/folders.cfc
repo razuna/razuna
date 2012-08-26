@@ -3702,17 +3702,6 @@
 		<!--- Remove any duplicates --->
 		<cfset session.file_id = ListRemoveduplicates(session.file_id,",")>
 		<cfset session.thefileid = session.file_id>
-		<!--- Loop over the thetype to delete (from form) --->
-		<!--- <cfloop list="#attributes.intstruct.del_thetype#" delimiters="," index="i">
-			<!--- Find the value in the session --->
-			<cfset f = listFindNoCase(session.thetype, i)>
-			<!--- Remove it at the found postion --->
-			<cfset session.thetype = listDeleteAt(session.thetype, f)>
-		</cfloop>
-		<!--- Now simply add the selected fileids to the session --->
-		<cfset session.thetype = listAppend(session.thetype, attributes.intstruct.thetype, ",")>
-		<!--- Remove any duplicates --->
-		<cfset session.thetype = ListRemoveduplicates(session.thetype,",")> --->
 	</cfthread>
 </cffunction>
 

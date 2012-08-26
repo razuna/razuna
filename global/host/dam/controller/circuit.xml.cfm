@@ -2289,6 +2289,11 @@
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="xmpwritethread(attributes)" />
 			</true>
 		</if>
+		<!-- Variables for API -->
+		<set name="attributes.thefiletype" value="img" />
+		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />		
 	</fuseaction>
 	<!-- Convert Image -->
 	<fuseaction name="images_convert">

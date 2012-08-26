@@ -2953,8 +2953,11 @@ This is the main function called directly by a single upload else from addassets
 						<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
 						<cfinvoke method="processDocFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
 					</cfif>
-					<!--- Clear the path for the loop
-					<cfset arguments.thestruct.qryfile.path = replacenocase("#arguments.thestruct.qryfile.path#", "#zipFileList.directory#", "", "ALL")> --->
+					<!--- Put file_id in struct as fileid for plugin api --->
+					<cfset arguments.thestruct.fileid = returnid>
+					<cfset arguments.thestruct.file_name = thefilename>
+					<!--- Check on any plugin that call the on_file_add action --->
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 				<cfelse>
 					<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 				</cfif>
