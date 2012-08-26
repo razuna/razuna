@@ -17,6 +17,7 @@
 	}
 	// when saving folder
 	function foldersubmit(theid,isdetail,iscol){
+		$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		var url = formaction("form_folder" + theid);
 		var items = formserialize("form_folder" + theid);
 		//alert(iscol);
@@ -30,14 +31,15 @@
 				type: "POST",
 				url: url,
 			   	data: items,
-			   	success: function(theid,isdetail,iscol){
+			   	success: function(data, textStatus, jqXHR){
+			   		// Set var for the folderid and trim it
+			   		var fid = trim(data);
 			   		// Reload Explorer
-					loadcontent('explorer','index.cfm?fa=c.explorer');
-					// Hide Window
-					destroywindow(1);
-					// Feedback
-					$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
-					$("#updatetext").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+					$('#explorer').load('index.cfm?fa=c.explorer');
+					// Jump into the folder
+					$('#rightside').load('index.cfm?fa=c.folder&col=F&folder_id=' + fid);
+					// 
+					$("#bodyoverlay").remove();
 			   	}
 			});
 		}
@@ -47,11 +49,15 @@
 				type: "POST",
 				url: url,
 			   	data: items,
-			   	success: function(theid,isdetail,iscol){
+			   	success: function(data, textStatus, jqXHR){
+			   		// Set var for the folderid and trim it
+			   		var fid = trim(data);
 			   		// Reload Explorer
 					loadcontent('explorer_col','index.cfm?fa=c.explorer_col');
-					// Hide Window
-					destroywindow(1);
+					// Jump into the folder
+					$('#rightside').load('index.cfm?fa=c.collections&col=T&folder_id=col-' + fid);
+					// 
+					$("#bodyoverlay").remove();
 			   	}
 			});
 		}

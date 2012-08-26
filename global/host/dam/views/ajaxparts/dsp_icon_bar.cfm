@@ -112,7 +112,7 @@
 						<!--- Add Subfolder --->
 						<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder>
 							<p>
-								<a href="##" onclick="showwindow('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F','#myFusebox.getApplicationData().defaults.trans("folder_new")#',750,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">
+								<a href="##" onclick="$('##rightside').load('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/folder-new-7.png" width="16" height="16" border="0" />
 									</div>

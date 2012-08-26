@@ -328,6 +328,7 @@
 			<cfif samefolder.recordcount EQ 0>
 				<!--- Add folder --->
 				<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
+				<cfoutput>#trim(newfolderid)#</cfoutput>
 				<!--- If we store on the file system we create the folder here --->
 				<cfif application.razuna.storage EQ "local">
 					<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
@@ -381,6 +382,7 @@
 		<cfset arguments.thestruct.folder_name = listlast(arguments.thestruct.link_path,"/\")>
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
+		<cfoutput>#trim(newfolderid)#</cfoutput>
 		<!--- If we store on the file system we create the folder here --->
 		<cfif application.razuna.storage EQ "local">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
@@ -1222,15 +1224,6 @@
 	</cfif>
 	)
 	</cfquery>
-	<!--- Update the folder table when the id is emtpy so we have the folder_id_r and folder_main_id_r done
-	<cfif #level# EQ 1>
-		<cfquery datasource="#arguments.thesource#">
-			UPDATE #arguments.theprefix#folders
-			SET folder_id_r = <cfqueryparam value="#insertid.folder_id#" cfsqltype="cf_sql_numeric">,
-			    folder_main_id_r = <cfqueryparam value="#insertid.folder_id#" cfsqltype="cf_sql_numeric">
-			WHERE folder_id = <cfqueryparam value="#insertid.folder_id#" cfsqltype="cf_sql_numeric">
-		</cfquery>
-	</cfif> --->
 	<!--- Insert the DESCRIPTION (only if not from CFC files.extractZip coming) --->
 	<cfif StructIsEmpty(arguments.thefolderparam)>
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
