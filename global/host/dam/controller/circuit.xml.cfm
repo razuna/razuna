@@ -2109,6 +2109,11 @@
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="metatofile(attributes)" />
 			</true>
 		</if>
+		<!-- Variables for API -->
+		<set name="attributes.thefiletype" value="doc" />
+		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Serve File to the browser -->
 	<fuseaction name="serve_file">
@@ -2187,6 +2192,11 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
+		<!-- Variables for API -->
+		<set name="attributes.thefiletype" value="vid" />
+		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Convert Video -->
 	<fuseaction name="videos_convert">
@@ -2293,7 +2303,7 @@
 		<set name="attributes.thefiletype" value="img" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<!-- CFC: Get plugin actions -->
-		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />		
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Convert Image -->
 	<fuseaction name="images_convert">
@@ -2369,6 +2379,11 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
+		<!-- Variables for API -->
+		<set name="attributes.thefiletype" value="aud" />
+		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Convert Audio -->
 	<fuseaction name="audios_convert">
