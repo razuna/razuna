@@ -1975,6 +1975,57 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfset resetcachetoken(cachetype)>
 	<!--- Return --->
 	<cfreturn />
+</cffunction>
+
+<!--- Metadata: Add --->
+<cffunction name="setmetadatacustom" access="Public" output="false">
+	<cfargument name="fileid" required="true">
+	<cfargument name="type" required="true">
+	<cfargument name="metadata" required="true">
+	<!--- Loop over the assetid --->
+	<cfloop list="#arguments.fileid#" index="i" delimiters=",">
+		<!--- Set i into var --->
+		<cfset theid = i>
+		<!--- Loop over metadata --->
+		<cfloop list="#arguments.metadata#" delimiters=";" index="i">
+			<!--- Get the list items --->
+			<cfset f = listFirst(i,":")>
+			<cfset v = listLast(i,":")>
+			<!--- Remove any existing data first --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#custom_fields_values
+			WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
+			AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#custom_fields_values
+			(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+			VALUES(
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createUUID()#">
+			)
+			</cfquery>
+		</cfloop>
+		<!--- Initiate the index --->
+		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" hostid="#session.hostid#" prefix="#session.hostdbprefix#" assetid="#theid#" assetcategory="#arguments.type#" userid="#session.theuserid#">
+	</cfloop>
+	<!--- Flush cache --->
+	<cfif arguments.type EQ "img">
+		<cfset resetcachetoken("images")>
+	<cfelseif arguments.type EQ "vid">
+		<cfset resetcachetoken("videos")>
+	<cfelseif arguments.type EQ "aud">
+		<cfset resetcachetoken("audios")>
+	<cfelseif arguments.type EQ "doc">
+		<cfset resetcachetoken("files")>
+	</cfif>
+	<!--- Return --->
+	<cfreturn />
 </cffunction>	
 
 </cfcomponent>

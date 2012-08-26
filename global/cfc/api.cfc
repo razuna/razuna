@@ -263,13 +263,22 @@
 		</cfif>
 	</cffunction>
 
-	<!--- Add Metadata --->
+	<!--- Set Metadata --->
 	<cffunction name="setMetadata" access="public" returntype="void">
 		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
 		<cfargument name="type" type="string" required="true" hint="Type of asset" />
 		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
 		<!--- Call function --->
 		<cfinvoke component="xmp" method="setMetadata" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
+	</cffunction>
+
+	<!--- Set Custom Metadata --->
+	<cffunction name="setMetadataCustom" access="public" returntype="void">
+		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
+		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
+		<!--- Call function --->
+		<cfinvoke component="xmp" method="setMetadataCustom" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
 	</cffunction>
 
 
