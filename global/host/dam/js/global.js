@@ -1,7 +1,7 @@
 // JQuery Settings
-$.ajaxSetup({
-	cache: false
-});
+// $.ajaxSetup({
+// 	cache: false
+// });
 // Show Window
 function showwindow(theurl,thetitle,thew,thewin) {
 	destroywindow(thewin);
@@ -449,14 +449,7 @@ function storeids(theform){
    	// Only continue if there is something selected
    	// if (fileids != ''){
    		// Store values in sessions
-		var url = 'index.cfm?fa=c.store_file_values';
-		var items = '&file_id=' + fileids + '&thetype=' + filetypes + '&del_file_id=' + del_fileids + '&del_thetype=' + del_filetypes;
-		// Submit Form
-		$.ajax({
-			type: "POST",
-			url: url,
-		   	data: items
-		});
+		$('#div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids,del_file_id:del_fileids});
 	// };
 }
 // Check all checkboxes
