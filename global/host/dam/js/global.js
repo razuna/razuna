@@ -2,6 +2,9 @@
 // $.ajaxSetup({
 // 	cache: false
 // });
+function randomstring() {
+   return Math.random();
+}
 // Show Window
 function showwindow(theurl,thetitle,thew,thewin) {
 	destroywindow(thewin);
