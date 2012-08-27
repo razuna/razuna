@@ -339,6 +339,11 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+		<cfset arguments.thestruct.file_name = thedetail.file_name>
+		<cfset arguments.thestruct.thefiletype = "doc">
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfset variables.cachetoken = resetcachetoken("folders")>
@@ -414,6 +419,11 @@
 			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
+			<!--- Execute workflow --->
+			<cfset arguments.thestruct.fileid = i>
+			<cfset arguments.thestruct.file_name = thedetail.file_name>
+			<cfset arguments.thestruct.thefiletype = "doc">
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
@@ -861,6 +871,11 @@
 				</cfquery>
 				<!--- Log --->
 				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid='#arguments.thestruct.doc_id#')#>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
+				<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
+				<cfset arguments.thestruct.thefiletype = "doc">
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			</cfif>
 		<cfreturn />
 	</cffunction>

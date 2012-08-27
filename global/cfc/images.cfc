@@ -280,6 +280,11 @@
 			<cfset attributes.intstruct.link_kind = thedetail.link_kind>
 			<cfset attributes.intstruct.filenameorg = thedetail.filenameorg>
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+			<!--- Execute workflow --->
+			<cfset attributes.intstruct.fileid = attributes.intstruct.id>
+			<cfset attributes.intstruct.file_name = thedetail.img_filename>
+			<cfset attributes.intstruct.thefiletype = "img">
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
 		</cfthread>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("folders")>
@@ -355,6 +360,11 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = i>
+		<cfset arguments.thestruct.file_name = thedetail.img_filename>
+		<cfset arguments.thestruct.thefiletype = "img">
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
@@ -1111,23 +1121,23 @@
 <!--- MOVE FILE IN THREADS --->
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
-		<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
-			<cfset arguments.thestruct.img_id = "">
-			<!--- If we are coming from a overview ids come with type --->
-			<cfif arguments.thestruct.thetype EQ "all" AND fileid CONTAINS "-img">
-				<cfset arguments.thestruct.img_id = listfirst(fileid,"-")>
-			<cfelseif arguments.thestruct.thetype NEQ "all">
-				<cfset arguments.thestruct.img_id = fileid>
-			</cfif>
-			<cfif arguments.thestruct.img_id NEQ "">
-				<cfthread intstruct="#arguments.thestruct#">
-					<cfinvoke method="move" thestruct="#attributes.intstruct#" />
-				</cfthread>
-			</cfif>
-		</cfloop>
-		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("folders")>
-		<cfset variables.cachetoken = resetcachetoken("images")>
+	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
+		<cfset arguments.thestruct.img_id = "">
+		<!--- If we are coming from a overview ids come with type --->
+		<cfif arguments.thestruct.thetype EQ "all" AND fileid CONTAINS "-img">
+			<cfset arguments.thestruct.img_id = listfirst(fileid,"-")>
+		<cfelseif arguments.thestruct.thetype NEQ "all">
+			<cfset arguments.thestruct.img_id = fileid>
+		</cfif>
+		<cfif arguments.thestruct.img_id NEQ "">
+			<cfthread intstruct="#arguments.thestruct#">
+				<cfinvoke method="move" thestruct="#attributes.intstruct#" />
+			</cfthread>
+		</cfif>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset variables.cachetoken = resetcachetoken("images")>
 </cffunction>
 
 <!--- MOVE FILE --->
@@ -1150,6 +1160,11 @@
 			<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 			<!--- Log --->
 			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid='#arguments.thestruct.img_id#')#>
+			<!--- Execute workflow --->
+			<cfset arguments.thestruct.fileid = arguments.thestruct.img_id>
+			<cfset arguments.thestruct.file_name = arguments.thestruct.qryimg.img_filename>
+			<cfset arguments.thestruct.thefiletype = "img">
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />		
 		</cfif>
 	<cfreturn />
 </cffunction>

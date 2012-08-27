@@ -983,6 +983,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Put file_id in struct as fileid for plugin api --->
 		<cfset arguments.thestruct.fileid = returnid>
+		<cfset arguments.thestruct.file_name = arguments.thestruct.qryfile.filename>
 		<!--- Check on any plugin that call the on_file_add action --->
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 	</cfif>

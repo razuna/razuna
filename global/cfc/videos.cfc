@@ -588,6 +588,11 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
+	<!--- Execute workflow --->
+	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+	<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+	<cfset arguments.thestruct.thefiletype = "vid">
+	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<cfreturn />
 </cffunction>
 
@@ -659,6 +664,11 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = i>
+		<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+		<cfset arguments.thestruct.thefiletype = "vid">
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
@@ -1507,6 +1517,11 @@
 				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 				<!--- Log --->
 				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.vid_id#')#>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.vid_id>
+				<cfset arguments.thestruct.file_name = arguments.thestruct.qryvid.vid_filename>
+				<cfset arguments.thestruct.thefiletype = "vid">
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">

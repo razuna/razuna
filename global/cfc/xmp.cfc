@@ -2024,6 +2024,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfelseif arguments.type EQ "doc">
 		<cfset resetcachetoken("files")>
 	</cfif>
+	<cfset resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>	

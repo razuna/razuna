@@ -407,6 +407,11 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
+	<!--- Execute workflow --->
+	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+	<cfset arguments.thestruct.file_name = detail.aud_name>
+	<cfset arguments.thestruct.thefiletype = "aud">
+	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
 	<cfset variables.cachetoken = resetcachetoken("folders")>
@@ -481,6 +486,11 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = i>
+		<cfset arguments.thestruct.file_name = thedetail.aud_name>
+		<cfset arguments.thestruct.thefiletype = "aud">
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
@@ -595,6 +605,11 @@
 				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 				<!--- Log --->
 				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid='#arguments.thestruct.aud_id#')#>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.aud_id>
+				<cfset arguments.thestruct.file_name = arguments.thestruct.qryaud.aud_name>
+				<cfset arguments.thestruct.thefiletype = "aud">
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving audio" dump="#cfcatch#">

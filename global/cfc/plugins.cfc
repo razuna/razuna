@@ -106,23 +106,29 @@
 		<cfargument name="p_desc" type="string" required="true">
 		<cfargument name="p_license" type="string" required="true">
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		INSERT INTO plugins
-		(p_id,p_name,p_url,p_version,p_author,p_author_url,p_path,p_description,p_license)
-		VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_name#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_url#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_version#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_author#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_authorurl#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_path#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_desc#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_license#">
-		)
-		</cfquery>
-		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
+			INSERT INTO plugins
+			(p_id,p_name,p_url,p_version,p_author,p_author_url,p_path,p_description,p_license)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_name#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_url#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_version#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_author#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_authorurl#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_path#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_desc#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_license#">
+			)
+			</cfquery>
+			<!--- Reset cache --->
+			<cfset resetcachetoken("settings")>
+			<cfcatch type="database">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -170,6 +176,19 @@
 		</cfquery>
 		<!--- Reset cache --->
 		<cfset resetcachetoken("settings")>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Upload --->
+	<cffunction name="upload" returntype="void">
+		<cfargument name="thestruct" required="true" type="struct">
+		<!--- Set path for plugins --->
+		<cfset var p = expandpath("../") & "global/plugins">
+		<!--- Upload file into plugin directory (will fail if name is already there) --->
+		<cffile action="upload" destination="#p#" nameconflict="error" filefield="thefile" result="thefile">
+		<!--- Unzip the file --->
+		<cfset unzip(destination="#p#", zipfile="#p#/#thefile.serverFile#")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
