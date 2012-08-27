@@ -540,7 +540,7 @@
 	</cffunction>
 	
 	<!--- FUNCTION: GET ACCOUNT USAGE --->
-	<cffunction name="GetAccountUsage" access="public" output="false" region="razcache" cachedwithin="#CreateTimeSpan(0,3,0,0)#">
+	<cffunction name="GetAccountUsage" access="public" output="false">
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
 		<!--- Set Structure --->
