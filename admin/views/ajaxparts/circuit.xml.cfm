@@ -302,5 +302,9 @@
 	<fuseaction name="plugins_hosts">
   		<include template="dsp_plugins_hosts" />
 	</fuseaction>
+	<!-- Plugins Upload -->
+	<fuseaction name="plugins_upload">
+  		<include template="dsp_plugins_upload" />
+	</fuseaction>
 	
 </circuit>

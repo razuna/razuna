@@ -30,15 +30,23 @@
 			<ul>
 				<!--- Page --->
 				<li><a href="##plugins">Plugins</a></li>
-				<!--- plugins_add --->
-				<li><a href="##plugins_add">#defaultsObj.trans("add_new")#</a></li>
 				<!--- Host Plugins --->
 				<li><a href="##plugins_hosts" onclick="loadcontent('plugins_hosts','#myself#c.plugins_hosts');">#defaultsObj.trans("plugins_hosts_tab")#</a></li>
-				
 			</ul>
 			<!--- Plugins Main page --->
 			<div id="plugins">
-				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+				<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
+					<tr>
+						<td colspan="2" align="right"><a href="##" onclick="$('##plugin_upload').slideToggle('slow');return false;">#defaultsObj.trans("add_new")#</a></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<div id="plugin_upload" style="display:none;">
+								Plugins extend and expand the functionality of Razuna. If you have a plugin in a .zip format, you may install it by uploading it here.<br /><br />
+								<iframe src="#myself#ajax.plugins_upload" frameborder="false" scrolling="false" style="border:0px;width:500px;height:80px;"></iframe>
+							</div>
+						</td>
+					</tr>
 					<tr>
 						<th>Plugin</th>
 						<th>#defaultsObj.trans("desc")#</th>
@@ -51,11 +59,8 @@
 					</cfloop>
 				</table>
 			</div>
-			<!--- New --->
-			<div id="plugins_add"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 			<!--- Plugin activate per tenant list --->
-			<div id="plugins_hosts"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
-			
+			<div id="plugins_hosts"><img src="images/loading.gif" border="0" style="padding:10px;"></div>	
 		</div>
 	</form>
 

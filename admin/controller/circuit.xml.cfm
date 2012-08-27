@@ -546,6 +546,12 @@
 		<!-- CFC: Save host plugins -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setpluginshosts(attributes.listpluginshost)" />
 	</fuseaction>
+	<!-- Get Plugins Host -->
+	<fuseaction name="plugins_upload">
+		<!-- CFC: Save host plugins -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="upload(attributes)" />
+		<do action="ajax.plugins_upload" />
+	</fuseaction>
 
 	<!--  -->
 	<!-- END: PLUGINS -->
