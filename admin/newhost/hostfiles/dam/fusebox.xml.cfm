@@ -58,6 +58,8 @@
 		<class alias="labels" classpath="global.cfc.labels" type="component" constructor="init"/>
 		<class alias="rfs" classpath="global.cfc.rfs" type="component" constructor="init"/>
 		<class alias="import" classpath="global.cfc.import" type="component" constructor="init"/>
+		<class alias="plugins" classpath="global.cfc.plugins" type="component" constructor="init"/>
+		<class alias="api" classpath="global.cfc.api" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>

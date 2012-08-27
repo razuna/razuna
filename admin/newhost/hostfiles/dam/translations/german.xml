@@ -1645,16 +1645,16 @@
 		<transtext>Vorschau-Bild wiederherstellen</transtext>
 	</transid>
 	<transid name="admin_upload_templates">
-		<transtext>Upload Vorlagen</transtext>
+		<transtext>Konvertierungs-Vorlagen</transtext>
 	</transid>
 	<transid name="admin_upload_templates_intro">
-		<transtext><![CDATA[Upload Vorlagen erlauben Ihnen automatisch Ihre Daten in vordefinierte Formate zu konvertieren.]]></transtext>
+		<transtext><![CDATA[Konvertierungs-Vorlagen erlauben Ihnen automatisch Daten in vordefinierte Formate zu konvertieren.]]></transtext>
 	</transid>
 	<transid name="admin_upload_templates_new">
-		<transtext>Uoload Vorlage erfassen</transtext>
+		<transtext>Vorlage erfassen</transtext>
 	</transid>
 	<transid name="admin_upload_templates_active">
-		<transtext>Upload Vorlage ist aktiv</transtext>
+		<transtext>Vorlage ist aktiv</transtext>
 	</transid>
 	<transid name="admin_upload_templates_name">
 		<transtext>Name der Vorlage</transtext>

@@ -19,7 +19,7 @@
 		<transtext>We are sorry but we could not log you in. Try again please</transtext>
 	</transid>
 	<transid name="logoff">
-		<transtext>Log Out</transtext>
+		<transtext>Log Off</transtext>
 	</transid>
 	<transid name="settings">
 		<transtext>Settings</transtext>
@@ -1642,16 +1642,16 @@
 		<transtext>Recreate Preview Images</transtext>
 	</transid>
 	<transid name="admin_upload_templates">
-		<transtext>Upload Templates</transtext>
+		<transtext>Rendition Templates</transtext>
 	</transid>
 	<transid name="admin_upload_templates_intro">
-		<transtext><![CDATA[Upload Templates allow you to define certain actions during uploading of any asset. With Upload Templates you can also convert assets to different formats while adding them to the system.]]></transtext>
+		<transtext><![CDATA[Rendition Templates allow you to define certain actions during uploading of any asset. With Rendition Templates you can also convert assets to different formats while adding them to the system.]]></transtext>
 	</transid>
 	<transid name="admin_upload_templates_new">
-		<transtext>Add a Upload Template</transtext>
+		<transtext>Add a template</transtext>
 	</transid>
 	<transid name="admin_upload_templates_active">
-		<transtext>Upload Template is active</transtext>
+		<transtext>Template is active</transtext>
 	</transid>
 	<transid name="admin_upload_templates_name">
 		<transtext>Template Name</transtext>

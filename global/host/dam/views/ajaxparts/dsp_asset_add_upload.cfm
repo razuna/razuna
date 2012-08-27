@@ -150,7 +150,7 @@ $('##uploader').pluploadQueue().bind('QueueChanged',
 	<cfif qry_templates.recordcount NEQ 0>
 		<div style="float:right;">
 			<select id="upl_template_chooser">
-				<option value="0" selected="selected">Choose Upload Template</option>
+				<option value="0" selected="selected">Choose Rendition Template</option>
 				<option value="0">---</option>
 				<cfloop query="qry_templates">
 					<option value="#upl_temp_id#">#upl_name#</option>
