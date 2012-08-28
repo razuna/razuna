@@ -129,7 +129,7 @@
 		<cfreturn qryusers />
 	</cffunction>
 
-	<!--- Get Users eMail --->
+	<!--- Get Users --->
 	<cffunction name="getUser" access="public" returntype="query">
 		<cfargument name="user_id" type="string" required="true" />
 		<cfinvoke component="users" method="details" thestruct="#arguments#" returnvariable="qryuser" />
@@ -268,7 +268,7 @@
 
 	<!--- Set Metadata --->
 	<cffunction name="setMetadata" access="public" returntype="void">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
+		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
 		<cfargument name="type" type="string" required="true" hint="Type of asset" />
 		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
 		<!--- Call function --->
@@ -277,7 +277,7 @@
 
 	<!--- Set Custom Metadata --->
 	<cffunction name="setMetadataCustom" access="public" returntype="void">
-		<cfargument name="fileid" type="string" required="true" hint="ID of asset" />
+		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
 		<cfargument name="type" type="string" required="true" hint="Type of asset" />
 		<cfargument name="metadata" type="string" required="true" hint="Metadata as a list separated with a ;" />
 		<!--- Call function --->
