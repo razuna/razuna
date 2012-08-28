@@ -2589,6 +2589,10 @@
 		<cfset var iscol = "F">
 		<cfset var theid = arguments.id>
 	</cfif>
+	<!--- If this use is not in the admin groups clear the showmyfolder session --->
+	<cfif NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser()>
+		<cfset session.showmyfolder = "">
+	</cfif>
 	<!--- Param --->
 	<cfparam default="0" name="session.thefolderorg">
 	<cfparam default="0" name="session.type">
@@ -3339,8 +3343,8 @@
 	<cfargument name="folder_id" type="string" required="true">
 	<cfargument name="external" type="string" required="false">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 	<!--- Permission follow but not for sysadmin and admin --->
 	<cfif NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser() AND NOT structkeyexists(arguments,"external")>
 		CASE
