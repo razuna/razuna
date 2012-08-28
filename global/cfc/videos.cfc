@@ -292,7 +292,14 @@
 			<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
 			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
 			<cfsavecontent variable="thevideo"><cfoutput>
-			<cfif cgi.user_agent CONTAINS "safari" AND NOT cgi.user_agent CONTAINS "chrome">
+			<script type="text/javascript">
+			    QT_WriteOBJECT('#thevideo#', '#thewidth#','#theheight#', '', 
+			     'scale', 'tofit',
+			     'controller','true',
+			     'autoplay','false'
+			     );
+			</script>
+			<!--- <cfif cgi.user_agent CONTAINS "safari" AND NOT cgi.user_agent CONTAINS "chrome">
 				<video controls="" autoplay="" style="margin: auto; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" name="media" src="#thevideo#"></video>
 			<cfelse>
 				<OBJECT CLASSID="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" HEIGHT="#theheight#" WIDTH="#thewidth#" CODEBASE="http://www.apple.com/qtactivex/qtplugin.cab">
@@ -305,7 +312,7 @@
 				<embed width="#thewidth#" height="#theheight#" name="plugin" autoplay="true" src="#theimage#" href="#thevideo#" target="myself" type="video/quicktime" pluginspage="http://www.apple.com/quicktime/download/"> 
 				</OBJECT>
 			</cfif>
-			<br>Click on the image to start watching the movie.<br>(If the video is not showing try to <a href="#thevideo#">watch it in QuickTime directly</a>.)
+			<br>Click on the image to start watching the movie.<br>(If the video is not showing try to <a href="#thevideo#">watch it in QuickTime directly</a>.) --->
 			</cfoutput></cfsavecontent>
 			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
 			<!---
