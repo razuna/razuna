@@ -620,7 +620,8 @@
 		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='img',assetid='#arguments.thestruct.file_id#')#>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfset variables.cachetoken = resetcachetoken("images")>
 </cffunction>
 

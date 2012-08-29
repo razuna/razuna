@@ -684,7 +684,8 @@
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 	</cffunction>
 	
 	<!--- SERVE THE FILE TO THE BROWSER --->

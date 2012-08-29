@@ -923,7 +923,8 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")> 
 </cffunction>
 
 <!--- CONVERT VIDEO IN A THREAD --->
