@@ -702,6 +702,8 @@
 --->
 			</cfloop>
 		</cfif>
+		<!--- Reset all caches --->
+		<cfset resetcachetokenall()>
 		<!--- Feedback --->
 		<cfoutput><br><span style="font-weight:bold;color:green;">Re-Index successfully completed!</span><br><br><a href="##" onclick="window.close();">Click this link to close this window</a></cfoutput>
 		<cfflush>
