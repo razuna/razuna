@@ -904,9 +904,9 @@ Comment:<br>
 			<!--- Nirvanix or Amazon --->
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Get signed URLS for thumb --->
-				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#t#" nvxsession="#arguments.thestruct.nvxsession#">
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#t#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Get signed URLS original --->
-				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" key="#a#" nvxsession="#arguments.thestruct.nvxsession#">
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#a#" nvxsession="#arguments.thestruct.nvxsession#">
 			<cfelse>
 				<!--- Get signed URLS for thumb --->
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#t#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -948,9 +948,9 @@ Comment:<br>
 			<!--- Nirvanix or Amazon --->
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Get signed URLS for thumb --->
-				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#t#" nvxsession="#arguments.thestruct.nvxsession#">
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#t#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Get signed URLS original --->
-				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" key="#a#" nvxsession="#arguments.thestruct.nvxsession#">
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#a#" nvxsession="#arguments.thestruct.nvxsession#">
 			<cfelse>
 				<!--- Get signed URLS for thumb --->
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#t#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -992,9 +992,9 @@ Comment:<br>
 			<!--- Nirvanix or Amazon --->
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Get signed URLS for thumb --->
-				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#t#" nvxsession="#arguments.thestruct.nvxsession#">
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#t#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Get signed URLS original --->
-				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" key="#a#" nvxsession="#arguments.thestruct.nvxsession#">
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#a#" nvxsession="#arguments.thestruct.nvxsession#">
 			<cfelse>
 				<!--- Get signed URLS for thumb --->
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#t#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -1037,10 +1037,10 @@ Comment:<br>
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Get signed URLS for thumb --->
 				<cfif file_extension EQ "pdf">
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" key="#t#" nvxsession="#arguments.thestruct.nvxsession#">
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#t#" nvxsession="#arguments.thestruct.nvxsession#">
 				</cfif>
 				<!--- Get signed URLS original --->
-				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" key="#a#" nvxsession="#arguments.thestruct.nvxsession#">
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#a#" nvxsession="#arguments.thestruct.nvxsession#">
 			<cfelse>
 				<!--- Get signed URLS for thumb --->
 				<cfif file_extension EQ "pdf">
