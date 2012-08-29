@@ -897,6 +897,9 @@ Comment:<br>
 		<cfflush>
 		<!--- Loop over images and redo the urls --->
 		<cfloop query="qry">
+			<!--- Feedback --->
+			<cfoutput>. </cfoutput>
+			<cfflush>
 			<!--- put thumbnail path together --->
 			<cfset t = path_to_asset & "/thumb_" & img_id & "." & thumb_extension>
 			<!--- put org name together --->
@@ -941,6 +944,9 @@ Comment:<br>
 		<cfflush>
 		<!--- Loop and redo the urls --->
 		<cfloop query="qry">
+			<!--- Feedback --->
+			<cfoutput>. </cfoutput>
+			<cfflush>
 			<!--- put thumbnail path together --->
 			<cfset t = path_to_asset & "/" & vid_name_image>
 			<!--- put org name together --->
@@ -985,6 +991,9 @@ Comment:<br>
 		<cfflush>
 		<!--- Loop and redo the urls --->
 		<cfloop query="qry">
+			<!--- Feedback --->
+			<cfoutput>. </cfoutput>
+			<cfflush>
 			<!--- put thumbnail path together --->
 			<cfset t = path_to_asset & "/" & aud_name_noext & ".wav">
 			<!--- put org name together --->
@@ -1029,6 +1038,9 @@ Comment:<br>
 		<cfflush>
 		<!--- Loop and redo the urls --->
 		<cfloop query="qry">
+			<!--- Feedback --->
+			<cfoutput>. </cfoutput>
+			<cfflush>
 			<!--- put thumbnail path together --->
 			<cfset t = path_to_asset & "/" & file_name_noext & ".jpg">
 			<!--- put org name together --->
@@ -1064,6 +1076,9 @@ Comment:<br>
 		</cfloop>
 		<!--- Feedback --->
 		<cfoutput><strong>Done with files!</strong><br /><br /></cfoutput>
+		<cfflush>
+		<!--- Feedback --->
+		<cfoutput><strong style="color:green;">All files have new been proccessed successfully. You can close this window now.</strong><br /><br /></cfoutput>
 		<cfflush>
 	</cffunction>
 	
