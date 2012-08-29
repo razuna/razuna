@@ -135,13 +135,38 @@
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			'x' as permfolder
 		<cfelse>
-			(
-				SELECT fg3.grp_permission
+			CASE
+				WHEN (SELECT fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = f.folder_id_r
-				AND (fg3.grp_id_r = '0' OR fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">))
-			) as permfolder
+				AND fg3.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = f.folder_id_r
+				AND fg3.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = f.folder_id_r
+				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = f.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'R' THEN 'R'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = f.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'W' THEN 'W'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = f.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'X' THEN 'X'
+			END as permfolder
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
@@ -337,13 +362,38 @@
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			'x' as permfolder
 		<cfelse>
-			(
-				SELECT fg3.grp_permission
+			CASE
+				WHEN (SELECT fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = i.folder_id_r
-				AND (fg3.grp_id_r = '0' OR fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">))
-			) as permfolder
+				AND fg3.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = i.folder_id_r
+				AND fg3.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = i.folder_id_r
+				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = i.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'R' THEN 'R'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = i.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'W' THEN 'W'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = i.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'X' THEN 'X'
+			END as permfolder
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
@@ -506,13 +556,38 @@
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			'x' as permfolder
 		<cfelse>
-			(
-				SELECT fg3.grp_permission
+			CASE
+				WHEN (SELECT fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = v.folder_id_r
-				AND (fg3.grp_id_r = '0' OR fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">))
-			) as permfolder
+				AND fg3.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = v.folder_id_r
+				AND fg3.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = v.folder_id_r
+				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = v.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'R' THEN 'R'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = v.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'W' THEN 'W'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = v.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'X' THEN 'X'
+			END as permfolder
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
@@ -675,13 +750,38 @@
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			'x' as permfolder
 		<cfelse>
-			(
-				SELECT fg3.grp_permission
+			CASE
+				WHEN (SELECT fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = a.folder_id_r
-				AND (fg3.grp_id_r = '0' OR fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">))
-			) as permfolder
+				AND fg3.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = a.folder_id_r
+				AND fg3.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = a.folder_id_r
+				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = a.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'R' THEN 'R'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = a.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'W' THEN 'W'
+				WHEN (SELECT fg3.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg3
+				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg3.folder_id_r = a.folder_id_r
+				AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'X' THEN 'X'
+			END as permfolder
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
