@@ -1598,6 +1598,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("files")>
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- The return --->
 	<cfif isnumeric(arguments.thestruct.newid)>
@@ -1774,6 +1775,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Flush Cache --->
 			<cfset resetcachetoken("images")>
 			<cfset resetcachetoken("folders")>
+			<cfset resetcachetoken("search")>
 			<cfset variables.cachetoken = resetcachetoken("general")>
 		</cfif>
 	</cfif>
@@ -2742,6 +2744,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- RFS --->
 		<cfif application.razuna.rfs>
@@ -3504,6 +3507,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("audios")>
 		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.newid />
@@ -3618,6 +3622,7 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("videos")>
 				<cfset resetcachetoken("folders")>
+				<cfset resetcachetoken("search")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
@@ -3629,6 +3634,7 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("images")>
 				<cfset resetcachetoken("folders")>
+				<cfset resetcachetoken("search")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		<!--- Amazon --->
@@ -3655,6 +3661,7 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("videos")>
 				<cfset resetcachetoken("folders")>
+				<cfset resetcachetoken("search")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
@@ -3666,6 +3673,7 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("images")>
 				<cfset resetcachetoken("folders")>
+				<cfset resetcachetoken("search")>
 				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		</cfif>
@@ -3883,6 +3891,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset resetcachetoken("images")>
 	<cfset resetcachetoken("videos")>
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
