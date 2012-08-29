@@ -23,20 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfcomponent hint="CFC for Groups-Users" output="false">
-
-<!--- ----------------------------------------------- --->
-<!--- Init --->
-<!--- Added this during FuseBox integration of DSC --->
-<!--- Name: nitai, Date: 12/27/2007 --->
-<!--- ----------------------------------------------- --->
-<cffunction name="init" returntype="groups_users" access="public" output="false">
-	<cfargument name="dsn" type="string" required="yes" />
-	<cfargument name="database" type="string" required="yes" />
-	<cfset application.razuna.datasource = arguments.dsn />
-	<cfset variables.database = arguments.database />
-	<cfreturn this />
-</cffunction>
+<cfcomponent hint="CFC for Groups-Users" extends="extQueryCaching">
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- get groups of a user --->
@@ -109,6 +96,9 @@
 		<cfset arguments.thestruct.grp_id_assigneds = arguments.thestruct.grp_id_assigneds_adm>
 		<cfinvoke method="resetUser" thestruct="#arguments.thestruct#">
 	</cfif>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("search")>
+	<cfset resetcachetoken("folders")>
 </cffunction>
 
 
@@ -302,7 +292,7 @@
 	<cfreturn />
 </cffunction>
 
-<!--- remove user from group --->
+<!--- add user to group --->
 <cffunction name="addusertogroup" returntype="void">
 	<cfargument name="grp_id" type="string" required="true">
 	<cfargument name="user_id" type="string" required="true">
