@@ -1775,7 +1775,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Flush Cache --->
 			<cfset resetcachetoken("images")>
 			<cfset resetcachetoken("folders")>
-			<cfset resetcachetoken("search")>
+			<cfset resetcachetoken("search")> 
 			<cfset variables.cachetoken = resetcachetoken("general")>
 		</cfif>
 	</cfif>
