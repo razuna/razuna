@@ -24,72 +24,47 @@
 *
 --->
 <cfoutput>
-	<cfset thestorage = "http://#cgi.http_host##cgi.script_name#?fa=">
-	<!--- For file detail --->
-	<cfif attributes.file_id NEQ 0>
-		<div><a href="#myself#c.mini_browser&folder_id=#attributes.folder_id#" style="text-decoration:none;"><img src="#dynpath#/global/host/dam/images/go-up-5.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><span style="color:green;font-weight:bold;">Go back</span></a></div>
-		<br />
-		<!--- Images --->
-		<cfif attributes.kind EQ "img">
-			<!--- Show original if allowed --->
-			<strong>Original</strong> (#qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(qry_detail.detail.img_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel
-			<br />
-			<a href="#thestorage#c.si&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-			<br />
-			<strong>Preview</strong> (#qry_detail.theprevsize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(qry_detail.detail.thumb_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #qry_detail.detail.thumbwidth#x#qry_detail.detail.thumbheight# pixel
-			<br />
-			<a href="#thestorage#c.si&f=#attributes.file_id#&v=p" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-			<!--- Show converted --->
-			<cfloop query="qry_related">
-				<br />
-				<strong>#ucase(img_extension)#</strong> <cfif ilength NEQ ""> (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB)</cfif> #myFusebox.getApplicationData().defaults.trans("size")#: #orgwidth#x#orgheight# pixel
-				<br />
-				<a href="#thestorage#c.si&f=#img_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-			</cfloop>
-		</cfif>
-		<!--- Videos --->
-		<cfif attributes.kind EQ "vid">
-			<strong>Original</strong> (#qry_detail.thesize# MB) #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(qry_detail.detail.vid_extension)# #myFusebox.getApplicationData().defaults.trans("size")#: #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel
-			<br />
-			<a href="#thestorage#c.si&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-			<!--- Show converted --->
-			<cfloop query="qry_related">
-				<br />
-				#ucase(vid_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) #myFusebox.getApplicationData().defaults.trans("size")#: #vid_width#x#vid_height# pixel
-				<br />
-				<a href="#thestorage#c.si&f=#vid_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#vid_id#&type=vid&v=o">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-			</cfloop>
-		</cfif>
-		<!--- Audios --->
-		<cfif attributes.kind EQ "aud">
-			<strong>Original</strong> #myFusebox.getApplicationData().defaults.trans("format")#: #ucase(qry_detail.detail.aud_extension)#
-			<br />
-			<a href="#thestorage#c.si&f=#attributes.file_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-			<!--- Show converted --->
-			<cfloop query="qry_related">
-				<br />
-				<strong>#ucase(aud_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)
-				<br />
-				<a href="#thestorage#c.si&f=#aud_id#&v=o" target="_blank">View</a> | <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud">#myFusebox.getApplicationData().defaults.trans("download")#</a>
-			</cfloop>
-		</cfif>
-	<!--- Browsing folder and files --->
-	<cfelse>
-		<div>There are #qry_subfolders.recordcount# folders and #qry_filecount.thetotal# files here.</div>
-		<br>
+	<div id="tabs_mini">
+		<ul>
+			<li><a href="##thecontent" onclick="" rel="prefetch prerender">Folder &amp; Files</a></li>
+			<li><a href="##thesearch" onclick="" rel="prefetch prerender">Search</a></li>
+			<li><a href="##theupload" onclick="" rel="prefetch prerender">Upload</a></li>
+		</ul>
+	<div id="thecontent">
 		<!--- Foldername --->
 		<cfif qry_foldername NEQ "">
-			<div id="foldername">#qry_foldername#</div>
+			<div id="foldername"><a href="#myself#c.mini_browser&folder_id=0">Home</a><cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.mini_browser&folder_id=#ListGetAt(i,2,"|")#">#ListGetAt(i,1,"|")#</a></cfloop>
+			</div>
 		</cfif>
-		<cfif attributes.folder_id NEQ 0>
-			<cfif qry_folder.folder_id EQ qry_folder.folder_id_r><cfset fid = 0><cfelse><cfset fid = qry_folder.folder_id_r></cfif>
-			<div id="parentfolder"><a href="#myself#c.mini_browser&folder_id=#fid#" style="text-decoration:none;"><img src="#dynpath#/global/host/dam/images/go-up-5.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><span style="color:green;">Parent Folder</style></a></div>
-		</cfif>
+		<div>There are #qry_subfolders.recordcount# folders and #qry_filecount.thetotal# files here.</div>
+		<br />
 		<cfloop query="qry_subfolders">
-			<div id="folders"><a href="#myself#c.mini_browser&folder_id=#folder_id#"><img src="#dynpath#/global/host/dam/images/folder-yellow_16.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left">#folder_name#</a></div>
+			<div id="folders">
+				<div><a href="#myself#c.mini_browser&folder_id=#folder_id#"><img src="#dynpath#/global/host/dam/images/folder-blue-mini.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"></a></div>
+				<div id="foldername_list"><a href="#myself#c.mini_browser&folder_id=#folder_id#">#folder_name#</a></div>
+			</div>
+			<!--- <div style="clear:both;"</div> --->
 		</cfloop>
 		<cfloop query="qry_files">
-			<div id="files"<cfif qry_files.recordcount NEQ 1> class="list"</cfif>><cfif kind EQ "img"><a href="#myself#c.mini_browser&folder_id=#folder_id#&file_id=#id#&kind=#kind#"><img src="#dynpath#/global/host/dam/images/image-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelseif kind EQ "vid"><a href="#myself#c.mini_browser&folder_id=#folder_id#&file_id=#id#&kind=#kind#"><img src="#dynpath#/global/host/dam/images/video-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelseif kind EQ "aud"><a href="#myself#c.mini_browser&folder_id=#folder_id#&file_id=#id#&kind=#kind#"><img src="#dynpath#/global/host/dam/images/audio-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelse><a href="#myself#c.serve_file&file_id=#id#&type=doc" target="_blank"><img src="#dynpath#/global/host/dam/images/x-office-document-2.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"></cfif>#filename#</a></div>
+			<div id="files">
+				<div><a href="##" onclick="slidefile('#id#','#kind#');return false;"><cfif kind EQ "img"><img src="#dynpath#/global/host/dam/images/image-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelseif kind EQ "vid"><img src="#dynpath#/global/host/dam/images/video-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelseif kind EQ "aud"><img src="#dynpath#/global/host/dam/images/audio-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelse><img src="#dynpath#/global/host/dam/images/x-office-document-2.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"></cfif></a></div>
+				<div id="foldername_list"><a href="##" onclick="slidefile('#id#','#kind#');return false;">#filename#</a></div>
+				<!--- This div loads dynamically --->
+				<div id="slider#id#" style="display:none;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+			</div>
 		</cfloop>
-	</cfif>
+	</div>
+	<div id="thesearch"></div>
+	<div id="theupload"></div>
+	<!--- JS --->
+	<script type="text/javascript">
+		// Create tabs
+		$('##tabs_mini').tabs();
+		// Slide file
+		function slidefile(theid,thekind){
+			$('##slider' + theid).load('#myself#c.mini_browser_files&file_id=' + theid + '&kind=' + thekind, function(){
+				$('##slider' + theid).slideToggle('slow');
+			})
+		}
+	</script>
 </cfoutput>

@@ -34,7 +34,11 @@
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
 <!--- CSS --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css?_v=#attributes.cachetag#" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/mini.css?_v=#attributes.cachetag#" />
+<!--- JS --->
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
 <!--- Favicon --->
 <link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
 </head>
@@ -55,7 +59,7 @@
 		<br />
 		<br />
 		<div style="padding-left:10px;">
-		#trim( thecontent )#
+			#trim( thecontent )#
 		</div>
 		<br />
 	</div>

@@ -35,17 +35,36 @@
 <cfheader name="CACHE-CONTROL" value="NO-CACHE, no-store, must-revalidate">
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
+<!--- CSS --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/mini.css?_v=#attributes.cachetag#" />
 <!--- JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js?_v=#attributes.cachetag#"></script>
-<!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/mini.css?_v=#attributes.cachetag#" />
+<script type="text/javascript" src="#dynpath#/global/host/dam/js/mini.js?_v=#attributes.cachetag#"></script>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 </head>
 <body>
 <div id="container">
-	#trim( thecontent )#
+	<div id="outer">
+		<div style="float:left;">
+			<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
+				<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
+			<cfelse>
+				<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
+			</cfif>
+		</div>
+		<div style="float:right;padding-top:10px;">
+			<a href="http://razuna.com/signup" target="_blank">Create an account</a>
+		</div>
+		<div style="clear:both;"></div>
+		<br />
+		<br />
+		<div style="padding-left:10px;">
+			#trim( thecontent )#
+		</div>
+		<br />
+	</div>
 </div>
 </body>
 </html>

@@ -24,76 +24,56 @@
 *
 --->
 <cfoutput>
-<div id="login_div">
-	<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
-		<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
-	<cfelse>
-		<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
-	</cfif>
-	<br />
-	<br />
-	<div style="padding-left:10px;">
-		<form action="#self#" method="post" name="form_login_mini" id="form_login_mini">
-		<input type="hidden" name="#theaction#" value="#xfa.submitform#">
-		<input type="hidden" name="mini" value="T">
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
-		    <tr>
-		        <td width="100%" nowrap>#myFusebox.getApplicationData().defaults.trans("email_address")#</td>
-			</tr>
-			<tr>
-				<td width="100%" nowrap style="padding-bottom:10px;">
-					<label for="name" class="error">Enter a username!</label>
-		       	 	<div id="login_name"><input type="text" name="theemail" id="theemail" size="30" value="#cookie.loginname#" /></div>
-				</td>
-		    </tr>
-		    <tr>
-		        <td>#myFusebox.getApplicationData().defaults.trans("password")#</td>
-			</tr>
-			<tr>
-		        <td>
-			        <label for="pass" class="error">Enter a password!</label>
-			    	<div id="login_password"><input type="password" name="pass" id="pass" size="30" value="#cookie.loginpass#" /></div>
-				</td>
-		    </tr>
-		     <tr>
-				<td><input type="checkbox" name="rem_login" id="rem_login" value="T" checked="true"> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="color:##000000;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("remember_login")#</a></td>
-			</tr>
-		    <tr>
-		        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="button" /></td>
-		    </tr>
-			<cfif qry_langs.recordcount NEQ 1>
-				<tr>
-			        <td style="padding-bottom:10px;">
-						<select name="app_lang" onChange="javascript:changelang('form_login_share');">
+	<div id="outer-container">
+		<div id="inner-container">
+			<form action="#self#" method="post" name="form_login_mini" id="form_login_mini">
+				<input type="hidden" name="#theaction#" value="#xfa.submitform#">
+				<input type="hidden" name="mini" value="T">
+			    <h1>SIGN IN TO RAZUNA</h1>
+			    <input type="text" name="theemail" id="theemail" value="#cookie.loginname#" placeholder="Username" />
+			    <input type="password" name="pass" id="pass" value="#cookie.loginpass#" placeholder="Password" />
+			    <p>
+			    	<input type="submit" name="submitbutton" id="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="awesome big green" style="width:300px;height:50px;font-size:22px;" />
+			    </p>
+				<p id="footer-login">
+					<input type="checkbox" name="rem_login" id="rem_login" value="T" checked="true"> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("remember_login")#</a>
+					<br /><br />
+					<cfif qry_langs.recordcount NEQ 1>
+						<select name="app_lang" id="app_lang" onChange="changelang();">
 							<option value="javascript:void();" selected>#myFusebox.getApplicationData().defaults.trans("changelang")#</option>
 							<cfloop query="qry_langs">
-							<option value="#myself##xfa.switchlang#&thelang=#lang_name#&to=mini">#lang_name#</option>
+								<option value="#myself##xfa.switchlang#&thelang=#lang_name#&to=mini">#lang_name#</option>
 							</cfloop>
 						</select>
-					</td>
-			    </tr>
-			</cfif>
-		</table>
-		</form>
+					</cfif>
+					<br /><br />
+					<a href="#cgi.http_host##cgi.script_name#" target="_blank">I forgot my password.</a>
+				</p>
+			</form>
+		</div>
 	</div>
-</div>
-<cfif structkeyexists(attributes,"e")>
-	<div style="padding-top:10px;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
-</cfif>
-<div id="login_loading"></div>
-<div id="alertbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
-<div id="alertgroupbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("share_error_group")#</div>
+	<cfif structkeyexists(attributes,"e")>
+		<p id="footer-login" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</p>
+	</cfif>
+	<div id="login_loading"></div>
+	<div id="alertbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
+	<div id="alertgroupbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("share_error_group")#</div>
 </cfoutput>
-
 <script type="text/javascript">
-function clickcbk(theform,thefield,which) {
-	var curval = $('#rem_login:checked').val();
-	if(curval == false){
-		$('#rem_login').attr('checked','checked');
+	function clickcbk(theform,thefield,which) {
+		var curval = $('#rem_login:checked').val();
+		if(curval == false){
+			$('#rem_login').attr('checked','checked');
+		}
+		else{
+			$('#rem_login').attr('checked','');
+		}
 	}
-	else{
-		$('#rem_login').attr('checked','');
-	}
-}
+	// $(document).ready(function() 
+	// {
+	//     $('#submitbutton').click(function(){
+	//     	$("login_loading").html('<div id="bodyoverlay"><img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+	//     	alert('bla');
+	//     })
+	// });
 </script>
-

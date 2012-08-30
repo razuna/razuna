@@ -12,6 +12,271 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
+* {
+	margin: 0px;
+	padding: 0px;
+}
+
+html>body #container {
+	height: auto;
+}
+
+h1 {
+	font-size: 24px;
+	margin: 20px 0px 15px 0px;
+	text-shadow: 0px 1px 0px #fff;
+}
+
+h2 {
+	font-size: 16px;
+	margin: 10px 0px 20px 0px;
+	text-shadow: 0px 1px 0px #fff;
+}
+
+a:link {
+	color: #000000;
+	text-decoration: none;
+}
+a:visited {
+	color: #000000;
+	text-decoration: none;
+}
+a:hover {
+	color: green;
+	text-decoration: none;
+}
+
+p {
+	font-size: 18px;
+}
+
+input[type=text], input[type=password] {
+	display: block;
+	margin: 10px auto;
+	width: 340px;
+	height: 34px;
+	font-size: 16px;
+	color: #494849;
+	padding: 5px 10px;
+	border: 1px solid #bdbdbd;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-border-radius: 5px;
+	outline: none;
+}
+
+/* header */
+
+#header {
+	height: 45px;
+	padding: 5px;
+}
+
+#header img {
+	width: 175px;
+	margin-top: 7px;
+}
+
+#header a {
+	float: right;
+	margin-top: 15px;
+	margin-right: 20px;
+	font-size: 13px;
+	color: #000;
+}
+
+/* content */
+
+#outer-container {
+	padding: 5px;
+	-moz-border-radius: 6px;
+	-webkit-border-radius: 6px;
+	border-radius: 6spx;
+	background-color: #F0F0F0;
+	border: 1px solid #b4b4b4;
+	height: auto;
+}
+
+#inner-container {
+	padding: 5px;
+	-moz-border-radius: 8px;
+	-webkit-border-radius: 8px;
+	border-radius: 8px;
+}
+
+#form_login_mini {
+	text-align: center;
+	font-weight: bold;
+}
+
+#login-button-container {
+	margin-top: 4px;
+}
+
+#login-button-link {
+	background-image: url(../img/login_button_sprite.png) !important;
+	background-position: 0px 0px !important;
+	background-repeat: no-repeat;
+	display: inline-block;
+	width: 200px;
+	height: 55px;
+}
+
+#login-button-link:hover {
+	background-position: 0 -77px !important;
+}
+
+#subtext-field {
+	color: #6C6C6C;
+	font-size: 13px;
+	padding-top: 3px;
+	text-shadow: 0px 1px 0px white;
+	padding-left: 60px;
+	padding-right: 60px;
+	font-weight: 500;
+	line-height: 1.2em;
+	min-height: 33px;
+}
+
+#subtext-field.error{
+	color: #EF4056;
+	font-weight: bold;
+}
+
+/* footer */
+
+#footer-login {
+	text-align: center;
+	padding: 10px 0px 10px 0px; 
+}
+
+#footer-login a {
+	font-size: 13px;
+	color: #000000;
+}
+
+/*  
+    awesome buttons are based on a blog post by ZERB
+    Read there blog post for more information:
+    "Super awesome Buttons with CSS3 and RGBA":http://www.zurb.com/article/266/super-awesome-buttons-with-css3-and-rgba 
+    
+    this buttons are even more awesome, as the need only one color for all three states,
+    and have an super awesome onclick state
+*/
+
+/* set an awesome color for the buttons */
+button.awesome, 
+input.awesome, 
+a.button.awesome {
+  background-color: #111;
+}
+/* Touch the rest at your onw risk. */
+button.awesome,
+input.awesome,
+a.button.awesome { 
+
+  font: inherit;
+  background-repeat: repeat-x; 
+  color: #fff;
+  text-decoration: none; 
+  position: relative; 
+  cursor: pointer; 
+  border: 0; 
+  font-style: normal; 
+  font-weight: bold; 
+  line-height: 1; 
+  
+  padding: 5px 10px 6px;
+  font-size: 13px;
+  
+  /* IE only stuff */
+  border-bottom: 1px solid transparent\9;
+  
+  
+  /* not all browser support these, but who cares? */
+  text-shadow: 0 -1px 1px rgba(0,0,0,0.25), -2px 0 1px rgba(0,0,0,0.25); 
+  border-radius: 5px; 
+  -moz-border-radius: 5px; 
+  -webkit-border-radius: 5px; 
+  -moz-box-shadow: 0 1px 2px rgba(0,0,0,0.5); 
+  -webkit-box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  
+  /* one image for all states 
+     see http://www.alistapart.com/articles/sprites */
+  background-image: url(images/awesome-overlay-sprite.png);
+  background-position: 0 0;
+  
+  /* cross browser inline block hack 
+     see http://blog.mozilla.com/webdev/2009/02/20/cross-browser-inline-block/ */
+  display: -moz-inline-stack;
+  display: inline-block;
+  vertical-align: middle;
+  *display: inline !important;
+  position: relative;
+  
+  /* help IE to calm down a bit */
+  zoom: 1;
+  
+  /*disable text selection (Firefox only)*/
+  -moz-user-select: none;
+}
+/* hide selection background color */
+.awesome::selection {
+	background: transparent;
+}
+
+button.awesome:hover,
+input.awesome:hover,
+a.button.awesome:hover {
+  background-position: 0 -50px; 
+  color: #fff;
+}
+button.awesome:active,
+input.awesome:active,
+a.button.awesome:active	{ 
+  background-position: 0 100%; 
+  -moz-box-shadow: inset 0 1px 2px rgba(0,0,0,0.7); 
+  /* unfortunately, Safari seems not to support inset yet */
+  -webkit-box-shadow: none;
+  
+  /* IE only stuff */
+  border-bottom: 0\9;
+  border-top: 1px solid #666\9;
+}
+
+button.awesome.small,         input.awesome.small,          a.button.awesome.small 	        { padding: 4px 7px 5px; font-size: 10px; }
+button.awesome.small:active,  input.awesome.small:active,   a.button.awesome.small:active	  { padding: 5px 7px 4px; }
+button.awesome.medium,        input.awesome.medium,         a.button.awesome.medium         { /* default */ }
+button.awesome.medium:active, input.awesome.medium:active,  a.button.awesome.medium:active	{ padding: 6px 10px 5px; }
+button.awesome.large,         input.awesome.large,          a.button.awesome.large 	        { padding: 8px 14px 9px; font-size: 14px; }
+button.awesome.large:active,  input.awesome.large:active,   a.button.awesome.large:active	  { padding: 9px 14px 8px; }
+
+.awesome.blue {
+background-color: #0A50FF !important;
+}
+.awesome.red {
+background-color: #e33100 !important;
+}
+.awesome.green {
+background-color: #579E31 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #container {
 	position: relative;
 	min-height: 100%;
@@ -21,46 +286,14 @@ body {
 	height: auto;
 	width: auto;
 }
-html>body #container {
-	height: auto;
-}
-a:link {
-	color: #000000;
-	text-decoration: none;
-}
-a:visited {
-	color: #000000;
-	text-decoration: underline;
-}
-a:hover {
-	color: #CC0000;
-	text-decoration: underline;
-}
+
 
 .alert {
 	color: #CC0000;
 	font-weight: bold;
 }
 
-#footer {
-	position: fixed;
-	bottom: 0;
-	background-color: #FFFFFF;
-	width: 99%;
-	height: 15px;
-	font-size: 11px;
-	color: #000000;
-	text-align: right;
-	padding-bottom: 5px;
-	line-height: 1.4em;
-	clear: both;
-	z-index:5000;
-}
-#footer a {
-	font-size:11px;
-	color: #CC0000;
-	text-decoration: underline;
-}
+
 
 #outer {
 	width: auto;
@@ -71,42 +304,33 @@ a:hover {
 	margin-right: auto;
 	padding: 10px;
 }
-.clearfix {display: inline-block;}
-
-/* Hides from IE-mac \*/
-* html .clearfix {height: 1%;}
-.clearfix {display: block;}
-/* End hide from IE-mac */
 
 .list {
 	border-bottom: 1px solid #f1f1f1;
 }
 #files {
-	padding: 3px 0px 3px 0px;
+	clear: both;
+	padding: 3px 0px 7px 0px;
+	border-bottom: 1px solid #f1f1f1;
+}
+#files img {
+	max-width: 32px;
+  	max-height: 32px;
+  	width: expression(this.width > 32 ? "32px" : true);
+  	height: expression(this.height > 32 ? "32px" : true);
 }
 #foldername {
 	font-weight: bold;
 }
+#foldername_list {
+	font-weight: bold;
+	padding-top: 4px;
+}
 #folders {
-/* 	font-weight: bold; */
 	clear: both;
-	padding-bottom: 5px;
+	padding: 3px 0px 7px 0px;
+	border-bottom: 1px solid #f1f1f1;
 }
-#parentfolder {
-/* 	font-weight: bold; */
-	clear: both;
-	padding-bottom: 6px;
-	padding-top: 3px;
-}
-.button {	
-	background: -moz-linear-gradient(center top , #FFFFFF 0%, #FFFFFF 66%, #F0F0F0 90%, #F0F0F0 100%) repeat scroll 0 0 transparent;
-    border: 1px solid #AAAAAA;
-    border-radius: 4px 4px 4px 4px;
-    padding: 4px 20px;
-    position: relative;
-	color: #706961;
-}
-.button:hover {
-	border: 1px solid #917a73;
-	color: #917a73;
+#fileoptions a {
+	text-decoration: underline;
 }

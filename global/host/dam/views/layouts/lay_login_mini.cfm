@@ -26,7 +26,7 @@
 <cfoutput>
 	<div id="outer">
 	    #body#
-	  	<div style="padding-left:10px;">
+	  	<!--- <div style="padding-left:10px;">
 	  		<cfif NOT application.razuna.isp>
 				<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#
 				<br>Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a>
@@ -34,6 +34,6 @@
 			</cfif>
 			<a href="http://razuna.com" target="_blank">Razuna Website</a>
 			<br><a href="http://blog.razuna.com" target="_blank">Razuna Blog</a>
-		</div>
+		</div> --->
 	</div>
 </cfoutput>
