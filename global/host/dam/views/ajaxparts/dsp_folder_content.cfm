@@ -30,7 +30,7 @@
 		<form id="#kind#form"></form>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<td><cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/<a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a></cfloop></td>
+				<td><cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop></td>
 			</tr>
 			<tr>
 				<td>

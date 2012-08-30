@@ -4922,7 +4922,10 @@
 					<true>
 						<set name="attributes.folder_id" value="#url.folder_id#" />
 						<!-- CFC: Get Breadcrumb -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(url.folder_id_r)" returnvariable="qry_breadcrumb" />
+						<invoke object="myFusebox.getApplicationData().folders" method="getbreadcrumb" returnvariable="qry_breadcrumb">
+							<argument name="folder_id_r" value="#url.folder_id_r#" />
+							<argument name="fromshare" value="true" />
+						</invoke>
 					</true>
 				</if>
 				<!-- CFC: Get folder share options -->
@@ -5619,7 +5622,10 @@
 					<true>
 						<set name="attributes.folder_id" value="#url.folder_id#" />
 						<!-- CFC: Get Breadcrumb -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(url.folder_id_r)" returnvariable="qry_breadcrumb" />
+						<invoke object="myFusebox.getApplicationData().folders" method="getbreadcrumb" returnvariable="qry_breadcrumb">
+							<argument name="folder_id_r" value="#url.folder_id_r#" />
+							<argument name="fromshare" value="true" />
+						</invoke>
 					</true>
 				</if>
 				<!-- CFC: Get folder share options -->
@@ -5851,57 +5857,32 @@
 	 			<set name="session.hosttype" value="" overwrite="false" />
 				<set name="attributes.folder_id" value="0" overwrite="false" />
 				<set name="attributes.file_id" value="0" overwrite="false" />
+				<set name="attributes.pages" value="chrome" overwrite="false" />
+				<!-- Action: Get asset path -->
+				<do action="assetpath" />
+				<!-- Action: Storage -->
+				<do action="storage" />
 				<!-- For Nirvanix get usage count -->
 				<if condition="application.razuna.storage EQ 'nirvanix' OR session.hosttype EQ 'f'">
 					<true>
-						<!-- Action: Check storage -->
-						<do action="storage" />
 						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
 				</if>
-				<!-- Action: Get asset path -->
-				<do action="assetpath" />
-				<!-- If this is a file request -->
-				<if condition="attributes.file_id NEQ 0">
-					<true>
-						<!-- Action: Storage -->
-						<do action="storage" />
-						<!-- Get link to assets for downloading -->
-						<if condition="attributes.kind EQ 'img'">
-							<true>
-								<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
-								<invoke object="myFusebox.getApplicationData().images" methodcall="relatedimages(attributes)" returnvariable="qry_related" />
-							</true>
-						</if>
-						<if condition="attributes.kind EQ 'vid'">
-							<true>
-								<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
-								<invoke object="myFusebox.getApplicationData().videos" methodcall="relatedvideos(attributes)" returnvariable="qry_related" />
-							</true>
-						</if>
-						<if condition="attributes.kind EQ 'aud'">
-							<true>
-								<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
-								<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="qry_related" />
-							</true>
-						</if>
-					</true>
-					<false>
-						<!-- CFC: Get folder properties -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolderproperties(attributes.folder_id)" returnvariable="qry_folder" />
-						<!-- CFC: Get folder name -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
-						<!-- CFC: Set Access -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
-						<!-- CFC: Get the total file count -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry_filecount" />
-						<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
-						<!-- CFC: Get subfolders -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
-						<!-- CFC: Get all assets -->
-						<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
-					</false>
-				</if>
+				<!-- CFC: Get folder properties -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolderproperties(attributes.folder_id)" returnvariable="qry_folder" />
+				<!-- CFC: Get folder name -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
+				<!-- CFC: Set Access -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+				<!-- CFC: Get the total file count -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry_filecount" />
+				<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
+				<!-- CFC: Get subfolders -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
+				<!-- CFC: Get all assets -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getallassets(attributes)" returnvariable="qry_files" />
+				<!-- CFC: Get Breadcrumb -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />	
 				<!-- Get the Cache tag -->
 				<do action="cachetag" />
 				<!-- Get View -->
@@ -5911,6 +5892,34 @@
 				 <do action="mini" />
 			</false>
 		</if>
+	</fuseaction>
+	<!-- Get the files only (for slider) -->
+	<fuseaction name="mini_browser_files">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- Get link to assets for downloading -->
+		<if condition="attributes.kind EQ 'img'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
+				<invoke object="myFusebox.getApplicationData().images" methodcall="relatedimages(attributes)" returnvariable="qry_related" />
+			</true>
+		</if>
+		<if condition="attributes.kind EQ 'vid'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
+				<invoke object="myFusebox.getApplicationData().videos" methodcall="relatedvideos(attributes)" returnvariable="qry_related" />
+			</true>
+		</if>
+		<if condition="attributes.kind EQ 'aud'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
+				<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="qry_related" />
+			</true>
+		</if>
+		<!-- Show -->
+		<do action="ajax.mini_browser_files" />
 	</fuseaction>
 	<!-- Mini Logoff -->
 	<fuseaction name="mini_logoff">

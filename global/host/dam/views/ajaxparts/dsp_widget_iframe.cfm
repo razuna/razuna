@@ -72,7 +72,9 @@
 					#qry.qry_filecount.thetotal# #myFusebox.getApplicationData().defaults.trans("share_content_count")#
 					<!--- BreadCrumb --->
 					<cfif structkeyexists(url,"folder_id_r")>
-						| <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&fid=#attributes.fid#">#ListGetAt(i,1,"|")#</a> </cfloop>
+						<cfif listlen(qry_breadcrumb)>
+							| <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&fid=#attributes.fid#">#ListGetAt(i,1,"|")#</a> </cfloop>
+						</cfif>
 					</cfif>
 					<!--- Not when a collection since they do not know limits!!! --->
 					<cfif session.iscol EQ "F">
