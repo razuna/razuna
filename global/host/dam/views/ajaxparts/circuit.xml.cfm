@@ -670,4 +670,9 @@
   		<include template="dsp_admin_users_import_upload" />
 	</fuseaction>
 
+	<!-- Mini: Slider -->
+	<fuseaction name="mini_browser_files">
+  		<include template="dsp_mini_browser_files" />
+	</fuseaction>
+
 </circuit>
