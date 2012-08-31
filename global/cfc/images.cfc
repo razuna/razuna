@@ -784,7 +784,7 @@
 		</cfif>
 		<!--- IM commands --->
 		<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# +profile '*' -colorspace RGB #theflatten##theformatconv#">
-		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace RGB #theflatten##thethumbtconv#">
+		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
 		<cfset thescript = createuuid()>
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
