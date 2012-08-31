@@ -674,5 +674,9 @@
 	<fuseaction name="mini_browser_files">
   		<include template="dsp_mini_browser_files" />
 	</fuseaction>
+	<!-- Mini: Search Results -->
+	<fuseaction name="mini_search">
+  		<include template="dsp_mini_search" />
+	</fuseaction>
 
 </circuit>

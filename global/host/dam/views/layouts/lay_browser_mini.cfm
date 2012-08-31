@@ -23,39 +23,104 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <cfoutput>
 	<div id="tabs_mini">
 		<ul>
 			<li><a href="##thecontent" onclick="" rel="prefetch prerender">Folder &amp; Files</a></li>
 			<li><a href="##thesearch" onclick="" rel="prefetch prerender">Search</a></li>
-			<li><a href="##theupload" onclick="" rel="prefetch prerender">Upload</a></li>
 		</ul>
-	<div id="thecontent">
-		<!--- Foldername --->
-		<cfif qry_foldername NEQ "">
-			<div id="foldername"><a href="#myself#c.mini_browser&folder_id=0">Home</a><cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.mini_browser&folder_id=#ListGetAt(i,2,"|")#">#ListGetAt(i,1,"|")#</a></cfloop>
-			</div>
-		</cfif>
-		<div>There are #qry_subfolders.recordcount# folders and #qry_filecount.thetotal# files here.</div>
-		<br />
-		<cfloop query="qry_subfolders">
-			<div id="folders">
-				<div><a href="#myself#c.mini_browser&folder_id=#folder_id#"><img src="#dynpath#/global/host/dam/images/folder-blue-mini.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"></a></div>
-				<div id="foldername_list"><a href="#myself#c.mini_browser&folder_id=#folder_id#">#folder_name#</a></div>
-			</div>
-			<!--- <div style="clear:both;"</div> --->
-		</cfloop>
-		<cfloop query="qry_files">
-			<div id="files">
-				<div><a href="##" onclick="slidefile('#id#','#kind#');return false;"><cfif kind EQ "img"><img src="#dynpath#/global/host/dam/images/image-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelseif kind EQ "vid"><img src="#dynpath#/global/host/dam/images/video-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelseif kind EQ "aud"><img src="#dynpath#/global/host/dam/images/audio-x-generic.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"><cfelse><img src="#dynpath#/global/host/dam/images/x-office-document-2.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"></cfif></a></div>
-				<div id="foldername_list"><a href="##" onclick="slidefile('#id#','#kind#');return false;">#filename#</a></div>
-				<!--- This div loads dynamically --->
-				<div id="slider#id#" style="display:none;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
-			</div>
-		</cfloop>
+		<div id="thecontent">
+			<!--- Foldername --->
+			<cfif qry_foldername NEQ "">
+				<div id="foldername">/ <a href="#myself#c.mini_browser&folder_id=0" style="text-decoration:underline;">Home</a><cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.mini_browser&folder_id=#ListGetAt(i,2,"|")#" style="text-decoration:underline;">#ListGetAt(i,1,"|")#</a></cfloop></div>
+				<div style="float:right;font-weight:bold;"><cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#attributes.folder_id#');" style="text-decoration:underline;">Upload</a></cfif></div>
+				<div style="clear:both;"></div>
+			</cfif>
+			<div>There are #qry_subfolders.recordcount# folders and #qry_filecount.thetotal# files here.</div>
+			<br />
+			<cfloop query="qry_subfolders">
+				<div id="folders">
+					<div><a href="#myself#c.mini_browser&folder_id=#folder_id#"><img src="#dynpath#/global/host/dam/images/folder-blue-mini.png" border="0" style="padding-right:5px;margin-top:-1px;" align="left"></a></div>
+					<div id="foldername_list"><a href="#myself#c.mini_browser&folder_id=#folder_id#">#folder_name#</a></div>
+				</div>
+				<!--- <div style="clear:both;"</div> --->
+			</cfloop>
+			<cfloop query="qry_files">
+				<div id="files">
+					<div id="filesthumbs">
+						<a href="##" onclick="slidefile('#id#','#kind#');return false;">
+							<cfif kind EQ "img">
+								<!--- Show assets --->
+								<cfif link_kind NEQ "url">
+									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
+									<cfelse>
+										<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
+									</cfif>
+								<cfelse>
+									<img src="#link_path_url#" border="0" width="120">
+								</cfif>
+							<cfelseif kind EQ "vid">
+								<cfif link_kind NEQ "url">
+									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
+									<cfelse>
+										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+									</cfif>
+								<cfelse>
+									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
+								</cfif>
+							<cfelseif kind EQ "aud">
+								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">
+							<cfelse>
+								<!--- If it is a PDF we show the thumbnail --->
+								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
+									<cfif cloud_url NEQ "">
+										<img src="#cloud_url#" border="0">
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+									</cfif>
+								<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
+									<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+									<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
+									<cfelse>
+										<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="120" border="0">
+									</cfif>
+								<cfelse>
+									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
+								</cfif>
+							</cfif>
+						</a>
+					</div>
+					<div id="foldername_list"><a href="##" onclick="slidefile('#id#','#kind#');return false;">#filename#</a></div>
+					<div style="clear:both;"></div>
+					<!--- This div loads dynamically --->
+					<div id="slider#id#" style="display:none;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+				</div>
+			</cfloop>
+		</div>
+		<!--- Search --->
+		<div id="thesearch">
+			<form name="form_minisearch" id="form_minisearch">
+				<input type="hidden" name="searchthetype" id="searchthetype" value="all" >
+				<input type="text" name="searchtext" id="searchtext" placeholder="Enter your search term and hit enter" />
+			</form>
+			<div style="clear:both;"></div>
+			<!--- Show results --->
+			<div id="minisearchstatus"></div>
+			<div id="minisearchresults"></div>
+		</div>
 	</div>
-	<div id="thesearch"></div>
-	<div id="theupload"></div>
 	<!--- JS --->
 	<script type="text/javascript">
 		// Create tabs
@@ -66,5 +131,12 @@
 				$('##slider' + theid).slideToggle('slow');
 			})
 		}
+		// Fire off search
+		$('##form_minisearch').submit(
+			function(){
+				checkentry();
+				return false;
+			}
+		);
 	</script>
 </cfoutput>

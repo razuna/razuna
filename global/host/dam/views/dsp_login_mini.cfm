@@ -59,21 +59,3 @@
 	<div id="alertbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("login_error")#</div>
 	<div id="alertgroupbox" style="padding-top:10px;display:none;" class="alert">#myFusebox.getApplicationData().defaults.trans("share_error_group")#</div>
 </cfoutput>
-<script type="text/javascript">
-	function clickcbk(theform,thefield,which) {
-		var curval = $('#rem_login:checked').val();
-		if(curval == false){
-			$('#rem_login').attr('checked','checked');
-		}
-		else{
-			$('#rem_login').attr('checked','');
-		}
-	}
-	// $(document).ready(function() 
-	// {
-	//     $('#submitbutton').click(function(){
-	//     	$("login_loading").html('<div id="bodyoverlay"><img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
-	//     	alert('bla');
-	//     })
-	// });
-</script>

@@ -5858,6 +5858,15 @@
 				<set name="attributes.folder_id" value="0" overwrite="false" />
 				<set name="attributes.file_id" value="0" overwrite="false" />
 				<set name="attributes.pages" value="chrome" overwrite="false" />
+				<set name="attributes.start" value="false" overwrite="false" />
+				<!-- If start is true we open the extension window -->
+				<if condition="attributes.start AND cookie.razminipath NEQ 0">
+					<true>
+						<relocate url="#myself#c.mini_browser&amp;folder_id=#cookie.razminipath#" />
+					</true>
+				</if>
+				<!-- Set the path -->
+				<set name="cookie.razminipath" value="#attributes.folder_id#" />
 				<!-- Action: Get asset path -->
 				<do action="assetpath" />
 				<!-- Action: Storage -->
@@ -5918,6 +5927,11 @@
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="qry_related" />
 			</true>
 		</if>
+		<if condition="attributes.kind NEQ 'img' AND attributes.kind NEQ 'vid' AND attributes.kind NEQ 'aud'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="qry_detail" />
+			</true>
+		</if>
 		<!-- Show -->
 		<do action="ajax.mini_browser_files" />
 	</fuseaction>
@@ -5943,6 +5957,28 @@
 		<set name="session.theuserid" value="" />
 		<set name="session.thedomainid" value="" />
 		<do action="mini" />
+	</fuseaction>
+	<!-- Mini Search -->
+	<fuseaction name="mini_search">
+		<!-- ACTION: Search Files -->
+		<do action="search_files" />
+		<!-- ACTION: Search Images -->
+		<do action="search_images" />
+		<!-- ACTION: Search Videos -->
+		<do action="search_videos" />
+		<!-- ACTION: Search Audios -->
+		<do action="search_audios" />
+		<!-- CFC: Combine searches -->
+		<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(qry_results_files,qry_results_images,qry_results_videos,qry_results_audios)" returnvariable="qry_files" />
+		<!-- Put id's into lists -->
+		<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
+		<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
+		<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
+		<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
+		<!-- Set the total -->
+		<set name="qry_filecount.thetotal" value="#qry_files.thetotal#" />
+		<!-- Show -->
+		<do action="ajax.mini_search" />
 	</fuseaction>
 	
 	<!--  -->

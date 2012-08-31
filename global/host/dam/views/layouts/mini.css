@@ -51,6 +51,10 @@ p {
 	font-size: 18px;
 }
 
+#minisearchstatus{
+	text-align: center;
+}
+
 input[type=text], input[type=password] {
 	display: block;
 	margin: 10px auto;
@@ -313,14 +317,31 @@ background-color: #579E31 !important;
 	padding: 3px 0px 7px 0px;
 	border-bottom: 1px solid #f1f1f1;
 }
+#filesthumbs {
+	float: left;
+	padding-right: 5px;
+	width: 35px;
+	overflow: hidden;
+	text-align: center;
+}
 #files img {
 	max-width: 32px;
   	max-height: 32px;
   	width: expression(this.width > 32 ? "32px" : true);
   	height: expression(this.height > 32 ? "32px" : true);
 }
+#filesimg {
+	padding-bottom: 5px;
+}
+#filesimg img {
+	max-width: 110px;
+  	max-height: 110px;
+  	width: expression(this.width > 110 ? "110px" : true);
+  	height: expression(this.height > 110 ? "110px" : true);
+}
 #foldername {
 	font-weight: bold;
+	float: left;
 }
 #foldername_list {
 	font-weight: bold;

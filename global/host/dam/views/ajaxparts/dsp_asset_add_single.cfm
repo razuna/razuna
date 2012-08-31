@@ -53,7 +53,8 @@
 	<cfif structkeyexists(attributes,"_w")>
 		<a href="##" onclick="#theaddurl#&pluploadruntimes=html5';">Html5</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=flash';">Flash</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=silverlight';">Silverlight</a> | <a href="##" onclick="#theaddurl#&pluploadruntimes=html4';">Html4</a>
 	<cfelse>
-		<a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html5');">Html5</a></cfif> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=flash');">Flash</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=silverlight');">Silverlight</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html4');">Html4</a>
+		<a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html5');">Html5</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=flash');">Flash</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=silverlight');">Silverlight</a> | <a href="##" onclick="$('##addsingle').load('#theaddurl#&pluploadruntimes=html4');">Html4</a>
+	</cfif>
 </cfif>
 </div>
 </cfoutput>

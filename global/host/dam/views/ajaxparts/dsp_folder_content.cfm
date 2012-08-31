@@ -179,11 +179,23 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><cfif cloud_url NEQ "">
-												<img src="#cloud_url#" border="0">
+								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg">
+										<cfif link_kind NEQ "url">
+											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+												<cfif cloud_url NEQ "">
+													<img src="#cloud_url#" border="0">
+												<cfelse>
+													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+												</cfif>
 											<cfelse>
-												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-											</cfif><cfelse><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif></div></a>
+												<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+											</cfif>
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
+										</cfif>
+									</div>
+								</a>
 							<!--- <br><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#attributes.folder_id#','#filename#',800,600);return false;">#myFusebox.getApplicationData().defaults.trans("file_detail")#</a> --->
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-vid") NEQ 0> checked="checked"</cfif>>
@@ -288,23 +300,23 @@
 								</script>
 								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable#id#-doc" type="#id#-doc" class="theimg">
-								<!--- If it is a PDF we show the thumbnail --->
-								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
-									<cfif cloud_url NEQ "">
-										<img src="#cloud_url#" border="0">
+									<!--- If it is a PDF we show the thumbnail --->
+									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
+									<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
+										<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+										<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
+										<cfelse>
+											<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="120" border="0">
+										</cfif>
 									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
 									</cfif>
-								<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
-									<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
-									<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
-									<cfelse>
-										<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="120" border="0">
-									</cfif>
-								<cfelse>
-									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
-								</cfif>
 								</div>
 								</a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
