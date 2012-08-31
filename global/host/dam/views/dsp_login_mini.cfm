@@ -47,7 +47,7 @@
 						</select>
 					</cfif>
 					<br /><br />
-					<a href="#cgi.http_host##cgi.script_name#" target="_blank">I forgot my password.</a>
+					<a href="//#cgi.http_host##cgi.script_name#" target="_blank" style="text-decoration:underline">I forgot my password</a> | <a href="//#cgi.http_host##cgi.script_name#" target="_blank" style="text-decoration:underline">Razuna Standard</a>
 				</p>
 			</form>
 		</div>

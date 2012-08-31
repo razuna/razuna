@@ -98,7 +98,7 @@ Page output starts here
 				    </tr>
 				</cfif>
 			    <tr>
-					<td nowrap="true"><a href="##" onclick="loadcontent('login_div','#myself##xfa.forgotpass#');$('##alertbox').html('');return false;">#myFusebox.getApplicationData().defaults.trans("forgot_password")#</a> | <a href="##" onclick="loadcontent('login_div','#myself##xfa.req_access#');$('##alertbox').html('');return false;">#myFusebox.getApplicationData().defaults.trans("request_access")#</a></td>
+					<td nowrap="true"><a href="##" onclick="loadcontent('login_div','#myself##xfa.forgotpass#');$('##alertbox').html('');return false;">#myFusebox.getApplicationData().defaults.trans("forgot_password")#</a> | <a href="#myself#c.mini">Mobile</a> | <a href="##" onclick="loadcontent('login_div','#myself##xfa.req_access#');$('##alertbox').html('');return false;">#myFusebox.getApplicationData().defaults.trans("request_access")#</a></td>
 				</tr>
 			</table>
 			</form>
