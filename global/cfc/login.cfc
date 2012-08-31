@@ -199,6 +199,8 @@
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
+					<!--- Flush Cache --->
+					<cfset resetcachetoken("folders")>
 				</cfif>
 			</cfif>
 		</cfthread>
@@ -275,8 +277,10 @@ Username: #qryuser.user_login_name#
 Password: #randompassword#
 
 			</cfmail>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("users")>
 		</cfif>
-	<cfreturn thepass />
+		<cfreturn thepass />
 	</cffunction>
 
 	<!--- FUNCTION: Random Password --->
