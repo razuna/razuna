@@ -164,10 +164,10 @@
 	<!--- Get PluginID --->
 	<cffunction name="getMyID" access="public" returntype="string">
 		<cfargument name="pluginname" type="string" required="true" />
-		<!--- Detect if there is /razuna in the path --->
+		<!--- Dedect if there is /razuna in the path --->
 		<cfset var thepath = expandPath("../..")>
 		<cfset var thepath = replaceNoCase(thepath, "/razuna", "", "one")>
-		<cfset var plugID = getProfileString("#thepath#/razuna/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
+		<cfset var plugID = getProfileString("#thepath#razuna/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
 		<cfreturn plugID />
 	</cffunction>
 
