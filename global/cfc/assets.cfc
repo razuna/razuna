@@ -2395,7 +2395,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.theuserid = session.theuserid>
 	<cfset arguments.thestruct.storage = application.razuna.storage>
-	<cfset arguments.thestruct.theplaceholderpic = arguments.thestruct.rootpath & "global/host/dam/images/placeholders/nopic.jpg">
+	<cfset arguments.thestruct.theplaceholderpic = arguments.thestruct.rootpath & "global/host/dam/images/placeholders/novideo.png">
 	<!--- init function internal vars --->
 	<cfset var theDBurl = "">
 	<cfset var iLoop = "">
