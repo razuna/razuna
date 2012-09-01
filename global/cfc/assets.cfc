@@ -1212,7 +1212,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Create folder to hold the images --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thepdfdirectory#" mode="775">
 			<!--- Script: Create thumbnail --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -thumbnail 128x +profile '*' -colorspace RGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -thumbnail 128x +profile '*' -colorspace sRGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Script: Create images --->
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfile# #arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Execute --->
@@ -1244,40 +1244,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfelse>
 					<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 				</cfif>
-<<<<<<< HEAD
-			</cfif>
-			<!--- If we are PDF we create thumbnail and images from the PDF --->
-			<!--- RFS --->
-			<cfif !application.razuna.rfs>
-				<cfif attributes.intstruct.qryfile.extension EQ "PDF" AND attributes.intstruct.qryfile.link_kind NEQ "url">
-					<!--- Create a temp folder to hold the PDF images --->
-					<cfset attributes.intstruct.thepdfdirectory = "#attributes.intstruct.thetempdirectory#/#createuuid('')#/razuna_pdf_images">
-					<!--- Create folder to hold the images --->
-					<cfdirectory action="create" directory="#attributes.intstruct.thepdfdirectory#" mode="775">
-					<!--- Script: Create thumbnail --->
-					<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfileflat# -thumbnail 128x +profile '*' -colorspace sRGB -background white -flatten #attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
-					<!--- Script: Create images --->
-					<cffile action="write" file="#attributes.intstruct.thesht#" output="#attributes.intstruct.theimconvert# #attributes.intstruct.theorgfile# #attributes.intstruct.thepdfdirectory#/#attributes.intstruct.thepdfimage#" mode="777">
-					<!--- Execute --->
-					<cfset ttpdf = createUUID("")>
-					<cfthread name="#ttpdf#" pdfintstruct="#attributes.intstruct#" priority="LOW">
-						<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
-						<cfif application.razuna.storage NEQ "amazon">
-							<cfexecute name="#attributes.pdfintstruct.thesht#" timeout="900" />
-						</cfif>
-					</cfthread>
-					<!--- Wait for thread to finish --->
-					<cfthread action="join" name="#ttpdf#" />						
-					<!--- Delete scripts --->
-					<cffile action="delete" file="#attributes.intstruct.thesh#">
-					<cffile action="delete" file="#attributes.intstruct.thesht#">
-					<!--- If no PDF could be generated then copy the thumbnail placeholder --->
-					<cfif NOT fileexists("#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#")>
-						<cffile action="copy" source="#attributes.intstruct.rootpath#global/host/dam/images/icons/icon_pdf.png" destination="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thepdfimage#" mode="775">
-					</cfif>
-					<cfset attributes.intstruct.qryfile.path = "#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
-				<!--- We are normal files --->
-=======
 				<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfelse>
 				<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
@@ -1289,7 +1255,6 @@ This is the main function called directly by a single upload else from addassets
 					<cfset arguments.thestruct.qryfile.path = replace(arguments.thestruct.qryfile.path," ","\ ","all")>
 					<cfset arguments.thestruct.qryfile.path = replace(arguments.thestruct.qryfile.path,"&","\&","all")>
 					<cfset arguments.thestruct.qryfile.path = replace(arguments.thestruct.qryfile.path,"'","\'","all")>
->>>>>>> plugin
 				<cfelse>
 					<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 					<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
@@ -3437,16 +3402,6 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 				</cfquery>
 			</cfif>
-<<<<<<< HEAD
-		</cfthread>
-		<!--- Join above thread --->
-		<cfthread action="join" name="#tt#" />
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")>
-		<cfset variables.cachetoken = resetcachetoken("general")>
-=======
 		<!--- link_kind is url --->
 		<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
 			<!--- Add to Lucene --->
@@ -3515,7 +3470,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfset resetcachetoken("audios")>
 	<cfset resetcachetoken("folders")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
->>>>>>> plugin
 	<!--- Return --->
 	<cfreturn arguments.thestruct.newid />
 </cffunction>
