@@ -302,6 +302,8 @@
 		<cfargument name="args" required="true" />
 		<!--- Params --->
 		<cfset var result = structnew()>
+		<cfset result.pcfc = "">
+		<cfset result.pview = "">
 		<!--- Take comp path apart --->
 		<cfset var fcomp = listFirst(arguments.args.comp, ".")>
 		<!--- Just invoke the cfc --->
