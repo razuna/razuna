@@ -40,33 +40,36 @@
 				<tr>
 					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.prefs_global_main');return false;">&raquo; #defaultsObj.trans("settings_global")#</a></td>
 				</tr>
+				<tr>
+					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.plugins');return false;">&raquo; Plugins</a></td>
+				</tr>
 			</table>
 			<!--- Users --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
-			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_60"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/user-group-properties.png" alt="" width="24" height="24" border="0" align="left" style="padding-left:10px;"></td><td width="212" class="textbold" style="padding-left:5px;"><strong>#defaultsObj.trans("users")#</strong></td></tr></table></td>
-			</tr>
+				<tr>
+					<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_60"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/user-group-properties.png" alt="" width="24" height="24" border="0" align="left" style="padding-left:10px;"></td><td width="212" class="textbold" style="padding-left:5px;"><strong>#defaultsObj.trans("users")#</strong></td></tr></table></td>
+				</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 			<!--- User Links --->
 			<tr>
-			<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself#c.users');return false;">&raquo; #defaultsObj.trans("user_list")#</a></td>
+				<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself#c.users');return false;">&raquo; #defaultsObj.trans("user_list")#</a></td>
 			</tr>
 			<!--- Groups --->
 			<tr>
-			<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.groups');return false;">&raquo; #defaultsObj.trans("groups_link")#</a></td>
+				<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.groups');return false;">&raquo; #defaultsObj.trans("groups_link")#</a></td>
 			</tr>
 			</table>
 			<!--- Hosts --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
-			<tr>
-			<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_61"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/go-home-7.png" alt="" width="24" height="24" border="0" align="left" style="padding-left:10px;"></td><td width="212" class="textbold" style="padding-left:5px;"><strong>#defaultsObj.trans("hosts")#</strong></td></tr></table></td>
-			</tr>
+				<tr>
+					<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_61"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/go-home-7.png" alt="" width="24" height="24" border="0" align="left" style="padding-left:10px;"></td><td width="212" class="textbold" style="padding-left:5px;"><strong>#defaultsObj.trans("hosts")#</strong></td></tr></table></td>
+				</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
-			<tr>
-			<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself#c.hosts');return false;">&raquo; #defaultsObj.trans("host_menue")#</a></td>
-			</tr>
+				<tr>
+					<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself#c.hosts');return false;">&raquo; #defaultsObj.trans("host_menue")#</a></td>
+				</tr>
 			</table>
 		</td>
 	</tr>

@@ -338,6 +338,47 @@
 			PRIMARY KEY (rfs_id)
 		)
 		</cfquery>
+
+		<!--- ct_plugins_hosts --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE ct_plugins_hosts
+		(
+			ct_pl_id_r		varchar(100),
+		  	ct_host_id_r	BIGINT,
+		  	rec_uuid		varchar(100)
+		)
+		</cfquery>
+
+		<!--- plugins --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE plugins
+		(
+			p_id 			varchar(100),
+			p_path 			varchar(500),
+			p_active 		varchar(5) DEFAULT 'false',
+			p_name 			varchar(500),
+			p_url 			varchar(500),
+			p_version 		varchar(20),
+			p_author 		varchar(500),
+			p_author_url 	varchar(500),
+			p_description 	varchar(2000),
+			p_license 		varchar(500),
+			p_cfc_list 		varchar(500),
+			PRIMARY KEY (p_id)
+		)
+		</cfquery>
+		
+		<!--- plugins_actions --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE plugins_actions
+		(
+			action 			varchar(200),
+  			comp 			varchar(200),
+  			func 			varchar(200),
+  			args 			clob,
+  			p_id 			varchar(100)
+		)
+		</cfquery>
 		
 		<!---  --->
 		<!--- END: CREATE TABLES --->

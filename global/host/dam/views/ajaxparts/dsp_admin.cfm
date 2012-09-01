@@ -44,6 +44,10 @@
 			</cfif>
 			<!--- <li><a href="##admin_api" onclick="loadcontent('admin_api','#myself#c.admin_api');">API</a></li> --->
 			<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">System Information</a></li>
+			<!--- Plugins --->
+			<cfif qry_plugins.recordcount NEQ 0>
+				<li><a href="##admin_plugins">Plugins</a></li>
+			</cfif>
 		</ul>
 		<!--- Users --->
 		<div id="admin_users">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
@@ -88,6 +92,24 @@
 		<!--- <div id="admin_api">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div> --->
 		<!--- System Information --->
 		<div id="admin_system">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+		<!--- Plugins --->
+		<cfif qry_plugins.recordcount NEQ 0>
+			<div id="admin_plugins">
+				<div>The following plugins are installed.</div>
+				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+					<tr>
+						<th>Plugin</th>
+						<th>Description</th>
+					</tr>
+					<cfloop query="qry_plugins">
+						<tr>
+							<td valign="top" nowrap="nowrap"><strong>#p_name#</strong><br /><div style="padding-top:5px;"><a href="##" onclick="loadcontent('rightside','#myself#c.plugin_settings&p_id=#p_id#');return false;">Settings</a> | <a href="##" onclick="showwindow('#myself#c.admin_plugin_one&p_id=#p_id#','Information about this plugin',450,1);return false;">Information</a></div></td>
+							<td valign="top">#p_description#<br />Version: #p_version# | Author: #p_author#</td>
+						</tr>
+					</cfloop>
+				</table>
+			</div>
+		</cfif>
 	</div>
 	<!--- <div style="float:right;"><a href="##" onclick="destroywindow(1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduler_close_cap")#</a></div> --->
 	<!--- Activate the Tabs --->

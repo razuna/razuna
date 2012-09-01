@@ -339,6 +339,11 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+		<cfset arguments.thestruct.file_name = thedetail.file_name>
+		<cfset arguments.thestruct.thefiletype = "doc">
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
@@ -415,6 +420,11 @@
 			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
+			<!--- Execute workflow --->
+			<cfset arguments.thestruct.fileid = i>
+			<cfset arguments.thestruct.file_name = thedetail.file_name>
+			<cfset arguments.thestruct.thefiletype = "doc">
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
@@ -857,7 +867,7 @@
 			<!--- Ignore if the folder id is the same --->
 			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
 				<!--- Update DB --->
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#files
 				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				WHERE file_id = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -865,6 +875,11 @@
 				</cfquery>
 				<!--- Log --->
 				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid='#arguments.thestruct.doc_id#')#>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
+				<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
+				<cfset arguments.thestruct.thefiletype = "doc">
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			</cfif>
 		<cfreturn />
 	</cffunction>

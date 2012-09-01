@@ -319,6 +319,9 @@
 				loadcontent('rightside','#myself#c.folder&col=F&folder_id=#cs.folder_redirect#');
 			</script>
 		</cfif>
+		<cfloop list="#pl.pview#" delimiters="," index="i">
+			#evaluate(i)#
+		</cfloop>
 	</cfoutput>
 </div>
 <!--- Activate the Tabs on the main page --->

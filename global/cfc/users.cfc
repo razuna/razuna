@@ -108,10 +108,12 @@
 
 <!--- Get all users --->
 <cffunction name="getall">
-	<cfargument name="thestruct" type="Struct">
+	<cfargument name="thestruct" type="Struct" required="false">
+	<cfparam name="arguments.thestruct" default="#structnew()#">
 	<cfset var localquery = 0>
-	<cfquery datasource="#application.razuna.datasource#" name="localquery">
-	SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
+	<cfset variables.cachetoken = getcachetoken("users")>
+	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getallusers */ u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
 		(
 		SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>min(ct_g_u_grp_id)
 		FROM ct_groups_users
@@ -147,6 +149,7 @@
 <!--- Get Details from this User --->
 <cffunction name="details">
 	<cfargument name="thestruct" type="Struct">
+	<cfset variables.cachetoken = getcachetoken("users")>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin, user_create_date,
 	user_active,USER_COMPANY,USER_PHONE,USER_MOBILE,USER_FAX,user_in_dam, user_salutation
@@ -734,5 +737,20 @@
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
+
+<!--- Get all users who are active --->
+<cffunction name="getallactive">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getallactive */ u.user_email, u.user_first_name, u.user_last_name
+	FROM users u, ct_users_hosts uh
+	WHERE (
+		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+		AND uh.ct_u_h_user_id = u.user_id
+		)
+	WHERE lower(u.user_active) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="t">
+	</cfquery>
+	<cfreturn qry>
+</cffunction>
+
 
 </cfcomponent>

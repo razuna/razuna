@@ -265,6 +265,31 @@
 	<cfreturn localquery />
 </cffunction>
 
+<!--- ------------------------------------------------------------------------------------- --->
+<!--- get users of a group --->
+<cffunction name="getUsersOfGroups" returntype="query">
+	<cfargument name="grp_id" type="string" required="true">
+	<!--- function internal vars --->
+	<cfset var localquery = 0>
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
+	SELECT u.user_id, u.user_first_name, u.user_last_name, u.user_email
+	FROM users u, ct_users_hosts ct
+	WHERE EXISTS(
+		SELECT ct_groups_users.ct_g_u_user_id
+		FROM ct_groups_users INNER JOIN groups ON ct_groups_users.ct_g_u_grp_id = groups.grp_id
+		WHERE(
+			groups.grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+			OR groups.grp_host_id IS NULL
+		)
+		AND groups.grp_id IN (<cfqueryparam value="#Arguments.grp_id#" cfsqltype="CF_SQL_VARCHAR" list="true">)
+		AND ct_groups_users.ct_g_u_user_id = u.user_id
+	)
+	AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+	AND u.user_id = ct.ct_u_h_user_id
+	</cfquery>
+	<cfreturn localquery />
+</cffunction>
+
 
 <!--- get all admins or sysadmin of this host --->
 <cffunction name="getadmins">

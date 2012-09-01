@@ -2,8 +2,6 @@
 <server>
   <system>
     <buffersize>0</buffersize>
-    <strictarraypassbyreference>true</strictarraypassbyreference>
-    <functionscopedvariables>false</functionscopedvariables>
     <password>admin</password>
     <licensekey></licensekey>
     <assert>true</assert>

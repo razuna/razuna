@@ -100,7 +100,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2" align="right"><a href="##" onclick="$('##pdfxmp').css('display','').show('blind','slow');">Show additional metadata fields</a></td>
+					<td colspan="2" align="right"><a href="##" onclick="$('##pdfxmp').slideToggle('slow');return false;">Show additional metadata fields</a></td>
 				</tr>
 				<tr>
 					<td colspan="2" style="padding:0px;margin:0px;">
@@ -174,7 +174,7 @@
 					</td>
 				</tr>
 				<tr>
-					<td colspan="2" align="right"><a href="##" onclick="$('##imgxmp').css('display','').show('blind','slow');">Show additional metadata fields</a></td>
+					<td colspan="2" align="right"><a href="##" onclick="$('##imgxmp').slideToggle('slow');return false;">Show additional metadata fields</a></td>
 				</tr>
 				<tr>
 					<td colspan="2" style="padding:0px;margin:0px;">

@@ -476,7 +476,7 @@ Comment:<br>
 
 <!--- Get ALL Upload Templates ---------------------------------------------------------------------->
 	<cffunction name="upl_templates" output="false">
-		<cfargument name="theactive" type="boolean" required="false" default="0">
+		<cfargument name="theactive" type="boolean" required="false" default="false">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT upl_temp_id, upl_active, upl_name, upl_description

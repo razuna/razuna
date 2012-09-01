@@ -67,6 +67,11 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
+		<!-- Plugins -->
+		<instantiate class="plugins" object="myFusebox.getApplicationData().plugins" overwrite="true">
+			<argument name="dsn" value="#application.razuna.datasource#" />
+			<argument name="database" value="#application.razuna.thedatabase#" />
+		</instantiate>
 	</fuseaction>
 
 </circuit>

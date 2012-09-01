@@ -283,6 +283,8 @@
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 				<!-- CFC: Get config -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('prerelease')" returnvariable="prerelease" />
+				<!-- CFC: Get plugin actions -->
+				<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_main_page')" returnvariable="pl" />
 				<!-- Get the Cache tag -->
 				<do action="cachetag" />
 				<!-- Show main page -->
@@ -1383,6 +1385,8 @@
 				<set name="attributes.folder_id" value="#attributes.folder_id_org#" />
 			</true>
 		</if>
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_folder_settings',attributes)" returnvariable="pl" />
 		<!-- Show -->
 		<do action="ajax.folder_new" />
 	</fuseaction>
@@ -2125,6 +2129,11 @@
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="metatofile(attributes)" />
 			</true>
 		</if>
+		<!-- Variables for API -->
+		<set name="attributes.thefiletype" value="doc" />
+		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Serve File to the browser -->
 	<fuseaction name="serve_file">
@@ -2203,6 +2212,11 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
+		<!-- Variables for API -->
+		<set name="attributes.thefiletype" value="vid" />
+		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Convert Video -->
 	<fuseaction name="videos_convert">
@@ -2305,6 +2319,11 @@
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="xmpwritethread(attributes)" />
 			</true>
 		</if>
+		<!-- Variables for API -->
+		<set name="attributes.thefiletype" value="img" />
+		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Convert Image -->
 	<fuseaction name="images_convert">
@@ -2380,6 +2399,11 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
+		<!-- Variables for API -->
+		<set name="attributes.thefiletype" value="aud" />
+		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
 	<!-- Convert Audio -->
 	<fuseaction name="audios_convert">
@@ -3135,6 +3159,12 @@
 				<set name="session.savehere" value="" />
 			</true>
 		</if>
+		<!-- For scheduled uploads do... -->
+		<if condition="session.type EQ 'plugin'">
+			<true>
+				<set name="session.savehere" value="" />
+			</true>
+		</if>
 		<!-- If we save the basket as zip in this folder do... -->
 		<if condition="session.type EQ 'saveaszip'">
 			<true>
@@ -3526,6 +3556,51 @@
 	<!-- ADMIN SECTION -->
 	<!--  -->
 	
+	<!-- Calling the main admin -->
+	<fuseaction name="admin">
+		<!-- Check on activated plugins here -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb('true')" returnvariable="qry_plugins" />
+		<!-- Do -->
+		<do action="ajax.admin" />
+	</fuseaction>
+	<!-- Showing plugin information page -->
+	<fuseaction name="admin_plugin_one">
+		<!-- Get this one plugin -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getone(attributes.p_id)" returnvariable="qry_plugin" />
+		<!-- Do -->
+		<do action="ajax.plugin_info" />
+	</fuseaction>
+	<!-- Load the plugin settings page -->
+	<fuseaction name="plugin_settings">
+		<!-- Get this one plugin -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getone(attributes.p_id)" returnvariable="qry_plugin" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('settings')" returnvariable="pl" />
+		<!-- Do -->
+		<do action="ajax.plugin_settings_loader" />
+	</fuseaction>
+	<!-- Save the plugin settings page -->
+	<fuseaction name="plugin_save">
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions(attributes.p_action,attributes)" returnvariable="pl" />
+	</fuseaction>
+
+	<!-- Call plugin method directly -->
+	<fuseaction name="plugin_direct">
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="callDirect(attributes)" returnvariable="pl" />
+		<!-- Do -->
+		<do action="ajax.plugin_loader" />
+	</fuseaction>
+
+	<!-- If we call the choose folder within the plugin -->
+	<fuseaction name="plugin_choose_folder">
+		<!-- Param -->
+		<set name="session.type" value="plugin" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
+	</fuseaction>
+
 	<!--  -->
 	<!-- ADMIN: USERS -->
 	<!--  -->
@@ -4183,7 +4258,7 @@
 	<!-- Get existing custom fields -->
 	<fuseaction name="custom_fields_existing">
 		<!-- CFC: Get fields -->
-		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get(attributes)" returnvariable="qry_fields" />
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get()" returnvariable="qry_fields" />
 		<!-- Show -->
 		<do action="ajax.custom_fields_existing" />
 	</fuseaction>

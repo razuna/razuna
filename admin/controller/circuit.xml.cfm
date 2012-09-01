@@ -504,6 +504,60 @@
 	<!--  -->
 
 	<!--  -->
+	<!-- START: PLUGINS -->
+	<!--  -->
+
+	<!-- Load -->
+	<fuseaction name="plugins">
+		<!-- Assetpath -->
+		<set name="attributes.pathoneup" value="#pathoneup#" />
+		<!-- CFC: Get all plugins -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getall(attributes.pathoneup)" returnvariable="qry_plugins" />
+		<!-- Show -->
+		<do action="ajax.plugins" />
+	</fuseaction>
+	<!-- Activate/Deactivate -->
+	<fuseaction name="plugins_onoff">
+		<!-- CFC: Activate or not -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setactive(attributes.pid,attributes.active,'#pathoneup#')" />
+		<!-- Reload the page -->
+		<do action="plugins" />
+	</fuseaction>
+	<!-- remove -->
+	<fuseaction name="plugins_remove">
+		<!-- CFC: Activate or not -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="remove(attributes.id)" />
+		<!-- Reload the page -->
+		<do action="plugins" />
+	</fuseaction>
+	<!-- Get Plugins Host -->
+	<fuseaction name="plugins_hosts">
+		<!-- Get all hosts -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="qry_allhosts" />
+		<!-- CFC: Get all plugins from DB only -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getalldb('true')" returnvariable="qry_plugins" />
+		<!-- CFC: Get all plugins who are selected for the hosts -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getpluginshosts()" returnvariable="qry_plugins_hosts" />
+		<!-- Show -->
+		<do action="ajax.plugins_hosts" />
+	</fuseaction>
+	<!-- Get Plugins Host -->
+	<fuseaction name="plugins_hosts_saves">
+		<!-- CFC: Save host plugins -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="setpluginshosts(attributes.listpluginshost)" />
+	</fuseaction>
+	<!-- Get Plugins Host -->
+	<fuseaction name="plugins_upload">
+		<!-- CFC: Save host plugins -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="upload(attributes)" />
+		<do action="ajax.plugins_upload" />
+	</fuseaction>
+
+	<!--  -->
+	<!-- END: PLUGINS -->
+	<!--  -->
+
+	<!--  -->
 	<!-- START: PREFERENCES -->
 	<!--  -->
 

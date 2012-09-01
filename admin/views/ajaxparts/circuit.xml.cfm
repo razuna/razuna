@@ -293,5 +293,18 @@
 	<fuseaction name="prefs_rendf_valftp">
   		<include template="dsp_pref_global_rendfarm_valftp" />
 	</fuseaction>
+
+	<!-- Plugins -->
+	<fuseaction name="plugins">
+  		<include template="dsp_plugins" />
+	</fuseaction>
+	<!-- Plugins Hosts -->
+	<fuseaction name="plugins_hosts">
+  		<include template="dsp_plugins_hosts" />
+	</fuseaction>
+	<!-- Plugins Upload -->
+	<fuseaction name="plugins_upload">
+  		<include template="dsp_plugins_upload" />
+	</fuseaction>
 	
 </circuit>

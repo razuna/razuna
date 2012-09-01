@@ -408,6 +408,11 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
+	<!--- Execute workflow --->
+	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+	<cfset arguments.thestruct.file_name = detail.aud_name>
+	<cfset arguments.thestruct.thefiletype = "aud">
+	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
 	<cfset resetcachetoken("folders")>
@@ -483,6 +488,11 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = i>
+		<cfset arguments.thestruct.file_name = thedetail.aud_name>
+		<cfset arguments.thestruct.thefiletype = "aud">
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
@@ -588,7 +598,7 @@
 			<!--- Ignore if the folder id is the same --->
 			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryaud.folder_id_r>
 				<!--- Update DB --->
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
 				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 				WHERE aud_id = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -598,6 +608,11 @@
 				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 				<!--- Log --->
 				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryaud.aud_name#',logfiletype='aud',assetid='#arguments.thestruct.aud_id#')#>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.aud_id>
+				<cfset arguments.thestruct.file_name = arguments.thestruct.qryaud.aud_name>
+				<cfset arguments.thestruct.thefiletype = "aud">
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving audio" dump="#cfcatch#">
@@ -610,7 +625,7 @@
 <cffunction name="moverelated" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get all that have the same aud_id as related --->
-	<cfquery datasource="#variables.dsn#" name="qryintern">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern">
 	SELECT folder_id_r, aud_id
 	FROM #session.hostdbprefix#audios
 	WHERE aud_group = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -620,7 +635,7 @@
 	<cfif qryintern.recordcount NEQ 0>
 		<cfloop query="qryintern">
 			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#audios
 			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			WHERE aud_id = <cfqueryparam value="#aud_id#" cfsqltype="CF_SQL_VARCHAR">

@@ -292,14 +292,7 @@
 			<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
 			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
 			<cfsavecontent variable="thevideo"><cfoutput>
-			<script type="text/javascript">
-			    QT_WriteOBJECT('#thevideo#', '#thewidth#','#theheight#', '', 
-			     'scale', 'tofit',
-			     'controller','true',
-			     'autoplay','false'
-			     );
-			</script>
-			<!--- <cfif cgi.user_agent CONTAINS "safari" AND NOT cgi.user_agent CONTAINS "chrome">
+			<cfif cgi.user_agent CONTAINS "safari" AND NOT cgi.user_agent CONTAINS "chrome">
 				<video controls="" autoplay="" style="margin: auto; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" name="media" src="#thevideo#"></video>
 			<cfelse>
 				<OBJECT CLASSID="clsid:02BF25D5-8C17-4B23-BC80-D3488ABDDC6B" HEIGHT="#theheight#" WIDTH="#thewidth#" CODEBASE="http://www.apple.com/qtactivex/qtplugin.cab">
@@ -312,7 +305,7 @@
 				<embed width="#thewidth#" height="#theheight#" name="plugin" autoplay="true" src="#theimage#" href="#thevideo#" target="myself" type="video/quicktime" pluginspage="http://www.apple.com/quicktime/download/"> 
 				</OBJECT>
 			</cfif>
-			<br>Click on the image to start watching the movie.<br>(If the video is not showing try to <a href="#thevideo#">watch it in QuickTime directly</a>.) --->
+			<br>Click on the image to start watching the movie.<br>(If the video is not showing try to <a href="#thevideo#">watch it in QuickTime directly</a>.)
 			</cfoutput></cfsavecontent>
 			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
 			<!---
@@ -583,6 +576,9 @@
 	</cfquery>
 	<!--- Delete labels --->
 	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<!--- Delete from file system --->
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
@@ -592,10 +588,11 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset resetcachetoken("folders")>
-	<cfset resetcachetoken("search")>
+	<!--- Execute workflow --->
+	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+	<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+	<cfset arguments.thestruct.thefiletype = "vid">
+	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<cfreturn />
 </cffunction>
 
@@ -667,11 +664,15 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = i>
+		<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+		<cfset arguments.thestruct.thefiletype = "vid">
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset resetcachetoken("folders")>
-	<cfset resetcachetoken("search")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
@@ -923,8 +924,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset resetcachetoken("folders")>
-	<cfset resetcachetoken("search")> 
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 </cffunction>
 
 <!--- CONVERT VIDEO IN A THREAD --->
@@ -1499,28 +1499,33 @@
 <cffunction name="move" output="false">
 	<cfargument name="thestruct" type="struct">
 		<cftry>
-		<!--- Params --->
-		<cfset arguments.thestruct.qryvid = "">
-		<cfset arguments.thestruct.storage = application.razuna.storage>
-		<!--- Move --->
-		<cfinvoke method="getdetails" vid_id="#arguments.thestruct.vid_id#" ColumnList="v.vid_filename, v.folder_id_r, path_to_asset" returnvariable="arguments.thestruct.qryvid">
-		<!--- Ignore if the folder id is the same --->
-		<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
-			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
-			UPDATE #session.hostdbprefix#videos
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
-			WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
-			<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
-			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.vid_id#')#>
-		</cfif>
-		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">
-		</cfcatch>
+			<!--- Params --->
+			<cfset arguments.thestruct.qryvid = "">
+			<cfset arguments.thestruct.storage = application.razuna.storage>
+			<!--- Move --->
+			<cfinvoke method="getdetails" vid_id="#arguments.thestruct.vid_id#" ColumnList="v.vid_filename, v.folder_id_r, path_to_asset" returnvariable="arguments.thestruct.qryvid">
+			<!--- Ignore if the folder id is the same --->
+			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
+				<!--- Update DB --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#videos
+				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
+				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
+				<!--- Log --->
+				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.vid_id#')#>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.vid_id>
+				<cfset arguments.thestruct.file_name = arguments.thestruct.qryvid.vid_filename>
+				<cfset arguments.thestruct.thefiletype = "vid">
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+			</cfif>
+			<cfcatch type="any">
+				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">
+			</cfcatch>
 		</cftry>
 	<cfreturn />
 </cffunction>
@@ -1529,7 +1534,7 @@
 <cffunction name="moverelated" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get all that have the same img_id as related --->
-	<cfquery datasource="#variables.dsn#" name="qryintern">
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern">
 	SELECT folder_id_r, vid_id
 	FROM #session.hostdbprefix#videos
 	WHERE vid_group = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -1539,7 +1544,7 @@
 	<cfif qryintern.recordcount NEQ 0>
 		<cfloop query="qryintern">
 			<!--- Update DB --->
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#videos
 			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			WHERE vid_id = <cfqueryparam value="#vid_id#" cfsqltype="CF_SQL_VARCHAR">

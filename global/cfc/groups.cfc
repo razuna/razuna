@@ -78,14 +78,14 @@
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Get all the records --->
 <cffunction hint="Get all records" name="getall" returntype="query">
-	<cfargument name="thestruct" type="Struct">
+	<cfargument name="thestruct" type="Struct" required="false">
 	<cfargument name="host_id" default="#session.hostid#" type="numeric" required="false">
 	<cfargument name="mod_id" type="numeric" required="false">
 	<cfargument name="mod_short" type="string" required="false" hint="modules.mod_short">
 	<cfargument name="orderBy" type="string" required="false" default="grp_mod_id, grp_name" hint="""ORDER BY #yourtext#""">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
 	SELECT grp_id, grp_name, grp_host_id, grp_mod_id, grp_translation_key,
 		(
 			SELECT count(*)

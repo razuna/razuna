@@ -164,8 +164,18 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
-		<!-- RFS -->
+		<!-- Import -->
 		<instantiate class="import" object="myFusebox.getApplicationData().import" overwrite="true">
+			<argument name="dsn" value="#application.razuna.datasource#" />
+			<argument name="database" value="#application.razuna.thedatabase#" />
+		</instantiate>
+		<!-- Plugins -->
+		<instantiate class="plugins" object="myFusebox.getApplicationData().plugins" overwrite="true">
+			<argument name="dsn" value="#application.razuna.datasource#" />
+			<argument name="database" value="#application.razuna.thedatabase#" />
+		</instantiate>
+		<!-- API -->
+		<instantiate class="api" object="myFusebox.getApplicationData().api" overwrite="true">
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
