@@ -179,12 +179,6 @@
 									<td>Hi there. Thank you for using Razuna. In order for you to enjoy Razuna even more we have some additional tools for you available.</td>
 								</tr>
 								<tr>
-									<th><a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Razuna Desktop</a></th>
-								</tr>
-								<tr>
-									<td>Razuna Desktop enables you to add any asset from your desktop to Razuna by simply dragging and dropping it into your Razuna Desktop application. <a href="http://razuna.org/whatisrazuna/razunadesktop" target="_blank">Read more</a></td>
-								</tr>
-								<tr>
 									<th><a href="http://razuna.org/whatisrazuna/razunawordpress" target="_blank">Razuna Wordpress Plugin</a></th>
 								</tr>
 								<tr>
@@ -201,21 +195,6 @@
 								</tr>
 								<tr>
 									<td>Razuna features a extensive API for you to expand on and access your assets Head over to our <a href="http://razuna.org/getinvolved/developers" target="_blank">Developer section</a> or directly to the <a href="http://wiki.razuna.com/display/ecp/API+Developer+Guide" target="_blank">API guide</a>. </a></td>
-								</tr>
-								<tr>
-									<th style="padding-top:15px;">Follow Razuna</th>
-								</tr>
-								<tr>
-									<td><a href="http://twitter.com/razunahq" class="twitter-follow-button">Follow @razunahq</a></td>
-								</tr>
-								<tr>
-									<td><script>(function(d){
-  var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-  js = d.createElement('script'); js.id = id; js.async = true;
-  js.src = "//connect.facebook.net/en_US/all.js##appId=207944582601260&xfbml=1";
-  d.getElementsByTagName('head')[0].appendChild(js);
-}(document));</script>
-<div class="fb-like" data-href="https://www.facebook.com/razunahq" data-send="true" data-width="350" data-show-faces="true"></div></td>
 								</tr>
 							</table>
 						</div>
@@ -249,7 +228,7 @@
 						<div class="pane" id="blog"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 						<div class="pane" id="twitter"></div>
 						<div class="pane" id="facebook">
-							<div id="fb-root"></div>
+							<!--- <div id="fb-root"></div> --->
 						</div>
 					</div>
 					</td>

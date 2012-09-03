@@ -184,7 +184,7 @@
   var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
 </script>
 <!--- Twitter --->
-<script src="//platform.twitter.com/widgets.js" type="text/javascript"></script>
+<!--- <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script> --->
 <cfif application.razuna.isp>
 <script type="text/javascript">
   var _gaq = _gaq || [];
