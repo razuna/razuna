@@ -110,16 +110,12 @@
 </table>
 
 <!--- action with selection --->
-<div id="folderselection<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" style="display:none;padding-top:10px;">		
+<div id="folderselection<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" class="actiondropdown">
 	<!--- Select all link --->
-	<div style="float:left;padding-right:5px;padding-bottom:5px;" id="selectstoresearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>">
-		<div style="float:left;" id="storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>"></div>
-		<div style="float:left;padding-left:10px;display:none;" id="nonstoresearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>"><a href="##" onclick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');">Select none</a></div>
-		<!--- <div>#session.file_id#</div> --->
+	<div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#">
+		#qry_filecount.thetotal# files select. <a href="##" onclick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');">Select none</a>
 	</div>
-	<div style="clear:both;"></div>
 	<!--- Actions with selection icons --->
-	<div style="float:left;padding-right:5px;"><strong>#myFusebox.getApplicationData().defaults.trans("action_with_selection")#: </strong></div>
 	<cfif cs.show_bottom_part>
 		<a href="##" onclick="sendtobasket('searchform#attributes.thetype#');">
 			<div style="float:left;">

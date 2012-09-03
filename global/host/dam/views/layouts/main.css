@@ -780,3 +780,15 @@ button.css3button {
 	cursor: pointer; 
   	cursor: hand;
 }
+.actiondropdown {
+	display: none;
+	margin-top: 10px;
+	padding-top: 10px;
+	padding-left: 5px;
+	border: 1px solid #D3D3D3;
+	background: #E6E6E6;
+	height: 25px;
+	border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+}

@@ -721,7 +721,7 @@
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qryversion.newversion#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">,
 		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theuserid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.file_name_org#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.orgext#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,

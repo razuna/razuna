@@ -65,18 +65,19 @@
 			<td colspan="6">
 				<!--- Show notification of folder is being shared --->
 				<cfinclude template="inc_folder_header.cfm">
-				<div style="float:right;">
-					<!--- Folder Navigation (add file/tools/view) --->
-					<cfset thetype = "all">
-					<cfset thexfa = "c.folder_content">
-					<cfset thediv = "content">
+				<!--- <div style="float:right;">
 					<cfinclude template="dsp_folder_navigation.cfm">
-				</div>
+				</div> --->
 			</td>
 		</tr>
 		<!--- Icon Bar --->
 		<tr>
-			<td colspan="6" style="border:0px;"><cfinclude template="dsp_icon_bar.cfm"></td>
+			<td colspan="6" style="border:0px;">
+				<cfset thetype = "all">
+				<cfset thexfa = "c.folder_content">
+				<cfset thediv = "content">
+				<cfinclude template="dsp_icon_bar.cfm">
+			</td>
 		</tr>
 		<!--- Thumbnail --->
 		<cfif session.view EQ "">

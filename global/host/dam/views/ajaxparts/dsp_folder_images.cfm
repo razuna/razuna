@@ -32,16 +32,15 @@
 			<th width="100%" colspan="6">
 				<!--- Show notification of folder is being shared --->
 				<cfinclude template="inc_folder_header.cfm">
-				<div style="float:right;">
-					<!--- Folder Navigation (add file/tools/view) --->
-					<cfset thetype = "img">
-					<cfset thexfa = "#xfa.fimages#">
-					<cfset thediv = "img">
+				<!--- <div style="float:right;">
 					<cfinclude template="dsp_folder_navigation.cfm">
-				</div>
+				</div> --->
 			</th>
 		</tr>
 		<tr>
+			<cfset thetype = "img">
+			<cfset thexfa = "#xfa.fimages#">
+			<cfset thediv = "img">
 			<td colspan="6" class="gridno"><cfinclude template="dsp_icon_bar.cfm"></td>
 		</tr>
 		<!--- Thubmail view --->

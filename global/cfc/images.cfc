@@ -1124,6 +1124,10 @@
 <!--- MOVE FILE IN THREADS --->
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("images")>
+	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<!--- Loop over files --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
 		<cfset arguments.thestruct.img_id = "">
 		<!--- If we are coming from a overview ids come with type --->
@@ -1138,9 +1142,6 @@
 			</cfthread>
 		</cfif>
 	</cfloop>
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("folders")>
-	<cfset variables.cachetoken = resetcachetoken("images")>
 </cffunction>
 
 <!--- MOVE FILE --->

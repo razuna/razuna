@@ -225,31 +225,23 @@ function aspectwidth(inp,out,theform){
 }
 // Enable folderselection in list
 function enablesub(myform) {
-    var valid = true;   
-    var checkBoxes = false;
-    var checkboxChecked = false;
-    
-    for (var i=0, j=document.forms[myform].elements.length; i<j; i++) {
-        myType = document.forms[myform].elements[i].type;
-        
-	if (myType == 'checkbox') {
-            checkBoxes = true;
-            if (document.forms[myform].elements[i].checked) checkboxChecked = true;
-        }
-    }
-
-    if (checkboxChecked == false) {
-		$("#folderselection" + myform).css("display","none");
-		$("#folderselectionb" + myform).css("display","none");
+	// Check state of selection box
+    var isclosed = $("#folderselection" + myform).is(':hidden');
+    // get how many are selected
+    var n = $('#' + myform + ' input:checked').length;
+    // Open or close selection
+    if (n == 1 && isclosed) {
+		$("#folderselection" + myform).slideToggle('slow');
+		$("#folderselectionb" + myform).slideToggle('slow');
 		
 	}
-	if (checkboxChecked == true) {
-		$("#folderselection" + myform).css("display","");
-		$("#folderselectionb" + myform).css("display","");
+	if (n == 0) {
+		$("#folderselection" + myform).slideToggle('slow');
+		$("#folderselectionb" + myform).slideToggle('slow');
 	}
 	// Hide select all status
-	$("#selectstoreall").css("display","none");
-	$("#selectstoreallb").css("display","none");
+	$("#selectstore" + myform).css("display","none");
+	$("#selectstoreb" + myform).css("display","none");
 	// Store IDs
 	storeids(myform);
 }
@@ -456,6 +448,10 @@ function storeids(theform){
 function CheckAll(myform,folderid,thediv) {
 	// Set var
 	var ischk = false;
+	// Enable select all text again. cloud be set hidden from single selection
+	// Hide select all status
+	$("#selectstore" + myform).css("display","");
+	$("#selectstoreb" + myform).css("display","");
 	// Loop over checkboxes and check/uncheck and set var
 	$('#' + myform + ' :checkbox').each( function() {
 		if(this.checked){
@@ -469,30 +465,26 @@ function CheckAll(myform,folderid,thediv) {
 	})
 	// Depending on the var set or unset
 	if(ischk){
-		$("#folderselection" + myform).css("display","");
-		$("#folderselectionb" + myform).css("display","");
-		$('#select' + thediv).css('display','');
-		$('#non' + thediv).css('display','');
+		$("#folderselection" + myform).slideToggle('slow');
+		$("#folderselectionb" + myform).slideToggle('slow');
+		// $('#select' + thediv).slideToggle('slow');
+		// $('#non' + thediv).slideToggle('slow');
 		// Decide if this is from the search
 		if(folderid != 'x'){
-			$('#' + thediv).load('index.cfm?fa=c.store_file_all&folder_id=' + folderid, function(){
-				$('#' + thediv).html('<span style="color:green;font-weight:bold;">All assets in this folder have been selected. Now, apply an action from below!</span>');
-			})
+			$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid );
 		}
 		else{
 			// Get the ids from the hidden field
 			var theids = $('#searchlistids').val();
-			$('#' + thediv).load('index.cfm?fa=c.store_file_search', { fileids: theids}, function(){
-				$('#' + thediv).html('<span style="color:green;font-weight:bold;">All assets in this search section have been selected. Now, apply an action from below!</span>');
-			})
+			$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids })
 		}
 	}
 	else{
-		$("#folderselection" + myform).css("display","none");
-		$("#folderselectionb" + myform).css("display","none");
-		$('#select' + thediv).css('display','none');
-		$('#non' + thediv).css('display','none');
-		$('#' + thediv).load('index.cfm?fa=c.store_file_all&folder_id=0');
+		$("#folderselection" + myform).slideToggle('slow');
+		$("#folderselectionb" + myform).slideToggle('slow');
+		// $('#select' + thediv).slideToggle('slow');
+		// $('#non' + thediv).slideToggle('slow');
+		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=0');
 	}
 }
 
