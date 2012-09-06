@@ -9,9 +9,9 @@ commons-collections-3.2.1.jar
 commons-compress-1.4.jar
 commons-discovery.jar
 commons-fileupload-1.2.1.jar
-commons-httpclient-3.1bd.jar
 commons-io-1.4.jar
 commons-lang-2.4.jar
+commons-net-3.1.jar
 commons-pool.jar
 commons-vfs-2.0-SNAPSHOT.jar
 core-renderer.jar
