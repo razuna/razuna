@@ -345,11 +345,12 @@
 			<!--- Create uuid --->
 			<cfset tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#">
-				<cfset fc = "f" & randrange(1,10000000)>
+				<!--- Open connection --->
+				<cfset o = ftpopen(server=attributes.intstruct.ftp_server,username=attributes.intstruct.ftp_user,password=attributes.intstruct.ftp_pass,passive=attributes.intstruct.ftp_passive)>
 				<!--- Get the file --->
-				<cfftp action="getfile" connection="#fc#" server="#attributes.intstruct.ftp_server#" passive="#attributes.intstruct.ftp_passive#" stoponerror="no" username="#attributes.intstruct.ftp_user#" password="#attributes.intstruct.ftp_pass#" localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#" remotefile="#attributes.intstruct.remote_file#" transfermode="AUTO" failifexists="no" timeout="3600" />
+				<cfset Ftpgetfile(ftpdata=o,remotefile="#attributes.intstruct.remote_file#",localfile="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#",failifexists=false,passive=attributes.intstruct.ftp_passive,stoponerror=false)>
 				<!--- Close connection --->
-				<cfftp action="close" connection="#fc#" />
+				<cfset ftpclose(o)>
 			</cfthread>
 			<!--- Wait for the download above to finish --->
 			<cfthread action="join" name="#tt#" />
@@ -2763,6 +2764,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery dbtype="query" name="thedir">
 		SELECT *
 		FROM thedir
+		WHERE name != '__MACOSX'
 		ORDER BY name
 		</cfquery>
 		<!--- Get folders within the unzip RECURSIVE --->
@@ -3002,9 +3004,9 @@ This is the main function called directly by a single upload else from addassets
 			<!--- All foreign chars are now converted, except the FileSeparator and - --->
 			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","-","ALL")>
 			<!--- Rename --->
-			<!--- <cfif "#directory#/#name#" NEQ "#directory#/#d#"> --->
+			<cfif directoryExists("#directory#/#name#")>
 				<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
-			<!--- </cfif> --->
+			</cfif>
 			<!--- Call this method again since the folder name on the disk could have changed --->
 			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thedirectory#">
 		</cfif>

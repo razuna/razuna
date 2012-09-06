@@ -24,11 +24,10 @@
 *
 --->
 <cfoutput>
-<cfset fc = "ftp" & randrange(1,1000000)>
-<cfftp action="open" connection="#fc#" server="#attributes.server#" username="#attributes.user#" password="#attributes.pass#" passive="#attributes.passive#" />
-<cfif cfftp.succeeded>
+<cfset o = ftpopen(server=attributes.server,username=attributes.user,password=attributes.pass,passive=attributes.passive)>
+<cfif o.succeeded>
 	<span style="color:green;font-weight:bold;">#defaultsObj.trans("server_validated")#</span>
 <cfelse>
-	<span style="color:red;font-weight:bold;">#defaultsObj.trans("server_problem")# #cfftp.errortext#</span>
+	<span style="color:red;font-weight:bold;">#defaultsObj.trans("server_problem")# #o.errortext#</span>
 </cfif>
 </cfoutput>
