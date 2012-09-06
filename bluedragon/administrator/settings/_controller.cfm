@@ -89,6 +89,7 @@
 		<cfif ipParts[i] lt 0 || ipParts[i] gt 255>
 		  <cfset errorFields[errorFieldsIndex][1] = "allowIPs" />
 		  <cfset errorFields[errorFieldsIndex][2] = "One of the allowed IPs is not valid" />
+		  <cfset errorFieldsIndex++ />
 		</cfif>
 	      </cfif>
 	    </cfloop>
@@ -98,6 +99,7 @@
 		  <cfcatch type="any">
 		    <cfset errorFields[errorFieldsIndex][1] = "allowIPs" />
 		    <cfset errorFields[errorFieldsIndex][2] = "One of the allowed IPs is not valid" />
+			<cfset errorFieldsIndex++ />
 		  </cfcatch>
 	      </cftry>
 	  </cfif>
@@ -114,6 +116,7 @@
 		<cfif ipParts[i] lt 0 || ipParts[i] gt 255>
 		  <cfset errorFields[errorFieldsIndex][1] = "denyIPs" />
 		  <cfset errorFields[errorFieldsIndex][2] = "One of the denied IPs is not valid" />
+		  <cfset errorFieldsIndex++ />
 		</cfif>
 	      </cfif>
 	    </cfloop>
@@ -123,6 +126,7 @@
 		  <cfcatch type="any">
 		    <cfset errorFields[errorFieldsIndex][1] = "denyIPs" />
 		    <cfset errorFields[errorFieldsIndex][2] = "One of the denied IPs is not valid" />
+			<cfset errorFieldsIndex++ />
 		  </cfcatch>
 	      </cftry>
 	  </cfif>
