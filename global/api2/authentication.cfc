@@ -25,6 +25,12 @@
 --->
 <cfcomponent output="false">
 	
+	<!--- Set application values --->
+	<cfset application.razuna.storage = application.razuna.api.storage>
+	<cfset application.razuna.datasource = application.razuna.api.dsn>
+	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
+	<cfset application.razuna.setid = application.razuna.api.setid>
+
 	<!--- Check for db entry --->
 	<cffunction name="checkdb" access="public" output="no">
 		<cfargument name="api_key" type="string">

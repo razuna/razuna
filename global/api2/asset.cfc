@@ -25,11 +25,6 @@
 --->
 <cfcomponent output="false" extends="authentication">
 	
-	<!--- Set application values --->
-	<cfset application.razuna.storage = application.razuna.api.storage>
-	<cfset application.razuna.datasource = application.razuna.api.dsn>
-	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
-	
 	<!--- Asset: Get info --->
 	<cffunction name="getasset" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true" type="string">

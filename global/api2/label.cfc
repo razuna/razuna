@@ -24,11 +24,6 @@
 *
 --->
 <cfcomponent output="false" extends="authentication">
-	
-	<!--- Set Values --->
-	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
-	<cfset application.razuna.datasource = application.razuna.api.dsn>
-	<cfset application.razuna.storage = application.razuna.api.storage>
 
 	<!--- Get all labels --->
 	<cffunction name="getall" access="remote" output="false" returntype="query" returnformat="json">

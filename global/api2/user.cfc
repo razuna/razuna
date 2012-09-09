@@ -24,7 +24,7 @@
 *
 --->
 <cfcomponent output="false" namespace="user" extends="authentication">
-	
+
 	<!--- Add the user --->
 	<cffunction name="add" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
