@@ -3582,11 +3582,6 @@ This is the main function called directly by a single upload else from addassets
 				WHERE vid_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Flush Cache --->
-				<cfset resetcachetoken("videos")>
-				<cfset resetcachetoken("folders")>
-				<cfset resetcachetoken("search")>
-				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#images
@@ -3594,11 +3589,6 @@ This is the main function called directly by a single upload else from addassets
 				WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Flush Cache --->
-				<cfset resetcachetoken("images")>
-				<cfset resetcachetoken("folders")>
-				<cfset resetcachetoken("search")>
-				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
@@ -3621,11 +3611,6 @@ This is the main function called directly by a single upload else from addassets
 				WHERE vid_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Flush Cache --->
-				<cfset resetcachetoken("videos")>
-				<cfset resetcachetoken("folders")>
-				<cfset resetcachetoken("search")>
-				<cfset variables.cachetoken = resetcachetoken("general")>
 			<cfelseif arguments.thestruct.type EQ "img">
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#images
@@ -3633,11 +3618,6 @@ This is the main function called directly by a single upload else from addassets
 				WHERE img_id = <cfqueryparam value="#qry.file_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Flush Cache --->
-				<cfset resetcachetoken("images")>
-				<cfset resetcachetoken("folders")>
-				<cfset resetcachetoken("search")>
-				<cfset variables.cachetoken = resetcachetoken("general")>
 			</cfif>
 		</cfif>
 		<!--- Remove record in DB --->
@@ -3645,6 +3625,12 @@ This is the main function called directly by a single upload else from addassets
 		DELETE FROM #session.hostdbprefix#assets_temp
 		WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
 		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("search")>
+		<cfset variables.cachetoken = resetcachetoken("general")>
 	</cfif>
 </cffunction>
 
