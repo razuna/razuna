@@ -32,9 +32,9 @@
 			<th width="100%" colspan="6">
 				<!--- Show notification of folder is being shared --->
 				<cfinclude template="inc_folder_header.cfm">
-				<!--- <div style="float:right;">
+				<cfif attributes.folderaccess EQ "x">
 					<cfinclude template="dsp_folder_navigation.cfm">
-				</div> --->
+				</cfif>
 			</th>
 		</tr>
 		<tr>
@@ -75,79 +75,22 @@
 								});
 								</script>
 								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
-								<div id="draggable#vid_id#" type="#vid_id#-vid" class="theimg">
-								<cfif link_kind NEQ "url">
-									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-										<cfif cloud_url NEQ "">
-											<img src="#cloud_url#" border="0">
-										<cfelse>
-											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
-										</cfif>
-									<cfelse>
-										<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0">
-									</cfif>
-								<cfelse>
-									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
-								</cfif>
-								</div>
-								</a>
-								<!--- 
-								<!--- Show video if WMV only link to detail --->
-								<cfswitch expression="#vid_extension#">
-									<cfcase value="mov,3gp,mpg4,m4v,mp4,swf,flv,f4v">
-										<cfif application.razuna.thedatabase EQ "oracle">
-											<a class="flowplayer" href="#urlvideo#?id=#vid_id#&tabname=#session.hostdbprefix#videos&colname=video&review=#randomvalue#">
-												<img src="#urlvideoimage#?id=#vid_id#&colname=video_image&tabname=#session.vidtable#&review=#randomvalue#" border="0">
-											</a>
-										<cfelse>
+									<div id="draggable#vid_id#" type="#vid_id#-vid" class="theimg">
+										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-												<a class="flowplayer" href="#cloud_url_org#">
+												<cfif cloud_url NEQ "">
 													<img src="#cloud_url#" border="0">
-												</a>
+												<cfelse>
+													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+												</cfif>
 											<cfelse>
-												<a class="flowplayer" href="#thestorage##path_to_asset#/#vid_filename#">
-													<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
-												</a>
-											</cfif>
-											
-										</cfif>
-										<script language="javascript" type="text/javascript">
-											// this simple call does the magic
-											flowplayer("a.flowplayer", "#dynpath#/global/videoplayer/flowplayer-3.2.7.swf", { 
-											    clip: {
-											    	autoBuffering: false, 
-											    	autoPlay: false,
-											    plugins: { 
-											        controls: { 
-											            all: false,  
-											            play: true,  
-											            scrubber: true,
-											            volume: true,
-											            mute: true,
-											            time: true,
-											            stop: true,
-											            fullscreen: true
-											        }
-											    }
-											}});
-												<!--- $("a.flowplayer").flowembed("#dynpath#/global/videoplayer/flowplayer-3.2.7.swf",  {initialScale:'scale',protected:true,menuItems:[true,true,true,true,true,false],allowFullScreen:true,autoBuffering:false}); --->
-										</script>
-									</cfcase>
-									<cfcase value="wmv,avi,mpeg,mpg,rm">
-										<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#','#vid_filename#',800,600);return false;">
-										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-											<cfif cloud_url NEQ "">
-												<img src="#cloud_url#" border="0">
-											<cfelse>
-												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+												<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0">
 											</cfif>
 										<cfelse>
-											<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
+											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
 										</cfif>
-										</a>
-									</cfcase>
-								</cfswitch> --->
-								<!--- <br><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#','#vid_filename#',800,600);return false;">#myFusebox.getApplicationData().defaults.trans("file_detail")#</a> --->
+									</div>
+								</a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
 									<input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#vid_id#-vid") NEQ 0> checked="checked"</cfif>>
 								</div>
@@ -178,12 +121,11 @@
 			</tr>
 		<!--- View: Combined --->
 		<cfelseif session.view EQ "combined">
-			<cfif attributes.folderaccess NEQ "R">
-				<tr>
-					<td colspan="4" align="right"><div id="updatestatusvid" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsavevid();return false;" class="button"></td>
-				</tr>
-			</cfif>
+			<tr>
+				<td colspan="4" align="right"><div id="updatestatusvid" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsavevid();return false;" class="button"></td>
+			</tr>
 			<cfloop query="qry_files">
+				<cfset labels = labels>
 				<script type="text/javascript">
 				$(function() {
 					$("##draggable#vid_id#").draggable({
@@ -195,18 +137,13 @@
 						zIndex: 6,
 						helper: 'clone',
 						start: function() {
-							//$('##dropbaskettrash').css('display','none');
-							//$('##dropfavtrash').css('display','none');
 						},
 						stop: function() {
-							//$('##dropbaskettrash').css('display','');
-							//$('##dropfavtrash').css('display','');
 						}
 					});
 				});
 				</script>
-				<tr class="thumbview">
-					<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#vid_id#-vid") NEQ 0> checked="checked"</cfif>></td>
+				<tr class="list thumbview">
 					<td valign="top" width="1%" nowrap="true">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
 							<div id="draggable#vid_id#" type="#vid_id#-vid">
@@ -221,59 +158,112 @@
 								</cfif>
 							</div>
 						</a>
-						<br />
-						#myFusebox.getApplicationData().defaults.trans("date_created")#: #dateformat(vid_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#<!--- <br />
-						#myFusebox.getApplicationData().defaults.trans("date_changed")#: #dateformat(vid_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# --->
+						<!--- Icons --->
+						<div style="padding-top:5px;width:130px;white-space:nowrap;">
+							<div style="float:left;">
+								<input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#vid_id#-vid") NEQ 0> checked="checked"</cfif>>
+							</div>
+							<div style="float:right;padding-top:2px;">
+								<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#vid_id#&kind=vid','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+								<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#vid_id#-vid&thetype=#vid_id#-vid');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+								<cfif cs.button_send_email>
+									<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#vid_id#&thetype=vid','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+								</cfif>
+								<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#vid_id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+								<cfif attributes.folderaccess EQ "X">
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								</cfif>
+							</div>
+						</div>
 					</td>
+					<!--- Keywords, etc --->
 					<td valign="top" width="100%">
-						<!--- User has Write access --->
-						<cfif attributes.folderaccess NEQ "R">
+						<div style="float:left;padding-right:10px;">
+							#myFusebox.getApplicationData().defaults.trans("file_name")#<br />
 							<input type="text" name="#vid_id#_vid_filename" value="#vid_filename#" style="width:300px;"><br />
-							#myFusebox.getApplicationData().defaults.trans("description")#:<br />
-							<textarea name="#vid_id#_vid_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
-							#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
-							<textarea name="#vid_id#_vid_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
-						<cfelse>
-							#myFusebox.getApplicationData().defaults.trans("file_name")#: #vid_filename#<br />
-							#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
-							#myFusebox.getApplicationData().defaults.trans("keywords")#: #keywords#
-						</cfif>
+							#myFusebox.getApplicationData().defaults.trans("description")#<br />
+							<textarea name="#vid_id#_vid_desc_1" style="width:300px;height:30px;">#description#</textarea>
+						</div>
+						<div style="float:left;">
+							#myFusebox.getApplicationData().defaults.trans("labels")#<br />
+							<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_vid_qe_#vid_id#" onchange="razaddlabels('tags_vid_qe_#vid_id#','#vid_id#','vid');" multiple="multiple">
+								<option value=""></option>
+								<cfloop query="attributes.thelabelsqry">
+									<option value="#label_id#"<cfif ListFind(labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
+								</cfloop>
+							</select>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("keywords")#<br />
+							<textarea name="#vid_id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>									
+						</div>
 					</td>
-					<cfif attributes.folderaccess EQ "X">
-						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-						</td>
-					</cfif>
 				</tr>
 			</cfloop>
-			<cfif attributes.folderaccess NEQ "R">
-				<tr>
-					<td colspan="4" align="right"><div id="updatestatusvid2" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsavevid();return false;" class="button"></td>
-				</tr>
-			</cfif>
+			<tr>
+				<td colspan="4" align="right"><div id="updatestatusvid2" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsavevid();return false;" class="button"></td>
+			</tr>
 		<!--- List view --->
 		<cfelseif session.view EQ "list">
 			<tr>
 				<td></td>
-				<td width="100%"><b>#myFusebox.getApplicationData().defaults.trans("file_name")#</b></td>
+				<td nowrap="true"></td>
 				<td nowrap="true" align="center"><b>#myFusebox.getApplicationData().defaults.trans("date_created")#</b></td>
 				<td nowrap="true" align="center"><b>#myFusebox.getApplicationData().defaults.trans("date_changed")#</b></td>
-				<cfif attributes.folderaccess EQ "X">
-					<td></td>
-				</cfif>
 			</tr>
 			<!--- Show Subfolders --->
 			<cfinclude template="inc_folder_list.cfm">
 			<cfloop query="qry_files">
-			<tr class="list">
-				<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#vid_id#-vid") NEQ 0> checked="checked"</cfif>></td>
-				<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;"><strong>#vid_filename#</strong></a></td>
-				<td nowrap="true" width="1%" align="center">#dateformat(vid_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-				<td nowrap="true" width="1%" align="center">#dateformat(vid_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-				<cfif attributes.folderaccess EQ "X">
-					<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
-				</cfif>
-			</tr>
+				<script type="text/javascript">
+				$(function() {
+					$("##draggable#vid_id#").draggable({
+						appendTo: 'body',
+						cursor: 'move',
+						addClasses: false,
+						iframeFix: true,
+						opacity: 0.25,
+						zIndex: 6,
+						helper: 'clone',
+						start: function() {
+						},
+						stop: function() {
+						}
+					});
+				});
+				</script>
+				<tr class="list thumbview">
+					<td valign="top" width="1%" nowrap="true">
+						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
+							<div id="draggable#vid_id#-vid" type="#vid_id#-vid">
+								<cfif link_kind NEQ "url">
+									<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+								<cfelse>
+									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
+								</cfif>
+							</div>
+						</a>
+					</td>
+					<td width="100%" valign="top">
+						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;"><strong>#vid_filename#</strong></a>
+						<br />
+						<!--- Icons --->
+						<div style="float:left;padding-top:5px;">
+							<input type="checkbox" name="file_id" value="#vid_id#-vid" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#vid_id#-vid") NEQ 0> checked="checked"</cfif>> 
+							<div style="float:right;padding-top:2px;">
+								<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#vid_id#&kind=vid','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+								<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#vid_id#-vid&thetype=#vid_id#-vid');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+								<cfif cs.button_send_email>
+									<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#vid_id#&thetype=vid','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+								</cfif>
+								<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#vid_id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+								<cfif attributes.folderaccess EQ "X">
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								</cfif>
+							</div>
+						</div>
+					</td>
+					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(vid_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(vid_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+				</tr>
 			</cfloop>
 		</cfif>
 		<!--- Icon Bar --->
@@ -315,5 +305,9 @@
 			});
 	        return false; 
 		}
+		<cfif session.view EQ "combined">
+			// Activate Chosen
+			$(".chzn-select").chosen();
+		</cfif>
 	</script>
 </cfoutput>

@@ -37,7 +37,12 @@
 			   		// Reload Explorer
 					$('#explorer').load('index.cfm?fa=c.explorer');
 					// Jump into the folder
-					$('#rightside').load('index.cfm?fa=c.folder&col=F&folder_id=' + fid);
+					if (isdetail == 'F'){
+						$('#rightside').load('index.cfm?fa=c.folder&col=F&folder_id=' + fid);
+					}
+					else{
+						$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
+					}
 					// 
 					$("#bodyoverlay").remove();
 			   	}

@@ -276,7 +276,7 @@
 				<!-- CFC: Custom fields -->
 				<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 				<!-- CFC: Get Wisdom phrases -->
-				<invoke object="myFusebox.getApplicationData().Global" methodcall="wisdom()" returnvariable="wisdom" />
+				<!-- <invoke object="myFusebox.getApplicationData().Global" methodcall="wisdom()" returnvariable="wisdom" /> -->
 				<!-- CFC: Get Orders of this user -->
 				<invoke object="myFusebox.getApplicationData().basket" methodcall="get_orders()" returnvariable="qry_orders" />
 				<!-- CFC: Get customization -->
@@ -1094,6 +1094,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- Show -->
 		<do action="ajax.folder_files" />
 	</fuseaction>
@@ -1135,6 +1137,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- Show -->
 		<do action="ajax.folder_images" />
 	</fuseaction>
@@ -1179,6 +1183,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- Show -->
 		<do action="ajax.folder_videos" />
 	</fuseaction>
@@ -1236,6 +1242,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- Get labels -->
+		<do action="labels" />
 		<!-- Show -->
 		<do action="ajax.folder_audios" />
 	</fuseaction>
@@ -1287,6 +1295,8 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
 		<!-- CFC: Customization -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- Get labels -->
+		<do action="labels" />
 	</fuseaction>
 	<!-- Load Folder Content -->
 	<fuseaction name="folder_content">
@@ -1674,7 +1684,7 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="upload(attributes)" returnvariable="result" />
 		<!-- Show -->
-		<do action="asset_add_upload" />
+		<do action="ajax.versions_upload" />
 	</fuseaction>
 	<!-- Upload -->
 	<fuseaction name="asset_upload_do">
@@ -2665,6 +2675,8 @@
 		<set name="attributes.artofvideo" value="" />
 		<set name="attributes.artofaudio" value="" />
 		<set name="attributes.artoffile" value="" />
+		<set name="session.ftp_server" value="" overwrite="false" />
+		<set name="session.ftp_user" value="" overwrite="false" />
 		<!-- CFC: Get file detail -->
 		<if condition="attributes.thetype EQ 'doc'">
 			<true>
@@ -3147,6 +3159,13 @@
 		<set name="attributes.rid" value="0" overwrite="false" />
 		<set name="attributes.iscol" value="0" overwrite="false" />
 		<set name="attributes.kind" value="" overwrite="false" />
+		<!-- For main page upload do... -->
+		<if condition="attributes.folder_id EQ 'x'">
+			<true>
+				<set name="session.type" value="uploadinto" />
+				<set name="session.savehere" value="c.asset_add" />
+			</true>
+		</if>
 		<!-- For customization do... -->
 		<if condition="session.type EQ 'customization'">
 			<true>

@@ -55,57 +55,51 @@
 		<td align="left" width="1%" nowrap="true">
 			<div>
 				<!--- Icons --->
-				<div id="tooltip" style="float:left;width:470px;">
+				<div id="tooltip" style="float:left;width:490px;">
 					<!--- Upload --->
 					<cfif attributes.folderaccess NEQ "R"> 
 						<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
-								<div style="float:left;">
-									<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:2px;" />
-								</div>
-								<div style="float:left;padding-right:15px;padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("add_file")#</div>
+								<div style="float:left;padding-right:15px;"><button class="awesome medium green">Add your files</button></div>
 							</a>
 						<cfelseif cs.myfolder_upload>
 							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
-								<div style="float:left;">
-									<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:2px;" />
-								</div>
-								<div style="float:left;padding-right:15px;padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("add_file")#</div>
+								<div style="float:left;padding-right:15px;"><button class="awesome medium green">Add your files</button></div>
 							</a>
 						</cfif>
 					</cfif>
 					<!--- Select --->
 					<cfif cs.icon_select>
 						<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
-							<div style="float:left;">
+							<div style="float:left;padding-top:5px;">
 								<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
 							</div>
-							<div style="float:left;padding-right:15px;padding-top:2px;">Select all</div>
+							<div style="float:left;padding-right:15px;padding-top:5px;">Select all</div>
 						</a>
 					</cfif>
 					<!--- Search --->
 					<cfif cs.icon_search>
 						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
-							<div style="float:left;">
+							<div style="float:left;padding-top:5px;">
 								<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" />
 							</div>
-							<div style="float:left;padding-right:15px;padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
+							<div style="float:left;padding-right:15px;padding-top:5px;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
 						</a>
 					</cfif>
 					<!--- More actions --->
-					<div style="float:left;padding-top:2px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
-					<div style="float:left;padding-right:15px"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
+					<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
+					<div style="float:left;padding-right:15px;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
 					<!--- Views --->
-					<div style="float:left;padding-top:2px;"><a href="##" onclick="$('##dropviews#thediv#').toggle();" style="text-decoration:none;" class="ddicon">Views</a></div>
-					<div style="float:left;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##dropviews#thediv#').toggle();"></div>
+					<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##dropviews#thediv#').toggle();" style="text-decoration:none;" class="ddicon">Views</a></div>
+					<div style="float:left;;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##dropviews#thediv#').toggle();"></div>
 				</div>
 				<!--- More actions menu --->	
 				<div>
-					<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">328<cfelse>221</cfif>px;">
+					<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">358<cfelse>251</cfif>px;">
 						<!--- Refresh --->
 						<cfif cs.icon_refresh>
 							<p>
-								<a href="##" onclick="loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_desc")#">
+								<a href="##" onclick="loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&iscol=#attributes.iscol#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_desc")#">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" />
 									</div>
@@ -138,7 +132,7 @@
 						<!--- Show sub assets --->
 						<cfif cs.icon_show_subfolder>
 							<p>
-								<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&showsubfolders=<cfif session.showsubfolders EQ "F">T<cfelse>F</cfif>');$('##drop#thediv#').toggle();return false;">
+								<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&showsubfolders=<cfif session.showsubfolders EQ "F">T<cfelse>F</cfif>&iscol=#attributes.iscol#');$('##drop#thediv#').toggle();return false;">
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/link.png" width="16" height="16" border="0" />
 									</div>
@@ -215,11 +209,11 @@
 						</cfif>
 					</div>
 				</div>
-				<!--- More actions menu --->	
+				<!--- View menu --->	
 				<div>
-					<div id="dropviews#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">428<cfelse>321</cfif>px;">
+					<div id="dropviews#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">458<cfelse>351</cfif>px;">
 						<p>
-							<a href="##" onclick="loadcontent('#thediv#','#myself##thexfa#&folder_id=#folder_id#&kind=#thetype#&view=');$('##dropviews#thediv#').toggle();return false;" title="Thumbnail View">
+							<a href="##" onclick="loadcontent('#thediv#','#myself##thexfa#&folder_id=#folder_id#&kind=#thetype#&iscol=#attributes.iscol#&view=');$('##dropviews#thediv#').toggle();return false;" title="Thumbnail View">
 								<div style="float:left;padding-right:5px;">
 									<img src="#dynpath#/global/host/dam/images/view-list-icons.png" border="0" width="16" height="16">
 								</div>
@@ -227,21 +221,23 @@
 							</a>
 						</p>
 						<p>
-							<a href="##" onclick="loadcontent('#thediv#','#myself##thexfa#&folder_id=#folder_id#&kind=#thetype#&view=list');$('##dropviews#thediv#').toggle();return false;" title="List View">
+							<a href="##" onclick="loadcontent('#thediv#','#myself##thexfa#&folder_id=#folder_id#&kind=#thetype#&iscol=#attributes.iscol#&view=list');$('##dropviews#thediv#').toggle();return false;" title="List View">
 								<div style="float:left;padding-right:5px;">
 									<img src="#dynpath#/global/host/dam/images/view-list-text-3.png" border="0" width="16" height="16">
 								</div>
 								<div style="padding-top:2px;">List View</div>
 							</a>
 						</p>
-						<p>
-							<a href="##" onclick="loadcontent('#thediv#','#myself##thexfa#&folder_id=#folder_id#&kind=#thetype#&view=combined');$('##dropviews#thediv#').toggle();return false;" title="Combined/Quick Edit View">
-								<div style="float:left;padding-right:5px;">
-									<img src="#dynpath#/global/host/dam/images/view-list-details-4.png" border="0" width="16" height="16">
-								</div>
-								<div style="padding-top:2px;">Combined/Quick Edit View</div>
-							</a>
-						</p>
+						<cfif attributes.folderaccess NEQ "R">
+							<p>
+								<a href="##" onclick="loadcontent('#thediv#','#myself##thexfa#&folder_id=#folder_id#&kind=#thetype#&iscol=#attributes.iscol#&view=combined');$('##dropviews#thediv#').toggle();return false;" title="Combined/Quick Edit View">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/view-list-details-4.png" border="0" width="16" height="16">
+									</div>
+									<div style="padding-top:2px;">Quick Edit View</div>
+								</a>
+							</p>
+						</cfif>
 					</div>
 				</div>
 			</div>
@@ -252,7 +248,7 @@
 			<cfif session.offset GTE 1>
 				<!--- For Back --->
 				<cfset newoffset = session.offset - 1>
-				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</a> |
+				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#&iscol=#attributes.iscol#');">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</a> |
 			</cfif>
 			<cfset showoffset = session.offset * session.rowmaxpage>
 			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -260,7 +256,7 @@
 			<cfif qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry_filecount.thetotal> | 
 				<!--- For Next --->
 				<cfset newoffset = session.offset + 1>
-				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#');">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
+				<a href="##" onclick="loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=#newoffset#&iscol=#attributes.iscol#');">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
 			</cfif>
 			<!--- Pages --->
 			<cfif qry_filecount.thetotal GT session.rowmaxpage>
@@ -270,7 +266,7 @@
 						<select id="thepagelist#kind#" onChange="loadcontent('#thediv#', $('##thepagelist#kind# :selected').val());">
 						<cfloop from="1" to="#thepage#" index="i">
 							<cfset loopoffset = i - 1>
-							<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&offset=#loopoffset#&showsubfolders=#attributes.showsubfolders#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
+							<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&offset=#loopoffset#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
 						</cfloop>
 						</select>
 				</span>
@@ -293,10 +289,10 @@
 		<td align="right" width="1%" nowrap="true"><cfif qry_filecount.thetotal GT session.rowmaxpage OR qry_filecount.thetotal GT 25> <select name="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" id="selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="changerow('#thediv#','selectrowperpage#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>')" style="width:80px;">
 			<option value="javascript:return false;">Show how many...</option>
 			<option value="javascript:return false;">---</option>
-			<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
-			<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=50"<cfif session.rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
-			<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=75"<cfif session.rowmaxpage EQ 75> selected="selected"</cfif>>75</option>
-			<option value="#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=100"<cfif session.rowmaxpage EQ 100> selected="selected"</cfif>>100</option>
+			<option value="#myself##thefa#&iscol=#attributes.iscol#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=25"<cfif session.rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
+			<option value="#myself##thefa#&iscol=#attributes.iscol#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=50"<cfif session.rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
+			<option value="#myself##thefa#&iscol=#attributes.iscol#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=75"<cfif session.rowmaxpage EQ 75> selected="selected"</cfif>>75</option>
+			<option value="#myself##thefa#&iscol=#attributes.iscol#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&offset=0&rowmaxpage=100"<cfif session.rowmaxpage EQ 100> selected="selected"</cfif>>100</option>
 		</select></cfif>
 		</td>
 	</tr>
@@ -370,7 +366,7 @@
 	function changesortby(theselect){
 		// Get selected option
 		var thesortby = $('##' + theselect + ' option:selected').val();
-		loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&sortby=' + thesortby);
+		loadcontent('#thediv#','#myself##thefa#&folder_id=#attributes.folder_id#&kind=#kind#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&sortby=' + thesortby);
 	}
 </script>
 

@@ -1,13 +1,13 @@
 <script language="javascript" type="text/javascript">
 
 // Create Version
-function vercreate(fileid, type, tempid){
-	$("#status").css("display","");
-	$("#status").html('<cfoutput>#myFusebox.getApplicationData().defaults.trans("versions_create_progress")#</cfoutput>');
-	$("#status").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-	// Submit Form
-	loadcontent('versionlist','index.cfm?fa=c.versions_add&file_id=' + fileid + '&type=' + type + '&tempid=' + tempid);
-}
+// function vercreate(fileid, type, tempid){
+// 	$("#status").css("display","");
+// 	$("#status").html('<cfoutput>#myFusebox.getApplicationData().defaults.trans("versions_create_progress")#</cfoutput>');
+// 	$("#status").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+// 	// Submit Form
+// 	loadcontent('versionlist','index.cfm?fa=c.versions_add&file_id=' + fileid + '&type=' + type + '&tempid=' + tempid);
+// }
 // Playback Version
 function verplayback(fileid, type, version){
 	$("#status").css("display","");

@@ -27,17 +27,21 @@
 <cfif qry_related.recordcount NEQ 0>
 	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
-			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("converted_videos")#</th>
-		</tr>
-		<tr>
 			<td width="100%" nowrap="true" valign="top" colspan="2">
 				<cfloop query="qry_related">
-					<cfif attributes.s EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_filename#" target="_blank"></cfif>#ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) #myFusebox.getApplicationData().defaults.trans("size")#: #vid_width#x#vid_height# pixel</a> <a href="#myself#c.serve_file&file_id=#vid_id#&type=vid"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
-					<a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');"><img src="#dynpath#/global/host/dam/images/emblem-symbolic-link.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
-					<cfif attributes.folderaccess NEQ "R">
-						<a href="##" onclick="loadcontent('relatedvideos','#myself#c.videos_remove_related&id=#vid_id#&file_id=#attributes.file_id#&what=videos&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
+					<cfif attributes.s EQ "F">
+						<strong>#ucase(vid_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB, #vid_width#x#vid_height# pixel)<br />
+						<a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank">
+					<cfelse>
+						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_filename#" target="_blank">
 					</cfif>
-					<div id="divo#vid_id#" style="display:none;">Link: <input type="text" id="inputo#vid_id#" style="width:270px;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" /></div>
+					View</a>
+					 | <a href="#myself#c.serve_file&file_id=#vid_id#&type=vid">Download</a>
+					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');">Direct Link</a>
+					<cfif attributes.folderaccess NEQ "R">
+						 | <a href="##" onclick="remren('#vid_id#');">Remove</a>
+					</cfif>
+					<div id="divo#vid_id#" style="display:none;"><input type="text" id="inputo#vid_id#" style="width:400px;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" /></div>
 					<br>
 					<!--- Nirvanix --->
 					<cfif application.razuna.storage EQ "nirvanix" AND attributes.s EQ "T">
@@ -49,4 +53,26 @@
 		</tr>
 	</table>
 </cfif>
+<div id="dialog-confirm-rendition" title="Really remove this rendition?" style="display:none;">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The rendition will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
+<!--- Js --->
+<script type="text/javascript">
+function remren(id){
+	$( "##dialog-confirm-rendition" ).dialog({
+		resizable: false,
+		height:140,
+		modal: true,
+		buttons: {
+			"Yes, remove rendition": function() {
+				$( this ).dialog( "close" );
+				$('##relatedvideos').load('#myself#c.videos_remove_related&file_id=#attributes.file_id#&what=videos&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id);
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+};
+</script>
 </cfoutput>

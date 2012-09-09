@@ -25,28 +25,51 @@
 --->
 <cfoutput>
 <cfif qry_related.recordcount NEQ 0>
-	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
-		<tr>
-			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("converted_videos")#</th>
-		</tr>
-		<tr>
-			<td width="100%" nowrap="true" valign="top" colspan="2">
-				<cfloop query="qry_related">
-					<cfif attributes.s EQ "F"><a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#" target="_blank"></cfif>#ucase(img_extension)#<cfif ilength NEQ ""> (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB)</cfif> #myFusebox.getApplicationData().defaults.trans("size")#: #orgwidth#x#orgheight# pixel</a> <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o"><img src="#dynpath#/global/host/dam/images/down_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a> 
-					<a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');"><img src="#dynpath#/global/host/dam/images/emblem-symbolic-link.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
-					<cfif attributes.folderaccess NEQ "R">
-						<a href="##" onclick="loadcontent('relatedimages','#myself#c.images_remove_related&id=#img_id#&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-bottom: 2px; vertical-align: middle;" /></a>
-					</cfif>
-					<div id="divo#img_id#" style="display:none;">Link: <input type="text" id="inputo#img_id#" style="width:270px;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" /></div>
-					<br>
-					<!--- Nirvanix --->
-					<cfif application.razuna.storage EQ "nirvanix" AND attributes.s EQ "T">
-						<i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#</i>
-						<br>
-					</cfif>
-				</cfloop>
-			</td>
-		</tr>
-	</table>
+	<br />
+	<cfloop query="qry_related">
+		<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel,<cfif ilength NEQ ""> #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif>)<br />
+		<cfif attributes.s EQ "F">
+			<a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
+		<cfelse>
+			<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#" target="_blank">
+		</cfif>
+		View
+		</a> 
+		 | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">Download</a> 
+		 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');">Direct Link</a>
+		<cfif attributes.folderaccess NEQ "R">
+			 | <a href="##" onclick="remren('#img_id#');">Remove</a>
+		</cfif>
+		<div id="divo#img_id#" style="display:none;">Link: <input type="text" id="inputo#img_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" /></div>
+		<br>
+		<!--- Nirvanix --->
+		<cfif application.razuna.storage EQ "nirvanix" AND attributes.s EQ "T">
+			<i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#</i>
+			<br>
+		</cfif>
+		<br />
+	</cfloop>
 </cfif>
+<div id="dialog-confirm-rendition" title="Really remove this rendition?" style="display:none;">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The rendition will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
+<!--- Js --->
+<script type="text/javascript">
+function remren(id){
+	$( "##dialog-confirm-rendition" ).dialog({
+		resizable: false,
+		height:140,
+		modal: true,
+		buttons: {
+			"Yes, remove rendition": function() {
+				$( this ).dialog( "close" );
+				$('##relatedimages').load('#myself#c.images_remove_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id);
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+};
+</script>
 </cfoutput>

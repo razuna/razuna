@@ -175,7 +175,7 @@
 			$('##widget_link').attr('href',thetext);
 			$('##widget_id').val(trimmed);
 			// Update background widget list
-			loadcontent('widgets','#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');
+			$('##widgets').load('#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');
 		}
 		// Reset DL
 		function resetdlw(){

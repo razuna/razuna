@@ -39,34 +39,6 @@
 		<div id="thedroporders" style="float:left;width:100%;padding:0px 10px 0px 10px;"></div>
 	</cfif>
 	<div id="raztab" style="float:right;padding:10px 10px 0px 10px;font-weight:normal;width:100%;">
-		<div id="div_feedback" style="float:left;padding-left:20px;">
-			<a href="http://twitter.com/razunahq" class="twitter-follow-button">Follow @razunahq</a><br /><br />
-			<iframe src="//www.facebook.com/plugins/like.php?app_id=207944582601260&amp;href=http%3A%2F%2Fwww.facebook.com%2Frazunahq&amp;send=false&amp;layout=standard&amp;width=450&amp;show_faces=false&amp;action=like&amp;colorscheme=light&amp;height=35" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:300px; height:55px;" allowTransparency="true"></iframe>
-		</div>
-		<!--- <div id="div_feedback" style="float:left;padding-left:20px;">
-		<strong>Have any feedback? Make sure to let us know!</strong><br>
-		<form action="#self#" method="post" name="form_feedback" id="form_feedback" onsubmit="send_feedback();return false;">
-		<input type="hidden" name="fa" value="c.send_feedback">
-			<div id="info">
-			    <label for="author">Name</label> 
-				<input type="text" name="author" id="author" value="" size="22" tabindex="1" class="rounded" /> 
-				<label for="email">Email</label> 
-				<input type="text" name="email" id="email" value="" size="22" tabindex="2" class="rounded" /> 
-				<label for="url">Razuna URL</label> 
-				<input type="text" name="url" id="url" value="" size="22" tabindex="3" class="rounded" /> 
-			</div>
-			<div id="feedbsubmit">
-				<div style="float:left;">
-				<input name="submit" type="submit" id="submit" class="rounded" tabindex="5" value="Submit" />
-				</div>
-				<div id="send_feedback_status" style="clear:both;padding:0;margin:0;color:green;width:200px;"></div>
-			</div>
-			<div id="message">
-				<label for="comment">Feedback</label>
-				<textarea name="comment" id="comment" cols="2" rows="2" tabindex="4" class="rounded"></textarea> 
-			</div>
-		</form>
-		</div> --->
 		<div style="float:right;text-align:right;">
 			<a href="http://www.razuna.com" target="_blank"><img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;"></a>
 			<br>

@@ -25,20 +25,13 @@
 --->
 <cfoutput>
 <cfif qry_av.assets.recordcount NEQ 0 OR qry_av.links.recordcount NEQ 0>
-	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
-		<tr>
-			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("adiver_header")#</th>
-		</tr>
-		<tr>
-			<td width="100%" nowrap="true" valign="top" colspan="2">
-				<cfloop query="qry_av.links">
-					<a href="#av_link_url#" target="_blank">#av_link_title#</a><br />
-				</cfloop>
-				<cfloop query="qry_av.assets">
-					<a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a><br />
-				</cfloop>
-			</td>
-		</tr>
-	</table>
+	<br />
+	<cfloop query="qry_av.links">
+		<strong><a href="#av_link_url#" target="_blank">#av_link_title#</a></strong><br />
+	</cfloop>
+	<cfloop query="qry_av.assets">
+		<strong><a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a></strong><br />
+		<br />
+	</cfloop>
 </cfif>
 </cfoutput>

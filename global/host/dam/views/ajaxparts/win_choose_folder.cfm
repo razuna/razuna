@@ -49,7 +49,10 @@
 					"default"  : {
 						deletable : false,
 						renameable : false,
-						draggable : false
+						draggable : false,
+						icon : { 
+							image : "#dynpath#/global/host/dam/images/folder-blue-mini.png"
+						}
 					},
 					"file" : {
 						// the following three rules basically do the same

@@ -430,7 +430,7 @@
 		<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 		<cfset arguments.thestruct.theexeff = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
 	</cfif>	
-	<cftry>
+	<!--- <cftry> --->
 		<!--- We need to query the existing file --->
 		<!--- Images --->
 		<cfif arguments.thestruct.type EQ "img">
@@ -870,12 +870,12 @@
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.qryfile.file_id#" category="#arguments.thestruct.type#" notfile="T">
 			<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.qryfile.file_id#" category="#arguments.thestruct.type#" notfile="T">
 		</cfif>
-		<cfcatch type="any">
+		<!--- <cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error in creating a new version">
 				<cfdump var="#cfcatch#" />
 			</cfmail>
 		</cfcatch>
-	</cftry>
+	</cftry> --->
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

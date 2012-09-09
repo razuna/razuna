@@ -38,18 +38,23 @@
 		<div style="float:left;width:290px;">
 			<a href="#myself#c.main&_v=#createuuid('')#">
 				<cfif fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
-					<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" width="200" height="29" border="0" style="padding:3px 0px 0px 15px;">
+					<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" width="200" height="29" border="0" style="padding:0px 0px 0px 15px;">
 				<cfelse>
-					<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 15px;">
+					<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:0px 0px 0px 15px;">
 				</cfif>
 			</a>
 		</div>
+		<!--- <div style="width:auto;float:left;padding-top:5px;padding-right:10px;">
+			<a href="##" onclick="showwindow('#myself#c.choose_folder&folder_id=x','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
+				<button class="awesome big green">Add your files</button>
+			</a>
+		</div> --->
 		<!--- Search --->
 		<!--- <cfcachecontent name="quicksearch#w#" cachedwithin="#CreateTimeSpan(1,0,0,0)#" region="razcache"> --->
-			<div style="width:auto;float:right;padding-top:3px;">
+			<div style="width:auto;float:right;">
 				<form name="form_simplesearch" id="form_simplesearch" onsubmit="checkentry();return false;">
 				<input type="hidden" name="simplesearchthetype" id="simplesearchthetype" value="all" >
-				<div style="float:left;background-color:##ddd;padding:2px 4px 2px 2px;">
+				<div style="float:left;background-color:##ddd;padding:4px;">
 					<div style="float:left;">
 						<input name="simplesearchtext" id="simplesearchtext" type="text" class="textbold" style="width:#w#px;" value="Quick Search">
 					</div>
@@ -82,7 +87,7 @@
 	</div>
 	<div style="float:right;">
 		<!--- User Name with drop down --->
-		<div style="width:auto;float:right;padding:11px 10px 0px 20px;">
+		<div style="width:auto;float:right;padding:7px 10px 0px 20px;">
 			<!--- UserName --->
 			<div style="float:left;padding-right:3px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##userselection').toggle();"></div>
 			<div style="float:left;min-width:150px;"><a href="##" onclick="$('##userselection').toggle();" style="text-decoration:none;" class="ddicon">#session.firstlastname#</a></div>
@@ -120,7 +125,7 @@
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
 			</div>
 		</div>
-		<div style="width:auto;float:right;padding:11px 0px 0px 0px;">
+		<div style="width:auto;float:right;padding:7px 0px 0px 0px;">
 			<!--- Account --->
 		 	<cfif application.razuna.isp AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
 				<div style="float:left;padding-right:20px;">
@@ -135,19 +140,13 @@
 			</cfif>
 		</div>
 	</div>
-
+	<!--- JS --->
 	<script language="javascript">
 		function showaccount(){
 			win = window.open('','myWin','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=650,height=600');            
 			document.form_account.target='myWin';
 			document.form_account.submit();
 		}
-		<!---
-		$( "##simplesearchtext" ).autocomplete({
-			source: "#myself#c.search_suggest",
-			minLength: 2
-		});
-		--->
 		$(function() {
 			var cache = {}, lastXhr;
 			$( "##simplesearchtext" ).autocomplete({
@@ -168,7 +167,5 @@
 				}
 			});
 		});
-
 	</script>
-
 </cfoutput>

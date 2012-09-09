@@ -27,8 +27,8 @@
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<cfloop query="qry_cf">
 			<tr>
-				<td class="td2" valign="top"><strong>#cf_text#</strong></td>
-				<td class="td2">
+				<td class="td2" valign="top" width="1%" nowrap="true"><strong>#cf_text#</strong></td>
+				<td class="td2" width="100%">
 					<!--- For text --->
 					<cfif cf_type EQ "text">
 						<input type="text" style="width:300px;" id="cf_#cf_id#" name="cf_#cf_id#" value="#cf_value#">
@@ -51,13 +51,5 @@
 				</td>
 			</tr>
 		</cfloop>
-		<!--- Submit Button --->
-		<cfif attributes.folderaccess NEQ "R">
-			<tr>
-				<td colspan="2">
-					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
-				</td>
-			</tr>
-		</cfif>
 	</table>
 </cfoutput>

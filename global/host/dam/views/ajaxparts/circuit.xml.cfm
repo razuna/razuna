@@ -148,6 +148,10 @@
 	<fuseaction name="folder_check">
   		<include template="dsp_folder_check" />
 	</fuseaction>
+	<!-- Folder: Settings -->
+	<fuseaction name="folder_settings">
+  		<include template="dsp_folder_settings" />
+	</fuseaction>
 	
 	<!-- Collections: List -->
 	<fuseaction name="collections_list">

@@ -38,7 +38,7 @@
 			<cfinclude template="dsp_host_upgrade.cfm">
 		<cfelse>
 			<tr>
-				<td colspan="4" align="right"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("widget_new")#" class="button" onclick="showwindow('#myself#c.widget_detail&widget_id=0&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("widget_new")#',600,1);return false;" /></td>
+				<td colspan="4" align="right"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("widget_new")#" class="button" onclick="showwindow('#myself#c.widget_detail&widget_id=0&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("widget_new")#',600,2);return false;" /></td>
 			</tr>
 			<cfif qry_widgets.recordcount EQ 0>
 				<tr>
@@ -53,11 +53,11 @@
 				</tr>
 				<cfloop query="qry_widgets">
 					<tr class="list">
-						<td valign="top" nowrap="nowrap"><a href="##" onclick="showwindow('#myself#c.widget_detail&widget_id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("widget_update")#',600,1);return false;">#widget_name#</a></td>
+						<td valign="top" nowrap="nowrap"><a href="##" onclick="showwindow('#myself#c.widget_detail&widget_id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("widget_update")#',600,2);return false;">#widget_name#</a></td>
 						<td>#widget_description#</td>
 						<td valign="top"><a href="http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=#widget_id#" target="_blank">Show Widget</a></td>
 						<!--- trash --->
-						<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&what=widget&loaddiv=widgets','#myFusebox.getApplicationData().defaults.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+						<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&what=widget&loaddiv=widgets&iswin=two','#myFusebox.getApplicationData().defaults.trans("remove")#',400,2);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 					</tr>
 				</cfloop>
 			</cfif>

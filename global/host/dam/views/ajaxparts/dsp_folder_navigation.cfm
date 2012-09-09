@@ -24,16 +24,7 @@
 *
 --->
 <cfoutput>
-<div style="float:right;padding-top:3px;">
-	<div style="float:left;" id="tooltip">
-		<a href="##" onclick="loadview('');return false;" title="Thumbnail View"><img src="#dynpath#/global/host/dam/images/view-list-icons.png" border="0" width="24" height="24"></a>
-		<a href="##" onclick="loadview('list');return false;" title="List View"><img src="#dynpath#/global/host/dam/images/view-list-text-3.png" border="0" width="24" height="24"></a>
-		<a href="##" onclick="loadview('combined');return false;" title="Combined/Quick Edit View"><img src="#dynpath#/global/host/dam/images/view-list-details-4.png" border="0" width="24" height="24"></a>
-	</div>
+<div style="float:right;">
+	<a href="##" onclick="showwindow('#myself#ajax.folder_settings&folder_id=#attributes.folder_id#&iscol=#attributes.iscol#','#myFusebox.getApplicationData().defaults.trans("folder_properties")#',800,1);return false;">#myFusebox.getApplicationData().defaults.trans("folder_properties")#</a>
 </div>
-<script type="text/javascript">
-	function loadview(theview){
-		loadcontent('#thediv#','#myself##thexfa#&folder_id=#folder_id#&kind=#thetype#&view=' + theview);
-	}
-</script>
 </cfoutput>

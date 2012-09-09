@@ -125,13 +125,13 @@
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, 
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description, labels</cfif>, 
 			filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description</cfif>, 
+				SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description, labels</cfif>, 
 				filename_forsort, size, hashtag, date_create, date_change
 				FROM (
-					SELECT #Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
+					SELECT #Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description, '' as labels</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
 					FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					<cfif Len(Arguments.file_extension)>
@@ -166,7 +166,7 @@
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>, filename_forsort, size, hashtag, date_create, date_change
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description, '' as labels</cfif>, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
 				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, ft.*</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
 				FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
@@ -204,7 +204,7 @@
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, 
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description, '' as labels</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, 
 			file_create_time date_create, file_change_date date_change
 			FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -265,6 +265,22 @@
 				ORDER BY #sortby#
 			</cfif>
 			</cfquery>
+		</cfif>
+		<!--- Only get the labels if in the combinded view --->
+		<cfif session.view EQ "combined">
+			<!--- Get the cachetoken for here --->
+			<cfset variables.cachetokenlabels = getcachetoken("labels")>
+			<!--- Loop over files and get labels and add to qry --->
+			<cfloop query="qLocal">
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+				FROM ct_labels
+				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#file_id#">
+				</cfquery>
+				<!--- Add labels query --->
+				<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfloop>
 		</cfif>
 		<!--- Return --->
 		<cfreturn qLocal />
@@ -482,8 +498,11 @@
 	<!--- GET THE FILES DETAILS --->
 	<cffunction name="detail" output="false">
 		<cfargument name="thestruct" type="struct">
+		<!--- Params --->
 		<cfset var theassetsize = "">
 		<cfset var qry = structnew()>
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Get details --->
 		<cfquery datasource="#variables.dsn#" name="details" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detailfiles */ f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_create_date, f.file_create_time, 
@@ -542,12 +561,9 @@
 		<cfset arguments.thestruct.dsn = variables.dsn>
 		<cfset arguments.thestruct.setid = variables.setid>
 		<!--- Start the thread for updating --->
-		<!--- <cfinvoke method="updatethread" thestruct="#arguments.thestruct#" /> --->
-		<!--- <cfset tt = CreateUUid()> --->
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="updatethread" thestruct="#attributes.intstruct#" />
 		</cfthread>
-		<!--- <cfthread action="join" name="#tt#" /> --->
 	</cffunction>
 	
 	<!--- SAVE THE FILES DETAILS --->
@@ -556,6 +572,10 @@
 		<cfparam name="arguments.thestruct.shared" default="F">
 		<cfparam name="arguments.thestruct.what" default="">
 		<cfparam name="arguments.thestruct.frombatch" default="F">
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Loop over the file_id (important when working on more then one image) --->
 		<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
 			<cfset i = listfirst(i,"-")>
@@ -692,10 +712,6 @@
 			<!--- Log --->
 			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')#>
 		</cfloop>
-		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("files")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
 	</cffunction>
 	
 	<!--- SERVE THE FILE TO THE BROWSER --->

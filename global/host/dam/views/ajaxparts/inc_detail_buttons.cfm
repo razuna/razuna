@@ -1,6 +1,6 @@
 <cfoutput>
-<tr>
-	<td colspan="2">
+<div class="collapsable">
+	<div class="headers">
 		<cfif cs.show_bottom_part AND cs.button_basket>
 			<a href="##" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#-#attributes.cf_show#&thetype=#attributes.file_id#-#attributes.cf_show#');flash_footer();">
 				<div style="float:left;">
@@ -58,6 +58,6 @@
 				<div style="float:left;padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("delete_asset")#</div>
 			</a>
 		</cfif>
-	</td>
-</tr>
+	</div>
+</div>
 </cfoutput>

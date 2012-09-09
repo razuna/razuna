@@ -94,18 +94,20 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="label_add_all_thread" thestruct="#attributes.intstruct#" />
 		</cfthread>
+		<!--- Flush --->
+		<cfset variables.cachetoken = resetcachetoken("labels")>
 	</cffunction>
 
 	<!--- Add labels --->
 	<cffunction name="label_add_all_thread" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<!--- Remove all labels for this record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM ct_labels
+		WHERE ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
+		AND ct_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />
+		</cfquery>
 		<cfif structkeyexists(arguments.thestruct,"labels") AND arguments.thestruct.labels NEQ "null">
-			<!--- Remove all labels for this record --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM ct_labels
-			WHERE ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
-			AND ct_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />
-			</cfquery>
 			<!--- Loop over fields --->		
 			<cfloop list="#arguments.thestruct.labels#" delimiters="," index="i">
 				<!--- Insert into cross table --->
@@ -132,8 +134,6 @@
 			<cfif arguments.thestruct.thetype EQ "img" OR arguments.thestruct.thetype EQ "vid" OR arguments.thestruct.thetype EQ "aud" OR arguments.thestruct.thetype EQ "doc">
 				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" category="#arguments.thestruct.thetype#" notfile="T">
 			</cfif>
-			<!--- Flush --->
-			<cfset variables.cachetoken = resetcachetoken("labels")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn />

@@ -2237,12 +2237,12 @@
 	<!--- Oracle --->
 	<cfif variables.database EQ "oracle">
 		<!--- Query --->
-		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getallassets */ rn, id, filename, folder_id_r, ext, filename_org, kind, date_create, date_change, link_kind, link_path_url,
-		path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag
+		path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag, labels
 		FROM (
 			SELECT ROWNUM AS rn, id, filename, folder_id_r, ext, filename_org, kind, date_create, date_change, link_kind, 
-			link_path_url, path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag
+			link_path_url, path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag, labels
 			FROM (
 				SELECT i.img_id id, i.img_filename filename, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org,
 				'img' as kind, i.img_create_date, i.img_create_time date_create, i.img_change_date date_change, 
@@ -2258,7 +2258,8 @@
 				) AS theformat,
 				lower(i.img_filename) filename_forsort,
 				i.img_size size,
-				i.hashtag
+				i.hashtag, 
+				'' as labels
 				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
@@ -2278,7 +2279,8 @@
 				) AS theformat,
 				lower(v.vid_filename) filename_forsort,
 				v.vid_size size,
-				v.hashtag
+				v.hashtag, 
+				'' as labels
 				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#CF_SQL_VARCHAR#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -2288,7 +2290,8 @@
 				f.file_type as kind, f.file_create_time date_create, f.file_change_date date_change, f.link_kind, 
 				f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url,
 				ft.file_desc description, ft.file_keywords keywords, '0' as vheight, '0' as vwidth, '0' as theformat,
-				lower(f.file_name) filename_forsort, f.file_size size, f.hashtag
+				lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, 
+				'' as labels
 				FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 				WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2307,7 +2310,8 @@
 				) AS theformat,
 				lower(a.aud_name) filename_forsort,
 				a.aud_size size,
-				a.hashtag
+				a.hashtag, 
+				'' as labels
 				FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2320,7 +2324,7 @@
 	<!--- DB2 --->
 	<cfelseif variables.database EQ "db2">
 		<!--- Query --->
-		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getallassets */ id, filename, folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
 		path_to_asset, cloud_url, cloud_url_org, description, keywords, theformat, filename_forsort, size, hashtag
 		FROM (
@@ -2338,7 +2342,8 @@
 			) AS theformat,
 			lower(i.img_filename) filename_forsort,
 			i.img_size size,
-			i.hashtag
+			i.hashtag, 
+			'' as labels
 			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
@@ -2358,7 +2363,8 @@
 			) AS theformat,
 			lower(v.vid_filename) filename_forsort,
 			v.vid_size size,
-			v.hashtag
+			v.hashtag, 
+			'' as labels
 			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -2378,7 +2384,8 @@
 			) AS theformat,
 			lower(a.aud_name) filename_forsort,
 			a.aud_size size,
-			a.hashtag
+			a.hashtag, 
+			'' as labels
 			FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (a.aud_group IS NULL OR a.aud_group = '')
@@ -2388,7 +2395,7 @@
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url, f. cloud_url_org, ft.file_desc description, ft.file_keywords keywords, '0' as vheight, '0' as vwidth, '0' as theformat,
-			lower(f.file_name) filename_forsort, f.file_size size, f.hashtag
+			lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, '' as labels
 			FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 			WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2404,7 +2411,7 @@
 		<!--- MySQL Offset --->
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
-		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #max# </cfif>i.img_id id, i.img_filename filename, 
 		i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 		i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
@@ -2419,7 +2426,8 @@
 		) AS theformat,
 		lower(i.img_filename) filename_forsort,
 		i.img_size size,
-		i.hashtag
+		i.hashtag,
+		'' as labels
 		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
@@ -2449,7 +2457,8 @@
 		) AS theformat,
 		lower(v.vid_filename) filename_forsort,
 		v.vid_size size,
-		v.hashtag
+		v.hashtag,
+		'' as labels
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -2479,7 +2488,8 @@
 		) AS theformat,
 		lower(a.aud_name) filename_forsort,
 		a.aud_size size,
-		a.hashtag
+		a.hashtag,
+		'' as labels
 		FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (a.aud_group IS NULL OR a.aud_group = '')
@@ -2499,7 +2509,7 @@
 		f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc description, ft.file_keywords keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
-		lower(f.file_name) filename_forsort, f.file_size size, f.hashtag
+		lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, '' as labels
 		FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2521,6 +2531,22 @@
 			</cfif>
 		</cfif>
 		</cfquery>
+	</cfif>
+	<!--- Only get the labels if in the combinded view --->
+	<cfif session.view EQ "combined">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetokenlabels = getcachetoken("labels")>
+		<!--- Loop over files and get labels and add to qry --->
+		<cfloop query="qry">
+			<!--- Query labels --->
+			<cfquery name="qry_l" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+			FROM ct_labels
+			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+			</cfquery>
+			<!--- Add labels query --->
+			<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+		</cfloop>
 	</cfif>
 	<!--- Return --->
 	<cfreturn qry>
@@ -2768,6 +2794,9 @@
 		<!--- saveaszip or as a collection --->
 		<cfelseif session.type EQ "saveaszip" OR session.type EQ "saveascollection">
 			<a href="##" onclick="loadcontent('win_choosefolder','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#');">
+		<!--- upload --->
+		<cfelseif session.type EQ "uploadinto">
+			<a href="##" onclick="showwindow('index.cfm?fa=c.asset_add&folder_id=#folder_id#','Add your files',650,1);return false;">
 		<!--- customization --->
 		<cfelseif session.type EQ "customization">
 			<a href="##" onclick="javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);">
@@ -3036,10 +3065,6 @@
 <!--- THREAD: Save the combined view --->
 <cffunction name="combined_save_thread" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
-	<!---
-<cfdump var="#arguments.thestruct#">
-	<cfabort>
---->
 	<!--- Param --->
 	<cfset var docid = 0>
 	<cfset var audid = 0>
@@ -3049,6 +3074,8 @@
 	<cfloop delimiters="," index="myform" list="#arguments.thestruct.fieldnames#">
 		<!--- Images --->
 		<cfif myform CONTAINS "img_">
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("images")>
 			<!--- First part of the _ --->
 			<cfset theid = listfirst(myform,"_")>
 			<cfif imgid NEQ theid>
@@ -3113,6 +3140,8 @@
 			</cfif>
 		<!--- Videos --->
 		<cfelseif myform CONTAINS "vid_">
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("videos")>
 			<!--- First part of the _ --->
 			<cfset theid = listfirst(myform,"_")>
 			<cfif vidid NEQ theid>
@@ -3178,6 +3207,8 @@
 			</cfif>
 		<!--- Audios --->
 		<cfelseif myform CONTAINS "aud_">
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("audios")>
 			<!--- First part of the _ --->
 			<cfset theid = listfirst(myform,"_")>
 			<cfif audid NEQ theid>
@@ -3247,6 +3278,8 @@
 			</cfif>
 		<!--- Files --->
 		<cfelseif myform CONTAINS "doc_">
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("files")>
 			<!--- First part of the _ --->
 			<cfset theid = listfirst(myform,"_")>
 			<cfif docid NEQ theid>
@@ -3313,7 +3346,7 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("folders")>
-	<!--- <cfoutput>Filename: #form["#fname#"]# Desc: #form["#fdesc#"]# Keywords: #form["#fkeys#"]#<br /></cfoutput> --->
+	<cfset resetcachetoken("search")> 
 	<cfreturn />
 </cffunction>
 

@@ -23,39 +23,52 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<cfcontent reset="true">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" >
 <cfparam name="attributes.file_id" default="0">
-<head>
+<cfparam name="attributes.preview" default="false">
+<cfparam name="attributes.type" default="">
 <cfoutput>
+<head>
 <link rel="stylesheet" href="#dynpath#/global/host/dam/views/layouts/main.css" type="text/css" />
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/upload/swfupload.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/upload/jquery-asyncUpload-0.1.js"></script>
-<script>
-    $(function() {
-        $("##yourID").makeAsyncUploader({
-        	flash_url: '#dynpath#/global/js/upload/swfupload.swf',
-            upload_url: "#myself#c.asset_upload&tempid=#attributes.tempid#&thepath=#urlencodedformat(thisPath)#&thefieldname=filedata&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#",
-            button_image_url: '#dynpath#/global/js/upload/blankButton.png',
-            file_size_limit: "2000 MB",
-            file_types: "*.*",
-            file_upload_limit: 100,
-			file_queue_limit: 0,
-			debug: false
-        });
-    });  
-</script>
-<style type="text/css">
-<!--- <cfif attributes.file_id NEQ 0>body{background-color: ##DFE8F6;}</cfif> --->
-DIV.ProgressBar { width: 100px; padding: 0; border: 1px solid black; margin-right: 1em; height:.75em; margin-left:1em; display:-moz-inline-stack; display:inline-block; zoom:1; *display:inline; }
-DIV.ProgressBar DIV { background-color: Green; font-size: 1pt; height:100%; float:left; }
-SPAN.asyncUploader OBJECT { position: relative; top: 5px; left: 10px; z-index: 7000;}
-</style>
 </head>
 <body>
-<form action="#self#" name="upme" method="post" enctype="multipart/form-data">
-<input type="file" id="yourID" name="yourID" />
-<!--- </cfif> --->
-</form>
-</cfoutput>
+<cfif structKeyExists(form,"fieldnames")>
+    <div id="updummy" style="display:none;"></div>
+    <cfif form.preview>
+        <script type="text/javascript">
+            $('##updummy').load('#myself#c.previewimage_activate&tempid=#attributes.tempid#&type=#attributes.type#');
+        </script>
+        <span style="font-weight:bold;color:green;">New preview image has been uploaded.</span><br />In order to see it you most likely need to clear your cache!
+    <cfelse>
+        <span style="font-weight:bold;color:green;">We are processing your new version now.</span><br />You should be able to see the new version after a refresh of the list below. 
+        <br />#myFusebox.getApplicationData().defaults.trans("versions_create_progress")#
+        <script type="text/javascript">
+            parent.$('##versionlist').load('index.cfm?fa=c.versions_add&file_id=#attributes.file_id#&type=#attributes.type#&tempid=#attributes.tempid#');
+        </script>
+    </cfif>
+<cfelse>
+    <form action="#self#" name="upme" id="upme" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="fa" value="c.asset_upload">
+        <input type="hidden" name="tempid" value="#attributes.tempid#">
+        <input type="hidden" name="thepath" value="#thisPath#">
+        <input type="hidden" name="thefieldname" value="filedata">
+        <input type="hidden" name="folder_id" value="#attributes.folder_id#">
+        <input type="hidden" name="file_id" value="#attributes.file_id#">
+        <input type="hidden" name="preview" value="#attributes.preview#">
+        <input type="hidden" name="type" value="#attributes.type#">
+        <input type="file" id="filedata" name="filedata" class="button" />
+    </form>
+</cfif>
 </body>
+</cfoutput>
 </html>
+<!--- JS --->
+<script type="text/javascript">
+    $('#filedata').change(function() { 
+        // select the form and submit
+        $('#upme').submit();
+    });
+</script>

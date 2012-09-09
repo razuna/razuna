@@ -139,7 +139,9 @@
 			</div>
 		</div>
 	<cfelse>
-		<cfif cs.show_top_part><div id="apDiv1">#trim( headercontent )#</div></cfif>
+		<cfif cs.show_top_part>
+			<div id="apDiv1">#trim( headercontent )#</div>
+		</cfif>
 		<div id="apDiv3">#trim( leftcontent )#</div>
 		<div id="apDiv4">#trim( maincontent )#</div>
 		<!--- <div id="apDiv5">#trim( showcontent )#</div> --->

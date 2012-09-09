@@ -33,7 +33,7 @@
 	<cfif qry_folder.folder_is_collection EQ "T" OR attributes.iscol EQ "T">
 		<input type="hidden" name="coll_folder" value="T">
 	</cfif>
-	<div id="folder#attributes.theid#-#attributes.isdetail#" style="width:<cfif attributes.isdetail EQ "T">660px<cfelse>690px</cfif>;padding-bottom:60px;">
+	<div id="folder#attributes.theid#-#attributes.isdetail#" style="width:<cfif attributes.isdetail EQ "T">100%<cfelse>690px</cfif>;padding-bottom:60px;">
 		<cfif attributes.isdetail NEQ "T" AND NOT application.razuna.isp AND attributes.iscol NEQ "T">
 			<ul>
 				<li><a href="##folder_new#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("folder_new")#</a></li>
@@ -41,14 +41,7 @@
 			</ul>
 		</cfif>
 		<div id="folder_new#attributes.theid#">
-			<table border="0" cellpadding="0" cellspacing="0" class="grid" style="width:660px;">
-				<!---
-<tr>
-					<th colspan="2">
-						<div style="float:left;"><cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("folder_properties")#<cfelse>#myFusebox.getApplicationData().defaults.trans("folder_new")#</cfif></div>
-					</th>
-				</tr>
---->
+			<table border="0" cellpadding="0" cellspacing="0" class="grid">
 				<tr>
 					<td><strong>#myFusebox.getApplicationData().defaults.trans("folder_name")#</strong></td>
 					<td>
@@ -138,9 +131,11 @@
 				</cfif>
 			</table>
 			<!--- This is the plugin section --->
-			<cfloop list="#pl.pview#" delimiters="," index="i">
-				#evaluate(i)#
-			</cfloop>
+			<cfif attributes.iscol EQ "F">
+				<cfloop list="#pl.pview#" delimiters="," index="i">
+					#evaluate(i)#
+				</cfloop>
+			</cfif>
 		</div>
 		<!--- Link to Folder --->
 		<cfif attributes.isdetail NEQ "T" AND NOT application.razuna.isp AND attributes.iscol NEQ "T">
@@ -165,6 +160,7 @@
 				<div id="addlinkstatus" style="display:none;"></div>
 			</div>
 		</cfif>
+		<!--- Buttons --->
 		<div style="float:left;padding-top:10px;padding-bottom:10px;">
 			<cfif attributes.isdetail EQ "T" AND (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND NOT (qry_folder.folder_owner EQ session.theuserid AND qry_folder.folder_name EQ "my folder")>
 				<input type="button" name="movefolder" value="#myFusebox.getApplicationData().defaults.trans("move_folder")#" class="button" onclick="showwindow('#myself#c.move_file&file_id=0&type=movefolder&thetype=folder&folder_id=#attributes.folder_id#&folder_level=#qry_folder.folder_level#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("move_folder")#',600,1);"> 
@@ -180,7 +176,7 @@
 				<input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="destroywindow(1);return false;" class="button"> 
 			</cfif>
 		</div>
-		<div style="float:right;padding-top:10px;padding-bottom:10px;">
+		<div style="float:right;padding-top:10px">
 			<input type="submit" name="submit" value="<cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("button_update")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_add")#</cfif>" class="button">
 			<div id="updatetext" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 		</div>

@@ -35,13 +35,11 @@
 			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("versions_upload_desc")#</td>
 		</tr>
 		<tr class="list">
-			<td><iframe src="#myself#ajax.versions_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#" frameborder="false" scrolling="false" style="border:0px;width:500px;height:35px;" id="ifupload"></iframe></td>
-			<td><input type="button" value="#myFusebox.getApplicationData().defaults.trans("versions_upload_button")#" class="button" name="upversion" onclick="vercreate('#attributes.file_id#','#attributes.type#','#attributes.tempid#');return false;"></td>
+			<td><iframe src="#myself#ajax.versions_upload&folder_id=#attributes.folder_id#&file_id=#attributes.file_id#&extjs=T&tempid=#attributes.tempid#&type=#attributes.type#" frameborder="false" scrolling="false" style="border:0px;width:500px;height:35px;" id="ifupload"></iframe></td>
 		</tr>
 	</table>
 	<div id="status" style="width:95%;padding:10px;color:green;background-color:##FFFFE0;display:none;"></div>
 	<div id="versionlist"></div>
-	
 	<!--- Load Version list --->
 	<script language="JavaScript" type="text/javascript">
 		loadcontent('versionlist','#myself#c.versions_list&file_id=#attributes.file_id#&type=#attributes.type#');
