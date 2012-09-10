@@ -56,12 +56,12 @@
 		<tr>
 			<td colspan="5">
 				<div style="float:left;padding-left:10px;">
-					<cfif qry_widget.widget_uploading EQ "T"><a href="##" onclick="window.open('#myself#c.asset_add_single&folder_id=#session.fid#&_w=t','up#session.fid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | </cfif>
+					<cfif qry_widget.widget_uploading EQ "T"><a href="##" onclick="window.open('#myself#c.asset_add_single&folder_id=#session.fid#&_w=t&#session.urltoken#','up#session.fid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | </cfif>
 					#qry.qry_filecount.thetotal# #myFusebox.getApplicationData().defaults.trans("share_content_count")#
 					<!--- BreadCrumb --->
 					<cfif structkeyexists(url,"folder_id_r")>
 						<cfif listlen(qry_breadcrumb)>
-							| <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&fid=#attributes.fid#">#ListGetAt(i,1,"|")#</a> </cfloop>
+							| <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&fid=#attributes.fid#&#session.urltoken#">#ListGetAt(i,1,"|")#</a> </cfloop>
 						</cfif>
 					</cfif>
 					<!--- Not when a collection since they do not know limits!!! --->
@@ -70,7 +70,7 @@
 							<cfif session.offset GTE 1>
 								<!--- For Back --->
 								<cfset newoffset = session.offset - 1>
-								<a href="##" onclick="$('##rightside').load('#myself#c.w_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">< #myFusebox.getApplicationData().defaults.trans("back")#</a> |
+								<a href="##" onclick="$('##rightside').load('#myself#c.w_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#&#session.urltoken#');">< #myFusebox.getApplicationData().defaults.trans("back")#</a> |
 							</cfif>
 							<cfset showoffset = session.offset * session.rowmaxpage>
 							<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -78,7 +78,7 @@
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
 								<!--- For Next --->
 								<cfset newoffset = session.offset + 1>
-								<a href="##" onclick="$('##rightside').load('#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');" style="padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("next")# ></a>
+								<a href="##" onclick="$('##rightside').load('#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#&#session.urltoken#');" style="padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("next")# ></a>
 							</cfif>
 							<!--- Pages --->
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
@@ -87,7 +87,7 @@
 									<select id="thepagelistw" onChange="jumppage();">
 									<cfloop from="1" to="#thepage#" index="i">
 										<cfset loopoffset = i - 1>
-										<option value="#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
+										<option value="#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#&#session.urltoken#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
 									</cfloop>
 									</select>
 							</cfif>
@@ -102,7 +102,7 @@
 				<cfif session.iscol EQ "F">
 					<cfloop query="qry_subfolders">
 						<div class="assetbox" style="text-align:center;">
-							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&#urltoken#">
+							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&#session.urltoken#">
 								<div class="theimg">
 									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 								</div>
@@ -131,7 +131,7 @@
 												<cfset thev = "o">
 												<cfset theid = theformat>
 											</cfif>
-											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0"></a>
+											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&#session.urltoken#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0"></a>
 										<cfelse>
 											<cfif theformat EQ "original" OR theformat EQ "org">
 												<cfset thev = "o">
@@ -143,7 +143,7 @@
 												<cfset thev = "o">
 												<cfset theid = theformat>
 											</cfif>
-											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
+											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&#session.urltoken#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
 										</cfif>
 									<cfelse>
 										<img src="#link_path_url#" border="0">
@@ -151,7 +151,7 @@
 								</div>
 								<strong>#filename#</strong>
 								<br>
-								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=img','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=img&#session.urltoken#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 							</cfif>
@@ -169,9 +169,9 @@
 										</cfif>
 										<!--- Show video preview images --->
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0" width="160"></a>
+											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&#session.urltoken#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#cloud_url#" border="0" width="160"></a>
 										<cfelse>
-											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160"></a>
+											<a href="##" onclick="window.open('#myself#c.sv&f=#theid#&v=o&#session.urltoken#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160"></a>
 										</cfif>
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
@@ -179,7 +179,7 @@
 								</div>
 								<strong>#filename#</strong>
 								<br>
-								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=vid','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=vid&#session.urltoken#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 							</cfif>
@@ -194,11 +194,11 @@
 									<cfset theid = theformat>
 								</cfif>
 								<div class="theimg">
-									<a href="##" onclick="window.open('#myself#c.sa&f=#theid#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></a>
+									<a href="##" onclick="window.open('#myself#c.sa&f=#theid#&#session.urltoken#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></a>
 								</div>
 								<strong>#filename#</strong>
 								<br>
-								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=aud','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+								<a href="##" onclick="window.open('#myself#c.widget_download&file_id=#id#&wid=#session.widget_id#&kind=aud&#session.urltoken#','dl#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 							</cfif>
@@ -223,7 +223,7 @@
 								<!--- For now download pf PDF is allows independent of setting in the widget preferences --->
 								<!--- <cfif qry_widget.widget_dl_org EQ "t"> --->
 									<br>
-									<a href="#myself#c.serve_file&file_id=#id#&type=doc">#myFusebox.getApplicationData().defaults.trans("download")#</a>
+									<a href="#myself#c.serve_file&file_id=#id#&type=doc&#session.urltoken#">#myFusebox.getApplicationData().defaults.trans("download")#</a>
 								<!--- </cfif> --->
 							<cfelse>
 								The upload of "#filename#" is still in progress!

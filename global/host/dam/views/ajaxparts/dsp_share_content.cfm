@@ -36,7 +36,7 @@
 	<ul>
 		<li><a href="##shared_thumbs">Thumbnails</a></li>
 		<cfif qry_folder.share_comments EQ "T"><li><a href="##shared_list">List</a></li></cfif>
-		<li><a href="##shared_basket" id="tabs_shared_basket" onclick="loadcontent('shared_basket','#myself#c.share_basket');">Basket</a></li>
+		<li><a href="##shared_basket" id="tabs_shared_basket" onclick="loadcontent('shared_basket','#myself#c.share_basket&#session.urltoken#');">Basket</a></li>
 	</ul>
 	<div id="shared_thumbs">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
@@ -45,13 +45,13 @@
 				<td colspan="5">
 					<div style="float:left;">
 						<cfif qry_folder.share_upload EQ "T">
-							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | 
+							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#&#session.urltoken#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | 
 						</cfif>
 						#qry.qry_filecount.thetotal# #myFusebox.getApplicationData().defaults.trans("share_content_count")#
 						<!--- BreadCrumb --->
 						<cfif structkeyexists(url,"folder_id_r")>
 							<cfif listlen(qry_breadcrumb)>
-								| Folder: <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
+								| Folder: <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&#session.urltoken#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 							</cfif>
 						</cfif>
 					</div>
@@ -59,7 +59,7 @@
 						<cfif session.offset GTE 1>
 							<!--- For Back --->
 							<cfset newoffset = session.offset - 1>
-							<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">< #myFusebox.getApplicationData().defaults.trans("back")#</a> |
+							<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#&#session.urltoken#');">< #myFusebox.getApplicationData().defaults.trans("back")#</a> |
 						</cfif>
 						<cfset showoffset = session.offset * session.rowmaxpage>
 						<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -67,7 +67,7 @@
 						<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
 							<!--- For Next --->
 							<cfset newoffset = session.offset + 1>
-							<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');" style="padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("next")# ></a>
+							<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#&#session.urltoken#');" style="padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("next")# ></a>
 						</cfif>
 						<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
 							<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
@@ -75,7 +75,7 @@
 								<select id="thepagelistshare" onChange="loadcontent('rightside', $('##thepagelistshare :selected').val());">
 								<cfloop from="1" to="#thepage#" index="i">
 									<cfset loopoffset = i - 1>
-									<option value="#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
+									<option value="#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#&#session.urltoken#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
 								</cfloop>
 								</select>
 						</cfif>
@@ -88,7 +88,7 @@
 					<cfif session.iscol EQ "F">
 						<cfloop query="qry_subfolders">
 							<div class="assetbox" style="text-align:center;">
-								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#');">
+								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&#session.urltoken#');">
 									<div class="theimg">
 										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 									</div>
@@ -115,7 +115,7 @@
 									</div>
 									<div>
 										<!--- <img src="#dynpath#/global/host/dam/images/icons/icon_tiff.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a><!--- <img src="#dynpath#/global/host/dam/images/go-down-7.png" width="16" height="16" border="0" /> --->
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&#session.urltoken#');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a><!--- <img src="#dynpath#/global/host/dam/images/go-down-7.png" width="16" height="16" border="0" /> --->
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -130,7 +130,7 @@
 									</div>
 									<div>
 <!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&#session.urltoken#');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -145,7 +145,7 @@
 									</div>
 									<div>
 <!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_aud.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&#session.urltoken#');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -171,7 +171,7 @@
 									</div>
 									<div>
 <!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&#session.urltoken#');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -194,19 +194,19 @@
 					<td colspan="5">
 						<div style="float:left;">
 							<cfif qry_folder.share_upload EQ "T">
-								<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | 
+								<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#&#session.urltoken#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | 
 							</cfif>
 							#qry.qry_filecount.thetotal# #myFusebox.getApplicationData().defaults.trans("share_content_count")#
 							<!--- BreadCrumb --->
 							<cfif structkeyexists(url,"folder_id_r")>
-								| Folder: <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
+								| Folder: <cfloop list="#qry_breadcrumb#" delimiters=";" index="i"> / <a href="##" onclick="loadcontent('rightside','#myself#c.share_content&fid=#session.fid#&folder_id=#ListGetAt(i,2,"|")#&folder_id_r=#ListGetAt(i,3,"|")#&#session.urltoken#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 							</cfif>
 						</div>
 						<div style="float:right;">
 							<cfif session.offset GTE 1>
 								<!--- For Back --->
 								<cfset newoffset = session.offset - 1>
-								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">< #myFusebox.getApplicationData().defaults.trans("back")#</a> |
+								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#&#session.urltoken#');">< #myFusebox.getApplicationData().defaults.trans("back")#</a> |
 							</cfif>
 							<cfset showoffset = session.offset * session.rowmaxpage>
 							<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -214,7 +214,7 @@
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
 								<!--- For Next --->
 								<cfset newoffset = session.offset + 1>
-								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');" style="padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("next")# ></a>
+								<a href="##" onclick="loadcontent('rightside','#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#&#session.urltoken#');" style="padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("next")# ></a>
 							</cfif>
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
 								<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
@@ -222,7 +222,7 @@
 									<select id="thepagelistshare" onChange="loadcontent('rightside', $('##thepagelistshare :selected').val());">
 									<cfloop from="1" to="#thepage#" index="i">
 										<cfset loopoffset = i - 1>
-										<option value="#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
+										<option value="#myself#c.share_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#&#session.urltoken#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
 									</cfloop>
 									</select>
 							</cfif>
@@ -244,7 +244,7 @@
 								<cfelseif link_kind EQ "url">
 									<img src="#link_path_url#" border="0" width="120">
 								</cfif>
-								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&#session.urltoken#');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
 							<!--- Videos --->
 							<cfelseif kind EQ "vid">
 								<cfif link_kind NEQ "url">
@@ -256,11 +256,11 @@
 								<cfelseif link_kind EQ "url">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
 								</cfif>
-								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&#session.urltoken#');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
 							<!--- Audios --->
 							<cfelseif kind EQ "aud">
 								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="120" border="0">
-								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&#session.urltoken#');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
 							<!--- All other files --->
 							<cfelse>
 								<!--- If it is a PDF we show the thumbnail --->
@@ -276,7 +276,7 @@
 								<cfelse>
 									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0"></cfif>
 								</cfif>
-								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
+								<br><a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&#session.urltoken#');flash_basket_tab();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">
 							</cfif>
 							#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 						</td>
@@ -294,7 +294,7 @@
 							<!--- JS for Slide Effects --->
 							<script type="text/javascript">
 								// Load latest comment
-								loadcontent('divlatcomment#id#','#myself#c.share_comments_latest&file_id=#id#&type=#kind#');
+								loadcontent('divlatcomment#id#','#myself#c.share_comments_latest&file_id=#id#&type=#kind#&#session.urltoken#');
 							</script>
 						</td>
 					</tr>
