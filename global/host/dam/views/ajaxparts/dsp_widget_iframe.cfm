@@ -70,7 +70,7 @@
 							<cfif session.offset GTE 1>
 								<!--- For Back --->
 								<cfset newoffset = session.offset - 1>
-								<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">< #myFusebox.getApplicationData().defaults.trans("back")#</a> |
+								<a href="##" onclick="$('##rightside').load('#myself#c.w_content&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');">< #myFusebox.getApplicationData().defaults.trans("back")#</a> |
 							</cfif>
 							<cfset showoffset = session.offset * session.rowmaxpage>
 							<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
@@ -78,13 +78,13 @@
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage AND NOT shownextrecord GTE qry.qry_filecount.thetotal> | 
 								<!--- For Next --->
 								<cfset newoffset = session.offset + 1>
-								<a href="##" onclick="loadcontent('rightside','#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');" style="padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("next")# ></a>
+								<a href="##" onclick="$('##rightside').load('#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#newoffset#');" style="padding-right:5px;">#myFusebox.getApplicationData().defaults.trans("next")# ></a>
 							</cfif>
 							<!--- Pages --->
 							<cfif qry.qry_filecount.thetotal GT session.rowmaxpage>
 								<cfset thepage = ceiling(qry.qry_filecount.thetotal / session.rowmaxpage)>
 								Page: 
-									<select id="thepagelistw" onChange="loadcontent('rightside', $('##thepagelistw :selected').val());">
+									<select id="thepagelistw" onChange="jumppage();">
 									<cfloop from="1" to="#thepage#" index="i">
 										<cfset loopoffset = i - 1>
 										<option value="#myself#c.w_content&wid=#attributes.wid#&folder_id=#attributes.folder_id#&fid=#attributes.fid#<cfif structkeyexists(attributes,"folder_id_r")>&folder_id_r=#attributes.folder_id_r#</cfif>&offset=#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
@@ -106,7 +106,7 @@
 								<div class="theimg">
 									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 								</div>
-							<strong><a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#">#folder_name#</a></strong></a>
+							<strong>#folder_name#</strong></a>
 						</div>
 					</cfloop>
 				</cfif>
@@ -235,6 +235,12 @@
 		</tr>
 	</table>
 	</div>
+	<script type="text/javascript">
+		function jumppage(){
+			var p = $('##thepagelistw :selected').val();
+			$('##rightside').load(p);
+		}
+	</script>
 <!--- Load ScrollingImages --->
 <cfelse>
 	<!-- Smooth Div Scroll 1.1 - minified for faster loading-->
