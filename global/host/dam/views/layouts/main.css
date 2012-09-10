@@ -841,7 +841,18 @@ button.css3button {
 	font-size: 24px;
 	border-bottom: 1px solid grey;
 }
+.panelsnew h2 {
+	font-size: 16px;
+	font-weight: bold;
+	font-size: 14px;
+	padding-top: 10px;
+	padding-bottom: 0px;
+}
 .panelsnew a {
 	font-size: 14px;
 	font-weight: bold;
+}
+.announcements {
+	font-size: 14px;
+	font-weight: normal;
 }

@@ -64,25 +64,6 @@
 								<button class="awesome super green">Add your files</button>
 							</a>
 						</div>
-						<!--- Announcement for ISP --->
-						<cfif application.razuna.isp>
-							<br />
-							<div class="panelsnew">
-								<h1>Announcements from Razuna</h1>
-								<cfloop query="attributes.qry_news">
-									<span style="font-weight:bold;padding-top:10px;padding-bottom:0px;"><cfif currentrow EQ 1>#news_title#<cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a></cfif></span><br />
-									<cfif currentrow EQ 1>
-										#news_text##news_text_long#
-										<br /><br />
-									<cfelse>
-										<div id="slidenews#currentrow#" style="display:none;">
-											#news_text##news_text_long#
-											<br />
-										</div>
-									</cfif>
-								</cfloop>
-							</div>
-						</cfif>
 					</td>
 					<td width="50%" valign="top">
 						<!--- If the top part is hidden then admin functions are here and the search also --->
@@ -141,6 +122,25 @@
 							<br /><br />
 							<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Real world custom case');return false;">&gt; Real world customer case</a>
 						</div>
+						<!--- Announcement for ISP --->
+						<cfif application.razuna.isp>
+							<br />
+							<div class="panelsnew">
+								<h1>Razuna Announcements</h1>
+								<cfloop query="attributes.qry_news">
+									<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a></cfif><br />
+									<cfif currentrow EQ 1>
+										<span class="announcements">#news_text##news_text_long#</p>
+										<br /><br />
+									<cfelse>
+										<div id="slidenews#currentrow#" style="display:none;">
+											#news_text##news_text_long#
+											<br />
+										</div>
+									</cfif>
+								</cfloop>
+							</div>
+						</cfif>
 					</td>
 				</tr>
 			</table>
