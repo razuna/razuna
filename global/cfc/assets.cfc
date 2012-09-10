@@ -1442,7 +1442,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset ttut = createuuid("")>
 				<cfthread name="#ttut#" upstruct="#arguments.thestruct#" priority="HIGH">
 					<cfinvoke component="nirvanix" method="Upload">
-						<cfinvokeargument name="destFolderPath" value="/#attributes.upstruct.qryfile.folder_id#/doc/#aattributes.upstruct.newid#">
+						<cfinvokeargument name="destFolderPath" value="/#attributes.upstruct.qryfile.folder_id#/doc/#attributes.upstruct.newid#">
 						<cfinvokeargument name="uploadfile" value="#attributes.upstruct.thetempdirectory#/#attributes.upstruct.thepdfimage#">
 						<cfinvokeargument name="nvxsession" value="#attributes.upstruct.nvxsession#">
 					</cfinvoke>
