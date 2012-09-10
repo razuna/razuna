@@ -168,7 +168,7 @@
 			// Trim the returning ID
 			var trimmed = data.replace(/^\s+|\s+$/g, '');
 			// Update the textarea field
-			var thetextarea = '<iframe frameborder="0" src="http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=' + trimmed + '" scrolling="auto" width="100%" height="500"></iframe>';
+			var thetextarea = '&lt;iframe frameborder="0" src="http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=' + trimmed + '" scrolling="auto" width="100%" height="500"></iframe>';
 			var thetext = 'http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=' + trimmed;
 			$('##widget_textarea').html(thetextarea);
 			$('##widget_text').val(thetext);
