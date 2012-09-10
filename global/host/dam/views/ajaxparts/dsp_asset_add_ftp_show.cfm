@@ -25,7 +25,9 @@
 --->
 <cfoutput>
 	<cfif NOT qry_ftp.ftp.Succeeded>
-		Error: #qry_ftp.ftp.errortext#
+		<h2>An error occured while connecting to your FTP site</h2>
+		<p>Unfortunately, an error occured connecting to your FTP site. Please check your login and password. Below is the error the FTP site reported:</p>
+		<p>Error: #qry_ftp.ftp.errortext#<br />Error Code: #qry_ftp.ftp.errorcode#</p>
 	<cfelse>
 		<cfparam default="/" name="folderpath">
 		<form name="assetftpform" id="assetftpform" method="post" action="#self#">

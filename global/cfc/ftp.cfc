@@ -31,9 +31,8 @@
     <cfset var qry = structnew()>
     <cfset qry.backpath = "">
     <cfset qry.dirname = "">
-    <cfset var fc = "f" & randrange(1,100000000)>
     <!--- Open Connection to FTP Server --->
-    <cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive)>
+    <cfset var o = ftpopen(server=session.ftp_server,username=session.ftp_user,password=session.ftp_pass,passive=session.ftp_passive,stoponerror=false)>
     <!--- Set the response form the connection into scope --->
     <cfset qry.ftp = o>
     <!--- Try to connect to the FTP server --->
@@ -93,7 +92,7 @@
 		<!--- Delete the file in the outgoing folder --->
 		<cffile action="delete" file="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.thefile#">
 		<!--- Close FTP --->
-			<cfset ftpclose(o)>
+		<cfset ftpclose(o)>
 		<cfoutput>success</cfoutput>
 		<cfcatch type="any">
             <cfoutput>#cfcatch.Detail#</cfoutput>
