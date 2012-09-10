@@ -845,8 +845,8 @@ button.css3button {
 	font-size: 16px;
 	font-weight: bold;
 	font-size: 14px;
-	padding-top: 10px;
-	padding-bottom: 0px;
+	padding: 10px 0px 0px 0px;
+	margin: 0px;
 }
 .panelsnew a {
 	font-size: 14px;

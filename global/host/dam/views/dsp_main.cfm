@@ -128,7 +128,7 @@
 							<div class="panelsnew">
 								<h1>Razuna Announcements</h1>
 								<cfloop query="attributes.qry_news">
-									<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a></cfif><br />
+									<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a><br /></cfif>
 									<cfif currentrow EQ 1>
 										<span class="announcements">#news_text##news_text_long#</p>
 										<br /><br />
