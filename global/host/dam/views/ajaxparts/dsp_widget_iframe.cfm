@@ -102,7 +102,7 @@
 				<cfif session.iscol EQ "F">
 					<cfloop query="qry_subfolders">
 						<div class="assetbox" style="text-align:center;">
-							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&cfid=#cfid#&cftoken=#cftoken#">
+							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#">
 								<div class="theimg">
 									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 								</div>
