@@ -199,11 +199,11 @@
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
-					<!--- Flush Cache --->
-					<cfset resetcachetoken("folders")>
 				</cfif>
 			</cfif>
 		</cfthread>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
 	</cffunction>
 
 <!--- FUNCTION: LOGINSTATUS --->
