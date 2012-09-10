@@ -976,9 +976,15 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cfif>
 		<!--- copyrightstatus --->
 		<cftry>
-			<cfset xmp.copystatus = trim(#thexml[1]["Photoshop:CopyrightFlag"].xmltext#)>
+			<cfset xmp.copystatus = trim(#thexml[1]["XMP-xmpRights:Marked"].xmltext#)>
 			<cfcatch type="any"></cfcatch>
 		</cftry>
+		<cfif xmp.copystatus EQ "">
+			<cftry>
+				<cfset xmp.copystatus = trim(#thexml[1]["Photoshop:CopyrightFlag"].xmltext#)>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+		</cfif>
 		<!--- TransmissionReference --->
 		<cftry>
 			<cfset xmp.iptcjobidentifier = trim(#thexml[1]["XMP-photoshop:TransmissionReference"].xmltext#)>
