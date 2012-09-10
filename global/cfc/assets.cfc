@@ -956,7 +956,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- IMAGE UPLOAD (call method to process a img-file) --->
 			<cfinvoke method="processImgFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
 			<!--- Act on Upload Templates --->
-			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 				<cfset arguments.thestruct.upltemptype = "img">
 				<cfset arguments.thestruct.file_id = returnid>
 				<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
@@ -965,7 +965,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- VIDEO UPLOAD (call method to process a vid-file) --->
 			<cfinvoke method="processVidFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
 			<!--- Act on Upload Templates --->
-			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 				<cfset arguments.thestruct.upltemptype = "vid">
 				<cfset arguments.thestruct.file_id = returnid>
 				<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
@@ -974,7 +974,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- AUDIO UPLOAD (call method to process a aud-file) --->
 			<cfinvoke method="processAudFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
 			<!--- Act on Upload Templates --->
-			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 				<cfset arguments.thestruct.upltemptype = "aud">
 				<cfset arguments.thestruct.file_id = returnid>
 				<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
@@ -2939,7 +2939,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- IMAGE UPLOAD (call method to process a img-file) --->
 						<cfinvoke method="processImgFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
 						<!--- Act on Upload Templates --->
-						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 							<cfset arguments.thestruct.upltemptype = "img">
 							<cfset arguments.thestruct.file_id = returnid>
 							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
@@ -2948,7 +2948,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- VIDEO UPLOAD (call method to process a vid-file) --->
 						<cfinvoke method="processVidFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
 						<!--- Act on Upload Templates --->
-						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 							<cfset arguments.thestruct.upltemptype = "vid">
 							<cfset arguments.thestruct.file_id = returnid>
 							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
@@ -2957,7 +2957,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- AUDIO UPLOAD (call method to process a vid-file) --->
 						<cfinvoke method="processAudFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
 						<!--- Act on Upload Templates --->
-						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined">
+						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 							<cfset arguments.thestruct.upltemptype = "aud">
 							<cfset arguments.thestruct.file_id = returnid>
 							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
