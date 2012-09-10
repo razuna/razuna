@@ -1183,7 +1183,7 @@
 		<transtext>Bearbeiten</transtext>
 	</transid>
 	<transid name="custom_fields_asset">
-		<transtext>Zusätzliche Metadaten</transtext>
+		<transtext>Eigene Metadaten</transtext>
 	</transid>
 	<transid name="show_only_for">
 		<transtext>Anzeigen bei</transtext>

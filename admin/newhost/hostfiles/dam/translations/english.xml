@@ -208,7 +208,7 @@
 		<transtext>Other Formats</transtext>
 	</transid>
 	<transid name="folder_properties">
-		<transtext>Folder Properties</transtext>
+		<transtext><![CDATA[Folder Sharing & Settings]]></transtext>
 	</transid>
 	<transid name="folder_search">
 		<transtext>Search within folder</transtext>
@@ -457,7 +457,7 @@
 		<transtext><![CDATA[Do you really want to remove all the selected records?<br><br>Caution: The record will be deleted and is not recoverable!]]></transtext>
 	</transid>
 	<transid name="convert">
-		<transtext><![CDATA[Create Rendition(s)]]></transtext>
+		<transtext><![CDATA[Renditions]]></transtext>
 	</transid>
 	<transid name="click_for_preview">
 		<transtext>Click on the image to see the preview movie</transtext>
@@ -493,7 +493,7 @@
 		<transtext><![CDATA[Convert your original image file into the provided image formats. For each format there will be a thumbnail image generated and the needed image file.]]></transtext>
 	</transid>
 	<transid name="images_original">
-		<transtext>Original Image Asset</transtext>
+		<transtext>Details of the Original File</transtext>
 	</transid>
 	<transid name="comma_seperated">
 		<transtext>A comma should be used to separate words</transtext>
@@ -1180,7 +1180,7 @@
 		<transtext>Edit</transtext>
 	</transid>
 	<transid name="custom_fields_asset">
-		<transtext>Additional Metadata</transtext>
+		<transtext>Custom Metadata Fields</transtext>
 	</transid>
 	<transid name="show_only_for">
 		<transtext>Show in</transtext>
@@ -1231,7 +1231,7 @@
 		<transtext>You can watch your complete library with the stunning effects of Cooliris right here.</transtext>
 	</transid>
 	<transid name="pdf_image_desc">
-		<transtext>No PDF Viewer install? No problem click here to see the PDF as an image</transtext>
+		<transtext>PDF as image</transtext>
 	</transid>
 	<transid name="pages">
 		<transtext>Pages</transtext>
@@ -1630,7 +1630,7 @@
 		<transtext>Recreate Preview Image</transtext>
 	</transid>
 	<transid name="header_preview_image_recreate_desc">
-		<transtext><![CDATA[By clicking the below button you can recreate the thumbnail from the existing image or video. NOTE: This will replace the current preview image!]]></transtext>
+		<transtext><![CDATA[By clicking the below button you can recreate the preview image from the original file.<br /><br />NOTE: This will replace the current preview image! You need to refresh your cache in order to see the image.]]></transtext>
 	</transid>
 	<transid name="header_preview_image_recreate_button">
 		<transtext>Recreate Preview Image Now!</transtext>
