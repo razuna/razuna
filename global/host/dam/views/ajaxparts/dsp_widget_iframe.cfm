@@ -49,18 +49,6 @@
 	<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
 	<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
 	<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
-	<!--[if lt IE 7]>
-	<style> 
-	div.apple_overlay {
-		background-image:url(http://static.flowplayer.org/tools/img/overlay/overlay_IE6.gif);
-		color:##fff;
-	}
-	/* default close button positioned on upper right corner */
-	div.apple_overlay div.close {
-		background-image:url(http://static.flowplayer.org/tools/img/overlay/overlay_close_IE6.gif);
-	}	
-	</style>
-	<![endif]-->
 	</head>
 	<body>
 	<div id="rightside">
@@ -118,7 +106,7 @@
 								<div class="theimg">
 									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 								</div>
-							<strong>#folder_name#</strong></a>
+							<strong><a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#">#folder_name#</a></strong></a>
 						</div>
 					</cfloop>
 				</cfif>

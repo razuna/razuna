@@ -3474,6 +3474,8 @@
 					WHERE fg.folder_id_r = f.folder_id
 					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					) THEN 'unlocked'
+				WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
+				WHEN ( f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
 				ELSE 'locked'
 			END AS perm
 		<cfelse>
