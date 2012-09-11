@@ -27,15 +27,15 @@
 	<div style="padding:10px;min-height:300px;">
 		<!--- Group --->
 		<form name="grpedit" onsubmit="updategrp(#attributes.grp_id#,'#attributes.kind#','#attributes.loaddiv#');return false;">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-			<tr>
-				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groups_edit")#</th>
-			</tr>
-			<tr>
-				<td width="100%"><input type="text" size="40" name="grpname" id="grpname" value="#qry_detail.grp_name#" tabindex="1" /></td>
-				<td width="1%" nowrap="true"><input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></td>
-			</tr>
-		</table>
+			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+				<tr>
+					<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groups_edit")#</th>
+				</tr>
+				<tr>
+					<td width="100%"><cfif attributes.grp_id EQ 2>#qry_detail.grp_name#<cfelse><input type="text" size="40" name="grpname" id="grpname" value="#qry_detail.grp_name#" tabindex="1" /></cfif></td>
+					<td width="1%" nowrap="true"><cfif attributes.grp_id NEQ 2><input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" onclick="javascript:updategrp('#attributes.grp_id#','#attributes.kind#','#attributes.loaddiv#');" /></cfif></td>
+				</tr>
+			</table>
 		</form>
 		<!--- Add User --->
 		<div style="padding-left:5px;">

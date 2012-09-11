@@ -27,15 +27,16 @@
 <cfif session.hosttype EQ 0>
 	<cfinclude template="dsp_host_upgrade.cfm">
 <cfelse>
+	<!--- Add new group --->
 	<form name="grpdamadd" onsubmit="addgrp();return false;">
-	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-		<tr>
-			<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</th>
-		</tr>
-		<tr>
-			<td width="100%" colspan="2"><input type="text" size="40" name="grpnew" id="grpnew" /> <input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="javascript:addgrp('ecp');" /></td>
-		</tr>
-	</table>
+		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+			<tr>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("groupnumber_header_new")#</th>
+			</tr>
+			<tr>
+				<td width="100%" colspan="2"><input type="text" size="40" name="grpnew" id="grpnew" /> <input type="Button" name="Button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="javascript:addgrp('ecp');" /></td>
+			</tr>
+		</table>
 	</form>
 	<!--- Load list of groups here --->
 	<div id="grpdamlist">
@@ -43,6 +44,12 @@
 			<tr>
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("group_list")#</th>
 			</tr>
+			<!--- Administrator Group --->
+			<tr class="list">
+				<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=2&kind=ecp&loaddiv=#loaddiv#','Administrator',500,1);return false;">Administrators</a> (#qry_admin.usercount# members)</td>
+				<td align="center" valign="top" nowrap width="1%"></td>
+			</tr>
+		<!--- Groups of tenant --->
 			<cfloop query="qry_groups">
 				<tr class="list">
 					<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.groups_detail&grp_id=#grp_id#&kind=#kind#&loaddiv=#loaddiv#','#grp_name#',500,1);return false;">#grp_name#</a> (#usercount# members)</td>

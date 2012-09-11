@@ -321,6 +321,12 @@
 <cffunction name="addusertogroup" returntype="void">
 	<cfargument name="grp_id" type="string" required="true">
 	<cfargument name="user_id" type="string" required="true">
+	<!--- If the user is being added to the administrator group we remove all other groups first --->
+	<cfif arguments.grp_id EQ 2>
+		<cfset arguments.newid = arguments.user_id>
+		<cfinvoke method="deleteUser" thestruct="#arguments#" />
+	</cfif>
+	<!--- Insert users --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO ct_groups_users
 	(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)

@@ -3788,6 +3788,10 @@
 
 	<!-- Groups List -->
 	<fuseaction name="groups_list">
+		<!-- CFC: Get detail of Administrator group -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getdetail" returnvariable="qry_admin">
+			<argument name="grp_id" value="2" />
+		</invoke>
 		<!-- CFC: Get all groups -->
 		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
 			<argument name="thestruct" value="#attributes#" />

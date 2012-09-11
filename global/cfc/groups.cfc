@@ -42,10 +42,16 @@
 <!--- Get one detailled record --->
 <cffunction hint="Get one record" name="getdetail" returntype="query">
 	<cfargument name="grp_name" type="string" required="false">
+	<cfargument name="grp_id" type="string" required="false">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#application.razuna.datasource#" name="localquery">
-	SELECT grp_id,grp_name,grp_host_id,grp_mod_id,grp_translation_key
+	SELECT grp_id, grp_name, grp_host_id, grp_mod_id, grp_translation_key,
+		(
+			SELECT count(*)
+			FROM ct_groups_users
+			WHERE ct_g_u_grp_id = groups.grp_id
+		) AS usercount
 	FROM groups
 	WHERE (
 		grp_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
@@ -68,9 +74,9 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<cfquery datasource="#variables.dsn#" name="localquery">
-		SELECT grp_name
-		FROM groups
-		WHERE grp_id = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="CF_SQL_VARCHAR">
+	SELECT grp_name
+	FROM groups
+	WHERE grp_id = <cfqueryparam value="#arguments.thestruct.grp_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<cfreturn localquery>
 </cffunction>
