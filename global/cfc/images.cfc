@@ -1146,12 +1146,13 @@
 	<!--- Loop over files --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
 		<cfset arguments.thestruct.img_id = "">
+		<cfset arguments.thestruct.img_id = listfirst(fileid,"-")>
 		<!--- If we are coming from a overview ids come with type --->
-		<cfif arguments.thestruct.thetype EQ "all" AND fileid CONTAINS "-img">
+		<!--- <cfif arguments.thestruct.thetype EQ "all" AND fileid CONTAINS "-img">
 			<cfset arguments.thestruct.img_id = listfirst(fileid,"-")>
 		<cfelseif arguments.thestruct.thetype NEQ "all">
 			<cfset arguments.thestruct.img_id = fileid>
-		</cfif>
+		</cfif> --->
 		<cfif arguments.thestruct.img_id NEQ "">
 			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="move" thestruct="#attributes.intstruct#" />

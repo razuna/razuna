@@ -588,12 +588,13 @@
 	<!--- Loop over files --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
 		<cfset arguments.thestruct.aud_id = "">
+		<cfset arguments.thestruct.aud_id = listfirst(fileid,"-")>
 		<!--- If we are coming from a overview ids come with type --->
-		<cfif arguments.thestruct.thetype EQ "all" AND fileid CONTAINS "-aud">
+		<!--- <cfif arguments.thestruct.thetype EQ "all" AND fileid CONTAINS "-aud">
 			<cfset arguments.thestruct.aud_id = listfirst(fileid,"-")>
 		<cfelseif arguments.thestruct.thetype NEQ "all">
 			<cfset arguments.thestruct.aud_id = fileid>
-		</cfif>
+		</cfif> --->
 		<cfif arguments.thestruct.aud_id NEQ "">
 			<!--- <cfinvoke method="move" thestruct="#arguments.thestruct#" /> --->
 			<cfthread intstruct="#arguments.thestruct#">
