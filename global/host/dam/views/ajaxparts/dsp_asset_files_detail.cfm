@@ -134,7 +134,7 @@
 										<!--- Filename --->
 										<tr>
 											<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-											<td width="100%"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.file_name#"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
+											<td width="100%"><input type="text" style="width:400px;" name="fname" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
 										</tr>
 										<!--- Description & Keywords --->
 										<cfloop query="qry_langs">
@@ -142,11 +142,11 @@
 												<cfset thisid = lang_id>
 												<tr>
 													<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-													<td width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:400px;height:30px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
+													<td width="100%"><textarea name="desc_#thisid#" class="text" style="width:400px;height:30px;" onchange="document.form#attributes.file_id#.file_desc_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
 												</tr>
 												<tr>
 													<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-													<td width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:400px;height:30px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
+													<td width="100%"><textarea name="keywords_#thisid#" class="text" style="width:400px;height:30px;" onchange="document.form#attributes.file_id#.file_keywords_#thisid#.value = document.form#attributes.file_id#.keywords_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
 												</tr>
 											</cfif>
 										</cfloop>
@@ -224,15 +224,20 @@
 										<td>
 											<div style="float:left;">
 												<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+													<!--- Filename --->
+													<tr>
+														<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
+														<td width="100%"><input type="text" style="width:280px;" name="file_name" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
+													</tr>
 													<cfloop query="qry_langs">
 														<cfset thisid = lang_id>
 														<tr>
 															<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-															<td class="td2" width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:300px;height:40px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
+															<td class="td2" width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:300px;height:40px;" onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.file_desc_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
 														</tr>
 														<tr>
 															<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-															<td class="td2" width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:300px;height:40px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
+															<td class="td2" width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:300px;height:40px;" onchange="document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.file_keywords_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
 														</tr>
 													</cfloop>
 												</table>
@@ -323,7 +328,7 @@
 	<script language="JavaScript" type="text/javascript">
 		// Initialize Tabs
 		jqtabs("tab_detail#file_id#");
-		loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');
+		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#');
 		// Submit form
 		function filesubmit(){
 			$("##updatefile").css("display","");

@@ -114,7 +114,7 @@
 							<!--- Filename --->
 							<tr>
 								<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#<strong></td>
-								<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.vid_filename#"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
+								<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="fname" value="#qry_detail.detail.vid_filename#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
 							</tr>
 							<!--- Description & Keywords --->
 							<cfloop query="qry_langs">
@@ -122,11 +122,11 @@
 									<cfset thisid = lang_id>
 									<tr>
 										<td class="td2" valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-										<td class="td2" width="100%"><textarea name="vid_desc_#thisid#" class="text" style="width:400px;height:30px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_description#</cfif></cfloop></textarea></td>
+										<td class="td2" width="100%"><textarea name="desc_#thisid#" class="text" style="width:400px;height:30px;" onchange="document.form#attributes.file_id#.vid_desc_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_description#</cfif></cfloop></textarea></td>
 									</tr>
 									<tr>
 										<td class="td2" valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-										<td class="td2" width="100%"><textarea name="vid_keywords_#thisid#" class="text" style="width:400px;height:30px;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_keywords#</cfif></cfloop></textarea></td>
+										<td class="td2" width="100%"><textarea name="keywords_#thisid#" class="text" style="width:400px;height:30px;" onchange="document.form#attributes.file_id#.vid_keywords_#thisid#.value = document.form#attributes.file_id#.keywords_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_keywords#</cfif></cfloop></textarea></td>
 									</tr>
 								</cfif>
 							</cfloop>
@@ -206,25 +206,22 @@
 						<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
 						<div id="detaildesc">
 							<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+								<!--- Filename --->
+								<tr>
+									<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#<strong></td>
+									<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.vid_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
+								</tr>
 								<cfloop query="qry_langs">
 									<cfset thisid = lang_id>
 									<tr>
 										<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-										<td class="td2" width="100%"><textarea name="vid_desc_#thisid#" class="text" rows="2" cols="50"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_description#</cfif></cfloop></textarea></td>
+										<td class="td2" width="100%"><textarea name="vid_desc_#thisid#" class="text" style="width:400px;height:50px;" onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.vid_desc_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_description#</cfif></cfloop></textarea></td>
 									</tr>
 									<tr>
 										<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-										<td class="td2" width="100%"><textarea name="vid_keywords_#thisid#" class="text" rows="2" cols="50"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_keywords#</cfif></cfloop></textarea></td>
+										<td class="td2" width="100%"><textarea name="vid_keywords_#thisid#" class="text" style="width:400px;height:50px;" onchange="document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.vid_keywords_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#vid_keywords#</cfif></cfloop></textarea></td>
 									</tr>
 								</cfloop>
-								<!--- Submit Button --->
-								<cfif attributes.folderaccess NEQ "R">
-									<tr>
-										<td colspan="2">
-											<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
-										</td>
-									</tr>
-								</cfif>
 							</table>
 						</div>
 						<div stlye="clear:both;"></div>
