@@ -426,7 +426,7 @@
 	</cfthread>
 	<!--- Execute workflow --->
 	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
-	<cfset arguments.thestruct.file_name = detail.aud_name>
+	<cfset arguments.thestruct.file_name = details.aud_name>
 	<cfset arguments.thestruct.thefiletype = "aud">
 	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<!--- Flush Cache --->
