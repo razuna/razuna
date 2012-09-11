@@ -69,8 +69,8 @@
 			<div id="filesimg">
 				<cfif qry_detail.detail.link_kind NEQ "url">
 					<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-						<cfif cloud_url NEQ "">
-							<img src="#qry_detail.detail.cloud_url#" border="0">
+						<cfif qry_detail.detail.cloud_url NEQ "">
+							<img src="#qry_detail.detail.qry_detail.detail.cloud_url#" border="0">
 						<cfelse>
 							<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 						</cfif>
