@@ -462,12 +462,18 @@ Comment:<br>
 <!--- Get assets shared options ---------------------------------------------------------------------->
 	<cffunction name="share_reset_dl" output="false">
 		<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#share_options
-		SET asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.setto#">
-		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+		<!--- Get this folderid and all subfolders in a list --->
+		<cfinvoke component="folders" method="recfolder" thelist="#arguments.thestruct.folder_id#" returnvariable="folderlist">
+		<!--- Now loop over the folder list and do the reset --->
+		<cfloop list="#folderlist#" delimiters="," index="i">
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#share_options
+			SET asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.setto#">
+			WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
+			AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- Return --->
