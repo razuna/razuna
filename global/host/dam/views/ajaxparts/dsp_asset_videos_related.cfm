@@ -25,6 +25,7 @@
 --->
 <cfoutput>
 <cfif qry_related.recordcount NEQ 0>
+	<br />
 	<table boder="0" cellpadding="0" cellspacing="0" width="100%">
 		<tr>
 			<td width="100%" nowrap="true" valign="top" colspan="2">
