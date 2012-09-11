@@ -257,6 +257,7 @@
 		<cfargument name="theaction" required="true" />
 		<cfargument name="args" default="#structnew()#" required="false" />
 		<!--- Params --->
+		<cfparam name="arguments.args.folder_action" default="false" />
 		<cfset var result = structnew()>
 		<cfset result.pcfc = "">
 		<cfset result.pview = "">
@@ -269,6 +270,9 @@
 			AND p.p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args.p_id#">
 		</cfif>
 		AND pa.p_id = p.p_id
+		<cfif arguments.args.folder_action>
+			AND args LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:#arguments.args.folderid#%">
+		</cfif>
 		</cfquery>
 		<!--- Put query above into args struct so we have it in the plugin --->
 		<cfset arguments.args.qry_plugins_actions = qry>

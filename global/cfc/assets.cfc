@@ -986,6 +986,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Put file_id in struct as fileid for plugin api --->
 		<cfset arguments.thestruct.fileid = returnid>
 		<cfset arguments.thestruct.file_name = arguments.thestruct.qryfile.filename>
+		<cfset arguments.thestruct.folder_action = true>
+		<cfset arguments.thestruct.folderid = arguments.thestruct.qryfile.folder_id>
 		<!--- Check on any plugin that call the on_file_add action --->
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 	</cfif>
@@ -1213,7 +1215,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Create folder to hold the images --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thepdfdirectory#" mode="775">
 			<!--- Script: Create thumbnail --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -thumbnail 128x +profile '*' -colorspace sRGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -thumbnail #arguments.thestruct.qrysettings.set2_img_thumb_width#x +profile '*' -colorspace sRGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Script: Create images --->
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfile# #arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Execute --->
@@ -2969,6 +2971,8 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Put file_id in struct as fileid for plugin api --->
 					<cfset arguments.thestruct.fileid = returnid>
 					<cfset arguments.thestruct.file_name = arguments.thestruct.thefilename>
+					<cfset arguments.thestruct.folder_action = true>
+					<cfset arguments.thestruct.folderid = arguments.thestruct.theid>
 					<!--- Check on any plugin that call the on_file_add action --->
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 				<cfelse>
