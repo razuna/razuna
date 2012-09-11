@@ -96,17 +96,6 @@
 				<!--- More actions menu --->	
 				<div>
 					<div id="drop#thediv#" class="ddselection_header" style="width:200px;z-index:100;position:absolute;top:100px;left:<cfif attributes.folderaccess NEQ "R">358<cfelse>251</cfif>px;">
-						<!--- Refresh --->
-						<cfif cs.icon_refresh>
-							<p>
-								<a href="##" onclick="loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&iscol=#attributes.iscol#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_desc")#">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" />
-									</div>
-									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("tooltip_refresh")#</div>
-								</a>
-							</p>
-						</cfif>
 						<!--- Add Subfolder --->
 						<cfif attributes.folderaccess NEQ "R" AND cs.icon_create_subfolder>
 							<p>
@@ -173,17 +162,6 @@
 							</p>
 						</cfif>
 						<p><hr></p>
-						<!--- Import Metadata --->
-						<cfif attributes.folderaccess NEQ "R" AND cs.icon_metadata_import>
-							<p>
-								<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("header_import_metadata_desc")#">
-									<div style="float:left;padding-right:5px;">
-										<img src="#dynpath#/global/host/dam/images/package-add.png" border="0" width="16" height="16" />
-									</div>
-									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#</div>
-								</a>
-							</p>
-						</cfif>
 						<!--- Export Metadata --->
 						<cfif cs.icon_metadata_export>
 							<p>
@@ -192,6 +170,17 @@
 										<img src="#dynpath#/global/host/dam/images/document-export-4.png" border="0" width="16" height="16" />
 									</div>
 									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</div>
+								</a>
+							</p>
+						</cfif>
+						<!--- Import Metadata --->
+						<cfif attributes.folderaccess NEQ "R" AND cs.icon_metadata_import>
+							<p>
+								<a href="##" onclick="showwindow('#myself#c.meta_imp&folder_id=#url.folder_id#&isfolder=t','#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#',500,1);$('##drop#thediv#').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("header_import_metadata_desc")#">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/package-add.png" border="0" width="16" height="16" />
+									</div>
+									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("header_import_metadata")#</div>
 								</a>
 							</p>
 						</cfif>
@@ -204,6 +193,18 @@
 										<img src="#dynpath#/global/host/dam/images/folder-download.png" border="0" width="16" />
 									</div>
 									<div style="padding-top:2px;">Download assets in this folder</div>
+								</a>
+							</p>
+							<p><hr /></p>
+						</cfif>
+						<!--- Refresh --->
+						<cfif cs.icon_refresh>
+							<p>
+								<a href="##" onclick="loadcontent('dummy_#kind#','#myself#c.flushcache');loadcontent('#thediv#','#myself##thefa#&folder_id=#url.folder_id#&kind=#url.kind#&iscol=#attributes.iscol#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_desc")#">
+									<div style="float:left;padding-right:5px;">
+										<img src="#dynpath#/global/host/dam/images/view-refresh-3.png" width="16" height="16" border="0" />
+									</div>
+									<div style="padding-top:2px;">#myFusebox.getApplicationData().defaults.trans("tooltip_refresh")#</div>
 								</a>
 							</p>
 						</cfif>
