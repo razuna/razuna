@@ -97,8 +97,7 @@
 		var extension = document.forms[theform].extension.value;
 		var rawmetadata = document.forms[theform].rawmetadata.value;
 		var labels = $('#' + theform + ' [name="labels"]').val();
-		if (labels == null) var labels = '';
-		<!--- 
+		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Custom fields
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
@@ -114,9 +113,8 @@
 				}
 			</cfif>
 		</cfoutput></cfloop>
-		--->
-		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Put together the search
+		if (labels == null) var labels = '';
 		if (searchfor != '') var searchfor = searchfor;
 		if (keywords != '') var keywords = 'keywords:' + keywords;
 		if (description != '') var description = 'description:' + description;
