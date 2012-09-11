@@ -111,15 +111,21 @@
 									<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 										<tr>
 											<td colspan="2">
-												<cfif qry_detail.detail.link_kind NEQ "url">
-													<strong>Original</strong><br />
-													<cfif qry_detail.detail.shared EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">Download</a> | 
-													<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');">Direct Link</a>
-													<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"> | <a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">PDF as image(s)</a>
+												<cfif attributes.folderaccess EQ "R">
+													<strong>Original</strong> (not made available as download)<br />
+													<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">PDF as image(s)</a>
 													</cfif>
-													<div id="divo#attributes.file_id#" style="display:none;width:450px;"><input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#&v=o" /></div>
 												<cfelse>
-													<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
+													<cfif qry_detail.detail.link_kind NEQ "url">
+														<strong>Original</strong><br />
+														<cfif qry_detail.detail.shared EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sf&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.file_name_org#" target="_blank"></cfif>View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=doc" target="_blank">Download</a> | 
+														<a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');">Direct Link</a>
+														<cfif application.razuna.storage NEQ "amazon" AND qry_detail.detail.file_extension EQ "PDF" AND qry_detail.detail.link_kind NEQ "url"> | <a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sp&f=#file_id#" target="_blank">PDF as image(s)</a>
+														</cfif>
+														<div id="divo#attributes.file_id#" style="display:none;width:450px;"><input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#&v=o" /></div>
+													<cfelse>
+														<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
+													</cfif>
 												</cfif>
 												<br />
 											</td>

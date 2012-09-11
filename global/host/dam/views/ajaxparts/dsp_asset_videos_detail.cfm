@@ -50,8 +50,8 @@
 	<div id="tab_detail#file_id#">
 		<ul>
 			<li><a href="##detailinfo">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
-			<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
-				<li><a href="##convert" onclick="loadrenvid();">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
+			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
+				<li><a href="##convertt" onclick="loadrenvid();">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
 			</cfif>
 			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_metadata>
 				<li><a href="##meta">Metadata</a></li>
@@ -248,10 +248,10 @@
 				</div>
 			</cfif>
 		</cfif>
-		<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+		<cfif qry_detail.detail.link_kind NEQ "url">
 			<!--- Convert Videos --->
 			<cfif cs.tab_convert_files>
-				<div id="convert">
+				<div id="convertt">
 					<cfif session.hosttype EQ 0>
 						<cfinclude template="dsp_host_upgrade.cfm">
 					<cfelse>

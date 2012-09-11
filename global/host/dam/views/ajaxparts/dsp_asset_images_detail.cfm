@@ -37,22 +37,18 @@
 	<input type="hidden" name="thumbextension" value="#qry_detail.detail.thumb_extension#">
 	<input type="hidden" name="link_kind" value="#qry_detail.detail.link_kind#">
 	<input type="hidden" name="link_path_url" value="#qry_detail.detail.link_path_url#">
-	<div id="tab_detail#file_id#">
+	<div id="tab_detail#attributes.file_id#">
 		<!--- Tabs --->
 		<ul>
 			<!--- Info --->
 			<li><a href="##detailinfo">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<!--- Renditions --->
-			<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
-				<cfif cs.tab_convert_files>
-					<li><a href="##convert" onclick="loadren();">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
-				</cfif>
+			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
+				<li><a href="##convertt" onclick="loadren();">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
 			</cfif>
 			<!--- Metadata tabs  --->
-			<cfif qry_detail.detail.link_kind NEQ "url">
-				<cfif cs.tab_metadata>
-					<li><a href="##meta">Meta Data</a></li>
-				</cfif>
+			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_metadata>
+				<li><a href="##meta">Meta Data</a></li>
 			</cfif>
 			<!--- Comments --->
 			<cfif cs.tab_comments>
@@ -197,19 +193,15 @@
 		<div id="dialog-confirm-recreatepreview" style="display:none;">
 			<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 100px 0;"></span>#myFusebox.getApplicationData().defaults.trans("header_preview_image_recreate_desc")#</p>
 		</div>
-		<!--- Comments --->
-		<div id="divcomments"></div>
 		<!--- Convert Image --->
-		<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
-			<cfif cs.tab_convert_files>
-				<div id="convert">
-					<cfif session.hosttype EQ 0>
-						<cfinclude template="dsp_host_upgrade.cfm">
-					<cfelse>
-						<cfinclude template="dsp_asset_images_convert.cfm">
-					</cfif>
-				</div>
-			</cfif>
+		<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
+			<div id="convertt">
+				<cfif session.hosttype EQ 0>
+					<cfinclude template="dsp_host_upgrade.cfm">
+				<cfelse>
+					<cfinclude template="dsp_asset_images_convert.cfm">
+				</cfif>
+			</div>
 		</cfif>
 		<cfif qry_detail.detail.link_kind NEQ "url">
 			<!--- Meta Data --->
@@ -323,6 +315,8 @@
 				</div>
 			</cfif>
 		</cfif>
+		<!--- Comments --->
+		<div id="divcomments"></div>
 		<!--- VERSIONS --->
 		<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 			<div id="divversions"></div>

@@ -42,8 +42,8 @@
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('relatedaudios','#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<!--- Convert --->
-			<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
-				<li><a href="##convert" onclick="loadrenaud();">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
+			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
+				<li><a href="##convertt" onclick="loadrenaud();">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
 			</cfif>
 			<!--- Metadata --->
 			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_metadata>
@@ -225,9 +225,9 @@
 			</cfif>
 		</cfif>
 		<!--- Convert Audios --->
-		<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
+		<cfif qry_detail.detail.link_kind NEQ "url">
 			<cfif cs.tab_convert_files>
-				<div id="convert">
+				<div id="convertt">
 					<cfif session.hosttype EQ 0>
 						<cfinclude template="dsp_host_upgrade.cfm">
 					<cfelse>
