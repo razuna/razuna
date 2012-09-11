@@ -177,7 +177,7 @@
 						<!--- Icons --->
 						<div style="padding-top:5px;width:130px;white-space:nowrap;">
 							<div style="float:left;">
-								<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
+								<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
 							</div>
 							<div style="float:right;padding-top:2px;">
 								<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#file_id#&kind=doc','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
@@ -279,7 +279,9 @@
 						<br />
 						<!--- Icons --->
 						<div style="float:left;padding-top:5px;">
-							<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>> 
+							<div style="float:left;padding-top:2px;">
+								<input type="checkbox" name="file_id" value="#file_id#-doc" onclick="enablesub('#kind#form');"<cfif listfindnocase(session.file_id,"#file_id#-doc") NEQ 0> checked="checked"</cfif>>
+							</div>
 							<div style="float:right;padding-top:2px;">
 								<a href="##" onclick="showwindow('#myself#c.widget_download&file_id=#file_id#&kind=#kind#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 								<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#file_id#-#kind#&thetype=#file_id#-img');flash_footer();return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
