@@ -98,7 +98,7 @@
 		var rawmetadata = document.forms[theform].rawmetadata.value;
 		var labels = $('#' + theform + ' [name="labels"]').val();
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
-		// Custom fields
+		// Custom fields (get values)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
 				var value_#cfid# = document.forms[theform].cf#cfid#.value;
@@ -122,7 +122,7 @@
 		if (extension != '') var extension = 'extension:' + extension;
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:' + rawmetadata;
 		if (labels != '') var labels = 'labels:' + labels;
-		// Custom fields
+		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			if (value_#cfid# != '') var value_#cfid# = '(cf_text:#cf_id# AND cf_value:' + value_#cfid# + ')';
 		</cfoutput></cfloop>
@@ -164,7 +164,7 @@
 		else {
 			var searchtext = searchtext + labels;
 		}
-		// Custom fields
+		// Custom fields (add to the searchtext)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			// Check that value is not undefined
 			t = value_#cfid#.indexOf("undefined");
