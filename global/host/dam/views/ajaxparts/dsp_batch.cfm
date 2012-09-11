@@ -36,12 +36,12 @@
 		<ul>
 			<li tabindex="0"><a href="##batch_desc">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</a></li>
 			<cfif attributes.what EQ "img" OR session.thefileid CONTAINS "-img">
-				<li tabindex="1"><a href="##batch_xmp">XMP Description</a></li>
-				<li tabindex="2"><a href="##iptc_contact">IPTC Contact</a></li>
-				<li tabindex="3"><a href="##iptc_image">IPTC Image</a></li>
-				<li tabindex="4"><a href="##iptc_content">IPTC Content</a></li>
-				<li tabindex="5"><a href="##iptc_status">IPTC Status</a></li>
-				<li tabindex="6"><a href="##iptc_origin">Origin</a></li>
+				<cfif cs.tab_xmp_description><li tabindex="1"><a href="##batch_xmp">XMP Description</a></li></cfif>
+				<cfif cs.tab_iptc_contact><li tabindex="2"><a href="##iptc_contact">IPTC Contact</a></li></cfif>
+				<cfif cs.tab_iptc_image><li tabindex="3"><a href="##iptc_image">IPTC Image</a></li></cfif>
+				<cfif cs.tab_iptc_content><li tabindex="4"><a href="##iptc_content">IPTC Content</a></li></cfif>
+				<cfif cs.tab_iptc_status><li tabindex="5"><a href="##iptc_status">IPTC Status</a></li></cfif>
+				<cfif cs.tab_origin><li tabindex="6"><a href="##iptc_origin">Origin</a></li></cfif>
 			</cfif>
 			<cfif cs.tab_labels><li tabindex="7"><a href="##batch_labels">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li></cfif>
 			<!--- <li tabindex="8"><a href="##batch_custom">#myFusebox.getApplicationData().defaults.trans("custom_fields_header")#</a></li> --->
@@ -63,29 +63,41 @@
 		</div>
 		<cfif attributes.what EQ "img" OR session.thefileid CONTAINS "-img">
 			<!--- XMP Description --->
-			<div id="batch_xmp">
-				<cfinclude template="dsp_asset_images_xmp.cfm">
-			</div>
+			<cfif cs.tab_xmp_description>
+				<div id="batch_xmp">
+					<cfinclude template="dsp_asset_images_xmp.cfm">
+				</div>
+			</cfif>
 			<!--- IPTC Contact --->
-			<div id="iptc_contact">
-				<cfinclude template="dsp_asset_images_iptc_contact.cfm">
-			</div>
+			<cfif cs.tab_iptc_contact>
+				<div id="iptc_contact">
+					<cfinclude template="dsp_asset_images_iptc_contact.cfm">
+				</div>
+			</cfif>
 			<!--- IPTC Image --->
-			<div id="iptc_image">
-				<cfinclude template="dsp_asset_images_iptc_image.cfm">
-			</div>
+			<cfif cs.tab_iptc_image>
+				<div id="iptc_image">
+					<cfinclude template="dsp_asset_images_iptc_image.cfm">
+				</div>
+			</cfif>
 			<!--- IPTC Content --->
-			<div id="iptc_content">
-				<cfinclude template="dsp_asset_images_iptc_content.cfm">
-			</div>
+			<cfif cs.tab_iptc_content>
+				<div id="iptc_content">
+					<cfinclude template="dsp_asset_images_iptc_content.cfm">
+				</div>
+			</cfif>
 			<!--- IPTC Status --->
-			<div id="iptc_status">
-				<cfinclude template="dsp_asset_images_iptc_status.cfm">
-			</div>
+			<cfif cs.tab_iptc_status>
+				<div id="iptc_status">
+					<cfinclude template="dsp_asset_images_iptc_status.cfm">
+				</div>
+			</cfif>
 			<!--- Origin --->
-			<div id="iptc_origin">
-				<cfinclude template="dsp_asset_images_origin.cfm">
-			</div>
+			<cfif cs.tab_origin>
+				<div id="iptc_origin">
+					<cfinclude template="dsp_asset_images_origin.cfm">
+				</div>
+			</cfif>
 		</cfif>
 		<!--- Labels --->
 		<cfif cs.tab_labels>
