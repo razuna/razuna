@@ -123,10 +123,6 @@
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
 														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
-												<cfelse>
-													<tr>
-														<td colspan="2">Not available</td>
-													</tr>
 												</cfif>
 											<cfelse>
 												<tr>
@@ -202,10 +198,6 @@
 														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
 														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
 													</tr>
-												<cfelse>
-													<tr>
-														<td colspan="2">Not available</td>
-													</tr>
 												</cfif>																					
 											<cfelse>
 												<tr>
@@ -265,10 +257,6 @@
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
 														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
-													</tr>
-												<cfelse>
-													<tr>
-														<td colspan="2">Not available</td>
 													</tr>											
 												</cfif>
 											<cfelse>
@@ -341,10 +329,6 @@
 													<tr>
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
 														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
-													</tr>
-												<cfelse>
-													<tr>
-														<td colspan="2">Not available</td>
 													</tr>
 												</cfif>																					
 											<cfelse>
