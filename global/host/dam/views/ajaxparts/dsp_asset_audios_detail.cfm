@@ -159,7 +159,7 @@
 				</tr>
 				<!--- Submit Button --->
 				<tr>
-					<td colspan="2">
+					<td colspan="3" width="100%">
 						<cfif attributes.folderaccess NEQ "R">
 							<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 						<cfelse>

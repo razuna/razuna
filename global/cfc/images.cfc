@@ -511,7 +511,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketimg */ i.img_id, i.img_extension, i.thumb_extension, i.img_group, i.folder_id_r, i.path_to_asset,
 	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.cloud_url, 
-	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url
+	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url, i.img_filename filename
 	FROM #session.hostdbprefix#images i
 	WHERE 
 	<cfif arguments.thestruct.related EQ "T">

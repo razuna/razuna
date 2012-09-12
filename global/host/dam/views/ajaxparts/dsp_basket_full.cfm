@@ -89,33 +89,33 @@
 					<cfcase value="img">
 						<tr class="list">
 							<td width="1%" nowrap="true">
-								<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#myid#&what=images&loaddiv=&folder_id=0','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 								<cfloop query="qry_theimage">
-									<cfif myid EQ img_id>
-										<cfif link_kind NEQ "url">
-											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-												<img src="#cloud_url#" border="0">
+									<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+										<cfif myid EQ img_id>
+											<cfif link_kind NEQ "url">
+												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+													<img src="#cloud_url#" border="0">
+												<cfelse>
+													<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
+												</cfif>
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
+												<img src="#link_path_url#" border="0">
 											</cfif>
-										<cfelse>
-											<img src="#link_path_url#" border="0">
 										</cfif>
-									</cfif>
+									<cfif attributes.fromshare EQ "F"></a></cfif>	
 								</cfloop>
-								<cfif attributes.fromshare EQ "F"></a></cfif>
 							</td>
 							<td width="100%" colspan="2" valign="top" class="gridno">
 								<table border="0" cellpadding="0" cellspacing="0" width="100%">
-									<tr>
-										<td colspan="2" style="padding-bottom:7px;">
-											<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#myid#&what=images&loaddiv=&folder_id=0','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
-											<strong>#filename#</strong>
-											<cfif attributes.fromshare EQ "F"></a></cfif>
-										</td>
-									</tr>
 									<cfloop query="qry_theimage">
 										<cfif myid EQ img_id>
+											<tr>
+												<td colspan="2" style="padding-bottom:7px;">
+													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+													<strong>#filename#</strong>
+													<cfif attributes.fromshare EQ "F"></a></cfif>
+												</td>
+											</tr>
 											<cfif structkeyexists(variables,"qry_share_options")>
 												<!--- Original --->
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#img_id#-org-1">
@@ -125,7 +125,7 @@
 													</tr>
 												<cfelse>
 													<tr>
-														<td colspan="2">According to the share settings you are not allowed to download the original asset</td>
+														<td colspan="2">Not available</td>
 													</tr>
 												</cfif>
 											<cfelse>
@@ -168,33 +168,33 @@
 					<cfcase value="vid">
 						<tr class="list">
 							<td width="1%" nowrap="true">
-								<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#myid#&what=files&loaddiv=&folder_id=0','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 								<cfloop query="qry_thevideo">
 									<cfif myid EQ vid_id>
-										<cfif link_kind NEQ "url">
-											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-												<img src="#cloud_url#" border="0" width="120">
+										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+											<cfif link_kind NEQ "url">
+												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+													<img src="#cloud_url#" border="0" width="120">
+												<cfelse>
+													<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
+												</cfif>
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/#vid_name_image#" border="0">
+												<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
 											</cfif>
-										<cfelse>
-											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
-										</cfif>
+										<cfif attributes.fromshare EQ "F"></a></cfif>
 									</cfif>
 								</cfloop>
-								<cfif attributes.fromshare EQ "F"></a></cfif>
 							</td>
 							<td width="100%" colspan="2" valign="top" class="gridno">
 								<table border="0" cellpadding="0" cellspacing="0" width="100%">
-									<tr>
-										<td colspan="2" style="padding-bottom:7px;">
-											<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#myid#&what=files&loaddiv=&folder_id=0','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
-											<strong>#filename#</strong>
-											<cfif attributes.fromshare EQ "F"></a></cfif>
-										</td>
-									</tr>
 									<cfloop query="qry_thevideo">
 										<cfif myid EQ vid_id>
+											<tr>
+												<td colspan="2" style="padding-bottom:7px;">
+													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+													<strong>#filename#</strong>
+													<cfif attributes.fromshare EQ "F"></a></cfif>
+												</td>
+											</tr>
 											<!--- The Original video --->
 											<cfif structkeyexists(variables,"qry_share_options")>
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#vid_id#-org-1">
@@ -204,7 +204,7 @@
 													</tr>
 												<cfelse>
 													<tr>
-														<td colspan="2">According to the share settings you are not allowed to download the original asset</td>
+														<td colspan="2">Not available</td>
 													</tr>
 												</cfif>																					
 											<cfelse>
@@ -240,25 +240,25 @@
 					<cfcase value="aud">
 						<tr class="list">
 							<td width="1%" nowrap="true">
-								<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#myid#&what=audios&loaddiv=&folder_id=0','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 								<cfloop query="qry_theaudio">
 									<cfif myid EQ aud_id>
-										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="120" border="0">
+										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+											<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="120" border="0">
+										<cfif attributes.fromshare EQ "F"></a></cfif>
 									</cfif>
 								</cfloop>
-								<cfif attributes.fromshare EQ "F"></a></cfif>
 							</td>
 							<td width="100%" colspan="2" valign="top" class="gridno">
 								<table border="0" cellpadding="0" cellspacing="0" width="100%">
-									<tr>
-										<td colspan="2" style="padding-bottom:7px;">
-											<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#myid#&what=audios&loaddiv=&folder_id=0','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
-											<strong>#filename#</strong>
-											<cfif attributes.fromshare EQ "F"></a></cfif>
-										</td>
-									</tr>
 									<cfloop query="qry_theaudio">
 										<cfif myid EQ aud_id>
+											<tr>
+												<td colspan="2" style="padding-bottom:7px;">
+													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+													<strong>#filename#</strong>
+													<cfif attributes.fromshare EQ "F"></a></cfif>
+												</td>
+											</tr>
 											<!--- The Original audio --->
 											<cfif structkeyexists(variables,"qry_share_options")>
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#aud_id#-org-1">
@@ -268,7 +268,7 @@
 													</tr>
 												<cfelse>
 													<tr>
-														<td colspan="2">According to the share settings you are not allowed to download the original asset</td>
+														<td colspan="2">Not available</td>
 													</tr>											
 												</cfif>
 											<cfelse>
@@ -304,37 +304,37 @@
 					<cfdefaultcase>
 						<tr class="list">
 							<td width="1%" nowrap="true" valign="top" align="center">
-								<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#myid#&what=files&loaddiv=&folder_id=0','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 								<cfloop query="qry_thefile">
 									<cfif myid EQ file_id>
-										<!--- If it is a PDF we show the thumbnail --->
-										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
-											<img src="#cloud_url#" border="0">
-										<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
-											<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
-											<cfif FileExists("#ExpandPath("../../")#assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-												<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
+										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+											<!--- If it is a PDF we show the thumbnail --->
+											<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+												<img src="#cloud_url#" border="0">
+											<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
+												<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
+												<cfif FileExists("#ExpandPath("../../")#assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+													<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
+												<cfelse>
+													<img src="#thestorage##path_to_asset#/#thethumb#" width="128" border="0">
+												</cfif>
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/#thethumb#" width="128" border="0">
+												<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
 											</cfif>
-										<cfelse>
-											<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
-										</cfif>
+										<cfif attributes.fromshare EQ "F"></a></cfif>
 									</cfif>
 								</cfloop>
-								<cfif attributes.fromshare EQ "F"></a></cfif>
 							</td>
 							<td width="100%" colspan="2" valign="top" class="gridno">
 								<table border="0" cellpadding="0" cellspacing="0" width="100%">
-									<tr>
-										<td width="100%" colspan="2" valign="top">
-											<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#myid#&what=files&loaddiv=&folder_id=0','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
-											<strong>#filename#</strong>
-											<cfif attributes.fromshare EQ "F"></a></cfif>
-										</td>
-									</tr>
 									<cfloop query="qry_thefile">
 										<cfif myid EQ file_id>
+											<tr>
+												<td width="100%" colspan="2" valign="top">
+													<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.filedetail#&file_id=#file_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
+													<strong>#filename#</strong>
+													<cfif attributes.fromshare EQ "F"></a></cfif>
+												</td>
+											</tr>
 											<!--- The Original --->
 											<cfif structkeyexists(variables,"qry_share_options")>
 												<cfif qry_folder.share_dl_org EQ "T" OR qry_share_options CONTAINS "#file_id#-org-1">
@@ -344,7 +344,7 @@
 													</tr>
 												<cfelse>
 													<tr>
-														<td colspan="2">According to the share settings you are not allowed to download the original asset</td>
+														<td colspan="2">Not available</td>
 													</tr>
 												</cfif>																					
 											<cfelse>

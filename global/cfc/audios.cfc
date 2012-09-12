@@ -677,7 +677,7 @@
 	<cfparam default="F" name="arguments.thestruct.related">
 	<!--- Qry. We take the query and do a IN --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailforbasketaud */ aud_id, aud_name, aud_extension, aud_group, folder_id_r, aud_size, link_kind, link_path_url, path_to_asset
+	SELECT /* #variables.cachetoken#detailforbasketaud */ aud_id, aud_name filename, aud_extension, aud_group, folder_id_r, aud_size, link_kind, link_path_url, path_to_asset
 	FROM #session.hostdbprefix#audios
 	WHERE 
 	<cfif arguments.thestruct.related EQ "T">

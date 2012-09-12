@@ -58,6 +58,13 @@
 					</tr>
 				</cfif>
 			</cfif>
+		<!--- Original file not available --->
+		<cfelse>
+			<tr>
+				<td>
+					The original file has not been made available
+				</td>
+			</tr>
 		</cfif>
 		<!--- Show related videos (if any) --->
 		<tr>

@@ -970,7 +970,7 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Qry. We take the query and do a IN --->
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#detailforbasketfile */ file_id, file_extension, file_extension, file_size, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset, cloud_url
+		SELECT /* #variables.cachetoken#detailforbasketfile */ file_id, file_extension, file_extension, file_size, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset, cloud_url, file_name filename
 		FROM #session.hostdbprefix#files
 		WHERE file_id 
 		<cfif arguments.thestruct.qrybasket.recordcount EQ 0>

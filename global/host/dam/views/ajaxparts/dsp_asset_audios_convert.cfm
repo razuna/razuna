@@ -41,6 +41,13 @@
 					</cfif>
 				</td>
 			</tr>
+		<!--- Original file not available --->
+		<cfelse>
+			<tr>
+				<td>
+					The original file has not been made available
+				</td>
+			</tr>
 		</cfif>
 		<!--- Show related audios (if any) --->
 		<tr>

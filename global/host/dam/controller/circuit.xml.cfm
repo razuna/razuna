@@ -590,10 +590,10 @@
 						<invoke object="myFusebox.getApplicationData().collections" methodcall="details(attributes)" returnvariable="qry_folder" />
 					</false>
 				</if>
-				<!-- CFC: Get individual share options -->
-				<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 			</true>
 		</if>
+		<!-- CFC: Get individual share options -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 	</fuseaction>
 	<!-- INCLUDE: Remove all items in basket -->
 	<fuseaction name="basket_full_remove_all_include">
@@ -625,6 +625,8 @@
 	<fuseaction name="basket_full">
 		<!-- Param -->
 		<set name="attributes.fromshare" value="F" overwrite="false" />
+		<set name="qry_folder.share_dl_org" value="F" overwrite="false" />
+		<set name="qry_folder.share_order" value="" overwrite="false" />
 		<!-- Load include -->
 		<do action="basket_include" />
 		<!-- Show -->
