@@ -245,6 +245,27 @@ function enablesub(myform) {
 	// Store IDs
 	storeids(myform);
 }
+// Enable folderselection in list
+function enablefromselectable(myform) {
+	var idsempty = false;
+	// Check state of selection box
+    var isclosed = $("#folderselection" + myform).is(':hidden');
+    // get how many are selected
+    var n = $("#" + myform + " .ui-selected input[name='file_id']").length;
+    // Open or close selection
+    if (n > 0 && isclosed) {
+		$("#folderselection" + myform).slideToggle('slow');
+		$("#folderselectionb" + myform).slideToggle('slow');
+		
+	}
+	if (n == 0 && !isclosed) {
+		$("#folderselection" + myform).slideToggle('slow');
+		$("#folderselectionb" + myform).slideToggle('slow');
+	}
+	// Hide select all status
+	$("#selectstore" + myform).css("display","none");
+	$("#selectstoreb" + myform).css("display","none");
+}
 function enablesubserver(myform) {
     var valid = true;   
     var checkBoxes = false;
@@ -432,10 +453,10 @@ function storeids(theform){
            		fileids += document.forms[theform].elements[i].value + ',';
            		// filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
            	}
-           	else {
-           		del_fileids += document.forms[theform].elements[i].value + ',';
-           		// del_filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
-           	}
+           	// else {
+           	// 	del_fileids += document.forms[theform].elements[i].value + ',';
+           	// 	// del_filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
+           	// }
       	}
    	}
    	// Only continue if there is something selected

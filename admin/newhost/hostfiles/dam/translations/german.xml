@@ -1843,7 +1843,7 @@
 		<transtext>Import from path</transtext>
 	</transid>
 	<transid name="import_from_folder_foreign">
-		<transtext><![CDATA[Caution: Make sure your folders and files do not contain foreign characters!]]></transtext>
+		<transtext><![CDATA[Caution: Make sure your folders and files do not contain foreign characters. Razuna needs to rename your files and folders in order for this to work!]]></transtext>
 	</transid>
 	<transid name="admin_import_templates_desc">
 		<transtext><![CDATA[Define below the header column of the file and map each field to a column in the Razuna database. Note: Map each available column in your file in order to successfully import the file. <br /><br />The <strong>FIRST FIELD</strong> is the "key" and will be used to match the record. You can ONLY use the "ID" or "FILENAME" as the key!]]></transtext>

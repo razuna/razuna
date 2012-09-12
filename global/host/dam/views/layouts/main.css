@@ -856,3 +856,6 @@ button.css3button {
 	font-size: 14px;
 	font-weight: normal;
 }
+
+#selectme .ui-selecting { background: #E6E6E6; }
+#selectme .ui-selected { background: #E6E6E6; }

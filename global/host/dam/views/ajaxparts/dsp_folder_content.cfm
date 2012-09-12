@@ -99,7 +99,7 @@
 		<!--- Thumbnail --->
 		<cfif session.view EQ "">
 			<tr>
-				<td style="border:0px;">
+				<td style="border:0px;" id="selectme">
 				<!--- Show Subfolders --->
 				<cfinclude template="inc_folder_thumbnail.cfm">
 				<cfloop query="qry_files">
@@ -968,7 +968,6 @@
 			<td colspan="6" style="border:0px;"><cfset attributes.bot = "T"><cfinclude template="dsp_icon_bar.cfm"></td>
 		</tr>
 	</table>
-
 	</form>
 	</cfif>
 	<!--- JS for the combined view --->
@@ -1009,5 +1008,22 @@
 			// Activate Chosen
 			$(".chzn-select").chosen();
 		</cfif>
+		$(document).ready(function() {
+			$("###kind#form ##selectme").selectable({
+				stop: function(event, ui) {
+					var fileids = '';
+					$( ".ui-selected input[name='file_id']", this ).each(function() {
+						fileids += $(this).val() + ','
+					});
+					getselected#kind#(fileids);
+				}
+			});
+		});
+		function getselected#kind#(fileids){
+			// Get all that are selected
+			// alert(fileids);
+			$('##div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids});
+			enablefromselectable('#kind#form');
+		}
 	</script>
 </cfoutput>

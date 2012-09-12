@@ -47,7 +47,7 @@
 		<!--- Thubmail view --->
 		<cfif session.view EQ "">
 			<tr>
-				<td>
+				<td id="selectme">
 					<!--- Show Subfolders --->
 					<cfinclude template="inc_folder_thumbnail.cfm">
 					<cfloop query="qry_files">
@@ -311,5 +311,22 @@
 			// Activate Chosen
 			$(".chzn-select").chosen();
 		</cfif>
+		$(document).ready(function() {
+			$("###kind#form ##selectme").selectable({
+				stop: function(event, ui) {
+					var fileids = '';
+					$( ".ui-selected input[name='file_id']", this ).each(function() {
+						fileids += $(this).val() + ','
+					});
+					getselected#kind#(fileids);
+				}
+			});
+		});
+		function getselected#kind#(fileids){
+			// Get all that are selected
+			// alert(fileids);
+			$('##div_forall').load('index.cfm?fa=c.store_file_values',{file_id:fileids});
+			enablefromselectable('#kind#form');
+		}
 	</script>
 </cfoutput>
