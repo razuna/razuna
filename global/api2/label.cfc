@@ -32,9 +32,11 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getall */ label_id, label_text, label_path
+			SELECT /* #cachetoken#getall */ label_id, label_text, label_path
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
 			WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
 			ORDER BY label_path
@@ -55,9 +57,11 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getlabel */ label_id, label_text, label_path
+			SELECT /* #cachetoken#getlabel */ label_id, label_text, label_path
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
 			WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
 			AND label_id IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#argument.label_id#" list="Yes">)
@@ -91,8 +95,6 @@
 			<cfset arguments.thestruct.label_parent = arguments.label_parent>
 			<!--- call internal method --->
 			<cfinvoke component="global.cfc.labels" method="admin_update" thestruct="#arguments.thestruct#" returnVariable="lid">
-			<!--- Reset cache --->
-			<cfset resetcachetoken(arguments.api_key)>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Label successfully added or updated">
@@ -122,8 +124,6 @@
 				<!--- Call internal function --->
 				<cfinvoke component="global.cfc.labels" method="admin_remove" id="#i#">
 			</cfloop>
-			<!--- Reset cache --->
-			<cfset resetcachetoken(arguments.api_key)>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Label(s) successfully removed">
@@ -178,9 +178,7 @@
 				</cftry>
 			</cfloop>
 			<!--- Flush cache --->
-			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="labels" />
-			<cfset resetcachetoken(arguments.api_key)>
+			<cfset resetcachetoken(arguments.api_key,"labels")>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Label(s) added to asset successfully">
@@ -210,9 +208,7 @@
 				</cfquery>
 			</cfloop>
 			<!--- Flush cache --->
-			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="labels" />
-			<cfset resetcachetoken(arguments.api_key)>
+			<cfset resetcachetoken(arguments.api_key,"labels")>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Label(s) removed from asset successfully">
@@ -233,9 +229,11 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getlabelofasset */ l.label_id, l.label_text, l.label_path
+			SELECT /* #cachetoken#getlabelofasset */ l.label_id, l.label_text, l.label_path
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l, ct_labels ct
 			WHERE ct.ct_id_r IN (<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" list="Yes" />)
 			AND ct.ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />

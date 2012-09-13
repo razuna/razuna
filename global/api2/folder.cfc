@@ -36,6 +36,11 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetokenvid = getcachetoken(arguments.api_key,"videos")>
+			<cfset var cachetokenimg = getcachetoken(arguments.api_key,"images")>
+			<cfset var cachetokenaud = getcachetoken(arguments.api_key,"audios")>
+			<cfset var cachetokendoc = getcachetoken(arguments.api_key,"files")>
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- If the folderid is empty then set it to 0 --->
@@ -53,7 +58,7 @@
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 				<!--- Images --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "img">
-					SELECT  /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassetsfolder1 */
+					SELECT  /* #cachetokenimg#getassetsfolder1 */
 					i.img_id id, 
 					i.img_filename filename, 
 					i.folder_id_r folder_id, 
@@ -93,7 +98,7 @@
 				</cfif>
 				<!--- Videos --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "vid">
-					SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassetsfolder2 */
+					SELECT /* #cachetokenvid#getassetsfolder2 */
 					v.vid_id id, 
 					v.vid_filename filename, 
 					v.folder_id_r folder_id, 
@@ -133,7 +138,7 @@
 				</cfif>
 				<!--- Audios --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "aud">
-					SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassetsfolder3 */ 
+					SELECT /* #cachetokenaud#getassetsfolder3 */ 
 					a.aud_id id, 
 					a.aud_name filename, 
 					a.folder_id_r folder_id, 
@@ -173,7 +178,7 @@
 				</cfif>
 				<!--- Docs --->
 				<cfif arguments.show EQ "ALL" OR arguments.show EQ "doc">
-					SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassetsfolder4 */
+					SELECT /* #cachetokendoc#getassetsfolder4 */
 					f.file_id id, 
 					f.file_name filename, 
 					f.folder_id_r folder_id, 
@@ -238,9 +243,11 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 			<!--- Query folder --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getfolders */ f.folder_id, f.folder_name, f.folder_owner,
+			SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner,
 			<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "h2">NVL<cfelseif application.razuna.api.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 				(
 					SELECT<cfif application.razuna.api.thedatabase EQ "mssql"> TOP 1</cfif> s.folder_id
@@ -322,11 +329,13 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getfolder */ folder_id, folder_id_r folder_related_to, folder_name
+			SELECT /* #cachetoken#getfolder */ folder_id, folder_id_r folder_related_to, folder_name
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders
 			WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
@@ -429,9 +438,7 @@
 			)
 			</cfquery>
 			<!--- Flush cache --->
-			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-			<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="folders" />
-			<cfset resetcachetoken(arguments.api_key)>
+			<cfset resetcachetoken(arguments.api_key,"folders")>
 			<!--- Feedback --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.folder_id = newfolderid>
@@ -490,8 +497,6 @@
 				<cfset fs.assetpath = trim(qrypath.set2_path_to_assets)>
 				<!--- Call CFC (Global) --->
 				<cfinvoke component="global.cfc.folders" method="remove_folder_thread" thestruct="#fs#" />
-				<!--- Reset cache --->
-				<cfset resetcachetoken(arguments.api_key)>
 				<!--- Feedback --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "Folder and all content within has been successfully removed.">

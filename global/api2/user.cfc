@@ -107,9 +107,7 @@
 					</cfif>
 				</cfif>
 				<!--- Flush cache --->
-				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="users" />
-				<cfset resetcachetoken(arguments.api_key)>
+				<cfset resetcachetoken(arguments.api_key,"users")>
 				<!--- Response --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "User has been added successfully">
@@ -135,9 +133,11 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetoken = getcachetoken(arguments.api_key,"users")>
 			<!--- Query the user --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getuser */ user_id, user_login_name, user_email, user_first_name, user_last_name, user_api_key
+			SELECT /* #cachetoken#getuser */ user_id, user_login_name, user_email, user_first_name, user_last_name, user_api_key
 			FROM users
 			WHERE user_id = <cfqueryparam value="#application.razuna.api.userid["#arguments.api_key#"]#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
@@ -223,9 +223,7 @@
 					</cfloop>
 				</cfif>
 				<!--- Flush cache --->
-				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="users" />
-				<cfset resetcachetoken(arguments.api_key)>
+				<cfset resetcachetoken(arguments.api_key,"users")>
 				<!--- Response --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "User has been updated successfully">
@@ -290,9 +288,7 @@
 				WHERE user_id = <cfqueryparam value="#qry.user_id#" cfsqltype="CF_SQL_VARCHAR">
 				</cfquery>
 				<!--- Flush cache --->
-				<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
-				<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="users" />
-				<cfset resetcachetoken(arguments.api_key)>
+				<cfset resetcachetoken(arguments.api_key,"users")>
 				<!--- Response --->
 				<cfset thexml.responsecode = 0>
 				<cfset thexml.message = "User has been removed successfully">

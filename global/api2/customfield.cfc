@@ -76,8 +76,6 @@
 			<cfset arguments.thestruct.cf_select_list = arguments.field_select_list>
 			<!--- call internal method --->
 			<cfinvoke component="global.cfc.custom_fields" method="add" thestruct="#arguments.thestruct#" returnVariable="theid">
-			<!--- Reset cache --->
-			<cfset resetcachetoken(arguments.api_key)>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Custom field successfully added">
@@ -137,7 +135,7 @@
 				</cfloop>
 			</cfloop>
 			<!--- Reset cache --->
-			<cfset resetcachetoken(arguments.api_key)>
+			<cfset resetcachetoken(arguments.api_key,"general")>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Custom field values successfully added">
@@ -158,8 +156,11 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset cachetoken = getcachetoken(arguments.api_key,"general")>
+			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getfieldsofasset */ ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value
+			SELECT /* #cachetoken#getfieldsofasset */ ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_text ct, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields c, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values cv
 			WHERE cv.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.asset_id#" list="Yes">)
 			AND ct.cf_id_r = cv.cf_id_r

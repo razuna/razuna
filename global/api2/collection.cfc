@@ -34,6 +34,11 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- Get Cachetoken --->
+			<cfset var cachetokenvid = getcachetoken(arguments.api_key,"videos")>
+			<cfset var cachetokenimg = getcachetoken(arguments.api_key,"images")>
+			<cfset var cachetokenaud = getcachetoken(arguments.api_key,"audios")>
+			<cfset var cachetokendoc = getcachetoken(arguments.api_key,"files")>
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- Query which file are in this collection --->
@@ -46,7 +51,7 @@
 			<cfif qry_col.recordcount NEQ 0>
 				<!--- Query the files --->
 				<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-				SELECT  /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassets2 */
+				SELECT  /* #cachetokenimg#getassetscol */
 				i.img_id id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
@@ -81,7 +86,7 @@
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND i.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				UNION ALL
-				SELECT 
+				SELECT /* #cachetokenvid#getassetscol */
 				v.vid_id id, 
 				v.vid_filename filename, 
 				v.folder_id_r folder_id, 
@@ -117,7 +122,7 @@
 				AND v.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				UNION ALL
 				<!--- Audios --->
-				SELECT 
+				SELECT /* #cachetokenaud#getassetscol */
 				a.aud_id id, 
 				a.aud_name filename, 
 				a.folder_id_r folder_id, 
@@ -152,7 +157,7 @@
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND a.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				UNION ALL
-				SELECT 
+				SELECT /* #cachetokendoc#getassetscol */
 				f.file_id id, 
 				f.file_name filename, 
 				f.folder_id_r folder_id, 
@@ -215,8 +220,8 @@
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
 			<!--- Query --->
-			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getcollections */ c.col_id, c.change_date, ct.col_name, 
+			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
+			SELECT c.col_id, c.change_date, ct.col_name, 
 				(
 					SELECT count(file_id_r) 
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files 

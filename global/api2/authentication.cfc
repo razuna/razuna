@@ -76,9 +76,6 @@
 			<cfset application.razuna.api.prefix[#arguments.api_key#] = pre.host_shard_group>
 			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
 			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
-			<cfif !structKeyExists(application.razuna.api, "cachetoken[#arguments.api_key#]")>
-				<cfset application.razuna.api.cachetoken[#arguments.api_key#] = createuuid("")>
-			</cfif>
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>
@@ -101,10 +98,28 @@
 		<cfreturn thexml>
 	</cffunction>
 
-	<!--- Reset the cachetoken --->
-	<cffunction name="resetcachetoken" access="public" output="false">
+	<!--- Get Cachetoken --->
+	<cffunction name="getcachetoken" output="false" returntype="string">
 		<cfargument name="api_key" type="string">
-		<cfreturn application.razuna.api.cachetoken[#arguments.api_key#] = createuuid("")>
+		<cfargument name="type" type="string" required="yes">
+		<!--- Set session --->
+		<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+		<!--- Call reset function --->
+		<cfinvoke component="global.cfc.extQueryCaching" method="getcachetoken" type="#arguments.type#" returnvariable="c" />
+		<!--- Return --->
+		<cfreturn c />
+	</cffunction>
+
+	<!--- reset the global caching variable of this cfc-object --->
+	<cffunction name="resetcachetoken" output="false" returntype="void">
+		<cfargument name="api_key" type="string">
+		<cfargument name="type" type="string" required="yes">
+		<!--- Set session --->
+		<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
+		<!--- Call reset function --->
+		<cfinvoke component="global.cfc.extQueryCaching" method="resetcachetoken" type="#arguments.type#" />
+		<!--- Return --->
+		<cfreturn />
 	</cffunction>
 
 </cfcomponent>
