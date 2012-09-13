@@ -3730,21 +3730,11 @@
 <!--- Store selection --->
 <cffunction name="store_selection" output="false" returntype="void">
 	<cfargument name="thestruct" required="yes" type="struct">
-	<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-		<cfset session.file_id = "">
-		<!--- Loop over the fileids to delete (from form) --->
-		<!--- <cfloop list="#attributes.intstruct.del_file_id#" delimiters="," index="i">
-			<!--- Find the value in the session --->
-			<cfset f = listFindNoCase(session.file_id, i)>
-			<!--- Remove it at the found postion --->
-			<cfset session.file_id = listDeleteAt(session.file_id, f)>
-		</cfloop> --->
-		<!--- Now simply add the selected fileids to the session --->
-		<cfset session.file_id = arguments.thestruct.file_id>
-		<!--- Remove any duplicates --->
-		<!--- <cfset session.file_id = ListRemoveduplicates(session.file_id,",")> --->
-		<cfset session.thefileid = session.file_id>
-	<!--- </cfthread> --->
+	<!--- Reset session --->
+	<cfset session.file_id = "">
+	<!--- Now simply add the selected fileids to the session --->
+	<cfset session.file_id = arguments.thestruct.file_id>
+	<cfset session.thefileid = session.file_id>
 </cffunction>
 
 </cfcomponent>
