@@ -345,6 +345,7 @@
 		</cfif>
 		$(document).ready(function() {
 			$("###kind#form ##selectme").selectable({
+				cancel: 'a',
 				stop: function(event, ui) {
 					var fileids = '';
 					$( ".ui-selected input[name='file_id']", this ).each(function() {
