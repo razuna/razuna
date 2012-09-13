@@ -6,10 +6,8 @@
       region="razcache",
       props=
       {
-      type : 'memorydisk',
-      diskpersistent : true,
-      diskmaxsizemb : 500
-    }
+        type : 'memorydisk'
+      }
     )>
 
     <!--- READ the documentation at http://wiki.razuna.com/display/ecp/Configure+Caching !!! --->
