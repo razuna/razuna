@@ -3163,11 +3163,12 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Write files --->
 					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexeff# -i #arguments.thestruct.theorgfile# #arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.wav" mode="777">
 					<!--- Execute --->
-					<cfthread name="wav#arguments.thestruct.newid#" intaudstruct="#arguments.thestruct#">
+					<cfset var tt = createuuid("")>
+					<cfthread name="wav#tt#" intaudstruct="#arguments.thestruct#">
 						<cfexecute name="#attributes.intaudstruct.thesh#" timeout="60" />
 					</cfthread>
 					<!--- Wait until the WAV is done --->
-					<cfthread action="join" name="wav#arguments.thestruct.newid#" />
+					<cfthread action="join" name="wav#tt#" />
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#arguments.thestruct.thesh#">
 				</cfif>
@@ -3176,11 +3177,12 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Write files --->
 					<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexeff# -i #arguments.thestruct.theorgfile# -ab 192k #arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.mp3" mode="777">
 					<!--- Execute --->
-					<cfthread name="wav#arguments.thestruct.newid#" intaudstruct="#arguments.thestruct#">
+					<cfset var tt = createuuid("")>
+					<cfthread name="wav#tt#" intaudstruct="#arguments.thestruct#">
 						<cfexecute name="#attributes.intaudstruct.thesh#" timeout="60" />
 					</cfthread>
 					<!--- Wait until the WAV is done --->
-					<cfthread action="join" name="wav#arguments.thestruct.newid#" />
+					<cfthread action="join" name="wav#tt#" />
 					<!--- Delete scripts --->
 					<cffile action="delete" file="#arguments.thestruct.thesh#">
 				<cfelseif arguments.thestruct.qryfile.link_kind EQ "lan" AND arguments.thestruct.qryfile.extension EQ "mp3">
