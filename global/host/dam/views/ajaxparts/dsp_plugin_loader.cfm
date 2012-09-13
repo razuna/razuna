@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<!--- Do the include of the plugin setting page --->
-	<cfif structKeyExists(pl,"pview")>
+	<cfif structKeyExists(pl,"pview") AND pl.pview NEQ "">
 		#evaluate(pl.pview)#
 	</cfif>
 </cfoutput>
