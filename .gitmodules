@@ -1,3 +1,6 @@
 [submodule "global/plugins/workflow"]
 	path = global/plugins/workflow
 	url = git@github.com:razuna/workflow.git
+[submodule "global/plugins/akamai"]
+	path = global/plugins/akamai
+	url = git@github.com:razuna/akamai.git
