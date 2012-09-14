@@ -35,24 +35,17 @@
 		<cfargument name="comp" type="string" required="true" />
 		<cfargument name="func" type="string" required="true" />
 		<cfargument name="args" type="string" required="false" default="" />
-		<!--- Remove any same action first --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM plugins_actions
-		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
-		AND lower(action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.action)#">
-		AND lower(comp) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.comp)#">
-		AND lower(func) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.func)#">
-		</cfquery>
 		<!--- Add this action to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO plugins_actions
-		(action, comp, func, args, p_id)
+		(action, comp, func, args, p_id, host_id)
 		VALUES(
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.action#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.comp#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.func#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		)
 		</cfquery>
 		<!--- Reset cache --->
@@ -70,6 +63,7 @@
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM plugins_actions
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.action NEQ "">
 			AND lower(action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.action)#">
 		</cfif>
