@@ -300,6 +300,7 @@
 			<cfset attributes.intstruct.fileid = attributes.intstruct.id>
 			<cfset attributes.intstruct.file_name = thedetail.img_filename>
 			<cfset attributes.intstruct.thefiletype = "img">
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 			<cfset arguments.thestruct.folder_action = true>
 			<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
@@ -383,6 +384,7 @@
 		<cfset arguments.thestruct.fileid = i>
 		<cfset arguments.thestruct.file_name = thedetail.img_filename>
 		<cfset arguments.thestruct.thefiletype = "img">
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
 		<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
@@ -1189,6 +1191,7 @@
 			<cfset arguments.thestruct.fileid = arguments.thestruct.img_id>
 			<cfset arguments.thestruct.file_name = arguments.thestruct.qryimg.img_filename>
 			<cfset arguments.thestruct.thefiletype = "img">
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			<cfset arguments.thestruct.folder_action = true>
 			<cfset arguments.thestruct.folderid = arguments.thestruct.folder_id>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />		
