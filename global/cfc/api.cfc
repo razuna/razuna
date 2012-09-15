@@ -35,6 +35,15 @@
 		<cfargument name="comp" type="string" required="true" />
 		<cfargument name="func" type="string" required="true" />
 		<cfargument name="args" type="string" required="false" default="" />
+		<!--- Query any same action first --->
+		<cfquery datasource="#application.razuna.datasource#" name="qryp">
+		DELETE FROM plugins_actions
+		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.pid#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND lower(action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.action)#">
+		AND lower(comp) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.comp)#">
+		AND lower(func) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.func)#">
+		</cfquery>
 		<!--- Add this action to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO plugins_actions

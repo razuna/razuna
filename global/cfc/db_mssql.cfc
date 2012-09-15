@@ -513,7 +513,8 @@
   			comp 			varchar(200),
   			func 			varchar(200),
   			args 			NVARCHAR(max),
-  			p_id 			varchar(100)
+  			p_id 			varchar(100),
+  			p_remove		varchar(10)
 		)
 		</cfquery>
 		

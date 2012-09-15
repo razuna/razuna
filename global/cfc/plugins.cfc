@@ -123,7 +123,7 @@
 			)
 			</cfquery>
 			<!--- Reset cache --->
-			<cfset resetcachetoken("settings")>
+			<!--- <cfset resetcachetoken("settings")> --->
 			<cfcatch type="database">
 				<cfset consoleoutput(true)>
 				<cfset console(cfcatch)>
@@ -152,8 +152,8 @@
 		<!--- Do below only on activate --->
 		<cfif p_active>
 			<!--- Execute table actions --->
-			<!--- <cfinvoke component="global.plugins.#pluginPathName#.cfc.main" method="db" /> --->
-			<!--- Get all cfc and put into DB (not really needed for now) --->
+			<cfinvoke component="global.plugins.#pluginPathName#.cfc.main" method="db" />
+			<!--- Get all cfc and put into DB (not really needed for now)
 			<cfif directoryExists(pluginDir)>
 				<!--- List the CFC directory --->
 				<cfdirectory directory="#pluginDir#" action="list" name="lCFC" type="file" recurse="false" />
@@ -162,6 +162,7 @@
 				<!--- Remove the .cfc from the name --->
 				<cfset listCFC = replaceNoCase(listCFC, ".cfc", "", "all")>
 			</cfif>
+			 --->
 		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -172,7 +173,7 @@
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
 		</cfquery>
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<!--- <cfset resetcachetoken("settings")> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -201,7 +202,7 @@
 		<!--- Also delete plugin on the system here --->
 
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<!--- <cfset resetcachetoken("settings")> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -210,6 +211,11 @@
 	<cffunction name="setpluginshosts" returntype="void">
 		<cfargument name="listpluginshost" type="string" required="true">
 		<cftransaction>
+			<!--- Set the remove colum to true for all --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE plugins_actions
+			SET p_remove = 'true'
+			</cfquery>
 			<!--- Since this is the general list we remove all values first --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM ct_plugins_hosts
@@ -236,24 +242,22 @@
 				<cfset session.hostid = hostid>
 				<!--- Execute the main.cfc which will add all the actions of the plugin to the DB --->
 				<cfinvoke component="global.plugins.#qryPlugin.p_path#.cfc.main" method="load" />
-			</cfloop>
-			<!--- Loop over the passed in list and add one by one --->
-			<cfloop list="#arguments.listpluginshost#" index="i" delimiters=",">
-				<!--- Get the first value (host) --->
-				<cfset hostid = listFirst(i,"-")>
-				<!--- Get last value (pluginid) --->
-				<cfset plid = listLast(i,"-")>
-				<!--- Finally remove all those actions for hostids who have been deselected --->
+				<!--- Set the remove to false --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE plugins_actions
-				SET p_remove = 'true'
-				WHERE host_id != <cfqueryparam cfsqltype="cf_sql_numeric" value="#hostid#">
-				AND p_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#plid#">
+				SET p_remove = 'false'
+				WHERE host_id = #hostid#
+				AND p_id = '#plid#'
 				</cfquery>
 			</cfloop>
+			<!--- Now remove all actions where the remove is true --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM plugins_actions
+			WHERE p_remove = 'true'
+			</cfquery>
 		</cftransaction>
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<!--- <cfset resetcachetoken("settings")> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
