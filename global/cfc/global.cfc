@@ -167,7 +167,7 @@
 		<cfset thefilename = REReplaceNoCase(thefilename, "([à]+)", "a", "ALL")>
 		<cfset thefilename = REReplaceNoCase(thefilename, "([é]+)", "e", "ALL")>
 		<!--- If all fails then --->
-		<cfset thefilename = REReplaceNoCase(thefilename, "[^a-zA-Z0-9\s]", "", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "[^a-zA-Z0-9\s^-_]", "", "ALL")>
 		<!--- Re-add the extension to the name --->
 		<cfif fileNameExt.theExt NEQ "">
 			<cfset thefilename = "#thefilename#.#fileNameExt.theExt#">
