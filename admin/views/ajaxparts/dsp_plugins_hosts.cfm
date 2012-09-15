@@ -70,7 +70,7 @@
 		// convert to a string
 		var listpluginshost = selected.join(",");
 		// Save
-		loadcontent('loaddummy','index.cfm?fa=c.plugins_hosts_saves&listpluginshost=' + listpluginshost);
+		$('#loaddummy').load('index.cfm?fa=c.plugins_hosts_saves', { listpluginshost: listpluginshost } );
 		// Feedback
 		$('#plfeedback').html('Saved your selection successfully!');
 	}

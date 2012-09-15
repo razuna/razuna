@@ -29,5 +29,7 @@
 	<div style="clear:both;"></div>
 	<hr />
 	<!--- Do the include of the plugin setting page --->
-	#pl.view.workflow.getSettings#
+	<cfloop list="#pl.pview#" delimiters="," index="i">
+		#evaluate(i)#
+	</cfloop>
 </cfoutput>

@@ -123,7 +123,7 @@
 			)
 			</cfquery>
 			<!--- Reset cache --->
-			<cfset resetcachetoken("settings")>
+			<!--- <cfset resetcachetoken("settings")> --->
 			<cfcatch type="database">
 				<cfset consoleoutput(true)>
 				<cfset console(cfcatch)>
@@ -144,19 +144,16 @@
 		<cfset var qryPlugin = getone("#arguments.p_id#")>
 		<cfset var pluginPathName = qryPlugin.p_path>
 		<cfset var pluginDir = arguments.pathup & "global/plugins/" & pluginPathName & "/cfc/">
+		<!--- First remove all actions for this plugin --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM plugins_actions
+		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
+		</cfquery>
 		<!--- Do below only on activate --->
 		<cfif p_active>
-			<!--- First remove all actions for this plugin --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM plugins_actions
-			WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
-			</cfquery>
-			<!--- Execute the main.cfc which will add all the actions of the plugin to the DB --->
-			<cfinvoke component="global.plugins.#pluginPathName#.cfc.main" method="load" />
 			<!--- Execute table actions --->
 			<cfinvoke component="global.plugins.#pluginPathName#.cfc.main" method="db" />
-
-			<!--- Get all cfc and put into DB (not really needed for now) --->
+			<!--- Get all cfc and put into DB (not really needed for now)
 			<cfif directoryExists(pluginDir)>
 				<!--- List the CFC directory --->
 				<cfdirectory directory="#pluginDir#" action="list" name="lCFC" type="file" recurse="false" />
@@ -165,6 +162,7 @@
 				<!--- Remove the .cfc from the name --->
 				<cfset listCFC = replaceNoCase(listCFC, ".cfc", "", "all")>
 			</cfif>
+			 --->
 		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -175,7 +173,7 @@
 		WHERE p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
 		</cfquery>
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<!--- <cfset resetcachetoken("settings")> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -204,7 +202,7 @@
 		<!--- Also delete plugin on the system here --->
 
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<!--- <cfset resetcachetoken("settings")> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -213,6 +211,11 @@
 	<cffunction name="setpluginshosts" returntype="void">
 		<cfargument name="listpluginshost" type="string" required="true">
 		<cftransaction>
+			<!--- Set the remove colum to true for all --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE plugins_actions
+			SET p_remove = 'true'
+			</cfquery>
 			<!--- Since this is the general list we remove all values first --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM ct_plugins_hosts
@@ -233,10 +236,28 @@
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
 				)
 				</cfquery>
+				<!--- Query the plugin so we know the path --->
+				<cfset var qryPlugin = getone("#plid#")>
+				<!--- Set the session for the hostid --->
+				<cfset session.hostid = hostid>
+				<!--- Execute the main.cfc which will add all the actions of the plugin to the DB --->
+				<cfinvoke component="global.plugins.#qryPlugin.p_path#.cfc.main" method="load" />
+				<!--- Set the remove to false --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE plugins_actions
+				SET p_remove = 'false'
+				WHERE host_id = #hostid#
+				AND p_id = '#plid#'
+				</cfquery>
 			</cfloop>
+			<!--- Now remove all actions where the remove is true --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM plugins_actions
+			WHERE p_remove = 'true'
+			</cfquery>
 		</cftransaction>
 		<!--- Reset cache --->
-		<cfset resetcachetoken("settings")>
+		<!--- <cfset resetcachetoken("settings")> --->
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -263,9 +284,10 @@
 		<cfset result.pview = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT /* #variables.cachetoken# */ pa.comp, pa.func, pa.args, p.p_path
+		SELECT pa.comp, pa.func, pa.args, p.p_path
 		FROM plugins_actions pa, plugins p
 		WHERE lower(pa.action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.theaction#">
+		AND pa.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif structKeyExists(arguments.args, "p_id")>
 			AND p.p_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.args.p_id#">
 		</cfif>
