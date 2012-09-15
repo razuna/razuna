@@ -986,6 +986,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Put file_id in struct as fileid for plugin api --->
 		<cfset arguments.thestruct.fileid = returnid>
 		<cfset arguments.thestruct.file_name = arguments.thestruct.qryfile.filename>
+		<!--- Check on any plugin that call the on_file_add action --->
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
 		<cfset arguments.thestruct.folderid = arguments.thestruct.qryfile.folder_id>
 		<!--- Check on any plugin that call the on_file_add action --->
@@ -2971,6 +2973,8 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Put file_id in struct as fileid for plugin api --->
 					<cfset arguments.thestruct.fileid = returnid>
 					<cfset arguments.thestruct.file_name = arguments.thestruct.thefilename>
+					<!--- Check on any plugin that call the on_file_add action --->
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 					<cfset arguments.thestruct.folder_action = true>
 					<cfset arguments.thestruct.folderid = arguments.thestruct.theid>
 					<!--- Check on any plugin that call the on_file_add action --->
