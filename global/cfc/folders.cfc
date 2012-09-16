@@ -50,7 +50,7 @@
 	<cfset var qRet = 0>
 	<!--- Do the select --->
 	<cfquery datasource="#variables.dsn#" name="f_1" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getTreeByCollection */ #Arguments.ColumnList#,
+	SELECT /* #variables.cachetoken##session.theUserID#getTreeByCollection */ #Arguments.ColumnList#,
 		<!--- Permission follow but not for sysadmin and admin --->
 		<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
 			CASE
@@ -2626,7 +2626,7 @@
 	<cfparam default="F" name="arguments.thestruct.actionismove">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getfoldersfortree */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, 
+	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, 
 	<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 	<!--- Permission follow but not for sysadmin and admin --->
 	<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
