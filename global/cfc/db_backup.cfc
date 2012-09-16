@@ -324,7 +324,8 @@
   			func 			varchar(200),
   			args 			clob,
   			p_id 			varchar(100),
-  			p_remove		varchar(10)
+  			p_remove		varchar(10),
+  			host_id 		int
 		)
 		</cfquery>
 			

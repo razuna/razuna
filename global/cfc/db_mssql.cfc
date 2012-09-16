@@ -514,7 +514,8 @@
   			func 			varchar(200),
   			args 			NVARCHAR(max),
   			p_id 			varchar(100),
-  			p_remove		varchar(10)
+  			p_remove		varchar(10),
+  			host_id 		int
 		)
 		</cfquery>
 		
