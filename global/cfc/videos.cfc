@@ -558,7 +558,7 @@
 <cffunction hint="REMOVE THE VIDEO" name="removevideo" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get file detail for log --->
-	<cfinvoke method="getdetails" vid_id="#arguments.thestruct.id#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
+	<cfinvoke method="getdetails" vid_id="#arguments.thestruct.id#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
 	<!--- Log --->
 	<cfinvoke component="extQueryCaching" method="log_assets">
 		<cfinvokeargument name="theuserid" value="#session.theuserid#">
@@ -633,12 +633,7 @@
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
-		<cfquery datasource="#application.razuna.datasource#" name="thedetail">
-		SELECT vid_filename, folder_id_r, vid_name_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset
-		FROM #session.hostdbprefix#videos
-		WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-		</cfquery>
+		<cfinvoke method="getdetails" vid_id="#i#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
 			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">

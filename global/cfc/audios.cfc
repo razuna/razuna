@@ -430,7 +430,7 @@
 	<cfset arguments.thestruct.thefiletype = "aud">
 	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<cfset arguments.thestruct.folder_action = true>
-	<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
+	<cfset arguments.thestruct.folderid = details.folder_id_r>
 	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>

@@ -153,7 +153,7 @@
 		<cfinvoke component="assets" method="getFileExtension" theFileName="#thename#" returnvariable="fileNameExt">
 		<cfset thefilename = "#fileNameExt.theName#">
 		<!--- All foreign chars are now converted, except the - --->
-		<cfset thefilename = REReplaceNoCase(thefilename, "[^[:word:]^-]", "", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "[^[:word:]^\-\_]", "", "ALL")>
 		<!--- Danish Chars --->
 		<cfset thefilename = REReplaceNoCase(thefilename, "([å]+)", "aa", "ALL")>
 		<cfset thefilename = REReplaceNoCase(thefilename, "([æ]+)", "ae", "ALL")>
@@ -167,7 +167,7 @@
 		<cfset thefilename = REReplaceNoCase(thefilename, "([à]+)", "a", "ALL")>
 		<cfset thefilename = REReplaceNoCase(thefilename, "([é]+)", "e", "ALL")>
 		<!--- If all fails then --->
-		<cfset thefilename = REReplaceNoCase(thefilename, "[^a-zA-Z0-9\s^-_]", "", "ALL")>
+		<cfset thefilename = REReplaceNoCase(thefilename, "[^a-zA-Z0-9\-\_\s]", "", "ALL")>
 		<!--- Re-add the extension to the name --->
 		<cfif fileNameExt.theExt NEQ "">
 			<cfset thefilename = "#thefilename#.#fileNameExt.theExt#">

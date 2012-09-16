@@ -248,7 +248,7 @@
 		<!--- Remove the file in the thread below --->
 		<cfthread intstruct="#arguments.thestruct#">
 			<!--- Get file detail for log --->
-			<cfinvoke method="filedetail" theid="#attributes.intstruct.id#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
+			<cfinvoke method="filedetail" theid="#attributes.intstruct.id#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset, thumb_extension" returnvariable="thedetail">
 			<!--- Delete from files DB (including referenced data) --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#images
@@ -300,7 +300,7 @@
 			<cfset attributes.intstruct.fileid = attributes.intstruct.id>
 			<cfset attributes.intstruct.file_name = thedetail.img_filename>
 			<cfset attributes.intstruct.thefiletype = "img">
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
 			<cfset arguments.thestruct.folder_action = true>
 			<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
@@ -323,12 +323,7 @@
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
-		<cfquery datasource="#application.razuna.datasource#" name="thedetail">
-		SELECT img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset
-		FROM #arguments.thestruct.hostdbprefix#images
-		WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-		</cfquery>
+		<cfinvoke method="filedetail" theid="#i#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset, thumb_extension" returnvariable="thedetail">
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
 			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
