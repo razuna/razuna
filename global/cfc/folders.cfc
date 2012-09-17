@@ -1389,6 +1389,7 @@
 	<cfset arguments.thestruct.hostdbprefix = session.hostdbprefix>
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.theuserid = session.theuserid>
+	<cfset arguments.thestruct.fromfolderremove = true>
 	<!--- Images --->
 	<cfquery datasource="#application.razuna.datasource#" name="qryimg">
 	Select img_id 
@@ -1459,6 +1460,10 @@
 		<cfelseif application.razuna.storage EQ "amazon">
 			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thefolderid#" awsbucket="#arguments.thestruct.awsbucket#" />
 		</cfif>
+		<!--- Execute plugins --->
+		<cfset arguments.thestruct.folderid = arguments.thefolderid>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_folder_remove" args="#arguments.thestruct#" />
 	</cfif>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("folders")>

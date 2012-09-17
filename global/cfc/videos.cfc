@@ -629,6 +629,7 @@
 	<cfset session.hostdbprefix = arguments.thestruct.hostdbprefix>
 	<cfset session.hostid = arguments.thestruct.hostid>
 	<cfset session.theuserid = arguments.thestruct.theuserid>
+	<cfparam name="arguments.thestruct.fromfolderremove" default="false" />
 	<!--- Loop --->
 	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
 		<cfset i = listfirst(i,"-")>
@@ -686,13 +687,15 @@
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 		<!--- Execute workflow --->
-		<cfset arguments.thestruct.fileid = i>
-		<cfset arguments.thestruct.file_name = thedetail.vid_filename>
-		<cfset arguments.thestruct.thefiletype = "vid">
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-		<cfset arguments.thestruct.folder_action = true>
-		<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfif !arguments.thestruct.fromfolderremove>
+			<cfset arguments.thestruct.fileid = i>
+			<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+			<cfset arguments.thestruct.thefiletype = "vid">
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			<cfset arguments.thestruct.folder_action = true>
+			<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
