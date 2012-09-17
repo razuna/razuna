@@ -44,6 +44,12 @@
 <cfelse>
 	<!--- Nirvanix --->
 	<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+		<!--- Decide on original or preview --->
+		<cfif attributes.v EQ "o">
+			<cfset theurl = qry_binary.qfile.cloud_url_org>
+		<cfelse>
+			<cfset theurl = qry_binary.qfile.cloud_url>
+		</cfif>
 		<!--- This is for basket or direct downloads --->
 		<cfif attributes.download EQ "T">
 			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
@@ -51,9 +57,9 @@
 		<cfelse>
 			<!--- Get file --->
 			<cfif application.razuna.storage EQ "nirvanix">
-				<cflocation url="#qry_binary.qfile.cloud_url_org#?disposition=attachment">
+				<cflocation url="#theurl#?disposition=attachment">
 			<cfelse>
-				<cflocation url="#qry_binary.qfile.cloud_url_org#">
+				<cflocation url="#theurl#">
 			</cfif>
 		</cfif>
 	<!--- Local --->
