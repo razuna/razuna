@@ -98,7 +98,7 @@
 	
 <!--- CONVERT BYTES TO KB/MB --------------------------------------------------------------------->
 	<cffunction hint="CONVERT BYTES TO MB" name="converttomb" output="false">
-		<cfargument name="thesize" default="" required="yes" type="numeric">
+		<cfargument name="thesize" default="" required="yes" type="string">
 		<cfargument name="unit" default="MB" required="no" type="string">
 		<!--- Set local variable --->
 		<cfset var divisor = 0>
