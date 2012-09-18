@@ -353,7 +353,7 @@
 		CREATE TABLE #arguments.thestruct.theschema#.ct_plugins_hosts
 		(
 			ct_pl_id_r		varchar(100),
-		  	ct_host_id_r	int(),
+		  	ct_host_id_r	int,
 		  	rec_uuid		varchar(100)
 		)
 		#this.tableoptions#
