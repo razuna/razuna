@@ -3311,7 +3311,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfthread action="join" name="#upa#" />
 				</cfif>
 				<!--- Upload the WAV --->
-				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("#attributes.audupstruct.thetempdirectory#/#attributes.audupstruct.qryfile.filenamenoext#.wav")>
+				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
 					<cfthread name="#upaw#" audupstruct="#arguments.thestruct#" priority="HIGH">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.audupstruct.qryfile.folder_id#/aud/#attributes.audupstruct.newid#">
@@ -3322,7 +3322,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfthread action="join" name="#upaw#" />
 				</cfif>
 				<!--- Move the MP3 but only if local asset link --->
-				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("#attributes.audupstruct.thetempdirectory#/#attributes.audupstruct.qryfile.filenamenoext#.mp3")>
+				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.mp3")>
 					<cfthread name="#upam#" audupstruct="#arguments.thestruct#" priority="HIGH">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.audupstruct.qryfile.folder_id#/aud/#attributes.audupstruct.newid#">
