@@ -108,7 +108,7 @@
 								<br />#myFusebox.getApplicationData().defaults.trans("link_images_desc")#
 							</cfif>
 						<cfelse>
-							<a href="#qry_detail.detail.link_path_url#" target="_blank" border="0"><img src="#qry_detail.detail.link_path_url#" border="0" width="120"></a><br /><a href="#qry_detail.detail.link_path_url#" target="_blank" border="0">#qry_detail.detail.link_path_url#</a>
+							<a href="#qry_detail.detail.link_path_url#" target="_blank" border="0"><img src="#qry_detail.detail.link_path_url#" border="0"></a><br /><a href="#qry_detail.detail.link_path_url#" target="_blank" border="0">#qry_detail.detail.link_path_url#</a>
 						</cfif>
 					</td>
 					<td width="100%" valign="top" colspan="2" style="padding-top:20px;" valign="top">
