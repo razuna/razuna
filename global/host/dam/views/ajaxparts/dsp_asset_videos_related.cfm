@@ -49,6 +49,7 @@
 						<i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_filename#</i>
 						<br>
 					</cfif>
+					<br />
 				</cfloop>
 			</td>
 		</tr>

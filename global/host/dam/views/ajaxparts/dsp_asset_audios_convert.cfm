@@ -118,7 +118,7 @@
 				<td></td>
 			</tr>
 			<tr>
-				<td colspan="3"><input type="button" name="convertbutton" value="#myFusebox.getApplicationData().defaults.trans("convert_button")#" class="button" onclick="convertaudios('form#attributes.file_id#');"> <div id="statusconvert" style="padding:10px;color:green;background-color:##FFFFE0;display:none;"></div><div id="statusconvertdummy"></div></td>
+				<td colspan="4"><input type="button" name="convertbutton" value="#myFusebox.getApplicationData().defaults.trans("convert_button")#" class="button" onclick="convertaudios('form#attributes.file_id#');"> <div id="statusconvert" style="padding:10px;color:green;background-color:##FFFFE0;display:none;"></div><div id="statusconvertdummy"></div></td>
 			</tr>
 		</table>
 		<!--- Additional Renditions --->

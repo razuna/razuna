@@ -767,7 +767,9 @@
 	<!--- Now, loop over the selected extensions and convert and store image --->
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
 		<!--- Create tempid --->
-		<cfset tempid = createuuid("")>
+		<cfset arguments.thestruct.newid = createuuid("")>
+		<!--- Put together the name --->
+		<cfset arguments.thestruct.thenamenoext = arguments.thestruct.thenamenoext & "_" & arguments.thestruct.newid>
 		<!--- If from upload templates we select with and height of image --->
 		<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined" AND arguments.thestruct.upl_template NEQ "">
 			<cfquery datasource="#application.razuna.datasource#" name="qry_w">
@@ -866,7 +868,6 @@
 		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" returnvariable="orgsize">
 		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" returnvariable="thumbsize">
 		<!---Create record--->
-		<cfset arguments.thestruct.newid = tempid>
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#images
 		(img_id)
@@ -976,7 +977,14 @@
 			</cfquery>
 		</cftransaction>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.newid#')#>
+		<cfset log = log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.file_id#')>
+		<!--- Call Plugins --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.newid>
+		<cfset arguments.thestruct.file_name = "#arguments.thestruct.thenamenoext#.#theformat#">
+		<cfset arguments.thestruct.folderid = arguments.thestruct.qry_detail.folder_id_r>
+		<cfset arguments.thestruct.thefiletype = "img">
+		<!--- Check on any plugin that call the on_rendition_add action --->
+		<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
 	</cfloop>
 	<!--- Remove folder --->
 	<cfif directoryexists(thisfolder)>

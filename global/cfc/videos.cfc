@@ -1348,17 +1348,18 @@
 					</cfquery>
 				</cftransaction>
 				<!--- Log --->
-				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.vid_name_org# to #previewimage# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.newid#')#>
-				<!--- Call method to send email --->
-				<!---
-				<cfset arguments.thestruct.emailwhat = "end_converting">
-				<cfset arguments.thestruct.convert_to = theformat>
-				<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#">
-				--->
-				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("videos")>
+				<cfset log = log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
+				<!--- Call Plugins --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.newid>
+				<cfset arguments.thestruct.file_name = previewvideo>
+				<cfset arguments.thestruct.folderid = arguments.thestruct.qry_detail.folder_id_r>
+				<cfset arguments.thestruct.thefiletype = "vid">
+				<!--- Check on any plugin that call the on_rendition_add action --->
+				<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("videos")>
 		<cfcatch type="any">
 			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error on convert video" type="html">
 				<cfdump var="#cfcatch#">

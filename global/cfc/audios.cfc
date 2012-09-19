@@ -1011,17 +1011,18 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Log --->
-				<cfset log = #log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#newid.id#')#>
-				<!--- Call method to send email --->
-				<!---
-				<cfset arguments.thestruct.emailwhat = "end_converting">
-				<cfset arguments.thestruct.convert_to = theformat>
-				<cfinvoke component="assets" method="addassetsendmail" thestruct="#arguments.thestruct#">
-				--->
-				<!--- Flush Cache --->
-				<cfset variables.cachetoken = resetcachetoken("audios")>
+				<cfset log = log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')>
+				<!--- Call Plugins --->
+				<cfset arguments.thestruct.fileid = newid.id>
+				<cfset arguments.thestruct.file_name = finalaudioname>
+				<cfset arguments.thestruct.folderid = arguments.thestruct.qry_detail.detail.folder_id_r>
+				<cfset arguments.thestruct.thefiletype = "aud">
+				<!--- Check on any plugin that call the on_rendition_add action --->
+				<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("audios")>
 		<cfcatch type="any">
 			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error on convert audio" type="html">
 				<cfdump var="#cfcatch#">
