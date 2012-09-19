@@ -74,7 +74,7 @@
 					</tr>
 				</cfif>
 				<!--- If cloud url is empty --->
-				<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND qry_detail.detail.cloud_url_org EQ "">
+				<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND qry_detail.detail.cloud_url_org EQ "" AND qry_detail.detail.link_kind NEQ "url">
 					<tr>
 						<td colspan="2"><h2 style="color:red;">It looks like this file could not be added to the system properly. Please delete it and add it again!</h2></td>
 					</tr>
@@ -218,105 +218,102 @@
 		<!--- Comments --->
 		<div id="divcomments"></div>
 		<!--- Meta Data --->
-		<cfif qry_detail.detail.link_kind NEQ "url">
-			<cfif cs.tab_metadata>
-				<div id="meta" class="collapsable">
-					<!--- Description & Keywords --->
-					<cfif cs.tab_description_keywords>
-						<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
-							<div id="detaildesc" style="padding-top:10px;">
-								<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-									<tr>
-										<td>
-											<div style="float:left;">
-												<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-													<!--- Filename --->
+		<cfif cs.tab_metadata>
+			<div id="meta" class="collapsable">
+				<!--- Description & Keywords --->
+				<cfif cs.tab_description_keywords>
+					<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
+						<div id="detaildesc" style="padding-top:10px;">
+							<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+								<tr>
+									<td>
+										<div style="float:left;">
+											<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+												<!--- Filename --->
+												<tr>
+													<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
+													<td width="100%"><input type="text" style="width:280px;" name="file_name" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
+												</tr>
+												<cfloop query="qry_langs">
+													<cfset thisid = lang_id>
 													<tr>
-														<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-														<td width="100%"><input type="text" style="width:280px;" name="file_name" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
+														<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
+														<td class="td2" width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:300px;height:40px;" onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.file_desc_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
 													</tr>
-													<cfloop query="qry_langs">
-														<cfset thisid = lang_id>
-														<tr>
-															<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-															<td class="td2" width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:300px;height:40px;" onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.file_desc_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
-														</tr>
-														<tr>
-															<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-															<td class="td2" width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:300px;height:40px;" onchange="document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.file_keywords_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
-														</tr>
-													</cfloop>
+													<tr>
+														<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
+														<td class="td2" width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:300px;height:40px;" onchange="document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.file_keywords_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
+													</tr>
+												</cfloop>
+											</table>
+										</div>
+										<!--- If we are a PDF we show additional XMP fields --->
+										<cfif qry_detail.detail.file_extension EQ "PDF">
+											<div style="float:right;">
+												<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+													<tr>
+														<td><strong>Author</strong></td>
+														<td><input type="text" style="width:330px;" name="author" value="#qry_detail.pdfxmp.author#"></td>
+													</tr>
+													<tr>
+														<td><strong>Author Title</strong></td>
+														<td><input type="text" style="width:330px;" name="authorsposition" value="#qry_detail.pdfxmp.authorsposition#"></td>
+													</tr>
+													<tr>
+														<td nowrap="nowrap"><strong>Description Writer</strong></td>
+														<td><input type="text" style="width:330px;" name="captionwriter" value="#qry_detail.pdfxmp.captionwriter#"></td>
+													</tr>
+													<tr>
+														<td nowrap="nowrap"><strong>Copyright Status</strong></td>
+														<td>
+														<select name="rightsmarked">
+															<option value=""<cfif qry_detail.pdfxmp.rightsmarked EQ ""> selected="selected"</cfif>>Unknown</option>
+															<option value="true"<cfif qry_detail.pdfxmp.rightsmarked EQ "true"> selected="selected"</cfif>>Copyrighted</option>
+															<option value="false"<cfif qry_detail.pdfxmp.rightsmarked EQ "false"> selected="selected"</cfif>>Public Domain</option>
+														</select>
+														</td>
+													</tr>
+													<tr>
+														<td nowrap="nowrap" valign="top"><strong>Copyright Notice</strong></td>
+														<td><textarea name="rights" class="text" style="width:330px;height:40px;">#qry_detail.pdfxmp.rights#</textarea></td>
+													</tr>
+													<tr>
+														<td nowrap="nowrap"><strong>Copyright URL</strong></td>
+														<td><input type="text" style="width:330px;" name="webstatement" value="#qry_detail.pdfxmp.webstatement#"></td>
+													</tr>
 												</table>
 											</div>
-											<!--- If we are a PDF we show additional XMP fields --->
-											<cfif qry_detail.detail.file_extension EQ "PDF">
-												<div style="float:right;">
-													<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-														<tr>
-															<td><strong>Author</strong></td>
-															<td><input type="text" style="width:330px;" name="author" value="#qry_detail.pdfxmp.author#"></td>
-														</tr>
-														<tr>
-															<td><strong>Author Title</strong></td>
-															<td><input type="text" style="width:330px;" name="authorsposition" value="#qry_detail.pdfxmp.authorsposition#"></td>
-														</tr>
-														<tr>
-															<td nowrap="nowrap"><strong>Description Writer</strong></td>
-															<td><input type="text" style="width:330px;" name="captionwriter" value="#qry_detail.pdfxmp.captionwriter#"></td>
-														</tr>
-														<tr>
-															<td nowrap="nowrap"><strong>Copyright Status</strong></td>
-															<td>
-															<select name="rightsmarked">
-																<option value=""<cfif qry_detail.pdfxmp.rightsmarked EQ ""> selected="selected"</cfif>>Unknown</option>
-																<option value="true"<cfif qry_detail.pdfxmp.rightsmarked EQ "true"> selected="selected"</cfif>>Copyrighted</option>
-																<option value="false"<cfif qry_detail.pdfxmp.rightsmarked EQ "false"> selected="selected"</cfif>>Public Domain</option>
-															</select>
-															</td>
-														</tr>
-														<tr>
-															<td nowrap="nowrap" valign="top"><strong>Copyright Notice</strong></td>
-															<td><textarea name="rights" class="text" style="width:330px;height:40px;">#qry_detail.pdfxmp.rights#</textarea></td>
-														</tr>
-														<tr>
-															<td nowrap="nowrap"><strong>Copyright URL</strong></td>
-															<td><input type="text" style="width:330px;" name="webstatement" value="#qry_detail.pdfxmp.webstatement#"></td>
-														</tr>
-													</table>
-												</div>
-											</cfif>
-										</td>
-									</tr>
-								</table>
-							</div>
-						<div stlye="clear:both;"></div>
-					</cfif>
-					<!--- Custom fields --->
-					<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-						<br />
-						<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
-						<div id="customfields" style="padding-top:10px;">
-							<cfinclude template="inc_custom_fields.cfm">
+										</cfif>
+									</td>
+								</tr>
+							</table>
 						</div>
-						<div stlye="clear:both;"></div>
-					</cfif>
-					<!--- Raw Metadata --->
-					<cfif cs.tab_metadata>
-						<br />
-						<a href="##" onclick="$('##rawmetadata').slideToggle('slow');return false;"><div class="headers">&gt; Raw Metadata</div></a>
-						<div id="rawmetadata" style="display:none;padding-top:10px;">
-							<textarea class="text" style="width:700px;height:400px;">#qry_detail.detail.file_meta#</textarea>
-						</div>
-					</cfif>
-					<!--- Submit Button --->
-					<cfif attributes.folderaccess NEQ "R">
-						<div stlye="clear:both;"></div>
-						<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
-					</cfif>
-				</div>			
-			</cfif>
+					<div stlye="clear:both;"></div>
+				</cfif>
+				<!--- Custom fields --->
+				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
+					<br />
+					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
+					<div id="customfields" style="padding-top:10px;">
+						<cfinclude template="inc_custom_fields.cfm">
+					</div>
+					<div stlye="clear:both;"></div>
+				</cfif>
+				<!--- Raw Metadata --->
+				<cfif qry_detail.detail.link_kind NEQ "url">
+					<br />
+					<a href="##" onclick="$('##rawmetadata').slideToggle('slow');return false;"><div class="headers">&gt; Raw Metadata</div></a>
+					<div id="rawmetadata" style="display:none;padding-top:10px;">
+						<textarea class="text" style="width:700px;height:400px;">#qry_detail.detail.file_meta#</textarea>
+					</div>
+				</cfif>
+				<!--- Submit Button --->
+				<cfif attributes.folderaccess NEQ "R">
+					<div stlye="clear:both;"></div>
+					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
+				</cfif>
+			</div>			
 		</cfif>
-
 		<cfif attributes.folderaccess NEQ "R">
 			<!--- VERSIONS --->
 			<div id="divversions"></div>

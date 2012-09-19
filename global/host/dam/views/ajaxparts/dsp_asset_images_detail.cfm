@@ -47,7 +47,7 @@
 				<li><a href="##convertt" onclick="loadren();">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
 			</cfif>
 			<!--- Metadata tabs  --->
-			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_metadata>
+			<cfif cs.tab_metadata>
 				<li><a href="##meta">Meta Data</a></li>
 			</cfif>
 			<!--- Comments --->
@@ -82,9 +82,9 @@
 					</tr>
 				</cfif>
 				<!--- If cloud url is empty --->
-				<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND qry_detail.detail.cloud_url_org EQ "">
+				<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND qry_detail.detail.cloud_url_org EQ "" AND qry_detail.detail.link_kind NEQ "url">
 					<tr>
-						<td colspan="2"><h2 style="color:red;">It looks like this file could not be added to the system properly. Please delete it and add it again!</h2></td>
+						<td colspan="3"><h2 style="color:red;">It looks like this file could not be added to the system properly. Please delete it and add it again!</h2></td>
 					</tr>
 				</cfif>
 				<!--- URL to files --->
@@ -203,50 +203,50 @@
 				</cfif>
 			</div>
 		</cfif>
-		<cfif qry_detail.detail.link_kind NEQ "url">
-			<!--- Meta Data --->
-			<cfif cs.tab_metadata>
-				<div id="meta" class="collapsable">
-					<cfif cs.tab_description_keywords>
-						<!--- Description & Keywords --->
-						<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
-						<div id="detaildesc" style="padding-top:10px;">
-							<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-								<!--- Filename --->
+		<!--- Meta Data --->
+		<cfif cs.tab_metadata>
+			<div id="meta" class="collapsable">
+				<cfif cs.tab_description_keywords>
+					<!--- Description & Keywords --->
+					<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
+					<div id="detaildesc" style="padding-top:10px;">
+						<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+							<!--- Filename --->
+							<tr>
+								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
+								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
+							</tr>
+							<!--- Desc --->
+							<cfloop query="qry_langs">
+								<cfset thisid = lang_id>
 								<tr>
-									<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
-									<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></td>
+									<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
+									<td class="td2" width="100%"><textarea name="img_desc_#thisid#" class="text" style="width:400px;height:50px;" onchange="document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value;document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
 								</tr>
-								<!--- Desc --->
-								<cfloop query="qry_langs">
-									<cfset thisid = lang_id>
-									<tr>
-										<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-										<td class="td2" width="100%"><textarea name="img_desc_#thisid#" class="text" style="width:400px;height:50px;" onchange="document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value;document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
-									</tr>
-									<tr>
-										<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-										<td class="td2" width="100%"><textarea name="img_keywords_#thisid#" class="text" style="width:400px;height:50px;" onchange="document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value;document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
-									</tr>
-								</cfloop>
 								<tr>
-									<td class="td2"></td>
-									<td class="td2">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#</td>
+									<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
+									<td class="td2" width="100%"><textarea name="img_keywords_#thisid#" class="text" style="width:400px;height:50px;" onchange="document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value;document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
 								</tr>
+							</cfloop>
+							<tr>
+								<td class="td2"></td>
+								<td class="td2">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#</td>
+							</tr>
 
-							</table>
-						</div>
-						<div stlye="clear:both;"></div>
-					</cfif>
-					<!--- Custom fields --->
-					<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
-						<br />
-						<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
-						<div id="customfields" style="padding-top:10px;">
-							<cfinclude template="inc_custom_fields.cfm">
-						</div>
-						<div stlye="clear:both;"></div>
-					</cfif>
+						</table>
+					</div>
+					<div stlye="clear:both;"></div>
+				</cfif>
+				<!--- Custom fields --->
+				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
+					<br />
+					<a href="##" onclick="$('##customfields').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("custom_fields_asset")#</div></a>
+					<div id="customfields" style="padding-top:10px;">
+						<cfinclude template="inc_custom_fields.cfm">
+					</div>
+					<div stlye="clear:both;"></div>
+				</cfif>
+				<cfif qry_detail.detail.link_kind NEQ "url">
 					<!--- XMP Description --->
 					<cfif cs.tab_xmp_description>
 						<br />
@@ -307,13 +307,13 @@
 					<div id="rawmetadata" style="display:none;padding-top:10px;">
 						<textarea class="text" style="width:700px;height:400px;">#qry_detail.detail.img_meta#</textarea>
 					</div>
-					<!--- Submit Button --->
-					<cfif attributes.folderaccess NEQ "R">
-						<div stlye="clear:both;"></div>
-						<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
-					</cfif>
-				</div>
-			</cfif>
+				</cfif>
+				<!--- Submit Button --->
+				<cfif attributes.folderaccess NEQ "R">
+					<div stlye="clear:both;"></div>
+					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
+				</cfif>
+			</div>
 		</cfif>
 		<!--- Comments --->
 		<div id="divcomments"></div>

@@ -17,7 +17,7 @@
 				<div style="float:left;padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("send_with_email")#</div>
 			</a>
 		</cfif>
-		<cfif qry_detail.detail.link_path_url NEQ "url" AND cs.button_send_ftp>
+		<cfif qry_detail.detail.link_kind NEQ "url" AND cs.button_send_ftp>
 			<a href="##" onclick="showwindow('#myself##xfa.sendftp#&file_id=#attributes.file_id#&thetype=#attributes.cf_show#','#myFusebox.getApplicationData().defaults.trans("send_with_ftp")#',600,2);return false;">
 				<div style="float:left;">
 					<img src="#dynpath#/global/host/dam/images/go-up-7.png" width="16" height="16" border="0" style="padding-right:3px;" />
