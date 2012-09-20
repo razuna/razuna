@@ -1801,6 +1801,8 @@
 <cffunction name="filetotalcount" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
 	<cfargument name="theoverall" default="f" required="no" type="string">
+	<!--- Param --->
+	<cfparam name="session.showsubfolders" default="F">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Show assets from subfolders or not --->
@@ -1880,6 +1882,8 @@
 <!--- GET COUNT OF FILE TYPES --->
 <cffunction name="filetotaltype" output="false">
 	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Param --->
+	<cfparam name="session.showsubfolders" default="F">
 	<!--- Show assets from subfolders or not --->
 	<cfif arguments.thestruct.folder_id NEQ "">
 		<cfif session.showsubfolders EQ "T">
