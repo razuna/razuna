@@ -15,7 +15,19 @@
 			<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#</i>
 		</cfif>
 		 | <a href="##" onclick="toggleslide('divp#attributes.file_id#','inputp#attributes.file_id#');">Direct Link</a>
-		<div id="divp#attributes.file_id#" style="display:none;"><input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" /></div>
+		<div id="divp#attributes.file_id#" style="display:none;">
+			<input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" />
+			<!--- Plugin --->
+			<cfset args = structNew()>
+			<cfset args.detail = qry_detail.detail>
+			<cfset args.thefiletype = "img">
+			<cfset args.thepreview = true>
+			<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+			<!--- Show plugin --->
+			<cfloop list="#pl.pview#" delimiters="," index="i">
+				#evaluate(i)#
+			</cfloop>
+		</div>
 		<!--- Original --->
 		<cfif attributes.folderaccess NEQ "R">
 			<br /><br />
@@ -38,7 +50,16 @@
 				<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.img_filename_org#</i>
 			</cfif>
 			 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');">Direct Link</a>
-			<div id="divo#attributes.file_id#" style="display:none;"><input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" /></div>
+			<div id="divo#attributes.file_id#" style="display:none;">
+				<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" />
+				<!--- Plugin --->
+				<cfset args.thepreview = false>
+				<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+				<!--- Show plugin --->
+				<cfloop list="#pl.pview#" delimiters="," index="i">
+					#evaluate(i)#
+				</cfloop>
+			</div>
 		</cfif>
 	<cfelseif attributes.folderaccess NEQ "R">
 		<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>

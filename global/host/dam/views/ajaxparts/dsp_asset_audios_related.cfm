@@ -44,7 +44,21 @@
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="loadcontent('relatedaudios','#myself#c.audios_remove_related&id=#aud_id#&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');">Remove</a>
 					</cfif>
-					<div id="divo#aud_id#" style="display:none;">Link: <input type="text" id="inputo#aud_id#" style="width:270px;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" /></div>
+					<div id="divo#aud_id#" style="display:none;">
+						<input type="text" id="inputo#aud_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" />
+						<!--- Plugin --->
+						<cfset args = structNew()>
+						<cfset args.detail.aud_id = aud_id>
+						<cfset args.detail.path_to_asset = path_to_asset>
+						<cfset args.detail.aud_name_org = aud_name>
+						<cfset args.thefiletype = "aud">
+						<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+						<!--- Show plugin --->
+						<cfloop list="#pl.pview#" delimiters="," index="i">
+							<br />
+							#evaluate(i)#
+						</cfloop>
+					</div>
 					<br />
 					<!--- Nirvanix --->
 					<cfif application.razuna.storage EQ "nirvanix" AND attributes.s EQ "T">

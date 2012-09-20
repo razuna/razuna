@@ -42,7 +42,21 @@
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remren('#vid_id#');">Remove</a>
 					</cfif>
-					<div id="divo#vid_id#" style="display:none;"><input type="text" id="inputo#vid_id#" style="width:400px;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" /></div>
+					<div id="divo#vid_id#" style="display:none;">
+						<input type="text" id="inputo#vid_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" />
+						<!--- Plugin --->
+						<cfset args = structNew()>
+						<cfset args.detail.vid_id = vid_id>
+						<cfset args.detail.path_to_asset = path_to_asset>
+						<cfset args.detail.vid_name_org = vid_filename>
+						<cfset args.thefiletype = "vid">
+						<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+						<!--- Show plugin --->
+						<cfloop list="#pl.pview#" delimiters="," index="i">
+							<br />
+							#evaluate(i)#
+						</cfloop>
+					</div>
 					<br>
 					<!--- Nirvanix --->
 					<cfif application.razuna.storage EQ "nirvanix" AND attributes.s EQ "T">

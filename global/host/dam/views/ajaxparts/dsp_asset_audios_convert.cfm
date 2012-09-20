@@ -35,7 +35,19 @@
 						<cfif qry_detail.detail.shared EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" target="_blank"></cfif>View</a>
 						 | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">Download</a>
 						 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');">Direct Link</a>
-						<div id="divo#attributes.file_id#" style="display:none;"><input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#&v=o" /></div>
+						<div id="divo#attributes.file_id#" style="display:none;">
+							<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#&v=o" />
+							<!--- Plugin --->
+							<cfset args = structNew()>
+							<cfset args.detail = qry_detail.detail>
+							<cfset args.thefiletype = "aud">
+							<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
+							<!--- Show plugin --->
+							<cfloop list="#pl.pview#" delimiters="," index="i">
+								<br />
+								#evaluate(i)#
+							</cfloop>
+						</div>
 					<cfelse>
 						<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
 					</cfif>

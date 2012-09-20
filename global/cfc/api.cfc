@@ -115,6 +115,11 @@
 		<cfreturn session.hostid />
 	</cffunction>
 
+	<!--- Get Sessions --->
+	<cffunction name="getUserID" access="public" returntype="String">
+		<cfreturn session.theuserid />
+	</cffunction>
+
 	<!--- Get HostDBPrefix --->
 	<cffunction name="getHostPrefix" access="public" returntype="String">
 		<cfreturn session.HostDBPrefix />

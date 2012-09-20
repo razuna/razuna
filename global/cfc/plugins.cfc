@@ -279,6 +279,7 @@
 		<cfargument name="args" default="#structnew()#" required="false" />
 		<!--- Params --->
 		<cfparam name="arguments.args.folder_action" default="false" />
+		<cfparam name="arguments.args.nameOfVariable" default="pl" />
 		<cfset var result = structnew()>
 		<cfset result.pcfc = "">
 		<cfset result.pview = "">
@@ -314,10 +315,10 @@
 				<!--- Parse view page --->
 				<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#lcase(func)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
 				<!--- Put into variable --->
-				<cfset result.pview = result.pview & "," & "pl.view.#p_path#.#func#">
+				<cfset result.pview = result.pview & "," & "#arguments.args.nameOfVariable#.view.#p_path#.#func#">
 			</cfif>
 			<!--- Put cfc path into list for easier retrieval --->
-			<cfset result.pcfc = result.pcfc & "," & "pl.cfc.#p_path#.#func#">
+			<cfset result.pcfc = result.pcfc & "," & "#arguments.args.nameOfVariable#.cfc.#p_path#.#func#">
 		</cfloop>
 		<!--- Return --->
 		<cfreturn result />
@@ -327,6 +328,7 @@
 	<cffunction name="callDirect" returntype="Struct">
 		<cfargument name="args" required="true" />
 		<!--- Params --->
+		<cfparam name="arguments.args.nameOfVariable" default="pl" />
 		<cfset var result = structnew()>
 		<cfset result.pcfc = "">
 		<cfset result.pview = "">
@@ -346,7 +348,7 @@
 			<!--- Parse view page --->
 			<cfsavecontent variable="result.view.#fcomp#.#arguments.args.func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#fcomp#/view/#lcase(arguments.args.func)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
 			<!--- Put into variable --->
-			<cfset result.pview = "pl.view.#fcomp#.#arguments.args.func#">
+			<cfset result.pview = "#arguments.args.nameOfVariable#.view.#fcomp#.#arguments.args.func#">
 		</cfif>
 		<!--- Return --->
 		<cfreturn result />
