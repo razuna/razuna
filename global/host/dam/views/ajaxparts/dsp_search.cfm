@@ -111,8 +111,8 @@
 						<!--- <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"> --->
 					</td>
 				</tr>
-				<!--- <tr>
-					
+				
+				<div style="display:none;">
 					<cfloop query="qry_cf_fields">
 						<cfset cfid = replace(cf_id,"-","","all")>
 						#cf_text#
@@ -134,8 +134,7 @@
 						</cfif>
 						<br />
 					</cfloop>
-					</td>
-				</tr> --->
+				</div>
 
 			</table>
 			</form>

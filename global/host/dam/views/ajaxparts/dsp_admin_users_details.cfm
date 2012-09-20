@@ -121,20 +121,23 @@
 					<!--- Since this can now be viewed by the user himself we only show selection for admins --->
 					<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 						<!--- If SysAdmin or Admin --->
-						<cfif Request.securityobj.CheckSystemAdminUser(qry_groups_admin.grp_id) OR Request.securityobj.CheckAdministratorGroup(qry_groups_admin.grp_id)>
-							<cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id>
+						<!--- <cfif Request.securityobj.CheckSystemAdminUser(qry_groups_admin.grp_id) OR Request.securityobj.CheckAdministratorGroup(qry_groups_admin.grp_id)> --->
+							<cfif Request.securityobj.CheckAdministratorUser() AND attributes.myinfo>
 								<input type="hidden" name="admin_group_2" value="2">
+								You are an Administrator. Full access granted!
 							</cfif>
 							<cfif Request.securityobj.CheckSystemAdminUser() AND attributes.myinfo>
 								<input type="hidden" name="admin_group_1" value="1">
 								You are a System-Administrator. Full access granted!
 							</cfif>
-							<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND !attributes.myinfo>
+							<!--- (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND  --->
+							<cfif !attributes.myinfo>
 								<input type="checkbox" name="admin_group_2" value="2"<cfif grpnrlist EQ 2> checked</cfif><cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id> disabled</cfif>> Administrator
 								<br /><br />
 							</cfif>
-						</cfif>
-						<cfif (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND !attributes.myinfo>
+						<!--- </cfif> --->
+						<!--- (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND  --->
+						<cfif !attributes.myinfo>
 							<cfloop query="qry_groups">
 								<input type="checkbox" name="webgroup_#qry_groups.grp_id#" value="#grp_id#"<cfif listfind(webgrpnrlist, #grp_id#, ",")> checked</cfif>> #qry_groups.grp_name# <cfif Len(qry_groups.grp_translation_key)> &nbsp;:&nbsp; #myFusebox.getApplicationData().defaults.trans(qry_groups.grp_translation_key)#</cfif>
 								<br />

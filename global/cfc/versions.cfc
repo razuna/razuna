@@ -279,19 +279,19 @@
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.thumb_height#">, 
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.img_width#">, 
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.img_height#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.img_size#">, 
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.thumb_size#">
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.img_size#">, 
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.thumb_size#">
 		<!--- For Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
 		,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.vid_size#">, 
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.vid_size#">, 
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.vid_width#">, 
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.vid_height#">, 
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.vid_name_image#">
 		<!--- For Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 		,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#qry.aud_size#">
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry.aud_size#">
 		</cfif>
 		)
 		</cfquery>
@@ -317,8 +317,8 @@
 			thumb_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.thumb_height#">, 
 			img_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.img_width#">, 
 			img_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.img_height#">, 
-			img_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.img_size#">, 
-			thumb_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.thumb_size#">,
+			img_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.img_size#">, 
+			thumb_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.thumb_size#">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
@@ -336,7 +336,7 @@
 			vid_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_filename_org#">,
 			vid_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_extension#">,
 			vid_name_image = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.vid_name_image#">,
-			vid_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.vid_size#">,
+			vid_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.vid_size#">,
 			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.vid_width#">,
 			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.vid_height#">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
@@ -355,7 +355,7 @@
 			SET 
 			aud_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_filename_org#">,
 			aud_extension = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.ver_extension#">,
-			aud_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#qryv.vid_size#">,
+			aud_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qryv.vid_size#">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
@@ -736,19 +736,19 @@
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.thumb_height#">, 
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_width#">, 
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_height#">, 
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.img_size#">, 
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.thumb_size#">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.img_size#">, 
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.thumb_size#">
 		<!--- For Videos --->
 		<cfelseif arguments.thestruct.type EQ "vid">
 			,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_size#">, 
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.vid_size#">, 
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_width#">, 
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.vid_height#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.vid_name_image#">
 		<!--- For Audios --->
 		<cfelseif arguments.thestruct.type EQ "aud">
 			,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfilelocal.aud_size#">
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfilelocal.aud_size#">
 		</cfif>
 		)
 		</cfquery>
@@ -767,8 +767,8 @@
 			thumb_height = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
 			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">, 
 			img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">,
-			img_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#ts#"].output#">,
-			thumb_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#ths#"].output#">,
+			img_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfthread["#ts#"].output#">,
+			thumb_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfthread["#ths#"].output#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
@@ -793,7 +793,7 @@
 			vid_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 			vid_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			vid_name_image = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.theorgimage#">,
-			vid_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#ts#"].output#">,
+			vid_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfthread["#ts#"].output#">,
 			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#tw#"].output#">,
 			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#th#"].output#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
@@ -819,7 +819,7 @@
 			aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 			aud_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 			aud_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
-			aud_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.qryfile.thesize#">,
+			aud_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.thesize#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,

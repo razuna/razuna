@@ -353,7 +353,7 @@
 		CREATE TABLE #arguments.thestruct.theschema#.ct_plugins_hosts
 		(
 			ct_pl_id_r		varchar(100),
-		  	ct_host_id_r	int(),
+		  	ct_host_id_r	int,
 		  	rec_uuid		varchar(100)
 		)
 		#this.tableoptions#
@@ -388,7 +388,8 @@
   			func 			varchar(200),
   			args 			text,
   			p_id 			varchar(100),
-  			p_remove		varchar(10)
+  			p_remove		varchar(10),
+  			host_id 		int
 		)
 		#this.tableoptions#
 		</cfquery>
@@ -1414,7 +1415,7 @@
 		  FILE_REMARKS         TEXT,
 		  FILE_ONLINE          VARCHAR(2),
 		  FILE_NAME_ORG        VARCHAR(200),
-		  FILE_SIZE			   INT,
+		  FILE_SIZE			   VARCHAR(100),
 		  LUCENE_KEY		   VARCHAR(2000),
 		  SHARED			   VARCHAR(2) DEFAULT 'F',
 		  LINK_KIND			   VARCHAR(20),
@@ -1504,8 +1505,8 @@
 		  IMG_FILENAME_ORG    VARCHAR(500),
 		  IMG_WIDTH           INT,
   		  IMG_HEIGHT          INT,
-	 	  IMG_SIZE            INT,
-  		  THUMB_SIZE          INT,
+	 	  IMG_SIZE            VARCHAR(100),
+  		  THUMB_SIZE          VARCHAR(100),
 		  LUCENE_KEY		  VARCHAR(2000),
 		  SHARED			  VARCHAR(2) DEFAULT 'F',
 		  LINK_KIND			  VARCHAR(20),
@@ -1895,8 +1896,8 @@
 		VID_NAME_IMAGE			VARCHAR(200),
 		VID_NAME_PRE			VARCHAR(200),
 		VID_NAME_PRE_IMG		VARCHAR(200),
-	 	VID_SIZE                INT,
-	 	VID_PREV_SIZE           INT,
+	 	VID_SIZE                VARCHAR(100),
+	 	VID_PREV_SIZE           VARCHAR(100),
 	 	LUCENE_KEY		   		VARCHAR(2000),
 	 	SHARED			  		VARCHAR(2) DEFAULT 'F',
 	 	LINK_KIND				VARCHAR(20),
@@ -2085,9 +2086,9 @@
 			thumb_height		INT,
 			img_width			INT,
 			img_height			INT,
-			img_size			INT,
-			thumb_size			INT,
-			vid_size			INT,
+			img_size			VARCHAR(100),
+			thumb_size			VARCHAR(100),
+			vid_size			VARCHAR(100),
 			vid_width			INT,
 			vid_height			INT,
 			vid_name_image		VARCHAR(200),
@@ -2137,7 +2138,7 @@
 			aud_ONLINE          VARCHAR(2),
 			aud_NAME_ORG        VARCHAR(200),
 			aud_GROUP           VARCHAR(100) DEFAULT NULL,
-			aud_size			INT,
+			aud_size			VARCHAR(100),
 			LUCENE_KEY		   	VARCHAR(2000),
 			SHARED			   	VARCHAR(2) DEFAULT 'F',
 			aud_meta			MEDIUMTEXT,

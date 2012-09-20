@@ -87,7 +87,7 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilenamenoext#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.theincomingtemppath#">,
 			<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.contentType#/#attributes.intstruct.thefile.contentSubType#">, --->
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.thefile.filesize#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.thefile.filesize#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.file_id#">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#md5hash#">
@@ -186,7 +186,7 @@
 			,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#orgsize#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
 			)
 			</cfquery>
@@ -266,7 +266,7 @@
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
 							<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-							<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+							<cfqueryparam cfsqltype="cf_sql_varchar" value="#orgsize#">,
 							<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
 							)
 							</cfquery>
@@ -385,7 +385,7 @@
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
 				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#orgsize#">,
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
 				)
 				</cfquery>
@@ -599,7 +599,7 @@
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
 					<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">, --->
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#thefile.filesize#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.filesize#">,
 					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#md5hash#">
@@ -770,7 +770,7 @@
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefilenamenoext#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.link_path_url#">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#orgsize#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.link_kind#">,
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
@@ -1346,7 +1346,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfelse>
 					<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
 				</cfif>
-			file_size = <cfqueryparam value="#arguments.thestruct.qryfile.thesize#" cfsqltype="cf_sql_numeric">, 
+			file_size = <cfqueryparam value="#arguments.thestruct.qryfile.thesize#" cfsqltype="cf_sql_varchar">, 
 			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">, 
 			link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">, 
 			host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">, 
@@ -2125,8 +2125,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfquery datasource="#arguments.thestruct.dsn#">
 				UPDATE #session.hostdbprefix#images
 				SET 
-				img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
-				thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
+				img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_varchar">, 
+				thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_varchar">,
 				hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.md5hash#">
 				<!--- AMAZON --->
 				<cfif arguments.thestruct.storage EQ "amazon" OR arguments.thestruct.storage EQ "nirvanix">
@@ -2607,7 +2607,7 @@ This is the main function called directly by a single upload else from addassets
 		UPDATE #session.hostdbprefix#videos
 		SET
 		vid_name_image = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.theorgimage#">,
-		vid_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#ts#">,
+		vid_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ts#">,
 		<cfif !application.razuna.rfs>
 			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#tw#">,
 			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#th#">,
@@ -2758,10 +2758,10 @@ This is the main function called directly by a single upload else from addassets
 		<cfset loopname = "">
 		<!--- Loop over the zip directories and rename them if needed --->
 		<cfset var ttf = "rec" & thetemp>
-		<cfthread name="#ttf#" intstruct="#arguments.thestruct#">
-			<cfinvoke method="rec_renamefolders" thedirectory="#attributes.intstruct.qryfile.path#" />
-		</cfthread>
-		<cfthread action="join" name="#ttf#" />
+		<!--- <cfthread name="#ttf#" intstruct="#arguments.thestruct#"> --->
+			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thestruct.qryfile.path#" />
+		<!--- </cfthread> --->
+		<!--- <cfthread action="join" name="#ttf#" /> --->
 		<!--- Get directory again since the directory names could have changed from above --->
 		<cfdirectory action="list" directory="#arguments.thestruct.qryfile.path#" name="thedir" recurse="true" type="dir">
 		<!--- Sort the above list in a query because cfdirectory sorting sucks --->
@@ -2918,9 +2918,9 @@ This is the main function called directly by a single upload else from addassets
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
 					<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.contentType#/#arguments.thestruct.contentSubType#">, --->
 					<cfif isnumeric(file.fileSize)>
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#file.fileSize#">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#file.fileSize#">,
 					<cfelse>
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="0">,
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="0">,
 					</cfif>
 					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
@@ -2997,26 +2997,28 @@ This is the main function called directly by a single upload else from addassets
 <!--- Recursive function to rename folders from zip --->
 <cffunction name="rec_renamefolders" output="false" access="public" returnType="void">
 	<cfargument name="thedirectory" type="string">
+	<!--- Set local var --->
+	<cfset var thedir = "">
+	<cfset var thedirlist = "">
 	<!--- Get folders within the unzip --->
-	<cfdirectory action="list" directory="#arguments.thedirectory#" name="thedir" recurse="true" type="dir">
+	<cfdirectory action="list" directory="#arguments.thedirectory#" name="thedirlist" recurse="true" type="dir">
 	<!--- Sort the above list in a query because cfdirectory sorting sucks --->
 	<cfquery dbtype="query" name="thedir">
 	SELECT *
-	FROM thedir
-	WHERE name LIKE '% %'
+	FROM thedirlist
 	ORDER BY name
 	</cfquery>
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
 	<cfloop query="thedir">
-		<cfif thedir.attributes NEQ "H" AND NOT name CONTAINS "__MACOSX">
+		<cfif thedir.attributes NEQ "H" AND name NEQ "__MACOSX">
 			<!--- All foreign chars are now converted, except the FileSeparator and - --->
-			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\-\#FileSeparator()#]","-","ALL")>
+			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\_\-\#FileSeparator()#]","-","ALL")>
 			<!--- Rename --->
-			<cfif directoryExists("#directory#/#name#")>
+			<cfif directoryExists("#directory#/#name#") AND "#directory#/#name#" NEQ "#directory#/#d#">
 				<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
+				<!--- Call this method again since the folder name on the disk could have changed --->
+				<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thedirectory#">
 			</cfif>
-			<!--- Call this method again since the folder name on the disk could have changed --->
-			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thedirectory#">
 		</cfif>
 	</cfloop>
 	<cfreturn />
@@ -3224,7 +3226,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfelse>
 					<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 				</cfif>,
-			aud_size = <cfqueryparam value="#arguments.thestruct.qryfile.thesize#" cfsqltype="cf_sql_numeric">, 
+			aud_size = <cfqueryparam value="#arguments.thestruct.qryfile.thesize#" cfsqltype="cf_sql_varchar">, 
 			aud_meta = <cfqueryparam value="#idtags#" cfsqltype="cf_sql_varchar">, 
 			link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">, 
 			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">, 
@@ -3280,11 +3282,11 @@ This is the main function called directly by a single upload else from addassets
 					<cffile action="#theaction#" source="#arguments.thestruct.theorgfileraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
 				</cfif>
 				<!--- Move the WAV --->
-				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
+				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.wav")>
 					<cffile action="move" source="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.wav" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.filenamenoext4copy#.wav" mode="775">
 				</cfif>
 				<!--- Move the MP3 but only if local asset link --->
-				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.mp3")>
 					<cffile action="move" source="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.mp3" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.filenamenoext4copy#.mp3" mode="775">
 				</cfif>
 				<!--- Add to Lucene --->
@@ -3309,7 +3311,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfthread action="join" name="#upa#" />
 				</cfif>
 				<!--- Upload the WAV --->
-				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
+				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
 					<cfthread name="#upaw#" audupstruct="#arguments.thestruct#" priority="HIGH">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.audupstruct.qryfile.folder_id#/aud/#attributes.audupstruct.newid#">
@@ -3320,7 +3322,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfthread action="join" name="#upaw#" />
 				</cfif>
 				<!--- Move the MP3 but only if local asset link --->
-				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.mp3")>
 					<cfthread name="#upam#" audupstruct="#arguments.thestruct#" priority="HIGH">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.audupstruct.qryfile.folder_id#/aud/#attributes.audupstruct.newid#">
@@ -3334,10 +3336,10 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
 				</cfif>
-				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
+				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav" nvxsession="#arguments.thestruct.nvxsession#">
 				</cfif>
-				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3")>
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_2" theasset="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3" nvxsession="#arguments.thestruct.nvxsession#">
 				</cfif>
 				<!--- Update DB --->
@@ -3371,7 +3373,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfthread action="join" name="#upa#" />
 				</cfif>
 				<!--- Upload the WAV --->
-				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
+				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
 					<cfthread name="#upw#" audstruct="#arguments.thestruct#" priority="HIGH">
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav">
@@ -3382,7 +3384,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfthread action="join" name="#upw#" />
 				</cfif>
 				<!--- Move the MP3 but only if local asset link --->
-				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3")>
 					<cfthread name="#upmp#" audstruct="#arguments.thestruct#" priority="HIGH">
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3">
@@ -3396,10 +3398,10 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 				</cfif>
-				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs>
+				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav" awsbucket="#arguments.thestruct.awsbucket#">
 				</cfif>
-				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3")>
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_2" key="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3" awsbucket="#arguments.thestruct.awsbucket#">
 				</cfif>
 				<!--- Update DB --->
@@ -4729,7 +4731,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thedir#">,
 				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.orgsize#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.orgsize#">,
 				<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
 				)
 				</cfquery>

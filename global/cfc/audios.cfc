@@ -221,7 +221,7 @@
 		</cfif>
 		<cfcatch type="any">
 			<cfdump var="#details#"><cfabort>
-			<cfdump var="#cfcatch#"><cfdump var="#isnumeric(details.aud_size)#"><cfabort>
+			<cfdump var="#cfcatch#"><cfdump var="#details.aud_size#"><cfabort>
 		</cfcatch>
 	</cftry>
 	<!--- Put into struct --->
@@ -1002,7 +1002,7 @@
 				aud_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">,
 				aud_name_org = <cfqueryparam cfsqltype="cf_sql_varchar" value="#finalaudioname#">,
 				folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qry_detail.detail.folder_id_r#">,
-			 	aud_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
+			 	aud_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#orgsize#">,
 			 	path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#">,
 			 	cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">,
 				cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">,

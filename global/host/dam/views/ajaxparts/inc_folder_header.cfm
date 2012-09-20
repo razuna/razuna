@@ -27,8 +27,6 @@
 	<div style="float:left;padding-left:2px;padding-top:5px;font-weight:normal;">
 		<cfif attributes.issearch>Your search returned #qry_filecount.thetotal# record(s) in this folder! | </cfif>
 		<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
-		<cfif session.theuserid NEQ qry_user.folder_owner>
-			The user "#qry_user.user#" shared this folder with you. Your permission is: <cfif attributes.folderaccess EQ "R">Read only<cfelseif attributes.folderaccess EQ "W">Read & Write<cfelse>No Restrictions</cfif>
-		</cfif>
+		<cfif session.theuserid NEQ qry_user.folder_owner>The user "#qry_user.user#" shared this folder with you.</cfif>
 	</div>
 </cfoutput>

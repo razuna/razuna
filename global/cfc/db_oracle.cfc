@@ -349,7 +349,8 @@
   			func 			varchar2(200 char),
   			args 			clob,
   			p_id 			varchar2(100 char),
-  			p_remove		varchar2(10 char)
+  			p_remove		varchar2(10 char),
+  			host_id 		number
 		)
 		</cfquery>
 			
@@ -1344,7 +1345,7 @@
 		  FILE_REMARKS         	CLOB,
 		  FILE_ONLINE          	VARCHAR2(2 CHAR),
 		  FILE_NAME_ORG        	VARCHAR2(200 CHAR),
-		  FILE_SIZE			   	NUMBER,
+		  FILE_SIZE			   	VARCHAR2(100 CHAR),
 		  LUCENE_KEY		   	VARCHAR2(2000 CHAR),
 		  SHARED			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		  LINK_KIND			   	VARCHAR2(20 CHAR),
@@ -1424,8 +1425,8 @@
 		  IMG_FILENAME_ORG    VARCHAR2(500 CHAR),
 		  IMG_WIDTH           NUMBER,
   		  IMG_HEIGHT          NUMBER,
-	 	  IMG_SIZE            NUMBER,
-  		  THUMB_SIZE          NUMBER,
+	 	  IMG_SIZE            VARCHAR2(100 CHAR),
+  		  THUMB_SIZE          VARCHAR2(100 CHAR),
 		  LUCENE_KEY		  VARCHAR2(2000 CHAR),
 		  SHARED			  VARCHAR2(2 CHAR) DEFAULT 'F',
 		  LINK_KIND			  VARCHAR2(20 CHAR),
@@ -1782,8 +1783,8 @@
 		VID_NAME_IMAGE			VARCHAR2(200 CHAR),
 		VID_NAME_PRE			VARCHAR2(200 CHAR),
 		VID_NAME_PRE_IMG		VARCHAR2(200 CHAR),
-	 	VID_SIZE                NUMBER,
-	 	VID_PREV_SIZE           NUMBER,
+	 	VID_SIZE                VARCHAR2(100 CHAR),
+	 	VID_PREV_SIZE           VARCHAR2(100 CHAR),
 	 	LUCENE_KEY		   		VARCHAR2(2000 CHAR),
 	 	SHARED			  		VARCHAR2(2 CHAR) DEFAULT 'F',
 	 	LINK_KIND			    VARCHAR2(20 CHAR),
@@ -1950,9 +1951,9 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			thumb_height		NUMBER,
 			img_width			NUMBER,
 			img_height			NUMBER,
-			img_size			NUMBER,
-			thumb_size			NUMBER,
-			vid_size			NUMBER,
+			img_size			VARCHAR2(100 CHAR),
+			thumb_size			VARCHAR2(100 CHAR),
+			vid_size			VARCHAR2(100 CHAR),
 			vid_width			NUMBER,
 			vid_height			NUMBER,
 			vid_name_image		VARCHAR2(200 CHAR),

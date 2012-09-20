@@ -68,6 +68,8 @@
 				i.path_to_asset,
 				i.cloud_url,
 				i.cloud_url_org,
+				i.img_create_time dateadd,
+				i.img_change_time datechange,
 				(
 					SELECT 
 						CASE 
@@ -103,6 +105,8 @@
 				v.path_to_asset,
 				v.cloud_url,
 				v.cloud_url_org,
+				v.vid_create_time dateadd,
+				v.vid_change_time datechange,
 				(
 					SELECT 
 						CASE 
@@ -139,6 +143,8 @@
 				a.path_to_asset,
 				a.cloud_url,
 				a.cloud_url_org,
+				a.aud_create_time dateadd,
+				a.aud_change_time datechange,
 				(
 					SELECT 
 						CASE 
@@ -174,6 +180,8 @@
 				f.path_to_asset,
 				f.cloud_url,
 				f.cloud_url_org,
+				f.file_create_time dateadd,
+				f.file_change_time datechange,
 				'false' as subassets,
 				concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
 				'0' as local_url_thumb
