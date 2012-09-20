@@ -985,6 +985,8 @@
 		<cfset arguments.thestruct.thefiletype = "img">
 		<!--- Check on any plugin that call the on_rendition_add action --->
 		<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
+		<!--- Reset name --->
+		<cfset arguments.thestruct.thenamenoext = replace(arguments.thestruct.thenamenoext,"_#arguments.thestruct.newid#","","one")>
 	</cfloop>
 	<!--- Remove folder --->
 	<cfif directoryexists(thisfolder)>

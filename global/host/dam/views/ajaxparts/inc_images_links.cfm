@@ -2,6 +2,7 @@
 	<div class="collapsable"><div class="headers">&gt; Existing Renditions</div></div>
 	<br />
 	<cfif qry_detail.detail.link_kind NEQ "url">
+		<!--- Preview --->
 		<strong>#myFusebox.getApplicationData().defaults.trans("preview")#</strong> (#ucase(qry_detail.detail.thumb_extension)#, #qry_detail.theprevsize# MB, #qry_detail.detail.thumbwidth#x#qry_detail.detail.thumbheight# pixel)<br /> 
 		<cfif qry_detail.detail.shared EQ "F">
 			<a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" target="_blank">
@@ -15,6 +16,7 @@
 		</cfif>
 		 | <a href="##" onclick="toggleslide('divp#attributes.file_id#','inputp#attributes.file_id#');">Direct Link</a>
 		<div id="divp#attributes.file_id#" style="display:none;"><input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" /></div>
+		<!--- Original --->
 		<cfif attributes.folderaccess NEQ "R">
 			<br /><br />
 			<cfif qry_detail.detail.link_kind NEQ "lan">
