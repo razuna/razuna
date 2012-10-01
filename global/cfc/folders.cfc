@@ -2803,7 +2803,7 @@
 	<!--- If this is a move then dont show the folder that we are moving --->
 	<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
 		AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
-	<cfelseif session.type EQ "uploadinto">
+	<cfelseif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR arguments.thestruct.actionismove EQ "T">
 		AND (permfolder = 'W' OR permfolder = 'X') 
 	</cfif>
 	</cfquery>
