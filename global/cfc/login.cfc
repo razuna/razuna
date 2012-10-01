@@ -366,8 +366,8 @@ Password: #randompassword#
 	<cffunction name="checkhost" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
 		<!--- Params --->
-		<cfparam name="arguments.rem_login" default="F">
-		<cfparam name="arguments.from_share" default="F">
+		<cfparam name="arguments.thestruct.rem_login" default="F">
+		<cfparam name="arguments.thestruct.from_share" default="F">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Query --->
