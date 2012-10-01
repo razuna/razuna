@@ -484,9 +484,17 @@
 							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable#id#-#kind#" type="#id#-#kind#">
 									<cfif link_kind NEQ "url">
-										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160">
+										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif>
+										<cfelse>
+											<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+										</cfif>
 									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
+										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
 									</cfif>
 								</div>
 							</a>
@@ -800,9 +808,17 @@
 							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								<div id="draggable#id#-#kind#" type="#id#-#kind#">
 									<cfif link_kind NEQ "url">
-										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160">
+										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif>
+										<cfelse>
+											<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+										</cfif>
 									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
+										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
 									</cfif>
 								</div>
 							</a>

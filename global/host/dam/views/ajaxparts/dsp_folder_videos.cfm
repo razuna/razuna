@@ -235,7 +235,15 @@
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
 							<div id="draggable#vid_id#-vid" type="#vid_id#-vid">
 								<cfif link_kind NEQ "url">
-									<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0">
+									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
+									<cfelse>
+										<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0">
+									</cfif>
 								<cfelse>
 									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
 								</cfif>
