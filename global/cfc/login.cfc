@@ -365,6 +365,9 @@ Password: #randompassword#
 	<!--- Check user and host. This is if login form is only the email and pass --->
 	<cffunction name="checkhost" access="public">
 		<cfargument name="thestruct" required="yes" type="struct">
+		<!--- Params --->
+		<cfparam name="arguments.rem_login" default="F">
+		<cfparam name="arguments.from_share" default="F">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Query --->
