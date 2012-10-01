@@ -6365,4 +6365,36 @@
 		</if>
 	</fuseaction>
 	
+	<!-- Download asset window -->
+	<fuseaction name="file_download">
+		<!-- Get link to assets for downloading -->
+		<if condition="attributes.kind EQ 'img'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" />
+				<invoke object="myFusebox.getApplicationData().images" methodcall="relatedimages(attributes)" returnvariable="attributes.qry_related" />
+			</true>
+		</if>
+		<if condition="attributes.kind EQ 'vid'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" />
+				<invoke object="myFusebox.getApplicationData().videos" methodcall="relatedvideos(attributes)" returnvariable="attributes.qry_related" />
+			</true>
+		</if>
+		<if condition="attributes.kind EQ 'aud'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" />
+				<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="attributes.qry_related" />
+			</true>
+		</if>
+		<if condition="attributes.kind EQ 'doc'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" />
+			</true>
+		</if>
+		<!-- CFC: Get individual share options -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
+		<!-- Show -->
+		<do action="ajax.file_download" />
+	</fuseaction>
+
 </circuit>

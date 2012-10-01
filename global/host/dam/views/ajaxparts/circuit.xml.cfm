@@ -696,4 +696,9 @@
   		<include template="dsp_mini_search" />
 	</fuseaction>
 
+	<!-- File: Download -->
+	<fuseaction name="file_download">
+  		<include template="dsp_file_download" />
+	</fuseaction>
+
 </circuit>
