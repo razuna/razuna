@@ -1490,6 +1490,8 @@
 	
 	<!-- ADD -->
 	<fuseaction name="asset_add">
+		<!-- Param -->
+		<set name="session.type" value="" />
 		<!-- XFA -->
 		<xfa name="addsingle" value="c.asset_add_single" />
 		<xfa name="addserver" value="c.asset_add_server" />

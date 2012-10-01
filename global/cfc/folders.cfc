@@ -2731,6 +2731,45 @@
 		<!--- If nothing meets the above lock the folder --->
 		ELSE 0
 	END AS subhere
+	<!--- Permfolder --->
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		, 'x' as permfolder
+	<cfelse>
+		,
+		CASE
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'R' THEN 'R'
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'W' THEN 'W'
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">)) = 'X' THEN 'X'
+			WHEN (f.folder_owner = '#Session.theUserID#') THEN 'X'
+		END as permfolder
+	</cfif>
 	FROM #session.hostdbprefix#folders f LEFT JOIN users u ON u.user_id = f.folder_owner
 	WHERE 
 	<cfif theid gt 0>
@@ -2764,6 +2803,8 @@
 	<!--- If this is a move then dont show the folder that we are moving --->
 	<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
 		AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+	<cfelseif session.type EQ "uploadinto">
+		AND (permfolder = 'W' OR permfolder = 'X') 
 	</cfif>
 	</cfquery>
 	<!--- Create the XML --->
