@@ -5939,6 +5939,7 @@
 		<set name="attributes.loginerror" value="F" overwrite="false" />
 		<set name="attributes.passsend" value="F" overwrite="false" />
 		<set name="attributes.sameuser" value="F" overwrite="false" />
+		<set name="cookie.razminipath" value="0" overwrite="false" />
 		<if condition="#session.hostid# NEQ ''">
 			<true>
 				<!-- CFC: Check for collection -->
