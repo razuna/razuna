@@ -2733,7 +2733,7 @@
 	END AS subhere
 	<!--- Permfolder --->
 	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-		, 'x' as permfolder
+		, 'X' as permfolder
 	<cfelse>
 		,
 		CASE
@@ -2804,7 +2804,7 @@
 	<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
 		AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 	<cfelseif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR arguments.thestruct.actionismove EQ "T">
-		AND (permfolder = 'W' OR permfolder = 'X') 
+		AND (permfolder = 'W' OR permfolder = 'X')
 	</cfif>
 	</cfquery>
 	<!--- Create the XML --->

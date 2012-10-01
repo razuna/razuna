@@ -133,7 +133,7 @@
 			END as perm,
 		</cfif>
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-			'x' as permfolder
+			'X' as permfolder
 		<cfelse>
 			CASE
 				WHEN (SELECT fg3.grp_permission
@@ -360,7 +360,7 @@
 			END as perm,
 		</cfif>
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-			'x' as permfolder
+			'X' as permfolder
 		<cfelse>
 			CASE
 				WHEN (SELECT fg3.grp_permission
@@ -554,7 +554,7 @@
 			END as perm,
 		</cfif>
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-			'x' as permfolder
+			'X' as permfolder
 		<cfelse>
 			CASE
 				WHEN (SELECT fg3.grp_permission
@@ -748,7 +748,7 @@
 			END as perm,
 		</cfif>
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-			'x' as permfolder
+			'X' as permfolder
 		<cfelse>
 			CASE
 				WHEN (SELECT fg3.grp_permission

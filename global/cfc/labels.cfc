@@ -441,7 +441,7 @@
 			<cfif !arguments.fromapi>
 				<!--- Permfolder --->
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					, 'x' as permfolder
+					, 'X' as permfolder
 				<cfelse>
 					,
 					CASE
@@ -490,7 +490,7 @@
 			<cfif !arguments.fromapi>
 				<!--- Permfolder --->
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					, 'x' as permfolder
+					, 'X' as permfolder
 				<cfelse>
 					,
 					CASE
@@ -539,7 +539,7 @@
 			<cfif !arguments.fromapi>
 				<!--- Permfolder --->
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					, 'x' as permfolder
+					, 'X' as permfolder
 				<cfelse>
 					,
 					CASE
@@ -588,7 +588,7 @@
 			<cfif !arguments.fromapi>
 				<!--- Permfolder --->
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					, 'x' as permfolder
+					, 'X' as permfolder
 				<cfelse>
 					,
 					CASE
