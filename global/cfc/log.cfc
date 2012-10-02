@@ -175,7 +175,7 @@
 	<cfquery datasource="#variables.dsn#" name="thetotal" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#get_log_assets */ log_id
 	FROM #session.hostdbprefix#log_assets
-	<cfif arguments.thestruct.id NEQ 0>
+	<cfif structKeyExists(arguments.thestruct,"id") AND arguments.thestruct.id NEQ 0>
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 	</cfif>
 	</cfquery>
