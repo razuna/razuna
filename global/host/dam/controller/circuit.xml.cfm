@@ -1508,6 +1508,11 @@
 		<!-- Params -->
 		<set name="attributes.nopreview" value="0" overwrite="false" />
 		<set name="attributes.av" value="0" overwrite="false" />
+		<if condition="structkeyexists(attributes,'folder_id')">
+			<true>
+				<set name="session.fid" value="#attributes.folder_id#" />
+			</true>
+		</if>
 		<!-- XFA -->
 		<xfa name="submitassetsingle" value="c.asset_upload_do" />
 		<!-- CFC: Get languages -->
