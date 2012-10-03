@@ -3786,6 +3786,13 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="users_import(attributes)" />
 	</fuseaction>
+	<!-- Upload file -->
+	<fuseaction name="users_upload_do">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().import" methodcall="upload(attributes)" />
+		<!-- Show -->
+		<do action="ajax.users_import_upload" />
+	</fuseaction>
 	
 	<!--  -->
 	<!-- ADMIN: USERS END -->

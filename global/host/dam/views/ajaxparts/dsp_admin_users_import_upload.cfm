@@ -23,36 +23,32 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<cfcontent reset="true">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
 <cfoutput>
 <link rel="stylesheet" href="#dynpath#/global/host/dam/views/layouts/main.css" type="text/css" />
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/upload/swfupload.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/upload/jquery-asyncUpload-0.1.js"></script>
-<script>
-    $(function() {
-        $("##yourID").makeAsyncUploader({
-        	flash_url: '#dynpath#/global/js/upload/swfupload.swf',
-            upload_url: "#myself#c.meta_imp_upload_do&tempid=#attributes.tempid#&thefieldname=filedata",
-            button_image_url: '#dynpath#/global/js/upload/blankButton.png',
-            file_size_limit: "2000 MB",
-            file_types: "*.csv;*.xls;*.xlsx",
-            file_upload_limit: 100,
-			file_queue_limit: 0,
-			debug: false
-        });
-    });  
-</script>
-<style type="text/css">
-DIV.ProgressBar { width: 100px; padding: 0; border: 1px solid black; margin-right: 1em; height:.75em; margin-left:1em; display:-moz-inline-stack; display:inline-block; zoom:1; *display:inline; }
-DIV.ProgressBar DIV { background-color: Green; font-size: 1pt; height:100%; float:left; }
-SPAN.asyncUploader OBJECT { position: relative; top: 5px; left: 10px; z-index: 7000;}
-</style>
 </head>
 <body>
-<form action="#self#" name="upme" method="post" enctype="multipart/form-data">
-<input type="file" id="yourID" name="yourID" />
-</form>
+<cfif structKeyExists(form,"fieldnames")>
+   Your file is uploaded. Please press the import button now.
+<cfelse>
+    <form action="#self#" name="upme" id="upme" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="fa" value="c.users_upload_do">
+        <input type="hidden" name="tempid" value="#attributes.tempid#">
+        <input type="hidden" name="thefieldname" value="filedata">
+        <input type="file" id="filedata" name="filedata" class="button" />
+    </form>
+</cfif>
 </cfoutput>
 </body>
+<!--- JS --->
+<script type="text/javascript">
+    $('#filedata').change(function() { 
+        // select the form and submit
+        $('#upme').submit();
+    });
+</script>
 </html>
