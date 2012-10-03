@@ -955,6 +955,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfif fileType.type_type EQ "img">
 			<!--- IMAGE UPLOAD (call method to process a img-file) --->
 			<cfinvoke method="processImgFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
+			<cfset arguments.thestruct.thefiletype = "img">
 			<!--- Act on Upload Templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 				<cfset arguments.thestruct.upltemptype = "img">
@@ -964,6 +965,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif fileType.type_type EQ "vid">
 			<!--- VIDEO UPLOAD (call method to process a vid-file) --->
 			<cfinvoke method="processVidFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
+			<cfset arguments.thestruct.thefiletype = "vid">
 			<!--- Act on Upload Templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 				<cfset arguments.thestruct.upltemptype = "vid">
@@ -973,6 +975,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfelseif fileType.type_type EQ "aud">
 			<!--- AUDIO UPLOAD (call method to process a aud-file) --->
 			<cfinvoke method="processAudFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
+			<cfset arguments.thestruct.thefiletype = "aud">
 			<!--- Act on Upload Templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 				<cfset arguments.thestruct.upltemptype = "aud">
@@ -982,14 +985,16 @@ This is the main function called directly by a single upload else from addassets
 		<cfelse>
 			<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
 			<cfinvoke method="processDocFile" returnvariable="returnid" thestruct="#arguments.thestruct#">
+			<cfset arguments.thestruct.thefiletype = "doc">
 		</cfif>
 		<!--- Put file_id in struct as fileid for plugin api --->
 		<cfset arguments.thestruct.fileid = returnid>
 		<cfset arguments.thestruct.file_name = arguments.thestruct.qryfile.filename>
+		<cfset arguments.thestruct.folder_id = arguments.thestruct.qryfile.folder_id>
+		<cfset arguments.thestruct.folder_action = false>
 		<!--- Check on any plugin that call the on_file_add action --->
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
-		<cfset arguments.thestruct.folderid = arguments.thestruct.qryfile.folder_id>
 		<!--- Check on any plugin that call the on_file_add action --->
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 	</cfif>
@@ -1307,7 +1312,7 @@ This is the main function called directly by a single upload else from addassets
 			<cffile action="delete" file="#arguments.thestruct.theshexmetaxmp#">							
 		</cfif>
 		<!--- Parse PDF XMP and write to DB --->
-		<cfif arguments.thestruct.pdf_xmp NEQ "">
+		<cfif structKeyExists(arguments.thestruct,"pdf_xmp") AND arguments.thestruct.pdf_xmp NEQ "">
 			<cfinvoke component="xmp" method="getpdfxmp" thestruct="#arguments.thestruct#" />
 		</cfif>
 	</cfif>
@@ -2006,18 +2011,26 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Move original image --->
 			<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 				<cfif application.razuna.rfs OR arguments.thestruct.importpath>
-					<cfset var fileaction = "copy">
+					<cfset arguments.thestruct.fileaction = "copy">
 				<cfelse>
-					<cfset var fileaction = "move">
+					<cfset arguments.thestruct.fileaction = "move">
 				</cfif>
-				<cffile action="#fileaction#" source="#arguments.thestruct.thesourceraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
+				<cfthread name="upload#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" priority="HIGH">
+					<cffile action="#attributes.intstruct.fileaction#" source="#attributes.intstruct.thesourceraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#" mode="775">
+				</cfthread>
+				<!--- Wait for thread to finish --->
+				<cfthread action="join" name="upload#arguments.thestruct.newid#" />
 			</cfif>
 			<!--- Move thumbnail --->
-			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
-				<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
-			<cfelseif !application.razuna.rfs>
-				<cffile action="move" source="#arguments.thestruct.destinationraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" mode="775">
-			</cfif>
+			<cfthread name="uploadt#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" priority="HIGH">
+				<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
+					<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
+				<cfelseif !application.razuna.rfs>
+					<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
+				</cfif>
+			</cfthread>
+			<!--- Wait for thread to finish --->
+			<cfthread action="join" name="uploadt#arguments.thestruct.newid#" />
 			<!--- Get size of original and thumnail --->
 			<cfset orgsize = arguments.thestruct.qryfile.thesize>
 			<cfif !application.razuna.rfs>
@@ -2904,7 +2917,7 @@ This is the main function called directly by a single upload else from addassets
 						<!--- <cfset arguments.thestruct.fidr = 0> --->
 					</cfif>
 					<!--- Add to temp db --->
-					<cfquery datasource="#variables.dsn#" name="qry">
+					<cfquery datasource="#variables.dsn#">
 					INSERT INTO #session.hostdbprefix#assets_temp
 					(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!---,mimetype--->,thesize,file_id,host_id,md5hash)
 					VALUES(
@@ -2942,6 +2955,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfif fileType.type_type EQ "img">
 						<!--- IMAGE UPLOAD (call method to process a img-file) --->
 						<cfinvoke method="processImgFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<cfset arguments.thestruct.thefiletype = "img">
 						<!--- Act on Upload Templates --->
 						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 							<cfset arguments.thestruct.upltemptype = "img">
@@ -2951,6 +2965,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfelseif fileType.type_type EQ "vid">
 						<!--- VIDEO UPLOAD (call method to process a vid-file) --->
 						<cfinvoke method="processVidFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<cfset arguments.thestruct.thefiletype = "vid">
 						<!--- Act on Upload Templates --->
 						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 							<cfset arguments.thestruct.upltemptype = "vid">
@@ -2960,6 +2975,7 @@ This is the main function called directly by a single upload else from addassets
 					<cfelseif fileType.type_type EQ "aud">
 						<!--- AUDIO UPLOAD (call method to process a vid-file) --->
 						<cfinvoke method="processAudFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<cfset arguments.thestruct.thefiletype = "aud">
 						<!--- Act on Upload Templates --->
 						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
 							<cfset arguments.thestruct.upltemptype = "aud">
@@ -2969,14 +2985,16 @@ This is the main function called directly by a single upload else from addassets
 					<cfelse>
 						<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
 						<cfinvoke method="processDocFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
+						<cfset arguments.thestruct.thefiletype = "doc">
 					</cfif>
 					<!--- Put file_id in struct as fileid for plugin api --->
 					<cfset arguments.thestruct.fileid = returnid>
 					<cfset arguments.thestruct.file_name = arguments.thestruct.thefilename>
+					<cfset arguments.thestruct.folder_id = arguments.thestruct.qryfile.folder_id>
+					<cfset arguments.thestruct.folder_action = false>
 					<!--- Check on any plugin that call the on_file_add action --->
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 					<cfset arguments.thestruct.folder_action = true>
-					<cfset arguments.thestruct.folderid = arguments.thestruct.theid>
 					<!--- Check on any plugin that call the on_file_add action --->
 					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 				<cfelse>

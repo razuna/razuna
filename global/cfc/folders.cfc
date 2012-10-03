@@ -1461,7 +1461,7 @@
 			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thefolderid#" awsbucket="#arguments.thestruct.awsbucket#" />
 		</cfif>
 		<!--- Execute plugins --->
-		<cfset arguments.thestruct.folderid = arguments.thefolderid>
+		<cfset arguments.thestruct.folder_id = arguments.thefolderid>
 		<cfset arguments.thestruct.folder_action = false>
 		<cfinvoke component="plugins" method="getactions" theaction="on_folder_remove" args="#arguments.thestruct#" />
 	</cfif>

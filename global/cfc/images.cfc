@@ -300,9 +300,10 @@
 			<cfset attributes.intstruct.fileid = attributes.intstruct.id>
 			<cfset attributes.intstruct.file_name = thedetail.img_filename>
 			<cfset attributes.intstruct.thefiletype = "img">
+			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+			<cfset arguments.thestruct.folder_action = false>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
 			<cfset arguments.thestruct.folder_action = true>
-			<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
 		</cfthread>
 		<!--- Flush Cache --->
@@ -381,9 +382,10 @@
 			<cfset arguments.thestruct.fileid = i>
 			<cfset arguments.thestruct.file_name = thedetail.img_filename>
 			<cfset arguments.thestruct.thefiletype = "img">
+			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+			<cfset arguments.thestruct.folder_action = false>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 			<cfset arguments.thestruct.folder_action = true>
-			<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		</cfif>
 	</cfloop>
@@ -981,8 +983,9 @@
 		<!--- Call Plugins --->
 		<cfset arguments.thestruct.fileid = arguments.thestruct.newid>
 		<cfset arguments.thestruct.file_name = "#arguments.thestruct.thenamenoext#.#theformat#">
-		<cfset arguments.thestruct.folderid = arguments.thestruct.qry_detail.folder_id_r>
+		<cfset arguments.thestruct.folder_id = arguments.thestruct.qry_detail.folder_id_r>
 		<cfset arguments.thestruct.thefiletype = "img">
+		<cfset arguments.thestruct.folder_action = false>
 		<!--- Check on any plugin that call the on_rendition_add action --->
 		<cfinvoke component="plugins" method="getactions" theaction="on_rendition_add" args="#arguments.thestruct#" />
 		<!--- Reset name --->
@@ -1199,9 +1202,10 @@
 			<cfset arguments.thestruct.fileid = arguments.thestruct.img_id>
 			<cfset arguments.thestruct.file_name = arguments.thestruct.qryimg.img_filename>
 			<cfset arguments.thestruct.thefiletype = "img">
+			<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+			<cfset arguments.thestruct.folder_action = false>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			<cfset arguments.thestruct.folder_action = true>
-			<cfset arguments.thestruct.folderid = arguments.thestruct.folder_id>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />		
 		</cfif>
 	<cfreturn />

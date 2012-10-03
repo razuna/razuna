@@ -283,6 +283,7 @@
 		<cfset var result = structnew()>
 		<cfset result.pcfc = "">
 		<cfset result.pview = "">
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT pa.comp, pa.func, pa.args, p.p_path
@@ -294,7 +295,7 @@
 		</cfif>
 		AND pa.p_id = p.p_id
 		<cfif arguments.args.folder_action>
-			AND args LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:#arguments.args.folderid#%">
+			AND args LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:#arguments.args.folder_id#%">
 		<cfelse>
 			AND args NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:%">
 		</cfif>

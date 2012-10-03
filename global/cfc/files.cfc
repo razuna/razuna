@@ -359,9 +359,10 @@
 		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
 		<cfset arguments.thestruct.file_name = thedetail.file_name>
 		<cfset arguments.thestruct.thefiletype = "doc">
+		<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+		<cfset arguments.thestruct.folder_action = false>
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<cfset arguments.thestruct.folder_action = true>
-		<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
@@ -445,9 +446,10 @@
 				<cfset arguments.thestruct.fileid = i>
 				<cfset arguments.thestruct.file_name = thedetail.file_name>
 				<cfset arguments.thestruct.thefiletype = "doc">
+				<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+				<cfset arguments.thestruct.folder_action = false>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
-				<cfset arguments.thestruct.folderid = thedetail.folder_id_r>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
@@ -906,9 +908,10 @@
 				<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
 				<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
 				<cfset arguments.thestruct.thefiletype = "doc">
+				<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+				<cfset arguments.thestruct.folder_action = false>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
-				<cfset arguments.thestruct.folderid = arguments.thestruct.folder_id>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			</cfif>
 		<cfreturn />
