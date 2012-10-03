@@ -295,6 +295,8 @@
 		AND pa.p_id = p.p_id
 		<cfif arguments.args.folder_action>
 			AND args LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:#arguments.args.folderid#%">
+		<cfelse>
+			AND args NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:%">
 		</cfif>
 		</cfquery>
 		<!--- Put query above into args struct so we have it in the plugin --->
