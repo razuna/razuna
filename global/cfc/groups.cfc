@@ -49,8 +49,11 @@
 	SELECT grp_id, grp_name, grp_host_id, grp_mod_id, grp_translation_key,
 		(
 			SELECT count(*)
-			FROM ct_groups_users
-			WHERE ct_g_u_grp_id = groups.grp_id
+			FROM ct_groups_users gu, users u, ct_users_hosts uh
+			WHERE gu.ct_g_u_grp_id = groups.grp_id
+			AND gu.ct_g_u_user_id = u.user_id
+			AND uh.ct_u_h_user_id = u.user_id
+			AND uh.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		) AS usercount
 	FROM groups
 	WHERE (
