@@ -751,6 +751,14 @@
 			DELETE FROM hosts
 			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
 			</cfquery>
+			<!--- Now remove all users but only if in one host --->
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			DELETE u
+			FROM users u
+			INNER JOIN ct_users_hosts ct ON ct.ct_u_h_user_id = u.user_id AND ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
+			WHERE (select count(ct_u_h_host_id) from ct_users_hosts where ct_u_h_user_id = u.user_id) = 1
+			AND ((Select CT_G_U_GRP_ID from ct_groups_users where CT_G_U_USER_ID = u.user_id) != 1 OR (Select CT_G_U_GRP_ID from ct_groups_users where CT_G_U_USER_ID = u.user_id) IS NULL)
+			</cfquery>
 			<!--- Remove any user linked to this host --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			DELETE FROM ct_users_hosts
@@ -805,6 +813,7 @@
 			DELETE FROM	modules
 			WHERE mod_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
 			</cfquery>
+			
 			<cfcatch type="any">
 				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error removing tables">
 					<cfdump var="#cfcatch#" />
