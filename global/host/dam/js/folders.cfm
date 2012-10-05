@@ -82,9 +82,11 @@
 	}
 	// Set today date into form fields
 	function settoday(theform) {
-		document.forms[theform].on_day.value = <cfoutput>#day(now())#</cfoutput>;
-		document.forms[theform].on_month.value = <cfoutput>#month(now())#</cfoutput>;
-		document.forms[theform].on_year.value = <cfoutput>#year(now())#</cfoutput>;
+		<cfset settodayd = day(now())>
+		<cfset settodaym = month(now())>
+		document.forms[theform].on_day.value = '<cfoutput><cfif len(settodayd) EQ 1>0</cfif>#settodayd#</cfoutput>';
+		document.forms[theform].on_month.value = '<cfoutput><cfif len(settodaym) EQ 1>0</cfif>#settodaym#</cfoutput>';
+		document.forms[theform].on_year.value = '<cfoutput>#year(now())#</cfoutput>';
 	}
 	// For search
 	function subadvfields(theform){

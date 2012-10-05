@@ -2867,6 +2867,7 @@
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="session.file_id" value="" overwrite="false" />
+		<set name="session.view" value="" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />

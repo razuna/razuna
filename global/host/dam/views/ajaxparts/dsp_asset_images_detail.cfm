@@ -155,11 +155,11 @@
 							</tr>
 							<tr>
 								<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("date_created")#</td>
-								<td>#dateformat(qry_detail.detail.img_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+								<td>#dateformat(qry_detail.detail.img_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 							</tr>
 							<tr>
 								<td nowrap="true" valign="top">#myFusebox.getApplicationData().defaults.trans("date_changed")#</td>
-								<td valign="top">#dateformat(qry_detail.detail.img_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+								<td valign="top">#dateformat(qry_detail.detail.img_change_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 							</tr>
 							<tr>
 								<td nowrap="true">#myFusebox.getApplicationData().defaults.trans("located_in")#</td>
