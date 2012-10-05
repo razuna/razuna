@@ -314,8 +314,8 @@
 		<cfelse>
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
-		<!--- Grab the result and query file db ---><!---  cachedwithin="1" region="razcache" --->
-		<cfquery datasource="#variables.dsn#" name="qrymain">
+		<!--- Grab the result and query file db --->
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, 
 		i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 		i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
