@@ -506,13 +506,13 @@
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
 		<!--- If criteria is empty --->
-		<!---
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "*">
 		</cfif>
-		--->
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
-		<cfif NOT arguments.criteria CONTAINS ":">
+		<cfif arguments.criteria EQ "*">
+			<cfset arguments.criteria = "*">
+		<cfelseif NOT arguments.criteria CONTAINS ":">
 			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)">
 		</cfif>
 		<cftry>

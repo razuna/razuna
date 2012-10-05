@@ -56,7 +56,7 @@
 		</cfif>
 		<!--- If search text is empty --->
 		<cfif arguments.thestruct.searchtext EQ "">
-			<cfset arguments.thestruct.searchtext = "">
+			<cfset arguments.thestruct.searchtext = "*">
 		</cfif>
 		<!--- Search in Lucene --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="doc" hostid="#session.hostid#" returnvariable="qrylucene">
@@ -175,8 +175,8 @@
 		LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 		WHERE f.file_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattree.categorytree)#" list="Yes"></cfif>)
 		<!--- Only if we have dates --->
-		<cfif #arguments.thestruct.on_day# NEQ "" AND #arguments.thestruct.on_month# NEQ "" AND #arguments.thestruct.on_year# NEQ "">
-			AND f.file_create_date = '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#'
+		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
+			AND f.file_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
 		</cfif>
 		<!--- Only if we have a folder id that is not 0 --->
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -271,7 +271,7 @@
 		</cfif>
 		<!--- If search text is empty --->
 		<cfif arguments.thestruct.searchtext EQ "">
-			<cfset arguments.thestruct.searchtext = "">
+			<cfset arguments.thestruct.searchtext = "*">
 		</cfif>
 		<!--- Search in Lucene --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="img" hostid="#session.hostid#" returnvariable="qrylucene">
@@ -314,8 +314,8 @@
 		<cfelse>
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
-		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
+		<!--- Grab the result and query file db ---><!---  cachedwithin="1" region="razcache" --->
+		<cfquery datasource="#variables.dsn#" name="qrymain">
 		SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, 
 		i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 		i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
@@ -402,8 +402,8 @@
 		LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 		WHERE i.img_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattree.categorytree)#" list="Yes"></cfif>)
 		<!--- Only if we have dates --->
-		<cfif #arguments.thestruct.on_day# NEQ "" AND #arguments.thestruct.on_month# NEQ "" AND #arguments.thestruct.on_year# NEQ "">
-			AND i.img_create_date = '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#'
+		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
+			AND i.img_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
 		</cfif>
 		<!--- Only if we have a folder id that is not 0 --->
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -465,7 +465,7 @@
 		</cfif>
 		<!--- If search text is empty --->
 		<cfif arguments.thestruct.searchtext EQ "">
-			<cfset arguments.thestruct.searchtext = "">
+			<cfset arguments.thestruct.searchtext = "*">
 		</cfif>
 		<!--- Search in Lucene --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="vid" hostid="#session.hostid#" returnvariable="qrylucene">
@@ -596,8 +596,8 @@
 		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
 		WHERE v.vid_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattree.categorytree)#" list="Yes"></cfif>)
 		<!--- Only if we have dates --->
-		<cfif #arguments.thestruct.on_day# NEQ "" AND #arguments.thestruct.on_month# NEQ "" AND #arguments.thestruct.on_year# NEQ "">
-			AND v.vid_create_date = '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#'
+		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
+			AND v.vid_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
 		</cfif>
 		<!--- Only if we have a folder id that is not 0 --->
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
@@ -659,7 +659,7 @@
 		</cfif>
 		<!--- If search text is empty --->
 		<cfif arguments.thestruct.searchtext EQ "">
-			<cfset arguments.thestruct.searchtext = "">
+			<cfset arguments.thestruct.searchtext = "*">
 		</cfif>
 		<!--- Search in Lucene --->
 		<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="aud" hostid="#session.hostid#" returnvariable="qrylucene">
@@ -790,8 +790,8 @@
 		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id
 		WHERE a.aud_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattree.categorytree)#" list="Yes"></cfif>)
 		<!--- Only if we have dates --->
-		<cfif #arguments.thestruct.on_day# NEQ "" AND #arguments.thestruct.on_month# NEQ "" AND #arguments.thestruct.on_year# NEQ "">
-			AND a.aud_create_date = '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#'
+		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
+			AND a.aud_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
 		</cfif>
 		<!--- Only if we have a folder id that is not 0 --->
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">

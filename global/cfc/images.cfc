@@ -117,7 +117,7 @@
 			SELECT ROWNUM AS rn, #thecolumnlist#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description, labels</cfif>, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
 				SELECT #Arguments.ColumnList#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,it.img_keywords keywords, it.img_description description, '' as labels</cfif>, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag,
-				i.img_create_time date_create, i.img_change_date date_change
+				i.img_create_time date_create, i.img_change_time date_change
 				FROM #session.hostdbprefix#images i<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
@@ -137,7 +137,7 @@
 		SELECT /* #variables.cachetoken#getFolderAssetsimg */ #thecolumnlist#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,it.img_keywords keywords, it.img_description description, '' as labels</cfif>, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
 			SELECT row_number() over() as rownr, i.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, it.*</cfif>,
-			lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_date date_change
+			lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
 			FROM #session.hostdbprefix#images i<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
@@ -155,7 +155,7 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getFolderAssetsimg */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,it.img_keywords keywords, it.img_description description, '' as labels</cfif>, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_date date_change
+		SELECT /* #variables.cachetoken#getFolderAssetsimg */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>#Arguments.ColumnList#<!--- If we have the combined view ---><cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,it.img_keywords keywords, it.img_description description, '' as labels</cfif>, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
 		FROM #session.hostdbprefix#images i<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1</cfif>
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
