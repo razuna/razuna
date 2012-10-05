@@ -39,11 +39,12 @@
 			<cfset var cachetokenimg = getcachetoken(arguments.api_key,"images")>
 			<cfset var cachetokenaud = getcachetoken(arguments.api_key,"audios")>
 			<cfset var cachetokendoc = getcachetoken(arguments.api_key,"files")>
+			<cfset var cachetokencol = getcachetoken(arguments.api_key,"general")>
 			<!--- Param --->
 			<cfset thestorage = "">
 			<!--- Query which file are in this collection --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry_col" cachedwithin="1" region="razcache">
-			SELECT /* #application.razuna.api.cachetoken["#arguments.api_key#"]#getassets1 */ file_id_r
+			SELECT /* #cachetokencol#getassetscol */ file_id_r
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct
 			WHERE ct.col_id_r = <cfqueryparam value="#arguments.collectionid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
