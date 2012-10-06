@@ -1039,6 +1039,9 @@
 <!--- GET RELATED AUDIOS --->
 <cffunction name="relatedaudios" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("audios")>
+	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedaudios */ aud_id, folder_id_r, aud_name, aud_extension, aud_size, path_to_asset, aud_group
 	FROM #session.hostdbprefix#audios

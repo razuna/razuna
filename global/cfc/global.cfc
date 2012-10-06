@@ -615,6 +615,8 @@ Comment:<br>
 <!--- Query additional versions link ---------------------------------------------------------------------->
 	<cffunction name="get_versions_link" output="false">
 		<cfargument name="thestruct" type="struct" required="true">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("general")>
 		<!--- Param --->
 		<cfset var qry = structnew()>
 		<!--- Query links --->

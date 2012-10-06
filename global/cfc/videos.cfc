@@ -465,6 +465,9 @@
 <!--- GET RELATED VIDEOS --->
 <cffunction name="relatedvideos" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("videos")>
+	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, v.vid_height, v.vid_width, v.vid_size vlength,
 	v.path_to_asset, v.cloud_url_org, v.vid_group
