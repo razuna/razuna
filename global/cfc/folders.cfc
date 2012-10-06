@@ -3438,7 +3438,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 	<!--- Permission follow but not for sysadmin and admin --->
-	<cfif NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser() AND NOT structkeyexists(arguments,"external")>
+	<cfif structKeyExists(Request.securityObj,"CheckSystemAdminUser") AND structKeyExists(Request.securityObj,"CheckAdministratorUser") AND NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser() AND NOT structkeyexists(arguments,"external")>
 		CASE
 			<!--- Check permission on this folder --->
 			WHEN EXISTS(
@@ -3487,7 +3487,7 @@
 	</cfif>
 --->
 	<!--- filter user folders, but not for collections --->
-	<cfif (NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser()) AND NOT structkeyexists(arguments,"external")>
+	<cfif (structKeyExists(Request.securityObj,"CheckSystemAdminUser") AND structKeyExists(Request.securityObj,"CheckAdministratorUser") AND NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser()) AND NOT structkeyexists(arguments,"external")>
 		AND
 			(
 			LOWER(<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(f.folder_of_user,<cfqueryparam cfsqltype="cf_sql_varchar" value="f">)) <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
