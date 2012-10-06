@@ -4989,6 +4989,12 @@
 	<fuseaction name="sharep">
 		<!-- Get the Cache tag -->
 		<do action="cachetag" />
+		<!-- Folder id into session -->
+		<if condition="structkeyexists(attributes,'fid'">
+			<true>
+				<set name="session.fid" value="#attributes.fid#" />
+			</true>
+		</if>
 		<!-- Param -->
 		<set name="shared.everyone" value="F" overwrite="false" />
 		<do action="v.share" />
