@@ -3761,7 +3761,7 @@ This is the main function called directly by a single upload else from addassets
 						</cfcase>
 						<!--- For RAW images we take dcraw --->
 						<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
-							<cfset theargs = "#thedcraw# -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
+							<cfset theargs = "#thedcraw# -w -b 2.0 -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
 							<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For everything else --->

@@ -817,7 +817,7 @@
 			<cfset thethumbtconv = "#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
 		</cfif>
 		<!--- IM commands --->
-		<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# +profile '*' -colorspace RGB #theflatten##theformatconv#">
+		<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -colorspace RGB #theflatten##theformatconv#">
 		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
 		<cfset thescript = createuuid()>
@@ -834,7 +834,7 @@
 		<cfswitch expression="#arguments.thestruct.qry_detail.img_extension#">
 			<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -c #theoriginalasset# > #theformatconv#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -w -b 2.0 -c #theoriginalasset# > #theformatconv#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #theformatconv# #theformatconv#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="#theexe# #theimargumentsthumb#" mode="777">
 			</cfcase>
@@ -1004,6 +1004,9 @@
 <!--- GET RELATED IMAGES --->
 <cffunction name="relatedimages" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("images")>
+	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, i.img_owner,
 	i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
