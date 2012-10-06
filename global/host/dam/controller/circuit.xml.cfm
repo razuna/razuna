@@ -4990,7 +4990,7 @@
 		<!-- Get the Cache tag -->
 		<do action="cachetag" />
 		<!-- Folder id into session -->
-		<if condition="structkeyexists(attributes,'fid'">
+		<if condition="structkeyexists(attributes,'fid')">
 			<true>
 				<set name="session.fid" value="#attributes.fid#" />
 			</true>

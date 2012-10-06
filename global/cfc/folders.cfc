@@ -2663,7 +2663,7 @@
 			<!--- If this is the upload bin --->
 			WHEN f.folder_id = '1' THEN 'unlocked'
 			<!--- If this is a collection --->
-			<!--- WHEN lower(f.folder_is_collection) = 't' THEN 'unlocked' --->
+			WHEN lower(f.folder_is_collection) = 't' THEN 'unlocked'
 			<!--- If nothing meets the above lock the folder --->
 			ELSE 'locked'
 		END AS perm
