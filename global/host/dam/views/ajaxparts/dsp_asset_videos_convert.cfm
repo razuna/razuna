@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<div class="collapsable"><div class="headers">&gt; Existing Renditions</div></div>
+	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##convertt" onclick="loadrenvid();">Refresh</a></div></div>
 	<br />
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 		<cfif attributes.folderaccess NEQ "R">
@@ -172,6 +172,7 @@
 				<td><input type="text" size="3" name="convert_width_avi" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_avi','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_avi" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_avi','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_avi" value="600">kb/s</td> --->
 			</tr>
+			<!--- MOV --->
 			<tr class="list">
 				<td align="center"><input type="checkbox" name="convert_to" value="mov"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',6);return false;" style="text-decoration:none;">Quicktime (MOV)</a></td>
@@ -182,6 +183,18 @@
 				<td><input type="text" size="3" name="convert_width_mov" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mov','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mov" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mov','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="600">kb/s</td> --->
 			</tr>
+			<!--- MXF --->
+			<tr class="list">
+				<td align="center"><input type="checkbox" name="convert_to" value="mxf"></td>
+				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',6);return false;" style="text-decoration:none;">MXF (MXF)</a></td>
+				<td nowrap="true">
+					<cfset incval.theformat = "mxf">
+					<cfinclude template="inc_video_presets.cfm" />
+				</td>
+				<td><input type="text" size="3" name="convert_width_mxf" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mxf','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mxf" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mxf','form#attributes.file_id#',#theaspectratio#);"></td>
+				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="600">kb/s</td> --->
+			</tr>
+			<!--- MPG --->
 			<tr class="list">
 				<td align="center"><input type="checkbox" name="convert_to" value="mpg"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',7)" style="text-decoration:none;">Mpeg1 Mpeg2 (MPG)</a></td>

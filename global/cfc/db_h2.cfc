@@ -811,6 +811,7 @@
 			INSERT INTO file_types VALUES ('r3d', 'img', 'image', 'r3d');
 			INSERT INTO file_types VALUES ('rwz', 'img', 'image', 'rwz');
 			INSERT INTO file_types VALUES ('x3f', 'img', 'image', 'x3f');
+			INSERT INTO file_types VALUES ('mxf', 'vid', 'video', 'mxf');
 			</cfquery>
 		</cfif>
 		<!--- <cfquery datasource="#arguments.thestruct.dsn#" name="test">

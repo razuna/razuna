@@ -1145,6 +1145,9 @@
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('x3f', 'img', 'image', 'x3f')
 			</cfquery>
+			<cfquery datasource="#arguments.thestruct.dsn#">
+			INSERT INTO #arguments.thestruct.theschema#.file_types VALUES ('mxf', 'vid', 'video', 'mxf')
+			</cfquery>
 		</cfif>
 	</cffunction>
 	

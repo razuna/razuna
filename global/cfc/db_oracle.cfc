@@ -1129,6 +1129,9 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO file_types VALUES ('x3f', 'img', 'image', 'x3f')
 		</cfquery>
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		INSERT INTO file_types VALUES ('mxf', 'vid', 'video', 'mxf')
+		</cfquery>
 	</cffunction>
 	
 	<!--- Create Host Remote --->

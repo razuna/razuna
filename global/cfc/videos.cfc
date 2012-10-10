@@ -1164,6 +1164,10 @@
 					</cfif>
 					<cfset theargument="-i #inputpath# -vcodec h263 -acodec #theacodec# -ac 1 -ar 8000 -r 25 -ab 12.2k -s #thewidth#x#theheight# -async 1 -y #thispreviewvideo#">
 				</cfcase>
+				<!--- MXF --->
+				<cfcase value="mxf">
+					<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -acodec pcm_s16le -ar 48000 -ac 2 -vsync 2 -async 1 -y #thispreviewvideo#">
+				</cfcase>
 				<!--- WMV --->
 				<cfcase value="wmv">
 					<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec wmv2 -acodec wmav2 -ar 48000 -ab 400k -ac 2 -vsync 2 -async 1 -y #thispreviewvideo#">
