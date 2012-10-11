@@ -5986,14 +5986,14 @@
 				<set name="attributes.file_id" value="0" overwrite="false" />
 				<set name="attributes.pages" value="chrome" overwrite="false" />
 				<set name="attributes.start" value="false" overwrite="false" />
+				<!-- Set the path -->
+				<set name="cookie.razminipath" value="#attributes.folder_id#" />
 				<!-- If start is true we open the extension window -->
 				<if condition="attributes.start AND cookie.razminipath NEQ 0">
 					<true>
 						<relocate url="#myself#c.mini_browser&amp;folder_id=#cookie.razminipath#" />
 					</true>
 				</if>
-				<!-- Set the path -->
-				<set name="cookie.razminipath" value="#attributes.folder_id#" />
 				<!-- Action: Get asset path -->
 				<do action="assetpath" />
 				<!-- Action: Storage -->
