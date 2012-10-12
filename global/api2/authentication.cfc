@@ -57,7 +57,7 @@
 			OR
 			gu.ct_g_u_grp_id = <cfqueryparam value="2" cfsqltype="CF_SQL_VARCHAR">
 		)
-		GROUP BY user_id, ct_g_u_grp_id
+		GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
 		</cfquery>
 		<!--- If timeout is within the last 30 minutes then extend it again --->
 		<cfif qry.recordcount EQ 0>
