@@ -360,13 +360,11 @@
 				<cfset theimgname = "thumb_#theimgid#.#qry.thumb_extension#">
 				<cfset thefinalname = listfirst(qry.img_filename_org,".") & ".#qry.thumb_extension#">
 				<cfset theext = qry.thumb_extension>
-				<cfset arguments.thestruct.thiscloudurl = qry.cloud_url>
 			<cfelse>
 				<cfset theimgname = qry.img_filename_org>
 				<cfset thefinalname = qry.img_filename_org>
 				<cfset theext = qry.img_extension>
 				<cfset theart = theext>
-				<cfset arguments.thestruct.thiscloudurl = qry.cloud_url_org>
 			</cfif>
 			<!--- If the art id not thumb and original we need to get the name from the parent record --->
 			<cfif qry.img_group NEQ "">
@@ -414,6 +412,10 @@
 				<cfthread action="join" name="#thethreadid#" />
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
+				<!--- Login to Nirvanix --->
+				<cfinvoke component="nirvanix" method="Login" returnvariable="nvxsession" />
+				<!--- Put together the download file --->
+				<cfset arguments.thestruct.thiscloudurl = "http://services.nirvanix.com/#nvxsession#/razuna/#session.hostid#/#arguments.thestruct.qry.path_to_asset#/#theimgname#">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cfhttp url="#attributes.intstruct.thiscloudurl#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
 				</cfthread>
