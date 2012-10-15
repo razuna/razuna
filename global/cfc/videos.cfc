@@ -225,7 +225,10 @@
 <cffunction name="getdetails" access="public" output="false" returntype="query">
 	<cfargument name="vid_id" type="string" required="true">
 	<cfargument name="ColumnList" required="false" type="string" hint="the column list for the selection" default="v.vid_id, v.vid_filename, v.vid_custom_id, v.vid_extension, v.vid_mimetype, v.vid_preview_width, v.vid_preview_heigth, v.folder_id_r, v.vid_name_org, v.vid_name_image, v.vid_name_pre, v.vid_name_pre_img, v.vid_width vwidth, v.vid_height vheight, v.path_to_asset, v.cloud_url, v.cloud_url_org">
-	<cfset qry = 0>
+	<!--- Local Param --->
+	<cfset var qry = 0>
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getdetailsvid */ #arguments.columnlist#
@@ -233,14 +236,8 @@
 		WHERE v.vid_id = <cfqueryparam value="#arguments.vid_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Return --->
 	<cfreturn qry>
-	<!--- 
-	v.vid_id, v.vid_FILENAME, v.FOLDER_ID_R, v.vid_CUSTOM_ID, v.vid_extension, v.vid_ONLINE, v.vid_OWNER, 
-	v.vid_CREATE_DATE, v.vid_CREATE_TIME, v.vid_CHANGE_DATE, v.vid_CHANGE_TIME, v.vid_mimetype, v.vid_publisher, 
-	v.vid_ranking rank, v.vid_SINGLE_SALE, v.vid_IS_NEW, v.vid_SELECTION, v.vid_IN_PROGRESS, v.vid_license,
-	v.video_image_org.getwidth() vwidth, v.video_image_org.getheight() vheight, v.vid_preview_width, v.vid_preview_heigth, 
-	v.video.getContentLength() vlength, v.video_preview.getContentLength() vprevlength
-	 --->
 </cffunction>
 
 <!--- SHOW VIDEO --->
