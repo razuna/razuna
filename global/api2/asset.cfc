@@ -357,6 +357,7 @@
 			</cfloop>
 			<!--- Flush cache --->
 			<cfset resetcachetoken(arguments.api_key,cachetype)>
+			<cfset resetcachetoken(arguments.api_key,"search")>
 			<!--- Feedback --->
 			<cfset thexml.responsecode = 0>
 			<cfset thexml.message = "Metadata successfully stored">
