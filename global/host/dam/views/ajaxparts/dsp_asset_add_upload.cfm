@@ -86,6 +86,9 @@ $(function() {
 					up.settings.url = '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&_v=' + S4();
 					up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), upl_template: $('##upl_template_chooser').val() };
 				});
+				up.bind('UploadComplete', function() {
+					parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');
+				});
 			}
 		</cfif>
 		

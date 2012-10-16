@@ -1120,12 +1120,20 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Insert --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#files
-	(file_id, is_available)
+	(file_id, is_available, folder_id_r, host_id, file_name)
 	VALUES(
 		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">
+		<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">
 		)
 	</cfquery>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("files")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")> 
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Set Params --->
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
 	<cfset arguments.thestruct.iswindows = iswindows()>
@@ -1796,23 +1804,37 @@ This is the main function called directly by a single upload else from addassets
 	<cfif arguments.thestruct.qryfile.link_kind EQ "url">
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #session.hostdbprefix#images
-		(img_id, host_id, folder_id_r)
+		(img_id, host_id, folder_id_r, is_available, img_filename)
 		VALUES(
 		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">
 		)
 		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
+		<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfelse>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #session.hostdbprefix#images
-		(img_id, host_id, folder_id_r)
+		(img_id, host_id, folder_id_r, is_available, img_filename)
 		VALUES(
 		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">
 		)
 		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- Grab stuff for exiftool and getting raw metadata from image --->
 		<cfif isWindows()>
 			<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
@@ -2405,15 +2427,22 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Insert record --->		
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#videos
-		(vid_id, vid_name_org, host_id, folder_id_r, path_to_asset)
+		(vid_id, vid_name_org, vid_filename, host_id, folder_id_r, path_to_asset, is_available)
 		VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thisvid.newid#">,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.filename#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.filename#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.folder_id#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#">
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#">,
+		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">
 		)
 		</cfquery>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
+		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- Put together the filenames --->
 		<cfset arguments.thestruct.thisvid.theorgimage = replacenocase(arguments.thestruct.qryfile.filename,".#arguments.thestruct.qryfile.extension#",".jpg","one")>
 		<!--- All below only if NOT from a link --->
@@ -3092,14 +3121,24 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.newid = 1>
 	<!--- Get new id --->
 	<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
+	<!--- Add record --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#audios
-	(aud_id, is_available)
+	(aud_id, is_available, folder_id_r, host_id, aud_name)
 	VALUES(
 		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">
+		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">
 	)
 	</cfquery>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("audios")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<cfset variables.cachetoken = resetcachetoken("general")> 
+	<!--- Set vars --->
 	<cfset arguments.thestruct.dsn = variables.dsn>
 	<cfset arguments.thestruct.database = variables.database>
 	<cfset arguments.thestruct.hostid = session.hostid>
