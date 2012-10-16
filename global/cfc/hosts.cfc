@@ -756,8 +756,7 @@
 			DELETE u
 			FROM users u
 			INNER JOIN ct_users_hosts ct ON ct.ct_u_h_user_id = u.user_id AND ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
-			WHERE (select count(ct_u_h_host_id) from ct_users_hosts where ct_u_h_user_id = u.user_id) = 1
-			AND ((Select CT_G_U_GRP_ID from ct_groups_users where CT_G_U_USER_ID = u.user_id) != 1 OR (Select CT_G_U_GRP_ID from ct_groups_users where CT_G_U_USER_ID = u.user_id) IS NULL)
+			WHERE 1 NOT IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = u.user_id)
 			</cfquery>
 			<!--- Remove any user linked to this host --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
