@@ -93,6 +93,7 @@
 			</cfloop>
 		</cftransaction>
 		<!--- Flush Cache --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn newcfid />
 </cffunction>
@@ -211,6 +212,7 @@
 		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
+	<cfset resetcachetoken("search")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Lucene is indexing these values in the video.cfc already thus we are done here --->
 </cffunction>
@@ -244,6 +246,7 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
@@ -268,6 +271,7 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Flush Cache --->
+	<cfset resetcachetoken("search")>
 	<cfset variables.cachetoken = resetcachetoken("general")>
 </cffunction>
 
