@@ -276,9 +276,9 @@
 	<cfswitch expression="#theextension#">
 	<!--- Flowplayer compatible formats --->
 		<cfcase value="3gp,mpg4,m4v,swf,flv,f4v">
-			<cfsavecontent variable="thevideo"><cfoutput><div style="height:auto;width:auto;padding-top:50px;"><!--- <cfif application.razuna.storage EQ "local">#thevideo#<br /></cfif> ---><a class="flowplayerdetail" href="#thevideo#" style="height:#arguments.thestruct.videodetails.vheight#px;width:#arguments.thestruct.videodetails.vwidth#px;"><img src="#theimage#" border="0" width="#arguments.thestruct.videodetails.vwidth#" height="#arguments.thestruct.videodetails.vheight#"></a>
+			<cfsavecontent variable="thevideo"><cfoutput><div style="height:auto;width:auto;padding-top:50px;"><a class="flowplayerdetail" href="#thevideo#" style="height:#arguments.thestruct.videodetails.vheight#px;width:#arguments.thestruct.videodetails.vwidth#px;"><img src="#theimage#" border="0" width="#arguments.thestruct.videodetails.vwidth#" height="#arguments.thestruct.videodetails.vheight#"></a>
 			<script language="javascript" type="text/javascript">
-				// this simple call does the magic
+				// Initiate
 				flowplayer("a.flowplayerdetail", "#arguments.thestruct.dynpath#/global/videoplayer/flowplayer-3.2.7.swf", { 
 				    clip: {
 				    	autoBuffering: true, 
@@ -300,7 +300,7 @@
 			</cfsavecontent>
 		</cfcase>
 		<!--- Quicktime only MOV --->
-		<cfcase value="mov">
+		<cfcase value="mov,mpg">
 			<!--- <cflocation url="#thevideo#"> --->
 			<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
 			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
@@ -309,7 +309,7 @@
 			    QT_WriteOBJECT('#thevideo#', '#thewidth#','#theheight#', '', 
 			     'scale', 'tofit',
 			     'controller','true',
-			     'autoplay','false'
+			     'autoplay','true'
 			     );
 			</script>
 			</cfoutput></cfsavecontent>
@@ -374,7 +374,7 @@
 			</cfsavecontent>
 		</cfcase>
 		<!--- WMV --->
-		<cfcase value="wmv">
+		<cfcase value="wmv,avi">
 			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
 			<cfif #arguments.thestruct.videofield# EQ "video" OR arguments.thestruct.v EQ "o">
 				<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
@@ -387,55 +387,22 @@
 			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
 			<!--- For Windows --->
 			<cfif cgi.HTTP_USER_AGENT CONTAINS "windows">
-				<cfsavecontent variable="thevideo"><cfoutput><!--- <cfif application.razuna.storage NEQ "nirvanix">#thevideo#<br /></cfif> ---><object id="MediaPlayer" width="#thewidth#" height="#theheight#" classid="CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95" standby="Loading Microsoft Windows Media Player components..." type="application/x-oleobject" codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab##Version=6,4,7,1112">
-	   <param name="filename" value="#thevideo#">
-	   <param name="autoStart" value="true">           
-	   <param name="showControls" value="true">
-	   <param name="ShowStatusBar" value="true">
-	   <param name="Autorewind" value="true">
-	   <param name="ShowDisplay" value="false">
-	   <embed src="#thevideo#" width="#thewidth#" height="#theheight#" type="application/x-mplayer2" name="MediaPlayer" autostart="1" showcontrols="0" showstatusbar="1" autorewind="1" showdisplay="0"></embed>
-	</object></cfoutput>
-				</cfsavecontent>
+				<cfsavecontent variable="thevideo"><cfoutput>
+<object id="MediaPlayer" width="#thewidth#" height="#theheight#" classid="CLSID:22D6F312-B0F6-11D0-94AB-0080C74C7E95" standby="Loading Microsoft Windows Media Player components..." type="application/x-oleobject" codebase="http://activex.microsoft.com/activex/controls/mplayer/en/nsmp2inf.cab##Version=6,4,7,1112">
+   <param name="filename" value="#thevideo#">
+   <param name="autoStart" value="true">           
+   <param name="showControls" value="true">
+   <param name="ShowStatusBar" value="true">
+   <param name="Autorewind" value="true">
+   <param name="ShowDisplay" value="false">
+   <embed src="#thevideo#" width="#thewidth#" height="#theheight#" type="application/x-mplayer2" name="MediaPlayer" autostart="1" showcontrols="0" showstatusbar="1" autorewind="1" showdisplay="0"></embed>
+</object></cfoutput></cfsavecontent>
 			<!--- Else we use Quicktime --->
 			<cfelse>
-				<cfsavecontent variable="thevideo"><cfoutput><!--- <cfif application.razuna.storage NEQ "nirvanix">#thevideo#<br /></cfif> --->
-				<script language="JavaScript" type="text/javascript">
-				QT_WriteOBJECT('#theimage#','#thewidth#','#theheight#','',
-				'href','#thevideo#',
-				'target','myself',
-				'type','video/quicktime',
-				'controller','false',
-				'autoplay', 'true',
-				'scale','tofit',
-				'loop','false',
-				'bgcolor','##FFFFFF',
-				'kioskmode','true',
-				'movieid','#arguments.thestruct.vid_id#');
-				</script><br>Click on the image to play video</cfoutput>
-				</cfsavecontent>
+				<!--- For Mac we simply redirect to the source. If user has Flip4Mac installed it will start playing in the browser --->
+				<cflocation url="#thevideo#">
 			</cfif>
 		</cfcase>
-		<!--- FLASH
-		<cfcase value="swf">
-			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
-			<cfif #arguments.thestruct.videofield# EQ "video" OR arguments.thestruct.v EQ "o">
-				<cfset theheight = #arguments.thestruct.videodetails.vheight#>
-				<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
-			<cfelse>
-				<cfset theheight = #arguments.thestruct.videodetails.vid_preview_heigth#>
-				<cfset thewidth = #arguments.thestruct.videodetails.vid_preview_width#>
-			</cfif>
-			<cfsavecontent variable="thevideo"><cfoutput>
-			<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://fpdownload.macromedia.com/pub/shockwave/cabs/flash/swflash.cab##version=8,0,0,0" width="#thewidth#" height="#theheight#" id="test" align="middle">
-			<param name="allowScriptAccess" value="sameDomain" />
-			<param name="movie" value="#thevideo#" />
-			<param name="quality" value="high" />
-			<param name="bgcolor" value="##ffffff" />
-			<embed src="#thevideo#" quality="high" bgcolor="##ffffff" width="#thewidth#" height="#theheight#" name="test" align="middle" allowScriptAccess="sameDomain" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" />
-			</object></cfoutput>
-			</cfsavecontent>
-		</cfcase> --->
 		<!--- RPM - RM --->
 		<cfcase value="rm">
 			<!--- Add 16pixel to the heigth or else the controller of the quicktime can not be seen --->
@@ -447,7 +414,7 @@
 			<cfset thewidth = #arguments.thestruct.videodetails.vid_preview_width#>
 			</cfif>
 			<cfsavecontent variable="thevideo"><cfoutput>
-			<EMBED WIDTH=#thewidth# HEIGHT=#theheight# SRC="#thevideo#" CONTROLS=ImageWindow CONSOLE=one></cfoutput>
+<EMBED WIDTH=#thewidth# HEIGHT=#theheight# SRC="#thevideo#" CONTROLS=ImageWindow CONSOLE=one></cfoutput>
 			</cfsavecontent>
 		</cfcase>
 		<!--- THESE FILES WILL BE DOWNLOADED --->
