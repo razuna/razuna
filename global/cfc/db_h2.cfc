@@ -744,6 +744,7 @@
 			INSERT INTO file_types VALUES ('flv', 'vid', 'application', 'x-shockwave-flash');
 			INSERT INTO file_types VALUES ('f4v', 'vid', 'application', 'x-shockwave-flash');
 			INSERT INTO file_types VALUES ('mov', 'vid', 'video', 'quicktime');
+			INSERT INTO file_types VALUES ('m4v', 'vid', 'video', 'quicktime');
 			INSERT INTO file_types VALUES ('avi', 'vid', 'video', 'avi');
 			INSERT INTO file_types VALUES ('3gp', 'vid', 'video', '3gpp');
 			INSERT INTO file_types VALUES ('rm', 'vid', 'application', 'vnd.rn-realmedia');

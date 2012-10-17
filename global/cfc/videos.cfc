@@ -275,7 +275,7 @@
 	<!--- Now show video according to extension --->
 	<cfswitch expression="#theextension#">
 	<!--- Flowplayer compatible formats --->
-		<cfcase value="3gp,mpg4,m4v,swf,flv,f4v">
+		<cfcase value="3gp,mpg4,swf,flv,f4v">
 			<cfsavecontent variable="thevideo"><cfoutput><div style="height:auto;width:auto;padding-top:50px;"><a class="flowplayerdetail" href="#thevideo#" style="height:#arguments.thestruct.videodetails.vheight#px;width:#arguments.thestruct.videodetails.vwidth#px;"><img src="#theimage#" border="0" width="#arguments.thestruct.videodetails.vwidth#" height="#arguments.thestruct.videodetails.vheight#"></a>
 			<script language="javascript" type="text/javascript">
 				// Initiate
@@ -300,7 +300,7 @@
 			</cfsavecontent>
 		</cfcase>
 		<!--- Quicktime only MOV --->
-		<cfcase value="mov,mpg">
+		<cfcase value="mov,mpg,m4v">
 			<!--- <cflocation url="#thevideo#"> --->
 			<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
 			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
