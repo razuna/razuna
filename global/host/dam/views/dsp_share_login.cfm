@@ -47,26 +47,26 @@ Page output starts here
 		<table width="100%" border="0" cellpadding="0" cellspacing="0">
 		    <!--- If this is a normal group access login --->
 		    <cfif attributes.perm_password EQ "F">
-			    <tr>
+			   <!---  <tr>
 			        <td width="100%" nowrap>#myFusebox.getApplicationData().defaults.trans("username")#</td>
-				</tr>
+				</tr> --->
 				<tr>
 					<td width="100%" nowrap style="padding-bottom:10px;">
 						<label for="name" class="error">Enter a username!</label>
-			       	 	<div id="login_name"><input type="text" name="name" id="name" size="30" /></div>
+			       	 	<div id="login_name"><input type="text" name="name" id="name" style="width:280px;" placeholder="Username" /></div>
 					</td>
 			    </tr>
-			    <tr>
+			    <!--- <tr>
 			        <td>#myFusebox.getApplicationData().defaults.trans("password")#</td>
-				</tr>
+				</tr> --->
 				<tr>
 			        <td>
 				        <label for="pass" class="error">Enter a password!</label>
-				    	<div id="login_password"><input type="password" name="pass" id="pass" size="30" /></div>
+				    	<div id="login_password"><input type="password" name="pass" id="pass" style="width:280px;" placeholder="Password" /></div>
 					</td>
 			    </tr>
 			    <tr>
-			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="button" /></td>
+			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="awesome big green" style="width:300px;height:50px;font-size:22px;" /></td>
 			    </tr>
 			     <cfif jr_enable EQ "true">
 				    <tr>

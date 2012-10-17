@@ -30,14 +30,16 @@
 <form action="#self#" method="post" id="form_forgotpass" id="form_forgotpass">
 <input type="hidden" name="#theaction#" value="#xfa.submitform#">
 	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	    <tr>
+	    <!--- <tr>
 	        <td>#myFusebox.getApplicationData().defaults.trans("youremail")#</td>
-		</tr>
+		</tr> --->
 		<tr>
-	        <td><label for="email" class="error" style="display:none;">Enter a valid eMail address!</label><div id="pf_email"><input type="text" name="email" id="email" size="40" /></div></td>
+	        <td><label for="email" class="error" style="display:none;">Enter a valid eMail address!</label><div id="pf_email"><input type="text" name="email" id="email" style="width:280px;" placeholder="Your email address" /></div></td>
 	    </tr>
 	    <tr>
-	        <td align="right" style="padding:10px 0px 10px 0px;"><input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="location.href='#myself##xfa.linkback#'" class="button" /> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("buttonsendpassword")#" class="button" /></td>
+	        <td style="padding:10px 0px 10px 0px;">
+	        	<input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="location.href='#myself##xfa.linkback#'" class="awesome medium green" /> 
+	        	<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("buttonsendpassword")#" class="awesome medium green" /></td>
 	    </tr>
 	</table>
 </form>

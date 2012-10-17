@@ -45,9 +45,9 @@ Page output starts here
 			<input type="hidden" name="#theaction#" value="#xfa.submitform#">
 			<input type="hidden" name="tl" value="t">
 			<table width="100%" border="0" cellpadding="0" cellspacing="0">
-			    <tr>
+			    <!--- <tr>
 			        <td width="100%" nowrap>#myFusebox.getApplicationData().defaults.trans("username")#</td>
-				</tr>
+				</tr> --->
 				<tr>
 					<td width="100%" nowrap style="padding-bottom:10px;">
 						<label for="name" class="error" style="display:none;">Enter a username!</label>
@@ -56,23 +56,23 @@ Page output starts here
 						<cfelse>
 							<cfset loginvalue = cookie.loginname>
 						</cfif>
-			       	 	<div id="login_name"><input type="text" name="name" id="name" style="width:250px;" value="#loginvalue#" /></div>
+			       	 	<div id="login_name"><input type="text" name="name" id="name" style="width:280px;" value="#loginvalue#" placeholder="Username" /></div>
 					</td>
 			    </tr>
-			    <tr>
+			   <!---  <tr>
 			        <td>#myFusebox.getApplicationData().defaults.trans("password")#</td>
-				</tr>
+				</tr> --->
 				<tr>
 			        <td style="padding-bottom:10px;">
 				        <label for="pass" class="error" style="display:none;">Enter a password!</label>
-				    	<div id="login_password"><input type="password" name="pass" id="pass" style="width:250px;" value="#cookie.loginpass#" /></div>
+				    	<div id="login_password"><input type="password" name="pass" id="pass" style="width:280px;" value="#cookie.loginpass#" placeholder="Password" /></div>
 					</td>
 			    </tr>
 			    <tr>
 					<td><input type="checkbox" name="rem_login" id="rem_login" value="T"<cfif structkeyexists(cookie,"loginrem") AND cookie.loginrem EQ "t"> checked="checked"</cfif>> <a href="##" onclick="clickcbk('form_login','rem_login',0);return false;" style="color:##000000;text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("remember_login")#</a></td>
 				</tr>
 			    <tr>
-			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="button" /></td>
+			        <td style="padding-bottom:10px;padding-top:10px;"><input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("button_login")#" class="awesome big green" style="width:300px;height:50px;font-size:22px;" /></td>
 			    </tr>
 			    <cfif jr_enable EQ "true">
 				    <tr>

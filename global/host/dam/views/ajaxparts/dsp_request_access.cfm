@@ -29,40 +29,27 @@
 <br />
 <form action="#self#" method="post" id="form_reqaccess" id="form_reqaccess">
 <input type="hidden" name="#theaction#" value="#xfa.submitform#">
-	<table width="100%" border="0" cellpadding="0" cellspacing="0">
-	    <tr>
-	        <td>#myFusebox.getApplicationData().defaults.trans("email")#</td>
-		</tr>
+	<table width="100%" border="0" cellpadding="0" cellspacing="0" class="grid">
 		<tr>
-	        <td><input type="text" name="user_email" id="user_email" size="40" /><br><label for="user_email" class="error" style="display:none;">Enter a valid eMail address!</label></td>
+	        <td><input type="text" name="user_email" id="user_email" style="width:280px;" placeholder="#myFusebox.getApplicationData().defaults.trans("email")#" /><br><label for="user_email" class="error" style="display:none;">Enter a valid eMail address!</label></td>
 	    </tr>
+		<tr>
+			<td><input type="text" name="user_first_name" id="user_first_name" style="width:280px;" placeholder="#myFusebox.getApplicationData().defaults.trans("user_first_name")#"><br><label for="user_first_name" class="error">Enter your Firstname!</label></td>
+		</tr>
+		<tr>
+			<td><input type="text" name="user_last_name" id="user_last_name" style="width:280px;" placeholder="#myFusebox.getApplicationData().defaults.trans("user_last_name")#"><br><label for="user_last_name" class="error">Enter your Lastname!</label></td>
+		</tr>
+		<tr>
+			<td><input type="password" name="user_pass" id="user_pass" style="width:280px;" placeholder="#myFusebox.getApplicationData().defaults.trans("password")#"><br><label for="user_pass" class="error">Enter Password!</label></td>
+		</tr>
+		<tr>
+			<td><input type="password" name="user_pass_confirm" id="user_pass_confirm" style="width:280px;" placeholder="#myFusebox.getApplicationData().defaults.trans("password_confirm")#"><br><label for="user_pass_confirm" class="error">Enter password or password does not match!</label></td>
+		</tr>
 	    <tr>
-			<td>#myFusebox.getApplicationData().defaults.trans("user_first_name")#*</td>
-		</tr>
-		<tr>
-			<td><input type="text" name="user_first_name" id="user_first_name" size="40" class="text"><br><label for="user_first_name" class="error">Enter your Firstname!</label></td>
-		</tr>
-		<tr>
-			<td>#myFusebox.getApplicationData().defaults.trans("user_last_name")#*</td>
-		</tr>
-		<tr>
-			<td><input type="text" name="user_last_name" id="user_last_name" size="40" class="text"><br><label for="user_last_name" class="error">Enter your Lastname!</label></td>
-		</tr>
-	    <tr>
-			<td>#myFusebox.getApplicationData().defaults.trans("password")#*</td>
-		</tr>
-		<tr>
-			<td><input type="password" name="user_pass" id="user_pass" size="40" class="text"><br><label for="user_pass" class="error">Enter Password!</label></td>
-		</tr>
-		<tr>
-			<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("password_confirm")#*</td>
-		</tr>
-		<tr>
-			<td><input type="password" name="user_pass_confirm" id="user_pass_confirm" size="40" class="text"><br><label for="user_pass_confirm" class="error">Enter password or password does not match!</label></td>
-		</tr>
-	    
-	    <tr>
-	        <td align="right" style="padding:10px 0px 10px 0px;"><input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="location.href='#myself##xfa.linkback#'" class="button" /> <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("request_access")#" class="button" /></td>
+	        <td style="padding:10px 0px 10px 0px;">
+	        	<input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="location.href='#myself##xfa.linkback#'" class="awesome medium green" /> 
+	        	<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("request_access")#" class="awesome medium green" />
+	        </td>
 	    </tr>
 	</table>
 </form>
