@@ -266,21 +266,6 @@ background-color: #e33100 !important;
 background-color: #579E31 !important;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #container {
 	position: relative;
 	min-height: 100%;
@@ -291,13 +276,10 @@ background-color: #579E31 !important;
 	width: auto;
 }
 
-
 .alert {
 	color: #CC0000;
 	font-weight: bold;
 }
-
-
 
 #outer {
 	width: auto;
