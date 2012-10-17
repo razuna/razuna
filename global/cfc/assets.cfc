@@ -433,6 +433,7 @@
 			<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
 				<!--- Set application variables. Needed for the checkdb method in API --->
 				<cfset application.razuna.api.dsn = variables.dsn>
+				<cfset application.razuna.api.setid = 1>
 				<cfset application.razuna.api.prefix[#arguments.thestruct.sessiontoken#] = session.hostdbprefix>
 				<cfset application.razuna.api.hostid[#arguments.thestruct.sessiontoken#] = session.hostid>
 				<!--- Check sessiontoken --->
@@ -458,6 +459,7 @@
 				<cfset application.razuna.api.dsn = application.razuna.datasource>
 				<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
 				<cfset application.razuna.api.storage = application.razuna.storage>
+				<cfset application.razuna.api.setid = 1>
 				<cfset application.razuna.api.prefix[#theapikey#] = session.hostdbprefix>
 				<cfset application.razuna.api.hostid[#theapikey#] = session.hostid>
 				<cfset application.razuna.api.userid[#theapikey#] = session.theuserid>
