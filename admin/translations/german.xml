@@ -2997,4 +2997,58 @@
 	<transid name="plugins_hosts_tab_desc">
 		<transtext><![CDATA[Hier finden Sie eine List aller <strong>aktivierten</strong> Plugins. Jedes Plugin kann selektiv für jeden Host aktiviert/deaktiviert werden.]]></transtext>
 	</transid>
+	<transid name="header_wl">
+		<transtext><![CDATA[White-Label]]></transtext>
+	</transid>
+	<transid name="header_wl_desc">
+		<transtext><![CDATA[The options below allow you to "White-Label" many aspects of your Razuna installation. All options will take effect immediately on all tenants and can not be overwriten. In short, these option will rebrand Razuna as you own product.<br /><em>(Tip: You can use HTML tags in the textarea fields)</em>]]></transtext>
+	</transid>
+	<transid name="header_wl_login">
+		<transtext><![CDATA[Login Page]]></transtext>
+	</transid>
+	<transid name="header_wl_login_desc">
+		<transtext><![CDATA[Add your custom links below the sign in box.]]></transtext>
+	</transid>
+	<transid name="use_html">
+		<transtext><![CDATA[Tip: You can use HTML tags in the textarea fields]]></transtext>
+	</transid>
+	<transid name="header_wl_main_razunatab">
+		<transtext><![CDATA[Razuna Tab]]></transtext>
+	</transid>
+	<transid name="header_wl_main_razunatab_desc">
+		<transtext><![CDATA[The following options apply to the "Razuna Tab" on the main Razuna page (lower right bottom). You can overwrite the tab text and also the text within the tab with your own. If you leave this field blank the tab will be removed.]]></transtext>
+	</transid>
+	<transid name="header_wl_main_razunatab_text">
+		<transtext><![CDATA[Tab Text]]></transtext>
+	</transid>
+	<transid name="header_wl_main_razunatab_content">
+		<transtext><![CDATA[Tab Content]]></transtext>
+	</transid>
+	<transid name="header_wl_main_html_title">
+		<transtext><![CDATA[HTML Title Text]]></transtext>
+	</transid>
+	<transid name="header_wl_main_html_title_desc">
+		<transtext><![CDATA[Change the HTML Title Text attribute to your own text.]]></transtext>
+	</transid>
+	<transid name="header_wl_main_feedback">
+		<transtext><![CDATA[Feedback Link]]></transtext>
+	</transid>
+	<transid name="header_wl_main_feedback_desc">
+		<transtext><![CDATA[Change the text and link of the feedback link within the textarea below. You can and should use HTML. If you leave this field blank the feedback link will be removed all together.]]></transtext>
+	</transid>
+	<transid name="header_wl_main_links_dd">
+		<transtext><![CDATA[Dropdown links]]></transtext>
+	</transid>
+	<transid name="header_wl_main_links_dd_desc">
+		<transtext><![CDATA[Both the search and the administrator menu contain links to the Razuna documentation. Since they are links to the Razuna documentation you should change them to your own help pages. Same applies to the Help/Support link. Again you should HTML to create the links.]]></transtext>
+	</transid>
+	<transid name="header_wl_main_links_dd_search">
+		<transtext><![CDATA[Link to your search documentation]]></transtext>
+	</transid>
+	<transid name="header_wl_main_links_dd_support">
+		<transtext><![CDATA[Link to your support]]></transtext>
+	</transid>
+	<transid name="header_wl_main_links_dd_documentation">
+		<transtext><![CDATA[Link to your documentation]]></transtext>
+	</transid>
 </translations>

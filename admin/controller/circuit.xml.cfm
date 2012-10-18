@@ -1306,5 +1306,24 @@
 		<!-- Show -->
 		<do action="prefs_renf" />
 	</fuseaction>
+
+	<!--  -->
+	<!-- START: White Label -->
+	<!--  -->
+	
+	<!-- Load -->
+	<fuseaction name="pref_global_wl">
+		<!-- Get options -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options()" returnvariable="qry_options" />
+		<!-- Show -->
+		<do action="ajax.pref_global_wl" />
+	</fuseaction>
+	<!-- Save -->
+	<fuseaction name="pref_global_wl_save">
+		<!-- Save WL -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_options(attributes)" />
+		<!-- Save CSS -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_css(attributes.thecss,pathoneup)" />
+	</fuseaction>
 	
 </circuit>

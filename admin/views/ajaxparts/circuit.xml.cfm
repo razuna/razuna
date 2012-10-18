@@ -181,6 +181,10 @@
 	<fuseaction name="prefs_global_tools">
   		<include template="dsp_pref_global_tools" />
 	</fuseaction>
+	<!-- GLOBAL: White Labeling -->
+	<fuseaction name="pref_global_wl">
+  		<include template="dsp_pref_global_wl" />
+	</fuseaction>
 
 	<!-- Translations -->
 	<fuseaction name="translations">

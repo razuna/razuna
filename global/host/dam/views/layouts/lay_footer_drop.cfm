@@ -31,7 +31,11 @@
 		<cfif qry_orders.recordcount NEQ 0>
 			<li><a href="##thedroporders" id="div_link_orders" onclick="tooglefooter('2');loadcontent('thedroporders','#myself#c.orders');">Show Orders</a></li>
 		</cfif>
-		<li style="float:right;"><a href="##raztab" onclick="tooglefooter('<cfif qry_orders.recordcount EQ 0>2<cfelse>3</cfif>');">About Razuna</a></li>
+		<cfif !application.razuna.whitelabel>
+			<li style="float:right;"><a href="##raztab" onclick="tooglefooter('<cfif qry_orders.recordcount EQ 0>2<cfelse>3</cfif>');">About Razuna</a></li>
+		<cfelseif application.razuna.whitelabel AND wl_text NEQ "">
+			<li style="float:right;"><a href="##raztab" onclick="tooglefooter('<cfif qry_orders.recordcount EQ 0>2<cfelse>3</cfif>');">#wl_text#</a></li>
+		</cfif>
 	</ul>
 	<div id="thedropbasket" style="float:left;width:100%;padding:0px 10px 0px 10px;"></div>
 	<div id="thedropfav" style="float:left;width:100%;padding:0px 10px 0px 10px;"></div>
@@ -40,14 +44,18 @@
 	</cfif>
 	<div id="raztab" style="float:right;padding:10px 10px 0px 10px;font-weight:normal;width:100%;">
 		<div style="float:right;text-align:right;">
-			<a href="http://www.razuna.com" target="_blank"><img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;"></a>
-			<br>
-			<cfif NOT application.razuna.isp>
-				<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#<br>
-				Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a><br>
+			<cfif application.razuna.whitelabel>
+				#wl_content#
+			<cfelse>
+				<a href="http://www.razuna.com" target="_blank"><img src="../../global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;"></a>
+				<br>
+				<cfif NOT application.razuna.isp>
+					<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#<br>
+					Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a><br>
+				</cfif>
+				<a href="http://razuna.com" target="_blank">Razuna Hosted Platform</a> and <a href="http://razuna.org" target="_blank">Razuna Open Source</a><br>
+				<a href="http://blog.razuna.com" target="_blank">Visit the Razuna Blog for latest news.</a>
 			</cfif>
-			<a href="http://razuna.com" target="_blank">Razuna Hosted Platform</a> and <a href="http://razuna.org" target="_blank">Razuna Open Source</a><br>
-			<a href="http://blog.razuna.com" target="_blank">Visit the Razuna Blog for latest news.</a>
 		</div>
 	</div>
 </div>

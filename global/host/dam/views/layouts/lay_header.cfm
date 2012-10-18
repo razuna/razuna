@@ -71,7 +71,7 @@
 						<p><hr></p>
 		<!--- 				<p><a href="##" onclick="showwindow('#myself#ajax.search_advanced','#myFusebox.getApplicationData().defaults.trans("link_adv_search")#',500,1);$('##searchselection').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("link_adv_search")#</a></p>
 						<p><hr></p> --->
-						<p><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##userselection').toggle();">Help with Search</a></p>
+						<p><cfif application.razuna.whitelabel>#wl_link_search#<cfelse><a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$('##searchselection').toggle();">Help with Search</a></cfif></p>
 					</div>
 					<div style="float:left;padding-left:2px;padding-top:1px;">
 						<button class="awesome big green">Search</button>
@@ -102,8 +102,22 @@
 					<!--- showwindow('#myself#ajax.admin','#myFusebox.getApplicationData().defaults.trans("header_administration")#',900,1); --->
 					<p><hr></p>
 				</cfif>
-				<p><a href="https://getsatisfaction.com/razuna" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a></p>
-				<p><a href="http://wiki.razuna.com" target="_blank" onclick="$('##userselection').toggle();">Documentation (Wiki)</a></p>
+				<!--- Help --->
+				<p>
+					<cfif application.razuna.whitelabel>
+						#wl_link_support#
+					<cfelse>
+						<a href="https://getsatisfaction.com/razuna" target="_blank" onclick="$('##userselection').toggle();">Help / Support</a>
+					</cfif>
+				</p>
+				<p>
+					<cfif application.razuna.whitelabel>
+						#wl_link_doc#
+					<cfelse>
+						<a href="http://wiki.razuna.com" target="_blank" onclick="$('##userselection').toggle();">Documentation (Wiki)</a>
+					</cfif>
+				</p>
+				<!--- Account --->
 				<cfif application.razuna.isp AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
 					<p><hr></p>
 					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">Account Settings</a></p>
@@ -118,7 +132,13 @@
 				<!--- Feedback --->
 				<cfif w EQ 100>
 					<p><hr></p>
-					<p><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></p>
+					<p>
+						<cfif application.razuna.whitelabel>
+							#wl_feedback#
+						<cfelse>
+							<cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a>
+						</cfif>
+					</p>
 				</cfif>
 				<p><hr></p>
 				<!--- Log off --->
@@ -134,8 +154,12 @@
 			</cfif>
 			<!--- Feedback --->
 			<cfif w EQ 300>
-				<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_feedback)>
-					<div style="float:left;"><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></div>
+				<cfif application.razuna.whitelabel>
+					#wl_feedback#
+				<cfelse>
+					<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_feedback)>
+						<div style="float:left;"><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></div>
+					</cfif>
 				</cfif>
 			</cfif>
 		</div>

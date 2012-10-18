@@ -1007,7 +1007,7 @@
 		</cfquery>
 		<cfcatch type="database">
 			<!--- Since 1.5.2 is installed we only added the white labeling --->
-			<cfif cfcatch.nativeerrorcode EQ 42122>
+			<cfif structkeyexists(cfcatch,"nativeerrorcode") AND cfcatch.nativeerrorcode EQ 42122>
 				<cfquery datasource="razuna_default">
 				Alter table razuna_config add conf_wl BOOLEAN DEFAULT false
 				</cfquery>
@@ -1999,6 +1999,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	</cfquery>
 	<!--- Return --->
 	<cfreturn q.opt_value />
+</cffunction>
+
+<!--- Get options --->
+<cffunction name="set_css" output="false" returntype="void">
+	<cfargument name="thecss" type="string" required="true">
+	<cfargument name="pathoneup" type="string" required="true">
+	<!--- Write file --->
+	<cffile action="write" file="#arguments.pathoneup#/global/host/dam/views/layouts/main.css" output="#arguments.thecss#" charset="utf-8" mode="775" />
+	<!--- Return --->
+	<cfreturn />
 </cffunction>
 
 </cfcomponent>

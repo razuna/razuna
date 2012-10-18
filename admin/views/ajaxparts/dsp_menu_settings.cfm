@@ -43,6 +43,11 @@
 				<tr>
 					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.plugins');return false;">&raquo; Plugins</a></td>
 				</tr>
+				<cfif application.razuna.whitelabel>
+					<tr>
+						<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.pref_global_wl');return false;">&raquo; White-Labelling</a></td>
+					</tr>
+				</cfif>
 			</table>
 			<!--- Users --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
