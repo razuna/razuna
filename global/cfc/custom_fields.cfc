@@ -93,7 +93,6 @@
 			</cfloop>
 		</cftransaction>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn newcfid />
 </cffunction>

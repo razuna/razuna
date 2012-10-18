@@ -351,6 +351,33 @@
 							</cfquery>
 						</cfif>
 					</cfloop>
+					<!--- Update change date --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+					Update images
+					SET img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+					WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					</cfquery>
+				<cfelseif arguments.assettype EQ "vid">
+					<!--- Update change date --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+					Update videos
+					SET vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					</cfquery>
+				<cfelseif arguments.assettype EQ "aud">
+					<!--- Update change date --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+					Update audios
+					SET aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					</cfquery>
+				<cfelse>
+					<!--- Update change date --->
+					<cfquery datasource="#application.razuna.api.dsn#">
+					Update files
+					SET file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					</cfquery>
 				</cfif>
 				<!--- Initiate the index --->
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="#lucenecategory#">

@@ -133,8 +133,34 @@
 						</cfquery>
 					</cfif>
 				</cfloop>
+				<!--- update change date (since we don't know the type we simply update all) --->
+				<cfquery datasource="#application.razuna.api.dsn#">
+				Update images
+				SET img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+				</cfquery>
+				<cfquery datasource="#application.razuna.api.dsn#">
+				Update videos
+				SET vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+				</cfquery>
+				<cfquery datasource="#application.razuna.api.dsn#">
+				Update audios
+				SET aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+				</cfquery>
+				<cfquery datasource="#application.razuna.api.dsn#">
+				Update files
+				SET file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+				</cfquery>
 			</cfloop>
 			<!--- Reset cache --->
+			<cfset resetcachetoken(arguments.api_key,"images")>
+			<cfset resetcachetoken(arguments.api_key,"videos")>
+			<cfset resetcachetoken(arguments.api_key,"audios")>
+			<cfset resetcachetoken(arguments.api_key,"files")>
+			<cfset resetcachetoken(arguments.api_key,"search")>
 			<cfset resetcachetoken(arguments.api_key,"general")>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>

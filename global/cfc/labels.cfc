@@ -845,6 +845,7 @@
 		<!--- Get path down --->
 		<cfinvoke method="label_get_path_down" label_id="#arguments.thestruct.label_id#" llist="#labelpath#" />
 		<!--- Flush --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn arguments.thestruct.label_id />
