@@ -136,22 +136,30 @@
 				<!--- update change date (since we don't know the type we simply update all) --->
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update images
-				SET img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				SET 
+				img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
 				WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update videos
-				SET vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				SET 
+				vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
 				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update audios
-				SET aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				SET 
+				aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
 				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update files
-				SET file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+				SET 
+				file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+				file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
 				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
 				</cfquery>
 			</cfloop>
