@@ -440,7 +440,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				<!--- Lucene: Delete Records --->
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 				<!--- Lucene: Update Records --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
+				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 				<cfcatch type="any">
 					<cfinvoke component="debugme" method="email_dump" emailto="nitai@razuna.com" emailfrom="server@razuna.com" emailsubject="error in xmp writing xml file line 400" dump="#cfcatch#">
 				</cfcatch>
@@ -487,7 +487,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<!--- Lucene: Delete Records --->
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 			<!--- Lucene: Update Records --->
-			<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 			<!--- Update images db with the new Lucene_Key --->
 			<cftransaction>
 				<cfquery datasource="#application.razuna.datasource#">
