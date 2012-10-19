@@ -353,7 +353,7 @@
 					</cfloop>
 					<!--- Update change date --->
 					<cfquery datasource="#application.razuna.api.dsn#">
-					Update images
+					Update #application.razuna.api.prefix["#arguments.api_key#"]#images
 					SET 
 					img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
@@ -362,7 +362,7 @@
 				<cfelseif arguments.assettype EQ "vid">
 					<!--- Update change date --->
 					<cfquery datasource="#application.razuna.api.dsn#">
-					Update videos
+					Update #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					SET 
 					vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
@@ -371,7 +371,7 @@
 				<cfelseif arguments.assettype EQ "aud">
 					<!--- Update change date --->
 					<cfquery datasource="#application.razuna.api.dsn#">
-					Update audios
+					Update #application.razuna.api.prefix["#arguments.api_key#"]#audios
 					SET 
 					aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
@@ -380,7 +380,7 @@
 				<cfelse>
 					<!--- Update change date --->
 					<cfquery datasource="#application.razuna.api.dsn#">
-					Update files
+					Update #application.razuna.api.prefix["#arguments.api_key#"]#files
 					SET 
 					file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
