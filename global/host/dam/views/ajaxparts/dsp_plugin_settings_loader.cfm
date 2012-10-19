@@ -29,7 +29,9 @@
 	<div style="clear:both;"></div>
 	<hr />
 	<!--- Do the include of the plugin setting page --->
-	<cfloop list="#pl.pview#" delimiters="," index="i">
-		#evaluate(i)#
-	</cfloop>
+	<cfif structKeyExists(pl,"pview")>
+		<cfloop list="#pl.pview#" delimiters="," index="i">
+			#evaluate(i)#
+		</cfloop>
+	</cfif>
 </cfoutput>

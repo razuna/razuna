@@ -24,9 +24,11 @@
 			<cfset args.thepreview = true>
 			<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
 			<!--- Show plugin --->
-			<cfloop list="#pl.pview#" delimiters="," index="i">
-				#evaluate(i)#
-			</cfloop>
+			<cfif structKeyExists(pl,"pview")>
+				<cfloop list="#pl.pview#" delimiters="," index="i">
+					#evaluate(i)#
+				</cfloop>
+			</cfif>
 		</div>
 		<!--- Original --->
 		<cfif attributes.folderaccess NEQ "R">
@@ -56,9 +58,11 @@
 				<cfset args.thepreview = false>
 				<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
 				<!--- Show plugin --->
-				<cfloop list="#pl.pview#" delimiters="," index="i">
-					#evaluate(i)#
-				</cfloop>
+				<cfif structKeyExists(pl,"pview")>
+					<cfloop list="#pl.pview#" delimiters="," index="i">
+						#evaluate(i)#
+					</cfloop>
+				</cfif>
 			</div>
 		</cfif>
 	<cfelseif attributes.folderaccess NEQ "R">

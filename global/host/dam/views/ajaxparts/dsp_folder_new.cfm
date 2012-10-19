@@ -132,9 +132,11 @@
 			</table>
 			<!--- This is the plugin section --->
 			<cfif attributes.iscol EQ "F">
-				<cfloop list="#pl.pview#" delimiters="," index="i">
-					#evaluate(i)#
-				</cfloop>
+				<cfif structKeyExists(pl,"pview")>
+					<cfloop list="#pl.pview#" delimiters="," index="i">
+						#evaluate(i)#
+					</cfloop>
+				</cfif>
 			</cfif>
 		</div>
 		<!--- Link to Folder --->

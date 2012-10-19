@@ -43,10 +43,12 @@
 							<cfset args.thefiletype = "aud">
 							<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
 							<!--- Show plugin --->
-							<cfloop list="#pl.pview#" delimiters="," index="i">
-								<br />
-								#evaluate(i)#
-							</cfloop>
+							<cfif structKeyExists(pl,"pview")>
+								<cfloop list="#pl.pview#" delimiters="," index="i">
+									<br />
+									#evaluate(i)#
+								</cfloop>
+							</cfif>
 						</div>
 					<cfelse>
 						<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>
