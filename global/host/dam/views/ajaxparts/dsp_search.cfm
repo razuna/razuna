@@ -185,10 +185,9 @@
 		<cfif structkeyexists(attributes,"searchfor")>
 			// Copy the simple search text value
 			$('#insearchsearchfor').val('<cfoutput>#attributes.searchfor#</cfoutput>');
-		<cfelse>
+		<cfelseif structkeyexists(attributes,"searchtext")>
 			// Copy the simple search text value
-			var sst = $('#simplesearchtext').val();
-			$('#insearchsearchfor').val(sst);
+			$('#insearchsearchfor').val('<cfoutput>#attributes.searchtext#</cfoutput>');
 		</cfif>
 		// Activate Chosen
 		$(".chzn-select").chosen();
