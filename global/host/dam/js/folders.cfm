@@ -172,7 +172,8 @@
 			t = value_#cfid#.indexOf("undefined");
 			if (t == '-1'){
 				if (searchtext != '' && value_#cfid# != '') {
-					var searchtext = searchtext + ' ' + andor + ' ' + value_#cfid#;
+					// var searchtext = searchtext + ' ' + andor + ' ' + value_#cfid#;
+					var searchtext = searchtext + ' OR ' + value_#cfid#;
 				}
 				else {
 					var searchtext = searchtext + value_#cfid#;
