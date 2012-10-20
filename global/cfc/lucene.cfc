@@ -116,7 +116,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,cf_value,labels",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -183,7 +183,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,cf_value,labels",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -306,7 +306,7 @@
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,cf_value,labels",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -321,7 +321,7 @@
 					}
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
-			</cfscript>
+				</cfscript>
 			</cfif>
 			<!--- Index the file itself, but not video (since video throws an error) --->
 			<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
