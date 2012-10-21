@@ -101,7 +101,7 @@
 				AND ft.lang_id_r = 1
 				</cfquery>
 				<!--- Add custom fields to a list --->
-				<cfset var c = quotedValueList(qry_cf.customfieldvalue, " ")>
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
@@ -111,7 +111,7 @@
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset var l = quotedValueList(qry_l.label_text, " ")>
+				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
@@ -177,7 +177,7 @@
 				AND ft.lang_id_r = 1
 				</cfquery>
 				<!--- Add custom fields to a list --->
-				<cfset var c = quotedValueList(qry_cf.customfieldvalue, " ")>
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
@@ -187,10 +187,10 @@
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset var l = quotedValueList(qry_l.label_text, " ")>
+				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
-				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
+				SELECT *, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
@@ -275,7 +275,7 @@
 				AND ft.lang_id_r = 1
 				</cfquery>
 				<!--- Add custom fields to a list --->
-				<cfset var c = quotedValueList(qry_cf.customfieldvalue, " ")>
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
@@ -285,7 +285,7 @@
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset var l = quotedValueList(qry_l.label_text, " ")>
+				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
@@ -316,7 +316,7 @@
 				AND ft.lang_id_r = 1
 				</cfquery>
 				<!--- Add custom fields to a list --->
-				<cfset var c = quotedValueList(qry_cf.customfieldvalue, " ")>
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
@@ -326,7 +326,7 @@
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset var l = quotedValueList(qry_l.label_text, " ")>
+				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
