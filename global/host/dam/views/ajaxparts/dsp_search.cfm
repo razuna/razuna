@@ -49,7 +49,7 @@
 						<br><br>
 						#myFusebox.getApplicationData().defaults.trans("search_term")# (<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank">Help</a>)
 						<br />
-						<input name="searchfor" id="insearchsearchfor" type="text" class="textbold" style="width:190px;">
+						<input name="searchfor" id="insearchsearchfor" type="text" class="textbold" style="width:190px;" placeholder="Enter search term">
 					</td>
 					<td valign="top">
 						Filename
@@ -70,9 +70,9 @@
 						<select data-placeholder="Choose a label" class="chzn-select" style="width:201px;" name="labels" id="search_labels" multiple="multiple">
 							<option value=""></option>
 							<cfloop query="attributes.thelabelsqry">
-								<cfset l = replace(label_path," "," AND ","all")>
-								<cfset l = replace(l,"/"," AND ","all")>
-								<option value="(#l#)"<cfif attributes.flabel EQ "(#l#)"> selected="true"</cfif>>#label_path#</option>
+								<cfset l = replace(label_path," "," +","all")>
+								<cfset l = replace(l,"/"," +","all")>
+								<option value="+#l#"<cfif attributes.flabel EQ "+#l#"> selected="true"</cfif>>#label_path#</option>
 							</cfloop>
 						</select>
 					</td>
@@ -185,7 +185,7 @@
 		<cfif structkeyexists(attributes,"searchfor")>
 			// Copy the simple search text value
 			$('#insearchsearchfor').val('<cfoutput>#attributes.searchfor#</cfoutput>');
-		<cfelseif structkeyexists(attributes,"searchtext")>
+		<cfelseif structkeyexists(attributes,"searchtext") AND NOT attributes.searchtext CONTAINS ":">
 			// Copy the simple search text value
 			$('#insearchsearchfor').val('<cfoutput>#attributes.searchtext#</cfoutput>');
 		</cfif>

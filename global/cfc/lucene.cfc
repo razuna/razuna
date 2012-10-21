@@ -82,16 +82,26 @@
 			    SELECT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, f.link_kind, f.lucene_key,
 			    ct.file_desc description, ct.file_keywords keywords, 
 			    f.file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext,
-			    x.author, x.rights, x.authorsposition, x.captionwriter, x.webstatement, x.rightsmarked,
-			    v.cf_value, ft.cf_id_r
+			    x.author, x.rights, x.authorsposition, x.captionwriter, x.webstatement, x.rightsmarked
 				FROM #session.hostdbprefix#files f 
 				LEFT JOIN #session.hostdbprefix#files_desc ct ON f.file_id = ct.file_id_r
 				LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON f.file_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id AND ft.lang_id_r = 1
 				WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Get custom fields --->
+				<cfquery name="qry_cf" datasource="#arguments.dsn#">
+				SELECT CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR)) AS customfieldvalue
+				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
+				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.cf_id_r = ft.cf_id_r 
+				AND v.host_id = ft.host_id 
+				AND ft.lang_id_r = 1
+				</cfquery>
+				<!--- Add custom fields to a list --->
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
@@ -101,10 +111,10 @@
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset l = valuelist(qry_l.label_text)>
+				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
-				SELECT *, '#l#' as labels
+				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
@@ -116,7 +126,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,cf_value,labels",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -131,9 +141,8 @@
 						captionwriter : "captionwriter", 
 						webstatement : "webstatement", 
 						rightsmarked : "rightsmarked",
-						cf_text : "cf_id_r",
-						cf_value : "cf_value",
-						labels : "labels"
+						labels : "labels",
+						customfieldvalue : "customfieldvalue"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
@@ -149,16 +158,26 @@
 				x.supplementalcategories, x.urgency, x.ciadrcity, 
 				x.ciadrctry, x.location, x.ciadrpcode, x.ciemailwork, x.ciurlwork, x.citelwork, x.intellectualgenre, x.instructions, x.source,
 				x.usageterms, x.copyrightstatus, x.transmissionreference, x.webstatement, x.headline, x.datecreated, x.city, x.ciadrregion, 
-				x.country, x.countrycode, x.scene, x.state, x.credit, x.rights,
-				v.cf_value, ft.cf_id_r
+				x.country, x.countrycode, x.scene, x.state, x.credit, x.rights
 				FROM #session.hostdbprefix#images f 
 				LEFT JOIN #session.hostdbprefix#images_text ct ON f.img_id = ct.img_id_r
 				LEFT JOIN #session.hostdbprefix#xmp x ON f.img_id = x.id_r AND x.asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON f.img_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id  AND ft.lang_id_r = 1
 				WHERE f.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Get custom fields --->
+				<cfquery name="qry_cf" datasource="#arguments.dsn#">
+				SELECT CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR)) AS customfieldvalue
+				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
+				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.cf_id_r = ft.cf_id_r 
+				AND v.host_id = ft.host_id 
+				AND ft.lang_id_r = 1
+				</cfquery>
+				<!--- Add custom fields to a list --->
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
@@ -168,10 +187,10 @@
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset l = valuelist(qry_l.label_text)>
+				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
-				SELECT *, '#l#' as labels
+				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
@@ -183,7 +202,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,cf_value,labels",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -225,9 +244,8 @@
 						state : "state", 
 						credit : "credit", 
 						rights : "rights",
-						cf_text : "cf_id_r",
-						cf_value : "cf_value",
-						labels : "labels"
+						labels : "labels",
+						customfieldvalue : "customfieldvalue"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
@@ -239,15 +257,25 @@
 			    SELECT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, f.link_kind, f.lucene_key,
 			    ct.vid_description description, ct.vid_keywords keywords, 
 				vid_meta as rawmetadata, '#arguments.category#' as thecategory,
-				f.vid_extension theext,
-				v.cf_value, ft.cf_id_r
+				f.vid_extension theext
 				FROM #session.hostdbprefix#videos f 
 				LEFT JOIN #session.hostdbprefix#videos_text ct ON f.vid_id = ct.vid_id_r
-				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON f.vid_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id  AND ft.lang_id_r = 1
 				WHERE f.vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Get custom fields --->
+				<cfquery name="qry_cf" datasource="#arguments.dsn#">
+				SELECT CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR)) AS customfieldvalue
+				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
+				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.cf_id_r = ft.cf_id_r 
+				AND v.host_id = ft.host_id 
+				AND ft.lang_id_r = 1
+				</cfquery>
+				<!--- Add custom fields to a list --->
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
@@ -257,10 +285,10 @@
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset l = valuelist(qry_l.label_text)>
+				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
-				SELECT *, '#l#' as labels
+				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
 				FROM qry_all
 				</cfquery>
 			<!--- FOR AUDIOS --->
@@ -270,15 +298,25 @@
 			    SELECT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, a.link_kind, a.lucene_key,
 			    aut.aud_description description, aut.aud_keywords keywords, 
 				a.aud_meta as rawmetadata, '#arguments.category#' as thecategory,
-				a.aud_extension theext,
-				v.cf_value, ft.cf_id_r
+				a.aud_extension theext
 				FROM #session.hostdbprefix#audios a
 				LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r
-				LEFT JOIN #session.hostdbprefix#custom_fields_values v ON a.aud_id = v.asset_id_r AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				LEFT JOIN #session.hostdbprefix#custom_fields_text ft ON v.cf_id_r = ft.cf_id_r AND v.host_id = ft.host_id  AND ft.lang_id_r = 1
 				WHERE a.aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Get custom fields --->
+				<cfquery name="qry_cf" datasource="#arguments.dsn#">
+				SELECT CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR)) AS customfieldvalue
+				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
+				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.cf_id_r = ft.cf_id_r 
+				AND v.host_id = ft.host_id 
+				AND ft.lang_id_r = 1
+				</cfquery>
+				<!--- Add custom fields to a list --->
+				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT l.label_text
@@ -288,10 +326,10 @@
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset l = valuelist(qry_l.label_text)>
+				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
-				SELECT *, '#l#' as labels
+				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
 				FROM qry_all
 				</cfquery>
 			</cfif>
@@ -306,7 +344,7 @@
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,cf_value,labels",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -315,9 +353,8 @@
 					description : "description",
 					rawmetadata : "rawmetadata",
 					extension : "theext",
-					cf_text : "cf_id_r",
-					cf_value : "cf_value",
-					labels : "labels"
+					labels : "labels",
+					customfieldvalue : "customfieldvalue"
 					}
 				};
 				results = CollectionIndexCustom( argumentCollection=args );

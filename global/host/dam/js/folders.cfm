@@ -99,18 +99,19 @@
 		var extension = document.forms[theform].extension.value;
 		var rawmetadata = document.forms[theform].rawmetadata.value;
 		var labels = $('#' + theform + ' [name="labels"]').val();
+		if(labels != null) var labels = labels.toString().replace(/,/g, " ");
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Custom fields (get values)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
-				var value_#cfid# = document.forms[theform].cf#cfid#.value;
+				var value_#cfid# = document.forms[theform].cf#cfid#.value.split(' ').join(' +');
 			<cfelseif cf_type EQ "select">
-				var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value;
+				var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value.split(' ').join(' +');
 			<cfelseif cf_type EQ "radio">
 				var oRadio = document.forms[theform].elements['cf#cfid#'];
 				for(var i = 0; i < oRadio.length; i++){
 				  if(oRadio[i].checked){
-				     var value_#cfid# = oRadio[i].value;
+				     var value_#cfid# = oRadio[i].value.split(' ').join(' +');
 				  }
 				}
 			</cfif>
@@ -123,10 +124,10 @@
 		if (filename != '') var filename = 'filename:' + filename;
 		if (extension != '') var extension = 'extension:' + extension;
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:' + rawmetadata;
-		if (labels != '') var labels = 'labels:' + labels;
+		if (labels != '') var labels = 'labels:(' + labels + ')';
 		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
-			if (value_#cfid# != '') var value_#cfid# = '(cf_text:#cf_id# AND cf_value:' + value_#cfid# + ')';
+			if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' +value_#cfid# + ')';
 		</cfoutput></cfloop>
 		// Create the searchtext
 		var searchtext = searchfor;
@@ -172,8 +173,7 @@
 			t = value_#cfid#.indexOf("undefined");
 			if (t == '-1'){
 				if (searchtext != '' && value_#cfid# != '') {
-					// var searchtext = searchtext + ' ' + andor + ' ' + value_#cfid#;
-					var searchtext = searchtext + ' OR ' + value_#cfid#;
+					var searchtext = searchtext + ' ' + andor + ' ' + value_#cfid#;
 				}
 				else {
 					var searchtext = searchtext + value_#cfid#;
