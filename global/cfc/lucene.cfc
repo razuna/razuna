@@ -114,7 +114,7 @@
 				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
-				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
+				SELECT *, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
@@ -288,7 +288,7 @@
 				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
-				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
+				SELECT *, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
 				FROM qry_all
 				</cfquery>
 			<!--- FOR AUDIOS --->
@@ -329,7 +329,7 @@
 				<cfset var l = valuelist(qry_l.label_text, " ")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
-				SELECT *, '#l#' as labels, '#c#' as customfieldvalue
+				SELECT *, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
 				FROM qry_all
 				</cfquery>
 			</cfif>
