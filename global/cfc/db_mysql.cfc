@@ -394,6 +394,31 @@
 		#this.tableoptions#
 		</cfquery>
 
+		<!--- options --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.options
+		(
+			opt_id			varchar(100),
+			opt_value		text,
+			rec_uuid		varchar(100)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<!--- news --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.news
+		(
+			news_id			varchar(100),
+			news_title		varchar(500),
+			news_active		varchar(6),
+			news_text		text,
+			news_date		varchar(20),
+			PRIMARY KEY (news_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+
 		<!---  --->
 		<!--- END: CREATE TABLES --->
 		<!---  --->

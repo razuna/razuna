@@ -1325,5 +1325,39 @@
 		<!-- Save CSS -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_css(attributes.thecss,pathoneup)" />
 	</fuseaction>
-	
+	<!-- News -->
+	<fuseaction name="wl_news">
+		<!-- Get options for rss -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options_one('wl_news_rss')" returnvariable="attributes.rss" />
+		<!-- Get news -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_news()" returnvariable="qry_news" />
+		<!-- Show -->
+		<do action="ajax.wl_news" />
+	</fuseaction>
+	<!-- News add/edit -->
+	<fuseaction name="wl_news_edit">
+		<!-- Param -->
+		<set name="attributes.add" value="false" overwrite="false" />
+		<!-- If add is true we create a news_id -->
+		<if condition="attributes.add">
+			<true>
+				<set name="attributes.news_id" value="#createuuid()#" />
+			</true>
+		</if>
+		<!-- Get record -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_news_edit(attributes)" returnvariable="qry_news_edit" />
+		<!-- Show -->
+		<do action="ajax.wl_news_edit" />
+	</fuseaction>
+	<!-- Save news -->
+	<fuseaction name="wl_news_save">
+		<!-- save record -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_news_edit(attributes)" />
+	</fuseaction>
+	<!-- Remove news -->
+	<fuseaction name="wl_news_remove">
+		<!-- save record -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="del_news(attributes.news_id)" />
+	</fuseaction>
+
 </circuit>

@@ -141,6 +141,37 @@
 								</cfloop>
 							</div>
 						</cfif>
+						<!--- If WL we show the news section here --->
+						<cfif application.razuna.whitelabel>
+							<br />
+							<div class="panelsnew">
+								<h1>Announcements</h1>
+								<!--- News --->
+								<cfif attributes.wl_news_rss EQ "">
+									<cfloop query="attributes.qry_news">
+										<cfif currentrow EQ 1><h2>#news_title#</h2><cfelse><a href="##" onclick="$('##slidenews#currentrow#').toggle('blind','slow');">#news_title#</a><br /></cfif>
+										<cfif currentrow EQ 1>
+											<span class="announcements">#news_text#</p>
+											<br /><br />
+										<cfelse>
+											<div id="slidenews#currentrow#" style="display:none;">
+												#news_text#
+												<br />
+											</div>
+										</cfif>
+									</cfloop>
+								<!--- RSS --->
+								<cfelse>
+									<cfif arrayisempty(attributes.qry_news)>
+										<h2>Connection to the news is currently not available</h2>
+									<cfelse>
+										<cfloop index="x" from="1" to="#arrayLen(attributes.qry_news)#">
+											<a href="#attributes.qry_news[x].link#" target="_blank">#attributes.qry_news[x].title#</a><br />
+										</cfloop>
+									</cfif>
+								</cfif>
+							</div>
+						</cfif>
 					</td>
 				</tr>
 			</table>

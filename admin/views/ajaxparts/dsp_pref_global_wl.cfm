@@ -33,7 +33,7 @@
 				<!--- CSS --->
 				<li><a href="##wl_css">CSS</a></li>
 				<!--- News --->
-				<li><a href="##wl_news">News</a></li>
+				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">News</a></li>
 			</ul>
 			<!--- Options --->
 			<div id="wl_options">
@@ -133,8 +133,10 @@
 			// Display saved message
 			$("##wlfeedback").css("display","");
 			$("##wlfeedback2").css("display","");
+			$("##wlfeedback3").css("display","");
 			$("##wlfeedback").html('#defaultsObj.trans("saved_changes")#');
 			$("##wlfeedback2").html('#defaultsObj.trans("saved_changes")#');
+			$("##wlfeedback3").html('#defaultsObj.trans("saved_changes")#');
 			return false;
 		});
 		// Defaults

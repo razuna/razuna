@@ -271,6 +271,21 @@
 						<invoke object="myFusebox.getApplicationData().global" methodcall="getaccount(session.hostid)" returnvariable="res_account" />
 					</true>
 				</if>
+				<!-- WL -->
+				<if condition="application.razuna.whitelabel">
+					<true>
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one('wl_news_rss')" returnvariable="attributes.wl_news_rss" />
+						<!-- If rss is empty -->
+						<if condition="attributes.wl_news_rss EQ ''">
+							<true>
+								<invoke object="myFusebox.getApplicationData().settings" methodcall="get_news('true')" returnvariable="attributes.qry_news" />
+							</true>
+							<false>
+								<invoke object="myFusebox.getApplicationData().rssparser" methodcall="rssparse(attributes.wl_news_rss,7)" returnvariable="attributes.qry_news" />
+							</false>
+						</if>
+		  			</true>
+		  		</if>
 				<!-- CFC: Get languages -->
 				<do action="languages" />
 				<!-- CFC: Custom fields -->

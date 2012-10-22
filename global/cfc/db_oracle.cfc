@@ -353,6 +353,29 @@
   			host_id 		number
 		)
 		</cfquery>
+
+		<!--- options --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE options
+		(
+			opt_id			varchar2(100 char),
+			opt_value		clob,
+			rec_uuid		varchar2(100 char)
+		)
+		</cfquery>
+
+		<!--- news --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE news
+		(
+			news_id			varchar2(100 char),
+			news_title		varchar2(500 char),
+			news_active		varchar2(6 char),
+			news_text		clob,
+			news_date		varchar2(20 char),
+			CONSTRAINT NEWS_PK PRIMARY KEY (news_id)
+		)
+		</cfquery>
 			
 		<!---  --->
 		<!--- END: CREATE TABLES --->
@@ -1537,7 +1560,7 @@
 		  LOG_USER        	VARCHAR2(100 CHAR),
 		  LOG_DATE        	DATE,
 		  LOG_TIME        	TIMESTAMP,
-		  LOG_SEARCH_FOR  	VARCHAR2(500 CHAR),
+		  LOG_SEARCH_FOR  	VARCHAR2(2000 CHAR),
 		  LOG_FOUNDITEMS  	NUMBER,
 		  LOG_SEARCH_FROM 	VARCHAR2(50 CHAR),
 		  LOG_TIMESTAMP   	TIMESTAMP,

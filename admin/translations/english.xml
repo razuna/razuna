@@ -3001,7 +3001,7 @@
 		<transtext><![CDATA[White-Label]]></transtext>
 	</transid>
 	<transid name="header_wl_desc">
-		<transtext><![CDATA[The options below allow you to "White-Label" many aspects of your Razuna installation. All options will take effect immediately on all tenants and can not be overwriten. In short, these option will rebrand Razuna as you own product.<br /><em>(Tip: You can use HTML tags in the textarea fields)</em>]]></transtext>
+		<transtext><![CDATA[Below are options to "White-Label" many aspects of your Razuna installation. Changes will take effect immediately on all tenants and can not be overwriten.<br /><em>(Tip: You can use HTML tags in the textarea fields)</em>]]></transtext>
 	</transid>
 	<transid name="header_wl_login">
 		<transtext><![CDATA[Login Page]]></transtext>
@@ -3050,5 +3050,23 @@
 	</transid>
 	<transid name="header_wl_main_links_dd_documentation">
 		<transtext><![CDATA[Link to your documentation]]></transtext>
+	</transid>
+	<transid name="header_wl_news">
+		<transtext><![CDATA[This is the general news section for your white-labelling edition. These news messages will appear on the front page of each tenant. You also have the option to read in a RSS feed.]]></transtext>
+	</transid>
+	<transid name="header_wl_news_rss">
+		<transtext><![CDATA[News from RSS]]></transtext>
+	</transid>
+	<transid name="header_wl_news_rss_desc">
+		<transtext><![CDATA[Please enter a valid RSS location here in order to display your news. Make sure that the RSS feed is publicly available and in the proper RSS format (RSS, Atom, etc.).<br />Note: You can either enter a RSS feed or edit news below. If you want to enable news then leave this field blank!]]></transtext>
+	</transid>
+	<transid name="header_wl_news_section">
+		<transtext><![CDATA[Your news]]></transtext>
+	</transid>
+	<transid name="header_wl_news_section_desc">
+		<transtext><![CDATA[Create your news below. These news will appear on each tenants front page. Changes will take effect immediately.]]></transtext>
+	</transid>
+	<transid name="header_wl_news_new">
+		<transtext><![CDATA[Create new news entry]]></transtext>
 	</transid>
 </translations>

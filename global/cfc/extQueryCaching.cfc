@@ -56,6 +56,7 @@
 <!--- reset the global caching variable of this cfc-object --->
 <cffunction name="resetcachetoken" output="false" returntype="string">
 	<cfargument name="type" type="string" required="yes">
+	<cfargument name="nohost" type="string" required="false" default="false">
 	<!--- Create token --->
 	<cfset var t = createuuid('')>
 	<!--- Update DB --->
@@ -63,8 +64,10 @@
 		<cfquery dataSource="#application.razuna.datasource#">
 		UPDATE cache
 		SET cache_token = <cfqueryparam value="#t#" CFSQLType="CF_SQL_VARCHAR">
-		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
-		AND cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
+		WHERE cache_type = <cfqueryparam value="#arguments.type#" CFSQLType="CF_SQL_VARCHAR">
+		<cfif !arguments.nohost>
+			AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		</cfif>
 		</cfquery>
 		<cfcatch type="database"></cfcatch>
 	</cftry>

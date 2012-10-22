@@ -1953,7 +1953,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfquery>
 	</cfloop>
 	<!--- Flush --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset variables.cachetoken = resetcachetoken("settings","true")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1971,6 +1971,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.wl_link_search = "">
 	<cfset s.wl_link_support = "">
 	<cfset s.wl_link_doc = "">
+	<cfset s.wl_news_rss = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#options */ opt_id, opt_value
@@ -2007,6 +2008,80 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfargument name="pathoneup" type="string" required="true">
 	<!--- Write file --->
 	<cffile action="write" file="#arguments.pathoneup#/global/host/dam/views/layouts/main.css" output="#arguments.thecss#" charset="utf-8" mode="775" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Get news edit --->
+<cffunction name="get_news_edit" output="false" returntype="query">
+	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset var q = "">
+	<!--- If we are from add then we need to insert record --->
+	<cfif arguments.thestruct.add>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO news
+		(news_id, news_active)
+		VALUE(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+		)
+		</cfquery>
+	</cfif>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="q">
+	SELECT news_id, news_active, news_text, news_date, news_title
+	FROM news
+	WHERE news_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn q />
+</cffunction>
+
+<!--- Get news edit --->
+<cffunction name="set_news_edit" output="false" returntype="void">
+	<cfargument name="thestruct" type="struct">
+	<!--- Save --->
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE news
+	SET
+	news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_active#">, 
+	news_text = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_text#">, 
+	news_date = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_date#">, 
+	news_title = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_title#">
+	WHERE news_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.news_id#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Get news edit --->
+<cffunction name="get_news" output="false" returntype="query">
+	<cfargument name="news_main" type="string" required="false" default="false">
+	<!--- Param --->
+	<cfset var q = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="q">
+	SELECT <cfif arguments.news_main AND application.razuna.thedatabase EQ "mssql">TOP 7 </cfif>news_id, news_active, news_date, news_title<cfif arguments.news_main>, news_text</cfif>
+	FROM news
+	<cfif arguments.news_main>
+		WHERE news_active = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+	</cfif>
+	ORDER BY news_date DESC
+	<cfif arguments.news_main AND application.razuna.thedatabase NEQ "mssql">LIMIT 7</cfif>
+	</cfquery>
+	<!--- Return --->
+	<cfreturn q />
+</cffunction>
+
+<!--- Get news edit --->
+<cffunction name="del_news" output="false" returntype="void">
+	<cfargument name="news_id" type="string" required="true">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM news
+	WHERE news_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.news_id#">
+	</cfquery>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

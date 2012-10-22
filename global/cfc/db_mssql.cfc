@@ -519,6 +519,29 @@
 		)
 		</cfquery>
 		
+		<!--- options --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.options
+		(
+			opt_id			varchar(100),
+			opt_value		NVARCHAR(max),
+			rec_uuid		varchar(100)
+		)
+		</cfquery>
+
+		<!--- news --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.news
+		(
+			news_id			varchar(100),
+			news_title		varchar(500),
+			news_active		varchar(6),
+			news_text		NVARCHAR(max),
+			news_date		varchar(20),
+			PRIMARY KEY (news_id)
+		)
+		</cfquery>
+		
 		<!---  --->
 		<!--- END: CREATE TABLES --->
 		<!---  --->

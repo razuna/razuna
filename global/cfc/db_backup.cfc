@@ -328,7 +328,29 @@
   			host_id 		int
 		)
 		</cfquery>
-			
+		
+		<!--- options --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.tschema#.options
+		(
+			opt_id			varchar(100),
+			opt_value		clob,
+			rec_uuid		varchar(100)
+		)
+		</cfquery>
+
+		<!--- news --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.tschema#.news
+		(
+			news_id			varchar(100),
+			news_title		varchar(500),
+			news_active		varchar(6),
+			news_text		clob,
+			news_date		varchar(20)
+		)
+		</cfquery>
+
 		<!---  --->
 		<!--- END: CREATE TABLES --->
 		<!---  --->
@@ -674,7 +696,7 @@
 		  LOG_USER			VARCHAR(100),
 		  LOG_DATE			DATE,
 		  LOG_TIME			TIMESTAMP,
-		  LOG_SEARCH_FOR	VARCHAR(500),
+		  LOG_SEARCH_FOR	VARCHAR(2000),
 		  LOG_FOUNDITEMS	BIGINT,
 		  LOG_SEARCH_FROM	VARCHAR(50),
 		  LOG_TIMESTAMP		TIMESTAMP,

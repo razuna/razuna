@@ -114,6 +114,11 @@
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
 					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
+					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
+					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
+					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
+					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
+					OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(object_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -161,6 +166,11 @@
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
 					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
+					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
+					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
+					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
+					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
+					OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(tabname) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">
@@ -208,6 +218,11 @@
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_labels">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="rfs">
 					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="cache">
+					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="ct_plugins_hosts">
+					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins">
+					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="plugins_actions">
+					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="options">
+					OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="news">
 				<cfelse>
 					<cfif currentRow EQ 1>
 						OR lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="modules">

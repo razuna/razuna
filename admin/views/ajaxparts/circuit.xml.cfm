@@ -310,5 +310,14 @@
 	<fuseaction name="plugins_upload">
   		<include template="dsp_plugins_upload" />
 	</fuseaction>
+
+	<!-- WL News -->
+	<fuseaction name="wl_news">
+  		<include template="dsp_wl_news" />
+	</fuseaction>
+	<!-- WL News Edit -->
+	<fuseaction name="wl_news_edit">
+  		<include template="dsp_wl_news_edit" />
+	</fuseaction>
 	
 </circuit>

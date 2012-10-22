@@ -42,11 +42,15 @@
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/main.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/error.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css" />
 <!--- Cache JS --->
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/jquery.markitup.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/sets/html/set.js"></script>
 <script type="text/javascript" src="js/global.js"></script>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <style>
