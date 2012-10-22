@@ -99,6 +99,7 @@
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("search")>
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("users")>
 </cffunction>
 
 
@@ -142,6 +143,8 @@
 		</cfif>
 	)
 	</cfquery>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("users")>
 	<cfreturn />
 </cffunction>
 
@@ -163,6 +166,8 @@
 			</cfquery>
 		</cftransaction>
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("users")>
 	<!---
 
 	<cftransaction>
@@ -314,6 +319,8 @@
 	WHERE ct_g_u_grp_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.grp_id#">
 	AND ct_g_u_user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.user_id#">
 	</cfquery>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("users")>
 	<cfreturn />
 </cffunction>
 
@@ -336,6 +343,8 @@
 		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
 	)
 	</cfquery>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("users")>
 	<cfreturn />
 </cffunction>
 
