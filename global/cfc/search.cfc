@@ -151,21 +151,24 @@
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = f.folder_id_r
 				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-				WHEN (SELECT fg3.grp_permission
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'R' THEN 'R'
-				WHEN (SELECT fg3.grp_permission
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'R' THEN 'R'
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'W' THEN 'W'
-				WHEN (SELECT fg3.grp_permission
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'W' THEN 'W'
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'X' THEN 'X'
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'X' THEN 'X'
 			END as permfolder
 		</cfif>
 		,
@@ -377,21 +380,24 @@
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = i.folder_id_r
 				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-				WHEN (SELECT fg3.grp_permission
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'R' THEN 'R'
-				WHEN (SELECT fg3.grp_permission
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'R' THEN 'R'
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'W' THEN 'W'
-				WHEN (SELECT fg3.grp_permission
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'W' THEN 'W'
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'X' THEN 'X'
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'X' THEN 'X'
 			END as permfolder
 		</cfif>
 		,
@@ -570,21 +576,24 @@
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = v.folder_id_r
 				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-				WHEN (SELECT fg3.grp_permission
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'R' THEN 'R'
-				WHEN (SELECT fg3.grp_permission
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'R' THEN 'R'
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'W' THEN 'W'
-				WHEN (SELECT fg3.grp_permission
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'W' THEN 'W'
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'X' THEN 'X'
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'X' THEN 'X'
 			END as permfolder
 		</cfif>
 		,
@@ -763,21 +772,24 @@
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = a.folder_id_r
 				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-				WHEN (SELECT fg3.grp_permission
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'R' THEN 'R'
-				WHEN (SELECT fg3.grp_permission
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'R' THEN 'R'
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'W' THEN 'W'
-				WHEN (SELECT fg3.grp_permission
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'W' THEN 'W'
+				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg3
 				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'X' THEN 'X'
+				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'X' THEN 'X'
 			END as permfolder
 		</cfif>
 		,
