@@ -2633,6 +2633,7 @@
 	<cfparam default="0" name="session.thefolderorg">
 	<cfparam default="0" name="session.type">
 	<cfparam default="F" name="arguments.thestruct.actionismove">
+	<cfparam default="" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, 
