@@ -2705,7 +2705,7 @@
 			AND s2.folder_id_r = f.folder_id
 			AND fg3.folder_id_r = s2.folder_id
 			AND lower(fg3.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-			AND fg3.grp_id_r IN (SELECT ct_g_u_grp_id FROM ct_groups_users <cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>WHERE ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#"></cfif>)
+			AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 			<cfif variables.database EQ "oracle">
 				AND ROWNUM = 1
 			<cfelseif  variables.database EQ "mysql" OR variables.database EQ "h2">

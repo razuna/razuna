@@ -62,6 +62,10 @@
 	</cfquery>
 	<!--- Put result into session --->
 	<cfset session.thegroupofuser = valuelist(localquery.grp_id)>
+	<!--- If session is empty then fill it with 0 --->
+	<cfif session.thegroupofuser EQ "">
+		<cfset session.thegroupofuser = 0>
+	</cfif>
 	<!--- Return --->
 	<cfreturn localquery />
 </cffunction>

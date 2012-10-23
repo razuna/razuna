@@ -445,7 +445,7 @@
 		</if>
 		<set name="session.login" value="F" />
 		<set name="session.weblogin" value="F" />
-		<set name="session.thegroupofuser" value="" />
+		<set name="session.thegroupofuser" value="0" />
 		<set name="session.theuserid" value="" />
 		<set name="session.thedomainid" value="" />
 		<do action="login" />
@@ -5175,7 +5175,7 @@
 		<!-- Param -->
 		<set name="session.login" value="F" />
 		<set name="session.weblogin" value="F" />
-		<set name="session.thegroupofuser" value="" />
+		<set name="session.thegroupofuser" value="0" />
 		<set name="session.theuserid" value="" />
 		<set name="session.thedomainid" value="" />
 		<set name="attributes.fid" value="#session.fid#" />
@@ -6095,7 +6095,7 @@
 		</if>
 		<set name="session.login" value="F" />
 		<set name="session.weblogin" value="F" />
-		<set name="session.thegroupofuser" value="" />
+		<set name="session.thegroupofuser" value="0" />
 		<set name="session.theuserid" value="" />
 		<set name="session.thedomainid" value="" />
 		<do action="mini" />
