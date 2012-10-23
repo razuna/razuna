@@ -25,7 +25,7 @@
 		<transtext>Instellingen</transtext>
 	</transid>
 	<transid name="headerlogin">
-		<transtext>Sign in to Razuna</transtext>
+		<transtext>Sign in</transtext>
 	</transid>
 	<transid name="error_nousername">
 		<transtext>Geef je gebruikersnaam in!</transtext>

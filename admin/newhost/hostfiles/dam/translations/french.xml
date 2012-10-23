@@ -25,7 +25,7 @@
 		<transtext><![CDATA[Paramètres]]></transtext>
 	</transid>
 	<transid name="headerlogin">
-		<transtext><![CDATA[Sign in to Razuna]]></transtext>
+		<transtext><![CDATA[Sign in]]></transtext>
 	</transid>
 	<transid name="error_nousername">
 		<transtext><![CDATA[Entrez votre nom d'utilisateur!]]></transtext>
