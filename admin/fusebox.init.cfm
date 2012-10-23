@@ -64,7 +64,7 @@
 </cfif>
 
 <!--- Log User Out when Session.login has expired. Timeout of Sessions is set above --->
-<cfif not IsDefined("Attributes.fa") or (Attributes.fa neq "c.login" and Attributes.fa neq "c.dologin" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa NEQ "c.update" AND attributes.fa NEQ "c.update_do" AND application.razuna.firsttime NEQ "true" AND attributes.fa NEQ "c.runschedbackup")>
+<cfif not IsDefined("Attributes.fa") or (Attributes.fa neq "c.login" and Attributes.fa neq "c.dologin" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa NEQ "c.update" AND attributes.fa NEQ "c.update_do" AND application.razuna.firsttime NEQ "true" AND attributes.fa NEQ "c.runschedbackup" AND attributes.fa NEQ "c.logoff")>
 	<cfif NOT structkeyexists(session,"login") OR NOT structkeyexists(session,"thelang") OR NOT structkeyexists(session,"hostid") OR NOT structkeyexists(request,"securityobj")>
 		<script language="javascript" type="text/javascript">
 			top.location.href = "<cfoutput>#self#?c.logoff</cfoutput>";

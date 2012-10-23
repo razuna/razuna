@@ -9,8 +9,7 @@ $(document).ready(function(){
 			$("#login_div").css("display","none");
 			// Hide alert
 			$("#alertbox").css("display","none");
-			// Show loading message in upload window
-			$("#login_loading").html('<div style="padding:10px"><img src="images/loading.gif" border="0"> Loading Razuna</div>');
+
 			// Submit
 			form.submit();
 		},

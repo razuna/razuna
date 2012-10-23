@@ -79,22 +79,22 @@ Page output starts here
 			</tr>
 		</table>
 		</form>
-		<table width="100%" border="0" cellpadding="0" cellspacing="0">
+		
 			<cfif attributes.loginerror EQ "T">
-				<tr>
-			        <td class="alert">#defaultsObj.trans("login_error")#</td>
-				</tr>
+				<div id="alertbox" style="padding-top:10px;" class="alert">#defaultsObj.trans("login_error")#</div>
 			</cfif>
 			<cfif attributes.nohost EQ "T">
+				<table width="100%" border="0" cellpadding="0" cellspacing="0">
 				<tr>
 			        <td class="alert">No host to choose from. Please contact your System Administrator to create a host!</td>
 				</tr>
+				</table>
 			</cfif>
-		</table>
+		
 	</div>
 </div>
-<div id="login_loading"></div>
-<div id="alertbox" style="padding-top:10px;display:none;" class="alert">#defaultsObj.trans("login_error")#</div>
+<div id="login_loading" style="display:none;text-align:center;padding-top:20px;"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" width="128" height="15" border="0" /></div>
+
 </cfoutput>
 <script type="text/javascript">
 	$('#name').focus();
