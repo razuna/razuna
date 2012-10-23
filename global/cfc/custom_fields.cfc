@@ -149,7 +149,7 @@
 		AND ct.cf_id_r = cv.cf_id_r
 		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		GROUP BY cv.cf_value, ct.cf_text
+		GROUP BY cv.cf_value, ct.cf_text, c.cf_order
 		ORDER BY c.cf_order
 		</cfquery>
 	<cfreturn qry>
