@@ -2034,7 +2034,7 @@
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- If there is no session for webgroups set --->
-	<cfparam default="" name="session.thegroupofuser">
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Loop over query set --->
 	<cfloop query="fprop">
 		<cfset grppos = listfind(session.thegroupofuser, grp_id_r)>
@@ -2633,7 +2633,7 @@
 	<cfparam default="0" name="session.thefolderorg">
 	<cfparam default="0" name="session.type">
 	<cfparam default="F" name="arguments.thestruct.actionismove">
-	<cfparam default="" name="session.thegroupofuser">
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, 
@@ -3436,7 +3436,7 @@
 	<cfargument name="folder_id" type="string" required="true">
 	<cfargument name="external" type="string" required="false">
 	<!--- If there is no session for webgroups set --->
-	<cfparam default="" name="session.thegroupofuser">
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getsubfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
