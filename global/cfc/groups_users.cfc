@@ -97,9 +97,9 @@
 		<cfinvoke method="resetUser" thestruct="#arguments.thestruct#">
 	</cfif>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("search")>
-	<cfset resetcachetoken("folders")>
-	<cfset resetcachetoken("users")>
+	<cfset resetcachetoken("search","true")>
+	<cfset resetcachetoken("folders","true")>
+	<cfset resetcachetoken("users","true")>
 </cffunction>
 
 
@@ -144,7 +144,7 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("users")>
+	<cfset resetcachetoken("users","true")>
 	<cfreturn />
 </cffunction>
 
@@ -320,7 +320,7 @@
 	AND ct_g_u_user_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.user_id#">
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("users")>
+	<cfset resetcachetoken("users","true")>
 	<cfreturn />
 </cffunction>
 
@@ -344,7 +344,7 @@
 	)
 	</cfquery>
 	<!--- Flush Cache --->
-	<cfset resetcachetoken("users")>
+	<cfset resetcachetoken("users","true")>
 	<cfreturn />
 </cffunction>
 

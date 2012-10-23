@@ -278,7 +278,7 @@ Password: #randompassword#
 
 			</cfmail>
 			<!--- Flush Cache --->
-			<cfset resetcachetoken("users")>
+			<cfset resetcachetoken("users","true")>
 		</cfif>
 		<cfreturn thepass />
 	</cffunction>
