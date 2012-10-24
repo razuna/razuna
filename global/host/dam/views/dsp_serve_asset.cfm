@@ -26,13 +26,7 @@
 <cfparam default="F" name="attributes.download">
 <cfparam default="" name="qry_binary.qfile.link_kind">
 <!--- Storage Decision --->
-<!---
-<cfif application.razuna.storage EQ "nirvanix">
-	<cfset thestorage = "#application.razuna.nvxurlservices#/#attributes.nvxsession#/razuna/#session.hostid#/">
-<cfelse>
---->
-	<cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
-<!--- </cfif> --->
+<cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
 <!--- Default file name when prompted to download --->
 <cfheader name="content-disposition" value="attachment; filename=#qry_binary.thefilename#" />
 <!--- File is external --->
@@ -67,7 +61,7 @@
 		<!--- This is for basket or direct downloads --->
 		<cfif attributes.download EQ "T">
 			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
-			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="true">
+			<cfcontent type="application/force-download" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="true">
 		<cfelse>
 			<!--- Different file location for assets stored on lan --->
 			<cfif qry_binary.qfile.link_kind EQ "lan">
@@ -75,9 +69,9 @@
 			<cfelse>
 				<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/#qry_binary.qfile.filenameorg#">
 			</cfif>
-			<cffile action="readbinary" file="#thefileloc#" variable="readb">
+			<!--- <cffile action="readbinary" file="#thefileloc#" variable="readb"> --->
 			<!--- Serve the file --->
-			<cfcontent type="application/force-download" variable="#readb#">
+			<cfcontent type="application/force-download" file="#thefileloc#" deletefile="false">
 		</cfif>
 	</cfif>
 </cfif>
