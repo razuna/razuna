@@ -1821,7 +1821,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset resetcachetoken("search")> 
 		<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfelse>
-		<cfquery datasource="#arguments.thestruct.dsn#">
+		<!--- <cfquery datasource="#arguments.thestruct.dsn#">
 		INSERT INTO #session.hostdbprefix#images
 		(img_id, host_id, folder_id_r, is_available, img_filename)
 		VALUES(
@@ -1836,7 +1836,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset resetcachetoken("images")>
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")> 
-		<cfset variables.cachetoken = resetcachetoken("general")>
+		<cfset variables.cachetoken = resetcachetoken("general")> --->
 		<!--- Grab stuff for exiftool and getting raw metadata from image --->
 		<cfif isWindows()>
 			<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
