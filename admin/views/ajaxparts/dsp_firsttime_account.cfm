@@ -92,7 +92,7 @@
 			// Status Message
 			$('#firsttimestatus').html('<img src="images/loading-bars.gif" border="0" align="right" />');
 			// Submit Form
-			loadcontent('ft','index.cfm?fa=c.first_time_final&' + items);
+			$('#ft').load('index.cfm?fa=c.first_time_final', {user_login_name:user_login_name,user_first_name:user_first_name,user_last_name:user_last_name,user_email:user_email,user_pass:user_pass});
 		}
 	}
 </script>
