@@ -32,7 +32,7 @@
 			<cfif application.razuna.isp>
 				<cfparam name="attributes.qry_news.news_title" default="" />
 				<cfparam name="attributes.qry_news.news_text" default="" />
-				<div>
+				<div style="text-align:center;">
 					<h2 style="color:red;">#attributes.qry_news.news_title#</h2>
 					#attributes.qry_news.news_text#
 				</div>
