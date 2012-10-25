@@ -1496,7 +1496,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <cffunction name="news_get" output="false">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Query --->
-	<cfquery datasource="razuna_default" name="qry" region="razcache" cachedwithin="#CreateTimeSpan(0,0,0,0)#">
+	<cfquery datasource="razuna_default" name="qry" cachedwithin="#CreateTimeSpan(0,0,30,0)#">
 	SELECT news_title, news_text, news_text_long, news_date
 	FROM razuna_news
 	WHERE news_show = true
