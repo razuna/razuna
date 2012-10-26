@@ -1305,8 +1305,8 @@ This is the main function called directly by a single upload else from addassets
 		<cfelse>
 			<!--- Script: Exiftool Commands --->
 			<cffile action="write" file="#arguments.thestruct.theshexs#" output="#arguments.thestruct.theexif# -b -subject #arguments.thestruct.theorgfile#" mode="777">
-			<cffile action="write" file="#arguments.thestruct.theshexk#" output="#arguments.thestruct.theexif# -keywords #arguments.thestruct.theorgfile#" mode="777">
-			<cffile action="write" file="#arguments.thestruct.theshexak#" output="#arguments.thestruct.theexif# -applekeywords #arguments.thestruct.theorgfile#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshexk#" output="#arguments.thestruct.theexif# -XMP-PDF:keywords #arguments.thestruct.theorgfile#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.theshexak#" output="#arguments.thestruct.theexif# -PDF:keywords #arguments.thestruct.theorgfile#" mode="777">
 			<cffile action="write" file="#arguments.thestruct.theshexmeta#" output="#arguments.thestruct.theexif# -a -g #arguments.thestruct.theorgfile#" mode="777">
 			<cffile action="write" file="#arguments.thestruct.theshexmetaxmp#" output="#arguments.thestruct.theexif# -X #arguments.thestruct.theorgfile#" mode="777">
 			<!--- Execute scripts --->
@@ -1382,9 +1382,9 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Grab the keywords --->
 			<cfset thekeywords = trim(listlast(thekeywords,":"))>
 			<cfset theapplekeywords = trim(listlast(theapplekeywords,":"))>
-			<!--- If both keywords values have the same length then only use one, else combine them --->
-			<cfif len(thekeywords) NEQ len(theapplekeywords)>
-				<cfset thekeywords = thekeywords & ", " & theapplekeywords>
+			<!--- If XMP keywords is empty take the PDF:Keywords var --->
+			<cfif thekeywords EQ "">
+				<cfset thekeywords = theapplekeywords>
 			</cfif>
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 				<cfquery datasource="#application.razuna.datasource#">

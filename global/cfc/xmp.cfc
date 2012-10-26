@@ -1237,8 +1237,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Start the thread for updating --->
-	<cfset tt = CreateUUid()>
-	<cfthread name="meta#tt#" intstruct="#arguments.thestruct#">
+	<!--- <cfset tt = CreateUUid()> --->
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="metatofilethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 </cffunction>
@@ -1278,14 +1278,14 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 				<cfset thiskeywords="arguments.thestruct.file_keywords_" & "#langindex#">
 				<cfif evaluate(thiskeywords) NEQ "">
-					<cfset arguments.thestruct.file_keywords = arguments.thestruct.file_keywords & "#evaluate(thiskeywords)#">
+					<cfset arguments.thestruct.file_keywords = arguments.thestruct.file_keywords & evaluate(thiskeywords)>
 					<cfif langindex LT langcount>
-						<cfset arguments.thestruct.file_keywords = arguments.thestruct.file_keywords & ", ">
+						<cfset arguments.thestruct.file_keywords = arguments.thestruct.file_keywords>
 					</cfif>
-					<cfset thisdesc="arguments.thestruct.file_desc_" & "#langindex#">
-					<cfset arguments.thestruct.file_desc = arguments.thestruct.file_desc & "#evaluate(thisdesc)#">
+					<cfset thisdesc="arguments.thestruct.file_desc_" & langindex>
+					<cfset arguments.thestruct.file_desc = arguments.thestruct.file_desc & evaluate(thisdesc)>
 					<cfif langindex LT langcount>
-						<cfset arguments.thestruct.file_desc = arguments.thestruct.file_desc & ", ">
+						<cfset arguments.thestruct.file_desc = arguments.thestruct.file_desc & " ">
 					</cfif>
 				</cfif>
 			</cfloop>
@@ -1307,26 +1307,28 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 				<!--- If we come from all we need to change the desc and keywords arguments name --->
 				<cfif arguments.thestruct.what EQ "all">
-					<cfset alldesc = "all_desc_" & #langindex#>
-					<cfset allkeywords = "all_keywords_" & #langindex#>
-					<cfset thisdesc = "arguments.thestruct.img_desc_" & #langindex#>
-					<cfset thiskeywords = "arguments.thestruct.img_keywords_" & #langindex#>
+					<cfset alldesc = "all_desc_" & langindex>
+					<cfset allkeywords = "all_keywords_" & langindex>
+					<cfset thisdesc = "arguments.thestruct.img_desc_" & langindex>
+					<cfset thiskeywords = "arguments.thestruct.img_keywords_" & langindex>
 					<cfset "#thisdesc#" =  evaluate(alldesc)>
 					<cfset "#thiskeywords#" =  evaluate(allkeywords)>
 				</cfif>
-				<cfset thiskeywords="arguments.thestruct.img_keywords_" & "#langindex#">
-				<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & "#evaluate(thiskeywords)#">
+				<cfset thiskeywords="arguments.thestruct.img_keywords_" & langindex>
+				<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & evaluate(thiskeywords)>
 				<cfif #langindex# LT #langcount#>
-					<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", ">
+					<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords>
 				</cfif>
-				<cfset thisdesc="arguments.thestruct.img_desc_" & "#langindex#">
-				<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & "#evaluate(thisdesc)#">
+				<cfset thisdesc="arguments.thestruct.img_desc_" & langindex>
+				<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & evaluate(thisdesc)>
 				<cfif #langindex# LT #langcount#>
-					<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", ">
+					<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & " ">
 				</cfif>
 			</cfloop>
 		</cfif>
 	</cfif>
+	<cfset consoleoutput(true)>
+<cfset console(arguments.thestruct.file_keywords)>
 	<!--- Remove the last comma of the keyword string --->
 	<cfset theright = trim(right(arguments.thestruct.file_keywords,2))>
 	<!--- If the last char is a comma remove it --->
@@ -1347,15 +1349,19 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<!--- Storage: Local --->
 	<cfif application.razuna.storage EQ "local">
 		<cftry>
+			<!--- Clear keywords from PDF (this should solve issues where keywords is shown multiple times in Acrobat) --->
+			<cfexecute name="#theexe#" arguments="-XMP-pdf:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+			<cfexecute name="#theexe#" arguments="-XMP-dc:subject= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+			<cfexecute name="#theexe#" arguments="-PDF:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
 			<!--- On Windows a .bat --->
 			<cfif iswindows>
-				<cfexecute name="#theexe#" arguments="-subject='#arguments.thestruct.file_desc#' -keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+				<cfexecute name="#theexe#" arguments="-PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
 			<cfelse>
 				<!--- Write the sh script file --->
 				<cfset thescript = createuuid()>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -subject='#arguments.thestruct.file_desc#' -keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
@@ -1392,7 +1398,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 		<!--- Write XMP to image with Exiftool --->
-		<cfexecute name="#theexe#" arguments="-subject='#arguments.thestruct.file_desc#' -keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" timeout="10" />
+		<cfexecute name="#theexe#" arguments="-PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" timeout="10" />
 		<!--- Upload file again to its original position --->
 		<!--- NIRVANIX --->
 		<cfif application.razuna.storage EQ "nirvanix">
