@@ -1327,8 +1327,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			</cfloop>
 		</cfif>
 	</cfif>
-	<cfset consoleoutput(true)>
-<cfset console(arguments.thestruct.file_keywords)>
 	<!--- Remove the last comma of the keyword string --->
 	<cfset theright = trim(right(arguments.thestruct.file_keywords,2))>
 	<!--- If the last char is a comma remove it --->
