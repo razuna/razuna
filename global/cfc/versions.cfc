@@ -596,13 +596,13 @@
 		<cfif application.razuna.storage EQ "local">
 			<!--- Create folder with the version --->
 			<cftry>
-				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" mode="775">
+				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" mode="775">
 				<cfcatch type="all"></cfcatch>
 			</cftry>
 			<!--- Move the file to the versions directory --->
-			<cfinvoke component="hosts" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
+			<cfinvoke component="hosts" method="directoryCopy" source="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#qryversion.newversion#" move="T">
 			<!--- Grab the new version and move it to the old directory --->
-			<cfinvoke component="hosts" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
+			<cfinvoke component="hosts" method="directoryCopy" source="#arguments.thestruct.qryfile.path#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfilelocal.path_to_asset#" move="T">
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
 			<cfset arguments.thestruct.newversion = qryversion.newversion>
@@ -696,7 +696,7 @@
 			<!--- Get SignedURL original --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfilelocal.path_to_asset#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL for the original in the versions --->
-			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#arguments.thestruct.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfilelocal.file_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
+			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_version" key="#session.hostid#/versions/#arguments.thestruct.type#/#arguments.thestruct.qryfile.file_id#/#arguments.thestruct.newversion#/#arguments.thestruct.qryfilelocal.file_name_org#" awsbucket="#arguments.thestruct.awsbucket#">
 		</cfif>
 		<!--- Update the record in versions DB --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
