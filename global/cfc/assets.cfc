@@ -883,9 +883,9 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 	<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 	<!--- Thread --->
 	<cfif arguments.thestruct.qryfile.tempid NEQ "">
-		<cfthread intstruct="#arguments.thestruct#" priority="LOW">
-			<cfinvoke method="addassetthread" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		<!--- <cfthread intstruct="#arguments.thestruct#" priority="LOW"> --->
+			<cfinvoke method="addassetthread" thestruct="#arguments.thestruct#" />
+		<!--- </cfthread> --->
 	</cfif>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.qryfile.path>
