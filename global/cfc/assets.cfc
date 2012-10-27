@@ -193,7 +193,7 @@
 			<!--- We don't need to send an email --->
 			<cfset arguments.thestruct.sendemail = false>
 			<!--- Call the addasset function --->
-			<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
 			</cfthread>
 		<cfelse>
@@ -273,7 +273,7 @@
 							<!--- We don't need to send an email --->
 							<cfset arguments.thestruct.sendemail = false>
 							<!--- Call the addasset function --->
-							<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+							<cfthread intstruct="#arguments.thestruct#">
 								<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
 							</cfthread>
 						<cfelse>
@@ -392,7 +392,7 @@
 				<!--- We don't need to send an email --->
 				<cfset arguments.thestruct.sendemail = false>
 				<!--- Call the addasset function --->
-				<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+				<cfthread intstruct="#arguments.thestruct#">
 					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
 				</cfthread>
 			<cfelse>
@@ -615,7 +615,7 @@
 				<!--- Add the original file name in a session since it is stored as lower case in the temp DB --->
 				<cfset arguments.thestruct.theoriginalfilename = thefile.serverFile>
 				<!--- Call the addasset function --->
-				<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+				<cfthread intstruct="#arguments.thestruct#">
 					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
 				</cfthread>
 				<!--- Get file type so we can return the type --->
@@ -782,7 +782,7 @@
 			<!--- We don't need to send an email --->
 			<cfset arguments.thestruct.sendemail = false>
 			<!--- Call the addasset function --->
-			<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
 			</cfthread>
 		<cfelse>
@@ -1084,6 +1084,8 @@ This is the main function called directly by a single upload else from addassets
 		SELECT path as temppath, tempid
 		FROM #session.hostdbprefix#assets_temp
 		WHERE date_add < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
+		AND path LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%dam/incoming%">
+		AND path IS NOT NULL
 		</cfquery>
 		<!--- Loop trough the found records --->
 		<cfloop query="qry">
@@ -1093,7 +1095,7 @@ This is the main function called directly by a single upload else from addassets
 			WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">
 			</cfquery>
 			<!--- Delete on the file system --->
-			<cfif directoryexists(temppath) AND temppath CONTAINS "dam/incoming">
+			<cfif directoryexists(temppath)>
 				<cfdirectory action="delete" recurse="true" directory="#temppath#">
 			</cfif>
 		</cfloop>
@@ -4804,7 +4806,7 @@ This is the main function called directly by a single upload else from addassets
 				<!--- We set that this is from this function --->
 				<cfset arguments.thestruct.importpath = true>
 				<!--- Call the addasset function --->
-				<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+				<cfthread intstruct="#arguments.thestruct#">
 					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
 				</cfthread>
 			<cfelse>
