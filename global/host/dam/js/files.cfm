@@ -43,7 +43,7 @@ function sendtobasket(theform){
 // Feedback on putting assets in basket
 function sendtobasket_feedback(){
 	// Flash the Basket
-	flash_footer();
+	flash_footer('basket');
 	// Reload Basket
 	loadcontent('thedropbasket','index.cfm?fa=c.basket');
 }

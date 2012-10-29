@@ -326,10 +326,17 @@ $(document).bind('click', function(e) {
 		$('#per_' + thisid).attr('checked','checked');
 	}
 // Flash footer_tabs
-function flash_footer(){
-	$("#tabs_footer").effect('pulsate');
+function flash_footer(what){
+	// $("#tabs_footer").effect('pulsate');
 	//$("#tabs_footer").effect('highlight',{'color':'orange'},1000);
 	//$('#tabs_footer').tabs('select','#thedropfav');
+	// Display notification
+	if(what == "basket"){
+		$.sticky('<span style="color:green;font-weight:bold;">Item is now in your basket</span>');
+	}
+	else {
+		$.sticky('<span style="color:green;font-weight:bold;">Item is now saved to your favorites</span>');
+	}
 }
 // Global Tagit events
 function raztagit(thediv,fileid,thetype,raztags,perm){
