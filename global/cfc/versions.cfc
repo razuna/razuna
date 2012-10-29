@@ -587,7 +587,7 @@
 		</cfif>
 		<!--- Create a new version number --->
 		<cfquery datasource="#arguments.thestruct.dsn#" name="qryversion">
-		SELECT <cfif arguments.thestruct.database EQ "oracle" OR arguments.thestruct.database EQ "h2">NVL<cfelseif arguments.thestruct.database EQ "mysql">ifnull<cfelseif arguments.thestruct.database EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
+		SELECT <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(ver_version),0) + 1 AS newversion
 		FROM #session.hostdbprefix#versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.file_id#">
 		AND ver_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar">
