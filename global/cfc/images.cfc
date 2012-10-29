@@ -548,6 +548,7 @@
 	<cfparam name="arguments.thestruct.shared" default="F">
 	<cfparam name="arguments.thestruct.what" default="">
 	<cfparam name="arguments.thestruct.frombatch" default="F">
+	<cfparam name="arguments.thestruct.batch_replace" default="true">
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
 		<cfset i = listfirst(i,"-")>
@@ -577,17 +578,17 @@
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
 						</cfquery>
 						<cfif ishere.recordcount NEQ 0>
-							<!--- If we come from batching we add the new values to existing --->
-							<!--- <cfif arguments.thestruct.frombatch EQ "T">
-								<cfset tdesc = ishere.img_description & " " & evaluate(thisdesc)>
-								<cfset tkeywords = ishere.img_keywords & "," & evaluate(thiskeywords)>
-							<cfelse>
-								<cfset tdesc = evaluate(thisdesc)>
-								<cfset tkeywords = evaluate(thiskeywords)>
-							</cfif> --->
-							<!--- We replace old values --->
 							<cfset tdesc = evaluate(thisdesc)>
 							<cfset tkeywords = evaluate(thiskeywords)>
+							<!--- If users chooses to append values --->
+							<cfif !arguments.thestruct.batch_replace>
+								<cfif ishere.img_description NEQ "">
+									<cfset tdesc = ishere.img_description & " " & tdesc>
+								</cfif>
+								<cfif ishere.img_keywords NEQ "">
+									<cfset tkeywords = ishere.img_keywords & "," & tkeywords>
+								</cfif>
+							</cfif>
 							<!--- Update DB --->
 							<cfquery datasource="#variables.dsn#">
 							UPDATE #session.hostdbprefix#images_text

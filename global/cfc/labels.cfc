@@ -101,12 +101,16 @@
 	<!--- Add labels --->
 	<cffunction name="label_add_all_thread" output="true" access="public">
 		<cfargument name="thestruct" type="struct">
+		<!--- Param --->
+		<cfparam name="arguments.thestruct.batch_replace" default="true">
 		<!--- Remove all labels for this record --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM ct_labels
-		WHERE ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
-		AND ct_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />
-		</cfquery>
+		<cfif arguments.thestruct.batch_replace>
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_labels
+			WHERE ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
+			AND ct_type = <cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />
+			</cfquery>
+		</cfif>
 		<cfif structkeyexists(arguments.thestruct,"labels") AND arguments.thestruct.labels NEQ "null">
 			<!--- Loop over fields --->		
 			<cfloop list="#arguments.thestruct.labels#" delimiters="," index="i">
@@ -144,14 +148,12 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Loop over files_ids --->
 		<cfthread intstruct="#arguments.thestruct#">
-		<cfloop list="#attributes.intstruct.file_ids#" index="i">
-			<cfset attributes.intstruct.fileid = listfirst(i,"-")>
-			<cfset attributes.intstruct.thetype = listlast(i,"-")>
-			<!--- Now pass each asset to the function above to add labels --->
-			
+			<cfloop list="#attributes.intstruct.file_ids#" index="i">
+				<cfset attributes.intstruct.fileid = listfirst(i,"-")>
+				<cfset attributes.intstruct.thetype = listlast(i,"-")>
+				<!--- Now pass each asset to the function above to add labels --->
 				<cfinvoke method="label_add_all" thestruct="#attributes.intstruct#" />
-			
-		</cfloop>
+			</cfloop>
 		</cfthread>
 		<!--- Return --->
 		<cfreturn />

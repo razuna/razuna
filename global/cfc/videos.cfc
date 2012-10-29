@@ -823,6 +823,7 @@
 	<cfparam name="arguments.thestruct.what" default="">
 	<cfparam name="arguments.thestruct.vid_online" default="F">
 	<cfparam name="arguments.thestruct.frombatch" default="F">
+	<cfparam name="arguments.thestruct.batch_replace" default="true">
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
 	<cfset i = listfirst(i,"-")>
@@ -844,17 +845,30 @@
 			<cfset l = #langindex#>
 			<cfif thisdesc CONTAINS #l# OR thiskeywords CONTAINS #l#>
 				<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="f">
+					<!--- Query excisting --->
 					<cfquery datasource="#variables.dsn#" name="ishere">
-					SELECT vid_id_r
+					SELECT vid_id_r, vid_description, vid_keywords
 					FROM #session.hostdbprefix#videos_text
 					WHERE vid_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 					AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
 					</cfquery>
-					<cfif #ishere.recordcount# IS NOT 0>
+					<cfif ishere.recordcount NEQ 0>
+						<cfset tdesc = evaluate(thisdesc)>
+						<cfset tkeywords = evaluate(thiskeywords)>
+						<!--- If users chooses to append values --->
+						<cfif !arguments.thestruct.batch_replace>
+							<cfif ishere.vid_description NEQ "">
+								<cfset tdesc = ishere.vid_description & " " & tdesc>
+							</cfif>
+							<cfif ishere.vid_keywords NEQ "">
+								<cfset tkeywords = ishere.vid_keywords & "," & tkeywords>
+							</cfif>
+						</cfif>
+						<!--- Update --->
 						<cfquery datasource="#variables.dsn#">
 						UPDATE #session.hostdbprefix#videos_text
-						SET vid_description = <cfqueryparam value="#ltrim(evaluate(thisdesc))#" cfsqltype="cf_sql_varchar">, 
-						vid_keywords = <cfqueryparam value="#ltrim(evaluate(thiskeywords))#" cfsqltype="cf_sql_varchar">
+						SET vid_description = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">, 
+						vid_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
 						WHERE vid_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
 						</cfquery>
