@@ -1,1 +1,0 @@
-Simply follow the install instructions outlined at http://wiki.razuna.com/display/ecp/1.+Install+ImageMagick,+Ghostscript,+FFmpeg+and+Exiftool

@@ -1,5 +1,0 @@
-For WINDOWS:
-
-Download the latest release at: http://www.insflug.org/raw/
-
-For ALL other platforms simply follow the install instructions outlined at http://wiki.razuna.com/display/ecp/1.+Install+ImageMagick,+Ghostscript,+FFmpeg+and+Exiftool

@@ -1,3 +1,0 @@
-Download the latest ImageMagick from http://www.imagemagick.org
-
-and follow the installation instructions outlined at http://wiki.razuna.com/display/ecp/1.+Install+ImageMagick,+Ghostscript,+FFmpeg+and+Exiftool
