@@ -3961,6 +3961,9 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfset arguments.thestruct.newid = createuuid("")>
+	<cfset arguments.thestruct.thesize = 0>
+	<cfset arguments.thestruct.thewidth = 0>
+	<cfset arguments.thestruct.theheight = 0>
 	<!--- Create a unique name for the temp directory to hold the file --->
 	<cfset arguments.thestruct.thetempfolder = "api#arguments.thestruct.newid#">
 	<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
@@ -3968,7 +3971,10 @@ This is the main function called directly by a single upload else from addassets
 	<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
 	<!--- Upload file --->
 	<cffile action="upload" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="file" result="thefile">
+	<!--- File Extension --->
 	<cfset thefile.serverFileExt = lcase(thefile.serverFileExt)>
+	<!--- File Size --->
+	<cfset arguments.thestruct.thesize = thefile.fileSize>
 	<!--- Get and set file type and MIME content --->
 	<cfquery datasource="#variables.dsn#" name="fileType">
 	SELECT type_type, type_mimecontent, type_mimesubcontent
@@ -3980,6 +3986,20 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.thefiletype = "#fileType.type_type#">
 	<cfelse>
 		<cfset arguments.thestruct.thefiletype = "doc">
+	</cfif>
+	<!--- If img or vid we get the h and w --->
+	<cfif arguments.thestruct.thefiletype EQ "img" OR arguments.thestruct.thefiletype EQ "vid">
+		<!--- The tool paths --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="thetools" />
+		<!--- Select proper executable --->
+		<cfif iswindows()>
+			<cfset theexe = thetools.exiftool & "/exiftool.exe">
+		<cfelse>
+			<cfset theexe = thetools.exiftool & "/exiftool">
+		</cfif>
+		<!--- Get with and heigth --->
+		<cfexecute name="#theexe#" arguments="-S -s -imagewidth #arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" variable="arguments.thestruct.thewidth" timeout="30" />
+		<cfexecute name="#theexe#" arguments="-S -s -ImageHeight #arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" variable="arguments.thestruct.theheight" timeout="30" />
 	</cfif>
 	<!--- Query to get the settings --->
 	<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrysettings">

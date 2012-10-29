@@ -629,7 +629,7 @@ Comment:<br>
 		</cfquery>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, av_link_title, av_link_url
+		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, av_link_title, av_link_url, thesize, thewidth, theheight, av_type
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -644,20 +644,23 @@ Comment:<br>
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.av_link" default="1">
 		<!--- New id --->
-		<cfset var newid = createuuid("")>
+		<!--- <cfset var newid = createuuid("")> --->
 		<!--- Save --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#additional_versions
-		(av_id, av_link_title, av_link_url, asset_id_r, folder_id_r, host_id, av_type, av_link)
+		(av_id, av_link_title, av_link_url, asset_id_r, folder_id_r, host_id, av_type, av_link, thesize, thewidth, theheight)
 		VALUES(
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link_title#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link_url#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.type#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link#">
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thesize#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thewidth#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theheight#">
 		)
 		</cfquery>
 		<!--- Flush Cache --->

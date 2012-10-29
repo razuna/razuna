@@ -30,7 +30,7 @@
 		<strong><a href="#av_link_url#" target="_blank">#av_link_title#</a></strong><br />
 	</cfloop>
 	<cfloop query="qry_av.assets">
-		<strong><a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a></strong><br />
+		<strong><a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a></strong> <em>(#myFusebox.getApplicationData().global.converttomb('#thesize#')#MB<cfif av_type EQ "img" OR av_type EQ "vid">, #thewidth#x#theheight# pixel</cfif>)</em><br />
 		<br />
 	</cfloop>
 </cfif>

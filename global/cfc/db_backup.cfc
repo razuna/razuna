@@ -1225,7 +1225,10 @@
 		  av_link_title			varchar(200) DEFAULT NULL,
 		  av_link_url 			varchar(500) DEFAULT NULL,
 		  host_id 				BIGINT DEFAULT NULL,
-		  av_link 				varchar(2) DEFAULT '1'
+		  av_link 				varchar(2) DEFAULT '1',
+		  thesize 				varchar(100) DEFAULT '0',
+  		  thewidth 				varchar(50) DEFAULT '0',
+  		  theheight				varchar(50) DEFAULT '0'
 		)
 		</cfquery>
 		
