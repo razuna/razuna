@@ -2883,6 +2883,7 @@
 		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="session.file_id" value="" overwrite="false" />
 		<set name="session.view" value="" />
+		<set name="attributes.share" value="F" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />
@@ -4904,6 +4905,7 @@
 	<fuseaction name="share">
 		<!-- Param -->
 		<set name="attributes.shared" value="T" />
+		<set name="attributes.share" value="T" />
 		<set name="attributes.wid" value="0" />
 		<set name="attributes.fromcol" value="F" overwrite="false" />
 		<set name="attributes.fp" value="F" overwrite="false" />
@@ -5044,6 +5046,7 @@
 		<set name="session.showsubfolders" value="F" />
 		<set name="attributes.pages" value="" />
 		<set name="session.offset" value="0" />
+		<set name="attributes.share" value="T" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Get languages -->
@@ -5151,6 +5154,7 @@
 		<!-- Param -->
 		<set name="attributes.folder_id" value="#session.fid#" />
 		<set name="attributes.iscol" value="#session.iscol#" />
+		<set name="attributes.share" value="T" />
 		<!-- If this is a collection get the list of assets for the search -->
 		<if condition="#session.iscol# EQ 'T'">
 			<true>
