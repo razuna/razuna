@@ -475,6 +475,10 @@ Comment:<br>
 			</cfquery>
 		</cfloop>
 		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("files")>
 		<cfset variables.cachetoken = resetcachetoken("general")>
 		<!--- Return --->
 		<cfreturn />

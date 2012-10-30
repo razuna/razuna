@@ -1689,7 +1689,6 @@ This is the main function called directly by a single upload else from addassets
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 					</cfquery>
 				</cftransaction>
-				<cfabort>
 				<!--- Add to Lucene --->
 				<cfif NOT structkeyexists(arguments.thestruct,"fromconverting")>
 					<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="img">
