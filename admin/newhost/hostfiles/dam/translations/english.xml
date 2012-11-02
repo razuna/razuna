@@ -247,7 +247,7 @@
 		<transtext>Add from server</transtext>
 	</transid>
 	<transid name="header_add_asset_email">
-		<transtext>Add from eMail</transtext>
+		<transtext>Add from email</transtext>
 	</transid>
 	<transid name="header_add_asset_ftp">
 		<transtext>Add with FTP</transtext>
@@ -316,19 +316,19 @@
 		<transtext><![CDATA[The file(s) have been added to the system successfully!]]></transtext>
 	</transid>
 	<transid name="email_mail_server">
-		<transtext>eMail Server</transtext>
+		<transtext>email Server</transtext>
 	</transid>
 	<transid name="email_address">
-		<transtext>eMail Address</transtext>
+		<transtext>email Address</transtext>
 	</transid>
 	<transid name="email_subject">
 		<transtext>Subject</transtext>
 	</transid>
 	<transid name="email_desc">
-		<transtext>With this form you can retrieve the attachment of the given eMail address. For security only those messages will be retrieved that have the same value in the subject that you enter below.</transtext>
+		<transtext>With this form you can retrieve the attachment of the given email address. For security only those messages will be retrieved that have the same value in the subject that you enter below.</transtext>
 	</transid>
 	<transid name="button_show_emails">
-		<transtext>Show eMails</transtext>
+		<transtext>Show emails</transtext>
 	</transid>
 	<transid name="email_error">
 		<transtext>There has been a problem connecting to the mail server. Please try again!</transtext>
@@ -388,7 +388,7 @@
 		<transtext>Download to Desktop</transtext>
 	</transid>
 	<transid name="send_with_email">
-		<transtext>Send per eMail</transtext>
+		<transtext>Send via email</transtext>
 	</transid>
 	<transid name="send_with_ftp">
 		<transtext>Upload to FTP Server</transtext>
@@ -421,7 +421,7 @@
 		<transtext>To</transtext>
 	</transid>
 	<transid name="send_email">
-		<transtext>Send eMail</transtext>
+		<transtext>Send email</transtext>
 	</transid>
 	<transid name="attachment">
 		<transtext>Attachment</transtext>
@@ -550,7 +550,7 @@
 		<transtext>Remove Basket</transtext>
 	</transid>
 	<transid name="send_basket_email">
-		<transtext>eMail Basket</transtext>
+		<transtext>email Basket</transtext>
 	</transid>
 	<transid name="send_basket_ftp">
 		<transtext>FTP Basket</transtext>
@@ -691,7 +691,7 @@
 		<transtext>Edit User</transtext>
 	</transid>
 	<transid name="email">
-		<transtext>eMail</transtext>
+		<transtext>email</transtext>
 	</transid>
 	<transid name="user_active">
 		<transtext>User can login</transtext>
@@ -1126,7 +1126,7 @@
 		<transtext>We sent you the password to the given email address.</transtext>
 	</transid>
 	<transid name="youremail">
-		<transtext>Your eMail Address</transtext>
+		<transtext>Your email Address</transtext>
 	</transid>
 	<transid name="buttonsendpassword">
 		<transtext>Send me my Password</transtext>
@@ -1219,7 +1219,7 @@
 		<transtext>Click here to select all assets on this page.</transtext>
 	</transid>
 	<transid name="upload_success_email">
-		<transtext><![CDATA[The asset is being processed. You will get notified by eMail. You can continue working in the meantime.]]></transtext>
+		<transtext><![CDATA[The asset is being processed. You will get notified by email. You can continue working in the meantime.]]></transtext>
 	</transid>
 	<transid name="load_in_cooliris">
 		<transtext>Watch in Cooliris</transtext>
@@ -1951,10 +1951,10 @@
 		<transtext><![CDATA[Show/Hide the Razuna "Add from Server" tab.]]></transtext>
 	</transid>
 	<transid name="header_customization_upload_from_email">
-		<transtext><![CDATA["Add from eMail" Tab]]></transtext>
+		<transtext><![CDATA["Add from email" Tab]]></transtext>
 	</transid>
 	<transid name="header_customization_upload_from_email_desc">
-		<transtext><![CDATA[Show/Hide the Razuna "Add from eMail" tab.]]></transtext>
+		<transtext><![CDATA[Show/Hide the Razuna "Add from email" tab.]]></transtext>
 	</transid>
 	<transid name="header_customization_upload_from_ftp">
 		<transtext><![CDATA["Add from FTP" Tab]]></transtext>
@@ -2191,10 +2191,10 @@
 		<transtext><![CDATA[Show/hide the "History" tab in the asset view window.]]></transtext>
 	</transid>
 	<transid name="header_customization_assetview_button_send_email">
-		<transtext><![CDATA["Send eMail" Button]]></transtext>
+		<transtext><![CDATA["Send email" Button]]></transtext>
 	</transid>
 	<transid name="header_customization_assetview_button_send_email_desc">
-		<transtext><![CDATA[Show/hide the "Send eMail" button in the asset view window.]]></transtext>
+		<transtext><![CDATA[Show/hide the "Send email" button in the asset view window.]]></transtext>
 	</transid>
 	<transid name="header_customization_assetview_button_send_ftp">
 		<transtext><![CDATA["Upload with FTP" Button]]></transtext>
@@ -2254,7 +2254,7 @@
 		<transtext><![CDATA[Social Network Accounts]]></transtext>
 	</transid>
 	<transid name="tab_users_social_accounts_desc">
-		<transtext><![CDATA[Your administrator has the Social Network Login enabled. In order for your users to login sucessfully with their Twitter, Facebook, Google, etc. account you need to provide their login name (usually the eMail address) which they use with their social account in the list below. Upon signing in, we then compare their login name with the information below and let the user access Razuna transparently.]]></transtext>
+		<transtext><![CDATA[Your administrator has the Social Network Login enabled. In order for your users to login sucessfully with their Twitter, Facebook, Google, etc. account you need to provide their login name (usually the email address) which they use with their social account in the list below. Upon signing in, we then compare their login name with the information below and let the user access Razuna transparently.]]></transtext>
 	</transid>
 	<transid name="header_img_format">
 		<transtext>Image Format</transtext>
@@ -2287,16 +2287,16 @@
 		<transtext>New Registration</transtext>
 	</transid>
 	<transid name="intranet_new_registration_desc">
-		<transtext>When a user wants requests access to your Digital Asset Management you will receive a notification email. Please enter here the eMail adress(es) and subject for that notification email. This email is only being sent to your internal staff not to your customer.</transtext>
+		<transtext>When a user wants requests access to your Digital Asset Management you will receive a notification email. Please enter here the email adress(es) and subject for that notification email. This email is only being sent to your internal staff not to your customer.</transtext>
 	</transid>
 	<transid name="intranet_new_registration_emails">
-		<transtext>Registration goes to the following eMail addresse(s)</transtext>
+		<transtext>Registration goes to the following email addresse(s)</transtext>
 	</transid>
 	<transid name="intranet_new_registration_email_subject">
-		<transtext>Subject of the eMail</transtext>
+		<transtext>Subject of the email</transtext>
 	</transid>
 	<transid name="multiple_emails">
-		<transtext>Divide many eMail addresses with a "," (comma)</transtext>
+		<transtext>Divide many email addresses with a "," (comma)</transtext>
 	</transid>
 	<transid name="custom_users_desc">
 		<transtext><![CDATA[The below settings influence what users will see upon sign in and controls their "My Folder" options.]]></transtext>
