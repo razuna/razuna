@@ -131,12 +131,78 @@
 				<cfif !listFind(session.thegroupofuser, "1", ",")>
 					<cfinvoke method="createmyfolder" userid="#qryuser.user_id#" />
 				</cfif>
+				<!--- If we are system admin then check for one folder --->
+				<cfif listFind(session.thegroupofuser, "1", ",")>
+					<cfinvoke method="createsysfolder" userid="#qryuser.user_id#" />
+				</cfif>
 			</cfif>
 		</cfif>
 		<cfreturn theuser />
 	</cffunction>
 
-<!--- Create my folder --->
+	<!--- Create folder for sysadmins but only if not one exists --->
+	<cffunction name="createsysfolder" access="private" returntype="void">
+		<cfargument name="userid" required="yes" type="string">
+		<!--- Check if there are any folders for this tenant --->
+		<cfquery datasource="#application.razuna.datasource#" name="ishere">
+		SELECT folder_id
+		FROM #session.hostdbprefix#folders
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Not here thus create --->
+		<cfif ishere.recordcount EQ 0>
+			<!--- New ID --->				
+			<cfset var newfolderid = createuuid("")>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#folders
+			(folder_id, folder_name, folder_level, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, folder_of_user, folder_id_r, folder_main_id_r, host_id)
+			values (
+			<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
+			<cfqueryparam value="Uploads" cfsqltype="cf_sql_varchar">, 
+			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
+			<cfqueryparam value="#arguments.userid#" cfsqltype="CF_SQL_VARCHAR">, 
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+			<cfqueryparam value="f" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			)
+			</cfquery>
+			<!--- Insert the DESCRIPTION --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#folders_desc
+			(folder_id_r, lang_id_r, folder_desc, host_id, rec_uuid)
+			VALUES(
+			<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">, 
+			<cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
+			<cfqueryparam value="Public Uploads folder" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+			<!--- Make it public for everyone --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#folders_groups
+			(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
+			VALUES(
+				<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="W" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("folders")>
+		</cfif>
+		<cfreturn />
+	</cffunction>
+
+	<!--- Create my folder --->
 	<cffunction name="createmyfolder" access="private">
 		<cfargument name="userid" required="yes" type="string">
 		<!--- Get the cachetoken for here --->
