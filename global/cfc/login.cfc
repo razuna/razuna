@@ -148,6 +148,7 @@
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND folder_is_collection IS NULL
 		</cfquery>
 		<!--- Not here thus create --->
 		<cfif ishere.recordcount EQ 0>
