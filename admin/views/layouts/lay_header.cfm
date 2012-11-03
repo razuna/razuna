@@ -24,45 +24,40 @@
 *
 --->
 <cfoutput>
-<span class="loginheader"><a href="#myself#c.main">
-	<cfif directoryexists("#pathoneup#global/host/logo/#session.hostid#")>
-		<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
-	<cfelse>
-		<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
-	</cfif>
-	</a></span>
+<span class="loginheader">
+	<a href="#myself#c.main">
+		<cfif directoryexists("#pathoneup#global/host/logo/#session.hostid#")>
+			<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
+		<cfelse>
+			<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
+		</cfif>
+	</a>
+</span>
 <div id="navrighttop">
 	<table border="0" cellpadding="0" cellspacing="0">
-	<tr>
-		<td nowrap="true">
-			<select name="gotodam" id="gotodam" onChange="javascript:gotodam_choose();" style="width:100px;">
-				<option id="gotodamselect" value="0" selected="true">#defaultsObj.trans("goto")#</option>
-				<cfloop query="qry_allhosts">
-					<option value="../#host_path#/dam">#ucase(host_name)#</option>
-				</cfloop>
-			</select>
-		</td>
-		<td nowrap="true" style="padding-left:5px;padding-right:30px;"><form name="f_lang">
-			<select name="app_lang" size=1 class="text" onChange="javascript:changelang('f_lang');">
-				<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
-				<cfset thelangs = #defaultsObj.getlangsadmin(thispath)#>
-				<cfloop query="thelangs">
-				<cfset thislang = replacenocase("#name#", ".xml", "", "ALL")>
-				<option value="#myself##xfa.switchlang#&thelang=#thislang#">#ucase(left(thislang,1))##mid(thislang,2,20)#</option>
-				</cfloop>
-			</select>
-		</td>
-		<!--- <td nowrap="true" style="padding-left:5px;"><form name="goto">
-			<select name="gotosec" class="text" style="width: 120px" onChange="javascript:gotos();">
-				<option value="" selected>#defaultsObj.trans("goto")#</option>
-				<option value="">---</option>
-				<option value="../#defaultsObj.hostpath("#application.razuna.datasource#")#/web/">#defaultsObj.trans("website")#</option>
-				<option value="../#defaultsObj.hostpath("#application.razuna.datasource#")#/dam/">#defaultsObj.trans("intraextra")#</option>
-			</select></form></td> --->
-		<td nowrap="true" style="padding-left:7px;"><a href="##" onClick="feedback_widget.show();">Feedback</a></td>
-		<td nowrap="true" style="padding-left:7px;"><a href="http://wiki.razuna.com" target="_blank">Documentation</a></td>
-		<td nowrap="true" style="padding-left:7px;"><a href="#myself#c.logoff">#defaultsObj.trans("logoff")#</a></td>
-	</tr>
+		<tr>
+			<td nowrap="true">
+				<select name="gotodam" id="gotodam" onChange="javascript:gotodam_choose();" style="width:100px;">
+					<option id="gotodamselect" value="0" selected="true">#defaultsObj.trans("goto")#</option>
+					<cfloop query="qry_allhosts">
+						<option value="../#host_path#/dam">#ucase(host_name)#</option>
+					</cfloop>
+				</select>
+			</td>
+			<td nowrap="true" style="padding-left:5px;padding-right:30px;"><form name="f_lang">
+				<select name="app_lang" size=1 class="text" onChange="javascript:changelang('f_lang');">
+					<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
+					<cfset thelangs = #defaultsObj.getlangsadmin(thispath)#>
+					<cfloop query="thelangs">
+					<cfset thislang = replacenocase("#name#", ".xml", "", "ALL")>
+					<option value="#myself##xfa.switchlang#&thelang=#thislang#">#ucase(left(thislang,1))##mid(thislang,2,20)#</option>
+					</cfloop>
+				</select>
+			</td>
+			<td nowrap="true" style="padding-left:7px;"><a href="##" onClick="feedback_widget.show();">Feedback</a></td>
+			<td nowrap="true" style="padding-left:7px;"><a href="http://wiki.razuna.com" target="_blank">Documentation</a></td>
+			<td nowrap="true" style="padding-left:7px;"><a href="#myself#c.logoff">#defaultsObj.trans("logoff")#</a></td>
+		</tr>
 	</table>
 </div>
 </cfoutput>
@@ -72,7 +67,8 @@
 		// Select gotodam value
 		var gotodam = $('#gotodam :selected').val();
 		if (gotodam != 0){
-			window.open(gotodam);
+			window.open(gotodam, '_blank');
+			window.focus();
 			$('#gotodamselect').attr('selected','selected');
 		}
 	}

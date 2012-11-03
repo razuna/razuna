@@ -85,8 +85,6 @@
 </script>
 <!--- Dummy div --->
 <div id="loaddummy" style="display:none;"></div>
-<!--- Twitter --->
-<!--- <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script> --->
 </body>
 </html>
 </cfoutput>

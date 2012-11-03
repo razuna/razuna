@@ -28,15 +28,12 @@
 	<tr bgcolor="##FFFFFF">
 		<td>
 			<!--- Settings --->
-			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
+			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
-					<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_40"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/applications-system-4.png" alt="" width="24" height="24" border="0" align="left" style="padding-left:10px;"></td><td width="212" class="textbold" style="padding-left:5px;"><strong>#defaultsObj.trans("settings")#</strong></td></tr></table></td>
+					<td height="30" nowrap background="images/button_menu/bggrey.gif" id="divlink_40"><table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="27"><img src="images/button_menu/applications-system-4.png" alt="" width="24" height="24" border="0" align="left" style="padding-left:10px;"></td><td width="212" class="textbold" style="padding-left:5px;"><strong>System</strong></td></tr></table></td>
 				</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
-				<tr>
-					<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself#c.prefs');return false;">&raquo; #defaultsObj.trans("settings_host")#</a></td>
-				</tr>
 				<tr>
 					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.prefs_global_main');return false;">&raquo; #defaultsObj.trans("settings_global")#</a></td>
 				</tr>
@@ -74,6 +71,9 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table_border">
 				<tr>
 					<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself#c.hosts');return false;">&raquo; #defaultsObj.trans("host_menue")#</a></td>
+				</tr>
+				<tr>
+					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.prefs');return false;">&raquo; #defaultsObj.trans("settings_host")#</a></td>
 				</tr>
 			</table>
 		</td>

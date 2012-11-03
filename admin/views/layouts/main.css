@@ -207,6 +207,7 @@ th {
 	margin: 0px;
 	float: right;
 	display: inline;
+	padding-top: 10px;
 }
 .navrighttop select {
 	font-size: 11px;

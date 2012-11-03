@@ -24,17 +24,23 @@
 *
 --->
 <cfoutput>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
+		<tr>
+			<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;">These settings below are core settings for each tenant. More settings can be found in the tenant administration itself!</td>
+		</tr>
+	</table>
+	<br />
 	<!--- Host form --->
 	<cfinclude template="dsp_host_chooser_include.cfm">
 	<form name="form_settings" id="form_settings" method="post" action="#self#">
 		<input type="hidden" name="#theaction#" value="c.prefs_save">
 		<div id="tabs_prefs">
 			<ul>
-				<li><a href="##pglobal" onclick="savesettings();">#defaultsObj.trans("settings_global")#</a></li>
+				<li><a href="##pglobal" onclick="savesettings();">Mail Settings</a></li>
 				<li><a href="##pmeta" onclick="savesettings();loadcontent('pmeta','#myself#c.prefs_meta');">#defaultsObj.trans("header_title_meta")#</a></li>
-				<li><a href="##pdam" onclick="savesettings();loadcontent('pdam','#myself#c.prefs_dam');">#defaultsObj.trans("settings_intra")#</a></li>
-				<li><a href="##pimage" onclick="savesettings();loadcontent('pimage','#myself#c.prefs_image');">#defaultsObj.trans("image_settings")#</a></li>
-				<li><a href="##pvideo" onclick="savesettings();loadcontent('pvideo','#myself#c.prefs_video');">#defaultsObj.trans("video_settings_global")#</a></li>
+				<li><a href="##pdam" onclick="savesettings();loadcontent('pdam','#myself#c.prefs_dam');">Storage Location</a></li>
+				<!--- <li><a href="##pimage" onclick="savesettings();loadcontent('pimage','#myself#c.prefs_image');">#defaultsObj.trans("image_settings")#</a></li>
+				<li><a href="##pvideo" onclick="savesettings();loadcontent('pvideo','#myself#c.prefs_video');">#defaultsObj.trans("video_settings_global")#</a></li> --->
 				<!--- If Nirvanix enabled --->
 				<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 					<li><a href="##pstorage" onclick="savesettings();loadcontent('pstorage','#myself#c.prefs_storage');">Cloud Storage</a></li>
@@ -43,8 +49,8 @@
 			<div id="pglobal"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 			<div id="pmeta"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 			<div id="pdam"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
-			<div id="pimage"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
-			<div id="pvideo"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
+			<!--- <div id="pimage"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
+			<div id="pvideo"><img src="images/loading.gif" border="0" style="padding:10px;"></div> --->
 			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				<div id="pstorage"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 			</cfif>

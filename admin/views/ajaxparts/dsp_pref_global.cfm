@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 <table border="0" cellpadding="0" cellspacing="0" width="700" class="grid">
-	<tr>
+	<!--- <tr>
 	<th class="textbold" colspan="2">#defaultsObj.trans("settings_languages")# - <a href="##" onclick="loadcontent('pglobal','#myself#c.prefs_update_langs');">Update Languages</a></th>
 	</tr>
 	<cfloop query="qry_langs">
@@ -54,7 +54,7 @@
 	<option value="-"<cfif #prefs.set2_date_format_del# EQ "-"> selected</cfif>>-</option>
 	<option value=":"<cfif #prefs.set2_date_format_del# EQ ":"> selected</cfif>>:</option>
 	</select></td>
-	</tr>
+	</tr> --->
 	<tr>
 	<th class="textbold" colspan="2">#defaultsObj.trans("header_email_settings")#</th>
 	</tr>

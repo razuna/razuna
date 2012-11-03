@@ -25,10 +25,6 @@
 --->
 <cfoutput>
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
-		<!--- Could Storage header --->
-		<tr>
-			<th class="textbold" colspan="3">Storage #defaultsObj.trans("settings")#</th>
-		</tr>
 		<tr>
 			<td colspan="3">#defaultsObj.trans("global_storage_desc")#</td>
 		</tr>

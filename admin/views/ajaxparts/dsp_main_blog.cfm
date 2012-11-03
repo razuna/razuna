@@ -34,7 +34,7 @@
 	<cfelse>
 		<cfloop index="x" from="1" to="#arrayLen(blogss)#">
 			<tr>
-				<td style="padding-top:15px;"><a href="#blogss[x].link#" target="_blank">#blogss[x].title#</a></td>
+				<td><a href="#blogss[x].link#" target="_blank">#blogss[x].title#</a></td>
 			</tr>
 		</cfloop>
 	</cfif>

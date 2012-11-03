@@ -31,7 +31,7 @@
 		<!--- Get Lang ID --->
 		<cfinvoke component="global.cfc.defaults" method="xmllangid" thetransfile="#thispath#/newhost/hostfiles/dam/translations/#name#" returnvariable="lang_id">
 		<tr>
-			<td width="1%" nowrap="true"><input type="checkbox" name="langs_selected" value="#lang_id#_#upname#"<cfif lang_id EQ 1> checked</cfif></td>
+			<td width="1%" nowrap="true"><input type="checkbox" name="langs_selected" value="#lang_id#_#upname#"<cfif lang_id EQ 1> checked="checked"</cfif>></td>
 			<td width="100%">#upname#</td>
 		</tr>
 	</cfloop>

@@ -26,36 +26,24 @@
 <cfoutput>
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<!--- Path to assets but only if we are not on Oracle --->
-	<cfif application.razuna.thedatabase NEQ "oracle">
-		<tr>
-			<th colspan="2">#defaultsObj.trans("path_to_assets")#</th>
-		</tr>
-		<tr>
-			<td colspan="2">#defaultsObj.trans("path_to_assets_desc")#</td>
-		</tr>
-		<tr>
-			<td>#defaultsObj.trans("path_to_assets")#</td>
-			<td><input type="text" name="set2_path_to_assets" size="60" class="text" value="#prefs.set2_path_to_assets#"></td>
-		</tr>
+	<tr>
+		<th colspan="2">#defaultsObj.trans("path_to_assets")#</th>
+	</tr>
+	<tr>
+		<td colspan="2">#defaultsObj.trans("path_to_assets_desc")#</td>
+	</tr>
+	<tr>
+		<td>#defaultsObj.trans("path_to_assets")#</td>
+		<td><input type="text" name="set2_path_to_assets" size="60" class="text" value="#prefs.set2_path_to_assets#"></td>
+	</tr>
 		<!---
 <tr>
 			<td>#defaultsObj.trans("admin_prefs_asset_path_webroot")#</td>
 			<td valign="top"><input type="radio" name="set2_path_to_assets_webroot" value="t"<cfif prefs.set2_path_to_assets_webroot EQ "t"> checked="checked"</cfif>> #defaultsObj.trans("yes")# <input type="radio" name="set2_path_to_assets_webroot" value="f"<cfif prefs.set2_path_to_assets_webroot EQ "f"> checked="checked"</cfif>> #defaultsObj.trans("no")#</td>
 		</tr>
 --->
-	</cfif>
-	<!--- IntraNet Titles --->
-	<tr>
-	<th colspan="2" class="textbold">#defaultsObj.trans("header_title_intra")#</th>
-	</tr>
-	<cfloop query="qry_langs">
-		<tr>
-			<td nowrap>#defaultsObj.trans("title_in")# #lang_name#</td>
-			<td><input type="text" name="set_title_intra_#lang_id#" size="60" value="#settingsObj.thissetting("set_title_intra_#lang_id#")#"></td>
-		</tr>
-	</cfloop>
 	<!--- Logo for Intranet --->
-	<tr>
+	<!--- <tr>
 	<th colspan="2" class="textbold">#defaultsObj.trans("intranet_logo")#</th>
 	</tr>
 	<tr>
@@ -72,7 +60,7 @@
 	<tr>
 		<td valign="top"><a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');">Refresh</a><br /><a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo&remove=t');">Remove Logo</a></td>
 		<td><div id="loadlogo"></div></td>
-	</tr>
+	</tr> --->
 	<!--- Directories
 	<tr>
 	<th colspan="2">#defaultsObj.trans("directories")#</th>
@@ -128,7 +116,7 @@
 	</tr>
 	 --->
 	<!--- email settings for new registration from site --->
-	<tr>
+	<!--- <tr>
 	<th colspan="2" class="textbold">#defaultsObj.trans("intranet_new_registration")#</th>
 	</tr>
 	<tr>
@@ -142,9 +130,9 @@
 	<td>#defaultsObj.trans("intranet_new_registration_email_subject")#</td>
 	<td><input type="text" name="set2_intranet_reg_emails_sub" size="60" value="#prefs.set2_intranet_reg_emails_sub#" /></td>
 	</tr>
-	</table>
-	<!--- Load the Logo --->
+	</table> --->
+	<!--- Load the Logo
 	<script language="JavaScript" type="text/javascript">
 		loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');
-	</script>
+	</script> --->
 </cfoutput>

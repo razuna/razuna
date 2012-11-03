@@ -122,6 +122,9 @@
 										<td width="100%">Server ID</td>
 										<td width="1%" nowrap>#application.razuna.serverid#</td>
 									</tr>
+									<tr>
+										<td class="list" colspan="2"></td>
+									</tr>
 								</table>
 								<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
  									<cfset variables.mem = systemmemory()>
@@ -166,11 +169,9 @@
 						<div id="tabs_main_support">
 						<!-- the tabs -->
 						<ul class="tabs">
-							<li><a href="##raztools">Razuna Tools</a></li>
-							<li><a href="##support">Razuna</a></li>
-							<li><a href="##twitter" onclick="window.open('http://twitter.com/razunahq');">Twitter</a></li>
-							<li><a href="##facebook" onclick="window.open('http://facebook.com/razunahq');">Facebook</a></li>
-							<li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Razuna Blog</a></li>
+							<li><a href="##raztools">Add-Ons</a></li>
+							<li><a href="##support">Support</a></li>
+							<li><a href="##blog" onclick="loadcontent('blog','#myself#c.mainblog');">Blog</a></li>
 						</ul>
 						<!-- tab "panes" -->
 						<div class="pane" id="raztools">
@@ -226,10 +227,6 @@
 							</table>
 						</div>
 						<div class="pane" id="blog"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
-						<div class="pane" id="twitter"></div>
-						<div class="pane" id="facebook">
-							<!--- <div id="fb-root"></div> --->
-						</div>
 					</div>
 					</td>
 				</tr>

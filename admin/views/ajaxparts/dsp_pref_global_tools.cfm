@@ -32,6 +32,9 @@
 		<tr>
 			<td colspan="2">#defaultsObj.trans("tools_desc")#</td>
 		</tr>
+		<tr>
+			<td class="list" colspan="2"></td>
+		</tr>
 		<!--- ImageMagick --->
 		<tr>
 			<th class="textbold" colspan="3">#defaultsObj.trans("header_imagemagick")#</th>
@@ -43,6 +46,9 @@
 			<td>#defaultsObj.trans("imagemagick_path")#</td>
 			<td><input type="text" name="imagemagick" id="imagemagick" value="#thetools.imagemagick#" size="60" class="text" onkeyup="checkpath('imagemagick');">
 			<div id="checkimagemagick" style="display:none;"></div></td>
+		</tr>
+		<tr>
+			<td class="list" colspan="2"></td>
 		</tr>
 		<!--- FFmpeg Paths --->
 		<tr>
@@ -56,6 +62,9 @@
 			<td><input type="text" name="ffmpeg" id="ffmpeg" value="#thetools.ffmpeg#" size="60" class="text" onkeyup="checkpath('ffmpeg');">
 			<div id="checkffmpeg" style="display:none;"></div></td>
 		</tr>
+		<tr>
+			<td class="list" colspan="2"></td>
+		</tr>
 		<!--- Exiftool Path --->
 		<tr>
 			<th class="textbold" colspan="2">#defaultsObj.trans("header_exiftool")#</th>
@@ -68,6 +77,9 @@
 			<td><input type="text" name="exiftool" id="exiftool" value="#thetools.exiftool#" size="60" class="text" onkeyup="checkpath('exiftool');">
 			<div id="checkexiftool" style="display:none;"></div></td>
 		</tr>
+		<tr>
+			<td class="list" colspan="2"></td>
+		</tr>
 		<!--- DCRAW Paths --->
 		<tr>
 			<th class="textbold" colspan="2">#defaultsObj.trans("header_dcraw")# (optional)</th>
@@ -79,6 +91,9 @@
 			<td nowrap="true">#defaultsObj.trans("header_dcraw")#</td>
 			<td><input type="text" name="dcraw" id="dcraw" value="#thetools.dcraw#" size="60" class="text" onkeyup="checkpath('dcraw');">
 			<div id="checkdcraw" style="display:none;"></div></td>
+		</tr>
+		<tr>
+			<td class="list" colspan="2"></td>
 		</tr>
 		<!--- MP4Box Paths --->
 		<tr>

@@ -93,6 +93,9 @@
 					<td width="100%">Server ID</td>
 					<td width="1%" nowrap>#application.razuna.serverid#</td>
 				</tr>
+				<tr>
+					<td class="list" colspan="2"></td>
+				</tr>
 			</table>
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 					<cfset variables.mem = systemmemory()>

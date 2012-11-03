@@ -26,13 +26,13 @@
 <cfoutput>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
-			<th>#defaultsObj.trans("header_backup_restore")#</th>
-		</tr>
-		<tr>
 			<td>#defaultsObj.trans("header_backup_restore_desc")#</td>
 		</tr>
 		<tr>
 			<td style="background-color:yellow;font-weight:bold;">During a Backup or Restore operation your server will become unresponsive to any requests! Do these operation when no one is accessing your server.</td>
+		</tr>
+		<tr>
+			<td class="list"></td>
 		</tr>
 	</table>
 	<!--- Backup --->
@@ -60,6 +60,9 @@
 				<input type="button" name="backup" value="Save Schedule" class="button" onclick="doschedbackup();">
 				<div id="schedback_dummy"></div>
 			</td>
+		</tr>
+		<tr>
+			<td class="list"></td>
 		</tr>
 	</table>
 	<!--- Restore --->

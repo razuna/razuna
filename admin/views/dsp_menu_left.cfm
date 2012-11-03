@@ -24,27 +24,10 @@
 *
 --->
 <cfoutput>
-	<!--- <div>
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablepanel">
-			<tr>
-				<th colspan="2">#defaultsObj.trans("goto")#</th>
-			</tr>
-			<tr>
-				<td><img src="images/men_goto.png" border="0"></td>
-				<td valign="top"><a href="../#defaultsObj.hostpath("#application.razuna.datasource#")#/dam/" target="_blank"><span style="font-size:15px;font-weight:bold;">#defaultsObj.trans("intraextra")#</span></a><!--- <br /><br /><a href="../#defaultsObj.hostpath("#application.razuna.datasource#")#/web/" target="_blank"><span style="font-size:15px;font-weight:bold;">#defaultsObj.trans("website")#</span></a> ---></td>
-			</tr>
-		</table>
-	</div>
-	<br> --->
-	<div id="tabs_mainmenu">
-		<ul>
-			<li><a href="##">Settings</a></li>
-		</ul>
-		<div id="setup"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
-	</div>
-	
-<script language="JavaScript" type="text/javascript">
-	jqtabs("tabs_mainmenu");
-	loadcontent('setup','#myself#ajax.menu_settings');
-</script>
+	<div id="setup"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
+	<!--- JS --->
+	<script language="JavaScript" type="text/javascript">
+		// jqtabs("tabs_mainmenu");
+		loadcontent('setup','#myself#ajax.menu_settings');
+	</script>
 </cfoutput>

@@ -30,6 +30,16 @@
 	</tr>	
 	<!--- show meta tags for each language --->
 	<cfloop query="qry_langs">
+		<!--- IntraNet Titles --->
+		<tr>
+			<th colspan="2" class="textbold">#defaultsObj.trans("header_title_intra")#</th>
+		</tr>
+		<tr>
+			<td nowrap>#defaultsObj.trans("title_in")# #lang_name#</td>
+		</tr>
+		<tr>
+			<td><input type="text" name="set_title_intra_#lang_id#" size="80" value="#settingsObj.thissetting("set_title_intra_#lang_id#")#"></td>
+		</tr>	
 		<tr>
 			<td>#lang_name# - #defaultsObj.trans("meta_keywords")#</td>
 		</tr>

@@ -28,7 +28,7 @@
 		<transtext>We are sorry but we could not log you in. Try again please</transtext>
 	</transid>
 	<transid name="logoff">
-		<transtext>Log Out</transtext>
+		<transtext>Sign Out</transtext>
 	</transid>
 	<transid name="qa">
 		<transtext>Questions / Answers</transtext>
@@ -100,7 +100,7 @@
 		<transtext>List existing Projects</transtext>
 	</transid>
 	<transid name="settings_global">
-		<transtext>System Settings</transtext>
+		<transtext>General Configuration</transtext>
 	</transid>
 	<transid name="translations_global">
 		<transtext>Global Translations</transtext>

@@ -612,11 +612,6 @@
 		<set name="set2_create_imgfolders_where" value="0" overwrite="false" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_image()" returnvariable="prefs" />
-		<!-- CFC: Load the folder tree -->
-		<invoke object="myFusebox.getApplicationData().Folders" method="getTreeByCollection" returnvariable="qry_thefolders">
-			<argument name="id" value="#set2_create_imgfolders_where#" />
-			<argument name="ignoreCollections" value="true" />
-		</invoke>
 		<!-- Show -->
 		<do action="ajax.prefs_image" />
 	</fuseaction>
@@ -626,11 +621,6 @@
 		<set name="set2_create_vidfolders_where" value="0" overwrite="false" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="prefs_video()" returnvariable="prefs" />
-		<!-- CFC: Load the folder tree -->
-		<invoke object="myFusebox.getApplicationData().Folders" method="getTreeByCollection" returnvariable="qry_thefolders">
-			<argument name="id" value="#set2_create_vidfolders_where#" />
-			<argument name="ignoreCollections" value="true" />
-		</invoke>
 		<!-- Show -->
 		<do action="ajax.prefs_video" />
 	</fuseaction>
