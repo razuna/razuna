@@ -386,8 +386,7 @@
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cfif>
 					<cfcatch type="any">
-						<cfset consoleoutput(true)>
-						<cfset console(cfcatch)>
+						
 					</cfcatch>
 				</cftry>
 			</cfif>
