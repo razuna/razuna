@@ -1911,27 +1911,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfif isAnimGIF>
 			<cfset QuerySetCell(arguments.thestruct.qrysettings, "set2_img_format", "gif", 1)>
 		</cfif>
-		<!--- Add the filename to the temp table so we can remove these files in one go later on --->
-		<cftransaction>
-			<cfquery datasource="#variables.dsn#">
-			INSERT INTO #session.hostdbprefix#temp
-			(tmp_token, tmp_filename, host_id)
-			VALUES (
-			<cfqueryparam value="#arguments.thestruct.tempid#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			)
-			</cfquery>
-			<cfquery datasource="#variables.dsn#">
-			INSERT INTO #session.hostdbprefix#temp
-			(tmp_token, tmp_filename, host_id)
-			VALUES (
-			<cfqueryparam value="#arguments.thestruct.tempid#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			)
-			</cfquery>
-		</cftransaction>
 		<!--- <cfset resizeImagett = createuuid()> --->
 		<cfset arguments.thestruct.theplaceholderpic = theplaceholderpic>
 		<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
