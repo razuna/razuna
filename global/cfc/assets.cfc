@@ -1246,7 +1246,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfthread>
 			<!--- Wait for thread to finish --->
-			<cfthread action="join" name="#ttpdf#" />						
+			<cfthread action="join" name="#ttpdf#" />					
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<cffile action="delete" file="#arguments.thestruct.thesht#">
