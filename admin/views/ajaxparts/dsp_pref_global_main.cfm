@@ -40,8 +40,6 @@
 			<li><a href="##tools" onclick="savesettings();loadcontent('tools','#myself#c.prefs_global_tools');">Tools</a></li>
 			<!--- Rendering Farm --->
 			<li><a href="##renf" onclick="savesettings();loadcontent('renf','#myself#c.prefs_renf');">#defaultsObj.trans("header_rf")#</a></li>
-			<!--- White Labeling --->
-			<li><a href="##wl" onclick="savesettings();loadcontent('wl','#myself#c.pref_global_wl');">#defaultsObj.trans("header_wl")#</a></li>
 			<!--- System Info --->
 			<li><a href="##systeminfo">System Information</a></li>
 		</ul>
@@ -57,8 +55,6 @@
 		<div id="tools"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 		<!--- Rendering Farm --->
 		<div id="renf"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
-		<!--- White Labeling --->
-		<div id="wl"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 		<!--- System Info --->
 		<div id="systeminfo">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
