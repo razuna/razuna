@@ -104,7 +104,7 @@
 			</div>
 			<!--- CSS --->
 			<div id="wl_css">
-				<textarea name="thecss" style="width:700px;height:500px;"><cfinclude template="#dynpath#/global/host/dam/views/layouts/main.css"></textarea>
+				<textarea name="thecss" style="width:700px;height:500px;"><cfinclude template="../../../global/host/dam/views/layouts/main.css"></textarea>
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
 				<br /><br />
