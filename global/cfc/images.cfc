@@ -58,7 +58,8 @@
 	<cfargument name="rowmaxpage" type="numeric" required="false" default="0">
 	<cfargument name="thestruct" type="struct" required="false" default="">
 	<!--- init local vars --->
-	<cfset qLocal = 0>
+	<cfset var qLocal = 0>
+	<cfset var thefolderlist = 0>
 	<!--- Set pages var --->
 	<cfparam name="arguments.thestruct.pages" default="">
 	<cfparam name="arguments.thestruct.thisview" default="">
