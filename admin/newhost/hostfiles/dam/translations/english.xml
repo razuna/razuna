@@ -1216,7 +1216,7 @@
 		<transtext>Select below assets</transtext>
 	</transid>
 	<transid name="tooltip_select_desc">
-		<transtext>Click here to select all assets on this page.</transtext>
+		<transtext>Click to select all assets in this folder</transtext>
 	</transid>
 	<transid name="upload_success_email">
 		<transtext><![CDATA[The asset is being processed. You will get notified by email. You can continue working in the meantime.]]></transtext>
@@ -1240,7 +1240,7 @@
 		<transtext>Include assets from subfolders</transtext>
 	</transid>
 	<transid name="tooltip_subfolders_desc">
-		<transtext>Click here to include or exclude assets from sub-folders in this view.</transtext>
+		<transtext>Click to include or exclude assets from sub-folders in this view.</transtext>
 	</transid>
 	<transid name="pdf_window_title">
 		<transtext>PDF Settings</transtext>
@@ -1273,7 +1273,7 @@
 		<transtext>Print details</transtext>
 	</transid>
 	<transid name="tooltip_print_desc">
-		<transtext>Click here to create a PDF from your assets. A wizard will guide you to creating the PDF for you.</transtext>
+		<transtext>Click to create a PDF from your assets. A wizard will guide you to creating the PDF for you.</transtext>
 	</transid>
 	<transid name="pdf_format">
 		<transtext>Format</transtext>
@@ -1825,7 +1825,7 @@
 		<transtext><![CDATA[Export metadata from all assets in this folder or only from the selected assets (if you want to export only from selected assets then use the select drop-down menu).]]></transtext>
 	</transid>
 	<transid name="import_from_folder">
-		<transtext><![CDATA[Click here to browse your folders]]></transtext>
+		<transtext><![CDATA[Click to browse your folders]]></transtext>
 	</transid>
 	<transid name="import_from_folder_custom">
 		<transtext><![CDATA[or enter the absolute path to a folder on the server below to import from a custom folder]]></transtext>
@@ -2324,5 +2324,11 @@
 	</transid>
 	<transid name="disabled">
 		<transtext>Disabled</transtext>
+	</transid>
+	<transid name="login_image_header">
+		<transtext>Login Image</transtext>
+	</transid>
+	<transid name="login_image_desc">
+		<transtext><![CDATA[You have the option to replace the image that is being presented on the login page. Please upload the image with the uploader below. NOTE: The image should be at least 1920 pixel width in order to fit all kind of resolutions.]]></transtext>
 	</transid>
 </translations>

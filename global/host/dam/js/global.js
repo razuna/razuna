@@ -225,6 +225,9 @@ function aspectwidth(inp,out,theform){
 }
 // Enable folderselection in list
 function enablesub(myform) {
+	// Check if there are any files selected. If so ignore below
+	var anyselect = $('div').hasClass('ui-selected'); 
+	if (!anyselect){
 	// Check state of selection box
     var isclosed = $("#folderselection" + myform).is(':hidden');
     // get how many are selected
@@ -233,17 +236,22 @@ function enablesub(myform) {
     if (n == 1 && isclosed) {
 		$("#folderselection" + myform).slideToggle('slow');
 		$("#folderselectionb" + myform).slideToggle('slow');
-		
 	}
-	if (n == 0) {
+	if (n == 0 && !isclosed) {
 		$("#folderselection" + myform).slideToggle('slow');
 		$("#folderselectionb" + myform).slideToggle('slow');
+		// Store IDs
+		storeids(myform);
 	}
-	// Hide select all status
-	$("#selectstore" + myform).css("display","none");
-	$("#selectstoreb" + myform).css("display","none");
-	// Store IDs
-	storeids(myform);
+	// if selection is here
+	if (n != 0){
+		// Hide select all status
+		// $("#selectstore" + myform).css("display","none");
+		// $("#selectstoreb" + myform).css("display","none");
+		// Store IDs
+		storeids(myform);
+	}
+	}
 }
 // Enable folderselection in list
 function enablefromselectable(myform) {
@@ -475,45 +483,50 @@ function storeids(theform){
 // Check all checkboxes
 function CheckAll(myform,folderid,thediv) {
 	// Set var
-	var ischk = false;
+	var ischk = true;
 	// Enable select all text again. cloud be set hidden from single selection
 	// Hide select all status
 	$("#selectstore" + myform).css("display","");
 	$("#selectstoreb" + myform).css("display","");
 	// Loop over checkboxes and check/uncheck and set var
 	$('#' + myform + ' :checkbox').each( function() {
-		if(this.checked){
-			$(this).attr('checked', false);
-			ischk = false;
-		}
-		else{
+		// if(this.checked){
+		// 	$(this).attr('checked', false);
+		// 	ischk = false;
+		// }
+		// else{
 			$(this).attr('checked', true);
-			ischk = true;
-		}
+			// ischk = true;
+		// }
 	})
 	// Depending on the var set or unset
-	if(ischk){
+	if($("#folderselection" + myform).is(':hidden')){
 		$("#folderselection" + myform).slideToggle('slow');
 		$("#folderselectionb" + myform).slideToggle('slow');
 		// $('#select' + thediv).slideToggle('slow');
 		// $('#non' + thediv).slideToggle('slow');
-		// Decide if this is from the search
-		if(folderid != 'x'){
-			$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid );
-		}
-		else{
-			// Get the ids from the hidden field
-			var theids = $('#searchlistids').val();
-			$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids })
-		}
+	}
+	// Decide if this is from the search
+	if(folderid != 'x'){
+		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid );
 	}
 	else{
-		$("#folderselection" + myform).slideToggle('slow');
-		$("#folderselectionb" + myform).slideToggle('slow');
-		// $('#select' + thediv).slideToggle('slow');
-		// $('#non' + thediv).slideToggle('slow');
-		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=0');
+		// Get the ids from the hidden field
+		var theids = $('#searchlistids').val();
+		$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: theids })
 	}
+}
+
+function CheckAllNot(myform){
+	// Loop over checkboxes and check/uncheck and set var
+	$('#' + myform + ' :checkbox').each( function() {
+		$(this).attr('checked', false);
+	})
+	// Hide bar
+	$("#folderselection" + myform).slideToggle('slow');
+	$("#folderselectionb" + myform).slideToggle('slow');
+	// Get the ids from the hidden field
+	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 })
 }
 
 // Site conversion

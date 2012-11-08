@@ -31,7 +31,7 @@
 		<td align="left" width="1%" nowrap="true">
 			<div id="tooltip" style="float:left;width:300px;">
 				<!--- Select --->
-				<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
+				<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 					<div style="float:left;">
 						<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
 					</div>
@@ -113,7 +113,7 @@
 <div id="folderselection<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" class="actiondropdown">
 	<!--- Select all link --->
 	<div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#">
-		#qry_filecount.thetotal# files select. <a href="##" onclick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');">Select none</a>
+		#qry_filecount.thetotal# files select. <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">Select none</a>
 	</div>
 	<!--- Actions with selection icons --->
 	<cfif cs.show_bottom_part>

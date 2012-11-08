@@ -2322,4 +2322,10 @@
 	<transid name="disabled">
 		<transtext>Disabled</transtext>
 	</transid>
+	<transid name="login_image_header">
+		<transtext>Login Image</transtext>
+	</transid>
+	<transid name="login_image_desc">
+		<transtext><![CDATA[You have the option to replace the image that is being presented on the login page. Please upload the image with the uploader below. NOTE: The image should be at least 1920 pixel width in order to fit all kind of resolutions.]]></transtext>
+	</transid>
 </translations>
