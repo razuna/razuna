@@ -150,32 +150,8 @@
 		</table>
 	</form>
 	<br />
-	<!--- Upload Logo --->
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-		<tr>
-			<th>#myFusebox.getApplicationData().defaults.trans("logo_header")#</th>
-		</tr>
-		<tr>
-			<td>#myFusebox.getApplicationData().defaults.trans("logo_desc")#</td>
-		</tr>
-		<tr>
-			<td>
-				<div id="iframe">
-					<iframe src="#myself#ajax.isp_settings_upload" frameborder="false" scrolling="false" style="border:0px;width:550px;height:50px;"></iframe>
-		       	</div>
-			</td>
-		</tr>
-		<tr>
-			<td><div id="loadlogo"></div></td>
-		</tr>
-		<tr>
-			<td valign="top"><a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');">Refresh</a> | <a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo&remove=t');">Remove Logo</a></td>
-		</tr>
-	</table>
-	<!--- Load Logo --->
+	<!--- JS --->
 	<script language="JavaScript" type="text/javascript">
-		// Load Logo
-		loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');
 		// Submit Form
 		$("##form_admin_settings").submit(function(e){
 			// Get values

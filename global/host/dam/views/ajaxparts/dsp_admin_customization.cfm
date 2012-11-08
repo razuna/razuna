@@ -34,6 +34,31 @@
 		<div id="status_custom_1" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" /></div>
 		<div style="clear:both;"></div>
 		<div><hr /></div>
+		<!--- Upload Logo --->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+			<tr>
+				<th>#myFusebox.getApplicationData().defaults.trans("logo_header")#</th>
+			</tr>
+			<tr>
+				<td>#myFusebox.getApplicationData().defaults.trans("logo_desc")#</td>
+			</tr>
+			<tr>
+				<td>
+					<div id="iframe">
+						<iframe src="#myself#ajax.isp_settings_upload" frameborder="false" scrolling="false" style="border:0px;width:550px;height:50px;"></iframe>
+			       	</div>
+				</td>
+			</tr>
+			<tr>
+				<td><div id="loadlogo"></div></td>
+			</tr>
+			<tr>
+				<td valign="top"><a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo&remove=t');">Remove Logo</a></td>
+			</tr>
+			<tr class="list">
+				<td><br /></td>
+			</tr>
+		</table>
 		<!--- User --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
@@ -483,8 +508,11 @@
 		</form>
 		<div style="clear:both;"></div>
 		<div id="dummy_maintenance"></div>
-		<!--- Load Progress --->
+		<!--- JS --->
 		<script type="text/javascript">
+			// Load Logo
+			loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');
+			// Submit
 			$("##form_admin_custom").submit(function(e){
 				// Get values
 				var url = formaction("form_admin_custom");
