@@ -174,8 +174,8 @@
 		<cfargument name="pluginname" type="string" required="true" />
 		<!--- Dedect if there is /razuna in the path --->
 		<cfset var thepath = expandPath("../..")>
-		<cfset var thepath = replaceNoCase(thepath, "/razuna", "", "one")>
-		<cfset var plugID = getProfileString("#thepath#global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
+		<cfset var thepath = replaceNoCase(thepath, "razuna", "", "one")>
+		<cfset var plugID = getProfileString("#thepath#razuna/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
 		<cfreturn plugID />
 	</cffunction>
 
