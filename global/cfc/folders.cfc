@@ -2264,6 +2264,7 @@
 					AND so.folder_id_r = i.folder_id_r
 					AND so.asset_type = 'img'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+					GROUP BY so.asset_format
 				) AS theformat,
 				lower(i.img_filename) filename_forsort,
 				i.img_size size,
@@ -2285,6 +2286,7 @@
 					AND so.folder_id_r = v.folder_id_r
 					AND so.asset_type = 'vid'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+					GROUP BY so.asset_format
 				) AS theformat,
 				lower(v.vid_filename) filename_forsort,
 				v.vid_size size,
@@ -2316,6 +2318,7 @@
 					AND so.folder_id_r = a.folder_id_r
 					AND so.asset_type = 'aud'
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+					GROUP BY so.asset_format
 				) AS theformat,
 				lower(a.aud_name) filename_forsort,
 				a.aud_size size,
@@ -2348,6 +2351,7 @@
 				AND so.folder_id_r = i.folder_id_r
 				AND so.asset_type = 'img'
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+				GROUP BY so.asset_format
 			) AS theformat,
 			lower(i.img_filename) filename_forsort,
 			i.img_size size,
@@ -2369,6 +2373,7 @@
 				AND so.folder_id_r = v.folder_id_r
 				AND so.asset_type = 'vid'
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+				GROUP BY so.asset_format
 			) AS theformat,
 			lower(v.vid_filename) filename_forsort,
 			v.vid_size size,
@@ -2390,6 +2395,7 @@
 				AND so.folder_id_r = a.folder_id_r
 				AND so.asset_type = 'aud'
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+				GROUP BY so.asset_format
 			) AS theformat,
 			lower(a.aud_name) filename_forsort,
 			a.aud_size size,
@@ -2432,6 +2438,7 @@
 			AND so.folder_id_r = i.folder_id_r
 			AND so.asset_type = 'img'
 			AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+			GROUP BY so.asset_format
 		) AS theformat,
 		lower(i.img_filename) filename_forsort,
 		i.img_size size,
@@ -2463,6 +2470,7 @@
 			AND so.folder_id_r = v.folder_id_r
 			AND so.asset_type = 'vid'
 			AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+			GROUP BY so.asset_format
 		) AS theformat,
 		lower(v.vid_filename) filename_forsort,
 		v.vid_size size,
@@ -2494,6 +2502,7 @@
 			AND so.folder_id_r = a.folder_id_r
 			AND so.asset_type = 'aud'
 			AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+			GROUP BY so.asset_format
 		) AS theformat,
 		lower(a.aud_name) filename_forsort,
 		a.aud_size size,
