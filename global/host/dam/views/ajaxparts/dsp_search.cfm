@@ -41,7 +41,7 @@
 			<input type="hidden" name="listaudid" id="s_listaudid" value="#attributes.listaudid#">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
 				<tr>
-					<th colspan="6">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
+					<th colspan="4">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
 				</tr>
 				<tr>
 					<td valign="top">
@@ -83,7 +83,12 @@
 						All Metadata
 						<br /><input type="text" name="rawmetadata" id="s_metadata" style="width:190px;" class="textbold" value="#attributes.metadata#">
 					</td>
-					<td nowrap="nowrap" valign="top">
+				</tr>
+				<tr>
+					<td style="padding-top:0;margin-top:0;">
+						<button class="awesome big green">Search</button>
+					</td>
+					<td nowrap="nowrap" valign="top" style="padding-top:0;margin-top:0;">
 						#myFusebox.getApplicationData().defaults.trans("search_for_type")#
 						<br />
 						<select name="thetype" id="s_type">
@@ -93,25 +98,25 @@
 							<option value="vid"<cfif attributes.thetype EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</option>
 							<option value="aud"<cfif attributes.thetype EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</option>
 						</select>
-						<br>
+					</td>
+					<td nowrap="nowrap" valign="top" style="padding-top:0;margin-top:0;">
 						#myFusebox.getApplicationData().defaults.trans("date_created")#
 						<br />
 						<cfset lastyear = #year(now())# - 10>
 						<cfset newyear = #year(now())# + 3>
 						<select name="on_day" id="s_on_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#"<cfif attributes.on_day EQ theday> selected="true"</cfif>>#theday#</option></cfloop></select> <select name="on_month" id="s_on_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#"<cfif attributes.on_month EQ themonth> selected="true"</cfif>>#themonth#</option></cfloop></select> <select name="on_year" id="s_on_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#"<cfif attributes.on_year EQ theyear> selected="true"</cfif>>#theyear#</option></cfloop></select> <a href="##" onclick="settoday('form_searchsearch');">#myFusebox.getApplicationData().defaults.trans("today")#</a>
-						<br>
+					</td>
+					<td nowrap="nowrap" valign="top" style="padding-top:0;margin-top:0;">
 						And/Or
 						<br /><select name="andor" id="andor">
 							<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>AND</option>
 							<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>OR</option>
 						</select>
 					</td>
-					<td valign="top">
-						<button class="awesome big green">Search</button>
-						<!--- <input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"> --->
-					</td>
 				</tr>
 				
+
+
 				<div style="display:none;">
 					<cfloop query="qry_cf_fields">
 						<cfset cfid = replace(cf_id,"-","","all")>
