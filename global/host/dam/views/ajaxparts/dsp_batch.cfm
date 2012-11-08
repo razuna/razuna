@@ -117,7 +117,7 @@
 			<!--- <div id="batch_custom"></div> --->
 		</div>
 		<!--- Submit Button --->
-		<div style="float:right;padding:10px;">New values will <input type="radio" name="batch_replace" value="true" checked="checked" /> replace or <input type="radio" name="batch_replace" value="false" /> append to excisting records. <input type="submit" name="submit" value="Batch records now" class="button"></div>
+		<div style="float:right;padding:10px;">New values will <input type="radio" name="batch_replace" value="true" /> replace or <input type="radio" name="batch_replace" value="false" checked="checked" /> append to existing records. <input type="submit" name="submit" value="Batch records now" class="button"></div>
 		<div id="updatebatch" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	</form>
 	<!--- Activate the Tabs --->
