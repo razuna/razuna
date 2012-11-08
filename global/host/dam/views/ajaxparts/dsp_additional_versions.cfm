@@ -106,6 +106,13 @@
 			}
 			else {
 				loadcontent('moreversions','#myself#c.adi_versions_add&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#&av_link_title=' + escape(t) + '&av_link_url=' + escape(u));
+				<cfif attributes.type EQ "img">
+					loadren();
+				<cfelseif attributes.type EQ "vid">
+					loadrenvid();
+				<cfelseif attributes.type EQ "aud">
+					loadrenaud();
+				</cfif>
 			}
 		}
 	</script>
