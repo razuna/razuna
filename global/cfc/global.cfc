@@ -647,14 +647,15 @@ Comment:<br>
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.av_link" default="1">
-		<!--- New id --->
-		<!--- <cfset var newid = createuuid("")> --->
+		<cfparam name="arguments.thestruct.thesize" default="0">
+		<cfparam name="arguments.thestruct.thewidth" default="0">
+		<cfparam name="arguments.thestruct.theheight" default="0">
 		<!--- Save --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#additional_versions
 		(av_id, av_link_title, av_link_url, asset_id_r, folder_id_r, host_id, av_type, av_link, thesize, thewidth, theheight)
 		VALUES(
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid("")#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link_title#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.av_link_url#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
