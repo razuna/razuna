@@ -60,7 +60,7 @@
 					</tr>
 					<tr>
 						<td></td>
-						<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
+						<td><input type="submit" name="submitsearch" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 					</tr>
 				</table>
 			</form>
@@ -146,7 +146,7 @@
 				
 				<tr>
 					<td></td>
-					<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
+					<td><input type="submit" name="submitsearchdoc" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 				</tr>
 			</table>
 			</form>
@@ -327,7 +327,7 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
+					<td><input type="submit" name="submitsearchimg" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 				</tr>
 			</table>
 			</form>
@@ -356,7 +356,7 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
+					<td><input type="submit" name="submitsearchvid" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 				</tr>
 			</table>
 			</form>
@@ -385,7 +385,7 @@
 				</tr>
 				<tr>
 					<td></td>
-					<td><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
+					<td><input type="submit" name="submitsearchaud" value="#myFusebox.getApplicationData().defaults.trans("button_find")#" class="button"></td>
 				</tr>
 			</table>
 			</form>
