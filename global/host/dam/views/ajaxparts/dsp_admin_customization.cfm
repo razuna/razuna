@@ -45,7 +45,7 @@
 			<tr>
 				<td>
 					<div id="iframe">
-						<iframe src="#myself#ajax.isp_settings_upload" frameborder="false" scrolling="false" style="border:0px;width:550px;height:50px;"></iframe>
+						<iframe src="#myself#ajax.isp_settings_upload" frameborder="false" scrolling="false" style="border:0px;width:550px;height:70px;"></iframe>
 			       	</div>
 				</td>
 			</tr>
@@ -118,7 +118,7 @@
 			</tr>
 		</table>
 		<!--- General --->
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+		<!--- <table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<th>#myFusebox.getApplicationData().defaults.trans("header_customization_general")#</th>
 			</tr>
@@ -164,7 +164,7 @@
 					<br />
 				</td>
 			</tr>
-		</table>
+		</table> --->
 		<!--- Explorer --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
