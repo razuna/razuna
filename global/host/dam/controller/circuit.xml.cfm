@@ -4382,7 +4382,7 @@
 	<fuseaction name="prefs_imgupload">
 		<set name="attributes.uploadnow" value="F" overwrite="false" />
 		<!-- CFC: Upload file -->
-		<if condition="#attributes.uploadnow# EQ 'T'">
+		<if condition="attributes.uploadnow EQ 'T'">
 			<true>
 				<!-- CFC: upload logo -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="upload(attributes)" returnvariable="result" />

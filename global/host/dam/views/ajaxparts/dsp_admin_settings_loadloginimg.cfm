@@ -23,13 +23,18 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfif structkeyexists(url,"remove") AND directoryexists("#ExpandPath("../..")#/global/host/logo/#session.hostid#")>
-	<cfdirectory action="delete" directory="#ExpandPath("../..")#/global/host/logo/#session.hostid#" recurse="true">
+<cfif structkeyexists(url,"remove") AND directoryexists("#ExpandPath("../..")#/global/host/login/#session.hostid#")>
+	<cfdirectory action="delete" directory="#ExpandPath("../..")#/global/host/login/#session.hostid#" recurse="true">
 </cfif>
 <cfoutput>
-	<cfif directoryexists("#ExpandPath("../..")#global/host/logo/#session.hostid#") AND fileexists("#ExpandPath("../..")#global/host/logo/#session.hostid#/logo.jpg")>
-		<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" width="200" height="29" border="0">
+	<cfif directoryexists("#ExpandPath("../..")#global/host/login/#session.hostid#")>
+		<!--- Get file in directory --->
+		<cfdirectory action="list" directory="#ExpandPath("../..")#global/host/login/#session.hostid#" listinfo="name" type="file" name="theimg" />
+		<!--- If not empty --->
+		<cfif theimg.recordcount NEQ 0>
+			<img src="#dynpath#/global/host/login/#session.hostid#/#theimg.name#" width="300" border="0" style="padding:0px 0px 10px 0px;" />
+		</cfif>
 	<cfelse>
-		<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0">
+		<img src="#dynpath#/global/host/dam/images/pimsourcebg.jpg" width="300" border="0" style="padding:0px 0px 10px 0px;">
 	</cfif>
 </cfoutput>

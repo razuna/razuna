@@ -49,10 +49,16 @@
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/login.min.js?_v=#attributes.cachetag#"></script>
 <cfif jr_enable EQ "true"><cfinclude template="../../js/janrain.cfm" runonce="true"></cfif>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
+<cfif directoryExists("#ExpandPath("../..")#global/host/login/#session.hostid#")><cfdirectory action="list" directory="#ExpandPath("../..")#global/host/login/#session.hostid#" listinfo="name" type="file" name="theimg" /><cfelse><cfset theimg.recordcount=0></cfif>
 <style>
 body{
-  /*background-image: url(../../global/host/dam/images/login_bg.jpg);*/
-  background-image: url(../../global/host/dam/images/pimsourcebg.jpg);
+<cfif theimg.recordcount EQ 0>
+  background-image: url('../../global/host/dam/images/pimsourcebg.jpg');
+<cfelse>
+  background-image: url('../../global/host/login/#session.hostid#/#theimg.name#');
+</cfif>
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 ##outer{
   background-color: transparent;

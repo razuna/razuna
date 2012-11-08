@@ -35,10 +35,15 @@
 <cfinput type="hidden" name="thepathup" value="#ExpandPath("../../")#">
 <cfinput type="hidden" name="uploadnow" value="T">
 <cfinput type="hidden" name="thefield" value="thefile">
-<cfinput size="50" type="file" name="thefile" validate="regular_expression" pattern="logo.jpg" validateat="onSubmit" required="true" message="Name your file logo.jpg!" />
+<cfif !structKeyExists(attributes,"loginimg")>
+	<cfinput size="50" type="file" name="thefile" validate="regular_expression" pattern="logo.jpg" validateat="onSubmit" required="true" message="Name your file logo.jpg!" />
+<cfelse>
+	<cfinput type="hidden" name="loginimg" value="true">
+	<cfinput size="50" type="file" name="thefile" validate="regular_expression" pattern="[*.jpg|*.gif|*.png]" validateat="onSubmit" required="true" message="Only jpg, gif and png formats please!" />
+</cfif>
 <cfinput type="submit" name="save" value="Upload" class="button"> 
 </cfform>
-<cfif structkeyexists(form,"fieldnames")>Logo is uploaded. Please click the refresh link below.</cfif>
+<cfif structkeyexists(form,"fieldnames")>Image uploaded successfully. Please click on refresh.</cfif>
 </cfoutput>
 </body>
 </html>

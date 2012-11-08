@@ -37,26 +37,45 @@
 		<!--- Upload Logo --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
-				<th>#myFusebox.getApplicationData().defaults.trans("logo_header")#</th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("logo_header")#</th>
 			</tr>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("logo_desc")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("logo_desc")#</td>
 			</tr>
-			<tr>
-				<td>
-					<div id="iframe">
+			<tr class="list">
+				<td valign="top">
+					<div id="iframe" valign="top">
 						<iframe src="#myself#ajax.isp_settings_upload" frameborder="false" scrolling="false" style="border:0px;width:550px;height:70px;"></iframe>
 			       	</div>
 				</td>
+				<td valign="top">
+					<div id="loadlogo"></div>
+				</td>
+				<td valign="top" nowrap="nowrap">
+					<a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo&remove=t');">Remove</a>
+				</td>
+			</tr>
+		</table>
+		<!--- Upload Login Image --->
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+			<tr>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("login_image_header")#</th>
 			</tr>
 			<tr>
-				<td><div id="loadlogo"></div></td>
-			</tr>
-			<tr>
-				<td valign="top"><a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo&remove=t');">Remove Logo</a></td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("login_image_desc")#</td>
 			</tr>
 			<tr class="list">
-				<td><br /></td>
+				<td valign="top">
+					<div id="iframeimg">
+						<iframe src="#myself#ajax.isp_settings_upload&loginimg=true" frameborder="false" scrolling="false" style="border:0px;width:550px;height:70px;"></iframe>
+			       	</div>
+				</td>
+				<td valign="top">
+					<div id="loadloginimage"></div>
+				</td>
+				<td valign="top" nowrap="nowrap">
+					<a href="##" onclick="loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg&remove=t');">Remove</a>
+				</td>
 			</tr>
 		</table>
 		<!--- User --->
@@ -512,6 +531,8 @@
 		<script type="text/javascript">
 			// Load Logo
 			loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');
+			// Load Login Image
+			loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg');
 			// Submit
 			$("##form_admin_custom").submit(function(e){
 				// Get values

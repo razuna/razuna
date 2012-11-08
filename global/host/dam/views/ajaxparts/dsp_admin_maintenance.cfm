@@ -29,7 +29,6 @@
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
 		<!--- Re-Index --->
-		<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box-dotted">During a rebuild of the search index or while conducting a Backup operation your server might become unresponsive to any requests! Do these operation when no one is accessing your server.</div>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</th>
@@ -37,6 +36,8 @@
 			<tr class="list">
 				<td>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_desc")#
 				<br /><br />
+				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box">During a rebuild of the search index or while conducting a Backup operation your server might become unresponsive to any requests! Do these operation when no one is accessing your server.</div>
+				<br />
 				<div id="thea"><a href="##" onclick="doreindexassets();">#myFusebox.getApplicationData().defaults.trans("admin_maintenance_do")#</a></div>
 				<br />
 				</td>

@@ -872,38 +872,30 @@
 <!--- FUNCTION: UPLOAD --->
 <cffunction hint="Upload" name="upload" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
+	<!--- Logo or loginimg --->
+	<cfif !arguments.thestruct.loginimg>
+		<cfset var theimgpath = "logo">
+	<cfelse>
+		<cfset var theimgpath = "login">
+		<!--- just remove any previous directory (like this we prevent having more the one image) --->
+		<cftry>
+			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" recurse="true" />
+			<cfcatch type="any"></cfcatch>
+		</cftry>
+	</cfif>
 	<!--- Create directory if not there already to hold this logo --->
 	<cftry>
-		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/logo/#session.hostid#" mode="775">
+		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" mode="775">
 		<cfcatch type="any"></cfcatch>
 	</cftry>
 	<!---  Upload file --->
-	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/logo/#session.hostid#" result="result" nameconflict="overwrite" mode="775">
-	<!--- 
-	<!--- Get the filename --->
-	<cfset thefilename = rereplacenocase("#result.serverFileName#","[^A-Za-z0-9]+","_","ALL")>	
-	<!--- Re-add the extension to the name --->
-	<cfif #result.serverFileExt# NEQ "">
-		<cfset thefilename = "#thefilename#.#result.serverFileExt#">
-	</cfif>
-	
-	
-	<!--- Rename the file --->
-	<cffile action="rename" source="#arguments.thestruct.thepath#/incoming/#result.ServerFile#" destination="#arguments.thestruct.thepathup#global/host/logo/#session.hostid#/#thefilename#"> --->
-	<!--- Run the SP: IMPORT_IMAGE
-	<CFSTOREDPROC PROCEDURE="#session.theoraschema#.import_intranet_logo" DATASOURCE="#application.razuna.datasource#">
-		<CFPROCPARAM VALUE="#application.razuna.setid#" CFSQLTYPE="CF_SQL_NUMERIC" type="in">
-		<CFPROCPARAM VALUE="#result.serverfile#" CFSQLTYPE="cf_sql_varchar" type="in">
-		<CFPROCPARAM VALUE="#session.hostdbprefix#SETTINGS_2" CFSQLTYPE="cf_sql_varchar" type="in">
-		<CFPROCPARAM VALUE="#arguments.thestruct.thefield#" CFSQLTYPE="cf_sql_varchar" type="in">
-		<CFPROCPARAM VALUE="#arguments.thestruct.theurl#" CFSQLTYPE="cf_sql_varchar" type="in">
-	</CFSTOREDPROC> --->
+	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" result="result" nameconflict="overwrite" mode="775">
 	<!--- Set variables that show the file in the GUI --->
-	<cfset this.thefilename = #result.serverFileName#>
+	<cfset this.thefilename = result.serverFileName>
+	<!--- Get Size --->
 	<cfinvoke component="global" method="converttomb" thesize="#result.filesize#" returnvariable="thesize">
-	<cfset this.thesize = #thesize#>
-	<!--- Remove the file in the incoming dir
-	<cffile action="delete" file="#arguments.thestruct.thepath#/incoming/#result.serverfile#"> --->
+	<cfset this.thesize = thesize>
+	<!--- Return --->
 	<cfreturn this />
 </cffunction>
 
