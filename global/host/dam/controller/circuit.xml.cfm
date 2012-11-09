@@ -1087,6 +1087,8 @@
 		<set name="attributes.issearch" value="false" overwrite="false" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -6123,6 +6125,8 @@
 		<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
 		<!-- Set the total -->
 		<set name="qry_filecount.thetotal" value="#qry_files.thetotal#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
 		<!-- Show -->
 		<do action="ajax.mini_search" />
 	</fuseaction>

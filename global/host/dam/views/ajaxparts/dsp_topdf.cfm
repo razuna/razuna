@@ -93,7 +93,7 @@ table {
 									<img src="#cloud_url#" width="128" height="128" border="0">
 								<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
 									<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
-									<cfif NOT FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#")>
+									<cfif NOT FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#")>
 										<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
 									<cfelse>
 										<img src="#thestorage##path_to_asset#/#thethumb#" width="128" border="0">
@@ -139,7 +139,7 @@ table {
 							<img src="#cloud_url#" width="128" height="128" border="0">
 						<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
 							<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
-							<cfif NOT FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#")>
+							<cfif NOT FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#")>
 								<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="128" height="128" border="0">
 							<cfelse>
 								<img src="#thestorage##path_to_asset#/#thethumb#" width="128" border="0">
@@ -238,7 +238,7 @@ table {
 						<img src="#qry_detail.detail.cloud_url#" width="128" height="128" border="0">
 					<cfelseif application.razuna.storage EQ "local" AND format EQ "PDF">
 						<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
-						<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#folderid#/doc/#attributes.file_id#/#thethumb#") EQ "no">
+						<cfif FileExists("#attributes.assetpath#/#session.hostid#/#folderid#/doc/#attributes.file_id#/#thethumb#") EQ "no">
 							<img src="#thisurl##dynpath#/global/host/dam/images/icons/icon_#format#.png" width="128" height="128" border="0">
 						<cfelse>
 							<img src="#thestorage##path_to_asset#/#thethumb#" width="128" border="0">

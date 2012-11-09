@@ -122,7 +122,7 @@
 					</cfif>
 				<cfelseif application.razuna.storage EQ "local" AND qry_detail.detail.file_extension EQ "PDF">
 					<cfset thethumb = replacenocase(qry_detail.detail.file_name_org, ".pdf", ".jpg", "all")>
-					<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") IS "no">
+					<cfif FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") IS "no">
 						<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" border="0">
 					<cfelse>
 						<img src="#dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#" width="120" border="0">

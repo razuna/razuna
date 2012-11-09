@@ -85,7 +85,7 @@
 									</cfif>
 								<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
 									<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
-									<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+									<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0">
 									<cfelse>
 										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0">
@@ -164,7 +164,7 @@
 									</cfif>
 								<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
 									<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
-									<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+									<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
 									<cfelse>
 										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="128" border="0">
@@ -263,7 +263,7 @@
 									</cfif>
 								<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
 									<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
-									<cfif FileExists("#ExpandPath("../../")#/assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+									<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
 									<cfelse>
 										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="128" border="0">
