@@ -522,7 +522,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
 					WHERE img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "vid">
-					SELECT /* #acachetokenvid#getrenditionsvid */
+					SELECT /* #cachetokenvid#getrenditionsvid */
 					vid_id id, 
 					vid_width width, 
 					vid_height height, 
