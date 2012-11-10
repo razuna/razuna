@@ -3716,6 +3716,10 @@
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<!-- CFC: Get social -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getsocial(attributes)" returnvariable="qry_social" />
+		<!-- CFC: Check for custom fields -->
+		<set name="attributes.cf_show" value="users" />
+		<set name="attributes.file_id" value="#attributes.user_id#" />
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- Show -->
 		<do action="ajax.users_detail" />
 	</fuseaction>
@@ -3754,6 +3758,13 @@
 			<true>
 				<set name="attributes.user_id" value="#attributes.newid#" />
 				<invoke object="myFusebox.getApplicationData().users" methodcall="savesocial(attributes)" />
+			</true>
+		</if>
+		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<set name="attributes.file_id" value="#attributes.newid#" />
+				<do action="custom_fields_save" />
 			</true>
 		</if>
 	</fuseaction>

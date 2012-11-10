@@ -78,6 +78,7 @@
 									<option value="vid">#myFusebox.getApplicationData().defaults.trans("only_videos")#</option>
 									<option value="doc">#myFusebox.getApplicationData().defaults.trans("only_documents")#</option>
 									<option value="aud">#myFusebox.getApplicationData().defaults.trans("only_audios")#</option>
+									<option value="users">Users</option>
 								</select>
 							</td>
 						</tr>

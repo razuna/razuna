@@ -24,11 +24,11 @@
 *
 --->
 <cfoutput>
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+	<table border="0" cellpadding="0" cellspacing="0" width="450" class="grid">
 		<cfloop query="qry_cf">
 			<tr>
-				<td class="td2" valign="top" width="1%" nowrap="true"><strong>#cf_text#</strong></td>
-				<td class="td2" width="100%">
+				<td width="130" nowrap="true"<cfif cf_type EQ "textarea"> valign="top"</cfif>><strong>#cf_text#</strong></td>
+				<td width="320">
 					<!--- For text --->
 					<cfif cf_type EQ "text">
 						<input type="text" style="width:300px;" id="cf_#cf_id#" name="cf_#cf_id#" value="#cf_value#">

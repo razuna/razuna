@@ -27,6 +27,7 @@
 <form action="#self#" method="post" name="userdetailadd" id="userdetailadd">
 <input type="hidden" name="#theaction#" value="c.users_save">
 <input type="hidden" name="user_id" value="#attributes.user_id#">
+<input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 <div id="tab_admin_user">
 	<ul>
 		<li><a href="##tab_user">#myFusebox.getApplicationData().defaults.trans("user_edit")#</a></li>
@@ -38,79 +39,79 @@
 	</ul>
 	<!--- User --->
 	<div id="tab_user">
-		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+		<table width="460" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<!--- User details --->
-			<tr>
-				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("user_name")# / #myFusebox.getApplicationData().defaults.trans("email")#</td>
-			</tr>
 			<!--- Don't show if from myinfo --->
 			<cfif attributes.myinfo>
 				<input type="hidden" name="user_active" value="#qry_detail.user_active#">
 			<cfelse>
 				<tr>
-					<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("user_active")#</td>
+					<td nowrap="nowrap"><strong>#myFusebox.getApplicationData().defaults.trans("user_active")#</strong></td>
 					<td><input type="checkbox" name="user_active" value="T"<cfif qry_detail.user_active EQ "T"> checked</cfif>></td>
 				</tr>
 			</cfif>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("email")#*</td>
-				<td><input type="text" name="user_email" id="user_email" size="45" class="text" value="#qry_detail.user_email#" onkeyup="checkemail();"><cfif attributes.add EQ "F"> <a href="mailto:#qry_detail.user_email#" title="Opens your email app to send email to user"><img src="#dynpath#/global/host/dam/images/mail.png" border="0" name="email_2" align="top"></a></cfif><div id="checkemaildiv"></div><label for="user_email" class="error">Enter your eMail address!</label></td>
+				<td width="130" nowrap="true">
+					<strong>#myFusebox.getApplicationData().defaults.trans("email")#*</strong>
+				</td>
+				<td width="300"><input type="text" name="user_email" id="user_email" style="width:300px;" class="text" value="#qry_detail.user_email#" onkeyup="checkemail();"><div id="checkemaildiv"></div><label for="user_email" class="error">Enter your eMail address!</label><!--- <cfif attributes.add EQ "F"><a href="mailto:#qry_detail.user_email#" title="Opens your email app to send email to user">email user</a></cfif> ---></td>
 			</tr>
 			<tr>
-				<td width="180">#myFusebox.getApplicationData().defaults.trans("user_name")#*</td>
-				<td width="420"><input type="text" name="user_login_name" id="user_login_name" size="45" value="#qry_detail.user_login_name#" onkeyup="checkusername();"><div id="checkusernamediv"></div><label for="user_login_name" class="error">Enter your Loginname!</label></td>
+				<td width="180"><strong>#myFusebox.getApplicationData().defaults.trans("user_name")#*</strong></td>
+				<td width="420"><input type="text" name="user_login_name" id="user_login_name" style="width:300px;" value="#qry_detail.user_login_name#" onkeyup="checkusername();"><div id="checkusernamediv"></div><label for="user_login_name" class="error">Enter your Loginname!</label></td>
 			</tr>
 			<tr>
-				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("password")#</th>
+				<th colspan="2"><br /></th>
 			</tr>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("password")#*</td>
-				<td><input type="password" name="user_pass" id="user_pass" size="25" class="text" style="float:left;"><a href="##" onclick="loadpass();return false;" title="Click here to generate a secure password"><img src="#dynpath#/global/host/dam/images/lock_16.png" width="16" height="16" border="0" style="padding-bottom: 2px; padding-left: 3px; vertical-align: middle; float: left;"></a><div id="randompass" style="float:left;padding-left:3px;"></div></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("password")#*</strong></td>
+				<td><input type="password" name="user_pass" id="user_pass" style="width:300px;" class="text" style="float:left;"></td>
 			</tr>
 			<tr>
-				<td nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("password_confirm")#*</td>
-				<td><span id="spryconfirm1"><input type="password" name="user_pass_confirm" id="user_pass_confirm" size="25" class="text"></span></td>
+				<td nowrap="nowrap" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("password_confirm")#*</strong></td>
+				<td><span id="spryconfirm1"><input type="password" name="user_pass_confirm" id="user_pass_confirm" style="width:300px;" class="text"></span><br ><a href="##" onclick="loadpass();return false;" title="Click here to generate a secure password">Generate password</a><div id="randompass"></div></td>
 			</tr>
 			<tr>
-				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("theuser")#</th>
+				<th colspan="2"><br /></th>
 			</tr>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("user_first_name")#*</td>
-				<td><input type="text" name="user_first_name" id="user_first_name" size="45" class="text" value="#qry_detail.user_first_name#"<!---  onchange="salut_first2();" --->><label for="user_first_name" class="error">Enter your Firstname!</label></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_first_name")#*</strong></td>
+				<td><input type="text" name="user_first_name" id="user_first_name" style="width:300px;" class="text" value="#qry_detail.user_first_name#"<!---  onchange="salut_first2();" --->><label for="user_first_name" class="error">Enter your Firstname!</label></td>
 			</tr>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("user_last_name")#*</td>
-				<td><input type="text" name="user_last_name" id="user_last_name" size="45" class="text" value="#qry_detail.user_last_name#"<!---  onchange="salut_last2();" --->><label for="user_last_name" class="error">Enter your Lastname!</label></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_last_name")#*</strong></td>
+				<td><input type="text" name="user_last_name" id="user_last_name" style="width:300px;" class="text" value="#qry_detail.user_last_name#"<!---  onchange="salut_last2();" --->><label for="user_last_name" class="error">Enter your Lastname!</label></td>
 			</tr>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("salutation")#</td>
-				<td nowrap="nowrap"><input type="text" name="user_salutation" size="45" class="text" value="#qry_detail.user_salutation#"></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("salutation")#</strong></td>
+				<td nowrap="nowrap"><input type="text" name="user_salutation" style="width:300px;" class="text" value="#qry_detail.user_salutation#"></td>
 			</tr>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("user_company")#</td>
-				<td><input name="user_company" type="text" size="45" value="#qry_detail.user_company#"></td>
-			</tr>
-			<!--- <tr>
-				<td width="1%" nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("user_street")#</td>
-				<td width="100%"><input type="text" name="user_street" size="24" value="#user_street#"> #myFusebox.getApplicationData().defaults.trans("user_street_nr")# <input type="text" name="user_street_nr" size="5" value="#user_street_nr#"></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_company")#</strong></td>
+				<td><input name="user_company" type="text" style="width:300px;" value="#qry_detail.user_company#"></td>
 			</tr>
 			<tr>
-				<td width="1%" nowrap="nowrap">#myFusebox.getApplicationData().defaults.trans("user_zip")#</td>
-				<td width="100%"><input type="text" name="user_zip" size="6" value="#user_zip#"> #myFusebox.getApplicationData().defaults.trans("user_city")# <input type="text" name="user_city" size="32" value="#user_city#"></td>
-			</tr> --->
-			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("user_tel")#</td>
-				<td><input name="user_phone" type="text" size="45" value="#qry_detail.user_phone#"></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_tel")#</strong></td>
+				<td><input name="user_phone" type="text" style="width:300px;" value="#qry_detail.user_phone#"></td>
 			</tr>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("user_fax")#</td>
-				<td><input name="user_fax" type="text" size="45" value="#qry_detail.user_fax#"></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_fax")#</strong></td>
+				<td><input name="user_fax" type="text" style="width:300px;" value="#qry_detail.user_fax#"></td>
 			</tr>
 			<tr>
-				<td>#myFusebox.getApplicationData().defaults.trans("user_mobile")#</td>
-				<td><input name="user_mobile" type="text" size="45" value="#qry_detail.user_mobile#"></td>
+				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_mobile")#</strong></td>
+				<td><input name="user_mobile" type="text" style="width:300px;" value="#qry_detail.user_mobile#"></td>
 			</tr>
 		</table>
+		<!--- Custom fields --->
+		<cfif qry_cf.recordcount NEQ 0>
+			<cfset cf_id = session.theuserid>
+			<br />
+			<div id="customfields" style="padding-top:10px;">
+				<cfinclude template="inc_custom_fields.cfm">
+			</div>
+			<div stlye="clear:both;"></div>
+		</cfif>
 	</div>
 	<!--- Groups --->
 	<div id="tab_groups">

@@ -23,4 +23,4 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfoutput>#attributes.thepass#</cfoutput>
+<cfoutput>Generate password is: #attributes.thepass#</cfoutput>

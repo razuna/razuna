@@ -109,10 +109,14 @@
 		LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 		WHERE c.cf_id = ct.cf_id_r
 		AND lower(c.cf_enabled) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-		AND (
-			lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">
-			OR lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
+		<cfif arguments.thestruct.cf_show EQ "users">
+			AND lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="users">
+		<cfelse>
+			AND (
+				lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">
+				OR lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
 			)
+		</cfif> 
 		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		ORDER BY c.cf_order
