@@ -332,7 +332,7 @@
 				</cfquery>
 				<!--- Add keywords and description to the asset (loop over the passed array) --->
 				<cfloop index="x" from="1" to="#arrayLen(thejson)#">
-					<cfif #thejson[x][1]# CONTAINS "_">
+					<cfif thejson[x][1] CONTAINS "_" AND thejson[x][1] NEQ "file_name">
 						<cfquery datasource="#application.razuna.api.dsn#">
 						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]##thedb#
 						SET #thejson[x][1]# = <cfif #thejson[x][1]# EQ "lang_id_r"><cfqueryparam cfsqltype="cf_sql_numeric" value="#thejson[x][2]#"><cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#thejson[x][2]#"></cfif>
@@ -371,36 +371,76 @@
 							</cfquery>
 						</cfif>
 					</cfloop>
+					<!--- Update file name --->
+					<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+						<cfif thejson[x][1] EQ "file_name">
+							<cfquery datasource="#application.razuna.api.dsn#">
+							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#images
+							SET img_filename = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
+							WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+							</cfquery>
+						</cfif>
+					</cfloop>
 					<!--- Update change date --->
 					<cfquery datasource="#application.razuna.api.dsn#">
-					Update #application.razuna.api.prefix["#arguments.api_key#"]#images
+					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#images
 					SET 
 					img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
 					WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					</cfquery>
 				<cfelseif arguments.assettype EQ "vid">
+					<!--- Update file name --->
+					<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+						<cfif thejson[x][1] EQ "file_name">
+							<cfquery datasource="#application.razuna.api.dsn#">
+							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#videos
+							SET vid_filename = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
+							WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+							</cfquery>
+						</cfif>
+					</cfloop>
 					<!--- Update change date --->
 					<cfquery datasource="#application.razuna.api.dsn#">
-					Update #application.razuna.api.prefix["#arguments.api_key#"]#videos
+					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					SET 
 					vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
 					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					</cfquery>
 				<cfelseif arguments.assettype EQ "aud">
+					<!--- Update file name --->
+					<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+						<cfif thejson[x][1] EQ "file_name">
+							<cfquery datasource="#application.razuna.api.dsn#">
+							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#audios
+							SET aud_name = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
+							WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+							</cfquery>
+						</cfif>
+					</cfloop>
 					<!--- Update change date --->
 					<cfquery datasource="#application.razuna.api.dsn#">
-					Update #application.razuna.api.prefix["#arguments.api_key#"]#audios
+					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#audios
 					SET 
 					aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
 					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					</cfquery>
 				<cfelse>
+					<!--- Update file name --->
+					<cfloop index="x" from="1" to="#arrayLen(thejson)#">
+						<cfif thejson[x][1] EQ "file_name">
+							<cfquery datasource="#application.razuna.api.dsn#">
+							UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#files
+							SET file_name = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thejson[x][2]#">
+							WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+							</cfquery>
+						</cfif>
+					</cfloop>
 					<!--- Update change date --->
 					<cfquery datasource="#application.razuna.api.dsn#">
-					Update #application.razuna.api.prefix["#arguments.api_key#"]#files
+					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#files
 					SET 
 					file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 					file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
