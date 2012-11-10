@@ -40,6 +40,7 @@
 		<cfparam default="F" name="arguments.thestruct.iscol">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
 		<cfparam default="t" name="arguments.thestruct.newsearch">
+		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Set sortby variable --->
 		<cfset var sortby = session.sortby>
 		<!--- Set the order by --->
