@@ -125,6 +125,8 @@
 					i.img_height AS height,
 					it.img_description description, 
 					it.img_keywords keywords,
+					i.img_create_time dateadd,
+					i.img_change_time datechange,
                     <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					    concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
 					    concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb
@@ -160,6 +162,8 @@
 					v.vid_height AS height,
 					vt.vid_description description, 
 					vt.vid_keywords keywords,
+					v.vid_create_time dateadd,
+					v.vid_change_time datechange,
 	                <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 		                concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
 		                concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_preview
@@ -195,6 +199,8 @@
 					0 AS height,
 					aut.aud_description description, 
 					aut.aud_keywords keywords,
+					a.aud_create_time dateadd,
+					a.aud_change_time datechange,
 	                <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 		                concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
 	                <cfelseif application.razuna.api.thedatabase EQ "mssql">
@@ -229,6 +235,8 @@
 					0 AS height,
 					ft.file_desc description, 
 					ft.file_keywords keywords,
+					f.file_create_time dateadd,
+					f.file_change_time datechange,
 	                <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 		                concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
 	                <cfelseif application.razuna.api.thedatabase EQ "mssql">
