@@ -31,6 +31,8 @@
 		<cfargument name="searchfor" type="string" required="true">
 		<cfargument name="show" type="string" required="false" default="all">
 		<cfargument name="doctype" type="string" required="false" default="">
+		<cfargument name="datecreate" type="string" required="false" default="">
+		<cfargument name="datechange" type="string" required="false" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -139,6 +141,13 @@
 					WHERE i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreeimg.categorytree)#" list="Yes"></cfif>)
 					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					AND (i.img_group IS NULL OR i.img_group = '')
+					<!--- Only if we have dates --->
+					<cfif arguments.datecreate NEQ "">
+						AND i.img_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+					</cfif>
+					<cfif arguments.datechange NEQ "">
+						AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+					</cfif>
 				</cfif>
 				<cfif arguments.show EQ "ALL">
 					UNION ALL
@@ -176,6 +185,13 @@
 					WHERE v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreevid.categorytree)#" list="Yes"></cfif>)
 					AND (v.vid_group IS NULL OR v.vid_group = '')
 					AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					<!--- Only if we have dates --->
+					<cfif arguments.datecreate NEQ "">
+						AND v.vid_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+					</cfif>
+					<cfif arguments.datechange NEQ "">
+						AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+					</cfif>
 				</cfif>
 				<cfif arguments.show EQ "ALL">
 					UNION ALL
@@ -212,6 +228,13 @@
 					WHERE a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreeaud.categorytree)#" list="Yes"></cfif>)
 					AND (a.aud_group IS NULL OR a.aud_group = '')
 					AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					<!--- Only if we have dates --->
+					<cfif arguments.datecreate NEQ "">
+						AND a.aud_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+					</cfif>
+					<cfif arguments.datechange NEQ "">
+						AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+					</cfif>
 				</cfif>
 				<cfif arguments.show EQ "ALL">
 					UNION ALL
@@ -247,8 +270,15 @@
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 					WHERE f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreedoc.categorytree)#" list="Yes"></cfif>)
 					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					<!--- Only if we have dates --->
+					<cfif arguments.datecreate NEQ "">
+						AND f.file_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+					</cfif>
+					<cfif arguments.datechange NEQ "">
+						AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+					</cfif>
 				</cfif>
-	            GROUP BY id, filename, folder_id, extension, filename_org, path_to_asset, cloud_url, cloud_url_org, size, description, keywords				
+	            GROUP BY id, filename, folder_id, extension, filename_org, path_to_asset, cloud_url, cloud_url_org, size, description, keywords, dateadd, datechange			
 				ORDER BY filename 
 			</cfquery>
 			<!--- If we query for doc only and have a filetype we filter the results --->
