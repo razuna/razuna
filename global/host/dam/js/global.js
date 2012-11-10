@@ -1083,7 +1083,7 @@ function searchadv_files(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "doc", folder_id: folderid, searchtext: searchtext, doctype: document.forms[theform].doctype.options[document.forms[theform].doctype.selectedIndex].value, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year:  document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "doc", folder_id: folderid, searchtext: searchtext, doctype: document.forms[theform].doctype.options[document.forms[theform].doctype.selectedIndex].value, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1123,7 +1123,7 @@ function searchadv_videos(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "vid", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "vid", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1165,7 +1165,7 @@ function searchadv_images(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "img", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "img", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1205,7 +1205,7 @@ function searchadv_audios(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "aud", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "aud", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});
@@ -1245,7 +1245,7 @@ function searchadv_all(theform, thefa, folderid) {
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
 		$('#loading_searchadv2').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
-		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "all", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value }, function(){
+		$(thediv).load('index.cfm?fa=' + thefa, { thetype: "all", folder_id: folderid, searchtext: searchtext, on_day: document.forms[theform].on_day.options[document.forms[theform].on_day.selectedIndex].value, on_month: document.forms[theform].on_month.options[document.forms[theform].on_month.selectedIndex].value, on_year: document.forms[theform].on_year.options[document.forms[theform].on_year.selectedIndex].value, change_day: document.forms[theform].change_day.options[document.forms[theform].change_day.selectedIndex].value, change_month: document.forms[theform].change_month.options[document.forms[theform].change_month.selectedIndex].value, change_year: document.forms[theform].change_year.options[document.forms[theform].change_year.selectedIndex].value }, function(){
 			// Hide Window
 			destroywindow(1);
 		});

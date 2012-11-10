@@ -36,6 +36,9 @@
 		<cfparam default="" name="arguments.thestruct.on_day">
 		<cfparam default="" name="arguments.thestruct.on_month">
 		<cfparam default="" name="arguments.thestruct.on_year">
+		<cfparam default="" name="arguments.thestruct.change_day">
+		<cfparam default="" name="arguments.thestruct.change_month">
+		<cfparam default="" name="arguments.thestruct.change_year">
 		<cfparam default="" name="arguments.thestruct.doctype">
 		<cfparam default="F" name="arguments.thestruct.iscol">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
@@ -182,6 +185,9 @@
 		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
 			AND f.file_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
 		</cfif>
+		<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
+			AND f.file_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
+		</cfif>
 		<!--- Only if we have a folder id that is not 0 --->
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 			AND f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -255,6 +261,9 @@
 		<cfparam default="" name="arguments.thestruct.on_day">
 		<cfparam default="" name="arguments.thestruct.on_month">
 		<cfparam default="" name="arguments.thestruct.on_year">
+		<cfparam default="" name="arguments.thestruct.change_day">
+		<cfparam default="" name="arguments.thestruct.change_month">
+		<cfparam default="" name="arguments.thestruct.change_year">
 		<cfparam default="F" name="arguments.thestruct.iscol">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
 		<cfparam default="t" name="arguments.thestruct.newsearch">
@@ -411,6 +420,9 @@
 		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
 			AND i.img_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
 		</cfif>
+		<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
+			AND i.img_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
+		</cfif>
 		<!--- Only if we have a folder id that is not 0 --->
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 			AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -451,6 +463,9 @@
 		<cfparam default="" name="arguments.thestruct.on_day">
 		<cfparam default="" name="arguments.thestruct.on_month">
 		<cfparam default="" name="arguments.thestruct.on_year">
+		<cfparam default="" name="arguments.thestruct.change_day">
+		<cfparam default="" name="arguments.thestruct.change_month">
+		<cfparam default="" name="arguments.thestruct.change_year">
 		<cfparam default="F" name="arguments.thestruct.iscol">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
 		<cfparam default="t" name="arguments.thestruct.newsearch">
@@ -607,6 +622,9 @@
 		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
 			AND v.vid_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
 		</cfif>
+		<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
+			AND v.vid_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
+		</cfif>
 		<!--- Only if we have a folder id that is not 0 --->
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 			AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
@@ -647,6 +665,9 @@
 		<cfparam default="" name="arguments.thestruct.on_day">
 		<cfparam default="" name="arguments.thestruct.on_month">
 		<cfparam default="" name="arguments.thestruct.on_year">
+		<cfparam default="" name="arguments.thestruct.change_day">
+		<cfparam default="" name="arguments.thestruct.change_month">
+		<cfparam default="" name="arguments.thestruct.change_year">
 		<cfparam default="F" name="arguments.thestruct.iscol">
 		<cfparam default="0" name="arguments.thestruct.folder_id">
 		<cfparam default="t" name="arguments.thestruct.newsearch">
@@ -802,6 +823,9 @@
 		<!--- Only if we have dates --->
 		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
 			AND a.aud_create_time LIKE '#arguments.thestruct.on_year#-#arguments.thestruct.on_month#-#arguments.thestruct.on_day#%'
+		</cfif>
+		<cfif arguments.thestruct.change_day NEQ "" AND arguments.thestruct.change_month NEQ "" AND arguments.thestruct.change_year NEQ "">
+			AND a.aud_change_time LIKE '#arguments.thestruct.change_year#-#arguments.thestruct.change_month#-#arguments.thestruct.change_day#%'
 		</cfif>
 		<!--- Only if we have a folder id that is not 0 --->
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">

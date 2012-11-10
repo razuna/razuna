@@ -81,12 +81,12 @@
 		$("#updatetext").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 	}
 	// Set today date into form fields
-	function settoday(theform) {
+	function settoday(theform,fd) {
 		<cfset settodayd = day(now())>
 		<cfset settodaym = month(now())>
-		document.forms[theform].on_day.value = '<cfoutput><cfif len(settodayd) EQ 1>0</cfif>#settodayd#</cfoutput>';
-		document.forms[theform].on_month.value = '<cfoutput><cfif len(settodaym) EQ 1>0</cfif>#settodaym#</cfoutput>';
-		document.forms[theform].on_year.value = '<cfoutput>#year(now())#</cfoutput>';
+		$('#' + theform + ' [name="' + fd + '_day"]').val('<cfoutput><cfif len(settodayd) EQ 1>0</cfif>#settodayd#</cfoutput>');
+		$('#' + theform + ' [name="' + fd + '_month"]').val('<cfoutput><cfif len(settodaym) EQ 1>0</cfif>#settodaym#</cfoutput>');
+		$('#' + theform + ' [name="' + fd + '_year"]').val('<cfoutput>#year(now())#</cfoutput>');
 	}
 	// For search
 	function subadvfields(theform){

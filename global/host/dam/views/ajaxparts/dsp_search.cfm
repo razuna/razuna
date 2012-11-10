@@ -89,34 +89,41 @@
 						<button class="awesome big green">Search</button>
 					</td>
 					<td nowrap="nowrap" valign="top" style="padding-top:0;margin-top:0;">
-						#myFusebox.getApplicationData().defaults.trans("search_for_type")#
-						<br />
-						<select name="thetype" id="s_type">
-							<option value="all"<cfif attributes.thetype EQ "all"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</option>
-							<option value="img"<cfif attributes.thetype EQ "img"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</option>
-							<option value="doc"<cfif attributes.thetype EQ "doc"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</option>
-							<option value="vid"<cfif attributes.thetype EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</option>
-							<option value="aud"<cfif attributes.thetype EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</option>
-						</select>
+						<div style="float:left;">
+							#myFusebox.getApplicationData().defaults.trans("search_for_type")#
+							<br />
+							<select name="thetype" id="s_type">
+								<option value="all"<cfif attributes.thetype EQ "all"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#</option>
+								<option value="img"<cfif attributes.thetype EQ "img"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_images")#</option>
+								<option value="doc"<cfif attributes.thetype EQ "doc"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_documents")#</option>
+								<option value="vid"<cfif attributes.thetype EQ "vid"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_videos")#</option>
+								<option value="aud"<cfif attributes.thetype EQ "aud"> selected="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("search_for_audios")#</option>
+							</select>
+						</div>
+						<div style="float:right;">
+							And/Or
+							<br /><select name="andor" id="andor">
+								<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>AND</option>
+								<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>OR</option>
+							</select>
+						</div>
 					</td>
 					<td nowrap="nowrap" valign="top" style="padding-top:0;margin-top:0;">
 						#myFusebox.getApplicationData().defaults.trans("date_created")#
 						<br />
 						<cfset lastyear = #year(now())# - 10>
 						<cfset newyear = #year(now())# + 3>
-						<select name="on_day" id="s_on_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#"<cfif attributes.on_day EQ theday> selected="true"</cfif>>#theday#</option></cfloop></select> <select name="on_month" id="s_on_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#"<cfif attributes.on_month EQ themonth> selected="true"</cfif>>#themonth#</option></cfloop></select> <select name="on_year" id="s_on_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#"<cfif attributes.on_year EQ theyear> selected="true"</cfif>>#theyear#</option></cfloop></select> <a href="##" onclick="settoday('form_searchsearch');">#myFusebox.getApplicationData().defaults.trans("today")#</a>
+						<select name="on_day" id="s_on_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#"<cfif attributes.on_day EQ theday> selected="true"</cfif>>#theday#</option></cfloop></select> <select name="on_month" id="s_on_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#"<cfif attributes.on_month EQ themonth> selected="true"</cfif>>#themonth#</option></cfloop></select> <select name="on_year" id="s_on_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#"<cfif attributes.on_year EQ theyear> selected="true"</cfif>>#theyear#</option></cfloop></select> <a href="##" onclick="settoday('form_searchsearch','on');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a>
 					</td>
 					<td nowrap="nowrap" valign="top" style="padding-top:0;margin-top:0;">
-						And/Or
-						<br /><select name="andor" id="andor">
-							<option value="AND"<cfif attributes.andor EQ "and"> selected="true"</cfif>>AND</option>
-							<option value="OR"<cfif attributes.andor EQ "or"> selected="true"</cfif>>OR</option>
-						</select>
+						#myFusebox.getApplicationData().defaults.trans("date_changed")#
+						<br />
+						<cfset lastyear = #year(now())# - 10>
+						<cfset newyear = #year(now())# + 3>
+						<select name="change_day" id="s_change_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="1" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#"<cfif attributes.change_day EQ theday> selected="true"</cfif>>#theday#</option></cfloop></select> <select name="change_month" id="s_change_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#"<cfif attributes.change_month EQ themonth> selected="true"</cfif>>#themonth#</option></cfloop></select> <select name="change_year" id="s_change_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#"<cfif attributes.change_year EQ theyear> selected="true"</cfif>>#theyear#</option></cfloop></select> <a href="##" onclick="settoday('form_searchsearch','change');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a>
 					</td>
 				</tr>
-				
-
-
+				<!--- Has to be here or else search mocks up --->
 				<div style="display:none;">
 					<cfloop query="qry_cf_fields">
 						<cfset cfid = replace(cf_id,"-","","all")>
@@ -140,7 +147,6 @@
 						<br />
 					</cfloop>
 				</div>
-
 			</table>
 			</form>
 		</div>
@@ -164,7 +170,6 @@
 						<li><a href="##content_search_doc" onclick="switchsearchtab('doc');" rel="prefetch">Documents (#qry_files.qdoc.cnt#)</a></li>
 					</cfif>
 				</ul>
-				
 				<div id="content_search_all">
 					<cfinclude template="dsp_folder_content_results.cfm" />
 				</div>
@@ -230,6 +235,9 @@
 				var on_day = $('#s_on_day option:selected').val();
 				var on_month = $('#s_on_month option:selected').val();
 				var on_year = $('#s_on_year option:selected').val();
+				var change_day = $('#s_change_day option:selected').val();
+				var change_month = $('#s_change_month option:selected').val();
+				var change_year = $('#s_change_year option:selected').val();
 				var andor = $('#andor option:selected').val();
 				var flab = $('#search_labels option:selected').val();
 				var fname = $('#s_filename').val();
@@ -238,7 +246,7 @@
 				var fext = $('#s_extension').val();
 				var fmeta = $('#s_metadata').val();
 				// Post the search
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab}, function(){
+				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab}, function(){
 						$("#bodyoverlay").remove();
 					});
 			}
