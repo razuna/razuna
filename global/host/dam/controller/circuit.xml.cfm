@@ -362,8 +362,15 @@
 		User requests access
 	 -->
 	<fuseaction name="req_access">
+		<!-- XFA -->
 		<xfa name="submitform" value="c.req_access_send" />
 		<xfa name="linkback" value="c.login" />
+		<!-- CFC: Check for custom fields -->
+		<set name="attributes.cf_show" value="users" />
+		<set name="attributes.cf_in_form" value="true" />
+		<set name="attributes.file_id" value="0" />
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />	
+		<!-- Show -->
 		<do action="ajax.req_access" />
 	</fuseaction>
 	<!--
@@ -382,8 +389,16 @@
 		<!-- Check the email address of the user -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="add(attributes)" returnvariable="status" />
 		<!-- Inform admins of this user request by eMails -->
-		<if condition="#status# NEQ 0">
+		<if condition="status NEQ 0">
 			<true>
+				<!-- Check if there are custom fields to be saved -->
+				<if condition="attributes.customfields NEQ 0">
+					<true>
+						<set name="attributes.file_id" value="#status#" />
+						<do action="custom_fields_save" />
+					</true>
+				</if>
+				<!-- Send out the email -->
 				<invoke object="myFusebox.getApplicationData().Login" methodcall="reqaccessemail(attributes)" />
 			</true>
 		</if>

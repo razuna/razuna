@@ -711,6 +711,9 @@ background-color: #e33100 !important;
 .awesome.green {
 background-color: #579E31 !important;
 }
+.awesome.grey {
+background-color: grey !important;
+}
 button.css3button {
 font-family: Arial, Helvetica, sans-serif;
 font-size: 16px;

@@ -24,20 +24,24 @@
 *
 --->
 <cfoutput>
-	<table border="0" cellpadding="0" cellspacing="0" width="450" class="grid">
+	<cfif !structKeyExists(variables,"cf_inline")><table border="0" cellpadding="0" cellspacing="0" width="450" class="grid"></cfif>
 		<cfloop query="qry_cf">
 			<tr>
-				<td width="130" nowrap="true"<cfif cf_type EQ "textarea"> valign="top"</cfif>><strong>#cf_text#</strong></td>
-				<td width="320">
+				<cfif !structKeyExists(variables,"cf_inline")>
+					<td width="130" nowrap="true"<cfif cf_type EQ "textarea"> valign="top"</cfif>><strong>#cf_text#</strong></td>
+					<td width="320">
+				<cfelse>
+					<td>
+				</cfif>
 					<!--- For text --->
 					<cfif cf_type EQ "text">
-						<input type="text" style="width:300px;" id="cf_#cf_id#" name="cf_#cf_id#" value="#cf_value#">
+						<input type="text" style="width:300px;" id="cf_#cf_id#" name="cf_#cf_id#" value="#cf_value#"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif>>
 					<!--- Radio --->
 					<cfelseif cf_type EQ "radio">
 						<input type="radio" name="cf_#cf_id#" value="T"<cfif cf_value EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf_#cf_id#" value="F"<cfif cf_value EQ "F" OR cf_value EQ ""> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 					<!--- Textarea --->
 					<cfelseif cf_type EQ "textarea">
-						<textarea name="cf_#cf_id#" style="width:300px;height:60px;">#cf_value#</textarea>
+						<textarea name="cf_#cf_id#" style="width:310px;height:60px;"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif>>#cf_value#</textarea>
 					<!--- Select --->
 					<cfelseif cf_type EQ "select">
 						<select name="cf_#cf_id#" style="width:300px;">
@@ -51,5 +55,5 @@
 				</td>
 			</tr>
 		</cfloop>
-	</table>
+	<cfif !structKeyExists(variables,"cf_inline")></table></cfif>
 </cfoutput>

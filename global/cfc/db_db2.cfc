@@ -1951,6 +1951,7 @@
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
 			cf_select_list	VARCHAR(2000),
+			cf_in_form		VARCHAR(10) DEFAULT 'true',
 			HOST_ID			INT,
 			PRIMARY KEY (cf_id)
 		)

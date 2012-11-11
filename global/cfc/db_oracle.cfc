@@ -1917,6 +1917,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			cf_show			VARCHAR2(10 CHAR),
 			cf_group 		VARCHAR2(100 CHAR),
 			cf_select_list	CLOB,
+			cf_in_form		VARCHAR2(10 CHAR) DEFAULT 'true',
 			HOST_ID			NUMBER,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#CUSTOM_FIELDS_PK PRIMARY KEY (CF_ID)
 		)

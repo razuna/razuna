@@ -1010,6 +1010,7 @@
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
 			cf_select_list	VARCHAR(4000),
+			cf_in_form		VARCHAR(10) DEFAULT 'true',
 			host_id			BIGINT
 		)
 		</cfquery>

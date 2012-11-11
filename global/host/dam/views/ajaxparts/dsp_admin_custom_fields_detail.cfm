@@ -29,7 +29,7 @@
 	<input type="hidden" name="#theaction#" value="c.custom_field_update">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<input type="hidden" name="cf_id" value="#attributes.cf_id#">
-	<table border="0" cellpadding="0" cellspacing="0" width="100%">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
 			<td valign="top" width="1%" nowrap="true">
 				<table border="0" cellpadding="0" cellspacing="0">
@@ -41,7 +41,7 @@
 					<cfloop query="qry_langs">
 						<cfset thisid = lang_id>
 						<tr>
-							<td valign="top" width="1%" nowrap="true">#lang_name#</td>
+							<td width="1%" nowrap="true">#lang_name#</td>
 							<td>
 								<cfloop query="qry_field">
 									<cfif lang_id_r EQ thisid>
@@ -51,6 +51,9 @@
 							</td>
 						</tr>
 					</cfloop>
+					<tr>
+						<td colspan="2">ID: #attributes.cf_id#</td>
+					</tr>
 				</table>
 			</td>
 			<td valign="top" width="100%" style="padding-left:10px;">
@@ -88,7 +91,8 @@
 						<td><textarea name="cf_select_list" style="width:150px;height:40px;">#qry_field.cf_select_list#</textarea><br /><em>(Separate values with a coma)</em></td>
 					</tr>
 					<tr>
-						<td colspan="2">ID: #attributes.cf_id#</td>
+						<td width="120" nowrap="true" style="padding-right:10px;" valign="top">Show in form</td>
+						<td width="100%"><input type="radio" name="cf_in_form" value="true"<cfif qry_field.cf_in_form> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf_in_form" value="false"<cfif !qry_field.cf_in_form> checked="checked"</cfif>> #myFusebox.getApplicationData().defaults.trans("no")#<br /><em>(only applies to "users" fields and the request form)</em></td>
 					</tr>
 				</table>
 			</td>

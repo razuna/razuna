@@ -2043,6 +2043,7 @@
 			cf_show			VARCHAR(10),
 			cf_group 		VARCHAR(100),
 			cf_select_list	TEXT,
+			cf_in_form		VARCHAR(10) DEFAULT 'true',
 			HOST_ID			INT,
 			PRIMARY KEY (cf_id),
 			KEY #arguments.thestruct.host_db_prefix#cf_enabled (cf_enabled),

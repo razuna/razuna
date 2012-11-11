@@ -116,7 +116,10 @@
 				lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="all">
 				OR lower(c.cf_show) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">
 			)
-		</cfif> 
+		</cfif>
+		<cfif structKeyExists(arguments.thestruct,"cf_in_form")>
+			AND cf_in_form = <cfqueryparam cfsqltype="cf_sql_varchar" value="true">
+		</cfif>
 		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		ORDER BY c.cf_order
@@ -166,7 +169,7 @@
 		<cfset variables.cachetoken = getcachetoken("general")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, c.cf_select_list, ct.cf_text, ct.lang_id_r
+		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, c.cf_select_list, ct.cf_text, ct.lang_id_r, c.cf_in_form
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c
 		WHERE c.cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.cf_id#">
 		AND ct.cf_id_r = c.cf_id
@@ -223,6 +226,8 @@
 <!--- Update field --->
 <cffunction name="update" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
+		<!--- Param --->
+		<cfparam name="arguments.thestruct.cf_in_form" default="true" />
 		<!--- Update record --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#custom_fields
@@ -231,7 +236,8 @@
 		cf_enabled = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_enabled#">, 
 		cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">, 
 		cf_group = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
-		cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">
+		cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">,
+		cf_in_form = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_in_form#">
 		WHERE cf_id = <cfqueryparam value="#arguments.thestruct.cf_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
