@@ -133,7 +133,12 @@
 							</cfif>
 							<!--- (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()) AND  --->
 							<cfif !attributes.myinfo>
-								<input type="checkbox" name="admin_group_2" value="2"<cfif grpnrlist EQ 2> checked</cfif><cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id> disabled</cfif>> Administrator
+								<cfif qry_groups_users.recordcount EQ 1 AND attributes.user_id EQ qry_groups_users.user_id>
+									<input type="hidden" name="admin_group_2" value="2" />
+									You are an Administrator. Full access granted!
+								<cfelse>
+									<input type="checkbox" name="admin_group_2" value="2"<cfif grpnrlist EQ 2> checked</cfif>> Administrator
+								</cfif>
 								<br /><br />
 							</cfif>
 						<!--- </cfif> --->
