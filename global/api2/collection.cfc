@@ -230,7 +230,7 @@
 		<cfif thesession>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT c.col_id, c.change_date, ct.col_name, 
+			SELECT c.col_id, c.change_date, ct.col_name, ct.col_desc as collection_description,
 				(
 					SELECT count(file_id_r) 
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files 

@@ -255,7 +255,7 @@
 			<cfset var cachetoken = getcachetoken(arguments.api_key,"folders")>
 			<!--- Query folder --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner,
+			SELECT /* #cachetoken#getfolders */ f.folder_id, f.folder_name, f.folder_owner, fd.folder_desc as folder_description,
 			<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "h2">NVL<cfelseif application.razuna.api.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 				(
 					SELECT<cfif application.razuna.api.thedatabase EQ "mssql"> TOP 1</cfif> s.folder_id
@@ -274,6 +274,7 @@
 				AS hassubfolders
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f
 			LEFT JOIN users u ON u.user_id = f.folder_owner
+			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id
 			WHERE
 			<cfif Arguments.folderid gt 0>
 				f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
@@ -343,10 +344,11 @@
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getfolder */ folder_id, folder_id_r folder_related_to, folder_name
-			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders
-			WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+			SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f 
+			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id
+			WHERE f.folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
+			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 			</cfquery>
 			<!--- Query total count --->
 			<cfinvoke component="global.cfc.folders" method="apifiletotalcount"folder_id="#arguments.folderid#" returnvariable="totalassets">
