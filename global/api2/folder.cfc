@@ -274,7 +274,7 @@
 				AS hassubfolders
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f
 			LEFT JOIN users u ON u.user_id = f.folder_owner
-			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id
+			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE
 			<cfif Arguments.folderid gt 0>
 				f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
@@ -346,7 +346,7 @@
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #cachetoken#getfolder */ f.folder_id, f.folder_id_r as folder_related_to, f.folder_name, fd.folder_desc as folder_description
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders f 
-			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id
+			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE f.folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 			</cfquery>
