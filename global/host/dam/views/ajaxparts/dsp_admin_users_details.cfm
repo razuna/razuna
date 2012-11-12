@@ -289,8 +289,9 @@
 	}
 	// Load Pass
 	function loadpass(){
-		$("##randompass").load('#myself#c.randompass', function() {
-	  		var thepass = $('##randompass').html();
+		$("##div_forall").load('#myself#c.randompass', function() {
+	  		var thepass = $('##div_forall').html();
+	  		$('##randompass').css('display','').html('Generate password is:' + ' ' + thepass);
 	  		$('##user_pass').val(thepass);
 	  		$('##user_pass_confirm').val(thepass);
 		})
