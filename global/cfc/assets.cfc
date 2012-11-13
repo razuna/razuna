@@ -4096,7 +4096,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Loop over the assets --->
 	<cfloop query="thefiles">
 		<!--- Feedback --->
-		<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+		<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 		<cfflush>
 		<!--- Params --->
 		<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -4174,7 +4174,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -4261,7 +4261,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -4348,7 +4348,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -4435,7 +4435,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -4522,7 +4522,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -4609,7 +4609,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -4696,7 +4696,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over the assets --->
 		<cfloop query="thefiles">
 			<!--- Feedback --->
-			<cfoutput>Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
 			<cfflush>
 			<!--- Params --->
 			<cfset arguments.thestruct.filepath = directory & "/" & name>
@@ -4748,7 +4748,7 @@ This is the main function called directly by a single upload else from addassets
 	<cftry>
 		<cfset var md5hash = "">
 		<!--- Throttle engine a bit --->
-		<cfpause interval="2" />
+		<!--- <cfpause interval="2" /> --->
 		<!--- Create a unique name for the temp directory to hold the file --->
 		<cfset arguments.thestruct.tempid = createuuid("")>
 		<!--- Get file extension --->
@@ -4804,9 +4804,9 @@ This is the main function called directly by a single upload else from addassets
 				<!--- We set that this is from this function --->
 				<cfset arguments.thestruct.importpath = true>
 				<!--- Call the addasset function --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
-				</cfthread>
+				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+				<!--- </cfthread> --->
 			<cfelse>
 				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 			</cfif>
