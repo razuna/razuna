@@ -1130,6 +1130,24 @@
 	<cfelse>
 		<cfset application.razuna.serverid = qry.conf_serverid>
 	</cfif>
+	<!--- Check for config file --->
+	<cfif fileExists("#arguments.pathoneup#/global/config/keys.ini")>
+		<!--- Set path --->
+ 		<cfset var iniFile = "#arguments.pathoneup#/global/config/keys.ini">
+ 		<!--- Set WL --->
+ 		<cfif getProfileString(iniFile, "default", "wl") EQ 13201283703>
+ 			<cfset QuerySetCell(qry, "conf_wl", true)>
+ 			<cfset var swl = true>
+		<cfelse>
+			<cfset QuerySetCell(qry, "conf_wl", false)>
+			<cfset var swl = false>
+ 		</cfif>
+ 		<!--- Update --->
+		<cfquery datasource="razuna_default">
+		UPDATE razuna_config
+		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#swl#">
+		</cfquery>
+	</cfif>
 	<!--- Now put config values into application scope --->
 	<cfset application.razuna.thedatabase = qry.conf_database>
 	<cfset application.razuna.datasource = qry.conf_datasource>
