@@ -464,9 +464,11 @@
 <!--- GET THE IMAGE DETAILS --->
 <cffunction name="detail" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
 	<cfset var thesize = 0>
 	<cfset var theprevsize = 0>
 	<cfset var qry = structnew()>
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Get details --->
 	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, 
@@ -477,7 +479,39 @@
 	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one,
 	i.img_remarks, i.img_extension, i.shared, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
-	s.set2_intranet_gen_download, s.set2_url_website, u.user_first_name, u.user_last_name, fo.folder_name
+	s.set2_intranet_gen_download, s.set2_url_website, u.user_first_name, u.user_last_name, fo.folder_name,
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		'unlocked' as perm
+	<cfelse>
+		CASE
+			<!--- Check permission on this folder --->
+			WHEN EXISTS(
+				SELECT fg.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg
+				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg.folder_id_r = i.folder_id_r
+				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				) THEN 'unlocked'
+			<!--- When folder is shared for everyone --->
+			WHEN EXISTS(
+				SELECT fg2.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg2
+				WHERE fg2.grp_id_r = '0'
+				AND fg2.folder_id_r = i.folder_id_r
+				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				) THEN 'unlocked'
+			WHEN "t" = (
+				SELECT fo.folder_of_user 
+				FROM #session.hostdbprefix#folders fo 
+				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
+				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+				AND fo.folder_id = i.folder_id_r
+				) THEN 'unlocked'
+			ELSE 'locked'
+		END as perm
+	</cfif>
 	FROM #session.hostdbprefix#images i 
 	LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#"> AND s.host_id = i.host_id
 	LEFT JOIN users u ON u.user_id = i.img_owner
@@ -510,11 +544,44 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Qry. We take the query and do a IN --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailforbasketimg */ i.img_id, i.img_extension, i.thumb_extension, i.img_group, i.folder_id_r, i.path_to_asset,
-	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.cloud_url, 
-	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url, i.img_filename filename
+	SELECT /* #variables.cachetoken#detailforbasketimg */ i.img_id, i.img_extension, i.thumb_extension, i.img_group, 
+	i.folder_id_r, i.path_to_asset, i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.cloud_url, 
+	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url, i.img_filename filename,
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		'unlocked' as perm
+	<cfelse>
+		CASE
+			<!--- Check permission on this folder --->
+			WHEN EXISTS(
+				SELECT fg.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg
+				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg.folder_id_r = i.folder_id_r
+				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				) THEN 'unlocked'
+			<!--- When folder is shared for everyone --->
+			WHEN EXISTS(
+				SELECT fg2.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg2
+				WHERE fg2.grp_id_r = '0'
+				AND fg2.folder_id_r = i.folder_id_r
+				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				) THEN 'unlocked'
+			WHEN "t" = (
+				SELECT fo.folder_of_user 
+				FROM #session.hostdbprefix#folders fo 
+				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
+				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+				AND fo.folder_id = i.folder_id_r
+				) THEN 'unlocked'
+			ELSE 'locked'
+		END as perm
+	</cfif>
 	FROM #session.hostdbprefix#images i
 	WHERE 
 	<cfif arguments.thestruct.related EQ "T">

@@ -512,6 +512,7 @@
 		<!--- Params --->
 		<cfset var theassetsize = "">
 		<cfset var qry = structnew()>
+		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Get details --->
@@ -520,7 +521,39 @@
 		f.file_change_date, f.file_change_time, f.file_owner, f.file_name, f.file_remarks, f.file_name_org, f.shared, 
 		f.link_path_url, f.link_kind, f.file_size, f.file_meta, f.path_to_asset, f.cloud_url, f.cloud_url_org,
 		s.set2_doc_download, s.set2_intranet_gen_download, s.set2_url_website, s.set2_path_to_assets,
-		u.user_first_name, u.user_last_name, fo.folder_name
+		u.user_first_name, u.user_last_name, fo.folder_name,
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			'unlocked' as perm
+		<cfelse>
+			CASE
+				<!--- Check permission on this folder --->
+				WHEN EXISTS(
+					SELECT fg.folder_id_r
+					FROM #session.hostdbprefix#folders_groups fg
+					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg.folder_id_r = f.folder_id_r
+					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+					) THEN 'unlocked'
+				<!--- When folder is shared for everyone --->
+				WHEN EXISTS(
+					SELECT fg2.folder_id_r
+					FROM #session.hostdbprefix#folders_groups fg2
+					WHERE fg2.grp_id_r = '0'
+					AND fg2.folder_id_r = f.folder_id_r
+					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					) THEN 'unlocked'
+				WHEN "t" = (
+					SELECT fo.folder_of_user 
+					FROM #session.hostdbprefix#folders fo 
+					WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
+					AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+					AND fo.folder_id = f.folder_id_r
+					) THEN 'unlocked'
+				ELSE 'locked'
+			END as perm
+		</cfif>
 		FROM #session.hostdbprefix#files f
 		LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#variables.setid#"> AND s.host_id = f.host_id
 		LEFT JOIN users u ON u.user_id = f.file_owner
@@ -991,11 +1024,46 @@
 	<!--- GET THE DETAILS FOR BASKET --->
 	<cffunction name="detailforbasket" output="false">
 		<cfargument name="thestruct" type="struct">
+		<!--- Param --->
+		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Qry. We take the query and do a IN --->
 		<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#detailforbasketfile */ file_id, file_extension, file_extension, file_size, folder_id_r, file_name_org, link_kind, link_path_url, path_to_asset, cloud_url, file_name filename
-		FROM #session.hostdbprefix#files
-		WHERE file_id 
+		SELECT /* #variables.cachetoken#detailforbasketfile */ f.file_id, f.file_extension, f.file_extension, f.file_size, f.folder_id_r, f.file_name_org, 
+		f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.file_name filename,
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			'unlocked' as perm
+		<cfelse>
+			CASE
+				<!--- Check permission on this folder --->
+				WHEN EXISTS(
+					SELECT fg.folder_id_r
+					FROM #session.hostdbprefix#folders_groups fg
+					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg.folder_id_r = f.folder_id_r
+					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+					) THEN 'unlocked'
+				<!--- When folder is shared for everyone --->
+				WHEN EXISTS(
+					SELECT fg2.folder_id_r
+					FROM #session.hostdbprefix#folders_groups fg2
+					WHERE fg2.grp_id_r = '0'
+					AND fg2.folder_id_r = f.folder_id_r
+					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					) THEN 'unlocked'
+				WHEN "t" = (
+					SELECT fo.folder_of_user 
+					FROM #session.hostdbprefix#folders fo 
+					WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
+					AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+					AND fo.folder_id = f.folder_id_r
+					) THEN 'unlocked'
+				ELSE 'locked'
+			END as perm
+		</cfif>
+		FROM #session.hostdbprefix#files f
+		WHERE f.file_id 
 		<cfif arguments.thestruct.qrybasket.recordcount EQ 0>
 		= '0'
 		<cfelse>

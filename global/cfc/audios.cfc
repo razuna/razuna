@@ -195,7 +195,39 @@
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
 	a.path_to_asset, a.lucene_key, s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
-	u.user_first_name, u.user_last_name, fo.folder_name
+	u.user_first_name, u.user_last_name, fo.folder_name,
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		'unlocked' as perm
+	<cfelse>
+		CASE
+			<!--- Check permission on this folder --->
+			WHEN EXISTS(
+				SELECT fg.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg
+				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg.folder_id_r = a.folder_id_r
+				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				) THEN 'unlocked'
+			<!--- When folder is shared for everyone --->
+			WHEN EXISTS(
+				SELECT fg2.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg2
+				WHERE fg2.grp_id_r = '0'
+				AND fg2.folder_id_r = a.folder_id_r
+				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				) THEN 'unlocked'
+			WHEN "t" = (
+				SELECT fo.folder_of_user 
+				FROM #session.hostdbprefix#folders fo 
+				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
+				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+				AND fo.folder_id = a.folder_id_r
+				) THEN 'unlocked'
+			ELSE 'locked'
+		END as perm
+	</cfif>
 	FROM #session.hostdbprefix#audios a 
 	LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#"> AND s.host_id = a.host_id
 	LEFT JOIN users u ON u.user_id = a.aud_owner
@@ -698,15 +730,49 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfparam default="F" name="arguments.thestruct.related">
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Qry. We take the query and do a IN --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailforbasketaud */ aud_id, aud_name filename, aud_extension, aud_group, folder_id_r, aud_size, link_kind, link_path_url, path_to_asset
-	FROM #session.hostdbprefix#audios
+	SELECT /* #variables.cachetoken#detailforbasketaud */ a.aud_id, a.aud_name filename, a.aud_extension, a.aud_group, a.folder_id_r, a.aud_size, 
+	a.link_kind, a.link_path_url, a.path_to_asset,
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		'unlocked' as perm
+	<cfelse>
+		CASE
+			<!--- Check permission on this folder --->
+			WHEN EXISTS(
+				SELECT fg.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg
+				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg.folder_id_r = a.folder_id_r
+				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
+				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
+				) THEN 'unlocked'
+			<!--- When folder is shared for everyone --->
+			WHEN EXISTS(
+				SELECT fg2.folder_id_r
+				FROM #session.hostdbprefix#folders_groups fg2
+				WHERE fg2.grp_id_r = '0'
+				AND fg2.folder_id_r = a.folder_id_r
+				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				) THEN 'unlocked'
+			WHEN "t" = (
+				SELECT fo.folder_of_user 
+				FROM #session.hostdbprefix#folders fo 
+				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
+				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
+				AND fo.folder_id = a.folder_id_r
+				) THEN 'unlocked'
+			ELSE 'locked'
+		END as perm
+	</cfif>
+	FROM #session.hostdbprefix#audios a
 	WHERE 
 	<cfif arguments.thestruct.related EQ "T">
-		aud_group
+		a.aud_group
 	<cfelse>
-		aud_id
+		a.aud_id
 	</cfif>
 	<cfif arguments.thestruct.qrybasket.recordcount EQ 0>
 	= '0'

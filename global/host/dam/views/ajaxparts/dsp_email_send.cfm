@@ -68,23 +68,31 @@
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- The Original video --->
 						<input type="hidden" name="artofimage" value="">
-						<tr>
-							<td width="1%"><input type="checkbox" name="artofimage" value="video"/></td>
-							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original <cfif qry_asset.detail.link_kind NEQ "url">#ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)</cfif></a></td>
-						</tr>
-						<!--- The preview video
-						<tr>
-							<td><input type="checkbox" name="artofimage" value="video_preview"/></td>
-							<td><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.vprevlength#")# MB) (#qry_asset.vid_preview_width#x#qry_asset.vid_preview_heigth# pixel)</a></td>
-						</tr> --->
+						<cfif qry_asset.detail.perm EQ "unlocked" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
+							<tr>
+								<td width="1%"><input type="checkbox" name="artofimage" value="video"/></td>
+								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original <cfif qry_asset.detail.link_kind NEQ "url">#ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)</cfif></a></td>
+							</tr>
+						</cfif>
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>
 						<cfloop query="qry_related">
-							<tr>
-								<td><input type="checkbox" name="artofimage" value="#vid_id#"/></td>
-								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_width#x#vid_height# pixel)</a></td>
-							</tr>
-							<cfset thecounter = thecounter + 1>
+							<cfset theid = vid_id>
+							<cfset theext = vid_extension>
+							<cfset theilength = vlength>
+							<cfset theorgwidth = vid_width>
+							<cfset theorgheight = vid_height>
+							<cfloop query="qry_share_options">
+								<cfif asset_format EQ theid>
+									<cfif qry_asset.detail.perm EQ "unlocked" OR asset_dl>
+										<tr>
+											<td><input type="checkbox" name="artofimage" value="#theid#"/></td>
+											<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(theext)# #myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB (#theorgwidth#x#theorgheight# pixel)</a></td>
+										</tr>
+										<cfset thecounter = thecounter + 1>
+									</cfif>
+								</cfif>
+							</cfloop>
 						</cfloop>
 					</table>
 				</td>
@@ -101,18 +109,31 @@
 							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',0)" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)</a></td>
 						</tr>
 						<!--- Original --->
-						<tr>
-							<td><input type="checkbox" name="artofimage" value="original"/></td>
-							<td><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
-						</tr>
+						<cfif qry_asset.detail.perm EQ "unlocked" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
+							<tr>
+								<td><input type="checkbox" name="artofimage" value="original"/></td>
+								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)</a></td>
+							</tr>
+						</cfif>
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>
 						<cfloop query="qry_related">
-							<tr>
-								<td><input type="checkbox" name="artofimage" value="#img_id#"/></td>
-								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</a></td>
-							</tr>
-							<cfset thecounter = thecounter + 1>
+							<cfset theid = img_id>
+							<cfset theext = img_extension>
+							<cfset theilength = ilength>
+							<cfset theorgwidth = orgwidth>
+							<cfset theorgheight = orgheight>
+							<cfloop query="qry_share_options">
+								<cfif asset_format EQ theid>
+									<cfif qry_asset.detail.perm EQ "unlocked" OR asset_dl>
+										<tr>
+											<td><input type="checkbox" name="artofimage" value="#theid#"/></td>
+											<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(theext)# #myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB (#theorgwidth#x#theorgheight# pixel)</a></td>
+										</tr>
+										<cfset thecounter = thecounter + 1>
+									</cfif>
+								</cfif>
+							</cfloop>
 						</cfloop>
 					</table>
 				</td>
@@ -125,18 +146,29 @@
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- The Original --->
 						<input type="hidden" name="artofimage" value="">
-						<tr>
-							<td width="1%"><input type="checkbox" name="artofimage" value="audio"/></td>
-							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
-						</tr>
+						<cfif qry_asset.detail.perm EQ "unlocked" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
+							<tr>
+								<td width="1%"><input type="checkbox" name="artofimage" value="audio"/></td>
+								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artofimage',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)</a></td>
+							</tr>
+						</cfif>
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>
-						<cfloop query="qry_related">
-							<tr>
-								<td><input type="checkbox" name="artofimage" value="#aud_id#"/></td>
-								<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB</a></td>
-							</tr>
-							<cfset thecounter = thecounter + 1>
+						<cfloop query="attributes.qry_related">
+							<cfset theid = aud_id>
+							<cfset theext = aud_extension>
+							<cfset theilength = aud_size>
+							<cfloop query="qry_share_options">
+								<cfif asset_format EQ theid>
+									<cfif qry_asset.detail.perm EQ "unlocked" OR asset_dl>
+										<tr>
+											<td><input type="checkbox" name="artofimage" value="#theid#"/></td>
+											<td><a href="##" onclick="clickcbk('sendemailform','artofimage',#thecounter#)" style="text-decoration:none;">#ucase(theext)# #myFusebox.getApplicationData().defaults.converttomb("#theilength#")# MB</a></td>
+										</tr>
+										<cfset thecounter = thecounter + 1>
+									</cfif>
+								</cfif>
+							</cfloop>
 						</cfloop>
 					</table>
 				</td>
@@ -149,10 +181,12 @@
 					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="gridno">
 						<!--- The Original --->
 						<input type="hidden" name="artoffile" value="">
-						<tr>
-							<td width="1%"><input type="checkbox" name="artoffile" value="file"/></td>
-							<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artoffile',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.file_size#")# MB)</a></td>
-						</tr>
+						<cfif qry_asset.detail.perm EQ "unlocked" OR (qry_share_options.asset_format EQ "org" AND qry_share_options.asset_dl)>
+							<tr>
+								<td width="1%"><input type="checkbox" name="artoffile" value="file"/></td>
+								<td width="100%"><a href="##" onclick="clickcbk('sendemailform','artoffile',1)" style="text-decoration:none;">Original #ucase(qry_asset.detail.file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.file_size#")# MB)</a></td>
+							</tr>
+						</cfif>
 					</table>
 				</td>
 			</tr>

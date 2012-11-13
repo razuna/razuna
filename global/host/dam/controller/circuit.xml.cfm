@@ -605,10 +605,10 @@
 		<set name="attributes.related" value="T" />
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detailforbasket(attributes)" returnvariable="qry_theaudio_related" />
 		<!-- If from share we query downloadable settings -->
-		<if condition="#attributes.fromshare# EQ 'T'">
+		<if condition="attributes.fromshare EQ 'T'">
 			<true>
 				<!-- CFC: Get folder or collection share options -->
-				<if condition="#session.iscol# EQ 'F'">
+				<if condition="session.iscol EQ 'F'">
 					<true>
 						<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(session.fid)" returnvariable="qry_folder" />
 					</true>
@@ -2622,6 +2622,8 @@
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="qry_related" />
 			</true>
 		</if>
+		<!-- CFC: Get share options -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 		<!-- Show -->
 		<do action="ajax.email_send" />
 	</fuseaction>
@@ -6457,7 +6459,7 @@
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="relatedaudios(attributes)" returnvariable="attributes.qry_related" />
 			</true>
 		</if>
-		<if condition="attributes.kind EQ 'doc'">
+		<if condition="attributes.kind EQ 'doc' OR attributes.kind EQ 'other'">
 			<true>
 				<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" />
 			</true>
