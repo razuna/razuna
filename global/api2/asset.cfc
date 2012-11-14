@@ -597,7 +597,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
 					WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				</cfif>
-				UNION ALL
+				<cfif arguments.assettype NEQ "doc">UNION ALL</cfif>
 				SELECT 
 				av_id id, 
 				0 AS width, 
