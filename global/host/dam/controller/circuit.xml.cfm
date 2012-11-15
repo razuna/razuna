@@ -26,7 +26,7 @@
 		<set name="attributes.fid" value="0" overwrite="false" />
 		<set name="attributes.wid" value="0" overwrite="false" />
 		<set name="jr_enable" value="false" overwrite="false" />
-		<if condition="#session.hostid# NEQ ''">
+		<if condition="session.hostid NEQ ''">
 			<true>
 				<!-- CFC: Get languages -->
 				<do action="languages" />
@@ -35,7 +35,7 @@
 				<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_url" />
 			</true>
 		</if>
-		<!-- If ISP (for now) -->
+		<!-- news -->
 		<if condition="#application.razuna.isp#">
 			<true>
 				<set name="attributes.frontpage" value="true" />
