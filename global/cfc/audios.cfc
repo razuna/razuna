@@ -331,7 +331,7 @@
 						<cfquery datasource="#variables.dsn#">
 						UPDATE #session.hostdbprefix#audios_text
 						SET 
-						aud_description = <cfqueryparam value="#ltrim(tdesc))#" cfsqltype="cf_sql_varchar">, 
+						aud_description = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">, 
 						aud_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
 						WHERE aud_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
