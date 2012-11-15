@@ -1962,6 +1962,11 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		)
 		</cfquery>
 	</cfloop>
+	<!--- Set ISP --->
+	<cfquery datasource="razuna_default">
+	UPDATE razuna_config
+	SET conf_isp = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.conf_isp#">
+	</cfquery>
 	<!--- Flush --->
 	<cfset variables.cachetoken = resetcachetoken("settings","true")>
 	<!--- Return --->

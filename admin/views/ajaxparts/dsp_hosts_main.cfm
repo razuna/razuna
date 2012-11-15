@@ -41,19 +41,31 @@
 			<input type="hidden" name="pathoneup" value="#pathoneup#">
 			<input type="hidden" name="firsttime" value="F">
 			<table width="600" border="0" cellspacing="0" cellpadding="0" class="grid">
-			<tr>
+			<!--- <tr>
 				<th colspan="2">#defaultsObj.trans("hosts_new")#</th>
 			</tr>
 			<tr>
 				<td colspan="2">#defaultsObj.trans("newhost_desc")#</td>
-			</tr>
+			</tr> --->
 			<tr>
 				<th colspan="2">#defaultsObj.trans("host_setings")#</th>
 			</tr>
 			<tr>
-				<td width="200">#defaultsObj.trans("hosts_name")#*</td>
-				<td width="400"><div style="float:left;"><input type="text" name="host_name" id="host_name" size="55" onkeyup="checkhostname();"></div><div id="checkhostname" style="float:right;"></div></td>
+				<td width="200">
+					<cfif application.razuna.isp>
+						Subdomain
+					<cfelse>
+						#defaultsObj.trans("hosts_name")#
+					</cfif>
+				</td>
+				<td width="400"><div style="float:left;"><input type="text" name="host_name" id="host_name" style="width:200px;" onkeyup="checkhostname();"><cfif application.razuna.isp>.domain.com</cfif></div><div id="checkhostname" style="float:right;"></div></td>
 			</tr>
+			<cfif application.razuna.isp>
+				<tr>
+					<td valign="top">Custom hostname</td>
+					<td><input type="text" name="host_name_custom" id="host_name_custom" style="width:200px;"><br /><em>(If you want to let your customer use his own domain. He needs to setup a CNAME to his subdomain!)</em></td>
+				</tr>
+			</cfif>
 			<!--- <tr>
 				<td valign="top">#defaultsObj.trans("hosts_path")#*</td>
 				<td><div style="float:left;"><input type="text" name="host_path" id="host_path" size="55" class="text" onchange="setpaths();" onkeyup="checkhostpath();"><br /><em>#defaultsObj.trans("no_space_umlauts")#</em></div><div id="checkhostpath" style="float:right;"></div></td>

@@ -33,7 +33,7 @@
 			<cfif application.razuna.storage EQ "nirvanix" AND attributes.nvxsession EQ 0>
 				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box-dotted">
 					<cfif application.razuna.isp>
-						<strong>Caution: Something is wrong with your setup. Please <a href="mailto:support@razuna.com?subject=Login error for #session.hostid#">contact the Razuna support team</a> with this error. Do NOT continue until you hear from us!</strong>
+						<strong>Caution: Something is wrong with your setup. Please contact our support team with this error. Do NOT continue until you hear from us! (Use the feedback link on top to report this. Thank you.)</strong>
 					<cfelse>
 						Caution: You are using the Nirvanix Cloud Storage, but it looks like it is not properly set up. Thus no assets will be shown! <br />Please check with your Administrator to resolve this immediately
 					</cfif>
@@ -123,7 +123,7 @@
 							<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Real world custom case');return false;">&gt; Real world customer case</a>
 						</div>
 						<!--- Announcement for ISP --->
-						<cfif application.razuna.isp>
+						<cfif cgi.http_host CONTAINS "razuna.com">
 							<br />
 							<div class="panelsnew">
 								<h1>Razuna Announcements</h1>

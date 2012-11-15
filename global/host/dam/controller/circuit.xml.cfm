@@ -36,7 +36,7 @@
 			</true>
 		</if>
 		<!-- news -->
-		<if condition="#application.razuna.isp#">
+		<if condition="cgi.http_host CONTAINS 'razuna.com'">
 			<true>
 				<set name="attributes.frontpage" value="true" />
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
@@ -263,7 +263,7 @@
 					</true>
 				</if>
 	 			<!-- If ISP (for now) -->
-				<if condition="#application.razuna.isp#">
+				<if condition="cgi.http_host CONTAINS 'razuna.com'">
 					<true>
 						<!-- Get News -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />
@@ -4966,7 +4966,7 @@
 		<!-- Get the Cache tag -->
 		<do action="cachetag" />
 		<!-- If ISP (for now) -->
-		<if condition="#application.razuna.isp#">
+		<if condition="cgi.http_host CONTAINS 'razuna.com'">
 			<true>
 				<set name="attributes.frontpage" value="true" />
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="news_get(attributes)" returnvariable="attributes.qry_news" />

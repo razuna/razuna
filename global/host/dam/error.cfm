@@ -35,7 +35,7 @@ VALUES(
 <!--- Flush Cache --->
 <cfinvoke component="extQueryCaching" method="resetcachetoken" type="logs" />
 <!--- eMail --->
-<cfif application.razuna.isp OR cgi.http_host CONTAINS "razunabd.local">
+<cfif cgi.http_host CONTAINS "razuna.com" OR cgi.http_host CONTAINS "razunabd.local">
 <cfmail to="bugs@razuna.com" from="server@razuna.com" subject="Razuna Error: #cgi.server_name# - #error.message#" type="html">
 #errortext#
 </cfmail>

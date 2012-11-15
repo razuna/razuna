@@ -184,9 +184,7 @@
   feedback_widget_options.style = "question";
   var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
 </script>
-<!--- Twitter --->
-<!--- <script src="//platform.twitter.com/widgets.js" type="text/javascript"></script> --->
-<cfif application.razuna.isp>
+<cfif cgi.http_host CONTAINS "razuna.com">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-27003876-1']);

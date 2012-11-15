@@ -91,6 +91,7 @@
 		<cfset arguments.thestruct.host_db_prefix = "raz1_">
 		<cfset arguments.thestruct.host_id = hostid.id>
 		<cfset arguments.thestruct.dsn = variables.dsn>
+		<cfparam name="arguments.thestruct.host_name_custom" default="" />
 		<!--- NIRVANIX --->
 		<cfif application.razuna.storage EQ "nirvanix" AND NOT structkeyexists(arguments.thestruct,"restore")>
 			<!--- Create a random password --->
@@ -116,7 +117,8 @@
 			host_path = <cfqueryparam value="#arguments.thestruct.host_path#" cfsqltype="cf_sql_varchar">, 
 			host_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
 			host_db_prefix = <cfqueryparam value="#arguments.thestruct.host_db_prefix#" cfsqltype="cf_sql_varchar">, 
-			host_shard_group = <cfqueryparam value="#arguments.thestruct.host_db_prefix#" cfsqltype="cf_sql_varchar">
+			host_shard_group = <cfqueryparam value="#arguments.thestruct.host_db_prefix#" cfsqltype="cf_sql_varchar">,
+			host_name_custom = <cfqueryparam value="#arguments.thestruct.host_name_custom#" cfsqltype="cf_sql_varchar">
 			WHERE host_id = <cfqueryparam value="#hostid.id#" cfsqltype="cf_sql_numeric">
 			</cfquery>
 		</cftransaction>
@@ -157,10 +159,12 @@
 				<cfset session.hostdbprefix = arguments.thestruct.host_db_prefix>
 			</cfif>
 			<!--- COPY NEWHOST DIR --->
-			<cfinvoke method="directoryCopy">
-				<cfinvokeargument name="source" value="#arguments.thestruct.pathhere#/newhost/hostfiles">
-				<cfinvokeargument name="destination" value="#arguments.thestruct.pathoneup#/#arguments.thestruct.host_path#">
-			</cfinvoke>
+			<cfif !application.razuna.isp>
+				<cfinvoke method="directoryCopy">
+					<cfinvokeargument name="source" value="#arguments.thestruct.pathhere#/newhost/hostfiles">
+					<cfinvokeargument name="destination" value="#arguments.thestruct.pathoneup#/#arguments.thestruct.host_path#">
+				</cfinvoke>
+			</cfif>
 			<!--- ADD THE SYSTEMADMIN TO THE CROSS TABLE FOR THE HOSTS --->
 			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin">
 			<cfoutput query="theadmins">
@@ -179,13 +183,15 @@
 			<!--- INSERT DEFAULT VALUES --->
 			<cfinvoke method="insert_default_values" thestruct="#arguments.thestruct#">
 			<!--- Create the fusebox files --->
-			<cfinvoke method="newHostCreateApp">
-				<cfinvokeargument name="module_folder" value="dam">
-				<cfinvokeargument name="thisid" value="#hostid.id#">
-				<cfinvokeargument name="host_path_replace" value="#arguments.thestruct.host_path#">
-				<cfinvokeargument name="host_db_prefix_replace" value="#arguments.thestruct.host_db_prefix#">
-				<cfinvokeargument name="pathoneup" value="#arguments.thestruct.pathoneup#">
-			</cfinvoke>
+			<cfif !application.razuna.isp>
+				<cfinvoke method="newHostCreateApp">
+					<cfinvokeargument name="module_folder" value="dam">
+					<cfinvokeargument name="thisid" value="#hostid.id#">
+					<cfinvokeargument name="host_path_replace" value="#arguments.thestruct.host_path#">
+					<cfinvokeargument name="host_db_prefix_replace" value="#arguments.thestruct.host_db_prefix#">
+					<cfinvokeargument name="pathoneup" value="#arguments.thestruct.pathoneup#">
+				</cfinvoke>
+			</cfif>
 			<!--- <cfinvoke method="newHostCreateApp">
 				<cfinvokeargument name="module_folder" value="web">
 				<cfinvokeargument name="thisid" value="#hostid.id#">
@@ -216,7 +222,6 @@
 <!--- Insert Default Values --->
 <cffunction name="insert_default_values" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
-	
 	<cftry>
 		<!--- Param --->
 		<cfparam default="" name="arguments.thestruct.oracle_url">
@@ -463,11 +468,17 @@
 	<cfargument name="orderBy" type="string" required="false" default="host_name ASC" hint="""ORDER BY #yourtext#""">
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
+	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="localquery">
-		SELECT host_id, host_name
-		FROM hosts
-		ORDER BY #arguments.orderBy#
+	SELECT host_id, host_name, host_name_custom
+	FROM hosts
+	ORDER BY #arguments.orderBy#
 	</cfquery>
+	<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+	<cfif localquery.recordcount LTE session.rowmaxpage>
+		<cfset session.offset = 0>
+	</cfif>
+	<!--- Return --->
 	<cfreturn localquery>
 </cffunction>
 
@@ -479,7 +490,7 @@
 	<cfset var localquery = 0>
 	<!--- function-body --->
 	<cfquery datasource="#variables.dsn#" name="localquery">
-		SELECT host_id, host_name, host_path, host_db_prefix, host_lang, host_type, host_shard_group
+		SELECT host_id, host_name, host_path, host_db_prefix, host_lang, host_type, host_shard_group, host_name_custom
 		FROM hosts
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
 	</cfquery>
@@ -524,186 +535,20 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- Update Host --->
-<cffunction name="update" output="false" access="public">
+<cffunction name="update" output="false" access="public" returntype="void">
 	<cfargument name="thestruct" type="Struct">
-
-	<cfquery datasource="#variables.dsn#" name="qry_hostslist">
-	SELECT host_lang, host_path, host_db_prefix p
-	FROM hosts
+	<!--- Update --->
+	<cfquery datasource="#variables.dsn#">
+	UPDATE hosts
+	SET 
+	host_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.host_name#">,
+	host_name_custom = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.host_name_custom#">
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
 	</cfquery>
-
-	<!--- If the count of languages is higher then it was before then add a new language to the setting table --->
-	<cfif #arguments.thestruct.host_lang# GT qry_hostslist.host_lang>
-		<cfset howmanylangnow = #qry_hostslist.host_lang#>
-		<cfset langdif = #arguments.thestruct.host_lang# - #howmanylangnow#>
-		<cfset fromon = #qry_hostslist.host_lang# + 1>
-		<!--- Languages --->
-		<cfloop index="l" from="#fromon#" to="#arguments.thestruct.host_lang#">
-			<cfset thelang = "set_lang_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				insert into #qry_hostslist.p#settings
-				(set_id, host_id)
-				values(
-				<cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-				)
-			</cfquery>
-		</cfloop>
-		<!--- Titels Intra --->
-		<cfloop index="l" from="#fromon#" to="#arguments.thestruct.host_lang#">
-			<cfset thelang = "set_title_intra_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				insert into #qry_hostslist.p#settings
-				(set_id, set_pref, host_id)
-				values(
-				<cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="Razuna - Digital Asset Management" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-				)
-			</cfquery>
-		</cfloop>
-		<!--- Titels WebSite --->
-		<cfloop index="l" from="#fromon#" to="#arguments.thestruct.host_lang#">
-			<cfset thelang = "set_title_website_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				insert into #qry_hostslist.p#settings
-				(set_id, set_pref, host_id)
-				values(
-				<cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="Razuna - WebSite" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-				)
-			</cfquery>
-		</cfloop>
-		<!--- Meta Keywords --->
-		<cfloop index="l" from="#fromon#" to="#arguments.thestruct.host_lang#">
-			<cfset thelang = "set_meta_keywords_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				insert into #qry_hostslist.p#settings
-				(set_id, set_pref, host_id)
-				values(
-				<cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="Razuna, Open Source, Digital Asset Management, DAM, Media Asset Management, MAM" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-				)
-			</cfquery>
-		</cfloop>
-		<!--- Meta Description --->
-		<cfloop index="l" from="#fromon#" to="#arguments.thestruct.host_lang#">
-			<cfset thelang = "set_meta_description_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				insert into #qry_hostslist.p#settings
-				(set_id, set_pref, host_id)
-				values(
-				<cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="Razuna - the Open Source Enterprise Digital Asset Management (DAM/MAM) Solution with integrated Content Management (CMS)!" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-				)
-			</cfquery>
-		</cfloop>
-		<!--- Meta Custom --->
-		<cfloop index="l" from="#fromon#" to="#arguments.thestruct.host_lang#">
-			<cfset thelang = "set_meta_custom_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				insert into #qry_hostslist.p#settings
-				(set_id, host_id)
-				values(
-				<cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-				)
-			</cfquery>
-		</cfloop>
-	</cfif>
-
-	<!--- If the count of languages is LOWER then it was before then remove the language from the setting table --->
-	<cfif #arguments.thestruct.host_lang# LT qry_hostslist.host_lang>
-		<cfset fromon = #arguments.thestruct.host_lang# + 1>
-		<!--- Languages --->
-		<cfloop index="l" from="#qry_hostslist.host_lang#" to="#fromon#" step="-1">
-			<cfset thelang = "set_lang_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				delete from #qry_hostslist.p#settings
-				where set_id = <cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-			</cfquery>
-		</cfloop>
-		<!--- Titles Intra --->
-		<cfloop index="l" from="#qry_hostslist.host_lang#" to="#fromon#" step="-1">
-			<cfset thelang = "set_title_intra_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				delete from #qry_hostslist.p#settings
-				where set_id = <cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-			</cfquery>
-		</cfloop>
-		<!--- Titles WebSite --->
-		<cfloop index="l" from="#qry_hostslist.host_lang#" to="#fromon#" step="-1">
-			<cfset thelang = "set_title_website_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-				delete from #qry_hostslist.p#settings
-				where set_id = <cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-			</cfquery>
-		</cfloop>
-		<!--- Meta Keywords --->
-		<cfloop index="l" from="#qry_hostslist.host_lang#" to="#fromon#" step="-1">
-			<cfset thelang = "set_meta_keywords_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-			delete from #qry_hostslist.p#settings
-			where set_id = <cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-			</cfquery>
-		</cfloop>
-		<!--- Meta Description --->
-		<cfloop index="l" from="#qry_hostslist.host_lang#" to="#fromon#" step="-1">
-			<cfset thelang = "set_meta_description_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-			delete from #qry_hostslist.p#settings
-			where set_id = <cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-			</cfquery>
-		</cfloop>
-		<!--- Meta Custom --->
-		<cfloop index="l" from="#qry_hostslist.host_lang#" to="#fromon#" step="-1">
-			<cfset thelang = "set_meta_custom_#l#">
-			<cfset thelang = #ucase(thelang)#>
-			<cfquery datasource="#variables.dsn#">
-			delete from #qry_hostslist.p#settings
-			where set_id = <cfqueryparam value="#thelang#" cfsqltype="cf_sql_varchar">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-			</cfquery>
-		</cfloop>
-		<!--- Remove translations from database table
-		<cfloop index="l" from="#qry_hostslist.host_lang#" to="#fromon#" step="-1">
-			<cfquery datasource="#variables.dsn#">
-				delete from #qry_hostslist.p#translations
-				where lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
-			</cfquery>
-		</cfloop> --->
-	</cfif>
-
-	<cfquery datasource="#variables.dsn#">
-	update hosts
-	set host_lang = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_lang#">
-	where host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
-	</cfquery>
-	
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfset variables.cachetoken = resetcachetoken("settings")>
-
+	<cfreturn />
 </cffunction>
 
 <!--- This is from remote --->
@@ -738,7 +583,7 @@
 	<cfif qry_rhost.recordcount EQ 1>
 		<cftry>
 			<!--- REMOVE THE DIRECTORY ON THE FILESYSTEM --->
-			<cfif arguments.thestruct.storage NEQ "nirvanix">
+			<cfif !application.razuna.isp>
 				<cfset thisdir = "#arguments.thestruct.pathoneup#/#qry_rhost.host_path#">
 				<cfif directoryExists(thisdir)>
 					<cfdirectory action="delete" directory="#arguments.thestruct.pathoneup#/#qry_rhost.host_path#" mode="775" recurse="yes">
@@ -940,11 +785,7 @@
 	<cfset var host_db_prefix_replace = qrythishost.host_shard_group>
 	<cfset var thefiles = 0>
 	<cfset var sqlStmt = "">
-	<!--- function body --->
-	<!--- Remove DAM directories and files so we can copy them later on without problems --->
 	<cftry>
-		<!--- directories
-		<cfdirectory action="delete" directory="#arguments.thestruct.pathoneup#/#host_path_replace#/dam/translations" mode="775" recurse="yes"> --->
 		<!--- files --->
 		<cfdirectory action="list" directory="#arguments.thestruct.pathoneup#/#host_path_replace#/dam/" name="thefiles" type="file">
 		<cfloop query="thefiles">
@@ -957,8 +798,7 @@
 		<cfinvokeargument name="source" value="#arguments.thestruct.pathhere#/newhost/hostfiles/dam">
 		<cfinvokeargument name="destination" value="#arguments.thestruct.pathoneup#/#host_path_replace#/dam">
 	</cfinvoke>
-	<!--- Re-Write the fusebox files files --->
-	<!--- <cfloop list="dam,web" index="iLoop"> --->
+	<!--- Re-Write the fusebox files --->
 		<cfinvoke method="newHostCreateApp">
 			<cfinvokeargument name="module_folder" value="dam">
 			<cfinvokeargument name="thisid" value="#thisid#">
@@ -970,7 +810,6 @@
 	<!--- Check to see if cache values are in the DB --->
 	<cfinvoke method="setcachetoken" hostid="#arguments.thestruct.host_id#" />
 
-	<!--- </cfloop> --->
 	<!--- Now update the language table from this host. Compare the change and id column
 	<cfloop index="l" from="1" to="#qrythishost.host_lang#">
 		<!--- Error check to see if the language is here, if not add all the translation from the master translation table --->

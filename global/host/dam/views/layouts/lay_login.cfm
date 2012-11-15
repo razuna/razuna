@@ -29,7 +29,7 @@
 	<div id="firebugalert" style="display:none;"></div>
 	<div id="outer">
 		<div id="loginform">
-			<cfif application.razuna.isp>
+			<cfif cgi.http_host CONTAINS "razuna.com">
 				<cfparam name="attributes.qry_news.news_title" default="" />
 				<cfparam name="attributes.qry_news.news_text" default="" />
 				<div style="text-align:center;">
@@ -44,7 +44,7 @@
 	  		<cfif application.razuna.whitelabel>
 	  			#wl#
 	  		<cfelse>
-		  		Powered by <a href="http://razuna.com" target="_blank">Razuna</a> <cfif NOT application.razuna.isp>#version#<br />
+		  		Powered by <a href="http://razuna.com" target="_blank">Razuna</a> <cfif !application.razuna.isp>#version#<br />
 					Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a>
 				</cfif>
 				<br />

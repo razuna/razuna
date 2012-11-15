@@ -49,7 +49,7 @@
 			<cfelse>
 				<a href="http://www.razuna.com" target="_blank"><img src="../../global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;"></a>
 				<br>
-				<cfif NOT application.razuna.isp>
+				<cfif !application.razuna.isp>
 					<a href="http://www.razuna.com" target="_blank">Razuna</a> #version#<br>
 					Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a><br>
 				</cfif>

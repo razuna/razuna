@@ -25,48 +25,56 @@
 --->
 <cfoutput>
 	<div style="padding:10px;">
-	<!---
-<form name="hostedit" id="hostedit" method="post" action="#self#">
+	<form name="form_hostedit" id="form_hostedit" method="post" action="#self#">
 	<input type="hidden" name="#theaction#" value="c.hosts_update">
 	<input type="hidden" name="host_id" value="#attributes.host_id#">
---->
+
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
-		<tr>
-			<th colspan="2">#defaultsObj.trans("hosts_edit")#</th>
-		</tr>
 		<!---
-<tr>
+		<tr>
 			<td>#defaultsObj.trans("how_many_lang")#</td>
 			<td><input type="text" name="thishost_lang" id="thishost_lang" size="10" class="text" value="#qry_hostsdetail.host_lang#"></td>
 		</tr>
---->
+		--->
 		<tr>
-			<td width="1%">#defaultsObj.trans("hosts_name")#</td>
-			<td width="100%">#qry_hostsdetail.host_name#</td>
+			<td nowrap="true" width="1%" nowrap="true"><cfif application.razuna.isp>Subdomain<cfelse>#defaultsObj.trans("hosts_name")#</cfif></td>
+			<td width="100%"><input type="text" name="host_name" id="host_name" style="width:200px;" value="#qry_hostsdetail.host_name#"><cfif application.razuna.isp>.domain.com</cfif></td>
 		</tr>
-		<tr>
-			<td nowrap="true">#defaultsObj.trans("hosts_path")#</td>
-			<td>#qry_hostsdetail.host_path#</td>
-		</tr>
-		<tr>
-			<td>#defaultsObj.trans("db_prefix")#</td>
+		<cfif application.razuna.isp>
+			<tr>
+				<td valign="top" nowrap="true">Custom hostname</td>
+				<td><input type="text" name="host_name_custom" id="host_name_custom" style="width:200px;" value="#qry_hostsdetail.host_name_custom#"><br /><em>(If you want to let your customer use his own domain. He needs to setup a CNAME to his subdomain!)</em></td>
+			</tr>
+		</cfif>
+		<cfif !application.razuna.isp>
+			<tr>
+				<td nowrap="true">#defaultsObj.trans("hosts_path")#</td>
+				<td>#qry_hostsdetail.host_path#</td>
+			</tr>
+		</cfif>
+		<!--- <tr>
+			<td nowrap="true">#defaultsObj.trans("db_prefix")#</td>
 			<td>#qry_hostsdetail.host_db_prefix#</td>
+		</tr> --->
+		<tr>
+			<td colspan="2"><div id="feedback" style="display:none;font-weight:bold;color:green;float:left;"></div><div style="float:right;"><input type="submit" name="Submitform_hostedit" value="#defaultsObj.trans("save")#" class="button"></div></td>
 		</tr>
-		<!---
-<tr>
-			<td colspan="2"><div id="feedback" style="display:none;font-weight:bold;color:red;float:left;"></div><div style="float:right;"><input type="submit" name="Submit" value="#defaultsObj.trans("save")#" class="button"></div></td>
-		</tr>
---->
+
 	</table>
-	<!--- </form> --->
+	</form>
 	</div>
-	<div id="dummy" style="display:none"></div>
 	<script language="javascript">
-		$("##hostedit").submit(function(e){
+		$("##form_hostedit").submit(function(e){
 			// Get values
-			var item = escape($("##thishost_lang").val());
+			var url = formaction("form_hostedit");
+			var items = formserialize("form_hostedit");
 			// Submit Form
-			loadcontent('dummy', '#myself#c.hosts_update&host_id=#attributes.host_id#&host_lang=' + item);
+			$.ajax({
+				type: "POST",
+				url: url,
+			   	data: items
+			});
+			// Feedback
 			$("##feedback").css("display","");
 			$("##feedback").html('#defaultsObj.trans("success")#');
 			return false;

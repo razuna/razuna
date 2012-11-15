@@ -1115,6 +1115,8 @@
 	</fuseaction>
 	<!-- List -->
 	<fuseaction name="hosts_list">
+		<set name="attributes.offset" value="0" overwrite="false" />
+		<set name="session.offset" value="#attributes.offset#" />
 		<!-- CFC: Get all hosts -->
 		<invoke object="myFusebox.getApplicationData().hosts" methodcall="getall()" returnvariable="qry_hostslist" />
 		<!-- Show -->

@@ -58,7 +58,7 @@
 		<transtext>Name of this Tenant</transtext>
 	</transid>
 	<transid name="hosts_path">
-		<transtext>Name of Folder on your WebServer</transtext>
+		<transtext>Name of folder</transtext>
 	</transid>
 	<transid name="how_many_users">
 		<transtext>Concurrent Users allowed</transtext>
@@ -1750,7 +1750,7 @@
 		<transtext>Language base</transtext>
 	</transid>
 	<transid name="host_setings">
-		<transtext>Tenant Values</transtext>
+		<transtext>Tenant Configuration</transtext>
 	</transid>
 	<transid name="language_description">
 		<transtext>Language Description</transtext>
@@ -2626,7 +2626,7 @@
 		<transtext>Tab out of this field to update the language fields below</transtext>
 	</transid>
 	<transid name="create_host">
-		<transtext>Create Tenant</transtext>
+		<transtext>Add Tenant</transtext>
 	</transid>
 	<transid name="passwordsent">
 		<transtext>We sent you the password to the given email address.</transtext>
@@ -2689,7 +2689,7 @@
 		<transtext>Note: Please make sure that there are no spaces and special characters in your path!</transtext>
 	</transid>
 	<transid name="path_to_assets_desc_create">
-		<transtext><![CDATA[Please enter the absolute path to an <b>existing</b> folder where you want to store your assets. If you already have a repository you can use the same path here! On Windows this should start with "C:\" and on Linux/MaxOS X with "/", but with <b>NO TRAILING SLASH</b>. The path can be on a network volume or local one, it does not matter as long as Razuna can read/write to it.<br>NOTE:If you move this folder outside the Razuna web root you will need to create a virtual directory within your web server!!!]]></transtext>
+		<transtext><![CDATA[Please enter the absolute path to an <b>existing</b> folder where you want to store your assets. If you already have a repository you can use the same path here! On Windows this should start with "C:\" and on Linux/MaxOS X with "/", but with <b>NO TRAILING SLASH</b>. The path can be on a network volume or local one, it does not matter as long as Razuna can read/write to it.<br /><br />NOTE: If you move this folder outside the Razuna web root you will need to create a virtual directory within your web server!!!]]></transtext>
 	</transid>
 	<transid name="installation_checklist_assetpath">
 		<transtext>Set path to Assets</transtext>
@@ -3068,5 +3068,8 @@
 	</transid>
 	<transid name="header_wl_news_new">
 		<transtext><![CDATA[Create new news entry]]></transtext>
+	</transid>
+	<transid name="header_wl_isp_desc">
+		<transtext><![CDATA[By default, you can setup tenants for each of your clients. This will create a seperate directory in the file system for each tenant. Each tenant has a unique ID to identify the records and settings of each tenant.<br /><br />For hosting companies this setup might work for a small numbers of clients, but becomes quickly cumbersome for many. For this setup, you have the option to activate the "Hosting Setting". Once activated, each tenant will still have their own unique ID and Razuna works the same as before, but all requests go to a single tenant directory!<br /><br /><strong>Important</strong><br />Once activated, Razuna will identify each tenant according to the subdomain. In order to make this work, you need to use subdomains for your tenants. Each tenant must have a unique subdomain, e.g. customer1.domain.com, customer2.domain.com.<br><br><strong style="color:red;">In order to activate this setting you have to restart the Razuna server after you changed and saved it!</strong>]]></transtext>
 	</transid>
 </translations>

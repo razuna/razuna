@@ -32,6 +32,8 @@
 <cfparam name="session.hostid" default="0">
 <cfparam name="cookie.loginnameadmin" default="">
 <cfparam name="cookie.loginpassadmin" default="">
+<cfparam name="session.offset" default="0">
+<cfparam name="session.rowmaxpage" default="25">
 
 <!--- Set the session for the language --->
 <cfparam name="session.locale" type="string" default="en">

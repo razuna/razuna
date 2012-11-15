@@ -70,7 +70,7 @@ body{
 <div id="container">
 	#trim(thecontent)#
 </div>
-<cfif application.razuna.isp>
+<cfif cgi.http_host CONTAINS "razuna.com">
 <script type="text/javascript">
   var _gaq = _gaq || [];
   _gaq.push(['_setAccount', 'UA-27003876-1']);

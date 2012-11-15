@@ -3069,4 +3069,7 @@
 	<transid name="header_wl_news_new">
 		<transtext><![CDATA[Create new news entry]]></transtext>
 	</transid>
+	<transid name="header_wl_isp_desc">
+		<transtext><![CDATA[By default, you can setup tenants for each of your clients. This will create a seperate directory in the file system for each tenant. Each tenant has a unique ID to identify the records and settings of each tenant.<br /><br />For hosting companies this setup might work for a small numbers of clients, but becomes quickly cumbersome for many. For this setup, you have the option to activate the "Hosting Setting". Once activated, each tenant will still have their own unique ID and Razuna works the same as before, but all requests go to a single tenant directory!<br /><br /><strong>Important</strong><br />Once activated, Razuna will identify each tenant according to the subdomain. In order to make this work, you need to use subdomains for your tenants. Each tenant must have a unique subdomain, e.g. customer1.domain.com, customer2.domain.com.<br><br><strong style="color:red;">In order to activate this setting you have to restart the Razuna server after you changed and saved it!</strong>]]></transtext>
+	</transid>
 </translations>

@@ -34,10 +34,10 @@
 		<input type="hidden" name="coll_folder" value="T">
 	</cfif>
 	<div id="folder#attributes.theid#-#attributes.isdetail#" style="width:<cfif attributes.isdetail EQ "T">100%<cfelse>690px</cfif>;padding-bottom:60px;">
-		<cfif attributes.isdetail NEQ "T" AND NOT application.razuna.isp AND attributes.iscol NEQ "T">
+		<cfif attributes.isdetail NEQ "T" AND !application.razuna.isp AND attributes.iscol NEQ "T">
 			<ul>
 				<li><a href="##folder_new#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("folder_new")#</a></li>
-				<cfif NOT application.razuna.isp><li><a href="##folder_link#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("link_folder_header")#</a></li></cfif>
+				<cfif !application.razuna.isp><li><a href="##folder_link#attributes.theid#">#myFusebox.getApplicationData().defaults.trans("link_folder_header")#</a></li></cfif>
 			</ul>
 		</cfif>
 		<div id="folder_new#attributes.theid#">
@@ -140,7 +140,7 @@
 			</cfif>
 		</div>
 		<!--- Link to Folder --->
-		<cfif attributes.isdetail NEQ "T" AND NOT application.razuna.isp AND attributes.iscol NEQ "T">
+		<cfif attributes.isdetail NEQ "T" AND !application.razuna.isp AND attributes.iscol NEQ "T">
 			<div id="folder_link#attributes.theid#">
 				<table border="0" cellpadding="0" cellspacing="0" class="grid" style="width:660px;">
 					<tr>

@@ -29,11 +29,13 @@
 		<div id="tabs_wl">
 			<ul>
 				<!--- Options --->
-				<li><a href="##wl_options">Options</a></li>
+				<li><a href="##wl_options">Text &amp; Link options</a></li>
 				<!--- CSS --->
 				<li><a href="##wl_css">CSS</a></li>
 				<!--- News --->
 				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">News</a></li>
+				<!--- ISP setup --->
+				<li><a href="##wl_isp">Hosting Setting</a></li>
 			</ul>
 			<!--- Options --->
 			<div id="wl_options">
@@ -111,7 +113,19 @@
 				<div id="wlfeedback2" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
 			</div>
 			<!--- News --->
-			<div id="wl_news"><img src="images/loading.gif" border="0" style="padding:10px;"></div>	
+			<div id="wl_news"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
+			<!--- ISP --->
+			<div id="wl_isp">
+				#myFusebox.getApplicationData().defaults.trans("header_wl_isp_desc")#
+				<br /><br />
+				<strong>Hosting Setting</strong><br />
+				<input type="radio" value="false" name="conf_isp"<cfif !application.razuna.isp> checked="checked"</cfif>> Hosting Setting is turned off<br />
+				<input type="radio" value="true" name="conf_isp"<cfif application.razuna.isp> checked="checked"</cfif>> Hosting Setting is turned on
+				<br /><br />
+				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
+				<br /><br />
+				<div id="wlfeedback3" style="display:none;font-weight:bold;color:green;padding-bottom:15px;"></div>
+			</div>
 		</div>
 	</form>
 

@@ -30,7 +30,7 @@
 			<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("folder_count_total")#</td>
 			<td width="1%" nowrap style="padding:5px;">#totalcount.thetotal#</td>
 		</tr>
-		<cfif NOT application.razuna.isp>
+		<cfif !application.razuna.isp>
 			<cfcachecontent name="damsysteminfo" cachedwithin="#CreateTimeSpan(1,0,0,0)#">
 				<tr>
 					<td width="100%" style="padding:5px;">#myFusebox.getApplicationData().defaults.trans("database_in_use")#</td>

@@ -34,12 +34,13 @@
 				<th>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</th>
 			</tr>
 			<tr class="list">
-				<td>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_desc")#
-				<br /><br />
-				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box">During a rebuild of the search index or while conducting a Backup operation your server might become unresponsive to any requests! Do these operation when no one is accessing your server.</div>
-				<br />
-				<div id="thea"><a href="##" onclick="doreindexassets();">#myFusebox.getApplicationData().defaults.trans("admin_maintenance_do")#</a></div>
-				<br />
+				<td>
+					#myFusebox.getApplicationData().defaults.trans("admin_maintenance_desc")#
+					<br /><br />
+					<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box">During a rebuild of the search index the server might become unresponsive to any requests. Do a rebuild when no one is accessing your server!</div>
+					<br />
+					<input type="button" name="doreindex" value="#myFusebox.getApplicationData().defaults.trans("admin_maintenance_do")#" onclick="doreindexassets();" class="button" />
+					<br /><br />
 				</td>
 			</tr>
 		</table>
@@ -47,12 +48,12 @@
 			<!--- Clear Cache --->
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr>
-					<th>Flush Host Cache</th>
+					<th>Flush Template Cache</th>
 				</tr>
 				<tr class="list">
 					<td>
-					Razuna keeps an internal cache of the host application. If you feel that there is an error or have been instructed by us to do so, you can re-built the cache with the link below.<br /><br />
-					<a href="http://#cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" target="_blank">Re-built Cache</a>
+					Razuna keeps an internal template cache to speed things up. If you feel that there is an error or have been instructed by us to do so, you can re-built the cache with the button below.<br /><br />
+					<a href="http://#cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" target="_blank" style="text-decoration:none;"><input type="button" name="rebuiltcache" value="Flush template cache now" class="button" /></a>
 					<br /><br />
 					</td>
 				</tr>
@@ -84,7 +85,7 @@ Please choose the database cache to flush:<br />
 			<tr class="list">
 				<td>
 				#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner_desc")#<br /><br />
-				<a href="##" onclick="docleaner();">#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner_link")#</a>
+				<input type="button" name="cleaner" value="#myFusebox.getApplicationData().defaults.trans("admin_maintenance_db_cleaner_link")#" onclick="docleaner();" class="button" />
 				<br /><br />
 				</td>
 			</tr>
