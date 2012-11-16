@@ -2183,6 +2183,7 @@
 		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="doc" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<set name="attributes.folder_action" value="true" />
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
@@ -2266,6 +2267,7 @@
 		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="vid" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<set name="attributes.folder_action" value="true" />
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
@@ -2373,6 +2375,7 @@
 		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="img" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<set name="attributes.folder_action" value="true" />
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
@@ -2453,6 +2456,7 @@
 		<!-- Variables for API -->
 		<set name="attributes.thefiletype" value="aud" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
+		<set name="attributes.folder_action" value="true" />
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
