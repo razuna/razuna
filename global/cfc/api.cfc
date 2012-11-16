@@ -173,7 +173,11 @@
 	<cffunction name="getMyID" access="public" returntype="string">
 		<cfargument name="pluginname" type="string" required="true" />
 		<!--- Set path --->
-		<cfset var thepath = expandPath("../")>
+		<cfif structkeyexists(session,"thisapp") AND session.thisapp EQ "admin">
+			<cfset var thepath = expandPath("..")>
+		<cfelse>
+			<cfset var thepath = expandpath("../..")>
+		</cfif>
 		<!--- Get id from config file --->
 		<cfset var plugID = getProfileString("#thepath#/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
 		<cfreturn plugID />
