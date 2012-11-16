@@ -872,6 +872,8 @@
 <!--- FUNCTION: UPLOAD --->
 <cffunction hint="Upload" name="upload" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
+	<!--- Param --->
+	<cfparam name="arguments.thestruct.loginimg" default="false" />
 	<!--- Logo or loginimg --->
 	<cfif !arguments.thestruct.loginimg>
 		<cfset var theimgpath = "logo">
