@@ -200,7 +200,7 @@
 			AND ct.cf_id_r = cv.cf_id_r
 			AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.lang_id#">
 			AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
-			GROUP BY cv.cf_value, ct.cf_text
+			GROUP BY cv.cf_value, ct.cf_text, c.cf_order
 			ORDER BY c.cf_order
 			</cfquery>
 		<!--- No session found --->
