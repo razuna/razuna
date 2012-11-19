@@ -460,11 +460,11 @@
 			<cfset ths = "t#arguments.thestruct.therandom#">
 			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" returnvariable="orgsize">
-				<cfoutput>#orgsize#</cfoutput>
+				<cfoutput>#trim(orgsize)#</cfoutput>
 			</cfthread>
 			<cfthread name="#ths#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.qryfile.path#/thumb_#attributes.intstruct.qryfile.file_id#.#attributes.intstruct.qrysettings.set2_img_format#" returnvariable="orgsize">
-				<cfoutput>#orgsize#</cfoutput>
+				<cfoutput>#trim(orgsize)#</cfoutput>
 			</cfthread>
 			<cfthread action="join" name="#ts#,#ths#" timeout="6000" />
 			<!--- Write the sh script files --->
@@ -523,21 +523,21 @@
 			<cfset ts = "g#arguments.thestruct.therandom#">
 			<cfthread name="#ts#" intstruct="#arguments.thestruct#" output="yes">
 				<cfinvoke component="global" method="getfilesize" filepath="#attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.qryfile.filename#" returnvariable="orgsize">
-				<cfoutput>#orgsize#</cfoutput>
+				<cfoutput>#trim(orgsize)#</cfoutput>
 			</cfthread>
 			<!--- Get image width --->
 			<cfset tw = "gw#arguments.thestruct.therandom#">
 			<cfthread name="#tw#" intstruct="#arguments.thestruct#" output="yes">
 				<cfexecute name="#attributes.intstruct.theexif#" arguments=" -S -s -ImageWidth #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.thisvid.theorgimage#" timeout="10" variable="orgwidth" />
 				<cfset orgwidth = trim(listlast(orgwidth," "))>
-				<cfoutput>#orgwidth#</cfoutput>
+				<cfoutput>#trim(orgwidth)#</cfoutput>
 			</cfthread>
 			<!--- Get image height --->
 			<cfset th = "gh#arguments.thestruct.therandom#">
 			<cfthread name="#th#" intstruct="#arguments.thestruct#" output="yes">
 				<cfexecute name="#attributes.intstruct.theexif#" arguments="-S -s -ImageHeight #attributes.intstruct.thisvid.finalpath#/#attributes.intstruct.thisvid.theorgimage#" timeout="10" variable="orgheight" />
 				<cfset orgheight = trim(listlast(orgheight," "))>
-				<cfoutput>#orgheight#</cfoutput>
+				<cfoutput>#trim(orgheight)#</cfoutput>
 			</cfthread>
 			<!--- Join threads --->
 			<cfthread action="join" name="#ts#,#tw#,#th#" timeout="6000" />
@@ -767,8 +767,8 @@
 			thumb_height = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
 			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">, 
 			img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">,
-			img_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfthread["#ts#"].output#">,
-			thumb_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfthread["#ths#"].output#">,
+			img_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#trim(cfthread["#ts#"].output)#">,
+			thumb_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#trim(cfthread["#ths#"].output)#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
@@ -793,9 +793,9 @@
 			vid_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 			vid_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
 			vid_name_image = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.theorgimage#">,
-			vid_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfthread["#ts#"].output#">,
-			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#tw#"].output#">,
-			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#cfthread["#th#"].output#">,
+			vid_size = <cfqueryparam cfsqltype="cf_sql_varchar" value="#trim(cfthread["#ts#"].output)#">,
+			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#trim(cfthread["#tw#"].output)#">,
+			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#trim(cfthread["#th#"].output)#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfilelocal.path_to_asset#" cfsqltype="cf_sql_varchar">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
