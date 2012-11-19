@@ -83,6 +83,8 @@
 		        <input type="text" name="field_1" id="field_1" style="width:250px;" />
 		        <select id="select_1" name="select_1" style="width:250px;">
 		        	<option selected="selected">Map to ...</option>
+		        	<option>--- Key fields ---</option>
+		        	<cfloop list="#attributes.meta_keys#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
 		        	<option>--- Default ---</option>
 		        	<cfloop list="#attributes.meta_default#" index="i" delimiters=","><option value="#i#">#i#</option></cfloop>
 		        	<option>--- For Images ---</option>
