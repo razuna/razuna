@@ -209,8 +209,7 @@
 
 	<!--- setpluginshosts --->
 	<cffunction name="setpluginshosts" returntype="void">
-		<cfargument name="listpluginshost" type="string" required="true">
-		<cftransaction>
+		<cfargument name="thestruct" type="struct" required="true">
 			<!--- Set the remove colum to true for all --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE plugins_actions
@@ -221,7 +220,7 @@
 			DELETE FROM ct_plugins_hosts
 			</cfquery>
 			<!--- Loop over the passed in list and add one by one --->
-			<cfloop list="#arguments.listpluginshost#" index="i" delimiters=",">
+			<cfloop list="#arguments.thestruct.listpluginshost#" index="i" delimiters=",">
 				<!--- Get the first value (host) --->
 				<cfset hostid = listFirst(i,"-")>
 				<!--- Get last value (pluginid) --->
@@ -255,7 +254,6 @@
 			DELETE FROM plugins_actions
 			WHERE p_remove = 'true'
 			</cfquery>
-		</cftransaction>
 		<!--- Reset cache --->
 		<!--- <cfset resetcachetoken("settings")> --->
 		<!--- Return --->
