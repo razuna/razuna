@@ -117,21 +117,21 @@
 						<a href="http://wiki.razuna.com" target="_blank" onclick="$('##userselection').toggle();">Documentation (Wiki)</a>
 					</cfif>
 				</p>
+				<p><hr></p>
 				<!--- Account --->
 				<cfif cgi.http_host CONTAINS "razuna.com" AND (Request.securityobj.CheckAdministratorUser() OR Request.securityobj.CheckSystemAdminUser())>
-					<p><hr></p>
 					<p><a href="##" id="account" onclick="loadcontent('rightside','#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#');$('##userselection').toggle();">Account Settings</a></p>
+					<p><hr></p>
 				</cfif>
 				<!--- Languages --->
 				<cfif qry_langs.recordcount NEQ 1>
-					<p><hr></p>
 					<cfloop query="qry_langs">
 						<p><a href="#myself##xfa.switchlang#&thelang=#lang_name#&v=#createuuid()#">#lang_name#</a></p>
 					</cfloop>
+					<p><hr></p>
 				</cfif>
 				<!--- Feedback --->
 				<cfif w EQ 100>
-					<p><hr></p>
 					<p>
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
@@ -139,8 +139,8 @@
 							<cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a>
 						</cfif>
 					</p>
+					<p><hr></p>
 				</cfif>
-				<p><hr></p>
 				<!--- Log off --->
 				<p><a href="#myself#c.logout&_v=#createuuid('')#">#myFusebox.getApplicationData().defaults.trans("logoff")#</a></p>
 			</div>
