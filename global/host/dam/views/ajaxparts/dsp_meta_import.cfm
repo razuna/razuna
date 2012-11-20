@@ -82,7 +82,7 @@
 		<div style="clear:both;padding-bottom:10px;"></div>
 		<!--- Upload file --->
 		<div style="float:left;width:150px;font-weight:bold;padding-top:7px;">Upload File</div>
-		<div style="float:left;"><iframe src="#myself#ajax.meta_imp_upload&folder_id=#attributes.folder_id#&tempid=#attributes.tempid#" frameborder="false" scrolling="false" style="border:0px;width:300px;height:35px;" id="metaupload"></iframe></div>
+		<div style="float:left;"><iframe src="#myself#ajax.meta_imp_upload&folder_id=#attributes.folder_id#&tempid=#attributes.tempid#" frameborder="false" scrolling="false" style="border:0px;width:300px;height:55px;" id="metaupload"></iframe></div>
 	</div>
 	<div style="clear:both;padding-bottom:20px;"></div>
 		<!--- Loading Bars --->

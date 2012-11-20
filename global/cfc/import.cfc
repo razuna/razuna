@@ -252,8 +252,6 @@
 		<cfinvoke method="doimportaudios" thestruct="#arguments.thestruct#" />
 		<!--- Do docs --->
 		<cfinvoke method="doimportdocs" thestruct="#arguments.thestruct#" />
-		<!--- Custom Fields --->
-		<!--- (import of custom fields in 1.5.1) --->
 		<!--- Flush tables --->
 		<cfset resetcachetokenall()>
 		<!--- Return --->
@@ -348,7 +346,10 @@
 					<cfelse>
 						<cfset tlabel = "">
 					</cfif>
+					<!--- Import Labels --->
 					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.img_id#" kind="img" />
+					<!--- Import Custom Fields --->
+					<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.img_id#" thecurrentRow="#currentRow#" />
 					<!--- If template --->
 					<cfif arguments.thestruct.impp_template NEQ "">
 						<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
@@ -1163,6 +1164,8 @@
 					<cfset tlabel = "">
 				</cfif>
 				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.vid_id#" kind="vid" />
+				<!--- Import Custom Fields --->
+				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.vid_id#" thecurrentRow="#currentRow#" />
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
 					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
@@ -1318,6 +1321,8 @@
 					<cfset tlabel = "">
 				</cfif>
 				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.aud_id#" kind="aud" />
+				<!--- Import Custom Fields --->
+				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.aud_id#" thecurrentRow="#currentRow#" />
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
 					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
@@ -1479,7 +1484,10 @@
 				<cfelse>
 					<cfset tlabel = "">
 				</cfif>
+				<!--- Import Labels --->
 				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.file_id#" kind="doc" />
+				<!--- Import Custom Fields --->
+				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.file_id#" thecurrentRow="#currentRow#" />
 				<!--- If template --->
 				<cfif arguments.thestruct.impp_template NEQ "">
 					<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
@@ -1782,5 +1790,53 @@
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
-		
+	
+	<!---Import: Custom Fields ---------------------------------------------------------------------->
+	<cffunction name="doimportcustomfields" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfargument name="assetid" type="string">
+		<cfargument name="thecurrentRow" type="string">
+		<!--- Get the columlist --->
+		<cfloop list="#arguments.thestruct.theimport.columnList#" delimiters="," index="i">
+			<!--- Custom fields contain a : --->
+			<cfif i contains ":">
+				<!--- The value --->
+				<cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]>
+				<!--- The ID --->
+				<cfset var theid = listLast(i,":")>
+				<!--- Insert or update --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
+				SELECT cf_id_r
+				FROM #session.hostdbprefix#custom_fields_values
+				WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				</cfquery>
+				<!--- Insert --->
+				<cfif qry.recordcount EQ 0>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#custom_fields_values
+					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+					VALUES(
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				<!--- Update --->
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#custom_fields_values
+					SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">
+					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					</cfquery>
+				</cfif>
+			</cfif>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn  />
+	</cffunction>
+
 </cfcomponent>
