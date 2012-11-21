@@ -328,6 +328,8 @@
 	
 	<!--- Build labels drop down menu --->
 	<cffunction name="labels_dropdown" output="true" access="public">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("labels")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#labels_dropdown */ label_id, label_id_r, label_path, label_text
