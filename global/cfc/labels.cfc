@@ -344,6 +344,8 @@
 	<cffunction name="labels_query" output="false" access="public" returnType="query">
 		<cfargument name="thestruct" type="struct" required="true">
 		<cfargument name="id" type="string" required="true">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("labels")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#labels_query */ l.label_text, l.label_id,
