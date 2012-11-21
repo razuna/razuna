@@ -1745,14 +1745,15 @@
 				<!--- Insert --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#labels
-				(label_id, label_text, label_date, user_id, host_id, label_path)
+				(label_id, label_text, label_date, user_id, host_id, label_path, label_id_r)
 				VALUES(
 					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
 					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
 					<cfqueryparam CFSQLType="CF_SQL_TIMESTAMP" value="#now()#">,
 					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#session.theuserid#">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">
 				)
 				</cfquery>
 				<!--- Insert into CT --->
