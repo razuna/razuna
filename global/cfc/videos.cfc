@@ -233,7 +233,7 @@
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getdetailsvid */ #arguments.columnlist#,
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+	<cfif listfind(session.thegroupofuser,"1",",") NEQ 0 OR listfind(session.thegroupofuser,"2",",") NEQ 0>
 		'unlocked' as perm
 	<cfelse>
 		CASE

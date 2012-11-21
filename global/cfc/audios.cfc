@@ -196,7 +196,7 @@
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
 	a.path_to_asset, a.lucene_key, s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
 	u.user_first_name, u.user_last_name, fo.folder_name,
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+	<cfif listfind(session.thegroupofuser,"1",",") NEQ 0 OR listfind(session.thegroupofuser,"2",",") NEQ 0>
 		'unlocked' as perm
 	<cfelse>
 		CASE
