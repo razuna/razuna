@@ -473,7 +473,7 @@
 <cffunction name="doit" output="true" access="public">
 	<cfargument name="sched_id" type="string" required="yes" default="">
 	<cfset var doit = structnew()>
-	<!--- <cfset doit.dirlist = ""> --->
+	<cfset doit.dirlist = "">
 	<!--- <cfset var tempid = "sched-" & createuuid()> --->
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
@@ -482,9 +482,6 @@
 		<cfabort>
 	</cfif>
 	<!--- List all files from the server directory --->
-	<!---
-<cfmail from="server@razuna.com" to="support@razuna.com" subject="debug" type="html"><cfdump var="#doit.qry_detail#"></cfmail>
-	<cfabort>
 	<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" name="doit.serverdir" recurse="#doit.qry_detail.sched_server_recurse#">
 	<!--- Loop over the query and append to assets_temp for sorting correctly --->
 	<cfloop query="doit.serverdir">
@@ -507,7 +504,6 @@
 			--->
 		</cfif>
 	</cfloop>
---->
 	<!--- Return --->
 	<cfreturn doit>
 </cffunction>
