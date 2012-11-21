@@ -253,7 +253,7 @@
     <ipaddresses></ipaddresses>
   </debugoutput>
   <cfapplication>
-    <j2eesession>false</j2eesession>
+    <j2eesession>true</j2eesession>
     <clientglobalupdatesdisabled>true</clientglobalupdatesdisabled>
     <applicationtimeout>#CreateTimeSpan(2,0,0,0)#</applicationtimeout>
     <clientpurgeenabled>true</clientpurgeenabled>
