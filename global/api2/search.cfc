@@ -33,6 +33,7 @@
 		<cfargument name="doctype" type="string" required="false" default="">
 		<cfargument name="datecreate" type="string" required="false" default="">
 		<cfargument name="datechange" type="string" required="false" default="">
+		<cfargument name="folderid" type="string" required="false" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -148,6 +149,10 @@
 					<cfif arguments.datechange NEQ "">
 						AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
 					</cfif>
+					<!--- If we have a folderid --->
+					<cfif arguments.folderid NEQ "">
+						AND i.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folderid#">
+					</cfif>
 					<cfif application.razuna.api.thedatabase EQ "mssql">
 						GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords
 					</cfif>
@@ -195,6 +200,10 @@
 					<cfif arguments.datechange NEQ "">
 						AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
 					</cfif>
+					<!--- If we have a folderid --->
+					<cfif arguments.folderid NEQ "">
+						AND v.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folderid#">
+					</cfif>
 					<cfif application.razuna.api.thedatabase EQ "mssql">
 						GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time
 					</cfif>
@@ -241,6 +250,10 @@
 					<cfif arguments.datechange NEQ "">
 						AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
 					</cfif>
+					<!--- If we have a folderid --->
+					<cfif arguments.folderid NEQ "">
+						AND a.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folderid#">
+					</cfif>
 					<cfif application.razuna.api.thedatabase EQ "mssql">
 						GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time
 					</cfif>
@@ -285,6 +298,10 @@
 					</cfif>
 					<cfif arguments.datechange NEQ "">
 						AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+					</cfif>
+					<!--- If we have a folderid --->
+					<cfif arguments.folderid NEQ "">
+						AND f.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folderid#">
 					</cfif>
 					<cfif application.razuna.api.thedatabase EQ "mssql">
 						GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time
