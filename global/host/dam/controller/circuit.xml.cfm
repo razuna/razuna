@@ -4026,7 +4026,7 @@
 		<if condition="thetask.qry_detail.sched_method EQ 'server'">
 			<true>
 				<!-- Set params for adding assets -->
-				<set name="attributes.thefile" value="#thetask.dirlist#" />
+				<set name="attributes.thefile" value="#thetask.qry_detail.sched_server_folder#" />
 				<!-- CFC: Add to system -->
 				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetserver(attributes)" />		
 			</true>
