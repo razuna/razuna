@@ -6474,4 +6474,83 @@
 		<do action="ajax.file_download" />
 	</fuseaction>
 
+	<!-- Show metadata for rendttions -->
+	<fuseaction name="rend_meta">
+		<!-- Get Languages -->
+		<do action="languages" />
+		<!-- Images -->
+		<if condition="attributes.thetype EQ 'img'">
+			<true>
+				<!-- Set field names -->
+				<set name="attributes.desc" value="img_desc_" />
+				<set name="attributes.keys" value="img_keywords_" />
+				<!-- CFC: Get file detail -->
+				<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
+				<!-- Set filename -->
+				<set name="attributes.filename" value="#qry_detail.detail.img_filename#" />
+			</true>
+		</if>
+		<!-- Videos -->
+		<if condition="attributes.thetype EQ 'vid'">
+			<true>
+				<!-- Set field names -->
+				<set name="attributes.desc" value="vid_desc_" />
+				<set name="attributes.keys" value="vid_keywords_" />
+				<!-- CFC: Get file detail -->
+				<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
+				<!-- Set filename -->
+				<set name="attributes.filename" value="#qry_detail.detail.vid_filename#" />
+			</true>
+		</if>
+		<!-- Audios -->
+		<if condition="attributes.thetype EQ 'aud'">
+			<true>
+				<!-- Set field names -->
+				<set name="attributes.desc" value="aud_desc_" />
+				<set name="attributes.keys" value="aud_keywords_" />
+				<!-- CFC: Get file detail -->
+				<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
+				<!-- Set filename -->
+				<set name="attributes.filename" value="#qry_detail.detail.aud_name#" />
+			</true>
+		</if>
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<!-- Show -->
+		<do action="ajax.rend_meta" />
+	</fuseaction>
+	<!-- Save rend metadata -->
+	<fuseaction name="rend_meta_save">
+		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<do action="custom_fields_save" />
+			</true>
+		</if>
+		<!-- Images -->
+		<if condition="attributes.thetype EQ 'img'">
+			<true>
+				<!-- CFC: Save file detail -->
+				<invoke object="myFusebox.getApplicationData().images" methodcall="update(attributes)" />
+			</true>
+		</if>
+		<!-- If we are files -->
+		<if condition="attributes.thetype EQ 'doc'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().files" methodcall="update(attributes)" />
+			</true>
+		</if>
+		<!-- If we are videos -->
+		<if condition="attributes.thetype EQ 'vid'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().videos" methodcall="update(attributes)" />
+			</true>
+		</if>
+		<!-- If we are audios -->
+		<if condition="attributes.thetype EQ 'aud'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
+			</true>
+		</if>
+	</fuseaction>
 </circuit>

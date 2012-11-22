@@ -31,12 +31,13 @@
 		<cfif attributes.s EQ "F">
 			<a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
 		<cfelse>
-			<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename#" target="_blank">
+			<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename_org#" target="_blank">
 		</cfif>
 		View
 		</a> 
 		 | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">Download</a> 
 		 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');">Direct Link</a>
+		 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">Metadata</a>
 		<cfif attributes.folderaccess NEQ "R">
 			 | <a href="##" onclick="remren('#img_id#');">Remove</a>
 		</cfif>

@@ -849,8 +849,8 @@
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Get descriptions and keywords --->
-	<cfquery datasource="#variables.dsn#" name="desc">
-	SELECT vid_description, vid_keywords, lang_id_r
+	<cfquery datasource="#variables.dsn#" name="desc" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#detaildescvid */ vid_description, vid_keywords, lang_id_r, vid_description as thedesc, vid_keywords as thekeys
 	FROM #session.hostdbprefix#videos_text
 	WHERE vid_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>

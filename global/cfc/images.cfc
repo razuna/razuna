@@ -521,7 +521,7 @@
 	</cfquery>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detaildescimg */ img_description, img_keywords, lang_id_r
+	SELECT /* #variables.cachetoken#detaildescimg */ img_description, img_keywords, lang_id_r, img_description as thedesc, img_keywords as thekeys
 	FROM #session.hostdbprefix#images_text
 	WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>

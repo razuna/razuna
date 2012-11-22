@@ -705,4 +705,9 @@
   		<include template="dsp_file_download" />
 	</fuseaction>
 
+	<!-- Rendition: Metadata -->
+	<fuseaction name="rend_meta">
+  		<include template="win_rend_meta" />
+	</fuseaction>
+
 </circuit>

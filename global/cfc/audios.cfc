@@ -237,7 +237,7 @@
 	</cfquery>	
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detaildescaud */ aud_description, aud_keywords, lang_id_r
+	SELECT /* #variables.cachetoken#detaildescaud */ aud_description, aud_keywords, lang_id_r, aud_description as thedesc, aud_keywords as thekeys
 	FROM #session.hostdbprefix#audios_text
 	WHERE aud_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
