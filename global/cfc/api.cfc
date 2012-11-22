@@ -43,6 +43,7 @@
 		AND lower(action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.action)#">
 		AND lower(comp) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.comp)#">
 		AND lower(func) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.func)#">
+		AND lower(args) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.args)#">
 		</cfquery>
 		<!--- Add this action to DB --->
 		<cfquery datasource="#application.razuna.datasource#">
