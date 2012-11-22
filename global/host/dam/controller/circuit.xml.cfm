@@ -1037,7 +1037,11 @@
 		<!-- Show collection list -->
 		<do action="ajax.collection_chooser" />
 	</fuseaction>
-	
+	<!-- Release Collection -->
+	<fuseaction name="col_release">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="doRelease(attributes)" />
+	</fuseaction>
 	<!--
 		END: COLLECTIONS
 	-->
@@ -4926,7 +4930,7 @@
 	<!-- SHARING: START -->
 	<!--  -->
 	
-	<!-- This if for a shared collection -->
+	<!-- This is for a shared collection -->
 	<fuseaction name="sharec">
 		<!-- Param -->
 		<set name="session.iscol" value="T" />

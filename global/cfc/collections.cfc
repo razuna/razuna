@@ -36,16 +36,18 @@
 	<cfset var qry = structnew()>
 	<!--- Params --->
 	<cfparam default="0" name="arguments.thestruct.folder_id">
+	<cfparam default="false" name="arguments.thestruct.released">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry.collist" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name
+	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name, c.col_released
 	FROM #session.hostdbprefix#collections c
 	LEFT JOIN #session.hostdbprefix#collections_text ct ON c.col_id = ct.col_id_r 
 	WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	<cfif structkeyexists(arguments.thestruct,"withfolder")>
 		AND c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 	</cfif>
-	GROUP BY c.col_id, c.change_date, ct.col_name
+	AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.released#">
+	GROUP BY c.col_id, c.change_date, ct.col_name, c.col_released
 	</cfquery>
 	<!--- Get descriptions --->
 	<cfif qry.collist.recordcount NEQ 0>
@@ -263,8 +265,7 @@
 <cffunction name="details" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, c.share_comments, 
-	c.share_upload, c.share_order, c.share_order_user
+	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, c.share_comments, c.col_released, c.share_upload, c.share_order, c.share_order_user
 	FROM #session.hostdbprefix#collections_text ct, #session.hostdbprefix#collections c
 	WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND col_id = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -733,5 +734,28 @@
 	<cfreturn qry>
 </cffunction>
 
+<!--- Release --->
+<cffunction name="dorelease" output="false" returntype="void">
+	<cfargument name="thestruct" type="struct">
+	<!--- Set released --->
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE #session.hostdbprefix#collections
+	SET col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.release#">
+	WHERE col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
+	</cfquery>
+	<!--- Change name --->
+	<cfif arguments.thestruct.col_name NEQ "">
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#collections_text
+		SET col_name = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_name#">
+		WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
+		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+		</cfquery>
+	</cfif>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
 
 </cfcomponent>

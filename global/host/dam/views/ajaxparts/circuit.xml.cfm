@@ -710,4 +710,9 @@
   		<include template="win_rend_meta" />
 	</fuseaction>
 
+	<!-- Collection: Release -->
+	<fuseaction name="col_release">
+  		<include template="win_collection_release" />
+	</fuseaction>
+
 </circuit>

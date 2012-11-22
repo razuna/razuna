@@ -49,6 +49,11 @@
 			</cfif>
 		</ul>
 		<div id="colassets">
+			<!--- Top Buttons --->
+			<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="loadcontent('rightside','#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#');">&lt; Back to Collection list</a></div>
+			<div style="float:right;padding:10px 0px 10px 0px;"><div style="float:left;padding-right:20px;"><input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;"> <input type="button" name="buttoncopy" value="Copy" class="button"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
+			<div style="clear:both;"></div>
+			<!--- List files --->
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<cfloop query="qry_assets">
 					<cfset myid = cart_product_id>

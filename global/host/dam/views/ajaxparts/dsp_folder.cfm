@@ -70,6 +70,7 @@
 				</cfloop>
 			<cfelse>
 				<li><a href="##content" onclick="loadcontent('content','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content&iscol=#attributes.iscol#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_collections")#</a></li>
+				<li><a href="##contentrel" onclick="loadcontent('contentrel','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content&iscol=#attributes.iscol#&released=true');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_collections")# Released</a></li>
 			</cfif>
 		</ul>
 		
@@ -100,6 +101,9 @@
 					</cfif>
 				</cfif>
 			</cfloop>
+		<cfelse>
+			<!--- This is the collection released div --->
+			<div id="contentrel">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 		</cfif>
 		<!--- Search results --->
 		<div id="content_search_all" style="display:none;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>

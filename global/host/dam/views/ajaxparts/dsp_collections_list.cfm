@@ -43,7 +43,6 @@
 		</tr>
 		<cfloop query="qry_col_list.collist">
 			<tr class="list">
-<!--- showwindow('#myself##xfa.collectiondetail#&col_id=#col_id#&folder_id=#folder_id#','#col_name#',700,1);return false;				 --->
 				<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself##xfa.collectiondetail#&col_id=#col_id#&folder_id=#folder_id#');">#col_name#</a></td>
 				<td valign="top">
 					<cfloop query="qry_col_list.collistdesc">
@@ -58,5 +57,6 @@
 				</cfif>
 			</tr>
 		</cfloop>
+	</table>
 </cfoutput>
 
