@@ -903,6 +903,7 @@
 	<fuseaction name="collections">
 		<!-- Param -->
 		<set name="attributes.iscol" value="T" />
+		<set name="attributes.released" value="false" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="collectionslist" value="c.collections_list" />
 		<!-- CFC: CleanID -->
@@ -916,6 +917,7 @@
 	<fuseaction name="collections_list">
 		<!-- Param -->
 		<set name="attributes.withfolder" value="T" />
+		<set name="attributes.released" value="false" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="collectiondetail" value="c.collection_detail" />
 		<!-- CFC: Get languages -->
@@ -1042,6 +1044,25 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="doRelease(attributes)" />
 	</fuseaction>
+	<!-- Copy Collection (show window) -->
+	<fuseaction name="col_copy">
+		<!-- CFC: Get languages -->
+		<do action="languages" />
+		<!-- Get labels -->
+		<!-- <do action="labels" /> -->
+		<!-- Get labels for this record -->
+		<!-- <invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.col_id,'collection')" returnvariable="qry_labels" /> -->
+		<!-- CFC: Get detail of Collections -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="details(attributes)" returnvariable="qry_detail" />
+		<!-- Show -->
+		<do action="ajax.col_copy" />
+	</fuseaction>
+	<!-- Copy Collection DO -->
+	<fuseaction name="col_copy_do">
+		<!-- CFC: Copy Collection -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="copy(attributes)" />
+	</fuseaction>
+
 	<!--
 		END: COLLECTIONS
 	-->
