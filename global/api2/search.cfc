@@ -38,6 +38,38 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<!--- If we are on MS SQL the date has to be formated differently --->
+			<cfif application.razuna.api.thedatabase EQ "mssql">
+				<!--- Set the counter --->
+				<cfset var thecountercreate = 1>
+				<cfset var thecounterchange = 1>
+				<cfif arguments.datecreate NEQ "">
+					<cfloop list="#arguments.datecreate#" delimiters="-" index="i">
+						<cfif thecountercreate EQ 1>
+							<cfset var the_create_year = i>
+						<cfelseif thecountercreate EQ 2>
+							<cfset var the_create_month = i>
+						<cfelseif thecountercreate EQ 3>
+							<cfset var the_create_day = i>
+						</cfif>
+						<!--- Increase the counter --->
+						<cfset var thecountercreate = thecountercreate + 1>
+					</cfloop>
+				</cfif>
+				<cfif arguments.datechange NEQ "">
+					<cfloop list="#arguments.datechange#" delimiters="-" index="i">
+						<cfif thecounterchange EQ 1>
+							<cfset var the_change_year = i>
+						<cfelseif thecounterchange EQ 2>
+							<cfset var the_change_month = i>
+						<cfelseif thecounterchange EQ 3>
+							<cfset var the_change_day = i>
+						</cfif>
+						<!--- Increase the counter --->
+						<cfset var thecounterchange = thecounterchange + 1>
+					</cfloop>
+				</cfif>
+			</cfif>
 			<!--- Params --->
 			<cfset var imgc = false>
 			<cfset var vidc = false>
@@ -144,10 +176,22 @@
 					AND (i.img_group IS NULL OR i.img_group = '')
 					<!--- Only if we have dates --->
 					<cfif arguments.datecreate NEQ "">
-						AND i.img_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+						<cfif application.razuna.api.thedatabase EQ "mssql">
+							AND (DATEPART(yy, i.img_create_time) = #the_create_year#
+							AND DATEPART(mm, i.img_create_time) = #the_create_month#
+							AND DATEPART(dd, i.img_create_time) = #the_create_day#)
+						<cfelse>
+							AND i.img_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+						</cfif>
 					</cfif>
 					<cfif arguments.datechange NEQ "">
-						AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						<cfif application.razuna.api.thedatabase EQ "mssql">
+							AND (DATEPART(yy, i.img_change_time) = #the_change_year#
+							AND DATEPART(mm, i.img_change_time) = #the_change_month#
+							AND DATEPART(dd, i.img_change_time) = #the_change_day#)
+						<cfelse>
+							AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						</cfif>
 					</cfif>
 					<!--- If we have a folderid --->
 					<cfif arguments.folderid NEQ "">
@@ -195,10 +239,22 @@
 					AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					<!--- Only if we have dates --->
 					<cfif arguments.datecreate NEQ "">
-						AND v.vid_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+						<cfif application.razuna.api.thedatabase EQ "mssql">
+							AND (DATEPART(yy, v.vid_create_time) = #the_create_year#
+							AND DATEPART(mm, v.vid_create_time) = #the_create_month#
+							AND DATEPART(dd, v.vid_create_time) = #the_create_day#)
+						<cfelse>
+							AND v.vid_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+						</cfif>
 					</cfif>
 					<cfif arguments.datechange NEQ "">
-						AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						<cfif application.razuna.api.thedatabase EQ "mssql">
+							AND (DATEPART(yy, v.vid_change_time) = #the_change_year#
+							AND DATEPART(mm, v.vid_change_time) = #the_change_month#
+							AND DATEPART(dd, v.vid_change_time) = #the_change_day#)
+						<cfelse>
+							AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						</cfif>
 					</cfif>
 					<!--- If we have a folderid --->
 					<cfif arguments.folderid NEQ "">
@@ -245,10 +301,22 @@
 					AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					<!--- Only if we have dates --->
 					<cfif arguments.datecreate NEQ "">
-						AND a.aud_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+						<cfif application.razuna.api.thedatabase EQ "mssql">
+							AND (DATEPART(yy, a.aud_create_time) = #the_create_year#
+							AND DATEPART(mm, a.aud_create_time) = #the_create_month#
+							AND DATEPART(dd, a.aud_create_time) = #the_create_day#)
+						<cfelse>
+							AND a.aud_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+						</cfif>
 					</cfif>
 					<cfif arguments.datechange NEQ "">
-						AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						<cfif application.razuna.api.thedatabase EQ "mssql">
+							AND (DATEPART(yy, a.aud_change_time) = #the_change_year#
+							AND DATEPART(mm, a.aud_change_time) = #the_change_month#
+							AND DATEPART(dd, a.aud_change_time) = #the_change_day#)
+						<cfelse>
+							AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						</cfif>
 					</cfif>
 					<!--- If we have a folderid --->
 					<cfif arguments.folderid NEQ "">
@@ -294,10 +362,22 @@
 					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					<!--- Only if we have dates --->
 					<cfif arguments.datecreate NEQ "">
-						AND f.file_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+						<cfif application.razuna.api.thedatabase EQ "mssql">
+							AND (DATEPART(yy, f.file_create_time) = #the_create_year#
+							AND DATEPART(mm, f.file_create_time) = #the_create_month#
+							AND DATEPART(dd, f.file_create_time) = #the_create_day#)
+						<cfelse>
+							AND f.file_create_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreate#%">
+						</cfif>
 					</cfif>
 					<cfif arguments.datechange NEQ "">
-						AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						<cfif application.razuna.api.thedatabase EQ "mssql">
+							AND (DATEPART(yy, f.file_change_time) = #the_change_year#
+							AND DATEPART(mm, f.file_change_time) = #the_change_month#
+							AND DATEPART(dd, f.file_change_time) = #the_change_day#)
+						<cfelse>
+							AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						</cfif>
 					</cfif>
 					<!--- If we have a folderid --->
 					<cfif arguments.folderid NEQ "">
