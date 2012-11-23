@@ -43,7 +43,6 @@
 		</tr>
 		<cfloop query="qry_col_list.collist">
 			<tr class="list">
-<!--- showwindow('#myself##xfa.collectiondetail#&col_id=#col_id#&folder_id=#folder_id#','#col_name#',700,1);return false;				 --->
 				<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself##xfa.collectiondetail#&col_id=#col_id#&folder_id=#folder_id#');">#col_name#</a></td>
 				<td valign="top">
 					<cfloop query="qry_col_list.collistdesc">
@@ -54,9 +53,9 @@
 				</td>
 				<td valign="top" align="center">#dateformat(change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				<cfif attributes.folderaccess EQ "X">
-					<td align="center" width="1%" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&loaddiv=#kind#&folder_id=#folder_id#','#myFusebox.getApplicationData().defaults.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+					<td align="center" width="1%" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&loaddiv=#kind#<cfif attributes.released>rel</cfif>&folder_id=#folder_id#&released=#attributes.released#','#myFusebox.getApplicationData().defaults.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 				</cfif>
 			</tr>
 		</cfloop>
+	</table>
 </cfoutput>
-

@@ -108,7 +108,8 @@
 	color;grey;
 }
 .chzn-container .chzn-drop .chzn-results {
-	height: 150px;
+	overflow: auto;
+	max-height: 75px;
 }
 <cfif !cs.show_top_part>
 ##apDiv3, ##apDiv4 {

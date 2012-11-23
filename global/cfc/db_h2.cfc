@@ -1366,6 +1366,8 @@
 		  share_upload		varchar(1) DEFAULT 'f',
 		  share_order		varchar(1) DEFAULT 'f',
 		  share_order_user	VARCHAR(100),
+		  col_released		VARCHAR(5) DEFAULT 'false',
+		  col_copied_from	VARCHAR(100),
 		  HOST_ID			BIGINT,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_PK PRIMARY KEY (COL_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_#arguments.thestruct.host_db_prefix#COL_FK1_HOSTS FOREIGN KEY (HOST_ID)

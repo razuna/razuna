@@ -1696,6 +1696,8 @@
 		  share_upload		varchar2(1 char) DEFAULT 'f',
 		  share_order		varchar2(1 char) DEFAULT 'f',
 		  share_order_user	VARCHAR2(100 CHAR),
+		  col_released		VARCHAR2(5 CHAR) DEFAULT 'false',
+		  col_copied_from	VARCHAR2(100 CHAR),
 		  HOST_ID			NUMBER,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_PK PRIMARY KEY (COL_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE ENABLE

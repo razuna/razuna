@@ -1709,6 +1709,8 @@
 		  share_upload		varchar(1) DEFAULT 'f',
 		  share_order		varchar(1) DEFAULT 'f',
 		  share_order_user	VARCHAR(100),
+		  col_released		VARCHAR(5) DEFAULT 'false',
+		  col_copied_from	VARCHAR(100),
 		  HOST_ID			INT,
 		PRIMARY KEY (COL_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
