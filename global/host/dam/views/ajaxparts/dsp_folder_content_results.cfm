@@ -157,7 +157,7 @@
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<div>
-										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&#session.urltoken#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 								</cfif>
 								<br>
@@ -245,7 +245,7 @@
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<div>
-										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&#session.urltoken#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 								</cfif>
 								<br />
@@ -321,7 +321,7 @@
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<div>
-										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&#session.urltoken#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 								</cfif>
 								<br>
@@ -411,7 +411,7 @@
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<div>
-										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&#session.urltoken#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 								</cfif>
 								<br>
