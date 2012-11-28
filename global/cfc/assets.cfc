@@ -4158,61 +4158,64 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Feedback --->
 		<cfoutput>List files of this folder...<br><br></cfoutput>
 		<cfflush>
-		<!--- Now add all assets of this folder --->
-		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
-		<!--- Filter out hidden dirs --->
-		<cfquery dbtype="query" name="thefiles">
-		SELECT *
-		FROM thefiles
-		WHERE attributes != 'H'
-		</cfquery>
-		<!--- Feedback --->
-		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
-		<cfflush>
-		<!--- New folder id into struct --->
-		<cfset arguments.thestruct.new_folder_id = new_folder_id>
-		<!--- Loop over the assets --->
-		<cfloop query="thefiles">
+		<cftry>
+			<!--- Now add all assets of this folder --->
+			<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+			<!--- Filter out hidden dirs --->
+			<cfquery dbtype="query" name="thefiles">
+			SELECT *
+			FROM thefiles
+			WHERE attributes != 'H'
+			</cfquery>
 			<!--- Feedback --->
-			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
 			<cfflush>
-			<!--- Params --->
-			<cfset arguments.thestruct.filepath = directory & "/" & name>
-			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
-			<cfset arguments.thestruct.orgsize = size>
-			<!--- Now add the asset --->
-			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
-		</cfloop>
-		<!--- Feedback --->
-		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
-		<cfflush>
-		<!--- Check if folder has subfolders if so add them recursively --->
-		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
-		<!--- Filter out hidden dirs --->
-		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
-		SELECT *
-		FROM thedir
-		WHERE attributes != 'H'
-		</cfquery>
-		<cfset arguments.thestruct.folderpath = arguments.thestruct.folder_path>
-		<cfset arguments.thestruct.thisfolderid = arguments.thestruct.theid>
-		<cfset arguments.thestruct.thislevel = arguments.thestruct.level>
-		<!--- Call rec function --->
-		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- New folder id into struct --->
+			<cfset arguments.thestruct.new_folder_id = new_folder_id>
+			<!--- Loop over the assets --->
+			<cfloop query="thefiles">
+				<!--- Feedback --->
+				<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+				<cfflush>
+				<!--- Params --->
+				<cfset arguments.thestruct.filepath = directory & "/" & name>
+				<cfset arguments.thestruct.thedir = directory>
+				<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
+				<cfset arguments.thestruct.orgsize = size>
+				<!--- Now add the asset --->
+				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+			</cfloop>
 			<!--- Feedback --->
-			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 			<cfflush>
-			<!--- folder_id into theid --->
-			<cfset arguments.thestruct.theid = new_folder_id>
-			<!--- Add directory to the folder_path --->
-			<cfset arguments.thestruct.folder_path = directory & "/#name#">
-			<!--- Call function --->
-			<cfinvoke method="addassetpath3" thestruct="#arguments.thestruct#">
-		</cfif>
-		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath>
-		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid>
-		<cfset arguments.thestruct.level = arguments.thestruct.thislevel>
+			<!--- Check if folder has subfolders if so add them recursively --->
+			<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+			<!--- Filter out hidden dirs --->
+			<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+			SELECT *
+			FROM thedir
+			WHERE attributes != 'H'
+			</cfquery>
+			<cfset arguments.thestruct.folderpath = arguments.thestruct.folder_path>
+			<cfset arguments.thestruct.thisfolderid = arguments.thestruct.theid>
+			<cfset arguments.thestruct.thislevel = arguments.thestruct.level>
+			<!--- Call rec function --->
+			<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+				<!--- Feedback --->
+				<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+				<cfflush>
+				<!--- folder_id into theid --->
+				<cfset arguments.thestruct.theid = new_folder_id>
+				<!--- Add directory to the folder_path --->
+				<cfset arguments.thestruct.folder_path = directory & "/#name#">
+				<!--- Call function --->
+				<cfinvoke method="addassetpath3" thestruct="#arguments.thestruct#">
+			</cfif>
+			<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath>
+			<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid>
+			<cfset arguments.thestruct.level = arguments.thestruct.thislevel>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />
@@ -4246,60 +4249,63 @@ This is the main function called directly by a single upload else from addassets
 		<cfoutput>List files of this folder...<br><br></cfoutput>
 		<cfflush>
 		<!--- Now add all assets of this folder --->
-		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
-		<!--- Filter out hidden dirs --->
-		<cfquery dbtype="query" name="thefiles">
-		SELECT *
-		FROM thefiles
-		WHERE attributes != 'H'
-		</cfquery>
-		<!--- Feedback --->
-		<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
-		<cfflush>
-		<!--- New folder id into struct --->
-		<cfset arguments.thestruct.new_folder_id = new_folder_id>
-		<!--- Loop over the assets --->
-		<cfloop query="thefiles">
+		<cftry>
+			<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
+			<!--- Filter out hidden dirs --->
+			<cfquery dbtype="query" name="thefiles">
+			SELECT *
+			FROM thefiles
+			WHERE attributes != 'H'
+			</cfquery>
 			<!--- Feedback --->
-			<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+			<cfoutput>Found #thefiles.recordcount# files.<br><br></cfoutput>
 			<cfflush>
-			<!--- Params --->
-			<cfset arguments.thestruct.filepath = directory & "/" & name>
-			<cfset arguments.thestruct.thedir = directory>
-			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
-			<cfset arguments.thestruct.orgsize = size>
-			<!--- Now add the asset --->
-			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
-		</cfloop>
-		<!--- Feedback --->
-		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
-		<cfflush>
-		<!--- Check if folder has subfolders if so add them recursively --->
-		<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
-		<!--- Filter out hidden dirs --->
-		<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
-		SELECT *
-		FROM thedir
-		WHERE attributes != 'H'
-		</cfquery>
-		<cfset arguments.thestruct.folderpath2 = arguments.thestruct.folder_path>
-		<cfset arguments.thestruct.thisfolderid2 = arguments.thestruct.theid>
-		<cfset arguments.thestruct.thislevel2 = arguments.thestruct.level>
-		<!--- Call rec function --->
-		<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+			<!--- New folder id into struct --->
+			<cfset arguments.thestruct.new_folder_id = new_folder_id>
+			<!--- Loop over the assets --->
+			<cfloop query="thefiles">
+				<!--- Feedback --->
+				<cfoutput>#currentRow#. Adding: #listlast(name,FileSeparator())#<br></cfoutput>
+				<cfflush>
+				<!--- Params --->
+				<cfset arguments.thestruct.filepath = directory & "/" & name>
+				<cfset arguments.thestruct.thedir = directory>
+				<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
+				<cfset arguments.thestruct.orgsize = size>
+				<!--- Now add the asset --->
+				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+			</cfloop>
 			<!--- Feedback --->
-			<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 			<cfflush>
-			<!--- folder_id into theid --->
-			<cfset arguments.thestruct.theid = new_folder_id>
-			<!--- Add directory to the folder_path --->
-			<cfset arguments.thestruct.folder_path = directory & "/#name#">
-			<!--- Call function --->
-			<cfinvoke method="addassetpath4" thestruct="#arguments.thestruct#">
-		</cfif>
-		<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath2>
-		<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid2>
-		<cfset arguments.thestruct.level = arguments.thestruct.thislevel2>
+			<!--- Check if folder has subfolders if so add them recursively --->
+			<cfdirectory action="list" directory="#subfolderpath#" name="thedir" type="dir">
+			<!--- Filter out hidden dirs --->
+			<cfquery dbtype="query" name="arguments.thestruct.thesubdirs">
+			SELECT *
+			FROM thedir
+			WHERE attributes != 'H'
+			</cfquery>
+			<cfset arguments.thestruct.folderpath2 = arguments.thestruct.folder_path>
+			<cfset arguments.thestruct.thisfolderid2 = arguments.thestruct.theid>
+			<cfset arguments.thestruct.thislevel2 = arguments.thestruct.level>
+			<!--- Call rec function --->
+			<cfif arguments.thestruct.thesubdirs.recordcount NEQ 0>
+				<!--- Feedback --->
+				<cfoutput>Found #arguments.thestruct.thesubdirs.recordcount# sub-folder.<br><br></cfoutput>
+				<cfflush>
+				<!--- folder_id into theid --->
+				<cfset arguments.thestruct.theid = new_folder_id>
+				<!--- Add directory to the folder_path --->
+				<cfset arguments.thestruct.folder_path = directory & "/#name#">
+				<!--- Call function --->
+				<cfinvoke method="addassetpath4" thestruct="#arguments.thestruct#">
+			</cfif>
+			<cfset arguments.thestruct.folder_path = arguments.thestruct.folderpath2>
+			<cfset arguments.thestruct.theid = arguments.thestruct.thisfolderid2>
+			<cfset arguments.thestruct.level = arguments.thestruct.thislevel2>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />
