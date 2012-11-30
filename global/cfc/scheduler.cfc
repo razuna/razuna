@@ -482,28 +482,30 @@
 		<cfabort>
 	</cfif>
 	<!--- List all files from the server directory --->
-	<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" name="doit.serverdir" recurse="#doit.qry_detail.sched_server_recurse#">
-	<!--- Loop over the query and append to assets_temp for sorting correctly --->
-	<cfloop query="doit.serverdir">
-		<cfif type EQ "file" AND NOT directory CONTAINS "." AND NOT directory CONTAINS "cvs" AND NOT directory CONTAINS ".svn" AND NOT directory CONTAINS "scheduleduploads_" AND NOT name EQ ".ds_store">
-			<cfset doit.dirlist = directory & "/" & name & "," & doit.dirlist>
-			<!--- Get file extension --->
-			<!--- 
-			<cfset theextension = listlast("#name#",".")>
-			<!--- Insert into temp db --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#assets_temp
-			(tempid, filename, extension, path)
-			VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#name#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#directory#">
-			)
-			</cfquery> 
-			--->
-		</cfif>
-	</cfloop>
+	<cfif doit.qry_detail.sched_method EQ "server">
+		<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" name="doit.serverdir" recurse="#doit.qry_detail.sched_server_recurse#">
+		<!--- Loop over the query and append to assets_temp for sorting correctly --->
+		<cfloop query="doit.serverdir">
+			<cfif type EQ "file" AND NOT directory CONTAINS "." AND NOT directory CONTAINS "cvs" AND NOT directory CONTAINS ".svn" AND NOT directory CONTAINS "scheduleduploads_" AND NOT name EQ ".ds_store">
+				<cfset doit.dirlist = directory & "/" & name & "," & doit.dirlist>
+				<!--- Get file extension --->
+				<!--- 
+				<cfset theextension = listlast("#name#",".")>
+				<!--- Insert into temp db --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#assets_temp
+				(tempid, filename, extension, path)
+				VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#name#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#directory#">
+				)
+				</cfquery> 
+				--->
+			</cfif>
+		</cfloop>
+	</cfif>
 	<!--- Return --->
 	<cfreturn doit>
 </cffunction>
