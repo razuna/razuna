@@ -1230,24 +1230,18 @@
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("images")>
 	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset variables.cachetoken = resetcachetoken("images")>
 	<!--- Loop over files --->
-	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
-		<cfset arguments.thestruct.img_id = "">
-		<cfset arguments.thestruct.img_id = listfirst(fileid,"-")>
-		<!--- If we are coming from a overview ids come with type --->
-		<!--- <cfif arguments.thestruct.thetype EQ "all" AND fileid CONTAINS "-img">
-			<cfset arguments.thestruct.img_id = listfirst(fileid,"-")>
-		<cfelseif arguments.thestruct.thetype NEQ "all">
-			<cfset arguments.thestruct.img_id = fileid>
-		</cfif> --->
-		<cfif arguments.thestruct.img_id NEQ "">
-			<cfthread intstruct="#arguments.thestruct#">
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
+			<cfset attributes.intstruct.img_id = "">
+			<cfset attributes.intstruct.img_id = listfirst(fileid,"-")>
+			<cfif attributes.intstruct.img_id NEQ "">
 				<cfinvoke method="move" thestruct="#attributes.intstruct#" />
-			</cfthread>
-		</cfif>
-	</cfloop>
+			</cfif>
+		</cfloop>
+	</cfthread>
 </cffunction>
 
 <!--- MOVE FILE --->
