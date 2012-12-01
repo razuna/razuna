@@ -42,6 +42,10 @@ function loadcontent(ele,url){
   		$("#bodyoverlay").remove();
 	});
 }
+// Load overlay
+function loadoverlay(){
+	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+}
 // Tooltip
 function mytooltip(){
 	//$("#tooltip a[title]").tooltip('#demotip');
