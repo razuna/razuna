@@ -130,7 +130,7 @@
 		<div id="outer">
 			<div class="debt">
 				<h2>Thanks for trying Razuna! Your free trial has ended.</h2>
-				<p>Don't worry – all your stuff is safe. Simply choose a plan to pick up right were you left off.</p>
+				<p>Don&#039;t worry &ndash; all your stuff is safe. Simply choose a plan to pick up right were you left off.</p>
 				<p><a href="https://secure.razuna.com/account.cfm?userid=#session.theuserid#&hostid=#session.hostid#">Go to my account and pick a plan</a></p>
 				<p>If you have any questions please contact us at <a href="mailto:sales@razuna.com">sales@razuna.com</a></p>
 			</div>
