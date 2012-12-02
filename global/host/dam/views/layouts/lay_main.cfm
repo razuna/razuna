@@ -126,6 +126,16 @@
 </div>
 </cfif>
 <div id="container">
+	<cfif cgi.http_host CONTAINS "razuna.com" AND res_account.account_type EQ 0>
+		<div id="outer">
+			<div class="debt">
+				<h2>Thanks for trying Razuna! Your free trial has ended.</h2>
+				<p>Don't worry – all your stuff is safe. Simply choose a plan to pick up right were you left off.</p>
+				<p><a href="https://secure.razuna.com/account.cfm?userid=#session.theuserid#&hostid=#session.hostid#">Go to my account and pick a plan</a></p>
+				<p>If you have any questions please contact us at <a href="mailto:sales@razuna.com">sales@razuna.com</a></p>
+			</div>
+		</div>
+	</cfif>
 	<cfif session.indebt>
 		<div id="outer">
 			<div class="debt">
@@ -133,7 +143,7 @@
 				<p>Unfortunately, your account is currently <span style="color:red;font-weight:bold;">locked due to unpaid invoices</span>. Before you can use Razuna again, your account has to be cleared with us.</p>
 				<p>Until then, your account remains locked.</p>
 				<p>Click on the link below to get to your account settings and resolve your outstanding invoices now. Thank you!</p>
-				<p><!--- <a href="##" onclick="showwindow('#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#','Account',700,1);return false;"> ---><a href="https://secure.razuna.com/account.cfm?userid=#session.theuserid#&hostid=#session.hostid#" target="_blank">Go to Account & Invoices</a></p>
+				<p><!--- <a href="##" onclick="showwindow('#myself#ajax.account&userid=#session.theuserid#&hostid=#session.hostid#','Account',700,1);return false;"> ---><a href="https://secure.razuna.com/account.cfm?userid=#session.theuserid#&hostid=#session.hostid#">Go to Account & Invoices</a></p>
 				<p><i>(After payment, you will be able to to access Razuna immediately again).</i></p>
 				<p>If you have any questions please contact us at <a href="mailto:sales@razuna.com">sales@razuna.com</a></p>
 			</div>

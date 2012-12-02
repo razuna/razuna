@@ -869,19 +869,23 @@ Comment:<br>
 	<cffunction name="getaccount" output="true">
 		<cfargument name="thehostid" type="string" required="true">
 		<cfargument name="thecgi" type="string" required="false">
+		<cfset var account = "">
 		<!--- Call Remote CFC --->
-		<cfhttp url="http://razuna.com/includes/accounts.cfc">
+		<!--- <cfhttp url="http://razuna.com/includes/accounts.cfc">
 			<cfhttpparam type="url" name="method" value="checkaccount" />
 			<cfhttpparam type="url" name="thehostid" value="#arguments.thehostid#" />
-		</cfhttp>
+		</cfhttp> --->
 		<!--- Convert WDDX --->
-		<cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="account" />
-		<!--- <cfinvoke webservice="http://razuna.com/includes/accounts.cfc?wsdl" 
-			method="checkaccount"
-			thehostid="#arguments.thehostid#"
-			thecgi="#arguments.thecgi#" 
-			returnVariable="qry_account"
-			timeout="3"> --->
+		<!--- <cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="account" /> --->
+		<cfquery datasource="razuna_account" name="account">
+		SELECT b.bill_id, b.bill_date, b.bill_total, u.user_id, u.account_type
+		FROM hosted_bills b, hosted_users u
+		WHERE u.host_id = <cfqueryparam value="#arguments.thehostid#" cfsqltype="cf_sql_numeric" />
+		AND b.user_id = u.user_id
+		and lower(b.bill_paid) = <cfqueryparam value="f" cfsqltype="cf_sql_varchar" />
+		and b.reminder_count > 1
+		</cfquery>
+		
 		<!--- If there is a record then the user is in debt --->
 		<cfif account.recordcount NEQ 0>
 			<cfset session.indebt = true>
