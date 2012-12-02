@@ -119,14 +119,8 @@
 </style>
 </head>
 <body>
-<cfif cgi.user_agent CONTAINS "chrome" AND structkeyexists(cookie,"razgc") AND cookie.razgc NEQ "off">
-<div id="chromebar">
-	<div style="float:left;padding:7px 0px 0px 20px;">Hey there, Google Chrome user. Check out the <a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Razuna extension on the Chrome Web Store</a> to access your Razuna library directly.</div>
-	<div style="float:right;padding:7px 15px 0px 0px;"><a href="##" onclick="document.cookie='razgc=off; expires=#dateformat(dateadd('m',3,now()), 'dddd, dd-mmm-yyyy')# 00:00:00 GMT; path=/';location.href='#myself#c.main&v=#createuuid()#';" style="padding-right:15px;">Don't notify me anymore</a> <a href="##" onclick="document.cookie='razgc=off; expires=#dateformat(dateadd('yyyy',1,now()), 'dddd, dd-mmm-yyyy')# 00:00:00 GMT; path=/';location.href='#myself#c.main&v=#createuuid()#';window.open('https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn');">Yes, install it</a></div>
-</div>
-</cfif>
-<div id="container">
-	<cfif cgi.http_host CONTAINS "razuna.com" AND res_account.account_type EQ 0>
+<cfif cgi.http_host CONTAINS "razuna.com" AND res_account.account_type EQ 0>
+	<div id="container">
 		<div id="outer">
 			<div class="debt">
 				<h2>Thanks for trying Razuna! Your free trial has ended.</h2>
@@ -135,7 +129,19 @@
 				<p>If you have any questions please contact us at <a href="mailto:sales@razuna.com">sales@razuna.com</a></p>
 			</div>
 		</div>
-	</cfif>
+	</div>
+	</body>
+	</html>
+	</cfoutput>
+	<cfabort>
+</cfif>
+<cfif cgi.user_agent CONTAINS "chrome" AND structkeyexists(cookie,"razgc") AND cookie.razgc NEQ "off">
+<div id="chromebar">
+	<div style="float:left;padding:7px 0px 0px 20px;">Hey there, Google Chrome user. Check out the <a href="https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn" target="_blank">Razuna extension on the Chrome Web Store</a> to access your Razuna library directly.</div>
+	<div style="float:right;padding:7px 15px 0px 0px;"><a href="##" onclick="document.cookie='razgc=off; expires=#dateformat(dateadd('m',3,now()), 'dddd, dd-mmm-yyyy')# 00:00:00 GMT; path=/';location.href='#myself#c.main&v=#createuuid()#';" style="padding-right:15px;">Don't notify me anymore</a> <a href="##" onclick="document.cookie='razgc=off; expires=#dateformat(dateadd('yyyy',1,now()), 'dddd, dd-mmm-yyyy')# 00:00:00 GMT; path=/';location.href='#myself#c.main&v=#createuuid()#';window.open('https://chrome.google.com/webstore/detail/gliobkpjddpabnjilfghpnkghmigjjcn');">Yes, install it</a></div>
+</div>
+</cfif>
+<div id="container">
 	<cfif session.indebt>
 		<div id="outer">
 			<div class="debt">
