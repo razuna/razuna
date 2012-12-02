@@ -132,7 +132,6 @@
 	</div>
 	</body>
 	</html>
-	</cfoutput>
 	<cfabort>
 </cfif>
 <cfif cgi.user_agent CONTAINS "chrome" AND structkeyexists(cookie,"razgc") AND cookie.razgc NEQ "off">
