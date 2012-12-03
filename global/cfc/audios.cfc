@@ -295,18 +295,18 @@
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 		<!--- If we come from all we need to change the desc and keywords arguments name --->
 			<cfif arguments.thestruct.what EQ "all">
-				<cfset alldesc = "all_desc_" & #langindex#>
-				<cfset allkeywords = "all_keywords_" & #langindex#>
-				<cfset thisdesc = "arguments.thestruct.aud_desc_" & #langindex#>
-				<cfset thiskeywords = "arguments.thestruct.aud_keywords_" & #langindex#>
+				<cfset alldesc = "all_desc_#langindex#">
+				<cfset allkeywords = "all_keywords_#langindex#">
+				<cfset thisdesc = "arguments.thestruct.aud_desc_#langindex#">
+				<cfset thiskeywords = "arguments.thestruct.aud_keywords_#langindex#">
 				<cfset "#thisdesc#" =  evaluate(alldesc)>
 				<cfset "#thiskeywords#" =  evaluate(allkeywords)>
 			<cfelse>
-				<cfset thisdesc="aud_desc_" & #langindex#>
-				<cfset thiskeywords="aud_keywords_" & #langindex#>	
+				<cfset thisdesc = "desc_#langindex#">
+				<cfset thiskeywords = "keywords_#langindex#">	
 			</cfif>
-			<cfset l = #langindex#>
-			<cfif thisdesc CONTAINS #l# OR thiskeywords CONTAINS #l#>
+			<cfset l = langindex>
+			<cfif thisdesc CONTAINS l OR thiskeywords CONTAINS l>
 				<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="f">
 					<!--- query excisting --->
 					<cfquery datasource="#variables.dsn#" name="ishere">
@@ -354,11 +354,11 @@
 			</cfif>
 		</cfloop>
 		<!--- Save to the files table --->
-		<cfif structkeyexists(arguments.thestruct,"file_name") AND arguments.thestruct.frombatch NEQ "T">
+		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#audios
 			SET
-			aud_name = <cfqueryparam value="#arguments.thestruct.file_name#" cfsqltype="cf_sql_varchar">,
+			aud_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			aud_online = <cfqueryparam value="#arguments.thestruct.aud_online#" cfsqltype="cf_sql_varchar">,
 			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">,
 			aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
@@ -403,7 +403,7 @@
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud" online="#arguments.thestruct.aud_online#" notfile="T">
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')#>
+		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.fname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')#>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>

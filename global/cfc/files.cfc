@@ -629,18 +629,18 @@
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 				<!--- If we come from all we need to change the desc and keywords arguments name --->
 				<cfif arguments.thestruct.what EQ "all">
-					<cfset alldesc = "all_desc_" & #langindex#>
-					<cfset allkeywords = "all_keywords_" & #langindex#>
-					<cfset thisdesc = "arguments.thestruct.file_desc_" & #langindex#>
-					<cfset thiskeywords = "arguments.thestruct.file_keywords_" & #langindex#>
+					<cfset alldesc = "all_desc_#langindex#">
+					<cfset allkeywords = "all_keywords_#langindex#">
+					<cfset thisdesc = "arguments.thestruct.file_desc_#langindex#">
+					<cfset thiskeywords = "arguments.thestruct.file_keywords_#langindex#">
 					<cfset "#thisdesc#" =  evaluate(alldesc)>
 					<cfset "#thiskeywords#" =  evaluate(allkeywords)>
 				<cfelse>
-					<cfset thisdesc = "file_desc_" & #langindex#>
-					<cfset thiskeywords = "file_keywords_" & #langindex#>		
+					<cfset thisdesc = "desc_#langindex#">
+					<cfset thiskeywords = "keywords_#langindex#">		
 				</cfif>
-				<cfset l = #langindex#>
-				<cfif thisdesc CONTAINS "#l#" OR thiskeywords CONTAINS "#l#">
+				<cfset l = langindex>
+				<cfif thisdesc CONTAINS l OR thiskeywords CONTAINS l>
 					<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="f">
 						<!--- Query excisting --->
 						<cfquery datasource="#variables.dsn#" name="ishere">
@@ -664,7 +664,8 @@
 							<!--- Update DB --->
 							<cfquery datasource="#variables.dsn#">
 							UPDATE #session.hostdbprefix#files_desc
-							SET file_desc = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">,
+							SET 
+							file_desc = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">,
 							file_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
 							WHERE file_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 							AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
@@ -729,10 +730,11 @@
 					</cfif>
 				</cfif>
 				<!--- Save to the files table --->
-				<cfif structkeyexists(arguments.thestruct,"file_name")>
+				<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 					<cfquery datasource="#variables.dsn#">
 					UPDATE #session.hostdbprefix#files
-					SET file_name = <cfqueryparam value="#arguments.thestruct.file_name#" cfsqltype="cf_sql_varchar">,
+					SET 
+					file_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 					shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">,
 					file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
 					file_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
@@ -768,7 +770,7 @@
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
 			</cfif>
 			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')#>
+			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.fname#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')#>
 		</cfloop>
 	</cffunction>
 	

@@ -37,7 +37,7 @@
 	<div id="tab_detail#file_id#">
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
-			<cfif cs.tab_description_keywords>
+			<cfif cs.tab_metadata>
 				<li><a href="##meta">Metadata</a></li>
 			</cfif>
 			<!--- Comments --->

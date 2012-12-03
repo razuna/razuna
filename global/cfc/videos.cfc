@@ -898,18 +898,18 @@
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 		<!--- If we come from all we need to change the desc and keywords arguments name --->
 			<cfif arguments.thestruct.what EQ "all">
-				<cfset alldesc = "all_desc_" & #langindex#>
-				<cfset allkeywords = "all_keywords_" & #langindex#>
-				<cfset thisdesc = "arguments.thestruct.vid_desc_" & #langindex#>
-				<cfset thiskeywords = "arguments.thestruct.vid_keywords_" & #langindex#>
+				<cfset alldesc = "all_desc_#langindex#">
+				<cfset allkeywords = "all_keywords_#langindex#">
+				<cfset thisdesc = "arguments.thestruct.vid_desc_#langindex#">
+				<cfset thiskeywords = "arguments.thestruct.vid_keywords_#langindex#">
 				<cfset "#thisdesc#" =  evaluate(alldesc)>
 				<cfset "#thiskeywords#" =  evaluate(allkeywords)>
 			<cfelse>
-				<cfset thisdesc="vid_desc_" & #langindex#>
-				<cfset thiskeywords="vid_keywords_" & #langindex#>	
+				<cfset thisdesc = "desc_#langindex#">
+				<cfset thiskeywords = "keywords_#langindex#">	
 			</cfif>
-			<cfset l = #langindex#>
-			<cfif thisdesc CONTAINS #l# OR thiskeywords CONTAINS #l#>
+			<cfset l = langindex>
+			<cfif thisdesc CONTAINS l OR thiskeywords CONTAINS l>
 				<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="f">
 					<!--- Query excisting --->
 					<cfquery datasource="#variables.dsn#" name="ishere">
@@ -933,7 +933,8 @@
 						<!--- Update --->
 						<cfquery datasource="#variables.dsn#">
 						UPDATE #session.hostdbprefix#videos_text
-						SET vid_description = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">, 
+						SET 
+						vid_description = <cfqueryparam value="#ltrim(tdesc)#" cfsqltype="cf_sql_varchar">, 
 						vid_keywords = <cfqueryparam value="#ltrim(tkeywords)#" cfsqltype="cf_sql_varchar">
 						WHERE vid_id_r = <cfqueryparam value="#f#" cfsqltype="CF_SQL_VARCHAR">
 						AND lang_id_r = <cfqueryparam value="#l#" cfsqltype="cf_sql_numeric">
@@ -956,11 +957,11 @@
 			</cfif>
 		</cfloop>
 		<!--- Save to the files table --->
-		<cfif structkeyexists(arguments.thestruct,"file_name") AND arguments.thestruct.frombatch NEQ "T">
+		<cfif structkeyexists(arguments.thestruct,"fname") AND arguments.thestruct.frombatch NEQ "T">
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#videos
 			SET
-			vid_filename = <cfqueryparam value="#arguments.thestruct.file_name#" cfsqltype="cf_sql_varchar">,
+			vid_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			vid_online = <cfqueryparam value="#arguments.thestruct.vid_online#" cfsqltype="cf_sql_varchar">,
 			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">,
 			vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
@@ -996,7 +997,7 @@
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid" notfile="T">
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.file_name#',logfiletype='vid',assetid='#arguments.thestruct.file_id#')#>
+		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.fname#',logfiletype='vid',assetid='#arguments.thestruct.file_id#')#>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
