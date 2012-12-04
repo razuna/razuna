@@ -736,7 +736,7 @@
 		<transtext>Country</transtext>
 	</transid>
 	<transid name="user_tel">
-		<transtext>Telefon</transtext>
+		<transtext>Telephone</transtext>
 	</transid>
 	<transid name="user_fax">
 		<transtext>Fax</transtext>
