@@ -718,7 +718,7 @@
 			<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.fname#',logfiletype='img',assetid='#arguments.thestruct.file_id#')#>
+		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.img_filename#',logfiletype='img',assetid='#arguments.thestruct.file_id#')>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>

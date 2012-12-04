@@ -770,7 +770,7 @@
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
 			</cfif>
 			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.fname#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')#>
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qry.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')>
 		</cfloop>
 	</cffunction>
 	
