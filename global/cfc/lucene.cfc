@@ -104,14 +104,15 @@
 				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
-				SELECT l.label_text
+				SELECT l.label_path
 				FROM ct_labels ct, #session.hostdbprefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND l.label_id = ct.ct_label_id
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset var l = valuelist(qry_l.label_text, " ")>
+				<cfset var l = valuelist(qry_l.label_path," ")>
+				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT *, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
@@ -180,14 +181,15 @@
 				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
-				SELECT l.label_text
+				SELECT l.label_path
 				FROM ct_labels ct, #session.hostdbprefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND l.label_id = ct.ct_label_id
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Add labels to a list --->
-				<cfset var l = valuelist(qry_l.label_text, " ")>
+				<!--- Add query to list --->
+				<cfset var l = valuelist(qry_l.label_path," ")>
+				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT *, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
@@ -278,14 +280,15 @@
 				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
-				SELECT l.label_text
+				SELECT l.label_path
 				FROM ct_labels ct, #session.hostdbprefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND l.label_id = ct.ct_label_id
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset var l = valuelist(qry_l.label_text, " ")>
+				<cfset var l = valuelist(qry_l.label_path," ")>
+				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT *, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
@@ -319,14 +322,15 @@
 				<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
-				SELECT l.label_text
+				SELECT l.label_path
 				FROM ct_labels ct, #session.hostdbprefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND l.label_id = ct.ct_label_id
 				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
-				<cfset var l = valuelist(qry_l.label_text, " ")>
+				<cfset var l = valuelist(qry_l.label_path," ")>
+				<cfset var l = replace(l,"/"," ","all")>
 				<!--- Add labels to the query --->
 				<cfquery dbtype="query" name="qry_all">
 				SELECT *, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue

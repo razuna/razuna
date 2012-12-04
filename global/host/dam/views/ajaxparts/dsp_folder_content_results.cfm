@@ -809,7 +809,7 @@
 	</cfif>
 	<!--- JS for the combined view --->
 	<script language="JavaScript" type="text/javascript">
-		<cfif session.file_id NEQ "">
+		<cfif session.file_id NEQ "" AND fa NEQ "c.search_simple">
 			enablesub('searchform#attributes.thetype#');
 		</cfif>
 		// Submit form
