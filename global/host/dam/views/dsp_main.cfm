@@ -111,10 +111,10 @@
 						</cfif>
 						<!--- How to get the most out of Razuna --->
 						<cfif application.razuna.whitelabel>
-							<div class="panelsnew">
-								#attributes.wl_main_static#
-							</div>
 							<cfif attributes.wl_main_static NEQ "">
+								<div class="panelsnew">
+									#attributes.wl_main_static#
+								</div>
 								<br />
 							</cfif>
 						<cfelse>
