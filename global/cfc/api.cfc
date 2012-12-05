@@ -170,6 +170,17 @@
 		<cfreturn qrycf />
 	</cffunction>
 
+	<!--- Get CustomFieldsValues --->
+	<cffunction name="getCustomFieldsValues" access="public" returntype="query">
+		<cfargument name="fileid" type="string" required="true" />
+		<!--- Param --->
+		<cfset var s = structNew()>
+		<cfset s.file_id = arguments.fileid>
+		<!--- Call method --->
+		<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#s#" returnvariable="qrycfv" />
+		<cfreturn qrycfv />
+	</cffunction>
+
 	<!--- Get PluginID --->
 	<cffunction name="getMyID" access="public" returntype="string">
 		<cfargument name="pluginname" type="string" required="true" />
@@ -297,5 +308,42 @@
 		<cfinvoke component="xmp" method="setMetadataCustom" fileid="#arguments.fileid#" type="#arguments.type#" metadata="#arguments.metadata#">
 	</cffunction>
 
+	<!--- Get Description, keywords and raw metadata --->
+	<cffunction name="getMetadataOfFile" access="public" returntype="struct">
+		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<!--- Params --->
+		<cfset var s = structNew()>
+		<cfset s.file_id = arguments.fileid>
+		<cfset var qry = queryNew("id")>
+		<cfset queryAddRow(qry)>
+		<cfset querySetCell(qry, "id", arguments.fileid)>
+		<cfset var r = structNew()>
+		<!--- Images --->
+		<cfif arguments.type EQ "img">
+			<!--- Call function --->
+			<cfinvoke component="images" method="gettext" qry="#qry#" returnvariable="r.metadata">
+			<cfinvoke component="images" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
+			<cfinvoke component="xmp" method="readxmpdb" thestruct="#s#" returnvariable="r.xmpmetadata">
+		<!--- Videos --->
+		<cfelseif arguments.type EQ "vid">
+			<!--- Call function --->
+			<cfinvoke component="videos" method="gettext" qry="#qry#" returnvariable="r.metadata">
+			<cfinvoke component="videos" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
+		<!--- Audios --->
+		<cfelseif arguments.type EQ "aud">
+			<!--- Call function --->
+			<cfinvoke component="audios" method="gettext" qry="#qry#" returnvariable="r.metadata">
+			<cfinvoke component="audios" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
+		<!--- Docs --->
+		<cfelseif arguments.type EQ "doc">
+			<!--- Call function --->
+			<cfinvoke component="files" method="gettext" qry="#qry#" returnvariable="r.metadata">
+			<cfinvoke component="files" method="getrawmetadata" qry="#qry#" returnvariable="r.rawmetadata">
+			<cfinvoke component="files" method="getpdfxmp" thestruct="#s#" returnvariable="r.xmpmetadata">
+		</cfif>
+		<!--- Return --->
+		<cfreturn r />
+	</cffunction>
 
 </cfcomponent>

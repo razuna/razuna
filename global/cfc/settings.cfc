@@ -1989,6 +1989,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset s.wl_link_support = "">
 	<cfset s.wl_link_doc = "">
 	<cfset s.wl_news_rss = "">
+	<cfset s.wl_main_static = "">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="q" cacheRegion="razcache" cachedwithin="1">
 	SELECT /* #variables.cachetoken#options */ opt_id, opt_value

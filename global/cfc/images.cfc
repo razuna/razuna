@@ -870,6 +870,8 @@
 			<cfset newImgWidth  = evaluate("convert_width_#theformat#")>
 			<cfset newImgHeight = evaluate("convert_height_#theformat#")>
 		</cfif>
+		<!--- From here on we need to remove the number of the format (if any) --->
+		<cfset theformat = listfirst(theformat,"_")>
 		<!--- Set the format into struct for threads --->
 		<cfset arguments.thestruct.theformat = theformat>
 		<!--- If it is Window rewrite path --->
@@ -1305,12 +1307,30 @@
 <!--- Get description and keywords for print --->
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("images")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#gettextimg */ img_id_r tid, img_description description, img_keywords keywords
 	FROM #session.hostdbprefix#images_text
 	WHERE img_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qryintern>
+</cffunction>
+
+<!--- Get rawmetadata --->
+<cffunction name="getrawmetadata" output="false">
+	<cfargument name="qry" type="query">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("images")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#gettextrm */ img_meta rawmetadata
+	FROM #session.hostdbprefix#images
+	WHERE img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Return --->

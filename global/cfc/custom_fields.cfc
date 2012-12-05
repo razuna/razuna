@@ -154,6 +154,7 @@
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c, #session.hostdbprefix#custom_fields_values cv
 		WHERE cv.asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ct.cf_id_r = cv.cf_id_r
+		AND ct.cf_id_r = c.cf_id
 		AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 		AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		GROUP BY cv.cf_value, ct.cf_text, c.cf_order, ct.cf_id_r

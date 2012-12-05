@@ -1250,12 +1250,30 @@
 <!--- Get description and keywords for print --->
 <cffunction name="gettext" output="false">
 	<cfargument name="qry" type="query">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#gettextaud */ aud_id_r tid, aud_description description, aud_keywords keywords
+	SELECT /* #variables.cachetoken#gettextaud */ aud_id_r tid, aud_description description, aud_keywords keywords, aud_meta rawmetadata
 	FROM #session.hostdbprefix#audios_text
 	WHERE aud_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qryintern>
+</cffunction>
+
+<!--- Get rawmetadata --->
+<cffunction name="getrawmetadata" output="false">
+	<cfargument name="qry" type="query">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("audios")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#gettextrm */ aud_meta rawmetadata
+	FROM #session.hostdbprefix#audios
+	WHERE aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qryintern>

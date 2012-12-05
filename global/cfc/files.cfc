@@ -1073,10 +1073,26 @@
 		<cfargument name="qry" type="query">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords
+		SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords, file_meta rawmetadata
 		FROM #session.hostdbprefix#files_desc
 		WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qryintern>
+	</cffunction>
+
+	<!--- Get rawmetadata --->
+	<cffunction name="getrawmetadata" output="false">
+		<cfargument name="qry" type="query">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#gettextrm */ file_meta rawmetadata
+		FROM #session.hostdbprefix#files
+		WHERE file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qryintern>
@@ -1085,6 +1101,8 @@
 	<!--- GET RECORDS WITH EMTPY VALUES --->
 	<cffunction name="getempty" output="false">
 		<cfargument name="thestruct" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getemptyfile */
@@ -1101,6 +1119,8 @@
 	<!--- GET PDF XMP --->
 	<cffunction name="getpdfxmp" output="false">
 		<cfargument name="thestruct" type="struct">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="pdfxmp" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getpdfxmp */ author, rights, authorsposition, captionwriter, webstatement, rightsmarked
