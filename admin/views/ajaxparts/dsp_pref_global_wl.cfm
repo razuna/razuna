@@ -52,6 +52,12 @@
 				<div style="float:left;"><textarea name="wl_login_links" id="wl_login_links" style="width:500px;height:70px;">#qry_options.wl_login_links#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_login_links');return false;">Use default</a></div>
 				<div style="clear:both;"></div>
 				<br />
+				<!--- Main page Videos --->
+				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_video")#</strong><br />
+				#myFusebox.getApplicationData().defaults.trans("header_wl_main_video_desc")#<br />
+				<div style="float:left;"><textarea name="wl_main_static" id="wl_main_static" style="width:500px;height:70px;">#qry_options.wl_main_static#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_main_static');return false;">Use default</a></div>
+				<div style="clear:both;"></div>
+				<br />
 				<!--- Main Razuna tab Bottom --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab_desc")#<br /><br />
@@ -176,6 +182,9 @@
 					break;
 				case 'wl_link_doc':
 					$('##wl_link_doc').val('<a href="http://wiki.razuna.com" target="_blank" onclick="$(\'##userselection\').toggle();">Documentation (Wiki)</a>');
+					break;
+				case 'wl_main_static':
+					$('##wl_main_static').val('<h1>How to get the most out of Razuna</h1><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'How to add files to Razuna\');return false;">&gt; How to add files to Razuna</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'How to share files with Razuna\');return false;">&gt; How to share files with Razuna</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Make good use of widgets\');return false;">&gt; Make good use of wigets</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Manage users and groups\');return false;">&gt; Manage users and groups</a><br /><br /><a href="##" onclick="SetVideo(\'http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1\',\'Real world custom case\');return false;">&gt; Real world customer case</a>');
 					break;
 			}
 		}

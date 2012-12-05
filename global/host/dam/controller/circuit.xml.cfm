@@ -274,6 +274,9 @@
 				<!-- WL -->
 				<if condition="application.razuna.whitelabel">
 					<true>
+						<!-- Get main static text -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one('wl_main_static')" returnvariable="attributes.wl_main_static" />
+						<!-- Get news -->
 						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_options_one('wl_news_rss')" returnvariable="attributes.wl_news_rss" />
 						<!-- If rss is empty -->
 						<if condition="attributes.wl_news_rss EQ ''">

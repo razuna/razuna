@@ -110,18 +110,24 @@
 							</cfif>
 						</cfif>
 						<!--- How to get the most out of Razuna --->
-						<div class="panelsnew">
-							<h1>How to get the most out of Razuna</h1>
-							<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to add files to Razuna');return false;">&gt; How to add files to Razuna</a>
-							<br /><br />
-							<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to share files with Razuna');return false;">&gt; How to share files with Razuna</a>
-							<br /><br />
-							<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Make good use of widgets');return false;">&gt; Make good use of wigets</a>
-							<br /><br />
-							<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Manage users and groups');return false;">&gt; Manage users and groups</a>
-							<br /><br />
-							<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Real world custom case');return false;">&gt; Real world customer case</a>
-						</div>
+						<cfif application.razuna.whitelabel>
+							<div class="panelsnew">
+								#attributes.wl_main_static#
+							</div>
+						<cfelse>
+							<div class="panelsnew">
+								<h1>How to get the most out of Razuna</h1>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to add files to Razuna');return false;">&gt; How to add files to Razuna</a>
+								<br /><br />
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to share files with Razuna');return false;">&gt; How to share files with Razuna</a>
+								<br /><br />
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Make good use of widgets');return false;">&gt; Make good use of wigets</a>
+								<br /><br />
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Manage users and groups');return false;">&gt; Manage users and groups</a>
+								<br /><br />
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Real world custom case');return false;">&gt; Real world customer case</a>
+							</div>
+						</cfif>
 						<!--- Announcement for ISP --->
 						<cfif cgi.http_host CONTAINS "razuna.com">
 							<br />
