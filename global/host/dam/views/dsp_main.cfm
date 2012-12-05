@@ -114,7 +114,9 @@
 							<div class="panelsnew">
 								#attributes.wl_main_static#
 							</div>
-							<br />
+							<cfif attributes.wl_main_static NEQ "">
+								<br />
+							</cfif>
 						<cfelse>
 							<div class="panelsnew">
 								<h1>How to get the most out of Razuna</h1>
