@@ -114,6 +114,7 @@
 							<div class="panelsnew">
 								#attributes.wl_main_static#
 							</div>
+							<br />
 						<cfelse>
 							<div class="panelsnew">
 								<h1>How to get the most out of Razuna</h1>
@@ -127,10 +128,10 @@
 								<br /><br />
 								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Real world custom case');return false;">&gt; Real world customer case</a>
 							</div>
+							<br />
 						</cfif>
 						<!--- Announcement for ISP --->
 						<cfif cgi.http_host CONTAINS "razuna.com">
-							<br />
 							<div class="panelsnew">
 								<h1>Razuna Announcements</h1>
 								<cfloop query="attributes.qry_news">
@@ -146,10 +147,10 @@
 									</cfif>
 								</cfloop>
 							</div>
+							<br />
 						</cfif>
 						<!--- If WL we show the news section here --->
 						<cfif application.razuna.whitelabel>
-							<br />
 							<div class="panelsnew">
 								<h1>Announcements</h1>
 								<!--- News --->
