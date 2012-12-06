@@ -103,11 +103,11 @@
 				<cfif session.iscol EQ "F">
 					<cfloop query="qry_subfolders">
 						<div class="assetbox" style="text-align:center;">
-							
+							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&jsessionid=#session.SessionID#">
 								<div class="theimg">
-									<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&jsessionid=#session.SessionID#"><img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"></a><br />
+									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 								</div>
-							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&jsessionid=#session.SessionID#"><strong>#folder_name#</strong></a>
+							<strong>#folder_name#</strong></a>
 						</div>
 					</cfloop>
 				</cfif>
