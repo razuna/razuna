@@ -535,8 +535,7 @@ Comment:<br>
 		WHERE upl_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.upl_temp_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Put convert_to value into list --->
-		
+		<!--- Return --->
 		<cfreturn qry />
 	</cffunction>
 	
@@ -592,7 +591,7 @@ Comment:<br>
 			</cfquery>
 			<!--- Save the additional values --->
 			<cfloop collection="#arguments.thestruct#" item="col">
-				<cfif col EQ "convert_bitrate_#theformat#" OR col EQ "convert_height_#theformat#" OR col EQ "convert_width_#theformat#">
+				<cfif col EQ "convert_bitrate_#theformat#" OR col EQ "convert_height_#theformat#" OR col EQ "convert_width_#theformat#" OR col EQ "convert_dpi_#theformat#">
 					<cfset tf = lcase(col)>
 					<cfset tv = evaluate(tf)>
 					<cfif tv NEQ "">

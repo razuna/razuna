@@ -2120,7 +2120,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		  	upl_temp_field		varchar2(300 CHAR) DEFAULT NULL,
 		  	upl_temp_value		varchar2(100 CHAR) DEFAULT NULL,
 		  	upl_temp_type		varchar2(5 CHAR) DEFAULT NULL,
-		  	upl_temp_format		varchar2(5 CHAR) DEFAULT NULL,
+		  	upl_temp_format		varchar2(10 CHAR) DEFAULT NULL,
 		  	host_id				number DEFAULT NULL,
 		  	rec_uuid			VARCHAR2(100 CHAR),
 		  	CONSTRAINT #arguments.thestruct.host_db_prefix#UTV_PK PRIMARY KEY (rec_uuid) ENABLE	
