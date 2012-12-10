@@ -1194,7 +1194,7 @@
 		  	upl_temp_field		varchar(300) DEFAULT NULL,
 		  	upl_temp_value		varchar(100) DEFAULT NULL,
 		  	upl_temp_type		varchar(5) DEFAULT NULL,
-		  	upl_temp_format		varchar(5) DEFAULT NULL,
+		  	upl_temp_format		varchar(10) DEFAULT NULL,
 		  	host_id				BIGINT DEFAULT NULL,
 		  	rec_uuid			VARCHAR(100)	
 		)

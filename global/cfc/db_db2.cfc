@@ -2157,7 +2157,7 @@
 		  	upl_temp_field		varchar(300),
 		  	upl_temp_value		varchar(100),
 		  	upl_temp_type		varchar(5),
-		  	upl_temp_format		varchar(5),
+		  	upl_temp_format		varchar(10),
 		  	host_id				int,
 		  	rec_uuid			VARCHAR(100),
 		  	PRIMARY KEY (rec_uuid)	

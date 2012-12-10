@@ -783,20 +783,20 @@
 	<cfif application.razuna.rfs>
 		<cfset arguments.thestruct.convert = true>
 		<cfset arguments.thestruct.assettype = "aud">
-		<cfthread intstruct="#arguments.thestruct#">
-			<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+			<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
+		<!--- </cfthread> --->
 	<cfelse>
 		<!--- Start the thread for converting --->
-		<cfthread intstruct="#arguments.thestruct#">
-			<cfinvoke method="convertaudio" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+			<cfinvoke method="convertaudio" thestruct="#arguments.thestruct#" />
+		<!--- </cfthread> --->
 	</cfif>
 </cffunction>
 
 <!--- CONVERT AUDIO --->
-<cffunction name="convertaudio" output="true">
-	<cfargument name="thestruct" type="struct">
+<cffunction name="convertaudio" output="false" returntype="void">
+	<cfargument name="thestruct" type="struct" required="true">
 	<cftry>
 		<!--- Param --->
 		<cfparam name="fromadmin" default="F">
@@ -838,7 +838,7 @@
 			<cfelse>
 				<cfset inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav">
 			</cfif>
-			<cfthread name="convert#arguments.thestruct.file_id#" />
+			<cfthread name="convert#tempfolder#" />
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
@@ -854,7 +854,7 @@
 				<cfhttp url="#arguments.thestruct.qry_detail.detail.cloud_url_org#" file="#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav" path="#arguments.thestruct.thisfolder#"></cfhttp>
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
-			<cfthread name="convert#arguments.thestruct.file_id#" />
+			<cfthread name="convert#tempfolder#" />
 			<!--- Set the input path --->
 			<cfset inputpath = "#arguments.thestruct.thisfolder#/#arguments.thestruct.thename#">
 		<!--- Amazon --->
@@ -864,7 +864,7 @@
 				<!--- Set Name --->
 				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org>
 				<!--- Download file --->
-				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+				<cfthread name="download#tempfolder#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.detail.path_to_asset#/#attributes.intstruct.qry_detail.detail.aud_name_org#">
 						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.qry_detail.detail.aud_name_org#">
@@ -875,7 +875,7 @@
 				<!--- Set Name --->
 				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_noext & ".wav">
 				<!--- Download file --->
-				<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+				<cfthread name="download#tempfolder#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.detail.path_to_asset#/#attributes.intstruct.thename#">
 						<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.qry_detail.detail.aud_name_noext#.wav">
@@ -884,17 +884,17 @@
 				</cfthread>
 			</cfif>
 			<!--- Wait for the thread above until the file is downloaded fully --->
-			<cfthread action="join" name="download#arguments.thestruct.file_id#" />
-			<cfthread name="convert#arguments.thestruct.file_id#" />
+			<cfthread action="join" name="download#tempfolder#" />
+			<cfthread name="convert#tempfolder#" />
 			<!--- Set the input path --->
 			<cfset inputpath = "#thisfolder#/#arguments.thestruct.thename#">
 		<!--- If on LAN --->
 		<cfelseif arguments.thestruct.link_kind EQ "lan">
 			<cfset inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.thenamenoext#.wav">
-			<cfthread name="convert#arguments.thestruct.file_id#" />
+			<cfthread name="convert#tempfolder#" />
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
-		<cfthread action="join" name="convert#arguments.thestruct.file_id#" />
+		<cfthread action="join" name="convert#tempfolder#" />
 		<!--- Ok, file is here so continue --->
 		
 		<!--- Check the platform and then decide on the ffmpeg tag --->
@@ -914,22 +914,17 @@
 			<!--- Param --->
 			<cfparam name="arguments.thestruct.convert_bitrate_#theformat#" default="">
 			<!--- Create a new ID for the audio --->
-			<cftransaction>
-				<cfset newid = structnew()>
-				<cfset newid.id = createuuid("")>
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#audios
-				(aud_id, host_id)
-				VALUES( 
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
-				)
-				</cfquery>
-			</cftransaction>
-			<!--- Put together the filenames --->
-			<cfset newname = listfirst(arguments.thestruct.qry_detail.detail.aud_name_org, ".")>
-			<cfset finalaudioname = "#newname#" & "_" & #newid.id# & "." & #theformat#>
-			<!--- If from upload templates we select with and height of image --->
+			<cfset newid = structnew()>
+			<cfset newid.id = createuuid("")>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#audios
+			(aud_id, host_id)
+			VALUES( 
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
+			)
+			</cfquery>
+			<!--- If from upload templates --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined"  AND arguments.thestruct.upl_template NEQ "">
 				<cfquery datasource="#application.razuna.datasource#" name="qry_b">
 				SELECT upl_temp_field, upl_temp_value
@@ -943,6 +938,12 @@
 			<cfelse>
 				<cfset thebitrate = Evaluate("arguments.thestruct.convert_bitrate_#theformat#")>
 			</cfif>
+			<!--- From here on we need to remove the number of the format (if any) --->
+			<cfset theformat = listfirst(theformat,"_")>
+			<!--- Put together the filenames --->
+			<cfset newname = listfirst(arguments.thestruct.qry_detail.detail.aud_name_org, ".")>
+			<cfset finalaudioname = "#newname#" & "_" & #newid.id# & "." & #theformat#>
+			<!--- Check for os path --->
 			<cfif isWindows>
 				<cfset thisfinalaudioname = """#thisfolder#/#finalaudioname#""">
 				<cfset thisfinalaudioname4copy = thisfinalaudioname>
@@ -968,29 +969,26 @@
 				</cfdefaultcase>
 			</cfswitch>
 			<!--- FFMPEG: Convert --->
-			<cfset ttexe = "ttexe" & createuuid()>
-			<cfset thescript = createuuid()>
-			<cfset arguments.thestruct.thesh = "#thisfolder#/#thescript#.sh">
+			<cfset arguments.thestruct.thesh = "#GetTempDirectory()#/#newid.id#.sh">
 			<!--- On Windows a bat --->
 			<cfif isWindows>
-				<cfset arguments.thestruct.thesh = "#thisfolder#/#thescript#.bat">
+				<cfset arguments.thestruct.thesh = "#GetTempDirectory()#/#newid.id#.bat">
 			</cfif>
 			<!--- WAV (just copy the file) --->
 			<cfif theformat EQ "WAV">
 				<cffile action="copy" source="#inputpath4copy#" destination="#thisfinalaudioname4copy#" mode="775">
 				<!--- Write files --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="." mode="777">
-				<cfthread name="#ttexe#" />
 			<cfelse>
 				<!--- Write files --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# #arguments.thestruct.theargument#" mode="777">
 				<!--- Convert audio --->
-				<cfthread name="#ttexe#" intstruct="#arguments.thestruct#">
+				<cfthread name="#newid.id#" intstruct="#arguments.thestruct#">
 					<cfexecute name="#attributes.intstruct.thesh#" timeout="9000" />
 				</cfthread>
+				<!--- Wait for the thread above until the file is fully converted --->
+				<cfthread action="join" name="#newid.id#" />
 			</cfif>
-			<!--- Wait for the thread above until the file is fully converted --->
-			<cfthread action="join" name="#ttexe#" />
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<!--- Check if audio file could be generated by getting the size --->
@@ -1012,14 +1010,14 @@
 					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
 					<!--- Move Audio --->
 					<cffile action="move" source="#thisfolder#/#finalaudioname#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#" mode="775">
-					<cfthread name="uploadconvert#arguments.thestruct.file_id##theformat#" intstruct="#arguments.thestruct#"></cfthread>
+					<cfthread name="uploadconvert#newid.id#"></cfthread>
 				<!--- Nirvanix --->
 				<cfelseif application.razuna.storage EQ "nirvanix">
 					<!--- Set variables for thread --->
 					<cfset arguments.thestruct.newid = newid.id>
 					<cfset arguments.thestruct.finalaudioname = finalaudioname>
 					<!--- Upload: Audio --->
-					<cfthread name="uploadconvert#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+					<cfthread name="uploadconvert#newid.id#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.detail.folder_id_r#/aud/#attributes.intstruct.newid#">
 							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.finalaudioname#">
@@ -1027,7 +1025,7 @@
 						</cfinvoke>
 					</cfthread>
 					<!--- Wait for this thread to finish --->
-					<cfthread action="join" name="uploadconvert#arguments.thestruct.newid#" />
+					<cfthread action="join" name="uploadconvert#newid.id#" />
 					<!--- Get signed URLS --->
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#/#arguments.thestruct.finalaudioname#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Amazon --->
@@ -1035,7 +1033,7 @@
 					<!--- Set variables for thread --->
 					<cfset arguments.thestruct.newid = newid.id>
 					<cfset arguments.thestruct.finalaudioname = finalaudioname>
-					<cfthread name="uploadconvert#arguments.thestruct.file_id##theformat#" intstruct="#arguments.thestruct#">
+					<cfthread name="uploadconvert#newid.id#" intstruct="#arguments.thestruct#">
 						<!--- Upload: Audio --->
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.detail.folder_id_r#/aud/#attributes.intstruct.newid#/#attributes.intstruct.finalaudioname#">
@@ -1044,7 +1042,7 @@
 						</cfinvoke>
 					</cfthread>
 					<!--- Wait for this thread to finish --->
-					<cfthread action="join" name="uploadconvert#arguments.thestruct.file_id##theformat#" />
+					<cfthread action="join" name="uploadconvert#newid.id#" />
 					<!--- Get signed URLS --->
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#/#arguments.thestruct.finalaudioname#" awsbucket="#arguments.thestruct.awsbucket#">
 				</cfif>

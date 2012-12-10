@@ -843,6 +843,7 @@
 		<cfset arguments.thestruct.thenamenoext = arguments.thestruct.thenamenoext & "_" & arguments.thestruct.newid>
 		<!--- If from upload templates we select with and height of image --->
 		<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined" AND arguments.thestruct.upl_template NEQ "">
+			<!--- Get width --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry_w">
 			SELECT upl_temp_field, upl_temp_value
 			FROM #session.hostdbprefix#upload_templates_val
@@ -850,6 +851,7 @@
 			AND upl_temp_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_template#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
+			<!--- Get height --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry_h">
 			SELECT upl_temp_field, upl_temp_value
 			FROM #session.hostdbprefix#upload_templates_val
@@ -857,18 +859,33 @@
 			AND upl_temp_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_template#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
+			<!--- Get DPI --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_d">
+			SELECT upl_temp_field, upl_temp_value
+			FROM #session.hostdbprefix#upload_templates_val
+			WHERE upl_temp_field = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="convert_dpi_#theformat#">
+			AND upl_temp_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_template#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
 			<!--- Set image width and height --->
-			<cfset newImgWidth  = qry_w.upl_temp_value>
-			<cfset newImgHeight = qry_h.upl_temp_value>
+			<cfset var newImgWidth  = qry_w.upl_temp_value>
+			<cfset var newImgHeight = qry_h.upl_temp_value>
 			<!--- If height and size is empty we take the default values from the original file --->
 			<cfif NOT isnumeric(newImgWidth) AND NOT isnumeric(newImgHeight)>
-				<cfset newImgWidth  = arguments.thestruct.qry_detail.img_width>
-				<cfset newImgHeight = arguments.thestruct.qry_detail.img_height>
+				<cfset var newImgWidth  = arguments.thestruct.qry_detail.img_width>
+				<cfset var newImgHeight = arguments.thestruct.qry_detail.img_height>
+			</cfif>
+			<!--- DPI --->
+			<cfif qry_d.recordcount EQ 0>
+				<cfset var thedpi = "">
+			<cfelse>
+				<cfset var thedpi = qry_d.upl_temp_value>
 			</cfif>
 		<cfelse>
 			<!--- Set image width and height --->
-			<cfset newImgWidth  = evaluate("convert_width_#theformat#")>
-			<cfset newImgHeight = evaluate("convert_height_#theformat#")>
+			<cfset var newImgWidth  = evaluate("convert_width_#theformat#")>
+			<cfset var newImgHeight = evaluate("convert_height_#theformat#")>
+			<cfset var thedpi = evaluate("convert_dpi_#theformat#")>
 		</cfif>
 		<!--- From here on we need to remove the number of the format (if any) --->
 		<cfset theformat = listfirst(theformat,"_")>
@@ -888,7 +905,11 @@
 			<cfset thethumbtconv = "#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
 		</cfif>
 		<!--- IM commands --->
-		<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -colorspace RGB #theflatten##theformatconv#">
+		<cfif thedpi EQ "">
+			<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -colorspace RGB #theflatten##theformatconv#">
+		<cfelse>
+			<cfset theimarguments = "#theoriginalasset# -resample #thedpi# -colorspace RGB #theflatten##theformatconv#">
+		</cfif>
 		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
 		<cfset thescript = createuuid()>
@@ -935,8 +956,13 @@
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.thesht#">
 		<cffile action="delete" file="#arguments.thestruct.theshtt#">
-		<!--- Add the metadata from the source to the converted one --->
-		<cfexecute name="#theexif#" arguments="-TagsFromFile #theoriginalasset# -all:all #theformatconv#" timeout="60" />
+		<!--- Add the metadata from the source to the converted one. If DPI is there we need to add new DPI information --->
+		<cfif thedpi EQ "">
+			<cfset var thedpitags = "">
+		<cfelse>
+			<cfset var thedpitags = " -Photoshop:XResolution=#thedpi# -Photoshop:YResolution=#thedpi# -IFD0:XResolution=#thedpi# -JFIF:XResolution=#thedpi# -IFD0:YResolution=#thedpi# -JFIF:YResolution=#thedpi#">
+		</cfif>
+		<cfexecute name="#theexif#" arguments="-TagsFromFile #theoriginalasset# -all:all#thedpitags# #theformatconv#" timeout="60" />
 		<!--- Get size of original and thumnail --->
 		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" returnvariable="orgsize">
 		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" returnvariable="thumbsize">

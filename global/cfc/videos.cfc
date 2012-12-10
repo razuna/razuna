@@ -1142,10 +1142,6 @@
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
 			)
 			</cfquery>
-			<!--- Put together the filenames --->
-			<cfset newname = listfirst(arguments.thestruct.qry_detail.vid_name_org, ".")>
-			<cfset previewvideo = "#newname#" & "_" & arguments.thestruct.newid & "." & theformat>
-			<cfset previewimage = "#newname#" & "_" & arguments.thestruct.newid & ".jpg">
 			<!--- If from upload templates we select with and height of image --->
 			<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined" AND arguments.thestruct.upl_template NEQ "">
 				<cfquery datasource="#application.razuna.datasource#" name="qry_w">
@@ -1188,6 +1184,13 @@
 				<cfset thewidth = Evaluate("arguments.thestruct.convert_width_#theformat#")>
 				<cfset theheight = Evaluate("arguments.thestruct.convert_height_#theformat#")>
 			</cfif>
+			<!--- From here on we need to remove the number of the format (if any) --->
+			<cfset theformat = listfirst(theformat,"_")>
+			<!--- Put together the filenames --->
+			<cfset newname = listfirst(arguments.thestruct.qry_detail.vid_name_org, ".")>
+			<cfset previewvideo = "#newname#" & "_" & arguments.thestruct.newid & "." & theformat>
+			<cfset previewimage = "#newname#" & "_" & arguments.thestruct.newid & ".jpg">
+			<!--- Change path according to OS --->
 			<cfif isWindows>
 				<cfset thispreviewvideo = """#arguments.thestruct.thisfolder#/#previewvideo#""">
 				<cfset thispreviewimage = """#arguments.thestruct.thisfolder#/#previewimage#""">

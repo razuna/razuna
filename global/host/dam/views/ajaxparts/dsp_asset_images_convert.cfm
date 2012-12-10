@@ -39,7 +39,7 @@
 			<tr class="list">
 				<td width="1%" nowrap="true"><input type="checkbox" name="convert_to" value="jpg"></td>
 				<td width="1%" nowrap="true"><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',0)" style="text-decoration:none;">JPEG (Joint Photographic Experts Group)</a></td>
-				<td width="1%" nowrap="true"><input type="text" size="4" name="convert_width_jpg" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_jpg','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_jpg" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_jpg','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td width="1%" nowrap="true"><input type="text" size="4" name="convert_width_jpg" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_jpg','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_jpg" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_jpg','form#attributes.file_id#',#theaspectratio#);"> or <input type="text" size="4" name="convert_dpi_jpg"> dpi</td>
 				<td rowspan="6" width="100%" nowrap="true" valign="top" style="padding-left:20px;">
 					<strong>#myFusebox.getApplicationData().defaults.trans("images_original")#</strong>
 					<br />
@@ -51,34 +51,36 @@
 					<br />
 					#myFusebox.getApplicationData().defaults.trans("data_size")#: #qry_detail.thesize# MB
 					<br />
-					ColorSpace: #qry_xmp.colorspace#
+					ColorSpace: <cfif qry_xmp.colorspace EQ "">could not be read properly for this file<cfelse>#qry_xmp.colorspace#</cfif>
 					<br />
-					X Resolution: #qry_xmp.xres#
-					<br />
-					Y Resolution: #qry_xmp.yres#
-					<br />
-					Resolution Unit: #qry_xmp.resunit#
+					<cfif qry_xmp.resunit EQ "inches">
+						X Resolution: #qry_xmp.xres# dpi
+						<br />
+						Y Resolution: #qry_xmp.yres# dpi
+						<br />
+						Resolution Unit: #qry_xmp.resunit#
+					</cfif>
 				</td>
 			</tr>
 			<tr class="list">
 				<td><input type="checkbox" name="convert_to" value="gif"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',1)" style="text-decoration:none;">GIF (Graphic Interchange Format)</a></td>
-				<td><input type="text" size="4" name="convert_width_gif" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_gif','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_gif" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_gif','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" size="4" name="convert_width_gif" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_gif','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_gif" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_gif','form#attributes.file_id#',#theaspectratio#);"> or <input type="text" size="4" name="convert_dpi_gif"> dpi</td>
 			</tr>
 			<tr class="list">
 				<td><input type="checkbox" name="convert_to" value="png"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',2)" style="text-decoration:none;">PNG (Portable (Public) Network Graphic)</a></td>
-				<td><input type="text" size="4" name="convert_width_png" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_png','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_png" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_png','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" size="4" name="convert_width_png" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_png','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_png" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_png','form#attributes.file_id#',#theaspectratio#);"> or <input type="text" size="4" name="convert_dpi_png"> dpi</td>
 			</tr>
 			<tr class="list">
 				<td><input type="checkbox" name="convert_to" value="tif"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',3)" style="text-decoration:none;">TIFF (Tagged Image Format File)</a></td>
-				<td><input type="text" size="4" name="convert_width_tif" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_tif','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_tif" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_tif','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" size="4" name="convert_width_tif" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_tif','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_tif" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_tif','form#attributes.file_id#',#theaspectratio#);"> or <input type="text" size="4" name="convert_dpi_tif"> dpi</td>
 			</tr>
 			<tr class="list">
 				<td><input type="checkbox" name="convert_to" value="bmp"></td>
 				<td><a href="##" onclick="clickcbk('form#attributes.file_id#','convert_to',4)" style="text-decoration:none;">BMP (Windows OS/2 Bitmap Graphics)</a></td>
-				<td><input type="text" size="4" name="convert_width_bmp" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_bmp','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_bmp" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_bmp','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" size="4" name="convert_width_bmp" value="#qry_detail.detail.orgwidth#" onchange="aspectheight(this,'convert_height_bmp','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="4" name="convert_height_bmp" value="#qry_detail.detail.orgheight#" onchange="aspectwidth(this,'convert_width_bmp','form#attributes.file_id#',#theaspectratio#);"> or <input type="text" size="4" name="convert_dpi_bmp"> dpi</td>
 			</tr>
 			<tr>
 				<td colspan="4"><input type="button" name="convertbutton" value="#myFusebox.getApplicationData().defaults.trans("convert_button")#" class="button" onclick="convertimages('form#attributes.file_id#');"> <div id="statusconvert" style="padding:10px;color:green;background-color:##FFFFE0;visibility:hidden;"></div><div id="statusconvertdummy"></div></td>
