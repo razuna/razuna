@@ -174,12 +174,14 @@
 			<!--- Because we have many languages sometimes we put together the keywords and description here --->
 			<cfif structkeyexists(arguments.thestruct,"langcount")>
 				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-					<cfset thiskeywords="arguments.thestruct.keywords_#langindex#">
+					<cfparam name="arguments.thestruct.keywords_#langindex#" default="">
+					<cfparam name="arguments.thestruct.desc_#langindex#" default="">
+					<cfset thiskeywords = "arguments.thestruct.keywords_#langindex#">
 					<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & evaluate(thiskeywords)>
 					<cfif langindex LT langcount>
 						<cfset arguments.thestruct.img_keywords = arguments.thestruct.img_keywords & ", ">
 					</cfif>
-					<cfset thisdesc="arguments.thestruct.desc_#langindex#">
+					<cfset thisdesc = "arguments.thestruct.desc_#langindex#">
 					<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & evaluate(thisdesc)>
 					<cfif langindex LT langcount>
 						<cfset arguments.thestruct.img_desc = arguments.thestruct.img_desc & ", ">

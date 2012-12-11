@@ -27,7 +27,7 @@
 <cfoutput>
 	<form name="form#attributes.file_id#" id="form#attributes.file_id#" method="post" action="#self#">
 	<input type="hidden" name="#theaction#" value="c.rend_meta_save">
-	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
+	<input type="hidden" name="langcount" value="1">
 	<input type="hidden" name="file_id" value="#attributes.file_id#">
 	<input type="hidden" name="thetype" value="#attributes.thetype#">
 	<input type="hidden" name="customfields" value="#qry_cf.recordcount#">

@@ -91,13 +91,18 @@
 			<tr>
 				<td style="border:0px;">
 				<cfoutput query="qry_files.qall" startrow="#mysqloffset#" maxrows="#session.rowmaxpage#">
+					<cfif groupid NEQ "">
+						<cfset theid = groupid>
+					<cfelse>
+						<cfset theid = id>
+					</cfif>
 					<!--- Images --->
 					<cfif kind EQ "img">
 						<div class="assetbox"<cfif attributes.folder_id EQ 0> style="min-height:250px;"</cfif>>
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
-									$("##draggable-s#id#-#kind#").draggable({
+									$("##draggable-s#theid#-#kind#").draggable({
 										appendTo: 'body',
 										cursor: 'move',
 										addClasses: false,
@@ -118,9 +123,9 @@
 								});
 								</script>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
-									<div id="draggable-s#id#-#kind#" type="#id#-#kind#" class="theimg">
+									<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
 										<!--- Show assets --->
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
@@ -130,7 +135,7 @@
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
+												<img src="#thestorage##path_to_asset#/thumb_#theid#.#ext#?#hashtag#" border="0">
 											</cfif>
 										<cfelse>
 											<img src="#link_path_url#" border="0" width="120">
@@ -141,28 +146,28 @@
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									<div style="float:left;padding:3px 0px 3px 0px;">
-										<input type="checkbox" name="file_id" value="#id#-img" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
+										<input type="checkbox" name="file_id" value="#theid#-img" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-img") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=img&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-img&thetype=#id#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=img&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-img&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email>
-											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=img','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=img','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<cfif permfolder EQ "X">
-											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<div>
-										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-img&thetype=#theid#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 								</cfif>
 								<br>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
 								<strong>#left(filename,50)#</strong>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
@@ -178,7 +183,7 @@
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- Videos --->
@@ -187,7 +192,7 @@
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
-									$("##draggable-s#id#-#kind#").draggable({
+									$("##draggable-s#theid#-#kind#").draggable({
 										appendTo: 'body',
 										cursor: 'move',
 										addClasses: false,
@@ -207,9 +212,9 @@
 								});
 								</script>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
-								<div id="draggable-s#id#-#kind#" type="#id#-#kind#" class="theimg">
+								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
 									<cfif link_kind NEQ "url">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 											<cfif cloud_url NEQ "">
@@ -229,28 +234,28 @@
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									<div style="float:left;padding:3px 0px 3px 0px;">
-										<input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#id#-vid") NEQ 0> checked="checked"</cfif>>
+										<input type="checkbox" name="file_id" value="#theid#-vid" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-vid") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=vid&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-vid&thetype=#id#-vid');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=vid&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-vid&thetype=#theid#-vid');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email>
-											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=vid','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=vid','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<cfif permfolder EQ "X">
-											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<div>
-										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-vid&thetype=#theid#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 								</cfif>
 								<br />
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
 								<strong>#left(filename,50)#</strong>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
@@ -266,7 +271,7 @@
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- Audios --->
@@ -275,7 +280,7 @@
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
-									$("##draggable-s#id#-#kind#").draggable({
+									$("##draggable-s#theid#-#kind#").draggable({
 										appendTo: 'body',
 										cursor: 'move',
 										addClasses: false,
@@ -295,9 +300,9 @@
 								});
 								</script>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
-								<div id="draggable-s#id#-#kind#" type="#id#-#kind#" class="theimg">
+								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#" class="theimg">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">
 								</div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
@@ -305,28 +310,28 @@
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									<div style="float:left;padding:3px 0px 3px 0px;">
-										<input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#id#-aud") NEQ 0> checked="checked"</cfif>>
+										<input type="checkbox" name="file_id" value="#theid#-aud" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-aud") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=aud&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-aud&thetype=#id#-aud');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=aud&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-aud&thetype=#theid#-aud');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email>
-											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=aud','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=aud','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<cfif permfolder EQ "X">
-											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<div>
-										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-aud&thetype=#theid#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 								</cfif>
 								<br>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
 								<strong>#left(filename,50)#</strong>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
@@ -342,7 +347,7 @@
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					<!--- All other files --->
@@ -351,7 +356,7 @@
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
-									$("##draggable-s#id#-doc").draggable({
+									$("##draggable-s#theid#-doc").draggable({
 										appendTo: 'body',
 										cursor: 'move',
 										addClasses: false,
@@ -371,9 +376,9 @@
 								});
 								</script>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
-								<div id="draggable-s#id#-doc" type="#id#-doc" class="theimg">
+								<div id="draggable-s#theid#-doc" type="#theid#-doc" class="theimg">
 									<!--- If it is a PDF we show the thumbnail --->
 									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
 										<cfif cloud_url NEQ "">
@@ -395,28 +400,28 @@
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 									</a>
 									<div style="float:left;padding:3px 0px 3px 0px;">
-										<input type="checkbox" name="file_id" value="#id#-doc" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#id#-doc") NEQ 0> checked="checked"</cfif>>
+										<input type="checkbox" name="file_id" value="#theid#-doc" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-doc") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<a href="#myself#c.serve_file&file_id=#id#&type=doc"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
-										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#id#-doc&thetype=#id#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
+										<a href="#myself#c.serve_file&file_id=#theid#&type=doc"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-doc&thetype=#theid#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email>
-											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#id#&thetype=doc','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=doc','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<cfif permfolder EQ "X">
-											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 								</cfif>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 									<div>
-										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
+										<a href="##" onclick="loadcontent('loaddummy','#myself#c.basket_put_include&file_id=#theid#-doc&thetype=#theid#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 								</cfif>
 								<br>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 								</cfif>
 								<strong>#left(filename,50)#</strong>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
@@ -432,7 +437,7 @@
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
 								#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
 								<br><br>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
 						</div>
 					</cfif>
@@ -447,11 +452,16 @@
 				</tr>
 			</cfif>
 			<cfoutput query="qry_files.qall" startrow="#mysqloffset#" maxrows="#session.rowmaxpage#">
+				<cfif groupid NEQ "">
+					<cfset theid = groupid>
+				<cfelse>
+					<cfset theid = id>
+				</cfif>
 				<!--- Images --->
 				<cfif kind EQ "img">
 					<script type="text/javascript">
 					$(function() {
-						$("##draggable-s#id#-#kind#").draggable({
+						$("##draggable-s#theid#-#kind#").draggable({
 							appendTo: 'body',
 							cursor: 'move',
 							addClasses: false,
@@ -471,11 +481,11 @@
 					});
 					</script>
 					<tr class="list thumbview">
-						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-img" onclick="enablesub('searchform#attributes.thetype#');"></td>
+						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#theid#-img" onclick="enablesub('searchform#attributes.thetype#');"></td>
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
 							<!--- Show assets --->
-							<div id="draggable-s#id#-#kind#" type="#id#-#kind#">
+							<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#">
 								<cfif link_kind NEQ "url">
 									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 										<cfif cloud_url NEQ "">
@@ -484,7 +494,7 @@
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
 									<cfelse>
-										<img src="#thestorage#/#path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
+										<img src="#thestorage#/#path_to_asset#/thumb_#theid#.#ext#?#hashtag#" border="0">
 									</cfif>
 								<cfelse>
 									<img src="#link_path_url#" border="0" width="120">
@@ -500,11 +510,11 @@
 						<td valign="top" width="100%">
 							<!--- User has Write access --->
 							<cfif permfolder NEQ "R">
-								<input type="text" name="#id#_img_filename" value="#filename#" style="width:300px;"><br />
+								<input type="text" name="#theid#_img_filename" value="#filename#" style="width:300px;"><br />
 								#myFusebox.getApplicationData().defaults.trans("description")#:<br />
-								<textarea name="#id#_img_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
+								<textarea name="#theid#_img_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
-								<textarea name="#id#_img_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
+								<textarea name="#theid#_img_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 							<cfelse>
 								#myFusebox.getApplicationData().defaults.trans("file_name")#: #filename#<br />
 								#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
@@ -513,7 +523,7 @@
 						</td>
 						<cfif permfolder EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -521,7 +531,7 @@
 				<cfelseif kind EQ "vid">
 					<script type="text/javascript">
 					$(function() {
-						$("##draggable-s#id#-#kind#").draggable({
+						$("##draggable-s#theid#-#kind#").draggable({
 							appendTo: 'body',
 							cursor: 'move',
 							addClasses: false,
@@ -541,10 +551,10 @@
 					});
 					</script>
 					<tr class="list">
-						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('searchform#attributes.thetype#');"></td>
+						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#theid#-vid" onclick="enablesub('searchform#attributes.thetype#');"></td>
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								<div id="draggable-s#id#-#kind#" type="#id#-#kind#">
+							<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#">
 									<cfif link_kind NEQ "url">
 										<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160">
 									<cfelse>
@@ -562,11 +572,11 @@
 						<td valign="top" width="100%">
 							<!--- User has Write access --->
 							<cfif permfolder NEQ "R">
-								<input type="text" name="#id#_vid_filename" value="#filename#" style="width:300px;"><br />
+								<input type="text" name="#theid#_vid_filename" value="#filename#" style="width:300px;"><br />
 								#myFusebox.getApplicationData().defaults.trans("description")#:<br />
-								<textarea name="#id#_vid_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
+								<textarea name="#theid#_vid_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
-								<textarea name="#id#_vid_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
+								<textarea name="#theid#_vid_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 							<cfelse>
 								#myFusebox.getApplicationData().defaults.trans("file_name")#: #filename#<br />
 								#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
@@ -575,7 +585,7 @@
 						</td>
 						<cfif permfolder EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -583,7 +593,7 @@
 				<cfelseif kind EQ "aud">
 					<script type="text/javascript">
 					$(function() {
-						$("##draggable-s#id#-#kind#").draggable({
+						$("##draggable-s#theid#-#kind#").draggable({
 							appendTo: 'body',
 							cursor: 'move',
 							addClasses: false,
@@ -603,10 +613,10 @@
 					});
 					</script>
 					<tr class="list">
-						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('searchform#attributes.thetype#');"></td>
+						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#theid#-aud" onclick="enablesub('searchform#attributes.thetype#');"></td>
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								<div id="draggable-s#id#-#kind#" type="#id#-#kind#">
+							<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+								<div id="draggable-s#theid#-#kind#" type="#theid#-#kind#">
 									<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
 								</div>
 							</a>
@@ -620,11 +630,11 @@
 						<td valign="top" width="100%">
 							<!--- User has Write access --->
 							<cfif permfolder NEQ "R">
-								<input type="text" name="#id#_aud_filename" value="#filename#" style="width:300px;"><br />
+								<input type="text" name="#theid#_aud_filename" value="#filename#" style="width:300px;"><br />
 								#myFusebox.getApplicationData().defaults.trans("description")#:<br />
-								<textarea name="#id#_aud_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
+								<textarea name="#theid#_aud_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
-								<textarea name="#id#_aud_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
+								<textarea name="#theid#_aud_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 							<cfelse>
 								#myFusebox.getApplicationData().defaults.trans("file_name")#: #filename#<br />
 								#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
@@ -633,7 +643,7 @@
 						</td>
 						<cfif permfolder EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -641,7 +651,7 @@
 				<cfelse>
 					<script type="text/javascript">
 					$(function() {
-						$("##draggable-s#id#-doc").draggable({
+						$("##draggable-s#theid#-doc").draggable({
 							appendTo: 'body',
 							cursor: 'move',
 							addClasses: false,
@@ -661,10 +671,10 @@
 					});
 					</script>
 					<tr class="list">
-						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#id#-doc" onclick="enablesub('searchform#attributes.thetype#');"></td>
+						<td valign="top" width="1%" nowrap="true"><input type="checkbox" name="file_id" value="#theid#-doc" onclick="enablesub('searchform#attributes.thetype#');"></td>
 						<td valign="top" width="1%" nowrap="true">
-							<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								<div id="draggable-s#id#-doc" type="#id#-doc">
+							<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
+								<div id="draggable-s#theid#-doc" type="#theid#-doc">
 									<!--- If it is a PDF we show the thumbnail --->
 									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
 										<cfif cloud_url NEQ "">
@@ -694,11 +704,11 @@
 						<td valign="top" width="100%">
 							<!--- User has Write access --->
 							<cfif permfolder NEQ "R">
-								<input type="text" name="#id#_doc_filename" value="#filename#" style="width:300px;"><br />
+								<input type="text" name="#theid#_doc_filename" value="#filename#" style="width:300px;"><br />
 								#myFusebox.getApplicationData().defaults.trans("description")#:<br />
-								<textarea name="#id#_doc_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
+								<textarea name="#theid#_doc_desc_1" style="width:300px;height:30px;">#description#</textarea><br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#:<br />
-								<textarea name="#id#_doc_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
+								<textarea name="#theid#_doc_keywords_1" style="width:300px;height:30px;">#keywords#</textarea>
 							<cfelse>
 								#myFusebox.getApplicationData().defaults.trans("file_name")#: #filename#<br />
 								#myFusebox.getApplicationData().defaults.trans("description")#: #description#<br />
@@ -707,7 +717,7 @@
 						</td>
 						<cfif permfolder EQ "X">
 							<td valign="top" width="1%" nowrap="true">
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 							</td>
 						</cfif>
 					</tr>
@@ -734,11 +744,16 @@
 				</cfif>
 			</tr>
 			<cfoutput query="qry_files.qall" startrow="#mysqloffset#" maxrows="#session.rowmaxpage#">
+				<cfif groupid NEQ "">
+					<cfset theid = groupid>
+				<cfelse>
+					<cfset theid = id>
+				</cfif>
 				<!--- Images --->
 				<cfif kind EQ "img">
 					<tr class="list">
-						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-img" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-img" onclick="enablesub('searchform#attributes.thetype#');"></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -746,14 +761,14 @@
 						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<cfif permfolder EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- Videos --->
 				<cfelseif kind EQ "vid">
 					<tr class="list">
-						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-vid" onclick="enablesub('searchform#attributes.thetype#');"></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -761,14 +776,14 @@
 						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<cfif permfolder EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- Audios --->
 				<cfelseif kind EQ "aud">
 					<tr class="list">
-						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-aud" onclick="enablesub('searchform#attributes.thetype#');"></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -776,14 +791,14 @@
 						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<cfif permfolder EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				<!--- All other files --->
 				<cfelse>
 					<tr class="list">
-						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#id#-doc" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-doc" onclick="enablesub('searchform#attributes.thetype#');"></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -791,7 +806,7 @@
 						<td nowrap="true" width="1%" align="center">#dateformat(date_create, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<td nowrap="true" width="1%" align="center">#dateformat(date_change, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 						<cfif permfolder EQ "X">
-							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+							<td align="center" width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 						</cfif>
 					</tr>
 				</cfif>

@@ -2959,7 +2959,7 @@
 			</true>
 		</if>
 		<!-- ACTION: Search all -->
-		<if condition="#attributes.thetype# EQ 'all'">
+		<if condition="attributes.thetype EQ 'all'">
 			<true>
 				<!-- ACTION: Search Files -->
 				<do action="search_files" />
@@ -6510,8 +6510,8 @@
 		<if condition="attributes.thetype EQ 'img'">
 			<true>
 				<!-- Set field names -->
-				<set name="attributes.desc" value="img_desc_" />
-				<set name="attributes.keys" value="img_keywords_" />
+				<set name="attributes.desc" value="desc_" />
+				<set name="attributes.keys" value="keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
 				<!-- Set filename -->
@@ -6522,8 +6522,8 @@
 		<if condition="attributes.thetype EQ 'vid'">
 			<true>
 				<!-- Set field names -->
-				<set name="attributes.desc" value="vid_desc_" />
-				<set name="attributes.keys" value="vid_keywords_" />
+				<set name="attributes.desc" value="desc_" />
+				<set name="attributes.keys" value="keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
 				<!-- Set filename -->
@@ -6534,8 +6534,8 @@
 		<if condition="attributes.thetype EQ 'aud'">
 			<true>
 				<!-- Set field names -->
-				<set name="attributes.desc" value="aud_desc_" />
-				<set name="attributes.keys" value="aud_keywords_" />
+				<set name="attributes.desc" value="desc_" />
+				<set name="attributes.keys" value="keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
 				<!-- Set filename -->
@@ -6578,6 +6578,25 @@
 		<if condition="attributes.thetype EQ 'aud'">
 			<true>
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="update(attributes)" />
+			</true>
+		</if>
+		<!-- Lucene -->
+		<if condition="application.razuna.storage EQ 'local'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().lucene" method="index_delete">
+					<argument name="thestruct" value="#attributes#" />
+					<argument name="assetid" value="#attributes.file_id#" />
+					<argument name="category" value="#attributes.thetype#" />
+					<argument name="notfile" value="T" />
+				</invoke>
+				<invoke object="myFusebox.getApplicationData().lucene" method="index_update">
+					<argument name="thestruct" value="#attributes#" />
+					<argument name="assetid" value="#attributes.file_id#" />
+					<argument name="category" value="#attributes.thetype#" />
+					<argument name="dsn" value="#application.razuna.datasource#" />
+					<argument name="prefix" value="#session.hostdbprefix#" />
+					<argument name="notfile" value="T" />
+				</invoke>
 			</true>
 		</if>
 	</fuseaction>

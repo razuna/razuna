@@ -105,7 +105,7 @@
 		</cfif>
 		<!--- Grab the result and query file db --->
 		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r, 
+		SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r, '0' as groupid,
 		f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc description, fd.file_keywords keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
@@ -328,8 +328,8 @@
 		</cfif>
 		<!--- Grab the result and query file db --->
 		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, 
-		i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
+		SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, i.folder_id_r, i.img_group groupid,
+		i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 		i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description description, it.img_keywords keywords, '0' as vwidth, '0' as vheight, 
 		(
@@ -427,10 +427,10 @@
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 			AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 		</cfif>
-		<!--- Exclude related images --->
-		AND (i.img_group IS NULL OR i.img_group = '')
+		<!--- Exclude related images
+		AND (i.img_group IS NULL OR i.img_group = '') --->
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	    GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, it.img_description, it.img_keywords, i.img_filename, i.img_size, hashtag, fo.folder_name
+	    GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, it.img_description, it.img_keywords, i.img_filename, i.img_size, hashtag, fo.folder_name, i.img_group
 		ORDER BY #sortby#
 		</cfquery>
 		<!--- Select only records that are unlocked --->
@@ -530,7 +530,7 @@
 		</cfif>
 		<!--- Grab the result and query file db --->
 		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#search_videos */ v.vid_id id, v.vid_filename filename, v.folder_id_r, 
+		SELECT /* #variables.cachetoken#search_videos */ v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_group groupid,
 		v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 		v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
 		v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description description, vt.vid_keywords keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,
@@ -629,10 +629,10 @@
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 			AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 		</cfif>
-		<!--- Exclude related images --->
-		AND (v.vid_group IS NULL OR v.vid_group = '')
+		<!--- Exclude related images
+		AND (v.vid_group IS NULL OR v.vid_group = '') --->
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	    GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, is_available, v.vid_create_time, v.vid_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_filename, v.vid_size, hashtag, folder_name
+	    GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, is_available, v.vid_create_time, v.vid_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_filename, v.vid_size, hashtag, folder_name, v.vid_group
 		ORDER BY #sortby#
 		</cfquery>
 		<!--- Select only records that are unlocked --->
@@ -731,8 +731,8 @@
 			<cfset cattree = querynew("categorytree")>
 		</cfif>
 		<!--- Grab the result and query file db --->
-		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1">
-		SELECT /* #variables.cachetoken#search_audios */ a.aud_id id, a.aud_name filename, a.folder_id_r, 
+		<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#search_audios */ a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_group groupid,
 		a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 		a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
 		a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description description, aut.aud_keywords keywords, '0' as vwidth, '0' as vheight,
@@ -831,10 +831,10 @@
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 			AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 		</cfif>
-		<!--- Exclude related images --->
-		AND (a.aud_group IS NULL OR a.aud_group = '')
+		<!--- Exclude related images
+		AND (a.aud_group IS NULL OR a.aud_group = '') --->
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-    	GROUP BY a.aud_id, a.aud_name, a.folder_id_r,a.aud_extension, a.aud_name_org, is_available, a.aud_create_time, a.aud_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_name, a.aud_size, hashtag, folder_name
+    	GROUP BY a.aud_id, a.aud_name, a.folder_id_r,a.aud_extension, a.aud_name_org, is_available, a.aud_create_time, a.aud_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_name, a.aud_size, hashtag, folder_name, a.aud_group
 		ORDER BY #sortby#
 		</cfquery>
 		<!--- Select only records that are unlocked --->
@@ -864,7 +864,7 @@
 		<!--- The function must return suggestions as an array. ---> 
 		<cfset var myarray = ArrayNew(1)> 
 		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedWithin="1">
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedWithin="1" region="razcache">
 		SELECT /* #variables.cachetokenlogs#search */ log_search_for
 		FROM #session.hostdbprefix#log_search
 		WHERE lower(log_search_for) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%#lcase(arguments.searchtext)#%">
