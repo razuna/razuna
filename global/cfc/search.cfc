@@ -105,7 +105,7 @@
 		</cfif>
 		<!--- Grab the result and query file db --->
 		<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r, '0' as groupid,
+		SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r, '' as groupid,
 		f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc description, fd.file_keywords keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
