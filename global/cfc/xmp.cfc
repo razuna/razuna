@@ -1821,7 +1821,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<!--- Add custom fields --->
 	<cfloop query="arguments.thestruct.qry_cfields">
 		<!--- Replace foreign chars in column names --->
-		<cfset cfcolumn = REReplace(cf_text, "([^[:word:]^-]+)", "_", "ALL") & ":#cf_id#">
+		<cfset cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id#">
 		<!--- Query the query first to see if there is already a column with this custom field there. If not then add column else set cell --->
 		<cfquery name="qcf" dbtype="query">
 		SELECT *
@@ -1841,7 +1841,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<!--- Add custom fields values --->
 	<cfloop query="arguments.thestruct.qry_cf">
 		<!--- Replace foreign chars in column names --->
-		<cfset cfcolumn = REReplace(cf_text, "([^[:word:]^-]+)", "_", "ALL") & ":#cf_id_r#">
+		<cfset cfcolumn = REReplace(cf_text, "([^[:alnum:]^-]+)", "_", "ALL") & ":#cf_id_r#">
 		<!--- Set Cell --->
 		<cfset QuerySetCell(arguments.thestruct.tq, cfcolumn, cf_value)>
 	</cfloop>
