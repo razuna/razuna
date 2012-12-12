@@ -34,6 +34,12 @@
 		<cfargument name="datecreate" type="string" required="false" default="">
 		<cfargument name="datechange" type="string" required="false" default="">
 		<cfargument name="folderid" type="string" required="false" default="">
+		<cfargument name="datecreateparam" type="string" required="false" default="">
+		<cfargument name="datecreatestart" type="string" required="false" default="">
+		<cfargument name="datecreatestop" type="string" required="false" default="">
+		<cfargument name="datechangeparam" type="string" required="false" default="">
+		<cfargument name="datechangestart" type="string" required="false" default="">
+		<cfargument name="datechangestop" type="string" required="false" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -193,6 +199,18 @@
 							AND i.img_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
 						</cfif>
 					</cfif>
+					<cfif arguments.datecreateparam NEQ "">
+						AND i.img_create_time #arguments.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreatestart#">
+						<cfif arguments.datecreateparam EQ "between">
+							AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreatestop#">
+						</cfif>
+					</cfif>
+					<cfif arguments.datechangeparam NEQ "">
+						AND i.img_change_time #arguments.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechangestart#">
+						<cfif arguments.datechangeparam EQ "between">
+							AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechangestop#">
+						</cfif>
+					</cfif>
 					<!--- If we have a folderid --->
 					<cfif arguments.folderid NEQ "">
 						AND i.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folderid#">
@@ -254,6 +272,18 @@
 							AND DATEPART(dd, v.vid_change_time) = #the_change_day#)
 						<cfelse>
 							AND v.vid_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						</cfif>
+					</cfif>
+					<cfif arguments.datecreateparam NEQ "">
+						AND v.vid_create_time #arguments.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreatestart#">
+						<cfif arguments.datecreateparam EQ "between">
+							AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreatestop#">
+						</cfif>
+					</cfif>
+					<cfif arguments.datechangeparam NEQ "">
+						AND v.vid_change_time #arguments.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechangestart#">
+						<cfif arguments.datechangeparam EQ "between">
+							AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechangestop#">
 						</cfif>
 					</cfif>
 					<!--- If we have a folderid --->
@@ -318,6 +348,18 @@
 							AND a.aud_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
 						</cfif>
 					</cfif>
+					<cfif arguments.datecreateparam NEQ "">
+						AND a.aud_create_time #arguments.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreatestart#">
+						<cfif arguments.datecreateparam EQ "between">
+							AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreatestop#">
+						</cfif>
+					</cfif>
+					<cfif arguments.datechangeparam NEQ "">
+						AND a.aud_change_time #arguments.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechangestart#">
+						<cfif arguments.datechangeparam EQ "between">
+							AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechangestop#">
+						</cfif>
+					</cfif>
 					<!--- If we have a folderid --->
 					<cfif arguments.folderid NEQ "">
 						AND a.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.folderid#">
@@ -377,6 +419,18 @@
 							AND DATEPART(dd, f.file_change_time) = #the_change_day#)
 						<cfelse>
 							AND f.file_change_time LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechange#%">
+						</cfif>
+					</cfif>
+					<cfif arguments.datecreateparam NEQ "">
+						AND f.file_create_time #arguments.datecreateparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreatestart#">
+						<cfif arguments.datecreateparam EQ "between">
+							AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datecreatestop#">
+						</cfif>
+					</cfif>
+					<cfif arguments.datechangeparam NEQ "">
+						AND f.file_change_time #arguments.datechangeparam# <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechangestart#">
+						<cfif arguments.datechangeparam EQ "between">
+							AND <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.datechangestop#">
 						</cfif>
 					</cfif>
 					<!--- If we have a folderid --->
