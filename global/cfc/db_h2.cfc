@@ -1521,37 +1521,38 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#schedules
 		(
-			SCHED_ID 			 VARCHAR(100) NOT NULL,
-			SET2_ID_R 			 BIGINT,
-			SCHED_USER 			 VARCHAR(100),
-			SCHED_STATUS 		 VARCHAR(1) DEFAULT 1,
-			SCHED_METHOD 		 VARCHAR(10),
-			SCHED_NAME 			 VARCHAR(255),
-			SCHED_FOLDER_ID_R    VARCHAR(100),
-			SCHED_ZIP_EXTRACT 	 BIGINT,
-			SCHED_SERVER_FOLDER  VARCHAR(4000),
-			SCHED_SERVER_RECURSE BIGINT DEFAULT 1,
-			SCHED_SERVER_FILES   BIGINT DEFAULT 0,
-			SCHED_MAIL_POP 		 VARCHAR(255),
-			SCHED_MAIL_USER 	 VARCHAR(255),
-			SCHED_MAIL_PASS 	 VARCHAR(255),
-			SCHED_MAIL_SUBJECT 	 VARCHAR(255),
-			SCHED_FTP_SERVER 	 VARCHAR(255),
-			SCHED_FTP_USER 		 VARCHAR(255),
-			SCHED_FTP_PASS 		 VARCHAR(255),
-			SCHED_FTP_PASSIVE    BIGINT DEFAULT 0,
-			SCHED_FTP_FOLDER 	 VARCHAR(255),
-			SCHED_INTERVAL       VARCHAR(255),
-			SCHED_START_DATE     DATE,
-			SCHED_START_TIME     TIMESTAMP,
-			SCHED_END_DATE       DATE,
-			SCHED_END_TIME       TIMESTAMP,
-			HOST_ID				 BIGINT,
-		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_PK PRIMARY KEY (SCHED_ID),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_FK1 FOREIGN KEY (HOST_ID)
-		REFERENCES hosts (HOST_ID) ON DELETE CASCADE,
-		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_FK2 FOREIGN KEY (SCHED_USER)
-		REFERENCES users (USER_ID) ON DELETE SET NULL
+			sched_id 			 varchar(100) not null,
+			set2_id_r 			 bigint,
+			sched_user 			 varchar(100),
+			sched_status 		 varchar(1) default 1,
+			sched_method 		 varchar(10),
+			sched_name 			 varchar(255),
+			sched_folder_id_r    varchar(100),
+			sched_zip_extract 	 bigint,
+			sched_server_folder  varchar(4000),
+			sched_server_recurse bigint default 1,
+			sched_server_files   bigint default 0,
+			sched_mail_pop 		 varchar(255),
+			sched_mail_user 	 varchar(255),
+			sched_mail_pass 	 varchar(255),
+			sched_mail_subject 	 varchar(255),
+			sched_ftp_server 	 varchar(255),
+			sched_ftp_user 		 varchar(255),
+			sched_ftp_pass 		 varchar(255),
+			sched_ftp_passive    bigint default 0,
+			sched_ftp_folder 	 varchar(255),
+			sched_interval       varchar(255),
+			sched_start_date     date,
+			sched_start_time     timestamp,
+			sched_end_date       date,
+			sched_end_time       timestamp,
+			host_id				 bigint,
+			sched_upl_template	 varchar(100),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_PK PRIMARY KEY (SCHED_ID),
+			CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_FK1 FOREIGN KEY (HOST_ID)
+			REFERENCES hosts (HOST_ID) ON DELETE CASCADE,
+			CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_FK2 FOREIGN KEY (SCHED_USER)
+			REFERENCES users (USER_ID) ON DELETE SET NULL
 		)
 		</cfquery>
 		
@@ -1559,14 +1560,14 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#schedules_log
 		(
-			SCHED_LOG_ID        VARCHAR(100) NOT NULL,
-			SCHED_ID_R          VARCHAR(100),
-			SCHED_LOG_USER      VARCHAR(100),
-			SCHED_LOG_ACTION    VARCHAR(10),
-			SCHED_LOG_DATE      DATE,
-			SCHED_LOG_TIME      TIMESTAMP,
-			SCHED_LOG_DESC      VARCHAR(4000),
-			HOST_ID				BIGINT,
+			sched_log_id        varchar(100) not null,
+			sched_id_r          varchar(100),
+			sched_log_user      varchar(100),
+			sched_log_action    varchar(10),
+			sched_log_date      date,
+			sched_log_time      timestamp,
+			sched_log_desc      varchar(4000),
+			host_id				bigint,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_PK PRIMARY KEY (SCHED_LOG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SCHED_ID_R)
 		REFERENCES #arguments.thestruct.host_db_prefix#schedules (SCHED_ID) ON DELETE CASCADE

@@ -982,7 +982,8 @@
 			SCHED_START_TIME     TIMESTAMP,
 			SCHED_END_DATE       DATE,
 			SCHED_END_TIME       TIMESTAMP,
-			HOST_ID				 BIGINT
+			HOST_ID				 BIGINT,
+			sched_upl_template	 VARCHAR(100)
 		)
 		</cfquery>
 		

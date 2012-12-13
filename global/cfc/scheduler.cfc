@@ -77,12 +77,14 @@
 		 sched_ftp_user, 
 		 sched_ftp_pass, 
 		 sched_ftp_folder,
-		 host_id
+		 host_id,
+		 sched_upl_template
 		 <cfif schedData.ftpPassive is not "">, sched_ftp_passive</cfif> 
 		 <cfif schedData.startDate is not "">, sched_start_date</cfif>
 		 <cfif schedData.startTime is not "">, sched_start_time</cfif>
 		 <cfif schedData.endDate is not "">, sched_end_date</cfif>
-		 <cfif schedData.endTime is not "">, sched_end_time</cfif> )
+		 <cfif schedData.endTime is not "">, sched_end_time</cfif> 
+		)
 		VALUES 
 		(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
 		 <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">, 
@@ -103,7 +105,8 @@
 		 <cfqueryparam value="#schedData.ftpUser#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.ftpFolder#" cfsqltype="cf_sql_varchar">,
-		 <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		 <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		 <cfqueryparam value="#arguments.thestruct.upl_template#" cfsqltype="cf_sql_varchar">
 		 <cfif schedData.ftpPassive is not "">, <cfqueryparam value="#schedData.ftpPassive#" cfsqltype="cf_sql_numeric"></cfif> 
 		 <cfif schedData.startDate is not "">, <cfqueryparam value="#schedData.startDate#" cfsqltype="cf_sql_date"></cfif>
 		 <cfif schedData.startTime is not "">, <cfqueryparam value="#schedData.startTime#" cfsqltype="cf_sql_timestamp"></cfif>
@@ -285,7 +288,7 @@
 	s.sched_folder_id_r, s.sched_zip_extract, s.sched_server_folder, s.sched_mail_pop, s.sched_mail_user,
 	s.sched_mail_pass, s.sched_mail_subject, s.sched_ftp_server, s.sched_ftp_user, s.sched_ftp_pass,
 	s.sched_ftp_folder, s.sched_interval, s.sched_start_date, s.sched_start_time, s.sched_end_date,
-	s.sched_end_time, s.sched_ftp_passive, s.sched_server_recurse, s.sched_server_files, 
+	s.sched_end_time, s.sched_ftp_passive, s.sched_server_recurse, s.sched_server_files, s.sched_upl_template,
 	f.folder_name as folder_name
 	FROM #session.hostdbprefix#schedules s, #session.hostdbprefix#folders f
 	WHERE s.sched_id = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -333,6 +336,7 @@
 		sched_ftp_user = <cfqueryparam value="#schedData.ftpUser#" cfsqltype="cf_sql_varchar">, 
 		sched_ftp_pass = <cfqueryparam value="#schedData.ftpPass#" cfsqltype="cf_sql_varchar">, 
 		sched_ftp_folder = <cfqueryparam value="#schedData.ftpFolder#" cfsqltype="cf_sql_varchar">,
+		sched_upl_template = <cfqueryparam value="#arguments.thestruct.upl_template#" cfsqltype="cf_sql_varchar">,
 		sched_ftp_passive = 
 		<cfif schedData.ftpPassive is not "">
 			<cfqueryparam value="#schedData.ftpPassive#" cfsqltype="cf_sql_numeric">
@@ -483,27 +487,37 @@
 	</cfif>
 	<!--- List all files from the server directory --->
 	<cfif doit.qry_detail.sched_method EQ "server">
-		<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" name="doit.serverdir" recurse="#doit.qry_detail.sched_server_recurse#">
+		<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" name="doit.serverdir" recurse="#doit.qry_detail.sched_server_recurse#" type="file">
+		<!--- Sort the above list in a query because cfdirectory sorting sucks --->
+		<cfquery dbtype="query" name="doit.serverdir">
+		SELECT *
+		FROM doit.serverdir
+		WHERE size != 0
+		AND attributes != 'H'
+		AND name != 'thumbs.db'
+		AND name NOT LIKE '.DS_STORE%'
+		AND name NOT LIKE '__MACOSX%'
+		AND name NOT LIKE '%scheduleduploads_%'
+		ORDER BY name
+		</cfquery>
 		<!--- Loop over the query and append to assets_temp for sorting correctly --->
 		<cfloop query="doit.serverdir">
-			<cfif type EQ "file" AND NOT directory CONTAINS "." AND NOT directory CONTAINS "cvs" AND NOT directory CONTAINS ".svn" AND NOT directory CONTAINS "scheduleduploads_" AND NOT name EQ ".ds_store">
-				<cfset doit.dirlist = directory & "/" & name & "," & doit.dirlist>
-				<!--- Get file extension --->
-				<!--- 
-				<cfset theextension = listlast("#name#",".")>
-				<!--- Insert into temp db --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#assets_temp
-				(tempid, filename, extension, path)
-				VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#name#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#directory#">
-				)
-				</cfquery> 
-				--->
-			</cfif>
+			<cfset doit.dirlist = directory & "/" & name & "," & doit.dirlist>
+			<!--- Get file extension --->
+			<!--- 
+			<cfset theextension = listlast("#name#",".")>
+			<!--- Insert into temp db --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#assets_temp
+			(tempid, filename, extension, path)
+			VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#name#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#directory#">
+			)
+			</cfquery> 
+			--->
 		</cfloop>
 	</cfif>
 	<!--- Return --->

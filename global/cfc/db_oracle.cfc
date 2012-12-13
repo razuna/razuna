@@ -1880,6 +1880,7 @@
 			SCHED_END_DATE       DATE,
 			SCHED_END_TIME       TIMESTAMP,
 			HOST_ID				 NUMBER,
+			sched_upl_template	 VARCHAR2(100 CHAR),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_PK PRIMARY KEY (SCHED_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_FK2 FOREIGN KEY (SCHED_USER)
 		REFERENCES users (USER_ID) ON DELETE SET NULL ENABLE,

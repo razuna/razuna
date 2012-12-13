@@ -27,7 +27,7 @@
 <form action="#self#" method="post" name="schedulerform" id="schedulerform" onSubmit="validateMethodInput(this,'Add');return false;">
 <input type="hidden" name="#theaction#" value="c.scheduler_save">
 <input type="hidden" name="sched_id" value="#attributes.sched_id#">
-<input type="hidden" name="folder_id" value="#qry_detail.SCHED_FOLDER_ID_R#" />
+<input type="hidden" name="folder_id" value="#qry_detail.sched_folder_id_r#" />
 <table width="600" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
 		<th colspan="2">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads")#</th>
@@ -244,6 +244,20 @@
 		<tr>
 			<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_zip_archive")#</td>
 			<td><input type="checkbox" name="zipExtract" value="1" <cfif qry_detail.sched_zip_extract EQ 1 OR qry_detail.sched_zip_extract EQ ""> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("scheduled_uploads_extract_zip")#</td>
+		</tr>
+		<tr>
+			<td>Rendition Templates</td>
+			<td>
+				<cfif qry_templates.recordcount NEQ 0>
+					<select name="upl_template">
+						<option value="0"<cfif qry_detail.sched_upl_template EQ 0> selected="selected"</cfif>>Choose Rendition Template</option>
+						<option value="0">---</option>
+						<cfloop query="qry_templates">
+							<option value="#upl_temp_id#"<cfif qry_detail.sched_upl_template EQ upl_temp_id> selected="selected"</cfif>>#upl_name#</option>
+						</cfloop>
+					</select>
+				</cfif>
+			</td>
 		</tr>
 		<tr>
 			<td colspan="2" align="right"><input type="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></td>

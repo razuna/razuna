@@ -2005,6 +2005,7 @@
 			SCHED_END_DATE       DATE,
 			SCHED_END_TIME       TIMESTAMP DEFAULT '0000-00-00 00:00:00',
 			HOST_ID				 INT,
+			sched_upl_template	 VARCHAR(100),
 			PRIMARY KEY (SCHED_ID),
 			KEY #arguments.thestruct.host_db_prefix#sched_user (SCHED_USER),
 	  		KEY #arguments.thestruct.host_db_prefix#sched_hostid (HOST_ID),

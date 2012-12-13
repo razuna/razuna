@@ -3978,6 +3978,8 @@
 		</invoke>
 		<!-- CFC: get details -->
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="detail(attributes.sched_id)" returnvariable="qry_detail" />
+		<!-- CFC: get upload templates -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- Show -->
 		<do action="ajax.scheduler_detail" />
 	</fuseaction>
@@ -4047,6 +4049,7 @@
 		<set name="attributes.folder_id" value="#thetask.qry_detail.sched_folder_id_r#" />
 		<set name="session.theuserid" value="#thetask.qry_detail.sched_user#" />
 		<set name="attributes.sched_action" value="#thetask.qry_detail.sched_server_files#" />
+		<set name="attributes.upl_template" value="#thetask.qry_detail.sched_upl_template#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Log start -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
