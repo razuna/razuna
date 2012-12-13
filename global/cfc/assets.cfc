@@ -2796,7 +2796,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery dbtype="query" name="thedir">
 		SELECT *
 		FROM thedir
-		WHERE name != '__MACOSX'
+		WHERE name NOT LIKE '__MACOSX%'
 		ORDER BY name
 		</cfquery>
 		<!--- Get folders within the unzip RECURSIVE --->
@@ -2805,6 +2805,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfquery dbtype="query" name="thedirfiles">
 		SELECT *
 		FROM thedirfiles
+		WHERE size != 0
+		AND attributes != 'H'
+		AND name != 'thumbs.db'
+		AND name NOT LIKE '.DS_STORE%'
+		AND name NOT LIKE '__MACOSX%'
 		ORDER BY name
 		</cfquery>
 		<!--- Create Directories --->
@@ -2852,7 +2857,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfpause interval="5" />
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
-			<cfif size NEQ 0 AND fileexists("#directory#/#name#") AND attributes NEQ "H" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS ".DS_STORE" AND NOT name CONTAINS "__MACOSX" AND NOT name CONTAINS "MACOSX">
+			<cfif fileexists("#directory#/#name#")>
 				<cfset md5hash = "">
 				<!--- Set Original FileName --->
 				<cfset arguments.thestruct.theoriginalfilename = listlast(name,FileSeparator())>
@@ -3039,19 +3044,19 @@ This is the main function called directly by a single upload else from addassets
 	<cfquery dbtype="query" name="thedir">
 	SELECT *
 	FROM thedirlist
+	WHERE name NOT LIKE '__MACOSX%'
+	AND attributes != 'H'
 	ORDER BY name
 	</cfquery>
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
 	<cfloop query="thedir">
-		<cfif thedir.attributes NEQ "H" AND name NEQ "__MACOSX">
-			<!--- All foreign chars are now converted, except the FileSeparator and - --->
-			<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\_\-\#FileSeparator()#]","-","ALL")>
-			<!--- Rename --->
-			<cfif directoryExists("#directory#/#name#") AND "#directory#/#name#" NEQ "#directory#/#d#">
-				<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
-				<!--- Call this method again since the folder name on the disk could have changed --->
-				<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thedirectory#">
-			</cfif>
+		<!--- All foreign chars are now converted, except the FileSeparator and - --->
+		<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\_\-\#FileSeparator()#]","-","ALL")>
+		<!--- Rename --->
+		<cfif directoryExists("#directory#/#name#") AND "#directory#/#name#" NEQ "#directory#/#d#">
+			<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
+			<!--- Call this method again since the folder name on the disk could have changed --->
+			<cfinvoke method="rec_renamefolders" thedirectory="#arguments.thedirectory#">
 		</cfif>
 	</cfloop>
 	<cfreturn />
