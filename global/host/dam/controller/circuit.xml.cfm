@@ -1690,6 +1690,8 @@
 		<do action="asset_get_settings" />
 		<!-- CFC: Get FTP directory -->
 		<invoke object="myFusebox.getApplicationData().ftp" methodcall="getdirectory(attributes)" returnvariable="qry_ftp" />
+		<!-- CFC: get upload templates -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- Show -->
 		<do action="ajax.asset_add_ftp_show" />
 	</fuseaction>
@@ -1701,6 +1703,8 @@
 		<do action="asset_get_settings" />
 		<!-- CFC: Get ftp directory -->
 		<invoke object="myFusebox.getApplicationData().ftp" methodcall="getdirectory(attributes)" returnvariable="qry_ftp" />
+		<!-- CFC: get upload templates -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- Show -->
 		<do action="ajax.asset_add_ftp_show" />
 	</fuseaction>

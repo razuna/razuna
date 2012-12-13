@@ -72,19 +72,35 @@
 			<br>
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="tablepanel">
 				<tr>
-					<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_zip")#</th>
+					<th colspan="2">Options</th>
 				</tr>
 				<tr>
 					<td colspan="2" class="td2"><input type="checkbox" name="zip_extract" value="1" checked> #myFusebox.getApplicationData().defaults.trans("header_zip_desc")#</td>
 				</tr>
-				<tr>
+				<!--- <tr>
 					<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size")#</th>
-				</tr>
+				</tr> --->
 				<tr>
 					<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size_desc")#</td>
 				</tr>
 				<tr>
 					<td class="td2" colspan="2">#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="img_thumb_width" size="4" maxlength="3" value="#settings_image.set2_img_thumb_width#"> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="img_thumb_heigth" size="4" maxlength="3" value="#settings_image.set2_img_thumb_heigth#"></td>
+				</tr>
+				<tr>
+					<td colspan="2">
+						<!--- Load upload templates here --->
+						<cfif qry_templates.recordcount NEQ 0>
+							<div>
+								<select name="upl_template">
+									<option value="0" selected="selected">Choose Rendition Template</option>
+									<option value="0">---</option>
+									<cfloop query="qry_templates">
+										<option value="#upl_temp_id#">#upl_name#</option>
+									</cfloop>
+								</select>
+							</div>
+						</cfif>
+					</td>
 				</tr>
 				<!--- <tr>
 					<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_video_preview_size")#</th>
