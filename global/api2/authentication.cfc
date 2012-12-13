@@ -76,6 +76,9 @@
 			<cfset application.razuna.api.prefix[#arguments.api_key#] = pre.host_shard_group>
 			<cfset application.razuna.api.hostid[#arguments.api_key#] = qry.hostid>
 			<cfset application.razuna.api.userid[#arguments.api_key#] = qry.user_id>
+			<cfset session.hostdbprefix = pre.host_shard_group>
+			<cfset session.hostid = qry.hostid>
+			<cfset session.theuserid = qry.user_id>
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>

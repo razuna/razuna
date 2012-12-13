@@ -101,7 +101,7 @@
 			<cfset thexml.label_id = lid>
 		<!--- No session found --->
 		<cfelse>
-			<cfset var thexml = timeout()>
+			<cfset var thexml = timeout("s")>
 		</cfif>
 		<!--- Return --->
 		<cfreturn thexml>
