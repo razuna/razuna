@@ -29,7 +29,7 @@
 <cffunction name="howmany" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT count(com_id) thetotal
 	FROM #session.hostdbprefix#comments
 	WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -43,7 +43,7 @@
 <cffunction name="get" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT c.com_id, c.com_text, c.com_date, u.user_login_name, u.user_first_name, u.user_last_name
 	FROM #session.hostdbprefix#comments c LEFT JOIN users u ON u.user_id = c.user_id_r
 	WHERE c.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
@@ -58,16 +58,16 @@
 <cffunction name="getlatest" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#" name="qry">
-	SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>c.com_id, c.com_text, c.com_date, u.user_login_name, u.user_first_name, u.user_last_name
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>c.com_id, c.com_text, c.com_date, u.user_login_name, u.user_first_name, u.user_last_name
 	FROM #session.hostdbprefix#comments c LEFT JOIN users u ON u.user_id = c.user_id_r
 	WHERE c.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND c.asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.type#">
-	<cfif variables.database EQ "oracle">
+	<cfif application.razuna.thedatabase EQ "oracle">
 		AND ROWNUM = 1
 	</cfif>
 	ORDER BY c.com_date DESC
-	<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
+	<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 		LIMIT 1
 	</cfif>
 	</cfquery>
@@ -79,9 +79,9 @@
 <cffunction name="edit" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#" name="qry">
-	SELECT c.com_text
-	FROM #session.hostdbprefix#comments c
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
+	SELECT c.com_id, c.com_text, c.com_date, u.user_login_name, u.user_first_name, u.user_last_name
+	FROM #session.hostdbprefix#comments c LEFT JOIN users u ON u.user_id = c.user_id_r
 	WHERE c.com_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.com_id#">
 	</cfquery>
 	<!--- Return --->
@@ -92,10 +92,8 @@
 <cffunction name="add" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfif arguments.thestruct.comment NEQ "">
-		<!--- Create new ID --->
-		<!--- <cfset newid = createuuid()> --->
 		<!--- Query --->
-		<cfquery datasource="#Variables.dsn#" name="qry">
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		INSERT INTO #session.hostdbprefix#comments
 		(com_id, com_text, com_date, asset_id_r, user_id_r, asset_type, host_id)
 		VALUES(
@@ -117,10 +115,9 @@
 <cffunction name="remove" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	DELETE FROM #session.hostdbprefix#comments
-	WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-	AND com_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+	WHERE com_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn />
@@ -130,7 +127,7 @@
 <cffunction name="update" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
-	<cfquery datasource="#Variables.dsn#" name="qry">
+	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	UPDATE #session.hostdbprefix#comments
 	SET com_text = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.comment#">
 	WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
