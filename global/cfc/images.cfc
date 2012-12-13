@@ -1305,7 +1305,8 @@
 			<cfset arguments.thestruct.folder_action = false>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 			<cfset arguments.thestruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />		
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />	
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />		
 		</cfif>
 	<cfreturn />
 </cffunction>

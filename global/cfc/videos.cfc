@@ -1613,6 +1613,7 @@
 				<cfset arguments.thestruct.folder_action = true>
 				<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />	
 			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">
