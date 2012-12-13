@@ -1101,7 +1101,7 @@
 				<!--- Show if error --->
 				<cfcatch type="any">
 					<!--- Feedback --->
-					<cfoutput>Following error occurred:<br /><span style="font-weight:bold;color:red;">#cfcatch.message#</span><br><br></cfoutput>
+					<cfoutput>Following error occurred:<br /><span style="font-weight:bold;color:red;">#cfcatch.message#<br />#cfcatch.detail#</span><br><br></cfoutput>
 					<cfflush>
 				</cfcatch>
 			</cftry>
@@ -1805,13 +1805,13 @@
 				<!--- The value --->
 				<cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]>
 				<!--- The ID --->
-				<cfset var theid = listLast(i,":")>
+				<cfset var theid = ucase(listLast(i,":"))>
 				<!--- Insert or update --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT cf_id_r
 				FROM #session.hostdbprefix#custom_fields_values
 				WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(arguments.assetid)#">
 				</cfquery>
 				<!--- Insert --->
 				<cfif qry.recordcount EQ 0>
