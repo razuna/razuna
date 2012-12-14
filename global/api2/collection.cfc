@@ -248,7 +248,7 @@
 		<cfif thesession>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT c.col_id, c.change_date, ct.col_name, ct.col_desc as collection_description,
+			SELECT c.col_id, c.change_date, ct.col_name, ct.col_desc as collection_description, ct.col_keywords as collection_keywords,
 				(
 					SELECT count(file_id_r) 
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files 
@@ -280,7 +280,7 @@
 				)  as totalassets
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections c
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
-			WHERE c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folderid#">
+			WHERE c.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folderid#" list="true">)
 			AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 			ORDER BY lower(ct.col_name)
 			</cfquery>
@@ -291,5 +291,57 @@
 		<!--- Return --->
 		<cfreturn thexml />
 	</cffunction>
-	
+
+	<!--- Search --->
+	<cffunction name="search" access="remote" output="false" returntype="query" returnformat="json">
+		<cfargument name="api_key" type="string" required="true">
+		<cfargument name="id" type="string" required="false" default="">
+		<cfargument name="name" type="string" required="false" default="">
+		<cfargument name="keyword" type="string" required="false" default="">
+		<cfargument name="description" type="string" required="false" default="">
+		<cfargument name="released" type="string" required="false" default="">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Query --->
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+			SELECT c.folder_id_r
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections c
+			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+			WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+			<cfif arguments.id NEQ "">
+				AND c.col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
+			</cfif>
+			<cfif arguments.name NEQ "">
+				AND lower(ct.col_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.name)#%">
+			</cfif>
+			<cfif arguments.keyword NEQ "">
+				AND lower(ct.col_keywords) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.keyword)#%">
+			</cfif>
+			<cfif arguments.description NEQ "">
+				AND lower(ct.col_desc) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.description)#%">
+			</cfif>
+			<cfif arguments.released NEQ "">
+				AND lower(c.col_released) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.released)#%">
+			</cfif>
+			</cfquery>
+			<!--- Get getcollections --->
+			<cfif qry.recordcount NEQ 0>
+				<cfset var thexml = getcollections(api_key=arguments.api_key,folderid=valueList(qry.folder_id_r))>
+			<cfelse>
+				<cfset thexml = querynew("responsecode,message")>
+				<cfset queryaddrow(thexml,1)>
+				<cfset querysetcell(thexml,"responsecode","1")>
+				<cfset querysetcell(thexml,"message","No records found")>
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout()>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml />
+	</cffunction>
+
+
 </cfcomponent>
