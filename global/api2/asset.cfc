@@ -71,13 +71,34 @@
 				) as hassubassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
-					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb
+					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
 					'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
-					'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_thumb
+					'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_thumb,
 				</cfif>
-
-
+				<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					(
+						SELECT GROUP_CONCAT(DISTINCT ic.col_id_r ORDER BY ic.col_id_r SEPARATOR ',') AS col_id
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
+						WHERE ic.file_id_r = i.img_id
+					) AS colid
+				<cfelseif application.razuna.api.thedatabase EQ "mssql">
+					STUFF(
+						(
+							SELECT ', ' + ic.col_id_r
+							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
+				         	WHERE ic.file_id_r = i.img_id
+				          	FOR XML PATH ('')
+			          	)
+			          	, 1, 1, ''
+					) AS colid
+				<cfelseif application.razuna.api.thedatabase EQ "oracle">
+					(
+						SELECT wmsys.wm_concat(ic.col_id_r) AS col_id
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
+						WHERE ic.file_id_r = i.img_id
+					) AS colid
+				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
@@ -119,10 +140,33 @@
 				) as subassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
-					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_preview
+					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
 					'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
-					'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset,'/' + v.vid_name_image AS local_url_preview
+					'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset,'/' + v.vid_name_image AS local_url_thumb,
+				</cfif>
+				<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					(
+						SELECT GROUP_CONCAT(DISTINCT vc.col_id_r ORDER BY vc.col_id_r SEPARATOR ',') AS col_id
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
+						WHERE vc.file_id_r = v.vid_id
+					) AS colid
+				<cfelseif application.razuna.api.thedatabase EQ "mssql">
+					STUFF(
+						(
+							SELECT ', ' + vc.col_id_r
+							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
+				         	WHERE vc.file_id_r = v.vid_id
+				          	FOR XML PATH ('')
+			          	)
+			          	, 1, 1, ''
+					) AS colid
+				<cfelseif application.razuna.api.thedatabase EQ "oracle">
+					(
+						SELECT wmsys.wm_concat(vc.col_id_r) AS col_id
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
+						WHERE vc.file_id_r = v.vid_id
+					) AS colid
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
@@ -165,7 +209,30 @@
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
 					'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org
-				 </cfif>
+				</cfif>
+				<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					(
+						SELECT GROUP_CONCAT(DISTINCT ac.col_id_r ORDER BY ac.col_id_r SEPARATOR ',') AS col_id
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
+						WHERE ac.file_id_r = a.aud_id
+					) AS colid
+				<cfelseif application.razuna.api.thedatabase EQ "mssql">
+					STUFF(
+						(
+							SELECT ', ' + ac.col_id_r
+							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
+				         	WHERE ac.file_id_r = a.aud_id
+				          	FOR XML PATH ('')
+			          	)
+			          	, 1, 1, ''
+					) AS colid
+				<cfelseif application.razuna.api.thedatabase EQ "oracle">
+					(
+						SELECT wmsys.wm_concat(ac.col_id_r) AS col_id
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
+						WHERE ac.file_id_r = a.aud_id
+					) AS colid
+				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 				WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
@@ -199,6 +266,29 @@
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
 					'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + f.path_to_asset + '/' + f.file_name_org AS local_url_org
+				</cfif>
+				<cfif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
+					(
+						SELECT GROUP_CONCAT(DISTINCT fc.col_id_r ORDER BY fc.col_id_r SEPARATOR ',') AS col_id
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
+						WHERE fc.file_id_r = f.file_id
+					) AS colid
+				<cfelseif application.razuna.api.thedatabase EQ "mssql">
+					STUFF(
+						(
+							SELECT ', ' + fc.col_id_r
+							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
+				         	WHERE fc.file_id_r = f.file_id
+				          	FOR XML PATH ('')
+			          	)
+			          	, 1, 1, ''
+					) AS colid
+				<cfelseif application.razuna.api.thedatabase EQ "oracle">
+					(
+						SELECT wmsys.wm_concat(fc.col_id_r) AS col_id
+						FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
+						WHERE fc.file_id_r = f.file_id
+					) AS colid
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
