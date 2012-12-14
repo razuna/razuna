@@ -712,7 +712,7 @@
 			AND ctl.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ctl.ct_id_r = c.col_id
 			AND ctl.ct_type = <cfqueryparam value="collection" cfsqltype="cf_sql_varchar" />
-			GROUP BY ct.col_name
+			GROUP BY c.col_id, c.folder_id_r, ct.col_name
 			</cfquery>
 		</cfif>
 		<!--- Return --->
