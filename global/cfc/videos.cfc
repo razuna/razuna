@@ -1654,7 +1654,7 @@
 	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#gettextvid */ vid_id_r tid, vid_description description, vid_keywords keywords, vid_meta rawmetadata
+	SELECT /* #variables.cachetoken#gettextvid */ vid_id_r tid, vid_description description, vid_keywords keywords
 	FROM #session.hostdbprefix#videos_text
 	WHERE vid_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">

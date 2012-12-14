@@ -1079,7 +1079,7 @@
 		<cfargument name="qry" type="query">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords, file_meta rawmetadata
+		SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords
 		FROM #session.hostdbprefix#files_desc
 		WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
