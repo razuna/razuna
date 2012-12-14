@@ -971,6 +971,9 @@
 		<!--- Get size of original and thumnail --->
 		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#" returnvariable="orgsize">
 		<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" returnvariable="thumbsize">
+		<!--- Get width and height --->
+		<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #theformatconv#" timeout="60" variable="theheight" />
+		<cfexecute name="#theexif#" arguments="-S -s -ImageWidth #theformatconv#" timeout="60" variable="thewidth" />
 		<!---Create record--->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#images
@@ -1066,8 +1069,8 @@
 			img_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
 			thumb_width = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">,
 			thumb_height = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
-			<cfif isnumeric(newImgWidth)>img_width = <cfqueryparam value="#newImgWidth#" cfsqltype="cf_sql_numeric">,</cfif>
-			<cfif isnumeric(newImgHeight)>img_height = <cfqueryparam value="#newImgHeight#" cfsqltype="cf_sql_numeric">,</cfif> 
+			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">,
+			img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">, 
 			img_filename_org = <cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">,
 			img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
 			thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
