@@ -218,8 +218,8 @@
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
-			WHEN "t" = (
-				SELECT fo.folder_of_user 
+			WHEN lower(a.aud_owner) = (
+				SELECT lower(fo.folder_of_user) 
 				FROM #session.hostdbprefix#folders fo 
 				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
 				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
@@ -756,8 +756,8 @@
 				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 				) THEN 'unlocked'
-			WHEN "t" = (
-				SELECT fo.folder_of_user 
+			WHEN lower(a.aud_owner) = (
+				SELECT lower(fo.folder_of_user) 
 				FROM #session.hostdbprefix#folders fo 
 				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
 				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
