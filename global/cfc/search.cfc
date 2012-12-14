@@ -192,7 +192,7 @@
 		<cfif arguments.thestruct.folder_id NEQ 0 AND arguments.thestruct.iscol EQ "F">
 			AND f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 		</cfif>
-    	GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_type, is_available, f.file_create_time, f.file_change_date, link_kind, link_path_url,	path_to_asset, cloud_url, cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, f.file_size, hashtag, folder_name
+    	GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_type, is_available, f.file_create_time, f.file_change_date, link_kind, link_path_url,	path_to_asset, cloud_url, cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, f.file_size, hashtag, folder_name, fo.folder_of_user
 		ORDER BY #sortby#
 		</cfquery>
 		<!--- Show the results according to extension only. Needed when we have the doctype --->
@@ -430,7 +430,7 @@
 		<!--- Exclude related images
 		AND (i.img_group IS NULL OR i.img_group = '') --->
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	    GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, it.img_description, it.img_keywords, i.img_filename, i.img_size, hashtag, fo.folder_name, i.img_group
+	    GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, it.img_description, it.img_keywords, i.img_filename, i.img_size, hashtag, fo.folder_name, i.img_group, fo.folder_of_user
 		ORDER BY #sortby#
 		</cfquery>
 		<!--- Select only records that are unlocked --->
@@ -632,7 +632,7 @@
 		<!--- Exclude related images
 		AND (v.vid_group IS NULL OR v.vid_group = '') --->
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	    GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, is_available, v.vid_create_time, v.vid_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_filename, v.vid_size, hashtag, folder_name, v.vid_group
+	    GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, is_available, v.vid_create_time, v.vid_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_filename, v.vid_size, hashtag, folder_name, v.vid_group, fo.folder_of_user
 		ORDER BY #sortby#
 		</cfquery>
 		<!--- Select only records that are unlocked --->
@@ -834,7 +834,7 @@
 		<!--- Exclude related images
 		AND (a.aud_group IS NULL OR a.aud_group = '') --->
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-    	GROUP BY a.aud_id, a.aud_name, a.folder_id_r,a.aud_extension, a.aud_name_org, is_available, a.aud_create_time, a.aud_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_name, a.aud_size, hashtag, folder_name, a.aud_group
+    	GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, is_available, a.aud_create_time, a.aud_change_date, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_name, a.aud_size, hashtag, folder_name, a.aud_group, fo.folder_of_user
 		ORDER BY #sortby#
 		</cfquery>
 		<!--- Select only records that are unlocked --->
