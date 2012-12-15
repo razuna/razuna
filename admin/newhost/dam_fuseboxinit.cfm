@@ -2,6 +2,8 @@
 <cfset myself = myFusebox.getMyself() />
 <cfset theaction = application.fusebox.fuseactionVariable />
 
+<cfinvoke component="global.cfc.settings" method="getconfigdefault" />
+
 <!--- The WEBROOT --->
 <cfset webroot = rereplacenocase(cgi.PATH_INFO, "[a-z_]+.cfm", "", "ALL")>
 

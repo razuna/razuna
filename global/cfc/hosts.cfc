@@ -457,9 +457,9 @@
 	<!--- Write the Application file in the Intra Folder --->
 	<cffile action="write" file="#arguments.pathoneup#/#arguments.host_path_replace#/#arguments.module_folder#/fusebox.init.cfm" output="#something#" mode="775">
 	<!--- content of fusebox.appinit.cfm --->
-	<cfsavecontent variable="appinit"><cfinclude template="../../admin/newhost/#arguments.module_folder#_fuseboxappinit.cfm"></cfsavecontent>
+	<!--- <cfsavecontent variable="appinit"><cfinclude template="../../admin/newhost/#arguments.module_folder#_fuseboxappinit.cfm"></cfsavecontent> --->
 	<!--- Write the Application file in the Intra Folder --->
-	<cffile action="write" file="#arguments.pathoneup#/#arguments.host_path_replace#/#arguments.module_folder#/fusebox.appinit.cfm" output="#appinit#" mode="775">
+	<!--- <cffile action="write" file="#arguments.pathoneup#/#arguments.host_path_replace#/#arguments.module_folder#/fusebox.appinit.cfm" output="#appinit#" mode="775"> --->
 </cffunction>
 
 !--- ------------------------------------------------------------------------------------- --->
