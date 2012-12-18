@@ -48,6 +48,7 @@
 	</cfif>
 	AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.released#">
 	GROUP BY c.col_id, c.change_date, ct.col_name, c.col_released
+	ORDER BY lower(ct.col_name)
 	</cfquery>
 	<!--- Get descriptions --->
 	<cfif qry.collist.recordcount NEQ 0>
