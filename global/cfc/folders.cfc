@@ -328,7 +328,9 @@
 			<cfif samefolder.recordcount EQ 0>
 				<!--- Add folder --->
 				<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
-				<cfoutput>#trim(newfolderid)#</cfoutput>
+				<!--- Trim folderid --->
+				<cfset newfolderid = trim(newfolderid)>
+				<cfoutput>#newfolderid#</cfoutput>
 				<!--- If we store on the file system we create the folder here --->
 				<cfif application.razuna.storage EQ "local">
 					<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
@@ -347,6 +349,9 @@
 						<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#/aud" mode="775">
 					</cfif>
 				</cfif>
+				<!--- Check on any plugin that call the on_folder_add action --->
+				<cfset arguments.thestruct.folder_id = newfolderid>
+				<cfinvoke component="plugins" method="getactions" theaction="on_folder_add" args="#arguments.thestruct#" />
 				<!--- Set the Action2: Fill certain arguments (folder name, collection) with supporting argument if coming from CFC files --->
 				<cfif StructIsEmpty(arguments.thefolderparam)>
 					<cfset this.action2="done">
