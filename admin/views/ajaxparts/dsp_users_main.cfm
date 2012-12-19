@@ -55,27 +55,26 @@
 			<div id="uresults">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 					<tr>
-						<th colspan="7">#defaultsObj.trans("user_list")#</th>
-					</tr>
-					<tr>
-						<td></td>
-						<td nowrap="nowrap">#defaultsObj.trans("username")#</td>
-						<td nowrap="nowrap">#defaultsObj.trans("user_first_name")# #defaultsObj.trans("user_last_name")#</td>
-						<td nowrap="nowrap">#defaultsObj.trans("user_company")#</td>
-						<td nowrap="nowrap">eMail</td>
-						<td colspan="2"></td>
+						<th nowrap="nowrap" colspan="2">#defaultsObj.trans("username")#</th>
+						<th nowrap="nowrap">#defaultsObj.trans("user_first_name")# #defaultsObj.trans("user_last_name")#</th>
+						<th nowrap="nowrap">#defaultsObj.trans("user_company")#</th>
+						<th nowrap="nowrap">eMail</th>
+						<th colspan="2"></th>
 					</tr>
 					<cfoutput query="qry_users" group="user_id">
-					<tr>
-						<td valign="top" nowrap width="1%"><input type="checkbox" name="theuserid" value="#user_id#" /></td>
-						<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_login_name#</a></td>
-						<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_first_name# #user_last_name#</a></td>
-						<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_company#</a></td>
-						<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_email#</a></td>
-						<td valign="top" nowrap width="1%"><cfif #user_active# EQ "T"><img src="images/im-user.png" width="16" height="16" border="0" /><cfelse><img src="images/im-user-busy.png" width="16" height="16" border="0" /></cfif></td>
-						<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=rightside','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
-					</tr>
+						<tr>
+							<td valign="top" nowrap width="1%"><input type="checkbox" name="theuserid" value="#user_id#" /></td>
+							<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;"<cfif listfind(ct_g_u_grp_id,"1")> style="font-weight:bold;color:green;"</cfif>>#user_login_name#</a></td>
+							<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_first_name# #user_last_name#</a></td>
+							<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_company#</a></td>
+							<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_email#</a></td>
+							<td valign="top" nowrap width="1%"><cfif #user_active# EQ "T"><img src="images/im-user.png" width="16" height="16" border="0" /><cfelse><img src="images/im-user-busy.png" width="16" height="16" border="0" /></cfif></td>
+							<td align="center" valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=users&id=#user_id#&loaddiv=rightside','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a></td>
+						</tr>
 					</cfoutput>
+					<tr>
+						<td colspan="6" style="padding-top:20px;"><em>(Users in green are in the SystemAdministrator group)</em></td>
+					</tr>
 				</table>
 			</div>
 		</div>

@@ -110,22 +110,36 @@
 <cffunction name="getall">
 	<cfargument name="thestruct" type="Struct" required="false">
 	<cfparam name="arguments.thestruct" default="#structnew()#">
+	<!--- Params --->
 	<cfset var localquery = 0>
+	<!--- Get cachetoken --->
 	<cfset variables.cachetoken = getcachetoken("users")>
+	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getallusers */ u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
-		(
-		SELECT <cfif application.razuna.thedatabase EQ "mssql">TOP 1 </cfif>min(ct_g_u_grp_id)
-		FROM ct_groups_users
-		WHERE ct_g_u_user_id = u.user_id
-		<cfif application.razuna.thedatabase EQ "oracle">
-			AND ROWNUM = 1
-		<cfelseif application.razuna.thedatabase EQ "db2">
-			FETCH FIRST 1 ROWS ONLY
-		<cfelseif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
-			LIMIT 1
+		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+			(
+				SELECT GROUP_CONCAT(DISTINCT ct_g_u_grp_id ORDER BY ct_g_u_grp_id SEPARATOR ',') AS grpid
+				FROM ct_groups_users
+				WHERE ct_g_u_user_id = u.user_id
+			) AS ct_g_u_grp_id
+		<cfelseif application.razuna.thedatabase EQ "mssql">
+			STUFF(
+				(
+					SELECT ', ' + ct_g_u_grp_id
+					FROM ct_groups_users
+					WHERE ct_g_u_user_id = u.user_id
+		          	FOR XML PATH ('')
+	          	)
+	          	, 1, 1, ''
+			) AS ct_g_u_grp_id
+		<cfelseif application.razuna.thedatabase EQ "oracle">
+			(
+				SELECT wmsys.wm_concat(ct_g_u_grp_id) AS grpid
+				FROM ct_groups_users
+				WHERE ct_g_u_user_id = u.user_id
+			) AS ct_g_u_grp_id
 		</cfif>
-		) AS ct_g_u_grp_id
 	FROM ct_users_hosts uh, users u
 	WHERE (
 		uh.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#"> 
