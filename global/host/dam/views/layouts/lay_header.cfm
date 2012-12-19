@@ -136,7 +136,7 @@
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
 						<cfelse>
-							<cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a>
+							<a href="##" onClick="feedback_widget.show();">Feedback</a>
 						</cfif>
 					</p>
 					<p><hr></p>
@@ -157,9 +157,7 @@
 				<cfif application.razuna.whitelabel>
 					#wl_feedback#
 				<cfelse>
-					<cfif !application.razuna.custom.enabled OR (application.razuna.custom.enabled AND application.razuna.custom.show_feedback)>
-						<div style="float:left;"><cfif application.razuna.custom.enabled AND application.razuna.custom.feedback_url NEQ ""><a href="#application.razuna.custom.feedback_url#" target="_blank"><cfelse><a href="##" onClick="feedback_widget.show();"></cfif>Feedback</a></div>
-					</cfif>
+					<div style="float:left;"><a href="##" onClick="feedback_widget.show();">Feedback</a></div>
 				</cfif>
 			</cfif>
 		</div>
