@@ -1898,34 +1898,56 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 <!--- Save customization --->
 <cffunction name="set_customization" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- If we apply this setting to all tenants we call the subfunction --->
+	<cfif structKeyExists(arguments.thestruct,"apply_global")>
+		<!--- Get all the tenants and loop over the tenants --->
+		<cfinvoke component="hosts" method="getall" returnvariable="t" />
+		<!--- Loop --->
+		<cfloop query="t">
+			<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=#host_id#)>
+		</cfloop>
+	<!--- For a single tenant --->
+	<cfelse>
+		<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=session.hostid)>
+	</cfif>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Save customization --->
+<cffunction name="set_customization_internal" output="false" access="private" returntype="void">
+	<cfargument name="thestruct" type="struct">
+	<cfargument name="hostid" type="numeric">
 	<!--- First remove all records for this host --->
 	<cfquery dataSource="#application.razuna.datasource#">
 	DELETE FROM #session.hostdbprefix#custom
-	WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+	WHERE host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
 	</cfquery>
 	<!--- Now loop over the fieldnames and do an insert for each record found --->
 	<cfloop list="#arguments.thestruct.fieldnames#" index="i">
-		<cfquery dataSource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#custom
-		(custom_id, custom_value, host_id)
-		VALUES(
-			<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
-		)
-		</cfquery>
+		<cfif i NEQ "apply_global">
+			<cfquery dataSource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#custom
+			(custom_id, custom_value, host_id)
+			VALUES(
+				<cfqueryparam value="#lcase(i)#" CFSQLType="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#evaluate(trim(i))#" CFSQLType="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
+			)
+			</cfquery>
+		</cfif>
 	</cfloop>
 	<!--- Turn off redirection --->
 	<cfif structKeyExists(arguments.thestruct,"folder_redirect_off")>
 		<cfquery dataSource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#custom
 		SET custom_value = <cfqueryparam value="0" CFSQLType="CF_SQL_VARCHAR">
-		WHERE host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		WHERE host_id = <cfqueryparam value="#arguments.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		AND custom_id = <cfqueryparam value="folder_redirect" CFSQLType="CF_SQL_VARCHAR">
 		</cfquery>
 	</cfif>
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("settings")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

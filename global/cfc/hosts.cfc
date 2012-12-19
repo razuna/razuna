@@ -469,7 +469,7 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
 	SELECT host_id, host_name, host_name_custom
 	FROM hosts
 	ORDER BY #arguments.orderBy#

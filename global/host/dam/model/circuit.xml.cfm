@@ -179,8 +179,6 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
-		<!-- Read custom file. One time at start of application -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="readcustom()" />
 	</fuseaction>
 	
 </circuit>
