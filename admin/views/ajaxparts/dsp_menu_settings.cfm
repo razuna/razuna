@@ -58,9 +58,9 @@
 				<td valign="top"><a href="##" onclick="loadcontent('rightside','#myself#c.users');return false;">&raquo; #defaultsObj.trans("user_list")#</a></td>
 			</tr>
 			<!--- Groups --->
-			<tr>
+			<!--- <tr>
 				<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.groups');return false;">&raquo; #defaultsObj.trans("groups_link")#</a></td>
-			</tr>
+			</tr> --->
 			</table>
 			<!--- Hosts --->
 			<table width="100%" border="0" cellspacing="0" cellpadding="0" style="padding-top:15px;">
