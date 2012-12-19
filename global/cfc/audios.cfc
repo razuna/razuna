@@ -189,6 +189,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfset var qry = structnew()>
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Get details --->
 	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailaud */ a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner, a.cloud_url, a.cloud_url_org,
