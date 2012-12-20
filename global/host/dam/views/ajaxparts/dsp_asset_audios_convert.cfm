@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadrenaud();">Refresh</a></div></div>
+	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadrenaud();return false;">Refresh</a></div></div>
 	<br />
 	<table border="0" width="100%" cellpadding="0" cellspacing="0" class="grid">
 		<cfif attributes.folderaccess NEQ "R">

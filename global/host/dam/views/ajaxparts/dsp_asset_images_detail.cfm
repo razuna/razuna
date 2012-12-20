@@ -44,7 +44,7 @@
 			<li><a href="##detailinfo">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<!--- Renditions --->
 			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
-				<li><a href="##convertt" onclick="loadren();">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
+				<li><a href="##convertt" onclick="loadren();return false;">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>
 			</cfif>
 			<!--- Metadata tabs  --->
 			<cfif cs.tab_metadata>

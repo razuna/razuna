@@ -1,5 +1,5 @@
 <cfoutput>
-	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadren();">Refresh</a></div></div>
+	<div class="collapsable"><div class="headers">&gt; Existing Renditions - <a href="##" onclick="loadren();return false;">Refresh</a></div></div>
 	<br />
 	<cfif qry_detail.detail.link_kind NEQ "url">
 		<!--- Preview --->
