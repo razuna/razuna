@@ -205,9 +205,9 @@
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
 				<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
-				<cfhttpparam name="fileOverwrite" value="true" type="url">
+				<!--- <cfhttpparam name="fileOverwrite" value="true" type="url"> --->
 				<cfhttpparam name="excludedNode" value="node4" type="url">
-				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
+				<!--- <cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url"> --->
 			</cfhttp>
 			<!--- Parse --->
 			<cfset var xmlVar = xmlParse(cfhttp.filecontent)/>
