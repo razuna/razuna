@@ -466,8 +466,8 @@
 	<cfset variables.cachetoken = getcachetoken("videos")>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, v.vid_height, v.vid_width, v.vid_size vlength,
-	v.path_to_asset, v.cloud_url_org, v.vid_group
+	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, 
+	v.vid_height, v.vid_width, v.vid_size vlength, v.vid_name_org, v.path_to_asset, v.cloud_url_org, v.vid_group
 	FROM #session.hostdbprefix#videos v
 	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

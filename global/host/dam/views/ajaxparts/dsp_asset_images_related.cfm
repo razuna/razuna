@@ -43,6 +43,11 @@
 		</cfif>
 		<div id="divo#img_id#" style="display:none;">
 			<input type="text" id="inputo#img_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" />
+			<cfif application.razuna.storage EQ "local">
+				<input type="text" id="inputo#img_id#d" style="width:100%;" value="http://#cgi.http_host#/assets/#session.hostid#/#path_to_asset#/#img_filename_org#" />
+			<cfelse>
+				<input type="text" id="inputo#img_id#d" style="width:100%;" value="#cloud_url_org#" />
+			</cfif>
 			<!--- Plugin --->
 			<cfset args = structNew()>
 			<cfset args.detail.img_id = img_id>

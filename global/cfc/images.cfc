@@ -1113,7 +1113,8 @@
 	<cfset variables.cachetoken = getcachetoken("images")>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, i.img_owner,
+	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, 
+	i.img_online, i.img_owner, i.img_filename_org,
 	i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
 	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, 
 	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength,

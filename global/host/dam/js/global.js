@@ -1624,6 +1624,9 @@ function toggleslide(theclickid,thefield){
 	$('#' + thefield).click(function(){ 
 		this.select(); 
 	});
+	$('#' + thefield + 'd').click(function(){ 
+		this.select(); 
+	});
 };
 function SetVideo(source, title) {
 	$('#videoPlayerDiv').dialog('destroy');

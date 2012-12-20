@@ -17,6 +17,12 @@
 		 | <a href="##" onclick="toggleslide('divp#attributes.file_id#','inputp#attributes.file_id#');">Direct Link</a>
 		<div id="divp#attributes.file_id#" style="display:none;">
 			<input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" />
+			<br />
+			<cfif application.razuna.storage EQ "local">
+				<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="http://#cgi.http_host#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" />
+			<cfelse>
+				<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="#qry_detail.detail.cloud_url_org#" />
+			</cfif>
 			<!--- Plugin --->
 			<cfset args = structNew()>
 			<cfset args.detail = qry_detail.detail>
@@ -54,6 +60,11 @@
 			 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');">Direct Link</a>
 			<div id="divo#attributes.file_id#" style="display:none;">
 				<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" />
+				<cfif application.razuna.storage EQ "local">
+					<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="http://#cgi.http_host#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.img_filename_org#" />
+				<cfelse>
+					<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#qry_detail.detail.cloud_url_org#" />
+				</cfif>
 				<!--- Plugin --->
 				<cfset args.thepreview = false>
 				<cfinvoke component="global.cfc.plugins" method="getactions" theaction="show_in_direct_link" args="#args#" returnvariable="pl">
