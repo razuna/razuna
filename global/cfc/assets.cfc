@@ -418,6 +418,8 @@
 	<cfparam name="arguments.thestruct.av" default="0">
 	<cfparam name="arguments.thestruct.dam" default="false">
 	<cfset var md5hash = "">
+	<!--- Put HTTP referer into var --->
+	<cfset arguments.thestruct.comingfrom = cgi.http_referer>
 	<!--- If developer wants to debug  --->
 	<cfif arguments.thestruct.debug>
 		<cfinvoke component="debugme" method="email_dump" emailto="#arguments.thestruct.emailto#" emailfrom="server@razuna.com" emailsubject="debug apiupload" dump="#arguments.thestruct#">
@@ -637,6 +639,7 @@
 <message>success</message>
 <assetid>#xmlformat(arguments.thestruct.tempid)#</assetid>
 <filetype>#xmlformat(thefiletype)#</filetype>
+<comingfrom>#xmlFormat(arguments.thestruct.comingfrom)#</comingfrom>
 </Response></cfoutput>
 				</cfsavecontent>
 				<!--- When the redirect param is here then --->
