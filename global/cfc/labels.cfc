@@ -83,6 +83,7 @@
 			</cfif>
 		</cfif>
 		<!--- Flush --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
@@ -95,6 +96,7 @@
 			<cfinvoke method="label_add_all_thread" thestruct="#attributes.intstruct#" />
 		</cfthread>
 		<!--- Flush --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
 	</cffunction>
 
@@ -184,6 +186,7 @@
 		)
 		</cfquery>
 		<!--- Flush --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn theid />
@@ -207,6 +210,7 @@
 		AND ct_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
 		<!--- Flush --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
@@ -307,6 +311,7 @@
 		WHERE ct_id_r = <cfqueryparam value="#arguments.id#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
 		<!--- Flush --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
@@ -784,6 +789,7 @@
 			</cfquery>
 		</cfif>
 		<!--- Flush --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
