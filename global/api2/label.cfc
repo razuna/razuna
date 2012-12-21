@@ -174,10 +174,13 @@
 						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
+					<!--- Update Dates --->
+					<cfinvoke component="global.cfc.global" method="update_dates" type="#arguments.thestruct.asset_type#" fileid="#arguments.thestruct.asset_id#" />
 					<cfcatch type="database"></cfcatch>
 				</cftry>
 			</cfloop>
 			<!--- Flush cache --->
+			<cfset resetcachetoken(arguments.api_key,"search")>
 			<cfset resetcachetoken(arguments.api_key,"labels")>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>
@@ -208,6 +211,7 @@
 				</cfquery>
 			</cfloop>
 			<!--- Flush cache --->
+			<cfset resetcachetoken(arguments.api_key,"search")>
 			<cfset resetcachetoken(arguments.api_key,"labels")>
 			<!--- Return --->
 			<cfset thexml.responsecode = 0>

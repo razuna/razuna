@@ -82,6 +82,8 @@
 				</cfquery>
 			</cfif>
 		</cfif>
+		<!--- Update Dates --->
+		<cfinvoke component="global" method="update_dates" type="#arguments.thestruct.type#" fileid="#arguments.thestruct.id#" />
 		<!--- Flush --->
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>
@@ -95,9 +97,6 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="label_add_all_thread" thestruct="#attributes.intstruct#" />
 		</cfthread>
-		<!--- Flush --->
-		<cfset resetcachetoken("search")>
-		<cfset variables.cachetoken = resetcachetoken("labels")>
 	</cffunction>
 
 	<!--- Add labels --->
@@ -133,6 +132,8 @@
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
+				<!--- Update Dates --->
+				<cfinvoke component="global" method="update_dates" type="#arguments.thestruct.thetype#" fileid="#arguments.thestruct.fileid#" />
 			</cfloop>
 			<!--- Lucene: Delete Records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
@@ -141,6 +142,9 @@
 				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" category="#arguments.thestruct.thetype#" notfile="T">
 			</cfif>
 		</cfif>
+		<!--- Flush --->
+		<cfset resetcachetoken("search")>
+		<cfset variables.cachetoken = resetcachetoken("labels")>
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -209,6 +213,8 @@
 		AND ct_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="cf_sql_varchar" />
 		AND ct_type = <cfqueryparam value="#arguments.thestruct.type#" cfsqltype="cf_sql_varchar" />
 		</cfquery>
+		<!--- Update Dates --->
+		<cfinvoke component="global" method="update_dates" type="#arguments.thestruct.type#" fileid="#arguments.thestruct.id#" />
 		<!--- Flush --->
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("labels")>

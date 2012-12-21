@@ -1107,4 +1107,43 @@ Comment:<br>
 		<cfflush>
 	</cffunction>
 	
+	<!--- Update dates --->
+	<cffunction name="update_dates" output="false" returntype="void">
+		<cfargument name="type" required="true" type="string">
+		<cfargument name="fileid" required="true" type="string">
+		<!--- Only if certain type --->
+		<cfif arguments.type EQ "img" OR arguments.type EQ "vid" OR arguments.type EQ "aud" OR arguments.type EQ "doc">
+			<!--- Params --->
+			<cfif arguments.type EQ "img">
+				<cfset var thedb = "images">
+				<cfset var theid = "img_id">
+				<cfset var d1 = "img_change_date">
+				<cfset var d2 = "img_change_time">
+			<cfelseif arguments.type EQ "vid">
+				<cfset var thedb = "videos">
+				<cfset var theid = "vid_id">
+				<cfset var d1 = "vid_change_date">
+				<cfset var d2 = "vid_change_time">
+			<cfelseif arguments.type EQ "aud">
+				<cfset var thedb = "audios">
+				<cfset var theid = "aud_id">
+				<cfset var d1 = "aud_change_date">
+				<cfset var d2 = "aud_change_time">
+			<cfelseif arguments.type EQ "doc">
+				<cfset var thedb = "files">
+				<cfset var theid = "file_id">
+				<cfset var d1 = "file_change_date">
+				<cfset var d2 = "file_change_time">
+			</cfif>
+			<!--- Update DB --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix##thedb#
+			SET 
+			#d1# = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
+			#d2# = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
+			WHERE #theid# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			</cfquery>
+		</cfif>
+	</cffunction>
+
 </cfcomponent>
