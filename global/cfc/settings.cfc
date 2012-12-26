@@ -213,6 +213,7 @@
 
 <!--- Settings for Storage --->
 <cffunction name="prefs_storage">
+	<cfset variables.cachetoken = getcachetoken("settings")>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#prefs_storage */ set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket
 	FROM #session.hostdbprefix#settings_2
