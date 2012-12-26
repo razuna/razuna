@@ -207,18 +207,18 @@
 		<!--- Call --->
 		<cftry>
 			<!--- GetStorageNodeExtended --->
-			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
-				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
+				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 				<cfhttpparam name="fileOverwrite" value="true" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
 				<cfhttpparam name="excludedNode" value="node4" type="url">
-			</cfhttp> --->
-
-			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
+			</cfhttp>
+			<!--- GetStorageNode --->
+			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
 				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
-			</cfhttp>
+			</cfhttp> --->
 			<!--- Parse --->
 			<cfset var xmlVar = xmlParse(cfhttp.filecontent)/>
 			<!--- If session timed out --->
