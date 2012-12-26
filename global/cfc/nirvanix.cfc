@@ -56,10 +56,11 @@
 		<!--- Login and get session token --->
 		<cftry>
 			<cfif arguments.thestruct.isbrowser EQ "F">
-				<cfhttp url="https://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
+				<cfhttp url="http://services.nirvanix.com/ws/Authentication/Login.ashx" method="get" throwonerror="yes" charset="utf-8" timeout="60">
 					<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
 					<cfhttpparam name="username" value="#qry_settings.set2_nirvanix_name#" type="url">
 					<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
+					<cfhttpparam name="_v" value="#createuuid()#" type="url">
 				</cfhttp>
 			<cfelse>
 				<!--- If this is a Squid request then the ip is not in the remote_addr cgi variable --->
@@ -69,21 +70,27 @@
 					<cfset var theremoteip = cgi.remote_addr>
 				</cfif>
 				<!--- Get the SessionToken --->
-				<cfhttp url="https://services.nirvanix.com/ws/Authentication/LoginProxy.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
+				<cfhttp url="http://services.nirvanix.com/ws/Authentication/LoginProxy.ashx" method="get" throwonerror="yes" charset="utf-8" timeout="60">
 					<cfhttpparam name="appKey" value="#variables.appkey#" type="url">
 					<cfhttpparam name="username" value="#qry_settings.set2_nirvanix_name#" type="url">
 					<cfhttpparam name="password" value="#qry_settings.set2_nirvanix_pass#" type="url">
 					<cfhttpparam name="consumerIP" value="#theremoteip#" type="url">
+					<cfhttpparam name="_v" value="#createuuid()#" type="url">
 				</cfhttp>
 			</cfif>
 			<!--- Get the XML node for each setting --->
 			<cfset var thexml = xmlparse(cfhttp.FileContent)>
 			<cfset var nvxsession = thexml.Response.Sessiontoken[1].XmlText>
+			<cfset session.nvxsession = nvxsession>
 			<cfcatch type="any">
+				<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="debug login" type="html"><cfdump var="#cfcatch#"></cfmail>
 				<cfset var nvxsession = 0>
+				<cfset session.nvxsession = nvxsession>
+				<cfpause interval="5" />
+				<cfinvoke method="login" thestruct="#arguments.thestruct#" />
 			</cfcatch>
 		</cftry>
-		<!--- <cfpause interval="2" /> --->
+		
 		<!--- Return --->
 		<cfreturn nvxsession>
 	</cffunction>
@@ -156,10 +163,8 @@
 		<cfif fileexists(arguments.uploadfile)>			
 			<!--- Params --->
 			<cfset var tt = createuuid("")>
-			<!--- Get session --->
-			<cfset var nvxsession = login()>
 			<!--- Get Storage Node Stuff --->
-			<cfset var storagenode = getstoragenode(nvxsession,arguments.destFolderPath)>
+			<cfset var storagenode = getstoragenode(arguments.destFolderPath)>
 			<!--- Upload Asset --->
 			<cftry>
 				<cfhttp url="http://#storagenode.uploadhost#/Upload.ashx" method="post" throwonerror="yes" timeout="900">
@@ -195,30 +200,34 @@
 	
 	<!--- FUNCTION: GETSTORAGENODE --->
 	<cffunction name="GetStorageNode" returntype="struct" access="public" output="false">
-		<cfargument name="nvxsession" type="string" required="false">
 		<cfargument name="thepath" type="string" required="true">
 		<!--- Init struct --->
 		<cfset var thenode = structnew()>
+		
 		<!--- Call --->
 		<cftry>
 			<!--- GetStorageNodeExtended --->
 			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
-				<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 				<cfhttpparam name="fileOverwrite" value="true" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
 				<cfhttpparam name="excludedNode" value="node4" type="url">
 			</cfhttp> --->
 
-			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="60">
-				<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
+				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
-				<cfhttpparam name="fileOverwrite" value="true" type="url">
-				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
 			</cfhttp>
-
 			<!--- Parse --->
 			<cfset var xmlVar = xmlParse(cfhttp.filecontent)/>
+			<!--- If session timed out --->
+			<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+				<!--- Get session --->
+				<cfset login()>
+				<!--- Call method again --->
+				<cfinvoke method="GetStorageNode" thepath="#arguments.thepath#" />
+			</cfif>
 			<!--- Get the XML node for each setting --->
 			<cfset thenode.uploadhost = xmlvar.Response.GetStorageNode.UploadHost[1].XmlText>
 			<cfset thenode.uploadtoken = xmlvar.Response.GetStorageNode.UploadToken[1].XmlText>
@@ -244,15 +253,22 @@
 	<!--- FUNCTION: CREATE FOLDERS --->
 	<cffunction name="CreateFolders" access="public" output="false">
 		<cfargument name="folderpath" type="string" required="true">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cftry>
 			<!--- <cfset NxCreatefolder(variables.nvxsession,arguments.folderpath)> --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/CreateFolders.ashx" method="get" throwonerror="no" timeout="30">
-				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="folderPath" value="#arguments.folderpath#" type="url">
 			</cfhttp>
+			<!--- Parse XML --->
+			<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+			<!--- If session timed out --->
+			<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+				<!--- Get session --->
+				<cfset login()>
+				<!--- Call method again --->
+				<cfinvoke method="CreateFolders" folderpath="#arguments.folderpath#" />
+			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug nirvanix create folder" dump="#cfcatch#">
 			</cfcatch>
@@ -264,8 +280,6 @@
 	<cffunction name="DeleteFolders" access="public" output="false">
 		<cfargument name="folderpath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Get session --->
-		<!--- <cfset var nvxsession = login()> --->
 		<!--- Call --->
 		<!--- <cfset NxDeletefolder(variables.nvxsession,arguments.folderpath)> --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/DeleteFolders.ashx" method="get" throwonerror="no" timeout="30">
@@ -280,15 +294,22 @@
 		<cfargument name="folderpath" type="string" required="true">
 		<cfargument name="newFolderName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<cftry>
 			<!--- Call --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/RenameFolder.ashx" method="post" throwonerror="no" timeout="30">
-				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="folderPath" value="#arguments.folderpath#" type="url">
 				<cfhttpparam name="newFolderName" value="#arguments.newFolderName#" type="url">
 			</cfhttp>
+			<!--- Parse XML --->
+			<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+			<!--- If session timed out --->
+			<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+				<!--- Get session --->
+				<cfset login()>
+				<!--- Call method again --->
+				<cfinvoke method="RenameFolders" folderpath="#arguments.folderpath#" newFolderName="#arguments.newFolderName#" />
+			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Nirvanix error - renamefolder" dump="#cfcatch#">
 			</cfcatch>
@@ -301,15 +322,22 @@
 		<cfargument name="srcFolderPath" type="string" required="true">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<cftry>
 			<!--- Call --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/CopyFolders.ashx" method="get" throwonerror="no" timeout="30">
-				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="srcFolderPath" value="#arguments.srcFolderPath#" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 			</cfhttp>
+			<!--- Parse XML --->
+			<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+			<!--- If session timed out --->
+			<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+				<!--- Get session --->
+				<cfset login()>
+				<!--- Call method again --->
+				<cfinvoke method="CopyFolders" srcFolderPath="#arguments.srcFolderPath#" destFolderPath="#arguments.destFolderPath#" />
+			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Nirvanix error - copyfolder" dump="#cfcatch#">
 			</cfcatch>
@@ -322,15 +350,22 @@
 		<cfargument name="srcFolderPath" type="string" required="true">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<cftry>
 			<!--- Call --->
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/MoveFolders.ashx" method="get" throwonerror="no" timeout="30">
-				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="srcFolderPath" value="#arguments.srcFolderPath#" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 			</cfhttp>
+			<!--- Parse XML --->
+			<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+			<!--- If session timed out --->
+			<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+				<!--- Get session --->
+				<cfset login()>
+				<!--- Call method again --->
+				<cfinvoke method="MoveFolders" srcFolderPath="#arguments.srcFolderPath#" destFolderPath="#arguments.destFolderPath#" />
+			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Nirvanix error - movefolder" dump="#cfcatch#">
 			</cfcatch>
@@ -344,23 +379,24 @@
 		<cfargument name="folderPath" type="string" required="true">
 		<cfargument name="pageNumber" type="numeric" required="true">
 		<cfargument name="pageSize" type="numeric" required="true">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/ListFolder.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 			<cfhttpparam name="folderPath" value="#arguments.folderPath#" type="url">
 			<cfhttpparam name="pageNumber" value="#arguments.pageNumber#" type="url">
 			<cfhttpparam name="pageSize" value="#arguments.pageSize#" type="url">
 			<cfhttpparam name="sortCode" value="Name" type="url">
 			<cfhttpparam name="sortDescending" value="false" type="url">
 		</cfhttp>
-		<!--- Trim the XML. Workaround for a bug in the engine that does not parse XML correctly --->
-		<cfset trimxml = trim(cfhttp.FileContent)>
-		<cfset thelen = len(trimxml)>
-		<cfset findit = findoneof("<",cfhttp.FileContent)>
-		<cfset thexml = mid(cfhttp.FileContent, findit, thelen)>
-		<cfset xmlVar = xmlParse(thexml)/>
+		<!--- Parse XML --->
+		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+		<!--- If session timed out --->
+		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+			<!--- Get session --->
+			<cfset login()>
+			<!--- Call method again --->
+			<cfinvoke method="ListFolder" folderPath="#arguments.folderPath#" pageNumber="#arguments.pageNumber#" pageSize="#arguments.pageSize#" />
+		</cfif>
 		<!--- Return --->
 		<cfreturn xmlVar>
 	</cffunction>
@@ -374,14 +410,21 @@
 		<cfargument name="srcFilePath" type="string" required="true">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/MoveFiles.ashx" method="get" throwonerror="no" timeout="30">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 			<cfhttpparam name="srcFilePath" value="#arguments.srcFilePath#" type="url">
 			<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 		</cfhttp>
+		<!--- Parse XML --->
+		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+		<!--- If session timed out --->
+		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+			<!--- Get session --->
+			<cfset login()>
+			<!--- Call method again --->
+			<cfinvoke method="MoveFiles" srcFilePath="#arguments.srcFilePath#" destFolderPath="#arguments.destFolderPath#" />
+		</cfif>
 		<cfreturn />
 	</cffunction>
 	
@@ -390,14 +433,21 @@
 		<cfargument name="srcFilePath" type="string" required="true">
 		<cfargument name="destFolderPath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/CopyFiles.ashx" method="get" throwonerror="no" timeout="30">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 			<cfhttpparam name="srcFilePath" value="#arguments.srcFilePath#" type="url">
 			<cfhttpparam name="destFolderPath" value="#arguments.destFolderPath#" type="url">
 		</cfhttp>
+		<!--- Parse XML --->
+		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+		<!--- If session timed out --->
+		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+			<!--- Get session --->
+			<cfset login()>
+			<!--- Call method again --->
+			<cfinvoke method="CopyFiles" srcFilePath="#arguments.srcFilePath#" destFolderPath="#arguments.destFolderPath#" />
+		</cfif>
 		<cfreturn />
 	</cffunction>
 	
@@ -405,13 +455,20 @@
 	<cffunction name="DeleteFiles" access="public" output="false">
 		<cfargument name="filePath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/DeleteFiles.ashx" method="get" throwonerror="no" timeout="30">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 			<cfhttpparam name="filePath" value="#arguments.filePath#" type="url">
 		</cfhttp>
+		<!--- Parse XML --->
+		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+		<!--- If session timed out --->
+		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+			<!--- Get session --->
+			<cfset login()>
+			<!--- Call method again --->
+			<cfinvoke method="DeleteFiles" filePath="#arguments.filePath#" />
+		</cfif>
 		<cfreturn />
 	</cffunction>
 	
@@ -420,14 +477,21 @@
 		<cfargument name="filePath" type="string" required="true">
 		<cfargument name="newFileName" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/IMFS/RenameFile.ashx" method="get" throwonerror="no">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 			<cfhttpparam name="filePath" value="#arguments.filePath#" type="url">
 			<cfhttpparam name="newFileName" value="#arguments.newFileName#" type="url">
 		</cfhttp>
+		<!--- Parse XML --->
+		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+		<!--- If session timed out --->
+		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+			<!--- Get session --->
+			<cfset login()>
+			<!--- Call method again --->
+			<cfinvoke method="RenameFile" filePath="#arguments.filePath#" newFileName="#arguments.newFileName#" />
+		</cfif>
 		<cfreturn />
 	</cffunction>
 	
@@ -539,13 +603,20 @@
 	<!--- FUNCTION: GET STORAGE USAGE --->
 	<cffunction name="GetStorageUsage" access="public" output="false">
 		<cfargument name="userName" type="string" required="true">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/accounting/GetStorageUsage.ashx" method="get" throwonerror="no" charset="utf-8">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 			<cfhttpparam name="userName" value="#arguments.userName#" type="url">
 		</cfhttp>
+		<!--- Parse XML --->
+		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+		<!--- If session timed out --->
+		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+			<!--- Get session --->
+			<cfset login()>
+			<!--- Call method again --->
+			<cfinvoke method="GetStorageUsage" userName="#arguments.userName#" />
+		</cfif>
 		<cfreturn cfhttp>
 	</cffunction>
 	
@@ -561,16 +632,21 @@
 		<cfset x.band = 0>
 		<cfif application.razuna.isp>
 			<cftry>
-				<!--- Get session --->
-				<cfset var nvxsession = login()>
 				<!--- Call --->
 				<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
 				<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="60">
-					<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+					<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 					<cfhttpparam name="userName" value="#arguments.username#" type="url">
 				</cfhttp>
 				<!--- Parse XML --->
 				<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+				<!--- If session timed out --->
+				<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+					<!--- Get session --->
+					<cfset login()>
+					<!--- Call method again --->
+					<cfinvoke method="GetAccountUsage" userName="#arguments.userName#" />
+				</cfif>
 				<!--- Set values --->
 				<cfset var nvxDBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Download Bandwidth Usage' ] ]")>
 				<cfset var nvxUBU = xmlSearch(xmlVar, "//GetUsage[ FeatureName[ text() = 'Upload Bandwidth Usage' ] ]")>
@@ -641,13 +717,20 @@
 	<!--- FUNCTION: GET ACCOUNT LIMITS --->
 	<cffunction name="GetAccountLimits" access="public" output="false">
 		<cfargument name="userName" type="string" required="true">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountLimits.ashx" method="get" throwonerror="no" charset="utf-8">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 			<cfhttpparam name="userName" value="#arguments.userName#" type="url">
 		</cfhttp>
+		<!--- Parse XML --->
+		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+		<!--- If session timed out --->
+		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+			<!--- Get session --->
+			<cfset login()>
+			<!--- Call method again --->
+			<cfinvoke method="GetAccountLimits" userName="#arguments.userName#" />
+		</cfif>
 		<cfreturn cfhttp>
 	</cffunction>
 	
@@ -656,14 +739,21 @@
 		<cfargument name="userName" type="string" required="true">
 		<cfargument name="Type" type="string" required="true">
 		<cfargument name="Value" type="string" required="true">
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Call --->
 		<cfhttp url="http://services.nirvanix.com/ws/accounting/SetAccountLimits.ashx" method="get" throwonerror="no">
-			<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 			<cfhttpparam name="userName" value="#arguments.userName#" type="url">
 			<cfhttpparam name="#arguments.Type#" value="#arguments.value#" type="url">
 		</cfhttp>
+		<!--- Parse XML --->
+		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+		<!--- If session timed out --->
+		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+			<!--- Get session --->
+			<cfset login()>
+			<!--- Call method again --->
+			<cfinvoke method="SetAccountLimits" userName="#arguments.userName#" Type="#arguments.Type#" Value="#arguments.Value#" />
+		</cfif>
 		<cfreturn />
 	</cffunction>
 	
@@ -694,12 +784,10 @@
 	<!--- FUNCTION: SIGNED URL --->
 	<cffunction name="signedurlthread" access="public" output="false" returntype="string">
 		<cfargument name="thestruct" type="struct" required="true" />
-		<!--- Get session --->
-		<cfset var nvxsession = login()>
 		<!--- Get Signed URL --->
 		<cftry>
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetOptimalUrls.ashx" method="get" throwonerror="no">
-				<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
+				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="filePath" value="//razuna/#session.hostid#/#arguments.thestruct.theasset#" type="url">
 				<cfhttpparam name="expiration" value="#arguments.thestruct.newepoch#" type="url">
 			</cfhttp>
@@ -707,6 +795,13 @@
 			<cfset var d = xmlparse(cfhttp.filecontent)>
 			<!--- Get ResponseCode --->
 			<cfset var respcode = d.Response.Responsecode[1].XmlText>
+			<!--- If session timed out --->
+			<cfif respcode EQ "80006" OR respcode EQ "80101">
+				<!--- Get session --->
+				<cfset login()>
+				<!--- Call method again --->
+				<cfinvoke method="signedurl" theasset="#arguments.thestruct.theasset#" />
+			</cfif>
 			<!--- If response is 0 then ok, else let us know --->
 			<cfif respcode EQ 0>
 				<!--- Get Downloadtoken --->
