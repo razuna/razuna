@@ -202,13 +202,21 @@
 		<!--- Call --->
 		<cftry>
 			<!--- GetStorageNodeExtended --->
-			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
+			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
 				<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 				<cfhttpparam name="fileOverwrite" value="true" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
 				<cfhttpparam name="excludedNode" value="node4" type="url">
+			</cfhttp> --->
+
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="60">
+				<cfhttpparam name="sessionToken" value="#arguments.nvxsession#" type="url">
+				<cfhttpparam name="sizeBytes" value="50000" type="url">
+				<cfhttpparam name="fileOverwrite" value="true" type="url">
+				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
 			</cfhttp>
+
 			<!--- Parse --->
 			<cfset var xmlVar = xmlParse(cfhttp.filecontent)/>
 			<!--- Get the XML node for each setting --->
@@ -557,7 +565,7 @@
 				<cfset var nvxsession = login()>
 				<!--- Call --->
 				<!--- <cfset nvxusage = NxGetaccountusage(variables.nvxsession,arguments.username)> --->
-				<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="30">
+				<cfhttp url="http://services.nirvanix.com/ws/accounting/GetAccountUsage.ashx" method="get" throwonerror="no" charset="utf-8" timeout="60">
 					<cfhttpparam name="sessionToken" value="#nvxsession#" type="url">
 					<cfhttpparam name="userName" value="#arguments.username#" type="url">
 				</cfhttp>
