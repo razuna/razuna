@@ -154,7 +154,7 @@
 						</cfif>
 						<!--- List the converted formats --->
 						<cfset thecounter = 2>
-						<cfloop query="attributes.qry_related">
+						<cfloop query="qry_related">
 							<cfset theid = aud_id>
 							<cfset theext = aud_extension>
 							<cfset theilength = aud_size>
