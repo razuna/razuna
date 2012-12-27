@@ -124,7 +124,7 @@
 								<br /><br />
 								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to share files with Razuna');return false;">&gt; How to share files with Razuna</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Make good use of widgets');return false;">&gt; Make good use of wigets</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Make good use of widgets');return false;">&gt; Make good use of widgets</a>
 								<br /><br />
 								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Manage users and groups');return false;">&gt; Manage users and groups</a>
 								<br /><br />
