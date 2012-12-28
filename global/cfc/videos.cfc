@@ -224,7 +224,7 @@
 <!--- GET DETAIL OF THIS VIDEO --->
 <cffunction name="getdetails" access="public" output="false" returntype="query">
 	<cfargument name="vid_id" type="string" required="true">
-	<cfargument name="ColumnList" required="false" type="string" hint="the column list for the selection" default="v.vid_id, v.vid_filename, v.vid_custom_id, v.vid_extension, v.vid_mimetype, v.vid_preview_width, v.vid_preview_heigth, v.folder_id_r, v.vid_name_org, v.vid_name_image, v.vid_name_pre, v.vid_name_pre_img, v.vid_width vwidth, v.vid_height vheight, v.path_to_asset, v.cloud_url, v.cloud_url_org">
+	<cfargument name="ColumnList" required="false" type="string" hint="the column list for the selection" default="v.vid_id, v.vid_filename, v.vid_custom_id, v.vid_extension, v.vid_mimetype, v.vid_preview_width, v.vid_preview_heigth, v.folder_id_r, v.vid_name_org, v.vid_name_image, v.vid_name_pre, v.vid_name_pre_img, v.vid_width vwidth, v.vid_height vheight, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_group">
 	<!--- Local Param --->
 	<cfset var qry = 0>
 	<cfparam default="0" name="session.thegroupofuser">
@@ -558,7 +558,9 @@
 <cffunction hint="REMOVE THE VIDEO" name="removevideo" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Get file detail for log --->
-	<cfinvoke method="getdetails" vid_id="#arguments.thestruct.id#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
+	<cfinvoke method="getdetails" vid_id="#arguments.thestruct.id#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, v.lucene_key, v.link_kind, v.link_path_url, v.path_to_asset, v.vid_group" returnvariable="thedetail">
+	<!--- Update main record with dates --->
+	<cfinvoke component="global" method="update_dates" type="vid" fileid="#thedetail.vid_group#" />
 	<!--- Log --->
 	<cfinvoke component="extQueryCaching" method="log_assets">
 		<cfinvokeargument name="theuserid" value="#session.theuserid#">
@@ -968,13 +970,14 @@
 			SET
 			vid_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			vid_online = <cfqueryparam value="#arguments.thestruct.vid_online#" cfsqltype="cf_sql_varchar">,
-			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">,
-			vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-			vid_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.file_id#" />
+		<!--- Query again --->
 		<cfquery datasource="#variables.dsn#" name="qryorg">
 		SELECT vid_name_org, vid_filename, path_to_asset
 		FROM #session.hostdbprefix#videos
@@ -1049,6 +1052,8 @@
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 		<!--- Get details --->
 		<cfinvoke method="getdetails" vid_id="#arguments.thestruct.file_id#" returnvariable="arguments.thestruct.qry_detail">
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.qry_detail.vid_group#" />
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
 		<cfset tempfolder = "vid#createuuid('')#">
 		<!--- set the folder path in a var --->

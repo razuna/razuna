@@ -740,15 +740,16 @@
 					UPDATE #session.hostdbprefix#files
 					SET 
 					file_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
-					shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">,
-					file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-					file_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+					shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 					<!--- <cfif isdefined("remarks")>, file_remarks = <cfqueryparam value="#remarks#" cfsqltype="cf_sql_varchar"></cfif> --->
 					WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
 				</cfif>
 			</cfif>
+			<!--- Update main record with dates --->
+			<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.file_id#" />
+			<!--- Query --->
 			<cfquery datasource="#variables.dsn#" name="qry">
 			SELECT file_name_org, file_name, path_to_asset
 			FROM #session.hostdbprefix#files

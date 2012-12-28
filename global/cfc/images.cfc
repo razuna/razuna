@@ -249,7 +249,9 @@
 		<!--- Remove the file in the thread below --->
 		<cfthread intstruct="#arguments.thestruct#">
 			<!--- Get file detail for log --->
-			<cfinvoke method="filedetail" theid="#attributes.intstruct.id#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset, thumb_extension" returnvariable="thedetail">
+			<cfinvoke method="filedetail" theid="#attributes.intstruct.id#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset, thumb_extension, img_group" returnvariable="thedetail">
+			<!--- Update main record with dates --->
+			<cfinvoke component="global" method="update_dates" type="img" fileid="#thedetail.img_group#" />
 			<!--- Delete from files DB (including referenced data) --->
 			<cfquery datasource="#application.razuna.datasource#">
 			DELETE FROM #session.hostdbprefix#images
@@ -698,13 +700,13 @@
 			UPDATE #session.hostdbprefix#images
 			SET 
 			img_filename = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
-			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">,
-			img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-			img_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.file_id#" />
 		<!--- Select the record to get the original filename or assign if one is there --->
 		<cfquery datasource="#variables.dsn#" name="qryorg">
 		SELECT img_filename_org, img_filename, img_extension, thumb_extension, link_kind, link_path_url, path_to_asset
@@ -1083,6 +1085,8 @@
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 		</cftransaction>
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.file_id#" />
 		<!--- Log --->
 		<cfset log = log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.file_id#')>
 		<!--- Call Plugins --->

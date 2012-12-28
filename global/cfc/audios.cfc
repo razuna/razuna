@@ -192,7 +192,9 @@
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Get details --->
 	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailaud */ a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner, a.cloud_url, a.cloud_url_org,
+	SELECT /* #variables.cachetoken#detailaud */ 
+	a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_online, a.aud_owner, 
+	a.cloud_url, a.cloud_url_org, a.aud_group,
 	a.aud_create_date, a.aud_create_time, a.aud_change_date, a.aud_change_time, a.aud_name_noext,
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
 	a.path_to_asset, a.lucene_key, s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
@@ -366,13 +368,14 @@
 			SET
 			aud_name = <cfqueryparam value="#arguments.thestruct.fname#" cfsqltype="cf_sql_varchar">,
 			aud_online = <cfqueryparam value="#arguments.thestruct.aud_online#" cfsqltype="cf_sql_varchar">,
-			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">,
-			aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-			aud_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			shared = <cfqueryparam value="#arguments.thestruct.shared#" cfsqltype="cf_sql_varchar">
 			WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.file_id#" />
+		<!--- Query --->
 		<cfquery datasource="#variables.dsn#" name="qryorg">
 		SELECT aud_name_org, aud_name, path_to_asset
 		FROM #session.hostdbprefix#audios
@@ -422,11 +425,13 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Get file detail for log --->
 	<cfquery datasource="#application.razuna.datasource#" name="details">
-	SELECT aud_name, folder_id_r, link_kind, link_path_url, aud_name_org filenameorg, lucene_key, path_to_asset
+	SELECT aud_name, folder_id_r, link_kind, link_path_url, aud_name_org filenameorg, lucene_key, path_to_asset, aud_group
 	FROM #session.hostdbprefix#audios
 	WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Update main record with dates --->
+	<cfinvoke component="global" method="update_dates" type="aud" fileid="#details.aud_group#" />
 	<!--- Log --->
 	<cfinvoke component="extQueryCaching" method="log_assets">
 		<cfinvokeargument name="theuserid" value="#session.theuserid#">
@@ -824,6 +829,8 @@
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 		<!--- Get details --->
 		<cfinvoke method="detail" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.qry_detail">
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.qry_detail.aud_group#" />
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
 		<cfset tempfolder = "aud#createuuid('')#">
 		<!--- set the folder path in a var --->
