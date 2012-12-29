@@ -83,14 +83,12 @@
 			<cfset var nvxsession = thexml.Response.Sessiontoken[1].XmlText>
 			<cfset session.nvxsession = nvxsession>
 			<cfcatch type="any">
-				<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="debug login" type="html"><cfdump var="#cfcatch#"></cfmail>
 				<cfset var nvxsession = 0>
 				<cfset session.nvxsession = nvxsession>
 				<cfpause interval="5" />
 				<cfinvoke method="login" thestruct="#arguments.thestruct#" />
 			</cfcatch>
 		</cftry>
-		
 		<!--- Return --->
 		<cfreturn nvxsession>
 	</cffunction>
