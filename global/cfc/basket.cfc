@@ -606,7 +606,7 @@
 			<cfinvoke component="global" method="convertname" returnvariable="thefnamewithext" thename="#thefname#">
 			<cfset thefname = listfirst(thefnamewithext, ".")>
 			<!--- Create subfolder for the kind of audio --->
-			<cfif NOT directoryexists("#arguments.thestruct.newpath#/x/#theart#/")>
+			<cfif NOT directoryexists("#arguments.thestruct.newpath#/#thefname#/#theart#/")>
 				<cfdirectory action="create" directory="#arguments.thestruct.newpath#/#thefname#/#theart#/" mode="775">
 			</cfif>
 			<!--- Put variables into struct for threads --->
