@@ -129,6 +129,8 @@
 		</cfif>
 		<!--- Create a unique name for the temp directory to hold the file --->
 		<cfset arguments.thestruct.tempid = createuuid("")>
+		<!--- Put current id into session --->
+		<cfset session.currentupload = session.currentupload & "," & arguments.thestruct.tempid>
 		<cfset arguments.thestruct.thetempfolder = "asset#arguments.thestruct.tempid#">
 		<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
 		<!--- Create a temp directory to hold the file --->
@@ -229,6 +231,8 @@
 						</cfif>
 						<!--- Create a unique name for the temp directory to hold the file --->
 						<cfset arguments.thestruct.tempid = createuuid("")>
+						<!--- Put current id into session --->
+						<cfset session.currentupload = session.currentupload & "," & arguments.thestruct.tempid>
 						<cfset arguments.thestruct.thetempfolder = "asset#arguments.thestruct.tempid#">
 						<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
 						<!--- Create a temp directory to hold the file --->
@@ -300,11 +304,11 @@
 	<cfset arguments.thestruct.ftp_passive = session.ftp_passive>
 	<cfset arguments.thestruct.ftp_user = session.ftp_user>
 	<cfset arguments.thestruct.ftp_pass = session.ftp_pass>
-	<!--- <cfinvoke method="addassetftp" thestruct="#arguments.thestruct#" /> --->
+	<cfinvoke method="addassetftp" thestruct="#arguments.thestruct#" />
 	<!--- Start the thread for adding --->
-	<cfthread intstruct="#arguments.thestruct#">
+	<!--- <cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="addassetftp" thestruct="#attributes.intstruct#" />
-	</cfthread>
+	</cfthread> --->
 </cffunction>
 
 <!--- INSERT FROM FTP --->
@@ -316,6 +320,8 @@
 			<cfset md5hash = "">
 			<!--- Create a unique name for the temp directory to hold the file --->
 			<cfset arguments.thestruct.tempid = createuuid("")>
+			<!--- Put current id into session --->
+			<cfset session.currentupload = session.currentupload & "," & arguments.thestruct.tempid>
 			<cfset arguments.thestruct.thetempfolder = "ftp#arguments.thestruct.tempid#">
 			<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
 			<!--- Create a temp directory to hold the file --->
@@ -418,6 +424,7 @@
 	<cfparam name="arguments.thestruct.av" default="0">
 	<cfparam name="arguments.thestruct.dam" default="false">
 	<cfset var md5hash = "">
+	<cfparam name="session.currentupload" default="0">
 	<!--- Put HTTP referer into var --->
 	<cfset arguments.thestruct.comingfrom = cgi.http_referer>
 	<!--- If developer wants to debug  --->
@@ -511,6 +518,8 @@
 				<cfset arguments.thestruct.assetmetadata = SerializeJSON(metaarray)>
 			</cfif>
 			<cfset arguments.thestruct.tempid = createuuid("")>
+			<!--- Put current id into session --->
+			<cfset session.currentupload = session.currentupload & "," & arguments.thestruct.tempid>
 			<!--- Create a unique name for the temp directory to hold the file --->
 			<cfset arguments.thestruct.thetempfolder = "api#arguments.thestruct.tempid#">
 			<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
@@ -1133,10 +1142,34 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
+		<cfelse>
+			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
+		</cfif>
 		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 		)
 	</cfquery>
+	<!--- If there are metadata fields then add them here --->
+	<cfif arguments.thestruct.metadata EQ 1>
+		<!--- Check if API is called the old way --->
+		<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
+			<cfinvoke component="global.api.asset" method="setmetadata">
+				<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
+				<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+				<cfinvokeargument name="assettype" value="doc">
+				<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+			</cfinvoke>
+		<cfelse>
+			<!--- API2 --->
+			<cfinvoke component="global.api2.asset" method="setmetadata">
+				<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+				<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+				<cfinvokeargument name="assettype" value="doc">
+				<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+			</cfinvoke>
+		</cfif>
+	</cfif>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("files")>
 	<cfset resetcachetoken("folders")>
@@ -1331,6 +1364,30 @@ This is the main function called directly by a single upload else from addassets
 		<cfif structKeyExists(arguments.thestruct,"pdf_xmp") AND arguments.thestruct.pdf_xmp NEQ "">
 			<cfinvoke component="xmp" method="getpdfxmp" thestruct="#arguments.thestruct#" />
 		</cfif>
+		<!--- Grab the keywords --->
+		<cfset thekeywords = trim(listlast(thekeywords,":"))>
+		<cfset theapplekeywords = trim(listlast(theapplekeywords,":"))>
+		<!--- If XMP keywords is empty take the PDF:Keywords var --->
+		<cfif thekeywords EQ "">
+			<cfset thekeywords = theapplekeywords>
+		</cfif>
+		<!--- Append keywords and description to DB --->
+		<cfif structkeyexists(arguments.thestruct,"langcount")>
+			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#files_desc
+				(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
+				values(
+				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
+			</cfloop>
+		</cfif>
 	</cfif>
 	<!--- Put file_meta into struct for api --->
 	<cfset arguments.thestruct.file_meta = file_meta>
@@ -1353,13 +1410,7 @@ This is the main function called directly by a single upload else from addassets
 			file_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
 			file_type = <cfqueryparam value="#arguments.thestruct.thefiletype#" cfsqltype="cf_sql_varchar">, 
 			file_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
-			file_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">, 
-			file_name = 
-				<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-					<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
-				<cfelse>
-					<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
-				</cfif>
+			file_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">, 				
 			file_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
 			file_name_org = 
 				<cfif arguments.thestruct.link_kind EQ "lan">
@@ -1381,51 +1432,6 @@ This is the main function called directly by a single upload else from addassets
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 		</cftransaction>
-		<!--- Add the TEXTS to the DB. We have to hide this if we are coming from FCK --->
-		<!--- If we are PDF we create thumbnail and images from the PDF --->
-		<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND arguments.thestruct.qryfile.link_kind NEQ "url" AND structkeyexists(arguments.thestruct,"langcount")>
-			<!--- Grab the keywords --->
-			<cfset thekeywords = trim(listlast(thekeywords,":"))>
-			<cfset theapplekeywords = trim(listlast(theapplekeywords,":"))>
-			<!--- If XMP keywords is empty take the PDF:Keywords var --->
-			<cfif thekeywords EQ "">
-				<cfset thekeywords = theapplekeywords>
-			</cfif>
-			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#files_desc
-				(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
-				values(
-				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				)
-				</cfquery>
-			</cfloop>
-		</cfif>
-		<!--- If there are metadata fields then add them here --->
-		<cfif arguments.thestruct.metadata EQ 1>
-			<!--- Check if API is called the old way --->
-			<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
-				<cfinvoke component="global.api.asset" method="setmetadata">
-					<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
-					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
-					<cfinvokeargument name="assettype" value="doc">
-					<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
-				</cfinvoke>
-			<cfelse>
-				<!--- API2 --->
-				<cfinvoke component="global.api2.asset" method="setmetadata">
-					<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
-					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
-					<cfinvokeargument name="assettype" value="doc">
-					<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
-				</cfinvoke>
-			</cfif>
-		</cfif>
 		<!--- Move the file to its own directory --->
 		<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Create folder with the asset id --->
@@ -1649,12 +1655,6 @@ This is the main function called directly by a single upload else from addassets
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#images
 					SET
-					img_filename = 
-					<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-						<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
-					<cfelse>
-						<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-					</cfif>,
 					img_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
 					img_owner = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 					img_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
@@ -1818,7 +1818,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+		<cfelse>
+			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+		</cfif>,
 		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 		)
 		</cfquery>
@@ -1836,7 +1840,11 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+		<cfelse>
+			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+		</cfif>,
 		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 		)
 		</cfquery>
@@ -2418,7 +2426,11 @@ This is the main function called directly by a single upload else from addassets
 		(vid_id, vid_name_org, vid_filename, host_id, folder_id_r, path_to_asset, is_available, vid_create_time)
 		VALUES(
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thisvid.newid#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.filename#">,
+		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+		<cfelse>
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.filename#">
+		</cfif>,
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.filename#">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.folder_id#">,
@@ -2427,6 +2439,38 @@ This is the main function called directly by a single upload else from addassets
 		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
 		)
 		</cfquery>
+		<!--- Add the TEXTS to the DB. We have to hide this is if we are coming from FCK --->
+		<cfif arguments.thestruct.fieldname NEQ "NewFile" AND structkeyexists(arguments.thestruct,"langcount")>
+			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+				<cfif arguments.thestruct.uploadkind EQ "many">
+					<cfset desc="file_desc_" & "#countnr#" & "_" & "#langindex#">
+					<cfset keywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
+					<cfset title="file_title_" & "#countnr#" & "_" & "#langindex#">
+				<cfelse>
+					<cfset desc="arguments.thestruct.file_desc_" & "#langindex#">
+					<cfset keywords="arguments.thestruct.file_keywords_" & "#langindex#">
+					<cfset title="arguments.thestruct.file_title_" & "#langindex#">
+				</cfif>
+				<cfif desc CONTAINS "#langindex#">
+					<!--- check if form-vars are present. They will be missing if not coming from a user-interface (assettransfer, etc.) --->
+					<cfif IsDefined(desc) and IsDefined(keywords) and IsDefined(title)>
+						<cfquery datasource="#variables.dsn#">
+							INSERT INTO #session.hostdbprefix#videos_text
+							(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, vid_title, host_id)
+							VALUES(
+							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+							<cfqueryparam value="#arguments.thestruct.thisvid.newid#" cfsqltype="CF_SQL_VARCHAR">,
+							<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+							<cfqueryparam value="#evaluate(desc)#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							)
+						</cfquery>
+					</cfif>
+				</cfif>
+			</cfloop>
+		</cfif>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("folders")>
@@ -2643,13 +2687,6 @@ This is the main function called directly by a single upload else from addassets
 			vid_width = <cfqueryparam cfsqltype="cf_sql_numeric" value="#tw#">,
 			vid_height = <cfqueryparam cfsqltype="cf_sql_numeric" value="#th#">,
 		</cfif>
-		vid_filename = 
-		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
-		<cfelse>
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.filename#">
-		</cfif>
-		,
 		vid_custom_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thisvid.newid#">,
 		vid_online = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.vid_online#">,
 		vid_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
@@ -2687,38 +2724,6 @@ This is the main function called directly by a single upload else from addassets
 		WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thisvid.newid#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Add the TEXTS to the DB. We have to hide this is if we are coming from FCK --->
-		<cfif arguments.thestruct.fieldname NEQ "NewFile" AND structkeyexists(arguments.thestruct,"langcount")>
-			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-				<cfif arguments.thestruct.uploadkind EQ "many">
-					<cfset desc="file_desc_" & "#countnr#" & "_" & "#langindex#">
-					<cfset keywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
-					<cfset title="file_title_" & "#countnr#" & "_" & "#langindex#">
-				<cfelse>
-					<cfset desc="arguments.thestruct.file_desc_" & "#langindex#">
-					<cfset keywords="arguments.thestruct.file_keywords_" & "#langindex#">
-					<cfset title="arguments.thestruct.file_title_" & "#langindex#">
-				</cfif>
-				<cfif desc CONTAINS "#langindex#">
-					<!--- check if form-vars are present. They will be missing if not coming from a user-interface (assettransfer, etc.) --->
-					<cfif IsDefined(desc) and IsDefined(keywords) and IsDefined(title)>
-						<cfquery datasource="#variables.dsn#">
-							INSERT INTO #session.hostdbprefix#videos_text
-							(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, vid_title, host_id)
-							VALUES(
-							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-							<cfqueryparam value="#arguments.thestruct.thisvid.newid#" cfsqltype="CF_SQL_VARCHAR">,
-							<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-							<cfqueryparam value="#evaluate(desc)#" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							)
-						</cfquery>
-					</cfif>
-				</cfif>
-			</cfloop>
-		</cfif>
 		<!--- If there are metadata fields then add them here --->
 		<cfif arguments.thestruct.metadata EQ 1>
 			<!--- Check if API is called the old way --->
@@ -3118,14 +3123,19 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Add record --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#audios
-	(aud_id, is_available, folder_id_r, host_id, aud_name, aud_create_time)
+	(aud_id, is_available, folder_id_r, host_id, aud_name, aud_create_time, aud_name)
 	VALUES(
 		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+		<cfelse>
+			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+		</cfif>
 	)
 	</cfquery>
 	<!--- Flush Cache --->
@@ -3265,12 +3275,6 @@ This is the main function called directly by a single upload else from addassets
 			aud_type = <cfqueryparam value="#arguments.thestruct.thefiletype#" cfsqltype="cf_sql_varchar">, 
 			aud_name_noext = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">, 
 			aud_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">, 
-			aud_name = 
-				<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-					<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
-				<cfelse>
-					<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
-				</cfif>
 			aud_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
 			aud_name_org = 
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">

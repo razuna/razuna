@@ -39,6 +39,7 @@
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/plupload/plupload.full.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
 <style type="text/css">
 body {
 	background: white;
@@ -87,7 +88,16 @@ $(function() {
 					up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), upl_template: $('##upl_template_chooser').val() };
 				});
 				up.bind('UploadComplete', function() {
-					parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');
+					<cfif !pl_return.cfc.pl.loadform.active>
+						parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');
+					<cfelse>
+						// This is for the metaform plugin
+						// close window
+						parent.$('##thewindowcontent1').dialog('close');
+						// load metaform
+						parent.$('##rightside').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
+						// parent.$('##tab_addassets').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
+					</cfif>
 				});
 			}
 		</cfif>

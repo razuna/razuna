@@ -1552,6 +1552,7 @@
 	<fuseaction name="asset_add">
 		<!-- Param -->
 		<set name="session.type" value="" />
+		<set name="session.currentupload" value="0" />
 		<!-- XFA -->
 		<xfa name="addsingle" value="c.asset_add_single" />
 		<xfa name="addserver" value="c.asset_add_server" />
@@ -1605,6 +1606,8 @@
 		<!-- <do action="asset_get_settings" /> -->
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
 		<!-- Show -->
 		<do action="ajax.asset_add_server_content" />
 	</fuseaction>
@@ -1692,6 +1695,8 @@
 		<invoke object="myFusebox.getApplicationData().ftp" methodcall="getdirectory(attributes)" returnvariable="qry_ftp" />
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
 		<!-- Show -->
 		<do action="ajax.asset_add_ftp_show" />
 	</fuseaction>
@@ -1705,6 +1710,8 @@
 		<invoke object="myFusebox.getApplicationData().ftp" methodcall="getdirectory(attributes)" returnvariable="qry_ftp" />
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
 		<!-- Show -->
 		<do action="ajax.asset_add_ftp_show" />
 	</fuseaction>
@@ -1733,6 +1740,7 @@
 	
 	<!-- Add Upload iFrame -->
 	<fuseaction name="asset_add_upload">
+		<set name="session.currentupload" value="0" />
 		<!-- Set runtime session -->
 		<if condition="cgi.http_user_agent CONTAINS 'windows' OR cgi.http_user_agent CONTAINS 'safari'">
 			<true>
@@ -1746,6 +1754,8 @@
 		<do action="cachetag" />
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
+		<!-- CFC: Get plugin actions -->
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
 		<!-- Show -->
 		<do action="ajax.asset_add_upload" />
 	</fuseaction>
