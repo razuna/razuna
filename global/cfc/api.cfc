@@ -346,4 +346,67 @@
 		<cfreturn r />
 	</cffunction>
 
+	<!--- Get Description, keywords and raw metadata --->
+	<cffunction name="getFile" access="public" returntype="query">
+		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<!--- Set application values --->
+		<cfset application.razuna.api.storage = application.razuna.storage>
+		<cfset application.razuna.api.dsn = application.razuna.datasource>
+		<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
+		<cfset application.razuna.api.setid = application.razuna.setid>
+		<cfset application.razuna.api.dynpath = application.razuna.dynpath>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT
+		'img' as type,
+		i.img_id id, 
+		i.img_filename filename, 
+		i.folder_id_r folder_id, 
+		i.path_to_asset,
+		i.cloud_url,
+		i.cloud_url_org
+		FROM #getHostPrefix()#images i 
+		WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
+		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		UNION ALL
+		SELECT
+		'vid' as type,
+		v.vid_id id, 
+		v.vid_filename filename, 
+		v.folder_id_r folder_id, 
+		v.path_to_asset,
+		v.cloud_url,
+		v.cloud_url_org
+		FROM #getHostPrefix()#videos v 
+		WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
+		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		UNION ALL
+		SELECT
+		'aud' as type,
+		a.aud_id id, 
+		a.aud_name filename, 
+		a.folder_id_r folder_id, 
+		a.path_to_asset,
+		a.cloud_url,
+		a.cloud_url_org
+		FROM #getHostPrefix()#audios a
+		WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
+		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		UNION ALL
+		SELECT
+		'doc' as type,
+		f.file_id id, 
+		f.file_name filename, 
+		f.folder_id_r folder_id, 
+		f.path_to_asset,
+		f.cloud_url,
+		f.cloud_url_org
+		FROM #getHostPrefix()#files f 
+		WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
 </cfcomponent>
