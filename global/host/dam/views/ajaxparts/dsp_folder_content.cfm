@@ -462,7 +462,7 @@
 								</select>
 								<br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#<br />
-								<textarea name="#id#_img_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>									
+								<textarea name="#id#_img_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>
 							</div>
 						</td>
 					</tr>
@@ -546,7 +546,7 @@
 								</select>
 								<br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#<br />
-								<textarea name="#id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>									
+								<textarea name="#id#_vid_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>	
 							</div>
 						</td>
 					</tr>
@@ -618,7 +618,7 @@
 								</select>
 								<br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#<br />
-								<textarea name="#id#_aud_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>									
+								<textarea name="#id#_aud_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>
 							</div>
 						</td>
 					</tr>
@@ -706,7 +706,7 @@
 								</select>
 								<br />
 								#myFusebox.getApplicationData().defaults.trans("keywords")#<br />
-								<textarea name="#id#_doc_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>									
+								<textarea name="#id#_doc_keywords_1" style="width:400px;height:30px;">#keywords#</textarea>
 							</div>
 						</td>
 					</tr>

@@ -108,8 +108,10 @@
 		SELECT /* #variables.cachetoken#search_files */ f.file_id id, f.file_name filename, f.folder_id_r, '' as groupid,
 		f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
-		f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc description, fd.file_keywords keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
-		lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, fo.folder_name,
+		f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc description, fd.file_keywords keywords, 
+		'0' as vwidth, '0' as vheight, '0' as theformat, lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, 
+		fo.folder_name,
+		'' as labels,
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			'unlocked' as perm,
 		<cfelse>
@@ -244,6 +246,22 @@
 		<cfset var amount = ArrayNew(1)>
 		<cfset amount[1] = qry.recordcount>
 		<cfset QueryAddcolumn(qry, "cnt", "integer", amount)>
+		<!--- Only get the labels if in the combinded view --->
+		<cfif session.view EQ "combined">
+			<!--- Get the cachetoken for here --->
+			<cfset variables.cachetokenlabels = getcachetoken("labels")>
+			<!--- Loop over files and get labels and add to qry --->
+			<cfloop query="qry">
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+				FROM ct_labels
+				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+				</cfquery>
+				<!--- Add labels query --->
+				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfloop>
+		</cfif>
 		<!--- Log Result --->
 		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='doc')#>
 		<!--- Return query --->
@@ -331,7 +349,8 @@
 		SELECT /* #variables.cachetoken#search_images */ i.img_id id, i.img_filename filename, i.folder_id_r, i.img_group groupid,
 		i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 		i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
-		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description description, it.img_keywords keywords, '0' as vwidth, '0' as vheight, 
+		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description description, it.img_keywords keywords, 
+		'0' as vwidth, '0' as vheight, 
 		(
 			SELECT so.asset_format
 			FROM #session.hostdbprefix#share_options so
@@ -344,6 +363,7 @@
 		i.img_size size,
 		i.hashtag,
 		fo.folder_name,
+		'' as labels,
 		<!--- Check if this folder belongs to a user and lock/unlock --->
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			'unlocked' as perm,
@@ -446,6 +466,22 @@
 		<cfset var amount = ArrayNew(1)>
 		<cfset amount[1] = qry.recordcount>
 		<cfset QueryAddcolumn(qry, "cnt", "integer", amount)>
+		<!--- Only get the labels if in the combinded view --->
+		<cfif session.view EQ "combined">
+			<!--- Get the cachetoken for here --->
+			<cfset variables.cachetokenlabels = getcachetoken("labels")>
+			<!--- Loop over files and get labels and add to qry --->
+			<cfloop query="qry">
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+				FROM ct_labels
+				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+				</cfquery>
+				<!--- Add labels query --->
+				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfloop>
+		</cfif>
 		<!--- Log Result --->
 		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')#>
 		<!--- Return query --->
@@ -546,6 +582,7 @@
 		v.vid_size size,
 		v.hashtag,
 		fo.folder_name,
+		'' as labels,
 		<!--- Check if this folder belongs to a user and lock/unlock --->
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			'unlocked' as perm,
@@ -648,6 +685,22 @@
 		<cfset var amount = ArrayNew(1)>
 		<cfset amount[1] = qry.recordcount>
 		<cfset QueryAddcolumn(qry, "cnt", "integer", amount)>
+		<!--- Only get the labels if in the combinded view --->
+		<cfif session.view EQ "combined">
+			<!--- Get the cachetoken for here --->
+			<cfset variables.cachetokenlabels = getcachetoken("labels")>
+			<!--- Loop over files and get labels and add to qry --->
+			<cfloop query="qry">
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+				FROM ct_labels
+				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+				</cfquery>
+				<!--- Add labels query --->
+				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfloop>
+		</cfif>
 		<!--- Log Result --->
 		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='vid')#>
 		<!--- Return query --->
@@ -748,6 +801,7 @@
 		a.aud_size size,
 		a.hashtag,
 		fo.folder_name,
+		'' as labels,
 		<!--- Check if this folder belongs to a user and lock/unlock --->
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			'unlocked' as perm,
@@ -850,6 +904,22 @@
 		<cfset var amount = ArrayNew(1)>
 		<cfset amount[1] = qry.recordcount>
 		<cfset QueryAddcolumn(qry, "cnt", "integer", amount)>
+		<!--- Only get the labels if in the combinded view --->
+		<cfif session.view EQ "combined">
+			<!--- Get the cachetoken for here --->
+			<cfset variables.cachetokenlabels = getcachetoken("labels")>
+			<!--- Loop over files and get labels and add to qry --->
+			<cfloop query="qry">
+				<!--- Query labels --->
+				<cfquery name="qry_l" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+				FROM ct_labels
+				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+				</cfquery>
+				<!--- Add labels query --->
+				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfloop>
+		</cfif>
 		<!--- Log Result --->
 		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='aud')#>
 		<!--- Return query --->
