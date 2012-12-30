@@ -2818,10 +2818,9 @@
 	FROM qry
 	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	<!--- If this is a move then dont show the folder that we are moving --->
-	<cfif arguments.thestruct.actionismove EQ "T" AND session.type EQ "movefolder">
-		AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
-	<cfelseif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR arguments.thestruct.actionismove EQ "T">
+	<cfif session.type NEQ "choosecollection" AND (session.type EQ "uploadinto" OR session.type EQ "movefolder" OR arguments.thestruct.actionismove EQ "T")>
 		AND (permfolder = 'W' OR permfolder = 'X')
+		AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 	</cfif>
 	</cfquery>
 	<!--- Create the XML --->
