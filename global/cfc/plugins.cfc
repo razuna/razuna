@@ -295,7 +295,7 @@
 		<cfif arguments.args.folder_action>
 			AND args LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:#arguments.args.folder_id#%">
 		<cfelse>
-			AND args NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:%">
+			AND (args NOT LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="%folderid:%"> OR args IS NULL)
 		</cfif>
 		</cfquery>
 		<!--- Put query above into args struct so we have it in the plugin --->
@@ -303,9 +303,9 @@
 		<!--- Execute actions --->
 		<cfloop query="qry">
 			<!--- 1. CFC --->
-			<cfinvoke component="global.plugins.#p_path#.cfc.#comp#" method="#func#" args="#arguments.args#" returnvariable="result.cfc.#p_path#.#func#" />
+			<cfinvoke component="global.plugins.#p_path#.cfc.#comp#" method="#func#" args="#arguments.args#" returnvariable="result.cfc.#arguments.args.nameOfVariable#.#func#" />
 			<!--- Set the page value always to true if not defined --->
-			<cfset s = evaluate("result.cfc.#p_path#.#func#")>
+			<cfset s = evaluate("result.cfc.#arguments.args.nameOfVariable#.#func#")>
 			<cfif !isStruct(s) OR !structKeyExists(s, "page")>
 				<cfset var page = true>
 			<cfelse>
@@ -314,12 +314,12 @@
 			<!--- 2. include the page just not if dev set the page value to false (like coming from a save or alike) --->
 			<cfif fileExists("#expandpath("../../")#global/plugins/#p_path#/view/#lcase(func)#.cfm") AND page>
 				<!--- Parse view page --->
-				<cfsavecontent variable="result.view.#p_path#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#lcase(func)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
+				<cfsavecontent variable="result.view.#arguments.args.nameOfVariable#.#func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#p_path#/view/#lcase(func)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
 				<!--- Put into variable --->
-				<cfset result.pview = result.pview & "," & "#arguments.args.nameOfVariable#.view.#p_path#.#func#">
+				<cfset result.pview = result.pview & "," & "#arguments.args.nameOfVariable#.view.#arguments.args.nameOfVariable#.#func#">
 			</cfif>
 			<!--- Put cfc path into list for easier retrieval --->
-			<cfset result.pcfc = result.pcfc & "," & "#arguments.args.nameOfVariable#.cfc.#p_path#.#func#">
+			<cfset result.pcfc = result.pcfc & "," & "#arguments.args.nameOfVariable#.cfc.#arguments.args.nameOfVariable#.#func#">
 		</cfloop>
 		<!--- Return --->
 		<cfreturn result />
@@ -336,9 +336,9 @@
 		<!--- Take comp path apart --->
 		<cfset var fcomp = listFirst(arguments.args.comp, ".")>
 		<!--- Just invoke the cfc --->
-		<cfinvoke component="global.plugins.#arguments.args.comp#" method="#arguments.args.func#" args="#arguments.args#" returnvariable="result.cfc.#fcomp#.#arguments.args.func#" />
+		<cfinvoke component="global.plugins.#arguments.args.comp#" method="#arguments.args.func#" args="#arguments.args#" returnvariable="result.cfc.#arguments.args.nameOfVariable#.#arguments.args.func#" />
 		<!--- Set the page value always to true if not defined --->
-		<cfset s = evaluate("result.cfc.#fcomp#.#arguments.args.func#")>
+		<cfset s = evaluate("result.cfc.#arguments.args.nameOfVariable#.#arguments.args.func#")>
 		<cfif !isStruct(s) OR !structKeyExists(s, "page")>
 			<cfset var page = true>
 		<cfelse>
@@ -347,9 +347,9 @@
 		<!--- Include the page just not if dev set the page value to false (like coming from a save or alike) --->
 		<cfif fileExists("#expandpath("../../")#global/plugins/#fcomp#/view/#lcase(arguments.args.func)#.cfm") AND page>
 			<!--- Parse view page --->
-			<cfsavecontent variable="result.view.#fcomp#.#arguments.args.func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#fcomp#/view/#lcase(arguments.args.func)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
+			<cfsavecontent variable="result.view.#arguments.args.nameOfVariable#.#arguments.args.func#"><cfsetting enablecfoutputonly="false" /><cfinclude template="/global/plugins/#fcomp#/view/#lcase(arguments.args.func)#.cfm" /><cfsetting enablecfoutputonly="true" /></cfsavecontent>
 			<!--- Put into variable --->
-			<cfset result.pview = "#arguments.args.nameOfVariable#.view.#fcomp#.#arguments.args.func#">
+			<cfset result.pview = "#arguments.args.nameOfVariable#.view.#arguments.args.nameOfVariable#.#arguments.args.func#">
 		</cfif>
 		<!--- Return --->
 		<cfreturn result />
