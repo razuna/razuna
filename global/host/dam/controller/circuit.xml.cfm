@@ -1745,7 +1745,6 @@
 	<!-- Add Upload iFrame -->
 	<fuseaction name="asset_add_upload">
 		<set name="session.currentupload" value="0" />
-		<set name="pl_return.cfc.pl.loadform.active" value="false" />
 		<!-- Set runtime session -->
 		<if condition="cgi.http_user_agent CONTAINS 'windows' OR cgi.http_user_agent CONTAINS 'safari'">
 			<true>
@@ -1761,6 +1760,7 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
+		<set name="pl_return.cfc.pl.loadform.active" value="false" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.asset_add_upload" />
 	</fuseaction>
