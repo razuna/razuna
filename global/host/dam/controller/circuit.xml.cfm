@@ -1602,14 +1602,13 @@
 	<fuseaction name="asset_add_server_content">
 		<xfa name="serverfolders" value="c.asset_add_server_folders" />
 		<xfa name="submitassetserver" value="c.asset_upload_server" />
-		<!-- Param -->
-		<set name="pl_return.cfc.pl.loadform.active" value="false" />
 		<!-- Get settings -->
 		<!-- <do action="asset_get_settings" /> -->
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
+		<set name="pl_return.cfc.pl.loadform.active" value="false" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.asset_add_server_content" />
 	</fuseaction>
@@ -1691,7 +1690,6 @@
 		<set name="session.ftp_user" value="#attributes.ftp_user#" />
 		<set name="session.ftp_pass" value="#attributes.ftp_pass#" />
 		<set name="session.ftp_passive" value="#attributes.ftp_passive#" />
-		<set name="pl_return.cfc.pl.loadform.active" value="false" />
 		<!-- Get settings -->
 		<do action="asset_get_settings" />
 		<!-- CFC: Get FTP directory -->
@@ -1700,6 +1698,7 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
+		<set name="pl_return.cfc.pl.loadform.active" value="false" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.asset_add_ftp_show" />
 	</fuseaction>
@@ -1707,7 +1706,6 @@
 	<fuseaction name="asset_add_ftp_reload">
 		<xfa name="submitassetftp" value="c.asset_upload_ftp" />
 		<xfa name="reloadftp" value="c.asset_add_ftp_reload" />
-		<set name="pl_return.cfc.pl.loadform.active" value="false" />
 		<!-- Get settings -->
 		<do action="asset_get_settings" />
 		<!-- CFC: Get ftp directory -->
@@ -1716,6 +1714,7 @@
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_add_done')" returnvariable="pl_return" />
+		<set name="pl_return.cfc.pl.loadform.active" value="false" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.asset_add_ftp_show" />
 	</fuseaction>
