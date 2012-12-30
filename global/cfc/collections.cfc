@@ -288,6 +288,9 @@
 <!--- LIST COLLECTION DETAIL --->
 <cffunction name="details" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- If there is no session for webgroups set --->
+	<cfparam default="0" name="session.thegroupofuser">
+	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, c.share_comments, c.col_released, c.share_upload, c.share_order, c.share_order_user
 	<!--- Permfolder --->
