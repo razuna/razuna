@@ -1602,6 +1602,8 @@
 	<fuseaction name="asset_add_server_content">
 		<xfa name="serverfolders" value="c.asset_add_server_folders" />
 		<xfa name="submitassetserver" value="c.asset_upload_server" />
+		<!-- Param -->
+		<set name="pl_return.cfc.pl.loadform.active" value="false" />
 		<!-- Get settings -->
 		<!-- <do action="asset_get_settings" /> -->
 		<!-- CFC: get upload templates -->
@@ -1689,6 +1691,7 @@
 		<set name="session.ftp_user" value="#attributes.ftp_user#" />
 		<set name="session.ftp_pass" value="#attributes.ftp_pass#" />
 		<set name="session.ftp_passive" value="#attributes.ftp_passive#" />
+		<set name="pl_return.cfc.pl.loadform.active" value="false" />
 		<!-- Get settings -->
 		<do action="asset_get_settings" />
 		<!-- CFC: Get FTP directory -->
@@ -1704,6 +1707,7 @@
 	<fuseaction name="asset_add_ftp_reload">
 		<xfa name="submitassetftp" value="c.asset_upload_ftp" />
 		<xfa name="reloadftp" value="c.asset_add_ftp_reload" />
+		<set name="pl_return.cfc.pl.loadform.active" value="false" />
 		<!-- Get settings -->
 		<do action="asset_get_settings" />
 		<!-- CFC: Get ftp directory -->
@@ -1741,6 +1745,7 @@
 	<!-- Add Upload iFrame -->
 	<fuseaction name="asset_add_upload">
 		<set name="session.currentupload" value="0" />
+		<set name="pl_return.cfc.pl.loadform.active" value="false" />
 		<!-- Set runtime session -->
 		<if condition="cgi.http_user_agent CONTAINS 'windows' OR cgi.http_user_agent CONTAINS 'safari'">
 			<true>
