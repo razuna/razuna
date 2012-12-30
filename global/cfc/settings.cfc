@@ -1217,6 +1217,7 @@
 	<cfset application.razuna.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
+	<cfset application.razuna.dynpath = cgi.context_path>
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
