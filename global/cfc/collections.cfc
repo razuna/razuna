@@ -38,8 +38,25 @@
 	<cfparam default="0" name="arguments.thestruct.folder_id">
 	<cfparam default="false" name="arguments.thestruct.released">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="qry.collist" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name, c.col_released
+	<cfquery datasource="#variables.dsn#" name="qrylist" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getAllcol */ c.col_id, c.change_date, ct.col_name, c.col_released,
+	<!--- Permission follow but not for sysadmin and admin --->
+	<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
+		CASE
+			WHEN EXISTS(
+				SELECT fg.col_id_r
+				FROM #session.hostdbprefix#collections_groups fg LEFT JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
+				WHERE fg.col_id_r = c.col_id
+				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+				) THEN 'unlocked'
+			<!--- If this is the user folder or he is the owner --->
+			WHEN ( c.col_owner = '#Session.theUserID#' ) THEN 'unlocked'
+			<!--- If nothing meets the above lock the folder --->
+			ELSE 'locked'
+		END AS perm
+	<cfelse>
+		'unlocked' AS perm
+	</cfif>
 	FROM #session.hostdbprefix#collections c
 	LEFT JOIN #session.hostdbprefix#collections_text ct ON c.col_id = ct.col_id_r 
 	WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -49,6 +66,12 @@
 	AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.released#">
 	GROUP BY c.col_id, c.change_date, ct.col_name, c.col_released
 	ORDER BY lower(ct.col_name)
+	</cfquery>
+	<!--- Query to get unlocked collections only --->
+	<cfquery dbtype="query" name="qry.collist">
+	SELECT *
+	FROM qrylist
+	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	</cfquery>
 	<!--- Get descriptions --->
 	<cfif qry.collist.recordcount NEQ 0>
@@ -267,11 +290,54 @@
 	<cfargument name="thestruct" type="struct">
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, c.share_comments, c.col_released, c.share_upload, c.share_order, c.share_order_user
+	<!--- Permfolder --->
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		, 'X' as colaccess
+	<cfelse>
+		,
+		CASE
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#collections_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.col_id_r = c.col_id
+			AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#collections_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.col_id_r = c.col_id
+			AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+			WHEN (SELECT fg5.grp_permission
+			FROM #session.hostdbprefix#collections_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.col_id_r = c.col_id
+			AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+			<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+				WHEN (SELECT fg5.grp_permission
+				FROM #session.hostdbprefix#collections_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.col_id_r = c.col_id
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+				WHEN (SELECT fg5.grp_permission
+				FROM #session.hostdbprefix#collections_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.col_id_r = c.col_id
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+				WHEN (SELECT fg5.grp_permission
+				FROM #session.hostdbprefix#collections_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.col_id_r = c.col_id
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+			</cfloop>
+			WHEN (c.col_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">) THEN 'X'
+		END as colaccess
+	</cfif>
 	FROM #session.hostdbprefix#collections_text ct, #session.hostdbprefix#collections c
-	WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND col_id = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND c.col_id = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 	</cfquery>
+	<!--- Return --->
 	<cfreturn qry>
 </cffunction>
 
