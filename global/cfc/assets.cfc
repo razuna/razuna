@@ -3123,13 +3123,12 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Add record --->
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#audios
-	(aud_id, is_available, folder_id_r, host_id, aud_name, aud_create_time, aud_name)
+	(aud_id, is_available, folder_id_r, host_id, aud_create_time, aud_name)
 	VALUES(
 		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
 		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
 		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
 			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
