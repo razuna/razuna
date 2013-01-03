@@ -51,7 +51,7 @@
 	<cfset mysqloffset = session.offset * session.rowmaxpage>
 	<cfoutput query="qry_hostslist" startrow="#mysqloffset#" maxrows="#session.rowmaxpage#">
 		<tr>
-			<td width="100%" nowrap><a href="##" onclick="showwindow('#myself#c.hosts_detail&host_id=#host_id#','#defaultsObj.trans("hosts_edit")# #host_name#',500,1);return false;">#host_name#<cfif application.razuna.isp>.domain.com<cfif host_name_custom NEQ ""> &ndash; Custom Hostname: #host_name_custom#</cfif></cfif> (ID: #host_id#)</a></td>
+			<td width="100%" nowrap><a href="##" onclick="showwindow('#myself#c.hosts_detail&host_id=#host_id#','#defaultsObj.trans("hosts_edit")# #host_name#',500,1);return false;">#host_name#<cfif application.razuna.isp AND host_name_custom NEQ ""> &ndash; Custom Hostname: #host_name_custom#</cfif> (ID: #host_id#)</a></td>
 			<td width="1%" nowrap><cfif !application.razuna.isp><a href="##" onclick="showwindow('#myself#ajax.hosts_recreate&host_id=#host_id#','#host_name#',500,1);return false;">Upgrade Settings</a></cfif></td>
 			<td width="1%" nowrap><cfif !application.razuna.isp><a href="http://#cgi.http_host##dynpath#/raz#host_id#/dam/index.cfm?fusebox.loadclean=true&fusebox.password=#application.fusebox.password#&fusebox.parseall=true&v=#createuuid()#" target="_blank">Reset Cache</a></cfif></td>
 			<cfif qry_hostslist.recordcount NEQ 1 AND session.hostid NEQ host_id>

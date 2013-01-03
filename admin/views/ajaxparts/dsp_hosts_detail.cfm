@@ -38,7 +38,7 @@
 		--->
 		<tr>
 			<td nowrap="true" width="1%" nowrap="true"><cfif application.razuna.isp>Subdomain<cfelse>#defaultsObj.trans("hosts_name")#</cfif></td>
-			<td width="100%"><input type="text" name="host_name" id="host_name" style="width:200px;" value="#qry_hostsdetail.host_name#"><cfif application.razuna.isp>.domain.com</cfif></td>
+			<td width="100%"><input type="text" name="host_name" id="host_name" style="width:200px;" value="#qry_hostsdetail.host_name#"><cfif application.razuna.isp>.yourdomain.com</cfif></td>
 		</tr>
 		<cfif application.razuna.isp>
 			<tr>

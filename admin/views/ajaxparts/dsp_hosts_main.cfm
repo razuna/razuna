@@ -58,7 +58,7 @@
 						#defaultsObj.trans("hosts_name")#
 					</cfif>
 				</td>
-				<td width="400"><div style="float:left;"><input type="text" name="host_name" id="host_name" style="width:200px;" onkeyup="checkhostname();"><cfif application.razuna.isp>.domain.com</cfif></div><div id="checkhostname" style="float:right;"></div></td>
+				<td width="400"><div style="float:left;"><input type="text" name="host_name" id="host_name" style="width:200px;" onkeyup="checkhostname();"><cfif application.razuna.isp>.yourdomain.com</cfif></div><div id="checkhostname" style="float:right;"></div></td>
 			</tr>
 			<cfif application.razuna.isp>
 				<tr>
