@@ -45,14 +45,17 @@
 			(
 				mf_type		#thevarchar#(100),
 				mf_value 	#thevarchar#(500),
-				mf_order	#theint# DEFAULT '0',
+				mf_order	#theint# DEFAULT 0,
 				mf_cf		#thevarchar#(100),
-				host_id		#theint#,
-				PRIMARY KEY (wf_id)
+				host_id		#theint#
 			)
 			<cfif application.razuna.thedatabase EQ "mysql">#tableoptions#</cfif>
 			</cfquery>
-			<cfcatch type="database">Maybe add an alter or update execution in here</cfcatch>
+			<cfcatch type="database">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+				Maybe add an alter or update execution in here
+			</cfcatch>
 		</cftry>
 
 	</cffunction>
