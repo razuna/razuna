@@ -23,6 +23,10 @@
 		WHERE lower(mf_type) = <cfqueryparam cfsqltype="cf_sql_varchar" value="mf_active">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#getHostID()#">
 		</cfquery>
+		<!--- if active is empty --->
+		<cfif s.qry_mf_active.recordcount EQ 0>
+			<cfset s.qry_mf_active.mf_value = false>
+		</cfif>
 		<!--- Get the values of the form --->
 		<cfquery datasource="#getDatasource()#" name="s.qry">
 		SELECT mf_type, mf_value, mf_order

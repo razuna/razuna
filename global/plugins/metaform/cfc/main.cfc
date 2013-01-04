@@ -45,7 +45,7 @@
 			(
 				mf_type		#thevarchar#(100),
 				mf_value 	#thevarchar#(500),
-				mf_order	#theint# DEFAULT 0,
+				mf_order	#theint# DEFAULT '0',
 				mf_cf		#thevarchar#(100),
 				host_id		#theint#
 			)
