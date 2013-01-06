@@ -2165,7 +2165,7 @@
 	<cffunction name="clearall" access="public" output="false">
 		<!--- Query Tables --->
 		<cfquery datasource="#session.firsttime.database#" name="qrytables">
-		SELECT lower(table_name)
+		SELECT lower(table_name) as thetable
 		FROM information_schema.tables
 		WHERE table_catalog = 'RAZUNA'
 		AND table_type = 'TABLE'
@@ -2175,10 +2175,10 @@
 		<cfloop query="qrytables">
 			<cftry>
 				<cfquery datasource="#session.firsttime.database#">
-				ALTER TABLE #table_name# SET REFERENTIAL_INTEGRITY false
+				ALTER TABLE #thetable# SET REFERENTIAL_INTEGRITY false
 				</cfquery>
 				<cfquery datasource="#session.firsttime.database#">
-				DROP TABLE #table_name#
+				DROP TABLE #thetable#
 				</cfquery>
 				<cfcatch type="any"></cfcatch>
 			</cftry>
