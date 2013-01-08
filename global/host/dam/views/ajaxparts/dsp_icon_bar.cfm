@@ -358,6 +358,18 @@
 				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("delete")#</div>
 			</a>
 		</cfif>
+		<!--- Plugin being shows with add_folderview_select_wx  --->
+		<cfif structKeyExists(plwx,"pview")>
+			<cfloop list="#plwx.pview#" delimiters="," index="i">
+				#evaluate(i)#
+			</cfloop>
+		</cfif>
+	</cfif>
+	<!--- Plugin being shows with add_folderview_select_r  --->
+	<cfif structKeyExists(plr,"pview")>
+		<cfloop list="#plr.pview#" delimiters="," index="i">
+			#evaluate(i)#
+		</cfloop>
 	</cfif>
 </div>
 		

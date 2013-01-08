@@ -58,6 +58,15 @@
 				<div style="float:left;padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("delete_asset")#</div>
 			</a>
 		</cfif>
+		<!--- Plugin shown but only to users who are not R --->
+		<cfif attributes.folderaccess NEQ "R">
+			<!--- Plugin being shows with show_in_detail_link_wx  --->
+			<cfif structKeyExists(pllink,"pview")>
+				<cfloop list="#pllink.pview#" delimiters="," index="i">
+					#evaluate(i)#
+				</cfloop>
+			</cfif>
+		</cfif>
 	</div>
 </div>
 </cfoutput>

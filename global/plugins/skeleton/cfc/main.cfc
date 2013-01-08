@@ -1,16 +1,19 @@
 <cfcomponent output="false" extends="global.cfc.api">
 
+	<!--- Set the ID of this plugin --->
+	<cfset this.myID = getMyID("metaform")>
+
 	<!--- 
 	This runs when you activate the plugin and
 	adds all the actions of the plugin
 	--->
 	<cffunction name="load" returntype="void">
 		<!--- settings page --->
-		<cfset add_action(action="settings", comp="settings", func="getsettings")>
+		<cfset add_action(pid="#this.myID#", action="settings", comp="settings", func="getsettings")>
 		<!--- settings save --->
-		<cfset add_action(action="settings_save", comp="settings", func="setsettings")>
+		<cfset add_action(pid="#this.myID#", action="settings_save", comp="settings", func="setsettings")>
 		<!--- Load this on the main page --->
-		<cfset add_action(action="on_main_page", comp="page", func="start")>
+		<cfset add_action(pid="#this.myID#", action="on_main_page", comp="page", func="start")>
 	</cffunction>
 
 	<!--- 
