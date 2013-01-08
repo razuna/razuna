@@ -303,7 +303,7 @@
 <div id="folderselection<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form" class="actiondropdown">
 	<!--- Select all link --->
 	<div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form">
-	 	<a href="##" onclick="CheckAllNot('#kind#form');return false;">Select none</a>
+	 	<a href="##" onclick="CheckAllNot('#kind#form');return false;">Deselect all</a>
 	</div>
 	<!--- Actions with selection icons --->
 	<!--- <div style="float:left;padding-right:5px;"><strong>#myFusebox.getApplicationData().defaults.trans("action_with_selection")#: </strong></div> --->
