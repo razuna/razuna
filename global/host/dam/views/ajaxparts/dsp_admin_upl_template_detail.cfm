@@ -75,7 +75,19 @@
 					<input type="checkbox" name="convert_to" value="img-jpg"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "jpg"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',0);return false;" style="text-decoration:none;">JPG</a>
 				</td>
 				<td width="100%">
-					<input type="text" size="4" name="convert_width_jpg" id="convert_width_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg','convert_height_jpg');"> x <input type="text" size="4" name="convert_height_jpg" id="convert_height_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg','convert_width_jpg');">  or <input type="text" size="4" name="convert_dpi_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg">#upl_temp_value#</cfif></cfloop>"> dpi <a href="##" onclick="$('##jpg_more').slideToggle('slow');return false;">Additional JPG conversions</a>
+					<input type="text" size="4" name="convert_width_jpg" id="convert_width_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg','convert_height_jpg');"> x <input type="text" size="4" name="convert_height_jpg" id="convert_height_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg','convert_width_jpg');">  or <input type="text" size="4" name="convert_dpi_jpg" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<!--- Watermark --->
+					<cfif attributes.wmtemplates.recordcount NEQ 0>
+						<select name="convert_wm_jpg" id="convert_wm_jpg">
+							<option value="" selected="selected">Apply watermark</option>
+							<option value="">---</option>
+							<cfloop query="attributes.wmtemplates">
+								<cfset wm_temp_id = wm_temp_id>
+								<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_jpg" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+							</cfloop>
+						</select>
+					</cfif>
+					<a href="##" onclick="$('##jpg_more').slideToggle('slow');return false;">Additional JPG conversions</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -89,6 +101,17 @@
 								</td>
 								<td width="100%">
 									<input type="text" size="4" name="convert_width_jpg_2" id="convert_width_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_2','convert_height_jpg_2');"> x <input type="text" size="4" name="convert_height_jpg_2" id="convert_height_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_2','convert_width_jpg_2');"> or <input type="text" size="4" name="convert_dpi_jpg_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_jpg_2" id="convert_wm_jpg_2">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_jpg_2" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -97,6 +120,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_jpg_3" id="convert_width_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_3','convert_height_jpg_3');"> x <input type="text" size="4" name="convert_height_jpg_3" id="convert_height_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_3','convert_width_jpg_3');"> or <input type="text" size="4" name="convert_dpi_jpg_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_jpg_3" id="convert_wm_jpg_3">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_jpg_3" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -105,6 +139,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_jpg_4" id="convert_width_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_4','convert_height_jpg_4');"> x <input type="text" size="4" name="convert_height_jpg_4" id="convert_height_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_4','convert_width_jpg_4');"> or <input type="text" size="4" name="convert_dpi_jpg_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_jpg_4" id="convert_wm_jpg_4">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_jpg_4" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -113,6 +158,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_jpg_5" id="convert_width_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_5','convert_height_jpg_5');"> x <input type="text" size="4" name="convert_height_jpg_5" id="convert_height_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_5','convert_width_jpg_5');"> or <input type="text" size="4" name="convert_dpi_jpg_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_jpg_5" id="convert_wm_jpg_5">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_jpg_5" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -121,6 +177,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_jpg_6" id="convert_width_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_jpg_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_jpg_6','convert_height_jpg_6');"> x <input type="text" size="4" name="convert_height_jpg_6" id="convert_height_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_jpg_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_jpg_6','convert_width_jpg_6');"> or <input type="text" size="4" name="convert_dpi_jpg_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_jpg_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_jpg_6" id="convert_wm_jpg_6">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_jpg_6" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 						</table>
@@ -132,7 +199,19 @@
 					<input type="checkbox" name="convert_to" value="img-gif"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "gif"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',6);return false;" style="text-decoration:none;">GIF </a>
 				</td>
 				<td>
-					<input type="text" size="4" name="convert_width_gif" id="convert_width_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif','convert_height_gif');"> x <input type="text" size="4" name="convert_height_gif" id="convert_height_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif','convert_width_gif');"> or <input type="text" size="4" name="convert_dpi_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif">#upl_temp_value#</cfif></cfloop>"> dpi <a href="##" onclick="$('##gif_more').slideToggle('slow');return false;">Additional GIF conversions</a>
+					<input type="text" size="4" name="convert_width_gif" id="convert_width_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif','convert_height_gif');"> x <input type="text" size="4" name="convert_height_gif" id="convert_height_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif','convert_width_gif');"> or <input type="text" size="4" name="convert_dpi_gif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<!--- Watermark --->
+					<cfif attributes.wmtemplates.recordcount NEQ 0>
+						<select name="convert_wm_gif" id="convert_wm_gif">
+							<option value="" selected="selected">Apply watermark</option>
+							<option value="">---</option>
+							<cfloop query="attributes.wmtemplates">
+								<cfset wm_temp_id = wm_temp_id>
+								<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_gif" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+							</cfloop>
+						</select>
+					</cfif>
+					<a href="##" onclick="$('##gif_more').slideToggle('slow');return false;">Additional GIF conversions</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -146,6 +225,17 @@
 								</td>
 								<td width="100%">
 									<input type="text" size="4" name="convert_width_gif_2" id="convert_width_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_2','convert_height_gif_2');"> x <input type="text" size="4" name="convert_height_gif_2" id="convert_height_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_2','convert_width_gif_2');"> or <input type="text" size="4" name="convert_dpi_gif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_gif_2" id="convert_wm_gif_2">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_gif_2" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -154,6 +244,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_gif_3" id="convert_width_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_3','convert_height_gif_3');"> x <input type="text" size="4" name="convert_height_gif_3" id="convert_height_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_3','convert_width_gif_3');"> or <input type="text" size="4" name="convert_dpi_gif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_gif_3" id="convert_wm_gif_3">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_gif_3" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -162,6 +263,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_gif_4" id="convert_width_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_4','convert_height_gif_4');"> x <input type="text" size="4" name="convert_height_gif_4" id="convert_height_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_4','convert_width_gif_4');"> or <input type="text" size="4" name="convert_dpi_gif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_gif_4" id="convert_wm_gif_4">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_gif_4" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -170,6 +282,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_gif_5" id="convert_width_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_5','convert_height_gif_5');"> x <input type="text" size="4" name="convert_height_gif_5" id="convert_height_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_5','convert_width_gif_5');"> or <input type="text" size="4" name="convert_dpi_gif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_gif_5" id="convert_wm_gif_5">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_gif_5" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -178,6 +301,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_gif_6" id="convert_width_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_gif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_gif_6','convert_height_gif_6');"> x <input type="text" size="4" name="convert_height_gif_6" id="convert_height_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_gif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_gif_6','convert_width_gif_6');"> or <input type="text" size="4" name="convert_dpi_gif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_gif_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_gif_6" id="convert_wm_gif_6">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_gif_6" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 						</table>
@@ -189,7 +323,19 @@
 					<input type="checkbox" name="convert_to" value="img-png"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "png"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',12);return false;" style="text-decoration:none;">PNG</a>
 				</td>
 				<td>
-					<input type="text" size="4" name="convert_width_png" id="convert_width_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png','convert_height_png');"> x <input type="text" size="4" name="convert_height_png" id="convert_height_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png','convert_width_png');"> or <input type="text" size="4" name="convert_dpi_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_2">#upl_temp_value#</cfif></cfloop>"> dpi  <a href="##" onclick="$('##png_more').slideToggle('slow');return false;">Additional PNG conversions</a>
+					<input type="text" size="4" name="convert_width_png" id="convert_width_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png','convert_height_png');"> x <input type="text" size="4" name="convert_height_png" id="convert_height_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png','convert_width_png');"> or <input type="text" size="4" name="convert_dpi_png" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<!--- Watermark --->
+					<cfif attributes.wmtemplates.recordcount NEQ 0>
+						<select name="convert_wm_png" id="convert_wm_png">
+							<option value="" selected="selected">Apply watermark</option>
+							<option value="">---</option>
+							<cfloop query="attributes.wmtemplates">
+								<cfset wm_temp_id = wm_temp_id>
+								<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_png" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+							</cfloop>
+						</select>
+					</cfif>
+					<a href="##" onclick="$('##png_more').slideToggle('slow');return false;">Additional PNG conversions</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -203,6 +349,17 @@
 								</td>
 								<td width="100%">
 									<input type="text" size="4" name="convert_width_png_2" id="convert_width_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_2','convert_height_png_2');"> x <input type="text" size="4" name="convert_height_png_2" id="convert_height_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_2','convert_width_png_2');"> or <input type="text" size="4" name="convert_dpi_png_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_png_2" id="convert_wm_png_2">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_png_2" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -211,6 +368,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_png_3" id="convert_width_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_3','convert_height_png_3');"> x <input type="text" size="4" name="convert_height_png_3" id="convert_height_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_3','convert_width_png_3');"> or <input type="text" size="4" name="convert_dpi_png_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_png_3" id="convert_wm_png_3">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_png_3" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -219,6 +387,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_png_4" id="convert_width_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_4','convert_height_png_4');"> x <input type="text" size="4" name="convert_height_png_4" id="convert_height_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_4','convert_width_png_4');"> or <input type="text" size="4" name="convert_dpi_png_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_png_4" id="convert_wm_png_4">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_png_4" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -227,6 +406,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_png_5" id="convert_width_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_5','convert_height_png_5');"> x <input type="text" size="4" name="convert_height_png_5" id="convert_height_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_5','convert_width_png_5');"> or <input type="text" size="4" name="convert_dpi_png_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_png_5" id="convert_wm_png_5">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_png_5" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -235,6 +425,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_png_6" id="convert_width_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_png_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_png_6','convert_height_png_6');"> x <input type="text" size="4" name="convert_height_png_6" id="convert_height_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_png_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_png_6','convert_width_png_6');"> or <input type="text" size="4" name="convert_dpi_png_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_png_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_png_6" id="convert_wm_png_6">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_png_6" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 						</table>
@@ -246,7 +447,19 @@
 					<input type="checkbox" name="convert_to" value="img-tif"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "tif"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',18);return false;" style="text-decoration:none;">TIFF</a>
 				</td>
 				<td>
-					<input type="text" size="4" name="convert_width_tif" id="convert_width_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif','convert_height_tif');"> x <input type="text" size="4" name="convert_height_tif" id="convert_height_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif','convert_width_tif');"> or <input type="text" size="4" name="convert_dpi_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif">#upl_temp_value#</cfif></cfloop>"> dpi  <a href="##" onclick="$('##tif_more').slideToggle('slow');return false;">Additional TIF conversions</a>
+					<input type="text" size="4" name="convert_width_tif" id="convert_width_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif','convert_height_tif');"> x <input type="text" size="4" name="convert_height_tif" id="convert_height_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif','convert_width_tif');"> or <input type="text" size="4" name="convert_dpi_tif" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<!--- Watermark --->
+					<cfif attributes.wmtemplates.recordcount NEQ 0>
+						<select name="convert_wm_tif" id="convert_wm_tif">
+							<option value="" selected="selected">Apply watermark</option>
+							<option value="">---</option>
+							<cfloop query="attributes.wmtemplates">
+								<cfset wm_temp_id = wm_temp_id>
+								<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_tif" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+							</cfloop>
+						</select>
+					</cfif>
+					<a href="##" onclick="$('##tif_more').slideToggle('slow');return false;">Additional TIF conversions</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -260,6 +473,17 @@
 								</td>
 								<td width="100%">
 									<input type="text" size="4" name="convert_width_tif_2" id="convert_width_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_2','convert_height_tif_2');"> x <input type="text" size="4" name="convert_height_tif_2" id="convert_height_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_2','convert_width_tif_2');"> or <input type="text" size="4" name="convert_dpi_tif_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_tif_2" id="convert_wm_tif_2">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_tif_2" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -268,6 +492,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_tif_3" id="convert_width_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_3','convert_height_tif_3');"> x <input type="text" size="4" name="convert_height_tif_3" id="convert_height_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_3','convert_width_tif_3');"> or <input type="text" size="4" name="convert_dpi_tif_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_tif_3" id="convert_wm_tif_3">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_tif_3" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -276,6 +511,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_tif_4" id="convert_width_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_4','convert_height_tif_4');"> x <input type="text" size="4" name="convert_height_tif_4" id="convert_height_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_4','convert_width_tif_4');"> or <input type="text" size="4" name="convert_dpi_tif_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_tif_4" id="convert_wm_tif_4">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_tif_4" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -284,6 +530,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_tif_5" id="convert_width_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_5','convert_height_tif_5');"> x <input type="text" size="4" name="convert_height_tif_5" id="convert_height_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_5','convert_width_tif_5');"> or <input type="text" size="4" name="convert_dpi_tif_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_tif_5" id="convert_wm_tif_5">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_tif_5" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -292,6 +549,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_tif_6" id="convert_width_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_tif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_tif_6','convert_height_tif_6');"> x <input type="text" size="4" name="convert_height_tif_6" id="convert_height_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_tif_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_tif_6','convert_width_tif_6');"> or <input type="text" size="4" name="convert_dpi_tif_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_tif_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_tif_6" id="convert_wm_tif_6">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_tif_6" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 						</table>
@@ -303,7 +571,19 @@
 					<input type="checkbox" name="convert_to" value="img-bmp"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "bmp"> checked="checked"</cfif></cfloop>> <a href="##" onclick="clickcbk('formupltemp','convert_to',24);return false;" style="text-decoration:none;">BMP</a>
 				</td>
 				<td>
-					<input type="text" size="4" name="convert_width_bmp" id="convert_width_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp','convert_height_bmp');"> x <input type="text" size="4" name="convert_height_bmp" id="convert_height_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp','convert_width_bmp');"> or <input type="text" size="4" name="convert_dpi_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp">#upl_temp_value#</cfif></cfloop>"> dpi <a href="##" onclick="$('##bmp_more').slideToggle('slow');return false;">Additional BMP conversions</a>
+					<input type="text" size="4" name="convert_width_bmp" id="convert_width_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp','convert_height_bmp');"> x <input type="text" size="4" name="convert_height_bmp" id="convert_height_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp','convert_width_bmp');"> or <input type="text" size="4" name="convert_dpi_bmp" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp">#upl_temp_value#</cfif></cfloop>"> dpi 
+					<!--- Watermark --->
+					<cfif attributes.wmtemplates.recordcount NEQ 0>
+						<select name="convert_wm_bmp" id="convert_wm_bmp">
+							<option value="" selected="selected">Apply watermark</option>
+							<option value="">---</option>
+							<cfloop query="attributes.wmtemplates">
+								<cfset wm_temp_id = wm_temp_id>
+								<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_bmp" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+							</cfloop>
+						</select>
+					</cfif>
+					<a href="##" onclick="$('##bmp_more').slideToggle('slow');return false;">Additional BMP conversions</a>
 				</td>
 			</tr>
 			<!--- The Div --->
@@ -317,6 +597,17 @@
 								</td>
 								<td width="100%">
 									<input type="text" size="4" name="convert_width_bmp_2" id="convert_width_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_2','convert_height_bmp_2');"> x <input type="text" size="4" name="convert_height_bmp_2" id="convert_height_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_2">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_2','convert_width_bmp_2');"> or <input type="text" size="4" name="convert_dpi_bmp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_2">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_bmp_2" id="convert_wm_bmp_2">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_bmp_2" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -325,6 +616,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_bmp_3" id="convert_width_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_3','convert_height_bmp_3');"> x <input type="text" size="4" name="convert_height_bmp_3" id="convert_height_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_3">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_3','convert_width_bmp_3');"> or <input type="text" size="4" name="convert_dpi_bmp_3" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_3">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_bmp_3" id="convert_wm_bmp_3">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_bmp_3" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -333,6 +635,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_bmp_4" id="convert_width_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_4','convert_height_bmp_4');"> x <input type="text" size="4" name="convert_height_bmp_4" id="convert_height_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_4">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_4','convert_width_bmp_4');"> or <input type="text" size="4" name="convert_dpi_bmp_4" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_4">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_bmp_4" id="convert_wm_bmp_4">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_bmp_4" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -341,6 +654,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_bmp_5" id="convert_width_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_5','convert_height_bmp_5');"> x <input type="text" size="4" name="convert_height_bmp_5" id="convert_height_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_5">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_5','convert_width_bmp_5');"> or <input type="text" size="4" name="convert_dpi_bmp_5" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_5">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_bmp_5" id="convert_wm_bmp_5">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_bmp_5" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 							<tr>
@@ -349,6 +673,17 @@
 								</td>
 								<td>
 									<input type="text" size="4" name="convert_width_bmp_6" id="convert_width_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_bmp_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_width_bmp_6','convert_height_bmp_6');"> x <input type="text" size="4" name="convert_height_bmp_6" id="convert_height_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_bmp_6">#upl_temp_value#</cfif></cfloop>" onkeyup="whr('convert_height_bmp_6','convert_width_bmp_6');"> or <input type="text" size="4" name="convert_dpi_bmp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_dpi_bmp_6">#upl_temp_value#</cfif></cfloop>"> dpi 
+									<!--- Watermark --->
+									<cfif attributes.wmtemplates.recordcount NEQ 0>
+										<select name="convert_wm_bmp_6" id="convert_wm_bmp_6">
+											<option value="" selected="selected">Apply watermark</option>
+											<option value="">---</option>
+											<cfloop query="attributes.wmtemplates">
+												<cfset wm_temp_id = wm_temp_id>
+												<option value="#wm_temp_id#"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_wm_bmp_6" AND upl_temp_value EQ wm_temp_id> selected="selected"</cfif></cfloop>>#wm_name#</option>
+											</cfloop>
+										</select>
+									</cfif>
 								</td>
 							</tr>
 						</table>

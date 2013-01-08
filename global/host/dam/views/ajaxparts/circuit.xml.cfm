@@ -493,6 +493,18 @@
 	<fuseaction name="imp_template_detail">
   		<include template="dsp_admin_imp_template_detail" />
 	</fuseaction>
+	<!-- ADMIN: Watermark Templates -->
+	<fuseaction name="admin_watermark_templates">
+  		<include template="dsp_admin_watermark_templates" />
+	</fuseaction>
+	<!-- ADMIN: Watermark Templates Details -->
+	<fuseaction name="admin_watermark_template_detail">
+  		<include template="dsp_admin_watermark_template_detail" />
+	</fuseaction>
+	<!-- ADMIN: Watermark Upload -->
+	<fuseaction name="admin_watermark_upload">
+  		<include template="dsp_watermark_upload" />
+	</fuseaction>
 	<!-- ADMIN: Show user of groups -->
 	<fuseaction name="groups_list_users">
   		<include template="dsp_groups_list_users" />

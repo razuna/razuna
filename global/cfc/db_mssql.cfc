@@ -2262,6 +2262,37 @@
 		host_id				int
 		)
 		</cfquery>
+
+		<!--- Watermark --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#wm_templates (
+	  	wm_temp_id 			varchar(100),
+	  	wm_name				varchar(200),
+		wm_active			varchar(6) DEFAULT 'false',
+		host_id 			int,
+		PRIMARY KEY (wm_temp_id)
+		)
+		</cfquery>
+
+		<!--- Watermark values --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#wm_templates_val (
+	  	wm_temp_id_r 		varchar(100),
+		wm_use_image 		varchar(6) DEFAULT 'false',
+		wm_use_text 		varchar(6) DEFAULT 'false',
+		wm_image_opacity 	varchar(4),
+		wm_text_opacity 	varchar(4),
+		wm_image_position 	varchar(10),
+		wm_text_position 	varchar(10),
+		wm_text_content 	varchar(400),
+		wm_text_font 		varchar(100),
+		wm_text_font_size 	varchar(5),
+		wm_image_path 		varchar(300),
+		host_id 			int,
+		rec_uuid 			varchar(100),
+		PRIMARY KEY (rec_uuid)
+		)
+		</cfquery>
 		
 	</cffunction>
 	

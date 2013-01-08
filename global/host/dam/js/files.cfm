@@ -112,8 +112,34 @@ function convertimages(theform){
    	document.getElementById('statusconvert').style.visibility = "visible";
 	$("#statusconvert").html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("convert_feedback"))#</cfoutput>');
 	$("#statusconvert").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+	// Get values
+	var file_id = $('#' + theform + ' #file_id').val();
+	var theorgname = $('#' + theform + ' #theorgname').val();
+	var thepath = $('#' + theform + ' #thepath').val();
+	var link_kind = $('#' + theform + ' #link_kind').val();
+	var link_path_url = $('#' + theform + ' #link_path_url').val();
+	var convert_width_jpg = $('#' + theform + ' #convert_width_jpg').val();
+	var convert_height_jpg = $('#' + theform + ' #convert_height_jpg').val();
+	var convert_dpi_jpg = $('#' + theform + ' #convert_dpi_jpg').val();
+	var convert_width_gif = $('#' + theform + ' #convert_width_gif').val();
+	var convert_height_gif = $('#' + theform + ' #convert_height_gif').val();
+	var convert_dpi_gif = $('#' + theform + ' #convert_dpi_gif').val();
+	var convert_width_png = $('#' + theform + ' #convert_width_png').val();
+	var convert_height_png = $('#' + theform + ' #convert_height_png').val();
+	var convert_dpi_png = $('#' + theform + ' #convert_dpi_png').val();
+	var convert_width_tif = $('#' + theform + ' #convert_width_tif').val();
+	var convert_height_tif = $('#' + theform + ' #convert_height_tif').val();
+	var convert_dpi_tif = $('#' + theform + ' #convert_dpi_tif').val();
+	var convert_width_bmp = $('#' + theform + ' #convert_width_bmp').val();
+	var convert_height_bmp = $('#' + theform + ' #convert_height_bmp').val();
+	var convert_dpi_bmp = $('#' + theform + ' #convert_dpi_bmp').val();
+	var convert_wm_jpg = $('#' + theform + ' #convert_wm_jpg option:selected').val();
+	var convert_wm_gif = $('#' + theform + ' #convert_wm_gif option:selected').val();
+	var convert_wm_png = $('#' + theform + ' #convert_wm_png option:selected').val();
+	var convert_wm_tif = $('#' + theform + ' #convert_wm_tif option:selected').val();
+	var convert_wm_bmp = $('#' + theform + ' #convert_wm_bmp option:selected').val();
 	// Call the Action
-	loadcontent('statusconvertdummy','index.cfm?fa=c.images_convert&file_id=' + document.forms[theform].file_id.value + '&theorgname=' + escape(document.forms[theform].theorgname.value) + '&thepath=' + document.forms[theform].thepath.value + '&convert_width_jpg=' + document.forms[theform].convert_width_jpg.value + '&convert_height_jpg=' + document.forms[theform].convert_height_jpg.value + '&convert_dpi_jpg=' + document.forms[theform].convert_dpi_jpg.value + '&convert_width_gif=' + document.forms[theform].convert_width_gif.value + '&convert_height_gif=' + document.forms[theform].convert_height_gif.value + '&convert_dpi_gif=' + document.forms[theform].convert_dpi_gif.value + '&convert_width_png=' + document.forms[theform].convert_width_png.value + '&convert_height_png=' + document.forms[theform].convert_height_png.value + '&convert_dpi_png=' + document.forms[theform].convert_dpi_png.value + '&convert_width_tif=' + document.forms[theform].convert_width_tif.value + '&convert_height_tif=' + document.forms[theform].convert_height_tif.value + '&convert_dpi_tif=' + document.forms[theform].convert_dpi_tif.value + '&convert_width_bmp=' + document.forms[theform].convert_width_bmp.value + '&convert_height_bmp=' + document.forms[theform].convert_height_bmp.value + '&convert_dpi_bmp=' + document.forms[theform].convert_dpi_bmp.value + '&convert_to=' + convertto + '&link_kind=' + document.forms[theform].link_kind.value + '&link_path_url=' + escape(document.forms[theform].link_path_url.value));
+	$('#statusconvertdummy').load('index.cfm?fa=c.images_convert', { convert_to:convertto, file_id:file_id, theorgname:theorgname, thepath:thepath, link_kind:link_kind, link_path_url:link_path_url, convert_width_jpg:convert_width_jpg, convert_height_jpg:convert_height_jpg, convert_dpi_jpg:convert_dpi_jpg, convert_width_gif:convert_width_gif, convert_height_gif:convert_height_gif, convert_dpi_gif:convert_dpi_gif, convert_width_png:convert_width_png, convert_height_png:convert_height_png, convert_dpi_png:convert_dpi_png, convert_width_tif:convert_width_tif, convert_height_tif:convert_height_tif, convert_dpi_tif:convert_dpi_tif, convert_width_bmp:convert_width_bmp, convert_height_bmp:convert_height_bmp, convert_dpi_bmp:convert_dpi_bmp, convert_wm_jpg:convert_wm_jpg, convert_wm_gif:convert_wm_gif, convert_wm_png:convert_wm_png, convert_wm_tif:convert_wm_tif, convert_wm_bmp:convert_wm_bmp } );
 }
 
 // For Video Coversion

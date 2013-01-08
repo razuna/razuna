@@ -28,15 +28,15 @@
 	<input type="hidden" name="#theaction#" value="#xfa.save#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<input type="hidden" name="folder_id" value="#qry_detail.detail.folder_id_r#">
-	<input type="hidden" name="file_id" value="#attributes.file_id#">
-	<input type="hidden" name="theorgname" value="#qry_detail.detail.img_filename#">
-	<input type="hidden" name="thepath" value="#thisPath#">
+	<input type="hidden" name="file_id" id="file_id" value="#attributes.file_id#">
+	<input type="hidden" name="theorgname" id="theorgname" value="#qry_detail.detail.img_filename#">
+	<input type="hidden" name="thepath" id="thepath" value="#thisPath#">
 	<input type="hidden" name="filenameorg" value="#qry_detail.detail.img_filename_org#">
 	<input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 	<input type="hidden" name="extension" value="#qry_detail.detail.img_extension#">
 	<input type="hidden" name="thumbextension" value="#qry_detail.detail.thumb_extension#">
-	<input type="hidden" name="link_kind" value="#qry_detail.detail.link_kind#">
-	<input type="hidden" name="link_path_url" value="#qry_detail.detail.link_path_url#">
+	<input type="hidden" name="link_kind" id="link_kind" value="#qry_detail.detail.link_kind#">
+	<input type="hidden" name="link_path_url" id="link_path_url" value="#qry_detail.detail.link_path_url#">
 	<div id="tab_detail#attributes.file_id#">
 		<!--- Tabs --->
 		<ul>

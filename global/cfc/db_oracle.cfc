@@ -2242,6 +2242,37 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		host_id				number
 		)
 		</cfquery>
+
+		<!--- Watermark --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#wm_templates (
+	  	wm_temp_id 			varchar2(100 char),
+	  	wm_name				varchar2(200 char),
+		wm_active			varchar2(6 char) DEFAULT 'false',
+		host_id 			int,
+		PRIMARY KEY (wm_temp_id)
+		)
+		</cfquery>
+
+		<!--- Watermark values --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#wm_templates_val (
+	  	wm_temp_id_r 		varchar2(100 char),
+		wm_use_image 		varchar2(6 char) DEFAULT 'false',
+		wm_use_text 		varchar2(6 char) DEFAULT 'false',
+		wm_image_opacity 	varchar2(4 char),
+		wm_text_opacity 	varchar2(4 char),
+		wm_image_position 	varchar2(10 char),
+		wm_text_position 	varchar2(10 char),
+		wm_text_content 	varchar2(400 char),
+		wm_text_font 		varchar2(100 char),
+		wm_text_font_size 	varchar2(5 char),
+		wm_image_path 		varchar2(300 char),
+		host_id 			int,
+		rec_uuid 			varchar2(100 char),
+		PRIMARY KEY (rec_uuid)
+		)
+		</cfquery>
 		
 	</cffunction>
 	

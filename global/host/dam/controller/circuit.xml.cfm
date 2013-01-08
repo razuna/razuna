@@ -478,6 +478,12 @@
 		<invoke object="myFusebox.getApplicationData().settings" method="assetpath" returnvariable="attributes.assetpath" />
 	</fuseaction>
 	
+	<!-- Get Path to Assets -->
+	<fuseaction name="watermark">
+		<!-- CFC: get templates -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="getwmtemplates(true)" returnvariable="attributes.wmtemplates" />
+	</fuseaction>
+
 	<!--
 		END: GET SETTINGS FOR CALLS
 	 -->
@@ -2362,6 +2368,8 @@
 		<do action="assetpath" />
 		<!-- Get labels -->
 		<do action="labels" />
+		<!-- Get watermark templates -->
+		<do action="watermark" />
 		<!-- Get labels for this record -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'img')" returnvariable="qry_labels" />
 		<!-- CFC: Get XMP value -->
@@ -2431,6 +2439,7 @@
 		<set name="attributes.fromconverting" value="T" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.thepathup" value="#ExpandPath('../..')#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -4146,6 +4155,8 @@
 		</if>
 		<!-- CFC: get details -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_template_detail(attributes.upl_temp_id)" returnvariable="qry_detail" />
+		<!-- Get watermark templates -->
+		<do action="watermark" />
 		<!-- Show -->
 		<do action="ajax.upl_template_detail" />
 	</fuseaction>
@@ -4771,6 +4782,57 @@
 	<!-- ADMIN: LABELS STOP -->
 	<!--  -->
 	
+	<!--  -->
+	<!-- ADMIN: WATERMARK START -->
+	<!--  -->
+
+	<!-- Watermark templates list -->
+	<fuseaction name="admin_watermark_templates">
+		<!-- CFC: get templates -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="getwmtemplates()" returnvariable="qry_templates" />
+		<!-- Show -->
+		<do action="ajax.admin_watermark_templates" />
+	</fuseaction>
+	<!-- Templates Detail or add -->
+	<fuseaction name="admin_watermark_template_detail">
+		<!-- Param -->
+		<!-- Create new ID -->
+		<if condition="attributes.wm_temp_id EQ 0">
+			<true>
+				<set name="attributes.wm_temp_id" value="#createuuid('')#" />
+			</true>
+		</if>
+		<!-- CFC: get details -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="getwmtemplatedetail(attributes.wm_temp_id)" returnvariable="qry_detail" />
+		<!-- Show -->
+		<do action="ajax.admin_watermark_template_detail" />
+	</fuseaction>
+	<!-- Templates Save -->
+	<fuseaction name="admin_watermark_template_save">
+		<!-- CFC: save -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="setwmtemplate(attributes)" />
+	</fuseaction>
+	<!-- Templates Remove -->
+	<fuseaction name="wm_templates_remove">
+		<!-- Path -->
+		<set name="attributes.thepathup" value="#ExpandPath('../..')#" />
+		<!-- CFC: save -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="removewmtemplate(attributes)" />
+		<!-- Show -->
+		<do action="admin_watermark_templates" />
+	</fuseaction>
+	<!-- Add Upload iFrame -->
+	<fuseaction name="admin_watermark_upload">
+		<!-- CFC: upload -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="upload_watermark(attributes)" returnvariable="wmupload" />
+		<!-- Show -->
+		<do action="ajax.admin_watermark_upload" />
+	</fuseaction>
+
+	<!--  -->
+	<!-- ADMIN: WATERMARK STOP -->
+	<!--  -->
+
 	<!--  -->
 	<!-- ADMIN SECTION END -->
 	<!--  -->

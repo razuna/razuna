@@ -591,7 +591,7 @@ Comment:<br>
 			</cfquery>
 			<!--- Save the additional values --->
 			<cfloop collection="#arguments.thestruct#" item="col">
-				<cfif col EQ "convert_bitrate_#theformat#" OR col EQ "convert_height_#theformat#" OR col EQ "convert_width_#theformat#" OR col EQ "convert_dpi_#theformat#">
+				<cfif col EQ "convert_bitrate_#theformat#" OR col EQ "convert_height_#theformat#" OR col EQ "convert_width_#theformat#" OR col EQ "convert_dpi_#theformat#" OR col EQ "convert_wm_#theformat#">
 					<cfset tf = lcase(col)>
 					<cfset tv = evaluate(tf)>
 					<cfif tv NEQ "">
@@ -1144,6 +1144,154 @@ Comment:<br>
 			WHERE #theid# = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			</cfquery>
 		</cfif>
+	</cffunction>
+
+	<!--- Watermark Templates --->
+	<cffunction name="getWMTemplates" output="false">
+		<cfargument name="theactive" type="boolean" required="false" default="false">
+		<!--- Query --->
+		<cfquery dataSource="#application.razuna.datasource#" name="qry">
+		SELECT wm_temp_id, wm_active, wm_name
+		FROM #session.hostdbprefix#wm_templates
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif arguments.theactive>
+			AND wm_active = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="true">
+		</cfif>
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry>
+	</cffunction>
+
+	<!--- Get watermark templates ---------------------------------------------------------------------->
+	<cffunction name="getWMtemplatedetail" output="false">
+		<cfargument name="wm_temp_id" type="string" required="true">
+		<!--- New struct --->
+		<cfset var qry = structnew()>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry.wm">
+		SELECT wm_active, wm_name
+		FROM #session.hostdbprefix#wm_templates
+		WHERE wm_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.wm_temp_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Query values --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry.wmval">
+		SELECT wm_use_image, wm_use_text, wm_image_opacity, wm_text_opacity, wm_image_position, wm_text_position, 
+		wm_text_content, wm_text_font, wm_text_font_size, wm_image_path
+		FROM #session.hostdbprefix#wm_templates_val
+		WHERE wm_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.wm_temp_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- If certain values are empty --->
+		<cfif qry.wm.recordcount EQ 0>
+			<cfset queryAddRow(qry.wm)>
+			<cfset querySetCell(qry.wm, "wm_active", false)>
+		</cfif>
+		<cfif qry.wmval.recordcount EQ 0>
+			<cfset queryAddRow(qry.wmval)>
+			<cfset querySetCell(qry.wmval, "wm_use_image", false)>
+			<cfset querySetCell(qry.wmval, "wm_use_text", false)>
+		</cfif>
+		<!--- Get tools --->
+		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
+		<!--- Check the platform and then decide on the different executables --->
+		<cfif isWindows()>
+			<cfset var theimconvert = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
+		<cfelse>
+			<cfset var theimconvert = "#arguments.thestruct.thetools.imagemagick#/convert">
+		</cfif>
+		<!--- Get installed fonts and create list --->	
+		<cfexecute name="#theimconvert#" arguments="-list font" variable="x" timeout="60" />
+		<!--- Loops over result and grab the path to the XML --->
+		<cfloop list="#x#" delimiters=": " index="i">
+			<cfif i CONTAINS ".xml">
+				<cfset thepath = trim(i)>
+			</cfif>
+		</cfloop>
+		<!--- Parse XML --->
+		<cffile action="read" file="#thepath#" variable="thexml" />
+		<cfset var x = xmlParse(thexml)>
+		<cfset var thexml = xmlSearch(x, "//typemap/type/")>
+		<cfset var fontlist = "">
+		<!--- Loop over XML and create list --->
+		<cfloop array="#thexml#" index="f">
+			<cfset fontlist = fontlist & "," & f[1].xmlAttributes.fullname & ":" & f[1].xmlAttributes.name>
+		</cfloop>
+		<!--- Set local fontlist into struct --->
+		<cfset qry.fontlist = fontlist>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
+	<!--- Save watermark templates ---------------------------------------------------------------------->
+	<cffunction name="setWMtemplate" output="false">
+		<cfargument name="thestruct" type="struct" required="true">
+		<!--- Param --->
+		<cfparam name="arguments.thestruct.wm_active" default="false">
+		<cfparam name="arguments.thestruct.wm_use_image" default="false">
+		<cfparam name="arguments.thestruct.wm_use_text" default="false">
+		<!--- Delete record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#wm_templates
+		WHERE wm_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_temp_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#wm_templates_val
+		WHERE wm_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_temp_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Add record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#wm_templates
+		(wm_temp_id, wm_name, wm_active, host_id)
+		VALUES(
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_temp_id#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_name#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_active#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		)
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#wm_templates_val
+		(wm_temp_id_r, wm_use_image, wm_use_text, wm_image_opacity, wm_text_opacity, wm_image_position, wm_text_position, wm_text_content, wm_text_font, wm_text_font_size, wm_image_path, host_id, rec_uuid)
+		VALUES(
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_temp_id#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_use_image#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_use_text#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_image_opacity#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_text_opacity#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_image_position#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_text_position#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_text_content#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_text_font#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_text_font_size#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.wm_image_path#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createUUID()#">
+		)
+		</cfquery>
+	</cffunction>
+
+	<!--- Remove Watermark Templates --->
+	<cffunction name="removewmtemplate" output="false">
+		<cfargument name="thestruct" type="struct" required="true">
+		<!--- Delete record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#wm_templates
+		WHERE wm_temp_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#wm_templates_val
+		WHERE wm_temp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Remove the files on disk --->
+		<cftry>
+			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.id#" recurse="true" />
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 	</cffunction>
 
 </cfcomponent>

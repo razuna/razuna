@@ -826,11 +826,13 @@
 	<cfif isWindows>
 		<cfset theexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
 		<cfset themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
+		<cfset thecomposite = """#arguments.thestruct.thetools.imagemagick#/composite.exe""">
 		<cfset theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 		<cfset thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
 	<cfelse>
 		<cfset theexe = "#arguments.thestruct.thetools.imagemagick#/convert">
 		<cfset themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
+		<cfset thecomposite = "#arguments.thestruct.thetools.imagemagick#/composite">
 		<cfset theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 		<cfset thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
 	</cfif>
@@ -852,7 +854,7 @@
 		<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "undefined" AND arguments.thestruct.upl_template NEQ "">
 			<!--- Get width --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry_w">
-			SELECT upl_temp_field, upl_temp_value
+			SELECT upl_temp_value
 			FROM #session.hostdbprefix#upload_templates_val
 			WHERE upl_temp_field = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="convert_width_#theformat#">
 			AND upl_temp_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_template#">
@@ -860,7 +862,7 @@
 			</cfquery>
 			<!--- Get height --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry_h">
-			SELECT upl_temp_field, upl_temp_value
+			SELECT upl_temp_value
 			FROM #session.hostdbprefix#upload_templates_val
 			WHERE upl_temp_field = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="convert_height_#theformat#">
 			AND upl_temp_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_template#">
@@ -868,9 +870,17 @@
 			</cfquery>
 			<!--- Get DPI --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry_d">
-			SELECT upl_temp_field, upl_temp_value
+			SELECT upl_temp_value
 			FROM #session.hostdbprefix#upload_templates_val
 			WHERE upl_temp_field = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="convert_dpi_#theformat#">
+			AND upl_temp_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_template#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+			<!--- Get watermark --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_wm">
+			SELECT upl_temp_value
+			FROM #session.hostdbprefix#upload_templates_val
+			WHERE upl_temp_field = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="convert_wm_#theformat#">
 			AND upl_temp_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.upl_template#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
@@ -888,11 +898,20 @@
 			<cfelse>
 				<cfset var thedpi = qry_d.upl_temp_value>
 			</cfif>
+			<!--- If there is a watermark being selected grab it here --->
+			<cfif "convert_wm_#theformat#" NEQ "">
+				<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#qry_wm.upl_temp_value#" returnvariable="thewm" />
+			</cfif>
 		<cfelse>
 			<!--- Set image width and height --->
 			<cfset var newImgWidth  = evaluate("convert_width_#theformat#")>
 			<cfset var newImgHeight = evaluate("convert_height_#theformat#")>
 			<cfset var thedpi = evaluate("convert_dpi_#theformat#")>
+			<!--- If there is a watermark being selected grab it here --->
+			<cfif "convert_wm_#theformat#" NEQ "">
+				<cfset var wmid = evaluate("convert_wm_#theformat#")>
+				<cfinvoke component="global" method="getWMtemplatedetail" wm_temp_id="#wmid#" returnvariable="thewm" />
+			</cfif>
 		</cfif>
 		<!--- From here on we need to remove the number of the format (if any) --->
 		<cfset theformat = listfirst(theformat,"_")>
@@ -923,11 +942,13 @@
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 		<cfset arguments.thestruct.thesht = GetTempDirectory() & "/#thescript#t.sh">
 		<cfset arguments.thestruct.theshtt = GetTempDirectory() & "/#thescript#tt.sh">
+		<cfset arguments.thestruct.theshwm = GetTempDirectory() & "/#thescript#wm.sh">
 		<!--- On Windows a .bat --->
 		<cfif iswindows>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 			<cfset arguments.thestruct.thesht = GetTempDirectory() & "/#thescript#t.bat">
 			<cfset arguments.thestruct.theshtt = GetTempDirectory() & "/#thescript#tt.bat">
+			<cfset arguments.thestruct.theshwm = GetTempDirectory() & "/#thescript#wm.bat">
 		</cfif>
 		<!--- If we are a RAW image --->
 		<cfswitch expression="#arguments.thestruct.qry_detail.img_extension#">
@@ -963,6 +984,26 @@
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.thesht#">
 		<cffile action="delete" file="#arguments.thestruct.theshtt#">
+		<!--- If we need to watermark this image then --->
+		<cfif "convert_wm_#theformat#" NEQ "">
+			<cfif thewm.wmval.wm_use_image>
+				<cfexecute name="#thecomposite#" arguments="-dissolve #thewm.wmval.wm_image_opacity#% -gravity #thewm.wmval.wm_image_position# #arguments.thestruct.rootpath#global/host/watermark/#session.hostid#/#thewm.wmval.wm_image_path# #theformatconv# #theformatconv#" timeout="90" />
+			</cfif>
+			<cfif thewm.wmval.wm_use_text>
+				<!--- Opacity --->
+				<cfif thewm.wmval.wm_text_opacity EQ 100>
+					<cfset topa = "1.0">
+				<cfelse>
+					<cfset topa = "0.#left(thewm.wmval.wm_text_opacity,1)#">
+				</cfif>
+				<!--- Write script --->
+				<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 '#thewm.wmval.wm_text_content#' #theformatconv#" mode="777">
+				<!--- Execute it --->
+				<cfexecute name="#arguments.thestruct.theshwm#" timeout="60" />
+				<!--- Delete it --->
+				<cffile action="delete" file="#arguments.thestruct.theshwm#">
+			</cfif>
+		</cfif>
 		<!--- Add the metadata from the source to the converted one. If DPI is there we need to add new DPI information --->
 		<cfif thedpi EQ "">
 			<cfset var thedpitags = "">

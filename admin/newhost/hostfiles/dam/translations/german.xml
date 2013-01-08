@@ -2328,4 +2328,61 @@
 	<transid name="login_image_desc">
 		<transtext><![CDATA[You have the option to replace the image that is being presented on the login page. Please upload the image with the uploader below. NOTE: The image should be at least 1920 pixel width in order to fit all kind of resolutions.]]></transtext>
 	</transid>
+	<transid name="watermark_templates">
+		<transtext>Watermark Templates</transtext>
+	</transid>
+	<transid name="admin_watermark_templates_intro">
+		<transtext><![CDATA[With Watermark Templates you can create different watermark settings and apply them to your rendition template or when you create additional renditions.]]></transtext>
+	</transid>
+	<transid name="admin_watermark_templates_new">
+		<transtext>Add a Watermark Template</transtext>
+	</transid>
+	<transid name="admin_watermark_templates_active">
+		<transtext>Watermark Template is active</transtext>
+	</transid>
+	<transid name="admin_watermark_template_name">
+		<transtext>Template name</transtext>
+	</transid>
+	<transid name="admin_watermark_use_image">
+		<transtext>Use image</transtext>
+	</transid>
+	<transid name="admin_watermark_upload_image">
+		<transtext>Upload image</transtext>
+	</transid>
+	<transid name="opacity">
+		<transtext>Opacity</transtext>
+	</transid>
+	<transid name="admin_watermark_position_image">
+		<transtext>Image position</transtext>
+	</transid>
+	<transid name="admin_watermark_position_text">
+		<transtext>Text position</transtext>
+	</transid>
+	<transid name="admin_watermark_text_font">
+		<transtext>Select font</transtext>
+	</transid>
+	<transid name="admin_watermark_text_font_size">
+		<transtext>Set font size</transtext>
+	</transid>
+	<transid name="center">
+		<transtext>Center</transtext>
+	</transid>
+	<transid name="upper_right">
+		<transtext>Upper right corner</transtext>
+	</transid>
+	<transid name="upper_left">
+		<transtext>Upper left corner</transtext>
+	</transid>
+	<transid name="lower_right">
+		<transtext>Lower right corner</transtext>
+	</transid>
+	<transid name="lower_left">
+		<transtext>Lower left corner</transtext>
+	</transid>
+	<transid name="admin_watermark_use_text">
+		<transtext>Use text</transtext>
+	</transid>
+	<transid name="admin_watermark_text_content">
+		<transtext>Content</transtext>
+	</transid>
 </translations>

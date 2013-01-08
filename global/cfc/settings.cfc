@@ -903,17 +903,27 @@
 </cffunction>
 
 <!--- FUNCTION: UPLOAD WATERMARK --->
-<cffunction hint="Upload" name="upload_watermark" access="public" output="false">
+<cffunction name="upload_watermark" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
-	<!--- Get the host path --->
-	<cfinvoke component="defaults" method="hostpath" thesource="#application.razuna.datasource#" returnvariable="hostpath">
-	<!--- Upload watermark --->
-	<cffile action="upload" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#/#hostpath#/dam/images/watermark" nameconflict="overwrite" result="result">
-	<!--- Set variables that show the file in the GUI --->
-	<cfset this.thefilename = #result.ServerFile#>
-	<cfinvoke component="global" method="converttomb" thesize="#result.filesize#" returnvariable="thesize">
-	<cfset this.thesize = #thesize#>
-	<cfreturn this />
+	<!--- Param --->
+	<cfset var s = structNew()>
+	<!--- just remove any previous directory (like this we prevent having more the one image) --->
+	<cftry>
+		<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#" recurse="true" />
+		<cfcatch type="any"></cfcatch>
+	</cftry>
+	<!--- Create directory if not there already to hold this logo --->
+	<cftry>
+		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#" mode="775">
+		<cfcatch type="any"></cfcatch>
+	</cftry>
+	<!---  Upload file --->
+	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#" result="result" nameconflict="overwrite" mode="775">
+	<!--- Create var --->
+	<cfset s.fordbpath = "#arguments.thestruct.wm_temp_id#/#result.serverFile#">
+	<cfset s.imgpath = "global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#/#result.serverFile#">
+	<!--- Return --->
+	<cfreturn s />
 </cffunction>
 
 <!--- Get API key --->
