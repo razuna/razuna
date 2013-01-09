@@ -1203,7 +1203,7 @@ Comment:<br>
 		<!--- Get installed fonts and create list --->	
 		<cfexecute name="#theimconvert#" arguments="-list font" variable="x" timeout="60" />
 		<!--- Loops over result and grab the path to the XML --->
-		<cfloop list="#x#" delimiters=": " index="i">
+		<cfloop list="#x#" delimiters=" " index="i">
 			<cfif i CONTAINS ".xml">
 				<cfset thepath = trim(i)>
 			</cfif>
