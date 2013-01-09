@@ -2490,7 +2490,7 @@
 		<set name="attributes.fromconverting" value="T" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
-		<set name="attributes.thepathup" value="#ExpandPath('../..')#" />
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
