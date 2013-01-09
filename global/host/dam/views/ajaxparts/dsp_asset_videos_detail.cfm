@@ -74,6 +74,12 @@
 				<cfif cs.tab_history>
 					<li><a href="##history" onclick="loadcontent('history','#myself#c.log_history&id=#attributes.file_id#');">History</a></li>
 				</cfif>
+				<!--- Plugin being shows with add_tab_detail_wx  --->
+				<cfif structKeyExists(plwx,"pview")>
+					<cfloop list="#plwx.pview#" delimiters="," index="i">
+						#evaluate(i)#
+					</cfloop>
+				</cfif>
 			</cfif>
 		</ul>
 		<div id="detailinfo">
@@ -268,6 +274,12 @@
 			<cfif attributes.folderaccess NEQ "R">
 				<div id="shareoptions"></div>
 				<div id="history"></div>
+				<!--- Plugin being shows with add_tab_detail_wx  --->
+			<cfif structKeyExists(plwx,"pcfc")>
+				<cfloop list="#plwx.pcfc#" delimiters="," index="i">
+					<div id="#listlast(i,".")#"></div>
+				</cfloop>
+			</cfif>
 			</cfif>
 		</div>
 		<div id="updatefile" style="float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
