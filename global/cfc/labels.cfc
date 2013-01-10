@@ -104,6 +104,8 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.batch_replace" default="true">
+		<!--- Update Dates --->
+		<cfinvoke component="global" method="update_dates" type="#arguments.thestruct.thetype#" fileid="#arguments.thestruct.fileid#" />
 		<!--- Remove all labels for this record --->
 		<cfif arguments.thestruct.batch_replace>
 			<cfquery datasource="#application.razuna.datasource#">
@@ -132,8 +134,6 @@
 					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 				)
 				</cfquery>
-				<!--- Update Dates --->
-				<cfinvoke component="global" method="update_dates" type="#arguments.thestruct.thetype#" fileid="#arguments.thestruct.fileid#" />
 			</cfloop>
 			<!--- Lucene: Delete Records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
