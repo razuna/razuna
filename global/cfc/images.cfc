@@ -992,12 +992,18 @@
 			<cfif thewm.wmval.wm_use_text>
 				<!--- Opacity --->
 				<cfif thewm.wmval.wm_text_opacity EQ 100>
-					<cfset topa = "1.0">
+					<cfset var topa = "1.0">
 				<cfelse>
-					<cfset topa = "0.#left(thewm.wmval.wm_text_opacity,1)#">
+					<cfset var topa = "0.#left(thewm.wmval.wm_text_opacity,1)#">
+				</cfif>
+				<!--- Put text into var --->
+				<cfif iswindows>
+					<cfset var thetext = """#thewm.wmval.wm_text_content#""">
+				<cfelse>
+					<cfset var thetext = "'#thewm.wmval.wm_text_content#'">
 				</cfif>
 				<!--- Write script --->
-				<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 '#thewm.wmval.wm_text_content#' #theformatconv#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshwm#" output="#theexe# #theformatconv# -fill 'rgba(0,0,0,#topa#)' -gravity #thewm.wmval.wm_text_position# -pointsize #thewm.wmval.wm_text_font_size# -font #thewm.wmval.wm_text_font# -annotate 0 #thetext# #theformatconv#" mode="777">
 				<!--- Execute it --->
 				<cfexecute name="#arguments.thestruct.theshwm#" timeout="60" />
 				<!--- Delete it --->
