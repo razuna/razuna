@@ -1606,6 +1606,8 @@
 				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+				<!--- Update Dates --->
+				<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.vid_id#" />
 				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 				<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 				<!--- Log --->

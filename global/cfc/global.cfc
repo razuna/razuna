@@ -1119,21 +1119,29 @@ Comment:<br>
 				<cfset var theid = "img_id">
 				<cfset var d1 = "img_change_date">
 				<cfset var d2 = "img_change_time">
+				<!--- Flush --->
+				<cfset resetcachetoken("images")>
 			<cfelseif arguments.type EQ "vid">
 				<cfset var thedb = "videos">
 				<cfset var theid = "vid_id">
 				<cfset var d1 = "vid_change_date">
 				<cfset var d2 = "vid_change_time">
+				<!--- Flush --->
+				<cfset resetcachetoken("videos")>
 			<cfelseif arguments.type EQ "aud">
 				<cfset var thedb = "audios">
 				<cfset var theid = "aud_id">
 				<cfset var d1 = "aud_change_date">
 				<cfset var d2 = "aud_change_time">
+				<!--- Flush --->
+				<cfset resetcachetoken("audios")>
 			<cfelseif arguments.type EQ "doc">
 				<cfset var thedb = "files">
 				<cfset var theid = "file_id">
 				<cfset var d1 = "file_change_date">
 				<cfset var d2 = "file_change_time">
+				<!--- Flush --->
+				<cfset resetcachetoken("files")>
 			</cfif>
 			<!--- Update DB --->
 			<cfquery datasource="#application.razuna.datasource#">

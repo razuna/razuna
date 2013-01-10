@@ -1347,6 +1347,8 @@
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Update Dates --->
+			<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.img_id#" />
 			<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 			<cfset arguments.thestruct.storage = application.razuna.storage>
 			<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
