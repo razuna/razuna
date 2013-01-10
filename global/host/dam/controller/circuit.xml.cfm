@@ -2243,6 +2243,9 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_r',attributes)" returnvariable="plr" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="pllink" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
 		<!-- Show the folder listing -->
 		<do action="ajax.files_detail" />
 	</fuseaction>
@@ -2331,6 +2334,9 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_r',attributes)" returnvariable="plr" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="pllink" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
 		<!-- Show the folder listing -->
 		<do action="ajax.videos_detail" />
 	</fuseaction>
@@ -2546,6 +2552,9 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_r',attributes)" returnvariable="plr" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="pllink" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
 		<!-- Show the folder listing -->
 		<do action="ajax.audios_detail" />
 	</fuseaction>
