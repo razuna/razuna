@@ -116,6 +116,17 @@
 		<cfreturn session.hostid />
 	</cffunction>
 
+	<!--- Get Host --->
+	<cffunction name="getHost" access="public" returntype="query">
+		<cfargument name="id" type="numeric" required="true" />
+		<!--- Param --->
+		<cfset var s = structNew()>
+		<cfset s.host_id = arguments.id>
+		<!--- Call host details --->
+		<cfinvoke component="hosts" method="getdetail" thestruct="#s#" returnvariable="qryhost" />
+		<cfreturn qryhost />
+	</cffunction>
+
 	<!--- Get Sessions --->
 	<cffunction name="getUserID" access="public" returntype="String">
 		<cfreturn session.theuserid />
@@ -361,10 +372,15 @@
 		'img' as type,
 		i.img_id id, 
 		i.img_filename filename, 
+		i.img_filename_org filename_org,
 		i.folder_id_r folder_id, 
 		i.path_to_asset,
 		i.cloud_url,
-		i.cloud_url_org
+		i.cloud_url_org,
+		i.img_width width,
+		i.img_height height,
+		i.img_size size,
+		i.img_extension extension
 		FROM #getHostPrefix()#images i 
 		WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -373,10 +389,15 @@
 		'vid' as type,
 		v.vid_id id, 
 		v.vid_filename filename, 
+		v.vid_name_org filename_org,
 		v.folder_id_r folder_id, 
 		v.path_to_asset,
 		v.cloud_url,
-		v.cloud_url_org
+		v.cloud_url_org,
+		v.vid_width width,
+		v.vid_height height,
+		v.vid_size size,
+		v.vid_extension extension
 		FROM #getHostPrefix()#videos v 
 		WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -385,10 +406,15 @@
 		'aud' as type,
 		a.aud_id id, 
 		a.aud_name filename, 
+		a.aud_name_org filename_org,
 		a.folder_id_r folder_id, 
 		a.path_to_asset,
 		a.cloud_url,
-		a.cloud_url_org
+		a.cloud_url_org,
+		'0' as width,
+		'0' as height,
+		a.aud_size size,
+		a.aud_extension extension
 		FROM #getHostPrefix()#audios a
 		WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -397,10 +423,15 @@
 		'doc' as type,
 		f.file_id id, 
 		f.file_name filename, 
+		f.file_name_org filename_org, 
 		f.folder_id_r folder_id, 
 		f.path_to_asset,
 		f.cloud_url,
-		f.cloud_url_org
+		f.cloud_url_org,
+		'0' as width,
+		'0' as height,
+		f.file_size size,
+		f.file_extension extension
 		FROM #getHostPrefix()#files f 
 		WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
