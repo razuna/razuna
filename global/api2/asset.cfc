@@ -657,6 +657,7 @@
 					</cfif>
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
 					WHERE img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					OR img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "vid">
 					SELECT /* #cachetokenvid#getrenditionsvid */
 					vid_id id, 
@@ -675,6 +676,7 @@
 					</cfif>
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					WHERE vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					OR vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "aud">
 					SELECT /* #cachetokenaud#getrenditionsaud */
 					aud_id id, 
@@ -692,6 +694,7 @@
 					</cfif>
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
 					WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					OR aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				</cfif>
 				<cfif arguments.assettype NEQ "doc">UNION ALL</cfif>
 				SELECT 
