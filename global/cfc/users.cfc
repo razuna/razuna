@@ -766,5 +766,22 @@
 	<cfreturn qry>
 </cffunction>
 
+<!--- Get all users who are active --->
+<cffunction name="checkapikey" output="true">
+	<cfargument name="api_key" required="true" type="string">
+	<!--- Set application variables. Needed for the checkdb method in API --->
+	<cfset application.razuna.api.dsn = application.razuna.datasource>
+	<cfset application.razuna.api.setid = 1>
+	<cfset application.razuna.api.storage = application.razuna.storage>
+	<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
+	<!--- Call internal API to check for the API key --->
+	<cfinvoke component="global.api2.authentication" method="checkdb" api_key="#arguments.api_key#" returnvariable="checklogin">
+	<cfif !checklogin>
+		<cfoutput>Sorry, no valid API key!</cfoutput>
+		<cfabort>
+	</cfif>
+	<cfreturn checklogin />
+</cffunction>
+
 
 </cfcomponent>

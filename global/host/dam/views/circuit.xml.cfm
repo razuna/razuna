@@ -67,4 +67,11 @@
 		<include template="dsp_browser_mini" contentvariable="body" />
 		<do action="l.lay_browser_mini" />
 	</fuseaction>
+	<!--
+	VIEW: Custom
+	-->
+	<fuseaction name="view_custom">
+		<include template="dsp_view_custom" contentvariable="maincontent" />
+		<do action="l.lay_view_custom" />
+	</fuseaction>
 </circuit>

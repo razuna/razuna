@@ -103,5 +103,14 @@
   		<include template="lay_browser_mini" contentvariable="thecontent" />
   		<include template="lay_main_mini" />
 	</fuseaction>
+
+	<!--
+	View: Custom
+	-->
+	<fuseaction name="lay_view_custom">
+  		<!-- <include template="lay_view_custom" contentvariable="maincontent" /> -->
+  		<include template="lay_custom" />
+	</fuseaction>
+
 	
 </circuit>

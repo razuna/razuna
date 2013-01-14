@@ -33,7 +33,7 @@
 
 	<!--- Check for db entry --->
 	<cffunction name="checkdb" access="public" output="no">
-		<cfargument name="api_key" type="string">
+		<cfargument name="api_key" type="string" required="true">
 		<!--- Param --->
 		<cfparam name="thehostid" default="" />
 		<!--- Check to see if api key has a hostid --->

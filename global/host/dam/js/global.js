@@ -1606,16 +1606,26 @@ function subadvfieldsimg(theform,searchtext){
 }
 // Focus tree
 function razunatreefocus(folderid){
-	setTimeout(function() {
-    	razunatreefocusdelay(folderid);
-	}, 1250)
+
+	try {
+		setTimeout(function() {
+	    	razunatreefocusdelay(folderid);
+		}, 1250)
+	}
+	catch(e) {};
 }
 function razunatreefocusbranch(folderidr,folderid){
-	$.tree.focused().open_branch('#' + folderidr);
-	$.tree.focused().select_branch('#' + folderid);	
+	try{
+		$.tree.focused().open_branch('#' + folderidr);
+		$.tree.focused().select_branch('#' + folderid);
+	}
+	catch(e) {};
 }
 function razunatreefocusdelay(folderid){
-	$.tree.focused().select_branch('#' + folderid);	
+	try{
+		$.tree.focused().select_branch('#' + folderid);
+	}
+	catch(e) {};
 }
 // Toggle Slide
 function toggleslide(theclickid,thefield){

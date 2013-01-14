@@ -198,7 +198,10 @@
   feedback_widget_options.placement = "hidden";
   feedback_widget_options.color = "##222";
   feedback_widget_options.style = "question";
-  var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+  try{
+	var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+  }
+  catch(e) {};
 </script>
 <cfif cgi.http_host CONTAINS "razuna.com">
 <script type="text/javascript">
