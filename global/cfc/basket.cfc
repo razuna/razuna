@@ -404,12 +404,12 @@
 			<cfset arguments.thestruct.thefinalname = thefinalname>
 			<cfset arguments.thestruct.theart = theart>
 			<!--- Local --->
-			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
 				</cfthread>
 			<!--- Nirvanix --->
-			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfelseif application.razuna.storage EQ "nirvanix" AND qry.link_kind EQ "">
 				<!--- Login to Nirvanix --->
 				<cfinvoke component="nirvanix" method="Login" returnvariable="nvxsession" />
 				<!--- Put together the download file --->
@@ -418,7 +418,7 @@
 					<cfhttp url="#attributes.intstruct.thiscloudurl#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
 				</cfthread>
 			<!--- Amazon --->
-			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
 						<cfinvokeargument name="key" value="/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#">
@@ -427,14 +427,14 @@
 					</cfinvoke>
 				</cfthread>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
-			<cfelseif arguments.thestruct.qry.link_kind EQ "url">
+			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cffile action="write" file="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.qry.img_filename#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
 							
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
-			<cfelseif arguments.thestruct.qry.link_kind EQ "lan">
+			<cfelseif qry.link_kind EQ "lan">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
 					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
 				</cfthread>
@@ -442,7 +442,7 @@
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="#thethreadid#" />
 			<!--- Rename the file --->
-			<cfif structkeyexists(arguments.thestruct.qry, "link_kind") AND arguments.thestruct.qry.link_kind NEQ "url" AND fileExists("#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#")>
+			<cfif structkeyexists(qry, "link_kind") AND qry.link_kind NEQ "url" AND fileExists("#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#")>
 				<cffile action="move" source="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#arguments.thestruct.thefinalname#" destination="#arguments.thestruct.newpath#/#arguments.thestruct.thefname#/#arguments.thestruct.theart#/#thenewname#">
 			</cfif>
 		</cfif>
@@ -515,17 +515,17 @@
 			<!--- Create uuid for thread --->
 			<cfset wvt = createuuid("")>
 			<!--- Local --->
-			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
 					<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.vid_name_org#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
 				</cfthread>
 			<!--- Nirvanix --->
-			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfelseif application.razuna.storage EQ "nirvanix" AND qry.link_kind EQ "">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
 					<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
 				</cfthread>			
 			<!--- Amazon --->
-			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
 				<!--- Download file --->
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
@@ -535,14 +535,14 @@
 					</cfinvoke>
 				</cfthread>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
-			<cfelseif arguments.thestruct.qry.link_kind EQ "url">
+			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
 					<cffile action="write" file="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.qry.vid_filename#.txt" output="This asset is located on a external source. Here is the direct link (or the embeeded code) to the asset:
 							
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
-			<cfelseif arguments.thestruct.qry.link_kind EQ "lan">
+			<cfelseif qry.link_kind EQ "lan">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
 					<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
 				</cfthread>
@@ -616,17 +616,17 @@
 			<cfset arguments.thestruct.thenewname = thenewname>
 			<cfset arguments.thestruct.thefname = thefname>
 			<!--- Local --->
-			<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfif application.razuna.storage EQ "local" AND qry.link_kind EQ "">
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
 					<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.qry.aud_name_org#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
 				</cfthread>
 			<!--- Nirvanix --->
-			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfelseif application.razuna.storage EQ "nirvanix" AND qry.link_kind EQ "">
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
 					<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
 				</cfthread>
 			<!--- Amazon --->
-			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">
+			<cfelseif application.razuna.storage EQ "amazon" AND qry.link_kind EQ "">
 				<!--- Download file --->
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Download">
@@ -636,14 +636,14 @@
 					</cfinvoke>
 				</cfthread>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
-			<cfelseif arguments.thestruct.qry.link_kind EQ "url">
+			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
 					<cffile action="write" file="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.qry.aud_name#.txt" output="This asset is located on a external source. Here is the direct link to the asset:
 							
 #attributes.intstruct.qry.link_path_url#" mode="775">
 				</cfthread>
 			<!--- If this is a linked asset --->
-			<cfelseif arguments.thestruct.qry.link_kind EQ "lan">
+			<cfelseif qry.link_kind EQ "lan">
 				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
 					<cfif attributes.intstruct.theart EQ "audio">
 						<cffile action="copy" source="#attributes.intstruct.qry.link_path_url#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#" mode="775">
