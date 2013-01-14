@@ -134,10 +134,19 @@
 											</cfif>
 											<!--- Thumbnail --->
 											<cfif link_kind EQ "">
-												<tr>
-													<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
-													<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)</td>
-												</tr>
+												<cfif attributes.fromshare EQ "T">
+													<cfif qry_share_options CONTAINS "#myid#-thumb-1">
+														<tr>
+															<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
+															<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)</td>
+														</tr>
+													</cfif>
+												<cfelse>
+													<tr>
+														<td width="1%"><input type="checkbox" name="artofimage" id="imgt#myid#" value="#myid#-thumb" onchange="checksel('#myid#','imgt#myid#','img');" checked="checked" /></td>
+														<td width="100%">#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(thumb_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#thumblength#")# MB) (#thumbwidth#x#thumbheight# pixel)</td>
+													</tr>
+												</cfif>
 											</cfif>
 										</cfif>
 									</cfloop>
