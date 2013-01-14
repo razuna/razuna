@@ -1398,6 +1398,9 @@
 	</fuseaction>
 	<!-- Load Folder Content -->
 	<fuseaction name="folder_content">
+		<!-- Reset session -->
+		<set name="session.file_id" value="" />
+		<set name="session.thefileid" value="" />
 		<!-- Get Include -->
 		<do action="folder_content_include" />
 		<!-- Show -->
@@ -6749,4 +6752,15 @@
 			</true>
 		</if>
 	</fuseaction>
+
+	<!-- Show custom Razuna -->
+	<fuseaction name="view_custom">
+		<!-- Check that API key is valid -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="checkapikey(attributes.api_key)" returnvariable="qry_api_key" />
+		<!-- CFC: Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
+		<!-- Show main page -->
+		<do action="v.view_custom" />
+	</fuseaction>
+
 </circuit>
