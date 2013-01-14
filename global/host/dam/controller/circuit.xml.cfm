@@ -1097,6 +1097,11 @@
 		<!-- Reset session -->
 		<set name="session.file_id" value="" />
 		<set name="session.thefileid" value="" />
+		<if condition="!structkeyexists(attributes,'cv')">
+			<true>
+				<set name="session.customaccess" value="" />
+			</true>
+		</if>
 		<!-- CFC: Permissions of this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get the total of files count and kind of files -->
@@ -6755,6 +6760,8 @@
 
 	<!-- Show custom Razuna -->
 	<fuseaction name="view_custom">
+		<!-- Put the custom access into a session -->
+		<set name="session.customaccess" value="#attributes.access#" />
 		<!-- Check that API key is valid -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="checkapikey(attributes.api_key)" returnvariable="qry_api_key" />
 		<!-- CFC: Custom fields -->

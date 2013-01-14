@@ -29,7 +29,7 @@
 <cfif structKeyExists(attributes, "show")>
 	<cfif attributes.show EQ "folder">
 		<script type="text/javascript">
-			$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folderid#');
+			$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folderid#&cv=true');
 		</script>
 	</cfif>
 	<cfif attributes.show EQ "upload">

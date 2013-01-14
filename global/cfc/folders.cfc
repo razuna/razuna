@@ -2072,6 +2072,10 @@
 	<cfif (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
 		<cfset folderaccess = "x">
 	</cfif>
+	<!--- If session.customaccess is here and is not empty --->
+	<cfif structKeyExists(session,"customaccess") AND session.customaccess NEQ "">
+		<cfset folderaccess = session.customaccess>
+	</cfif>
 	<cfreturn folderaccess />
 </cffunction>
 
