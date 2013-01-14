@@ -34,7 +34,7 @@
 						<strong>Original</strong> (#ucase(qry_detail.detail.aud_extension)#)<br /> 
 						<cfif qry_detail.detail.shared EQ "F"><a href="http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" target="_blank"></cfif>View</a>
 						 | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">Download</a>
-						 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');">Direct Link</a>
+						 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
 						<div id="divo#attributes.file_id#" style="display:none;">
 							<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#&v=o" />
 							<br />

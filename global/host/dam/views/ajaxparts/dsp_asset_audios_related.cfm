@@ -40,7 +40,7 @@
 					</cfif>
 					View</a> 
 					| <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud">Download</a> 
-					| <a href="##" onclick="toggleslide('divo#aud_id#','inputo#aud_id#');">Direct Link</a>
+					| <a href="##" onclick="toggleslide('divo#aud_id#','inputo#aud_id#');return false;">Direct Link</a>
 					| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#aud_id#&thetype=aud&cf_show=aud','Metadata',550,2);return false;">Metadata</a>
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="loadcontent('relatedaudios','#myself#c.audios_remove_related&id=#aud_id#&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');">Remove</a>

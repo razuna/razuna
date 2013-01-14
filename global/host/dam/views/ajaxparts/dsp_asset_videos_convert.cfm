@@ -43,7 +43,7 @@
 							<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
 								<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#</i>
 							</cfif>
-							| <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');">Direct Link</a>
+							| <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
 							<div id="divo#attributes.file_id#" style="display:none;">
 								<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" />
 								<br />

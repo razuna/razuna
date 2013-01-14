@@ -38,7 +38,7 @@
 					</cfif>
 					View</a>
 					 | <a href="#myself#c.serve_file&file_id=#vid_id#&type=vid">Download</a>
-					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');">Direct Link</a>
+					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');return false;">Direct Link</a>
 					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#vid_id#&thetype=vid&cf_show=vid','Metadata',550,2);return false;">Metadata</a>
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remren('#vid_id#');">Remove</a>

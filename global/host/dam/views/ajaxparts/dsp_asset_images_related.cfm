@@ -36,7 +36,7 @@
 		View
 		</a> 
 		 | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">Download</a> 
-		 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');">Direct Link</a>
+		 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;">Direct Link</a>
 		 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">Metadata</a>
 		<cfif attributes.folderaccess NEQ "R">
 			 | <a href="##" onclick="remren('#img_id#');">Remove</a>
