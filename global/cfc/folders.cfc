@@ -2199,6 +2199,10 @@
 <!--- Get all assets of this folder --->
 <cffunction name="getallassets" output="true" returnType="query">
 	<cfargument name="thestruct" type="struct" required="true">
+	<!--- Sometimes folderid is empty --->
+	<cfif arguments.thestruct.folder_id EQ "">
+		<cfset arguments.thestruct.folder_id = 0>
+	</cfif>
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Set pages var --->
