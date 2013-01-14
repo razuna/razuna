@@ -27,7 +27,7 @@
 <cfif qry_related.recordcount NEQ 0>
 	<br />
 	<cfloop query="qry_related">
-		<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel,<cfif ilength NEQ ""> #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif>)<br />
+		<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)<br />
 		<cfif attributes.s EQ "F">
 			<a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
 		<cfelse>

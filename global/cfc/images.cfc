@@ -1128,7 +1128,8 @@
 			cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">, 
 			cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">, 
 			cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">, 
-			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+			img_meta = <cfqueryparam value="#thedpi#" cfsqltype="cf_sql_varchar">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 		</cftransaction>
@@ -1165,7 +1166,7 @@
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#relatedimagesimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, 
-	i.img_online, i.img_owner, i.img_filename_org,
+	i.img_online, i.img_owner, i.img_filename_org, i.img_meta,
 	i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
 	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, 
 	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength,
