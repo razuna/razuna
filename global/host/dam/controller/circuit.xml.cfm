@@ -6658,7 +6658,6 @@
 		<!-- Show -->
 		<do action="ajax.file_download" />
 	</fuseaction>
-
 	<!-- Show metadata for rendttions -->
 	<fuseaction name="rend_meta">
 		<!-- Get Languages -->
