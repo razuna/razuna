@@ -505,17 +505,30 @@
 				<!--- Set array --->
 				<cfset var metaarray = arraynew(2)>
 				<cfset var metacounter = 1>
+				<cfset var metaarraycf = arraynew(2)>
+				<cfset var metacountercf = 1>
 				<!--- Loop over the metadata fields, they all have a prefix of meta_ --->
 				<cfloop collection="#arguments.thestruct#" item="thefield">
 					<cfif thefield CONTAINS "meta_">
 						<cfset metaarray[#metacounter#][1] = replacenocase(thefield,"meta_","","ONE")>
-						<cfset metaarray[#metacounter#][2] = evaluate(thefield)>
+						<cfset metaarray[#metacounter#][2] = arguments.thestruct["#thefield#"]>
 						<!--- Increase the array --->
 						<cfset metacounter = metacounter + 1>
 					</cfif>
 				</cfloop>
 				<!--- Serialize it to JSON and put it into struct --->
 				<cfset arguments.thestruct.assetmetadata = SerializeJSON(metaarray)>
+				<!--- Get the custom metadata fields --->
+				<cfloop collection="#arguments.thestruct#" item="thefield">
+					<cfif thefield CONTAINS "metacf_">
+						<cfset metaarraycf[#metacountercf#][1] = replacenocase(thefield,"metacf_","","ONE")>
+						<cfset metaarraycf[#metacountercf#][2] = arguments.thestruct["#thefield#"]>
+						<!--- Increase the array --->
+						<cfset metacountercf = metacountercf + 1>
+					</cfif>
+				</cfloop>
+				<!--- Serialize it to JSON and put it into struct --->
+				<cfset arguments.thestruct.assetmetadatacf = SerializeJSON(metaarraycf)>
 			</cfif>
 			<cfset arguments.thestruct.tempid = createuuid("")>
 			<!--- Put current id into session --->
@@ -918,6 +931,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfparam default="0" name="arguments.thestruct.upl_template">
 	<cfparam default="0" name="arguments.thestruct.metadata">
 	<cfparam default="" name="arguments.thestruct.assetmetadata">
+	<cfparam default="" name="arguments.thestruct.assetmetadatacf">
 	<cfset arguments.thestruct.theimagepath = "#arguments.thestruct.thepath#/images">
 	<!--- If zip_extract is undefined --->
 	<cfif arguments.thestruct.zip_extract EQ "" OR arguments.thestruct.zip_extract EQ "undefined">
@@ -1167,6 +1181,12 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 				<cfinvokeargument name="assettype" value="doc">
 				<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+			</cfinvoke>
+			<!--- Add custom fields --->
+			<cfinvoke component="global.api2.customfield" method="setfieldvalue">
+				<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+				<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+				<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
 			</cfinvoke>
 		</cfif>
 	</cfif>
@@ -1748,6 +1768,12 @@ This is the main function called directly by a single upload else from addassets
 							<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 							<cfinvokeargument name="assettype" value="img">
 							<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+						</cfinvoke>
+						<!--- Add custom fields --->
+						<cfinvoke component="global.api2.customfield" method="setfieldvalue">
+							<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+							<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+							<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
 						</cfinvoke>
 					</cfif>
 				</cfif>
@@ -2742,6 +2768,12 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvokeargument name="assettype" value="vid">
 					<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
 				</cfinvoke>
+				<!--- Add custom fields --->
+				<cfinvoke component="global.api2.customfield" method="setfieldvalue">
+					<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+					<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
+				</cfinvoke>
 			</cfif>
 		</cfif>
 		<!--- Add to Lucene --->
@@ -3518,6 +3550,12 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
 					<cfinvokeargument name="assettype" value="aud">
 					<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+				</cfinvoke>
+				<!--- Add custom fields --->
+				<cfinvoke component="global.api2.customfield" method="setfieldvalue">
+					<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+					<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
 				</cfinvoke>
 			</cfif>
 		</cfif>
