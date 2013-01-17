@@ -634,13 +634,13 @@
 				<cfset "#thisdesc#" =  evaluate(alldesc)>
 				<cfset "#thiskeywords#" =  evaluate(allkeywords)>
 			<cfelse>
-				<cfif langindex EQ 1>
+				<!--- <cfif langindex EQ 1>
 					<cfset thisdesc = "desc_#langindex#">
 					<cfset thiskeywords = "keywords_#langindex#">
-				<cfelse>
+				<cfelse> --->
 					<cfset thisdesc = "img_desc_#langindex#">
 					<cfset thiskeywords = "img_keywords_#langindex#">
-				</cfif>
+				<!--- </cfif> --->
 			</cfif>
 			<cfset l = langindex>
 			<cfif thisdesc CONTAINS l OR thiskeywords CONTAINS l>
