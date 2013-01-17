@@ -831,72 +831,80 @@
 </cffunction>
 
 <!--- Copy --->
-<cffunction name="copy" output="false" returntype="void">
+<cffunction name="docopy" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.release" default="false">
-	<!--- New ID for collection --->
-	<cfset var newid = createUUID("")>
-	<!--- Copy the main record --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#collections
-	(col_id, folder_id_r, col_owner, create_date, create_time, change_date, change_time, col_template, col_shared, col_name_shared, share_dl_org, share_comments, share_upload, share_order, share_order_user, host_id, col_released, col_copied_from)
-	SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, folder_id_r, col_owner, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, col_template, col_shared, col_name_shared, share_dl_org, share_comments, share_upload, share_order, share_order_user, host_id, <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.release#">, col_id
-	FROM #session.hostdbprefix#collections
-	WHERE col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
-	</cfquery>
-	<!--- Add name, description and keywords --->
-	<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-		<cfset thisdesc = "arguments.thestruct.col_desc_#langindex#">
-		<cfset thiskeys = "arguments.thestruct.col_keywords_#langindex#">
-		<cfif thisdesc CONTAINS "#langindex#">
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#collections_text
-			(col_id_r, lang_id_r, col_desc, col_keywords, col_name, host_id, rec_uuid)
-			VALUES(
-			<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam value="#evaluate(thisdesc)#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#evaluate(thiskeys)#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.col_name#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-			)
-			</cfquery>
-		</cfif>
-	</cfloop>
-	<!--- Copy files --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#collections_ct_files
-	(col_id_r, file_id_r, col_file_type, col_item_order, col_file_format, host_id, rec_uuid)
-	SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, file_id_r, col_file_type, col_item_order, col_file_format, host_id, <cfif application.razuna.thedatabase EQ "mssql">newid()<cfelseif application.razuna.thedatabase EQ "oracle">sys_guid()<cfelseif application.razuna.thedatabase EQ "db2">generate_unique()<cfelseif application.razuna.thedatabase EQ "h2">random_uuid()<cfelseif application.razuna.thedatabase EQ "mysql">uuid()</cfif>
-	FROM #session.hostdbprefix#collections_ct_files
-	WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
-	</cfquery>
-	<!--- Groups --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#collections_groups
-	(col_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
-	SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, grp_id_r, grp_permission, host_id, <cfif application.razuna.thedatabase EQ "mssql">newid()<cfelseif application.razuna.thedatabase EQ "oracle">sys_guid()<cfelseif application.razuna.thedatabase EQ "db2">generate_unique()<cfelseif application.razuna.thedatabase EQ "h2">random_uuid()<cfelseif application.razuna.thedatabase EQ "mysql">uuid()</cfif>
-	FROM #session.hostdbprefix#collections_groups
-	WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
-	</cfquery>
-	<!--- Comments --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#comments
-	(com_id, asset_id_r, asset_type, user_id_r, com_text, com_date, host_id)
-	SELECT <cfif application.razuna.thedatabase EQ "mssql">newid()<cfelseif application.razuna.thedatabase EQ "oracle">sys_guid()<cfelseif application.razuna.thedatabase EQ "db2">generate_unique()<cfelseif application.razuna.thedatabase EQ "h2">random_uuid()<cfelseif application.razuna.thedatabase EQ "mysql">uuid()</cfif>, <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, asset_type, user_id_r, com_text, com_date, host_id
-	FROM #session.hostdbprefix#comments
-	WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
-	</cfquery>
-	<!--- Widgets --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#widgets
-	(widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, host_id)
-	SELECT <cfif application.razuna.thedatabase EQ "mssql">newid()<cfelseif application.razuna.thedatabase EQ "oracle">sys_guid()<cfelseif application.razuna.thedatabase EQ "db2">generate_unique()<cfelseif application.razuna.thedatabase EQ "h2">random_uuid()<cfelseif application.razuna.thedatabase EQ "mysql">uuid()</cfif>, <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, host_id
-	FROM #session.hostdbprefix#widgets
-	WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
-	</cfquery>
+	<cfparam name="arguments.thestruct.copycol" default="false">
+	<!--- This is called if we copy at the same time --->
+	<cfif arguments.thestruct.copycol>
+		<!--- New ID for collection --->
+		<cfset var newid = createUUID("")>
+		<!--- Copy the main record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#collections
+		(col_id, folder_id_r, col_owner, create_date, create_time, change_date, change_time, col_template, col_shared, col_name_shared, share_dl_org, share_comments, share_upload, share_order, share_order_user, host_id, col_released, col_copied_from)
+		SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, folder_id_r, col_owner, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, col_template, col_shared, col_name_shared, share_dl_org, share_comments, share_upload, share_order, share_order_user, host_id, 'true', col_id
+		FROM #session.hostdbprefix#collections
+		WHERE col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
+		</cfquery>
+		<!--- Add name, description and keywords --->
+		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+			<cfset thisdesc = "arguments.thestruct.col_desc_#langindex#">
+			<cfset thiskeys = "arguments.thestruct.col_keywords_#langindex#">
+			<cfif thisdesc CONTAINS "#langindex#">
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#collections_text
+				(col_id_r, lang_id_r, col_desc, col_keywords, col_name, host_id, rec_uuid)
+				VALUES(
+				<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#evaluate(thisdesc)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#evaluate(thiskeys)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#arguments.thestruct.col_name#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfif>
+		</cfloop>
+		<!--- Copy files --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#collections_ct_files
+		(col_id_r, file_id_r, col_file_type, col_item_order, col_file_format, host_id, rec_uuid)
+		SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, file_id_r, col_file_type, col_item_order, col_file_format, host_id, <cfif application.razuna.thedatabase EQ "mssql">newid()<cfelseif application.razuna.thedatabase EQ "oracle">sys_guid()<cfelseif application.razuna.thedatabase EQ "db2">generate_unique()<cfelseif application.razuna.thedatabase EQ "h2">random_uuid()<cfelseif application.razuna.thedatabase EQ "mysql">uuid()</cfif>
+		FROM #session.hostdbprefix#collections_ct_files
+		WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
+		</cfquery>
+		<!--- Groups --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#collections_groups
+		(col_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
+		SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, grp_id_r, grp_permission, host_id, <cfif application.razuna.thedatabase EQ "mssql">newid()<cfelseif application.razuna.thedatabase EQ "oracle">sys_guid()<cfelseif application.razuna.thedatabase EQ "db2">generate_unique()<cfelseif application.razuna.thedatabase EQ "h2">random_uuid()<cfelseif application.razuna.thedatabase EQ "mysql">uuid()</cfif>
+		FROM #session.hostdbprefix#collections_groups
+		WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
+		</cfquery>
+		<!--- Comments --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#comments
+		(com_id, asset_id_r, asset_type, user_id_r, com_text, com_date, host_id)
+		SELECT <cfif application.razuna.thedatabase EQ "mssql">newid()<cfelseif application.razuna.thedatabase EQ "oracle">sys_guid()<cfelseif application.razuna.thedatabase EQ "db2">generate_unique()<cfelseif application.razuna.thedatabase EQ "h2">random_uuid()<cfelseif application.razuna.thedatabase EQ "mysql">uuid()</cfif>, <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, asset_type, user_id_r, com_text, com_date, host_id
+		FROM #session.hostdbprefix#comments
+		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
+		</cfquery>
+		<!--- Widgets --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#widgets
+		(widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, host_id)
+		SELECT <cfif application.razuna.thedatabase EQ "mssql">newid()<cfelseif application.razuna.thedatabase EQ "oracle">sys_guid()<cfelseif application.razuna.thedatabase EQ "db2">generate_unique()<cfelseif application.razuna.thedatabase EQ "h2">random_uuid()<cfelseif application.razuna.thedatabase EQ "mysql">uuid()</cfif>, <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, host_id
+		FROM #session.hostdbprefix#widgets
+		WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
+		</cfquery>
+	<!--- We only need to make a release of the current collection --->
+	<cfelse>
+		<!--- Call internal release function --->
+		<cfset dorelease(arguments.thestruct)>
+	</cfif>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

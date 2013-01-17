@@ -1069,7 +1069,7 @@
 	<!-- Copy Collection DO -->
 	<fuseaction name="col_copy_do">
 		<!-- CFC: Copy Collection -->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="copy(attributes)" />
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="docopy(attributes)" />
 	</fuseaction>
 
 	<!--
