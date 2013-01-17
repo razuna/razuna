@@ -52,14 +52,14 @@
 											#ucase(cf_text)#<br />
 											<!--- For text --->
 											<cfif cf_type EQ "text">
-												<input type="text" style="width:400px;" id="#id#_cf_#cf_id#" name="cf_#cf_id#" />
+												<input type="text" style="width:400px;" id="#id#_cf_#cf_id#" name="#id#_cf_#cf_id#" />
 												<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
 													<cfset thereq = true>
 												<cfelse>
 													<cfset thereq = false>
 												</cfif>
 												<cfif thereq>
-													<cfset forjs = forjs & ",#id#_#thefield#:text">
+													<cfset forjs = forjs & ",#id#_cf_#cf_id#:text">
 												</cfif>
 											<!--- Radio --->
 											<cfelseif cf_type EQ "radio">
@@ -70,7 +70,7 @@
 													<cfset thereq = false>
 												</cfif>
 												<cfif thereq>
-													<cfset forjs = forjs & ",#id#_#thefield#:radio">
+													<cfset forjs = forjs & ",#id#_cf_#cf_id#:radio">
 												</cfif>
 											<!--- Textarea --->
 											<cfelseif cf_type EQ "textarea">
@@ -81,7 +81,7 @@
 													<cfset thereq = false>
 												</cfif>
 												<cfif thereq>
-													<cfset forjs = forjs & ",#id#_#thefield#:text">
+													<cfset forjs = forjs & ",#id#_cf_#cf_id#:text">
 												</cfif>
 											<!--- Select --->
 											<cfelseif cf_type EQ "select">
@@ -97,7 +97,7 @@
 													<cfset thereq = false>
 												</cfif>
 												<cfif thereq>
-													<cfset forjs = forjs & ",#id#_#thefield#:select">
+													<cfset forjs = forjs & ",#id#_cf_#cf_id#:select">
 												</cfif>
 											</cfif>
 										<cfelseif thefield EQ "labels">
@@ -114,7 +114,7 @@
 												<cfset thereq = false>
 											</cfif>
 											<cfif thereq>
-												<cfset forjs = forjs & ",#id#_#thefield#:select">
+												<cfset forjs = forjs & ",#id#_#thefield#:chosen">
 											</cfif>
 										<!--- Input fields --->
 										<cfelse>
@@ -157,12 +157,17 @@
 					<cfset tt = listlast(i,":")>
 					<!--- JS --->
 					<cfif tt EQ "text">
-						if ($('###tf#').val() == ''){
+						if ( $('###tf#').val() == '' ){
 							alert('Please enter all required values!');
 							return false;
 						}
 					<cfelseif tt EQ "select">
-						if (!$('###tf# option:selected').length){
+						if ( $('###tf# option:selected').val() == "" ){
+							alert('Please enter all required values!');
+							return false;
+						}
+					<cfelseif tt EQ "chosen">
+						if ( !$('###tf# option:selected').length){
 							alert('Please enter all required values!');
 							return false;
 						}
