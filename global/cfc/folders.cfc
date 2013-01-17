@@ -3537,6 +3537,8 @@
 	<cfargument name="fromshare" required="false" type="string" default="false">
 	<!--- Param --->
 	<cfparam name="flist" default="">
+	<!--- If there is no session for webgroups set --->
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query: Get current folder_id_r --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
@@ -3544,23 +3546,38 @@
 		<cfif session.iscol EQ "F">
 			,
 			CASE
+				<!--- Check permission on this folder --->
 				WHEN EXISTS(
 					SELECT fg.folder_id_r
-					FROM #session.hostdbprefix#folders_groups fg LEFT JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-					WHERE fg.folder_id_r = f.folder_id
+					FROM #session.hostdbprefix#folders_groups fg
+					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg.folder_id_r = f.folder_id
 					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 					) THEN 'unlocked'
+				<!--- When folder is shared for everyone --->
+				WHEN EXISTS(
+					SELECT fg2.folder_id_r
+					FROM #session.hostdbprefix#folders_groups fg2
+					WHERE fg2.grp_id_r = '0'
+					AND fg2.folder_id_r = f.folder_id
+					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					) THEN 'unlocked'
+				<!--- If this is the user folder or he is the owner --->
 				WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
-				WHEN ( f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
+				<!--- If nothing meets the above lock the folder --->
 				ELSE 'locked'
 			END AS perm
 		<cfelse>
 			CASE
 				WHEN EXISTS(
 					SELECT fg.col_id_r
-					FROM #session.hostdbprefix#collections_groups fg LEFT JOIN ct_groups_users gu ON gu.ct_g_u_grp_id = fg.grp_id_r AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-					WHERE fg.col_id_r = f.col_id
+					FROM #session.hostdbprefix#collections_groups fg
+					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg.col_id_r = f.col_id
 					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
+					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
 					) THEN 'unlocked'
 				<!--- If nothing meets the above lock the folder --->
 				ELSE 'locked'
