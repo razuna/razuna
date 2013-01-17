@@ -6759,6 +6759,8 @@
 
 	<!-- Show custom Razuna -->
 	<fuseaction name="view_custom">
+		<!-- Param -->
+		<set name="attributes.access" value="r" overwrite="false" />
 		<!-- Put the custom access into a session -->
 		<set name="session.customaccess" value="#attributes.access#" />
 		<!-- Check that API key is valid -->
