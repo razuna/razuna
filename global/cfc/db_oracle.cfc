@@ -1348,8 +1348,8 @@
 		  GRP_PERMISSION  	VARCHAR2(2 CHAR),
 		  HOST_ID			NUMBER,
 		  rec_uuid			VARCHAR2(100 CHAR),
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#FG_PK PRIMARY KEY (LOG_ACT_ID) ENABLE,
-		CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_GROUPS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#FG_PK PRIMARY KEY (rec_uuid) ENABLE,
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_GROUPS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
 		
 		</cfquery>
@@ -1768,9 +1768,9 @@
 		  FAV_ORDER  	NUMBER,
 		  HOST_ID		NUMBER,
 		  rec_uuid			VARCHAR2(100 CHAR),
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#UF_PK PRIMARY KEY (LOG_ACT_ID) ENABLE,
-		CONSTRAINT #arguments.thestruct.host_db_prefix#USERS_FAVORITES_FK1 FOREIGN KEY (USER_ID_R)
-	  REFERENCES USERS (USER_ID) ON DELETE SET NULL ENABLE
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#UF_PK PRIMARY KEY (rec_uuid) ENABLE,
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#USERS_FAVORITES_FK1 FOREIGN KEY (USER_ID_R)
+	      REFERENCES USERS (USER_ID) ON DELETE SET NULL ENABLE
 		)
 		
 		</cfquery>
