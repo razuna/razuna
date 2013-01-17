@@ -178,9 +178,9 @@
 					<cfabort>
 				<cfelseif xmlvar.Response.Responsecode[1].XmlText NEQ 0>
 					<!--- Send customer email with the fail --->
-					<cfinvoke component="email" method="send_email" subject="Razuna: Error during adding your file!" themessage="Unfortunately something went wrong during uploading your file to the storage. Thus your file is not available on Razuna.<br /><br />The Razuna support team has been notified of this and will look into it immediately.">
+					<cfinvoke component="email" method="send_email" subject="Razuna: Error during adding your file: #arguments.uploadfile#!" themessage="Unfortunately something went wrong during uploading your file (#arguments.uploadfile#) to the storage. Thus your file is not available on Razuna.<br /><br />The Razuna support team has been notified of this and will look into it immediately.">
 					<!--- Send us the error --->
-					<cfmail from="server@razuna.com" to="support@razuna.com" subject="upload nirvanix error" type="html"><cfdump var="#xmlvar#"><cfdump var="#arguments#"><cfdump var="#storagenode#"></cfmail>
+					<cfmail from="server@razuna.com" to="support@razuna.com" subject="upload nirvanix error (user notified)" type="html"><cfdump var="#xmlvar#"><cfdump var="#arguments#"><cfdump var="#storagenode#"></cfmail>
 					<cfabort>
 				</cfif>
 				<cfcatch type="any">
