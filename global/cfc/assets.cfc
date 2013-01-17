@@ -116,6 +116,8 @@
 <!--- INSERT FROM SERVER --->
 <cffunction name="addassetserverthread" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam name="session.currentupload" default="0">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
 		<cfset md5hash = "">
@@ -207,6 +209,8 @@
 <!--- INSERT FROM EMAIL --->
 <cffunction name="addassetemail" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam name="session.currentupload" default="0">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.emailid#" index="i">
 		<!--- Retrieve the message --->
@@ -314,6 +318,8 @@
 <!--- INSERT FROM FTP --->
 <cffunction name="addassetftp" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Params --->
+	<cfparam name="session.currentupload" default="0">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i">
 		<cftry>
