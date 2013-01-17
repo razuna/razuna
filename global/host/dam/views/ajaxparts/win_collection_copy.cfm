@@ -30,8 +30,9 @@
 	<input type="hidden" name="col_id" value="#attributes.col_id#">
 	<input type="hidden" name="folder_id" value="#attributes.folder_id#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
-		<h2>Copy this collection</h2>
-		This will copy the collection, all its files and all settings, also. 
+	<input type="hidden" name="release" value="true">
+		<h2>Release this collection</h2>
+		Releasing a collection will freeze the collection for further changes. It can be used in order to "lock" the collection. Only an Administrator can Un-Release a collection and make changes to it.
 		<br /><br />
 		<strong>Change Collection Name to</strong>
 		<input type="text" style="width:400px;" name="col_name" value="#qry_detail.col_name# copy">
@@ -59,8 +60,8 @@
 		</select>
 		<br /> --->
 		<!--- Save --->
-		<div style="float:left;padding:20px 0px 20px 0px;"><input type="checkbox" name="release" id="release" value="true"> Release the collection at the same time</div>
-		<div style="float:right;padding:20px 0px 20px 0px;"><input type="submit" name="submit" value="Copy Collection" class="button"></div>
+		<div style="float:left;padding:20px 0px 20px 0px;"><input type="checkbox" name="copycol" id="copycol" value="true" checked="checked"> Copy the collection at the same time</div>
+		<div style="float:right;padding:20px 0px 20px 0px;"><input type="submit" name="submit" value="Release Collection" class="button"></div>
 	</form>
 	<!--- JS --->
 	<script type="text/javascript">
@@ -71,14 +72,14 @@
 			// Get data
 			var url = formaction("formcopy#attributes.col_id#");
 			var items = formserialize("formcopy#attributes.col_id#");
-			var released = $('##release').is(':checked');
+			var copycol = $('##copycol').is(':checked');
 			// Submit Form
 	       	$.ajax({
 				type: "POST",
 				url: url,
 			   	data: items,
 			   	success: function(){
-					loadcontent('rightside','#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#&released=' + released);
+					loadcontent('rightside','#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#&released=true');
 					destroywindow('1');
 			   	}
 			})
