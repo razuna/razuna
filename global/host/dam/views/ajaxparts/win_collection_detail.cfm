@@ -53,12 +53,14 @@
 				<!--- Top Buttons --->
 				<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="backtocol();">&lt; Back to Collection list</a></div>
 				<div style="float:right;padding:10px 0px 10px 0px;">
-					<!--- If released --->
-					<cfif qry_detail.col_released>
-						<strong style="color:green;">This is a released collection!</strong><cfif request.securityobj.CheckSystemAdminUser() OR request.securityobj.CheckAdministratorUser()><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
-					<!--- Not released --->
-					<cfelse>
-						<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="Release" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','Release Collection',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
+					<cfif qry_assets.recordcount NEQ 0>
+						<!--- If released --->
+						<cfif qry_detail.col_released>
+							<strong style="color:green;">This is a released collection!</strong><cfif request.securityobj.CheckSystemAdminUser() OR request.securityobj.CheckAdministratorUser()><br /><em><a href="##" onclick="dorelease();">Un-Release it, if you need to make changes</a></em></cfif>
+						<!--- Not released --->
+						<cfelse>
+							<div style="float:left;padding-right:20px;"><!--- <input type="button" name="buttonrelease" value="Release" class="button" onclick="showwindow('#myself#ajax.col_release&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&release=true','Release Collection',500,1);return false;">  ---><input type="button" name="buttoncopy" value="Release" class="button" onclick="showwindow('#myself#c.col_copy&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','Release Collection',500,1);return false;"></div><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
+						</cfif>
 					</cfif>
 				</div>
 				<div style="clear:both;"></div>
@@ -286,7 +288,7 @@
 				</cfloop>
 			</table>
 			<!--- Bottom Buttons --->
-			<cfif qry_detail.colaccess NEQ "R">
+			<cfif qry_detail.colaccess NEQ "R" AND qry_assets.recordcount NEQ 0>
 				<div style="float:left;padding:10px 0px 10px 0px;"><a href="##" onclick="backtocol();">&lt; Back to Collection list</a></div>
 				<div style="float:right;padding:10px 0px 10px 0px;">
 					<!--- If released --->
