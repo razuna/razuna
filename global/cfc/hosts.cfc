@@ -489,7 +489,7 @@
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
 	<!--- function-body --->
-	<cfquery datasource="#variables.dsn#" name="localquery">
+	<cfquery datasource="#application.razuna.datasource#" name="localquery">
 		SELECT host_id, host_name, host_path, host_db_prefix, host_lang, host_type, host_shard_group, host_name_custom
 		FROM hosts
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.host_id#">
