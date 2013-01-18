@@ -2345,10 +2345,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		CREATE INDEX #arguments.thestruct.host_db_prefix#t_date ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(DATE_ADD)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#t_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(HOST_ID)
-		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#xmp_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(host_id)
+		CREATE INDEX #arguments.thestruct.host_db_prefix#t_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(host_id)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#raz1_cart_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#cart(CART_ID)
