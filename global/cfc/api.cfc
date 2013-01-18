@@ -360,12 +360,6 @@
 	<!--- Get Description, keywords and raw metadata --->
 	<cffunction name="getFile" access="public" returntype="query">
 		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
-		<!--- Set application values --->
-		<cfset application.razuna.api.storage = application.razuna.storage>
-		<cfset application.razuna.api.dsn = application.razuna.datasource>
-		<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
-		<cfset application.razuna.api.setid = application.razuna.setid>
-		<cfset application.razuna.api.dynpath = application.razuna.dynpath>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT
@@ -377,8 +371,8 @@
 		i.path_to_asset,
 		i.cloud_url,
 		i.cloud_url_org,
-		i.img_width width,
-		i.img_height height,
+		CAST(i.img_width AS CHAR) as width,
+		CAST(i.img_height AS CHAR) as height,
 		i.img_size size,
 		i.img_extension extension
 		FROM #getHostPrefix()#images i 
@@ -394,8 +388,8 @@
 		v.path_to_asset,
 		v.cloud_url,
 		v.cloud_url_org,
-		v.vid_width width,
-		v.vid_height height,
+		CAST(v.vid_width AS CHAR) as width,
+		CAST(v.vid_height AS CHAR) as height,
 		v.vid_size size,
 		v.vid_extension extension
 		FROM #getHostPrefix()#videos v 
