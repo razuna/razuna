@@ -1658,7 +1658,7 @@
 		  HOST_ID						NUMBER,
 		  SET2_AWS_BUCKET				VARCHAR2(100 CHAR),
 		  SET2_LABELS_USERS				VARCHAR2(2 CHAR) DEFAULT 'f',
-		  SET2_MD5CHECK					VARCHAR2(5 CHAR) DEFAULT 'false'
+		  SET2_MD5CHECK					VARCHAR2(5 CHAR) DEFAULT 'false',
 		  rec_uuid						VARCHAR2(100 CHAR),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS2_PK PRIMARY KEY (rec_uuid) ENABLE,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS2_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE ENABLE
@@ -2102,8 +2102,8 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#upload_templates 
 		(
 		  	upl_temp_id			varchar2(100 CHAR) NOT NULL,
-		  	upl_date_create 	timestamp NULL DEFAULT NULL,
-		  	upl_date_update		timestamp NULL DEFAULT NULL,
+		  	upl_date_create 	timestamp DEFAULT NULL,
+		  	upl_date_update		timestamp DEFAULT NULL,
 		  	upl_who				varchar2(100 CHAR) DEFAULT NULL,
 		  	upl_active			VARCHAR2(1 CHAR) DEFAULT '0',
 		  	host_id				number DEFAULT NULL,
@@ -2342,22 +2342,13 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		CREATE INDEX CT_U_RU_USER_ID ON #arguments.thestruct.theschema#.ct_users_remoteusers(CT_U_RU_USER_ID)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#t_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(TEMPID)
-		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#t_date ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(DATE_ADD)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#t_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(HOST_ID)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#xmp_idr ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(id_r)
-		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#xmp_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(host_id)
-		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#xmp_type ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#assets_temp(asset_type)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#raz1_cart_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#cart(CART_ID)
