@@ -186,6 +186,14 @@
 		</cfif>
 		</cfquery>
 	</cfif>
+	<!--- If coming from custom view and the session.customfileid is not empty --->
+	<cfif session.customfileid NEQ "">
+		<cfquery dbtype="query" name="qLocal">
+		SELECT *
+		FROM qLocal
+		WHERE vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfquery>
+	</cfif>
 	<!--- Only get the labels if in the combinded view --->
 	<cfif session.view EQ "combined">
 		<!--- Get the cachetoken for here --->

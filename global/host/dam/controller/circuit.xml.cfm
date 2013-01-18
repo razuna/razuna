@@ -1100,6 +1100,7 @@
 		<if condition="!structkeyexists(attributes,'cv')">
 			<true>
 				<set name="session.customaccess" value="" />
+				<set name="session.customfileid" value="" />
 			</true>
 		</if>
 		<!-- CFC: Permissions of this folder -->
@@ -6761,8 +6762,11 @@
 	<fuseaction name="view_custom">
 		<!-- Param -->
 		<set name="attributes.access" value="r" overwrite="false" />
+		<set name="attributes.fileid" value="" overwrite="false" />
 		<!-- Put the custom access into a session -->
 		<set name="session.customaccess" value="#attributes.access#" />
+		<!-- Put the custom fileid into session -->
+		<set name="session.customfileid" value="#attributes.fileid#" />
 		<!-- Check that API key is valid -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="checkapikey(attributes.api_key)" returnvariable="qry_api_key" />
 		<!-- CFC: Custom fields -->

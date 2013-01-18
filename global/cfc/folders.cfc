@@ -1831,6 +1831,10 @@
 		<cfif arguments.theoverall EQ "f" AND arguments.folder_id NEQ "">
 			AND fi.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND fi.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		)
 		+
 		(
@@ -1844,6 +1848,10 @@
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 			AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
 		)
 		+
@@ -1859,6 +1867,10 @@
 		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 			AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		) 
 		+
 		(
@@ -1872,6 +1884,10 @@
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 			AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
+		<!--- If coming from custom view and the session.customfileid is not empty --->
+		<cfif session.customfileid NEQ "">
+			AND a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
 		) as
 		thetotal
@@ -1977,18 +1993,27 @@
 		WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND SUBSTR<cfif variables.database EQ "mssql">ING</cfif>(file_extension,1,3) = 'doc'
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		<cfif session.customfileid NEQ "">
+			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		UNION ALL
 			SELECT 'xls' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_excel' as scr
 			FROM #session.hostdbprefix#files
 			WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND SUBSTR<cfif variables.database EQ "mssql">ING</cfif>(file_extension,1,3) = 'xls'
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif session.customfileid NEQ "">
+				AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
 		UNION ALL
 			SELECT 'pdf' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_pdf' as scr
 			FROM #session.hostdbprefix#files
 			WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND SUBSTR<cfif variables.database EQ "mssql">ING</cfif>(file_extension,1,3) = 'pdf'
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif session.customfileid NEQ "">
+				AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
 		UNION ALL
 			SELECT 'other' as ext, count(file_id) as cnt, 'doc' as typ, 'tab_others' as scr
 			FROM #session.hostdbprefix#files
@@ -1998,24 +2023,37 @@
 			AND file_extension <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> 'pdf')
 			OR  file_type = 'other')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif session.customfileid NEQ "">
+				AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
 		UNION ALL
 			SELECT 'img' as ext, count(img_id) as cnt, 'img' as typ, 'tab_images' as scr
 			FROM #session.hostdbprefix#images
 			WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND (img_group IS NULL OR img_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<!--- If coming from custom view and the session.customfileid is not empty --->
+			<cfif session.customfileid NEQ "">
+				AND img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
 		UNION ALL
 			SELECT 'vid' as ext, count(vid_id) as cnt, 'vid' as typ, 'tab_videos' as scr
 			FROM #session.hostdbprefix#videos
 			WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND (vid_group IS NULL OR vid_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif session.customfileid NEQ "">
+				AND vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
 		UNION ALL
 			SELECT 'aud' as ext, count(aud_id) as cnt, 'aud' as typ, 'tab_audios' as scr
 			FROM #session.hostdbprefix#audios
 			WHERE folder_id_r = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND (aud_group IS NULL OR aud_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfif session.customfileid NEQ "">
+				AND aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+			</cfif>
 		ORDER BY cnt DESC, scr
 	</cfquery>
 
@@ -2561,6 +2599,14 @@
 				LIMIT #mysqloffset#,#session.rowmaxpage#
 			</cfif>
 		</cfif>
+		</cfquery>
+	</cfif>
+	<!--- If coming from custom view and the session.customfileid is not empty --->
+	<cfif session.customfileid NEQ "">
+		<cfquery dbtype="query" name="qry">
+		SELECT *
+		FROM qry
+		WHERE id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfquery>
 	</cfif>
 	<!--- Only get the labels if in the combinded view --->
