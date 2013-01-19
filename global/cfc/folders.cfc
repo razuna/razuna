@@ -1808,6 +1808,7 @@
 	<cfargument name="theoverall" default="f" required="no" type="string">
 	<!--- Param --->
 	<cfparam name="session.showsubfolders" default="F">
+	<cfparam name="session.customfileid" default="">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Show assets from subfolders or not --->
@@ -1985,6 +1986,8 @@
 <!--- CREATE QUERY TABLE WITH AMOUNT OF DIFFERENT FILE TYPES FOR TAB DISPLAY --->
 <cffunction name="fileTotalAllTypes" output="false" hint="CREATE QUERY TABLE WITH AMOUNT OF DIFFERENT FILE TYPES FOR TAB DISPLAY">
 	<cfargument name="folder_id" default="" required="yes" type="string">
+	<!--- Params --->
+	<cfparam name="session.customfileid" default="">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<cfquery datasource="#variables.dsn#" name="qTab" cachedwithin="1" region="razcache">
@@ -2250,6 +2253,7 @@
 	<!--- Set pages var --->
 	<cfparam name="arguments.thestruct.pages" default="">
 	<cfparam name="arguments.thestruct.thisview" default="">
+	<cfparam name="session.customfileid" default="">
 	<!--- Show assets from subfolders or not --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.thestruct.folder_id#" database="#variables.database#" hostid="#session.hostid#" returnvariable="thefolders">

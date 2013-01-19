@@ -45,6 +45,7 @@
 	<!--- Param --->
 	<cfparam default="0" name="arguments.thestruct.serverFolderRecurse">
 	<cfparam default="0" name="arguments.thestruct.zipExtract">
+	<cfparam default="" name="arguments.thestruct.upl_template">
 	<cfset schedData.serverFolderRecurse = arguments.thestruct.serverFolderRecurse>
 	<cfset schedData.zipExtract = arguments.thestruct.zipExtract>
 	<cftry>
