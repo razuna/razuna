@@ -41,10 +41,12 @@
 					View</a> 
 					| <a href="#myself#c.serve_file&file_id=#aud_id#&type=aud">Download</a> 
 					| <a href="##" onclick="toggleslide('divo#aud_id#','inputo#aud_id#');return false;">Direct Link</a>
+					| <a href="##" onclick="toggleslide('dive#aud_id#','inpute#aud_id#');return false;">Embed</a>
 					| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#aud_id#&thetype=aud&cf_show=aud','Metadata',550,2);return false;">Metadata</a>
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="loadcontent('relatedaudios','#myself#c.audios_remove_related&id=#aud_id#&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');">Remove</a>
 					</cfif>
+					<!--- Direct link --->
 					<div id="divo#aud_id#" style="display:none;">
 						<input type="text" id="inputo#aud_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" />
 						<br />
@@ -67,6 +69,10 @@
 								#evaluate(i)#
 							</cfloop>
 						</cfif>
+					</div>
+					<!--- Embed Code --->
+					<div id="dive#aud_id#" style="display:none;">
+						<textarea id="inpute#aud_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" scrolling="auto" width="100%" height="150"></iframe></textarea>
 					</div>
 					<br />
 					<!--- Nirvanix --->

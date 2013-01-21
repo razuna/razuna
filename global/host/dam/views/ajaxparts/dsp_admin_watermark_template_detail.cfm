@@ -47,7 +47,7 @@
 			<div class="clear"></div>
 			<br />
 			<div style="width:90px;float:left;line-height:2em;">#myFusebox.getApplicationData().defaults.trans("opacity")#</div>
-			<div style="float:left;"><input type="text" style="width:20px;" name="wm_image_opacity" value="<cfif qry_detail.wmval.wm_image_opacity EQ "">50<cfelse>#qry_detail.wmval.wm_image_opacity#</cfif>" /> 0 - 100 %</div>
+			<div style="float:left;"><input type="text" style="width:30px;" name="wm_image_opacity" value="<cfif qry_detail.wmval.wm_image_opacity EQ "">50<cfelse>#qry_detail.wmval.wm_image_opacity#</cfif>" /> 0 - 100 %</div>
 			<div class="clear"></div>
 			<br />
 			<div style="width:90px;float:left;">#myFusebox.getApplicationData().defaults.trans("admin_watermark_position_image")#</div>
@@ -89,7 +89,7 @@
 			<br />
 			<div style="width:90px;float:left;line-height:2em;">#myFusebox.getApplicationData().defaults.trans("opacity")#</div>
 			<div style="float:left;">
-			<input type="text" style="width:20px;" name="wm_text_opacity" value="<cfif qry_detail.wmval.wm_text_opacity EQ "">100<cfelse>#qry_detail.wmval.wm_text_opacity#</cfif>" /> (100% means no opacity)
+			<input type="text" style="width:30px;" name="wm_text_opacity" value="<cfif qry_detail.wmval.wm_text_opacity EQ "">100<cfelse>#qry_detail.wmval.wm_text_opacity#</cfif>" /> (100% means no opacity)
 			</div>
 			<div class="clear"></div>
 			<br />

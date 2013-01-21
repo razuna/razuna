@@ -39,6 +39,7 @@
 					View</a>
 					 | <a href="#myself#c.serve_file&file_id=#vid_id#&type=vid">Download</a>
 					 | <a href="##" onclick="toggleslide('divo#vid_id#','inputo#vid_id#');return false;">Direct Link</a>
+					 | <a href="##" onclick="toggleslide('dive#vid_id#','inpute#vid_id#');return false;">Embed</a>
 					 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#vid_id#&thetype=vid&cf_show=vid','Metadata',550,2);return false;">Metadata</a>
 					<cfif attributes.folderaccess NEQ "R">
 						 | <a href="##" onclick="remren('#vid_id#');">Remove</a>
@@ -65,6 +66,10 @@
 								#evaluate(i)#
 							</cfloop>
 						</cfif>
+					</div>
+					<div id="dive#vid_id#" style="display:none;">
+						<cfset eh = vid_height + 40>
+						<textarea id="inpute#vid_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" scrolling="auto" width="100%" height="#eh#"></iframe></textarea>
 					</div>
 					<br>
 					<!--- Nirvanix --->

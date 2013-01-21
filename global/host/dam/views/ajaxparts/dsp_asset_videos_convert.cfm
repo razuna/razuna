@@ -44,6 +44,8 @@
 								<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#</i>
 							</cfif>
 							| <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
+							| <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>
+							<!--- Direct link --->
 							<div id="divo#attributes.file_id#" style="display:none;">
 								<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" />
 								<br />
@@ -62,6 +64,11 @@
 									<br />
 									#evaluate(i)#
 								</cfloop>
+							</div>
+							<!--- Embed Code --->
+							<div id="dive#attributes.file_id#" style="display:none;">
+								<cfset eh = qry_detail.detail.vheight + 40>
+								<textarea id="inpute#attributes.file_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" scrolling="auto" width="100%" height="#eh#"></iframe></textarea>
 							</div>
 						</cfif>
 					</td>
