@@ -2363,9 +2363,6 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		CREATE INDEX #arguments.thestruct.host_db_prefix#fo_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders(HOST_ID)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#fo_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders(folder_id)
-		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#fo_name ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#folders(FOLDER_NAME)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
@@ -2438,7 +2435,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		CREATE INDEX #arguments.thestruct.host_db_prefix#df_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files_desc(HOST_ID)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#fd_lang ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files_desc(LANG_ID_R)
+		CREATE INDEX #arguments.thestruct.host_db_prefix#fd_lang2 ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files_desc(LANG_ID_R)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#img_name ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#images(IMG_FILENAME)
@@ -2712,9 +2709,6 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#files_xmp_hostid ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#files_xmp(host_id)
-		</cfquery>
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		CREATE INDEX #arguments.thestruct.host_db_prefix#labels_id ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#labels(label_id)
 		</cfquery>
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE INDEX #arguments.thestruct.host_db_prefix#labels_text ON #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#labels(label_text)
