@@ -1042,6 +1042,7 @@
 	<cfargument name="thestruct" type="struct">
 	<cftry>
 		<!--- Param --->
+		<cfset arguments.thestruct.qrydetail = "">
 		<cfset arguments.thestruct.dsn = application.razuna.datasource>
 		<cfset arguments.thestruct.setid = application.razuna.setid>
 		<cfset arguments.thestruct.hostid = session.hostid>
@@ -1049,6 +1050,7 @@
 		<cfset var cloud_url = structnew()>
 		<cfset var cloud_url_org = structnew()>
 		<cfset var cloud_url_2 = structnew()>
+		<cfset var qry_detail = "">
 		<cfset cloud_url_org.theurl = "">
 		<cfset cloud_url.theurl = "">
 		<cfset cloud_url_2.theurl = "">
@@ -1059,65 +1061,59 @@
 		<!--- Get Tools --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 		<!--- Get details --->
-		<cfinvoke method="getdetails" vid_id="#arguments.thestruct.file_id#" returnvariable="arguments.thestruct.qry_detail">
+		<cfinvoke method="getdetails" vid_id="#arguments.thestruct.file_id#" returnvariable="qry_detail">
 		<!--- Update main record with dates --->
-		<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.qry_detail.vid_group#" />
+		<cfinvoke component="global" method="update_dates" type="vid" fileid="#qry_detail.vid_group#" />
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
-		<cfset tempfolder = "vid#createuuid('')#">
+		<cfset var tempfolder = "vid#createuuid('')#">
 		<!--- set the folder path in a var --->
-		<cfset arguments.thestruct.thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
+		<cfset var thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
 		<!--- Create the temp folder in the incoming dir --->
-		<cfdirectory action="create" directory="#arguments.thestruct.thisfolder#" mode="775">
+		<cfdirectory action="create" directory="#thisfolder#" mode="775">
 		<!--- Create uuid for thread --->
 		<cfset var tt = createuuid("")>
+		<cfset arguments.thestruct.qrydetail = qry_detail>
+		<cfset arguments.thestruct.this_folder = thisfolder>
+		<!--- Now get the extension and the name after the position from above --->
+		<cfset var thenamenoext = listfirst(arguments.thestruct.qrydetail.vid_name_org, ".")>
+		<cfset var thename = arguments.thestruct.qrydetail.vid_name_org>
+		<cfset arguments.thestruct.thename = thename>
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
-			<!--- Now get the extension and the name after the position from above --->
-			<cfset thenamenoext = listfirst(arguments.thestruct.qry_detail.vid_name_org, ".")>
-			<cfset thename = arguments.thestruct.qry_detail.vid_name_org>
-			<cfset arguments.thestruct.thename = thename>
 			<!--- Set the input path --->
-			<cfset inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.path_to_asset#/#arguments.thestruct.qry_detail.vid_name_org#">
+			<cfset var inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.qrydetail.vid_name_org#">
 			<!--- Set the input path for the still image --->
-			<cfset inputpathimage = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.path_to_asset#/#arguments.thestruct.qry_detail.vid_name_image#">
+			<cfset var inputpathimage = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.qrydetail.vid_name_image#">
 			<cfthread name="convert#tt#" intstruct="#arguments.thestruct#" />
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
-			<!--- Now get the extension and the name after the position from above --->
-			<cfset thenamenoext = listfirst(arguments.thestruct.qry_detail.vid_name_org, ".")>
-			<cfset thename = arguments.thestruct.qry_detail.vid_name_org>
-			<cfset arguments.thestruct.thename = thename>
 			<!--- Download file --->
 			<cfthread name="download#tt#" intstruct="#arguments.thestruct#">
-				<cfhttp url="#attributes.intstruct.qry_detail.cloud_url_org#" file="#attributes.intstruct.qry_detail.vid_name_org#" path="#attributes.intstruct.thisfolder#"></cfhttp>
-				<cfhttp url="#attributes.intstruct.qry_detail.cloud_url#" file="#attributes.intstruct.qry_detail.vid_name_image#" path="#attributes.intstruct.thisfolder#"></cfhttp>
+				<cfhttp url="#attributes.intstruct.qrydetail.cloud_url_org#" file="#attributes.intstruct.qrydetail.vid_name_org#" path="#attributes.intstruct.this_folder#"></cfhttp>
+				<cfhttp url="#attributes.intstruct.qrydetail.cloud_url#" file="#attributes.intstruct.qrydetail.vid_name_image#" path="#attributes.intstruct.this_folder#"></cfhttp>
 			</cfthread>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="download#tt#" />
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread name="convert#tt#" />
 			<!--- Set the input path --->
-			<cfset inputpath = "#arguments.thestruct.thisfolder#/#thename#">
+			<cfset var inputpath = "#thisfolder#/#thename#">
 			<!--- Set the input path for the still image --->
-			<cfset inputpathimage = "#arguments.thestruct.thisfolder#/#arguments.thestruct.qry_detail.vid_name_image#">
+			<cfset var inputpathimage = "#thisfolder#/#arguments.thestruct.qrydetail.vid_name_image#">
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
-			<!--- Now get the extension and the name after the position from above --->
-			<cfset thenamenoext = listfirst(arguments.thestruct.qry_detail.vid_name_org, ".")>
-			<cfset thename = arguments.thestruct.qry_detail.vid_name_org>
-			<cfset arguments.thestruct.thename = thename>
 			<!--- Download file --->
 			<cfthread name="download#tt#" intstruct="#arguments.thestruct#">
 				<!--- Download video --->
 				<cfinvoke component="amazon" method="Download">
-					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.path_to_asset#/#attributes.intstruct.qry_detail.vid_name_org#">
-					<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.thename#">
+					<cfinvokeargument name="key" value="/#attributes.intstruct.qrydetail.path_to_asset#/#attributes.intstruct.qrydetail.vid_name_org#">
+					<cfinvokeargument name="theasset" value="#attributes.intstruct.this_folder#/#attributes.intstruct.thename#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 				<!--- Download still images --->
 				<cfinvoke component="amazon" method="Download">
-					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.path_to_asset#/#attributes.intstruct.qry_detail.vid_name_image#">
-					<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.qry_detail.vid_name_image#">
+					<cfinvokeargument name="key" value="/#attributes.intstruct.qrydetail.path_to_asset#/#attributes.intstruct.qrydetail.vid_name_image#">
+					<cfinvokeargument name="theasset" value="#attributes.intstruct.this_folder#/#attributes.intstruct.qrydetail.vid_name_image#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
@@ -1125,27 +1121,27 @@
 			<cfthread action="join" name="download#tt#" />
 			<cfthread name="convert#tt#" />
 			<!--- Set the input path --->
-			<cfset inputpath = "#arguments.thestruct.thisfolder#/#thename#">
+			<cfset var inputpath = "#thisfolder#/#thename#">
 			<!--- Set the input path for the still image --->
-			<cfset inputpathimage = "#arguments.thestruct.thisfolder#/#arguments.thestruct.qry_detail.vid_name_image#">
+			<cfset var inputpathimage = "#thisfolder#/#arguments.thestruct.qrydetail.vid_name_image#">
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="convert#tt#" />
 		<!--- On local link asset we have a different input path --->
 		<cfif arguments.thestruct.link_kind EQ "lan">
-			<cfset inputpath = "#arguments.thestruct.link_path_url#">
+			<cfset var inputpath = "#arguments.thestruct.link_path_url#">
 		</cfif>
 		<!--- Check the platform and then decide on the ffmpeg tag --->
 		<cfif isWindows>
-			<cfset theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
-			<cfset theimexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
-			<cfset inputpath = """#inputpath#""">
-			<cfset inputpathimage = """#inputpathimage#""">
-			<cfset themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box.exe">
+			<cfset var theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+			<cfset var theimexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
+			<cfset var inputpath = """#inputpath#""">
+			<cfset var inputpathimage = """#inputpathimage#""">
+			<cfset var themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box.exe">
 		<cfelse>
-			<cfset theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-			<cfset theimexe = "#arguments.thestruct.thetools.imagemagick#/convert">
-			<cfset themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box">
+			<cfset var theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+			<cfset var theimexe = "#arguments.thestruct.thetools.imagemagick#/convert">
+			<cfset var themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box">
 		</cfif>
 		<!--- Now, loop over the selected extensions and convert and store video --->
 		<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
@@ -1184,13 +1180,13 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 				</cfquery>
 				<!--- Set image width and height --->
-				<cfset thewidth  = qry_w.upl_temp_value>
-				<cfset theheight = qry_h.upl_temp_value>
+				<cfset var thewidth  = qry_w.upl_temp_value>
+				<cfset var theheight = qry_h.upl_temp_value>
 				<!--- <cfset thebitrate = qry_b.upl_temp_value>  --->
 				<!--- If height and size is empty we take the default values from the original file --->
 				<cfif NOT isnumeric(thewidth) AND NOT isnumeric(theheight)>
-					<cfset thewidth  = arguments.thestruct.qry_detail.vwidth>
-					<cfset theheight = arguments.thestruct.qry_detail.vheight>
+					<cfset var thewidth  = arguments.thestruct.qrydetail.vwidth>
+					<cfset var theheight = arguments.thestruct.qrydetail.vheight>
 				</cfif>
 				<!--- If bitrate is empty
 				<cfif thebitrate EQ "">
@@ -1199,68 +1195,68 @@
 			<cfelse>		
 				<!--- <cfset thebitrate = Evaluate("arguments.thestruct.convert_bitrate_#theformat#")>
 				<cfif thebitrate EQ ""><cfset thebitrate = "600"></cfif> --->
-				<cfset thewidth = Evaluate("arguments.thestruct.convert_width_#theformat#")>
-				<cfset theheight = Evaluate("arguments.thestruct.convert_height_#theformat#")>
+				<cfset var thewidth = Evaluate("arguments.thestruct.convert_width_#theformat#")>
+				<cfset var theheight = Evaluate("arguments.thestruct.convert_height_#theformat#")>
 			</cfif>
 			<!--- From here on we need to remove the number of the format (if any) --->
-			<cfset theformat = listfirst(theformat,"_")>
+			<cfset var theformat = listfirst(theformat,"_")>
 			<!--- Put together the filenames --->
-			<cfset newname = listfirst(arguments.thestruct.qry_detail.vid_name_org, ".")>
-			<cfset previewvideo = "#newname#" & "_" & arguments.thestruct.newid & "." & theformat>
-			<cfset previewimage = "#newname#" & "_" & arguments.thestruct.newid & ".jpg">
+			<cfset var newname = listfirst(arguments.thestruct.qrydetail.vid_name_org, ".")>
+			<cfset var previewvideo = "#newname#" & "_" & arguments.thestruct.newid & "." & theformat>
+			<cfset var previewimage = "#newname#" & "_" & arguments.thestruct.newid & ".jpg">
 			<!--- Change path according to OS --->
 			<cfif isWindows>
-				<cfset thispreviewvideo = """#arguments.thestruct.thisfolder#/#previewvideo#""">
-				<cfset thispreviewimage = """#arguments.thestruct.thisfolder#/#previewimage#""">
+				<cfset var thispreviewvideo = """#thisfolder#/#previewvideo#""">
+				<cfset var thispreviewimage = """#thisfolder#/#previewimage#""">
 			<cfelse>
-				<cfset thispreviewvideo = "#arguments.thestruct.thisfolder#/#previewvideo#">
-				<cfset thispreviewimage = "#arguments.thestruct.thisfolder#/#previewimage#">
+				<cfset var thispreviewvideo = "#thisfolder#/#previewvideo#">
+				<cfset var thispreviewimage = "#thisfolder#/#previewimage#">
 			</cfif>
 			<!--- FFMPEG: Convert video to selected format --->
 			<cfswitch expression="#theformat#">
 				<!--- if AVI --->
 				<cfcase value="avi">
-					<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -ac 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -ac 2 -async 1 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- if 3GP --->
 				<cfcase value="3gp">
 					<!--- If we convert a VOB file then --->
-					<cfif arguments.thestruct.qry_detail.vid_extension EQ "vob">
-						<cfset theacodec = "libfaac">
+					<cfif arguments.thestruct.qrydetail.vid_extension EQ "vob">
+						<cfset var theacodec = "libfaac">
 					<cfelse>
-						<cfset theacodec = "copy">
+						<cfset var theacodec = "copy">
 					</cfif>
-					<cfset theargument="-i #inputpath# -vcodec h263 -acodec #theacodec# -ac 1 -ar 8000 -r 25 -ab 12.2k -s #thewidth#x#theheight# -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -vcodec h263 -acodec #theacodec# -ac 1 -ar 8000 -r 25 -ab 12.2k -s #thewidth#x#theheight# -async 1 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- MXF --->
 				<cfcase value="mxf">
-					<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -acodec pcm_s16le -ar 48000 -ac 2 -vsync 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -acodec pcm_s16le -ar 48000 -ac 2 -vsync 2 -async 1 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- WMV --->
 				<cfcase value="wmv">
-					<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec wmv2 -acodec wmav2 -ar 48000 -ab 400k -ac 2 -vsync 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec wmv2 -acodec wmav2 -ar 48000 -ab 400k -ac 2 -vsync 2 -async 1 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- OGV --->
 				<cfcase value="ogv">
-					<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -acodec libvorbis -vsync 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -acodec libvorbis -vsync 2 -async 1 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- WebM --->
 				<cfcase value="webm">
 					<!--- <cfset bitrate = thebitrate * 1024> --->
-					<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -vcodec libvpx -acodec libvorbis -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -vcodec libvpx -acodec libvorbis -async 1 -y #thispreviewvideo#">
 				</cfcase>
 				<cfdefaultcase>
 					<cfif isWindows>
-						<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -async 1 -y #thispreviewvideo#">
+						<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -async 1 -y #thispreviewvideo#">
 					<cfelse>
-						<cfset theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -acodec libfaac -crf 22 -threads 2 -async 1 -y #thispreviewvideo#">
+						<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -acodec libfaac -crf 22 -threads 2 -async 1 -y #thispreviewvideo#">
 					</cfif>
 				</cfdefaultcase>
 			</cfswitch>
 			<!--- FFMPEG: CONVERT THE VIDEO --->
 			<cfset arguments.thestruct.theargument = theargument>
 			<cfset arguments.thestruct.theexe = theexe>
-			<cfset thescript = arguments.thestruct.newid>
+			<cfset var thescript = arguments.thestruct.newid>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 			<!--- On Windows a bat --->
 			<cfif isWindows>
@@ -1269,7 +1265,7 @@
 			<!--- Write files --->
 			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexe# #arguments.thestruct.theargument#" mode="777">
 			<!--- Convert video --->
-			<cfset ttexe = createuuid("")>
+			<cfset var ttexe = createuuid("")>
 			<cfthread name="#ttexe#" intstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.intstruct.thesh#" timeout="24000" />
 			</cfthread>
@@ -1278,7 +1274,7 @@
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<!--- Check if video file could be generated by getting the size --->
-			<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.thisfolder#/#previewvideo#" returnvariable="siz">
+			<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#previewvideo#" returnvariable="siz">
 			<cfif siz EQ 0>
 				<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 				SELECT user_email
@@ -1289,7 +1285,7 @@
 			<cfelse>
 				<!--- If we are MP4 run it trough MP4Box --->
 				<cfif theformat EQ "mp4" AND arguments.thestruct.thetools.mp4box NEQ "">
-					<cfset ttmp4 = createuuid("")>
+					<cfset var ttmp4 = createuuid("")>
 					<cfset arguments.thestruct.thispreviewvideo = thispreviewvideo>
 					<cfset arguments.thestruct.themp4 = themp4>
 					<cfthread name="#ttmp4#" intstruct="#arguments.thestruct#">
@@ -1299,18 +1295,18 @@
 					<cfthread action="join" name="#ttmp4#" />
 				</cfif>
 				<!--- Get size of original --->
-				<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.thisfolder#/#previewvideo#" returnvariable="orgsize">
+				<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#previewvideo#" returnvariable="orgsize">
 				<!--- Storage: Local --->
 				<cfif application.razuna.storage EQ "local">
 					<!--- IMAGEMAGICK: copy over the existing still image and resize --->
 					<cfexecute name="#theimexe#" arguments="#inputpathimage# -resize #thewidth#x#theheight# #thispreviewimage#" timeout="5" />
 					<!--- Now move the files to its own folder --->
 					<!--- Create folder first --->
-					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#" mode="775">
+					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#" mode="775">
 					<!--- Move video --->
-					<cffile action="move" source="#arguments.thestruct.thisfolder#/#previewvideo#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#" mode="775">
+					<cffile action="move" source="#thisfolder#/#previewvideo#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#" mode="775">
 					<!--- Move still image --->
-					<cffile action="move" source="#arguments.thestruct.thisfolder#/#previewimage#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#" mode="775">
+					<cffile action="move" source="#thisfolder#/#previewimage#" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#" mode="775">
 					<cfthread name="uploadconvert#ttexe##theformat#" intstruct="#arguments.thestruct#"></cfthread>
 				<!--- Nirvanix --->
 				<cfelseif application.razuna.storage EQ "nirvanix">
@@ -1323,7 +1319,7 @@
 					<!--- Copy the video image --->
 					<cfthread name="uploadconvertc#ttexe##theformat#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/vid/#attributes.intstruct.newid#">
+							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#">
 							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thispreviewimage#">
 							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 						</cfinvoke>
@@ -1333,17 +1329,17 @@
 					<!--- Upload: Video --->
 					<cfthread name="uploadconvertu#ttexe##theformat#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/vid/#attributes.intstruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.previewvideo#">
+							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#">
+							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.this_folder#/#attributes.intstruct.previewvideo#">
 							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 						</cfinvoke>
 					</cfthread>
 					<!--- Wait for this thread to finish --->
 					<cfthread action="join" name="uploadconvertu#ttexe##theformat#" />
 					<!--- Get signed URLS --->
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewimage#" nvxsession="#arguments.thestruct.nvxsession#">
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewimage#" nvxsession="#arguments.thestruct.nvxsession#">
 					<!--- Get signed URLS --->
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewvideo#" nvxsession="#arguments.thestruct.nvxsession#">
+					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewvideo#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Amazon --->
 				<cfelseif application.razuna.storage EQ "amazon">
 					<!--- Set params for thread --->
@@ -1356,23 +1352,23 @@
 					<cfthread name="uploadconvert#ttexe##theformat#" intstruct="#arguments.thestruct#">
 						<!--- Upload: Video --->
 						<cfinvoke component="amazon" method="Upload">
-							<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.folder_id_r#/vid/#attributes.intstruct.newid#/#attributes.intstruct.previewvideo#">
-							<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.previewvideo#">
+							<cfinvokeargument name="key" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#/#attributes.intstruct.previewvideo#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.this_folder#/#attributes.intstruct.previewvideo#">
 							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 						</cfinvoke>
 						<!--- Upload: Still Image --->
 						<cfinvoke component="amazon" method="Upload">
-							<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.folder_id_r#/vid/#attributes.intstruct.newid#/#attributes.intstruct.thispreviewimage#">
-							<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.previewimage#">
+							<cfinvokeargument name="key" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#/#attributes.intstruct.thispreviewimage#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.this_folder#/#attributes.intstruct.previewimage#">
 							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 						</cfinvoke>
 					</cfthread>
 					<!--- Wait for this thread to finish --->
 					<cfthread action="join" name="uploadconvert#ttexe##theformat#" />
 					<!--- Get signed URLS --->
-					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewimage#" awsbucket="#arguments.thestruct.awsbucket#">
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewimage#" awsbucket="#arguments.thestruct.awsbucket#">
 					<!--- Get signed URLS --->
-					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewvideo#" awsbucket="#arguments.thestruct.awsbucket#">
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewvideo#" awsbucket="#arguments.thestruct.awsbucket#">
 				</cfif>
 				<!--- Add to shared options --->
 				<cftransaction>
@@ -1383,7 +1379,7 @@
 					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
 					<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.qrydetail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
 					<cfqueryparam value="vid" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
 					<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
@@ -1412,10 +1408,10 @@
 					vid_name_image  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewimage#">,
 					<!--- vid_name_pre = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">, --->
 					<!--- vid_name_pre_img  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewimage#">, --->
-					folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qry_detail.folder_id_r#">,
+					folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qrydetail.folder_id_r#">,
 				 	vid_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
 				 	vid_prev_size = <cfqueryparam cfsqltype="cf_sql_numeric" value="#orgsize#">,
-				 	path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qry_detail.folder_id_r#/vid/#arguments.thestruct.newid#">,
+				 	path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#">,
 				 	cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">,
 				 	cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">,
 					cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">,
@@ -1425,11 +1421,11 @@
 					</cfquery>
 				</cftransaction>
 				<!--- Log --->
-				<cfset log = log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qrydetail.vid_name_org# to #previewvideo# (#thewidth#x#theheight#)',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
 				<!--- Call Plugins --->
 				<cfset arguments.thestruct.fileid = arguments.thestruct.newid>
 				<cfset arguments.thestruct.file_name = previewvideo>
-				<cfset arguments.thestruct.folder_id = arguments.thestruct.qry_detail.folder_id_r>
+				<cfset arguments.thestruct.folder_id = arguments.thestruct.qrydetail.folder_id_r>
 				<cfset arguments.thestruct.thefiletype = "vid">
 				<cfset arguments.thestruct.folder_action = false>
 				<!--- Check on any plugin that call the on_rendition_add action --->
@@ -1437,6 +1433,7 @@
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
+		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("videos")>
 		<cfcatch type="any">
 			<cfmail to="support@razuna.com" from="server@razuna.com" subject="Error on convert video" type="html">

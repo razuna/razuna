@@ -2389,12 +2389,6 @@
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
-		<!-- CFC: Get video settings -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
-		<!-- CFC: Get image settings -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
-		<!-- CFC: Get detail of original image
-		<invoke object="myFusebox.getApplicationData().videos" methodcall="getdetails(attributes.file_id)" returnvariable="attributes.qry_detail" /> -->
 		<!-- CFC: Convert video -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
 	</fuseaction>

@@ -810,9 +810,9 @@
 		<!--- </cfthread> --->
 	<cfelse>
 		<!--- Start the thread for converting --->
-		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-			<cfinvoke method="convertaudio" thestruct="#arguments.thestruct#" />
-		<!--- </cfthread> --->
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="convertaudio" thestruct="#attributes.intstruct#" />
+		</cfthread>
 	</cfif>
 </cffunction>
 
@@ -842,9 +842,9 @@
 		<!--- Update main record with dates --->
 		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.qry_detail.aud_group#" />
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
-		<cfset tempfolder = "aud#createuuid('')#">
+		<cfset var tempfolder = "aud#createuuid('')#">
 		<!--- set the folder path in a var --->
-		<cfset thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
+		<cfset var thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
 		<!--- Create the temp folder in the incoming dir --->
 		<cfdirectory action="create" directory="#thisfolder#" mode="775">
 		<!--- Set vars for thread --->
@@ -858,9 +858,9 @@
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
 			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
 				<!--- Set the input path --->
-				<cfset inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_org#">
+				<cfset var inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_org#">
 			<cfelse>
-				<cfset inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav">
+				<cfset var inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav">
 			</cfif>
 			<cfthread name="convert#tempfolder#" />
 		<!--- Nirvanix --->
@@ -880,7 +880,7 @@
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread name="convert#tempfolder#" />
 			<!--- Set the input path --->
-			<cfset inputpath = "#arguments.thestruct.thisfolder#/#arguments.thestruct.thename#">
+			<cfset var inputpath = "#arguments.thestruct.thisfolder#/#arguments.thestruct.thename#">
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.link_kind NEQ "lan">
 			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
@@ -911,10 +911,10 @@
 			<cfthread action="join" name="download#tempfolder#" />
 			<cfthread name="convert#tempfolder#" />
 			<!--- Set the input path --->
-			<cfset inputpath = "#thisfolder#/#arguments.thestruct.thename#">
+			<cfset var inputpath = "#thisfolder#/#arguments.thestruct.thename#">
 		<!--- If on LAN --->
 		<cfelseif arguments.thestruct.link_kind EQ "lan">
-			<cfset inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.thenamenoext#.wav">
+			<cfset var inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.thenamenoext#.wav">
 			<cfthread name="convert#tempfolder#" />
 		</cfif>
 		<!--- Wait for the thread above until the file is downloaded fully --->
@@ -924,21 +924,21 @@
 		<!--- Check the platform and then decide on the ffmpeg tag --->
 		<cfif isWindows>
 			<cfset arguments.thestruct.theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
-			<cfset inputpath = """#inputpath#""">
-			<cfset inputpath4copy = inputpath>
+			<cfset var inputpath = """#inputpath#""">
+			<cfset var inputpath4copy = inputpath>
 		<cfelse>
 			<cfset arguments.thestruct.theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
-			<cfset inputpath4copy = inputpath>
-			<cfset inputpath = replace(inputpath," ","\ ","all")>
-			<cfset inputpath = replace(inputpath,"&","\&","all")>
-			<cfset inputpath = replace(inputpath,"'","\'","all")>
+			<cfset var inputpath4copy = inputpath>
+			<cfset var inputpath = replace(inputpath," ","\ ","all")>
+			<cfset var inputpath = replace(inputpath,"&","\&","all")>
+			<cfset var inputpath = replace(inputpath,"'","\'","all")>
 		</cfif>
 		<!--- Now, loop over the selected extensions and convert and store audio --->
 		<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
 			<!--- Param --->
 			<cfparam name="arguments.thestruct.convert_bitrate_#theformat#" default="">
 			<!--- Create a new ID for the audio --->
-			<cfset newid = structnew()>
+			<cfset var newid = structnew()>
 			<cfset newid.id = createuuid("")>
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#audios
@@ -958,25 +958,25 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 				</cfquery>
 				<!--- Set image width and height --->
-				<cfset thebitrate  = qry_b.upl_temp_value>
+				<cfset var thebitrate  = qry_b.upl_temp_value>
 			<cfelse>
-				<cfset thebitrate = Evaluate("arguments.thestruct.convert_bitrate_#theformat#")>
+				<cfset var thebitrate = Evaluate("arguments.thestruct.convert_bitrate_#theformat#")>
 			</cfif>
 			<!--- From here on we need to remove the number of the format (if any) --->
-			<cfset theformat = listfirst(theformat,"_")>
+			<cfset var theformat = listfirst(theformat,"_")>
 			<!--- Put together the filenames --->
-			<cfset newname = listfirst(arguments.thestruct.qry_detail.detail.aud_name_org, ".")>
-			<cfset finalaudioname = "#newname#" & "_" & #newid.id# & "." & #theformat#>
+			<cfset var newname = listfirst(arguments.thestruct.qry_detail.detail.aud_name_org, ".")>
+			<cfset var finalaudioname = "#newname#" & "_" & #newid.id# & "." & #theformat#>
 			<!--- Check for os path --->
 			<cfif isWindows>
-				<cfset thisfinalaudioname = """#thisfolder#/#finalaudioname#""">
-				<cfset thisfinalaudioname4copy = thisfinalaudioname>
+				<cfset var thisfinalaudioname = """#thisfolder#/#finalaudioname#""">
+				<cfset var thisfinalaudioname4copy = thisfinalaudioname>
 			<cfelse>
-				<cfset thisfinalaudioname = "#thisfolder#/#finalaudioname#">
-				<cfset thisfinalaudioname4copy = thisfinalaudioname>
-				<cfset thisfinalaudioname = replace(thisfinalaudioname," ","\ ","all")>
-				<cfset thisfinalaudioname = replace(thisfinalaudioname,"&","\&","all")>
-				<cfset thisfinalaudioname = replace(thisfinalaudioname,"'","\'","all")>
+				<cfset var thisfinalaudioname = "#thisfolder#/#finalaudioname#">
+				<cfset var thisfinalaudioname4copy = thisfinalaudioname>
+				<cfset var thisfinalaudioname = replace(thisfinalaudioname," ","\ ","all")>
+				<cfset var thisfinalaudioname = replace(thisfinalaudioname,"&","\&","all")>
+				<cfset var thisfinalaudioname = replace(thisfinalaudioname,"'","\'","all")>
 			</cfif>
 			<!--- FFMPEG: Set convert parameters for the different types --->
 			<cfswitch expression="#theformat#">

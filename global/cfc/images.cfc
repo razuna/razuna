@@ -770,7 +770,7 @@
 	<cfset cloud_url.theurl = "">
 	<cfset cloud_url_2.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
-	<cfset thetempids = "">
+	<cfset var thetempids = "">
 	<cfparam name="arguments.thestruct.upl_template" default="0">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
@@ -779,14 +779,14 @@
 	<!--- Get details of image --->
 	<cfinvoke method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_id,folder_id_r,img_filename_org,img_extension,img_filename,path_to_asset,img_width,img_height,cloud_url_org" returnvariable="arguments.thestruct.qry_detail">
 	<!--- Create a temp directory to hold the image file (needed because we are doing other files from it as well) --->
-	<cfset tempfolder = "img#createuuid('')#">
+	<cfset var tempfolder = "img#createuuid('')#">
 	<!--- set the folder path in a var --->
-	<cfset thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
+	<cfset var thisfolder = "#arguments.thestruct.thepath#/incoming/#tempfolder#">
 	<!--- Create the temp folder in the incoming dir --->
 	<cfdirectory action="create" directory="#thisfolder#" mode="775">
 	<!--- Now get the extension and the name after the position from above --->
-	<cfset thenamenoext = listfirst(arguments.thestruct.qry_detail.img_filename_org, ".")>
-	<cfset thename = thenamenoext & ".#arguments.thestruct.qry_detail.img_extension#">
+	<cfset var thenamenoext = listfirst(arguments.thestruct.qry_detail.img_filename_org, ".")>
+	<cfset var thename = thenamenoext & ".#arguments.thestruct.qry_detail.img_extension#">
 	<!--- Set vars for thread --->
 	<cfset arguments.thestruct.thisfolder = thisfolder>
 	<cfset arguments.thestruct.thename = thename>
@@ -832,25 +832,25 @@
 
 	<!--- Check the platform and then decide on the ImageMagick tag --->
 	<cfif isWindows>
-		<cfset theexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
-		<cfset themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
-		<cfset thecomposite = """#arguments.thestruct.thetools.imagemagick#/composite.exe""">
-		<cfset theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
-		<cfset thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
+		<cfset var theexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
+		<cfset var themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
+		<cfset var thecomposite = """#arguments.thestruct.thetools.imagemagick#/composite.exe""">
+		<cfset var theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+		<cfset var thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
 	<cfelse>
-		<cfset theexe = "#arguments.thestruct.thetools.imagemagick#/convert">
-		<cfset themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
-		<cfset thecomposite = "#arguments.thestruct.thetools.imagemagick#/composite">
-		<cfset theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
-		<cfset thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
+		<cfset var theexe = "#arguments.thestruct.thetools.imagemagick#/convert">
+		<cfset var themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
+		<cfset var thecomposite = "#arguments.thestruct.thetools.imagemagick#/composite">
+		<cfset var theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		<cfset var thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
 	</cfif>
 	<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 	<cfif arguments.thestruct.qry_detail.img_extension EQ "psd" OR arguments.thestruct.qry_detail.img_extension EQ "eps" OR arguments.thestruct.qry_detail.img_extension EQ "ai">
-		<cfset theargument = "#arguments.thestruct.thesource#[0]">
-		<cfset theflatten = "">
+		<cfset var theargument = "#arguments.thestruct.thesource#[0]">
+		<cfset var theflatten = "">
 	<cfelse>
-		<cfset theargument = "#arguments.thestruct.thesource#">
-		<cfset theflatten = "">
+		<cfset var theargument = "#arguments.thestruct.thesource#">
+		<cfset var theflatten = "">
 	</cfif>
 	<!--- Now, loop over the selected extensions and convert and store image --->
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
@@ -922,31 +922,31 @@
 			</cfif>
 		</cfif>
 		<!--- From here on we need to remove the number of the format (if any) --->
-		<cfset theformat = listfirst(theformat,"_")>
+		<cfset var theformat = listfirst(theformat,"_")>
 		<!--- Set the format into struct for threads --->
 		<cfset arguments.thestruct.theformat = theformat>
 		<!--- If it is Window rewrite path --->
 		<cfif isWindows>
-			<cfset theoriginalasset = """#theargument#""">
-			<cfset theformatconv = """#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#""">
-			<cfset thethumbtconv = """#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#""">
+			<cfset var theoriginalasset = """#theargument#""">
+			<cfset var theformatconv = """#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#""">
+			<cfset var thethumbtconv = """#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#""">
 		<cfelse>
-			<cfset theoriginalasset = theargument>
-			<cfset nameforim = replace(arguments.thestruct.thenamenoext," ","\ ","all")>
-			<cfset nameforim = replace(nameforim,"&","\&","all")>
-			<cfset nameforim = replace(nameforim,"'","\'","all")>
-			<cfset theformatconv = "#thisfolder#/#nameforim#.#theformat#">
-			<cfset thethumbtconv = "#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
+			<cfset var theoriginalasset = theargument>
+			<cfset var nameforim = replace(arguments.thestruct.thenamenoext," ","\ ","all")>
+			<cfset var nameforim = replace(nameforim,"&","\&","all")>
+			<cfset var nameforim = replace(nameforim,"'","\'","all")>
+			<cfset var theformatconv = "#thisfolder#/#nameforim#.#theformat#">
+			<cfset var thethumbtconv = "#thisfolder#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#">
 		</cfif>
 		<!--- IM commands --->
 		<cfif thedpi EQ "">
-			<cfset theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -colorspace RGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -colorspace RGB #theflatten##theformatconv#">
 		<cfelse>
-			<cfset theimarguments = "#theoriginalasset# -resample #thedpi# -colorspace RGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# -colorspace RGB #theflatten##theformatconv#">
 		</cfif>
-		<cfset theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
+		<cfset var theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
-		<cfset thescript = createuuid()>
+		<cfset var thescript = createuuid()>
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 		<cfset arguments.thestruct.thesht = GetTempDirectory() & "/#thescript#t.sh">
 		<cfset arguments.thestruct.theshtt = GetTempDirectory() & "/#thescript#tt.sh">
@@ -1144,7 +1144,7 @@
 		<!--- Update main record with dates --->
 		<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.file_id#" />
 		<!--- Log --->
-		<cfset log = log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.file_id#')>
+		<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #thename# to #arguments.thestruct.thenamenoext#.#theformat# (#newImgWidth#x#newImgHeight#)',logfiletype='img',assetid='#arguments.thestruct.file_id#')>
 		<!--- Call Plugins --->
 		<cfset arguments.thestruct.fileid = arguments.thestruct.newid>
 		<cfset arguments.thestruct.file_name = "#arguments.thestruct.thenamenoext#.#theformat#">
@@ -1161,6 +1161,7 @@
 		<cfdirectory action="delete" directory="#thisfolder#" recurse="true">
 	</cfif>
 	<!--- Flush Cache --->
+	<cfset resetcachetoken("search")>
 	<cfset variables.cachetoken = resetcachetoken("images")>
 	<!--- Return --->
 	<cfreturn />
