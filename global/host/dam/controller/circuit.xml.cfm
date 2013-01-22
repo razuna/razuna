@@ -1639,7 +1639,7 @@
 		<xfa name="serverfolders" value="c.asset_add_server_folders" />
 		<xfa name="servercontent" value="c.asset_add_server_content" />
 		<!-- CFC: Get folder -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="getserverdir(#attributes.folderpath#)" returnvariable="qry_filefolders" />
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getserverdir(attributes.folderpath)" returnvariable="qry_filefolders" />
 		<!-- Show -->
 		<do action="ajax.asset_add_server_folders" />
 	</fuseaction>

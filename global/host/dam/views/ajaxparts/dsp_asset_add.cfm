@@ -72,10 +72,8 @@
 	}
 	// Submit path
 	function importpath(){
-		// Get path
-		var p = $('##folder_path').val();
 		// Open window
-		window.open('#myself#c.asset_add_path&theid=#attributes.folder_id#&folder_path=' + p);
+		window.open('#myself#c.asset_add_path&theid=#attributes.folder_id#&folder_path=' + escape($('##folder_path').val());
 	}
 </script>
 </cfoutput>

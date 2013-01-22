@@ -28,7 +28,7 @@
 	<tr>
 		<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_serverfolders")#</th>
 	</tr>
-	<cfif attributes.folderpath NEQ #thispath#>
+	<cfif attributes.folderpath NEQ thispath>
 		<cfset thef = listlast("#attributes.folderpath#","/\")>
 		<cfset backpath = replacenocase("#attributes.folderpath#","/#thef#","","ALL")>
 		<tr>
