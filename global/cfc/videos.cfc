@@ -509,11 +509,13 @@
 				<cfset var theexe = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
 				<cfset var theasset = """#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#""">
 				<cfset var theorg = """#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#""">
+				<cfset var theorgraw = "#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#">
 			<cfelse>
 				<cfset var theexe = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
 				<cfset var themp4 = "#arguments.thestruct.thetools.mp4box#/MP4Box">
 				<cfset var theasset = "#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#">
 				<cfset var theorg = "#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#">
+				<cfset var theorgraw = "#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#">
 				<cfset theorg = replace(theorg," ","\ ","all")>
 				<cfset theorg = replace(theorg,"&","\&","all")>
 				<cfset theorg = replace(theorg,"'","\'","all")>
@@ -551,7 +553,7 @@
 			</cfif>
 			<!--- If we are coming from a path and we are local we move the thumbnail to the final destination, else we leave it here for pickup --->
 			<cfif arguments.thestruct.importpath AND application.razuna.storage EQ "local">
-				<cffile action="move" source="#theorg#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#" mode="775" />
+				<cffile action="move" source="#theorgraw#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#" mode="775" />
 			</cfif>
 			<!--- cfcatch --->
 			<cfcatch type="any">
