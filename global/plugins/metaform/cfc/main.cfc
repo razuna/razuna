@@ -10,6 +10,8 @@
 	<cffunction name="load" returntype="void">
 		<!--- settings page --->
 		<cfset add_action(pid="#this.myID#", action="settings", comp="settings", func="getsettings")>
+		<!--- load on add --->
+		<cfset add_action(pid="#this.myID#", action="on_file_add_done", comp="settings", func="loadForm")>
 	</cffunction>
 
 	<!--- 
