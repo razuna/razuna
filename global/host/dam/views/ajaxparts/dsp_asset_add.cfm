@@ -73,7 +73,7 @@
 	// Submit path
 	function importpath(){
 		// Open window
-		window.open('#myself#c.asset_add_path&theid=#attributes.folder_id#&folder_path=' + escape($('##folder_path').val()));
+		window.open('#myself#c.asset_add_path&theid=#attributes.folder_id#&v=#createuuid("")#&folder_path=' + escape($('##folder_path').val()));
 	}
 </script>
 </cfoutput>
