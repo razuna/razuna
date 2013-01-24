@@ -2626,7 +2626,7 @@
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 			</cfquery>
 			<!--- Add labels query --->
-			<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			<cfset QuerySetCell(query=qry, column="labels", value=valueList(qry_l.ct_label_id), row=currentrow)>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
