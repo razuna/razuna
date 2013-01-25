@@ -548,8 +548,8 @@
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<!--- If we can't create a still image we resort to a placeholder image --->
-			<cfif NOT FileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#")>
-				<cffile action="copy" source="#arguments.thestruct.theplaceholderpic#" destination="#theorg#" mode="775">
+			<cfif !FileExists("#theorgraw#")>
+				<cffile action="copy" source="#arguments.thestruct.theplaceholderpic#" destination="#theorgraw#" mode="775">
 			</cfif>
 			<!--- If we are coming from a path and we are local we move the thumbnail to the final destination, else we leave it here for pickup --->
 			<cfif arguments.thestruct.importpath AND application.razuna.storage EQ "local">
