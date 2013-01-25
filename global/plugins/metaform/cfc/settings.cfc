@@ -158,6 +158,11 @@
 				<cfset thefield = listLast(i,"_")>
 				<!--- If thefield contains a - then we are custom fields --->
 				<cfif thefield CONTAINS "-">
+					<!--- Set application values for the api --->
+					<cfset application.razuna.api.storage = application.razuna.storage>
+					<cfset application.razuna.api.dsn = application.razuna.datasource>
+					<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
+					<cfset application.razuna.api.setid = application.razuna.setid>
 					<!--- Get field --->
 					<cfset a = "#thefileid#_CF_#thefield#">
 					<!--- Get value --->
