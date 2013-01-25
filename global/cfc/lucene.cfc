@@ -576,7 +576,7 @@
 		<cfargument name="hostid" type="numeric">
 		<!--- If criteria is empty --->
 		<cfif arguments.criteria EQ "">
-			<cfset arguments.criteria = "*">
+			<cfset arguments.criteria = "">
 		</cfif>
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
 		<cfif arguments.criteria EQ "*">
