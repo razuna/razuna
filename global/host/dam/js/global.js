@@ -2,24 +2,6 @@
 $.ajaxSetup({
 	cache: false
 });
-$('body').on('dialogopen', '.ui-dialog-content', function () {
-
-    var $dialog = $(this);
-    var $body = $('body');
-    var height = $body.height();
-
-    // Hide the main scrollbar while the dialog is visible. This will prevent the main window
-    // from scrolling if the user reaches the end of the dialog's scrollbar.
-    $body.css('overflow', 'hidden');
-
-    // Calling resize on the dialog so that the overlay is resized for the scrollbars that are now hidden.
-    $dialog.resize().on('dialogclose', function () {
-        // Show the main scrollbars and unbind the close event handler, as if the
-        // dialog is shown again, we don't want the handler to fire multiple times.
-        $body.css('overflow', 'auto');
-        $dialog.off('dialogclose');
-    });
-});
 // Show Window
 function showwindow(theurl,thetitle,thew,thewin) {
 	destroywindow(thewin);

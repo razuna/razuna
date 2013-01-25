@@ -44,7 +44,7 @@
 					// Remove loader
 					$("#bodyoverlay").remove();
 					// Reload Explorer
-					loadcontent('#explorer','index.cfm?fa=c.explorer');
+					loadcontent('explorer','index.cfm?fa=c.explorer');
 			   	}
 			});
 		}

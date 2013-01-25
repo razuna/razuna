@@ -121,7 +121,7 @@
 					<cfset incval.theformat = "ogv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td width="450" nowrap="nowrap"><input type="text" style="width:35px" name="convert_width_ogv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_ogv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td nowrap="nowrap"><input type="text" style="width:35px" name="convert_width_ogv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_ogv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
 				<td rowspan="11" width="100%" nowrap="true" valign="top" style="padding-left:20px;">
 					<strong>#myFusebox.getApplicationData().defaults.trans("video_original")#</strong>
 					<br />
