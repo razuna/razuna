@@ -2190,12 +2190,12 @@
 		<cfset variables.cachetoken = resetcachetoken("folders")>
 		<!--- Log --->
 		<cfset log = #log_folders(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#, Level: #foldername.folder_level#)')#>
-	<!--- Ups something went wrong --->
-	<cfcatch type="any">
-		<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error folder move - #cgi.HTTP_HOST#">
-			<cfdump var="#arguments.thestruct#" />
-		</cfmail>
-	</cfcatch>
+		<!--- Ups something went wrong --->
+		<cfcatch type="any">
+			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error folder move - #cgi.HTTP_HOST#">
+				<cfdump var="#arguments.thestruct#" />
+			</cfmail>
+		</cfcatch>
 	</cftry>
 	<cfreturn />
 </cffunction>
@@ -2706,6 +2706,8 @@
 	<cfparam default="0" name="session.type">
 	<cfparam default="F" name="arguments.thestruct.actionismove">
 	<cfparam default="0" name="session.thegroupofuser">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, 

@@ -496,6 +496,7 @@
 	<fuseaction name="explorer">
 		<!-- Param -->
 		<set name="session.showmyfolder" value="F" overwrite="false" />
+		<set name="session.type" value="" />
 		<if condition="structkeyexists(attributes,'showmyfolder')">
 			<true>
 				<set name="session.showmyfolder" value="#attributes.showmyfolder#" />

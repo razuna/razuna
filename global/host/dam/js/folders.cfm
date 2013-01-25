@@ -34,8 +34,6 @@
 			   	success: function(data, textStatus, jqXHR){
 			   		// Set var for the folderid and trim it
 			   		var fid = trim(data);
-			   		// Reload Explorer
-					$('#explorer').load('index.cfm?fa=c.explorer');
 					// Jump into the folder
 					if (isdetail == 'F'){
 						$('#rightside').load('index.cfm?fa=c.folder&col=F&folder_id=' + fid);
@@ -43,8 +41,10 @@
 					else{
 						$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
 					}
-					// 
+					// Remove loader
 					$("#bodyoverlay").remove();
+					// Reload Explorer
+					loadcontent('#explorer','index.cfm?fa=c.explorer');
 			   	}
 			});
 		}
@@ -57,12 +57,12 @@
 			   	success: function(data, textStatus, jqXHR){
 			   		// Set var for the folderid and trim it
 			   		var fid = trim(data);
-			   		// Reload Explorer
-					loadcontent('explorer_col','index.cfm?fa=c.explorer_col');
 					// Jump into the folder
 					$('#rightside').load('index.cfm?fa=c.collections&col=T&folder_id=col-' + fid);
-					// 
+					// Remove loader
 					$("#bodyoverlay").remove();
+					// Reload Explorer
+					loadcontent('explorer_col','index.cfm?fa=c.explorer_col');
 			   	}
 			});
 		}
