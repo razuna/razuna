@@ -181,7 +181,7 @@
 				</tr>
 				<cfif attributes.folderaccess NEQ "R" AND qry_detail.detail.link_kind NEQ "url">
 					<tr>
-						<td><a href="##" onclick="showwindow('#myself#c.previewimage&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#','#myFusebox.getApplicationData().defaults.trans("header_preview_image")#',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("header_preview_image_title")#</a> or <a href="##" onclick="recreatepreview();">#myFusebox.getApplicationData().defaults.trans("header_preview_image_title_recreate")#</a></td>
+						<td><a href="##" onclick="showwindow('#myself#c.previewimage&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#','#myFusebox.getApplicationData().defaults.trans("header_preview_image")#',550,2);return false;">#myFusebox.getApplicationData().defaults.trans("header_preview_image_title")#</a> or <a href="##" onclick="recreatepreview();return false;">#myFusebox.getApplicationData().defaults.trans("header_preview_image_title_recreate")#</a></td>
 					</tr>
 				</cfif>
 				<!--- Submit Button --->
@@ -319,5 +319,22 @@
 	};
 	// Activate Chosen
 	$(".chzn-select").chosen();
+	// Recreate window confirm dialog
+	function recreatepreview(){
+		$( "##dialog-confirm-recreatepreview" ).dialog({
+			resizable: false,
+			height:250,
+			modal: true,
+			buttons: {
+				"#myFusebox.getApplicationData().defaults.trans("header_preview_image_recreate_button")#": function() {
+					$( this ).dialog( "close" );
+					$('##div_forall').load('#myself#c.recreatepreview&file_id=#attributes.file_id#-vid&thetype=vid');
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
 </script>
 </cfoutput>

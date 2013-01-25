@@ -29,7 +29,7 @@
 			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("header_preview_image_recreate_desc")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("batch_recreate_preview")#" onclick="recreatepreviews();" class="button"></td>
+			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("batch_recreate_preview")#" onclick="recreatepreviews();return false;" class="button"></td>
 		</tr>
 	</table>
 	<div id="previewimages"></div>
