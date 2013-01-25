@@ -1400,8 +1400,8 @@
 		  ID_INC		 VARCHAR2(100 CHAR) NOT NULL,
 		  FILE_ID_R      VARCHAR2(100 CHAR),
 		  LANG_ID_R      NUMBER,
-		  FILE_DESC      CLOB,
-		  FILE_KEYWORDS  CLOB,
+		  FILE_DESC      VARCHAR2(4000 CHAR),
+		  FILE_KEYWORDS  VARCHAR2(4000 CHAR),
 		  HOST_ID		 NUMBER,
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FILES_DESC_PK PRIMARY KEY (ID_INC),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_DESC_FK_FILE FOREIGN KEY (FILE_ID_R)
@@ -1481,8 +1481,8 @@
 		  ID_INC		   VARCHAR2(100 CHAR),
 		  IMG_ID_R         VARCHAR2(100 CHAR) NOT NULL,
 		  LANG_ID_R        NUMBER NOT NULL,
-		  IMG_KEYWORDS     CLOB,
-		  IMG_DESCRIPTION  CLOB,
+		  IMG_KEYWORDS     VARCHAR2(4000 CHAR),
+		  IMG_DESCRIPTION  VARCHAR2(4000 CHAR),
 		  HOST_ID		 NUMBER,
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGES_TEXT_PK PRIMARY KEY (ID_INC),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_TEXT_FK_IMG FOREIGN KEY (IMG_ID_R)
@@ -1671,7 +1671,7 @@
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#temp
 		(
 		  TMP_TOKEN     VARCHAR2(100 CHAR),
-		  TMP_FILENAME  CLOB,
+		  TMP_FILENAME  VARCHAR2(2000 CHAR),
 		  HOST_ID		NUMBER
 		)
 		
@@ -1711,8 +1711,8 @@
 		(
 		  COL_ID_R      VARCHAR2(100 CHAR),
 		  LANG_ID_R     NUMBER,
-		  COL_DESC      CLOB,
-		  COL_KEYWORDS  CLOB,
+		  COL_DESC      VARCHAR2(4000 CHAR),
+		  COL_KEYWORDS  VARCHAR2(4000 CHAR),
 		  COL_NAME      VARCHAR2(200 CHAR),
 		  HOST_ID		 NUMBER,
 		  rec_uuid			VARCHAR2(100 CHAR),
@@ -1840,9 +1840,9 @@
 		  ID_INC		   VARCHAR2(100 CHAR) NOT NULL,
 		  VID_ID_R         VARCHAR2(100 CHAR) NOT NULL,
 		  LANG_ID_R        NUMBER NOT NULL,
-		  VID_KEYWORDS     CLOB,
-		  VID_DESCRIPTION  CLOB,
-		  VID_TITLE		   CLOB,
+		  VID_KEYWORDS     VARCHAR2(4000 CHAR),
+		  VID_DESCRIPTION  VARCHAR2(4000 CHAR),
+		  VID_TITLE		   VARCHAR2(4000 CHAR),
 		  HOST_ID		 NUMBER,
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEOS_TEXT_PK PRIMARY KEY (ID_INC),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_TEXT_FK_VID FOREIGN KEY (VID_ID_R)
@@ -1862,7 +1862,7 @@
 			SCHED_NAME 			 VARCHAR2(255 CHAR),
 			SCHED_FOLDER_ID_R    VARCHAR2(100 CHAR),
 			SCHED_ZIP_EXTRACT 	 NUMBER,
-			SCHED_SERVER_FOLDER  CLOB,
+			SCHED_SERVER_FOLDER  VARCHAR2(4000 CHAR),
 			SCHED_SERVER_RECURSE NUMBER DEFAULT 1,
 			SCHED_SERVER_FILES   NUMBER DEFAULT 0,
 			SCHED_MAIL_POP 		 VARCHAR2(255 CHAR),
@@ -1900,7 +1900,7 @@
 			SCHED_LOG_ACTION    VARCHAR2(10 CHAR),
 			SCHED_LOG_DATE      DATE,
 			SCHED_LOG_TIME      TIMESTAMP,
-			SCHED_LOG_DESC      CLOB,
+			SCHED_LOG_DESC      VARCHAR2(4000 CHAR),
 			HOST_ID		 NUMBER,
 		CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_PK PRIMARY KEY (SCHED_LOG_ID),
 CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SCHED_ID_R)
@@ -1919,7 +1919,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			cf_enabled 		VARCHAR2(2 CHAR), 
 			cf_show			VARCHAR2(10 CHAR),
 			cf_group 		VARCHAR2(100 CHAR),
-			cf_select_list	CLOB,
+			cf_select_list	VARCHAR2(4000 CHAR),
 			cf_in_form		VARCHAR2(10 CHAR) DEFAULT 'true',
 			HOST_ID			NUMBER,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#CUSTOM_FIELDS_PK PRIMARY KEY (CF_ID)
@@ -1931,9 +1931,9 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		(
 			cf_id_r			VARCHAR2(100 CHAR), 
 			lang_id_r 		NUMBER, 
-			cf_text			CLOB,
-			HOST_ID		 NUMBER,
-			rec_uuid			VARCHAR2(100 CHAR),
+			cf_text			VARCHAR2(4000 CHAR),
+			HOST_ID		 	NUMBER,
+			rec_uuid		VARCHAR2(100 CHAR),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#cft_PK PRIMARY KEY (rec_uuid) ENABLE,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#cf_text FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
@@ -1944,9 +1944,9 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		(
 			cf_id_r			VARCHAR2(100 CHAR), 
 			asset_id_r 		VARCHAR2(100 CHAR), 
-			cf_value		CLOB,
-			HOST_ID		 NUMBER,
-			rec_uuid			VARCHAR(100),
+			cf_value		VARCHAR2(4000 CHAR),
+			HOST_ID		 	NUMBER,
+			rec_uuid		VARCHAR(100),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#CFV_PK PRIMARY KEY (rec_uuid) ENABLE,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#cf_values FOREIGN KEY (cf_id_r) REFERENCES #arguments.thestruct.host_db_prefix#custom_fields (cf_id) ON DELETE CASCADE
 		)
@@ -2058,9 +2058,9 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			ID_INC		   		VARCHAR2(100 CHAR) NOT NULL,
 			aud_ID_R			VARCHAR2(100 CHAR),
 			LANG_ID_R			NUMBER,
-			aud_DESCRIPTION     CLOB,
-			aud_KEYWORDS		CLOB,
-			HOST_ID		 NUMBER,
+			aud_DESCRIPTION     VARCHAR2(4000 CHAR),
+			aud_KEYWORDS		VARCHAR2(4000 CHAR),
+			HOST_ID		 		NUMBER,
 			CONSTRAINT #arguments.thestruct.host_db_prefix#AUDIOS_TEXT_PK PRIMARY KEY (ID_INC),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_DESC_FK_FILE FOREIGN KEY (aud_ID_R)
 			REFERENCES #arguments.thestruct.host_db_prefix#audios (aud_ID) ON DELETE CASCADE
