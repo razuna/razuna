@@ -121,7 +121,7 @@
 					<cfset incval.theformat = "ogv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td width="450"><input type="text" size="3" name="convert_width_ogv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_ogv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td width="450" nowrap="nowrap"><input type="text" style="width:35px" name="convert_width_ogv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_ogv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
 				<td rowspan="11" width="100%" nowrap="true" valign="top" style="padding-left:20px;">
 					<strong>#myFusebox.getApplicationData().defaults.trans("video_original")#</strong>
 					<br />
@@ -142,7 +142,7 @@
 					<cfset incval.theformat = "webm">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_webm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_webm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_webm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_webm','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" style="width:35px" name="convert_width_webm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_webm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_webm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_webm','form#attributes.file_id#',#theaspectratio#);"></td>
 			</tr>
 			<!--- Flash --->
 			<tr class="list">
@@ -152,7 +152,7 @@
 					<cfset incval.theformat = "flv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_flv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_flv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_flv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_flv','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" style="width:35px" name="convert_width_flv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_flv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_flv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_flv','form#attributes.file_id#',#theaspectratio#);"></td>
 			</tr>
 			<!--- MP4 --->
 			<tr class="list">
@@ -162,7 +162,7 @@
 					<cfset incval.theformat = "mp4">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mp4" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mp4','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mp4" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mp4','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" style="width:35px" name="convert_width_mp4" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mp4','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_mp4" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mp4','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mp4" value="600">kb/s</td> --->
 			</tr>
 			<tr class="list">
@@ -172,7 +172,7 @@
 					<cfset incval.theformat = "wmv">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td width="1%" nowrap="true"><input type="text" size="3" name="convert_width_wmv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_wmv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_wmv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_wmv','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td width="1%" nowrap="true"><input type="text" style="width:35px" name="convert_width_wmv" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_wmv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_wmv" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_wmv','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td width="100%" nowrap="true"><input type="text" size="4" name="convert_bitrate_wmv" value="600">kb/s</td> --->
 			</tr>
 			<tr class="list">
@@ -182,7 +182,7 @@
 					<cfset incval.theformat = "avi">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_avi" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_avi','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_avi" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_avi','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" style="width:35px" name="convert_width_avi" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_avi','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_avi" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_avi','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_avi" value="600">kb/s</td> --->
 			</tr>
 			<!--- MOV --->
@@ -193,7 +193,7 @@
 					<cfset incval.theformat = "mov">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mov" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mov','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mov" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mov','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" style="width:35px" name="convert_width_mov" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mov','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_mov" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mov','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="600">kb/s</td> --->
 			</tr>
 			<!--- MXF --->
@@ -204,7 +204,7 @@
 					<cfset incval.theformat = "mxf">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mxf" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mxf','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mxf" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mxf','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" style="width:35px" name="convert_width_mxf" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mxf','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_mxf" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mxf','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mov" value="600">kb/s</td> --->
 			</tr>
 			<!--- MPG --->
@@ -215,7 +215,7 @@
 					<cfset incval.theformat = "mpg">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_mpg" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mpg','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_mpg" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mpg','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" style="width:35px" name="convert_width_mpg" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_mpg','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_mpg" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_mpg','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_mpg" value="600">kb/s</td> --->
 			</tr>
 			<tr class="list">
@@ -247,7 +247,7 @@
 					<cfset incval.theformat = "rm">
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
-				<td><input type="text" size="3" name="convert_width_rm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_rm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" size="3" name="convert_height_rm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_rm','form#attributes.file_id#',#theaspectratio#);"></td>
+				<td><input type="text" style="width:35px" name="convert_width_rm" value="#qry_detail.detail.vwidth#" onchange="aspectheight(this,'convert_height_rm','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_rm" value="#qry_detail.detail.vheight#" onchange="aspectwidth(this,'convert_width_rm','form#attributes.file_id#',#theaspectratio#);"></td>
 				<!--- <td nowrap="true"><input type="text" size="4" name="convert_bitrate_rm" value="600">kb/s</td> --->
 			</tr>
 			<tr>
