@@ -126,7 +126,9 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#getHostID()#">
 		AND lower(mf_type) = <cfqueryparam cfsqltype="cf_sql_varchar" value="mf_active">
 		</cfquery>
-		<cfset s.active = qryactive.mf_value>
+		<cfif qryactive.recordcount NEQ 0>
+			<cfset s.active = qryactive.mf_value>
+		</cfif>
 		<!--- If session if here or not 0 --->
 		<cfif structKeyExists(session,"currentupload") AND session.currentupload NEQ 0>
 			<!--- Get fields to show --->
