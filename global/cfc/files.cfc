@@ -125,14 +125,14 @@
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description, labels</cfif>, 
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ rn, #thecolumnlist#, keywords, description, labels, 
 			filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT ROWNUM AS rn, #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description, labels</cfif>, 
+				SELECT ROWNUM AS rn, #thecolumnlist#, keywords, description, labels, 
 				filename_forsort, size, hashtag, date_create, date_change
 				FROM (
-					SELECT #Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description, '' as labels</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
-					FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+					SELECT #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
+					FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					<cfif Len(Arguments.file_extension)>
 						AND
@@ -166,10 +166,10 @@
 			<cfset var thecolumnlist = replacenocase(arguments.columnlist,"f.","","all")>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description, '' as labels</cfif>, filename_forsort, size, hashtag, date_create, date_change
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #thecolumnlist#, ft.file_keywords keywords, ft.file_desc description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, ft.*</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
-				FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+				SELECT row_number() over() as rownr, #session.hostdbprefix#files.*, ft.*, lower(file_name) filename_forsort, file_size size, hashtag, file_create_time date_create, file_change_date date_change
+				FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				<cfif Len(Arguments.file_extension)>
 					AND
@@ -204,9 +204,9 @@
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,ft.file_keywords keywords, ft.file_desc description, '' as labels</cfif>, lower(file_name) filename_forsort, file_size size, hashtag, 
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
 			file_create_time date_create, file_change_date date_change
-			FROM #session.hostdbprefix#files<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1</cfif>
+			FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			<cfif Len(Arguments.file_extension)>
 				AND

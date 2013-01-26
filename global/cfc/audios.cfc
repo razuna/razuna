@@ -96,12 +96,12 @@
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getFolderAssetsaud */ rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description, labels</cfif>, filename_forsort, size, hashtag, date_create, date_change
+		SELECT /* #variables.cachetoken#getFolderAssetsaud */ rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
-			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,keywords, description, labels</cfif>, filename_forsort, size, hashtag, date_create, date_change
+			SELECT ROWNUM AS rn, aud_id, aud_name, aud_extension, aud_create_date, aud_change_date, folder_id_r, keywords, description, labels, filename_forsort, size, hashtag, date_create, date_change
 			FROM (
-				SELECT #thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description, '' as labels</cfif>, lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
-				FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
+				SELECT #thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels, lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
+				FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (a.aud_group IS NULL OR a.aud_group = '')
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -117,11 +117,11 @@
 		<cfset var thecolumnlist = replacenocase(arguments.columnlist,"v.","","all")>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getFolderAssetsaud */ #thecolumnlist#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description, '' as labels</cfif>, filename_forsort, size, hashtag, date_create, date_change
+		SELECT /* #variables.cachetoken#getFolderAssetsaud */ #thecolumnlist#, att.aud_keywords keywords, att.aud_description description, '' as labels, filename_forsort, size, hashtag, date_create, date_change
 		FROM (
-			SELECT row_number() over() as rownr, a.*<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">, att.*</cfif>, 
+			SELECT row_number() over() as rownr, a.*, att.*, 
 			lower(a.aud_name) filename_forsort,	a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
-			FROM audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
+			FROM audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (a.aud_group IS NULL OR a.aud_group = '')
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -139,9 +139,9 @@
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #max# </cfif>
-		#thecolumns#<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc">,att.aud_keywords keywords, att.aud_description description, '' as labels</cfif>,
+		#thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels,
 		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
-		FROM #session.hostdbprefix#audios a<cfif session.view EQ "combined" OR arguments.thestruct.fuseaction EQ "c.view_doc"> LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1</cfif>
+		FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
