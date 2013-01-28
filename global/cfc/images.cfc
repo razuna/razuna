@@ -1188,7 +1188,7 @@
 	FROM #session.hostdbprefix#images i
 	WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	ORDER BY img_extension
+	ORDER BY img_create_time DESC
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
