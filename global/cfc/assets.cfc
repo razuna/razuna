@@ -1673,7 +1673,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfif arguments.thestruct.newid EQ 0>
 			<cfinvoke component="email" method="send_email" subject="Image #arguments.thestruct.qryfile.filename# not added" themessage="Unfortunately, we could not add your image #arguments.thestruct.qryfile.filename# to the system because we can't recognize it as an image!">
 			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Error',logdesc='Error: #arguments.thestruct.qryfile.filename# not recognized as image!',logfiletype='img')#>
+			<cfset log_assets(theuserid=session.theuserid,logaction='Error',logdesc='Error: #arguments.thestruct.qryfile.filename# not recognized as image!',logfiletype='img')>
 		<cfelse>
 			<!--- Add remaining data to the image table --->
 			<!--- <cfthread name="processImgFile#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" priority="HIGH"> --->
@@ -4024,16 +4024,39 @@ This is the main function called directly by a single upload else from addassets
 	<cfif arguments.thestruct.thefiletype EQ "img" OR arguments.thestruct.thefiletype EQ "vid">
 		<!--- The tool paths --->
 		<cfinvoke component="settings" method="get_tools" returnVariable="thetools" />
-		<!--- Select proper executable --->
+		<!--- According to win or lin --->
 		<cfif iswindows()>
-			<cfset theexe = thetools.exiftool & "/exiftool.exe">
+			<cfset var theexe = """#thetools.exiftool#/exiftool.exe""">
+			<!--- Get with and heigth --->
+			<cfexecute name="#theexe#" arguments="-S -s -imagewidth #arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" variable="arguments.thestruct.thewidth" timeout="30" />
+			<cfexecute name="#theexe#" arguments="-S -s -ImageHeight #arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" variable="arguments.thestruct.theheight" timeout="30" />
 		<cfelse>
-			<cfset theexe = thetools.exiftool & "/exiftool">
+			<cfset var theexe = thetools.exiftool & "/exiftool">
+			<!--- Set scripts --->
+			<cfset var theshw = "#GetTempDirectory()#/w#arguments.thestruct.newid#.sh">
+			<cfset var theshh = "#GetTempDirectory()#/h#arguments.thestruct.newid#.sh">
+			<!--- On LAN --->
+			<cfset var theserverfile = thefile.serverFile>
+			<cfset theserverfile = replace(theserverfile," ","\ ","all")>
+			<cfset theserverfile = replace(theserverfile,"&","\&","all")>
+			<cfset theserverfile = replace(theserverfile,"'","\'","all")>
+			<!--- Write Script --->
+			<cffile action="write" file="#theshw#" output="#theexe# -S -s -imagewidth #arguments.thestruct.theincomingtemppath#/#theserverFile#" mode="777">
+			<cffile action="write" file="#theshh#" output="#theexe# -S -s -ImageHeight #arguments.thestruct.theincomingtemppath#/#theserverFile#" mode="777">
+			<!--- Execute Script --->
+			<cfexecute name="#theshw#" timeout="900" variable="arguments.thestruct.thewidth" />
+			<cfexecute name="#theshh#" timeout="900" variable="arguments.thestruct.theheight" />
+			<!--- Delete scripts --->
+			<cffile action="delete" file="#theshw#">
+			<cffile action="delete" file="#theshh#">
 		</cfif>
-		<!--- Get with and heigth --->
-		<cfexecute name="#theexe#" arguments="-S -s -imagewidth #arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" variable="arguments.thestruct.thewidth" timeout="30" />
-		<cfexecute name="#theexe#" arguments="-S -s -ImageHeight #arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" variable="arguments.thestruct.theheight" timeout="30" />
+		<!--- Trim --->
+		<cfset arguments.thestruct.thewidth = trim(arguments.thestruct.thewidth)>
+		<cfset arguments.thestruct.theheight = trim(arguments.thestruct.theheight)>
 	</cfif>
+	<cfset consoleoutput(true)>
+<cfset console(arguments.thestruct)>
+
 	<!--- Query to get the settings --->
 	<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrysettings">
 	SELECT set2_path_to_assets
