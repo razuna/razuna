@@ -450,6 +450,8 @@
 		<cfargument name="fromapi" required="false" default="false">
 		<!--- If there is no session for webgroups set --->
 		<cfparam default="0" name="session.thegroupofuser">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("labels")>
 		<!--- Get assets --->
 		<cfif arguments.label_kind EQ "assets">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">

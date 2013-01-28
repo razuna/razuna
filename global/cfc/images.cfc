@@ -242,6 +242,9 @@
 <cffunction name="filedetail" access="public" output="false" returntype="query">
 	<cfargument name="theid" type="string" required="true">
 	<cfargument name="thecolumn" type="string" required="true">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("images")>
+		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#filedetailimg */ #arguments.thecolumn#
 		FROM #session.hostdbprefix#images

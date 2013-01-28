@@ -2671,6 +2671,8 @@
 	<cfif arguments.prefix EQ "">
 		<cfset arguments.prefix = session.hostdbprefix>
 	</cfif>
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
 	<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfoldersinlist */ folder_id
