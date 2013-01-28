@@ -1,7 +1,7 @@
 <cfsilent>
 
 	<!---
-		$Id: requests.cfm 2121 2012-06-22 10:29:03Z alan $
+		$Id: requests.cfm 2204 2012-07-23 15:27:58Z tony $
 		--->
 
 	<cfset request.page.title 	= "CFMLBug : Requests">
@@ -10,10 +10,13 @@
 </cfsilent><cfinclude template="inc/header.inc">
 <cfinclude template="inc/nav.inc">
 
-<table width="100%" style="font-size:1em">
-<tr>
-	<td valign="top" style="width:145px" id="summary-panel"><cfinclude template="_requests_summary.cfm"></td>
-	<td valign="top" style="padding-right: 20px;">
+<div class="container cf">
+
+	<div id="summary-panel" class="stats">
+		<cfinclude template="_requests_summary.cfm">
+	</div>
+	
+	<div class="content">
 		<cfif !DebuggerIsEnabled()>
 			<p>
 			CFMLBug has not been fully enabled for this server.
@@ -25,12 +28,17 @@
 			<a href="http://openbd.org/manual/?/app_server_cfc">/Server.cfc</a> for example.
 			</p>
 		<cfelse>
-			<div style="float:right;"><a href="javascript:void(null);" class="j-refresh-requests">refresh</a></div>
-			<div style="clear:both; padding-top: 6px;" id="requests-panel"><cfinclude template="_requests_all.cfm"></div>
+			<div class="refresh_btn">
+				<a href="javascript:void(null);" class="j-refresh-requests">refresh</a>
+			</div>
+			
+			<div id="requests-panel" class="panel">
+				<cfinclude template="_requests_all2.cfm">
+			</div>
 		</cfif>
-	</td>
-</tr>
-</table>
+	</div><!--- end content --->
+
+</div><!--- end container --->
 
 <script>
 inspectSession = function(id){
@@ -66,11 +74,14 @@ $(function(){
 	//$(".filepathsize").filepaths();
 
 	$(".j-template-file").live("click", function(){
-		$('.j-template-src').remove();
-		$(this).closest('tr').after("<tr class='j-template-src'><td colspan='8'></td></tr>");
+//		$('.j-template-src').remove();
+			$('.j-codewrap').remove();
+		//$(this).closest('tr').after("<tr class='j-template-src'><td colspan='8'></td></tr>");
+			$(this).parents('table.queries').after('<div class="j-codewrap"></div>')
 
 		$.get( requestRoot + "_requests_file.cfm&_cfmlbug&f=" + $(this).attr("f") + "&l=" + $(this).attr("l"),function(data){
-			$('.j-template-src td').html( data );
+//			$('.j-template-src td').html( data );
+				$('.j-codewrap').html(data)
 		});
 	});
 

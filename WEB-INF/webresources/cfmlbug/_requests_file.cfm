@@ -11,71 +11,7 @@
 
 </cfsilent>
 
-<style>
-.fileList th{
-	font-weight: normal;
-	text-align: right;
-	border-right: 3px solid #00bf30;
-	padding-right: 3px;
-}
 
-.fileList th pre {
-	margin-right: 3px;
-	color: #AFAFAF !important;
-}
-
-.fileList pre {
-	margin: 0px;
-	margin-top: 1px;
-	margin-bottom: 1px;
-	margin-left: 10px;
-}
-
-.fileList pre .cf { /* cf tags */
-	color: maroon;
-}
-
-.fileList pre .n { /* numbers */
-	color: blue;
-}
-
-.fileList pre .h { /* html tags */
-	color: navy;
-}
-
-.fileList pre .q { /* quotes */
-	color: blue;
-}
-
-.fileList pre .f { /* form elements */
-	color: #FF8000
-}
-
-.fileList pre .t { /* table elements */
-	color: teal
-}
-
-.fileList pre .c { /* comments elements */
-	color: gray
-}
-
-.fileList pre .i { /* image */
-	color: purple
-}
-
-.fileList pre .a { /* a tags */
-	color: green
-}
-
-.fileList td.code {
-	cursor: pointer;
-}
-
-#j-code-src-view-port{
-	height:200px;
-	overflow:auto
-}
-</style>
 
 <cfoutput>
 <div id="j-code-src-view-port">

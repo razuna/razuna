@@ -39,7 +39,7 @@ lucene-core-3.6.0.jar
 lucene-highlighter-3.6.0.jar
 mail.jar
 mailet_1_0.jar
-mongo-2.7.3.jar
+mongo-2.9.2.jar
 mysql-connector-java-5.1.18-bin.jar
 nirvanix-api.jar
 ojdbc14.jar
