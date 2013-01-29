@@ -6662,8 +6662,8 @@
 		<if condition="attributes.thetype EQ 'img'">
 			<true>
 				<!-- Set field names -->
-				<set name="attributes.desc" value="desc_" />
-				<set name="attributes.keys" value="keywords_" />
+				<set name="attributes.desc" value="img_desc_" />
+				<set name="attributes.keys" value="img_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
 				<!-- Set filename -->
@@ -6674,8 +6674,8 @@
 		<if condition="attributes.thetype EQ 'vid'">
 			<true>
 				<!-- Set field names -->
-				<set name="attributes.desc" value="desc_" />
-				<set name="attributes.keys" value="keywords_" />
+				<set name="attributes.desc" value="vid_desc_" />
+				<set name="attributes.keys" value="vid_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
 				<!-- Set filename -->
@@ -6686,8 +6686,8 @@
 		<if condition="attributes.thetype EQ 'aud'">
 			<true>
 				<!-- Set field names -->
-				<set name="attributes.desc" value="desc_" />
-				<set name="attributes.keys" value="keywords_" />
+				<set name="attributes.desc" value="aud_desc_" />
+				<set name="attributes.keys" value="aud_keywords_" />
 				<!-- CFC: Get file detail -->
 				<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
 				<!-- Set filename -->
