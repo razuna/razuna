@@ -314,10 +314,10 @@
 			<cfset attributes.intstruct.fileid = attributes.intstruct.id>
 			<cfset attributes.intstruct.file_name = thedetail.img_filename>
 			<cfset attributes.intstruct.thefiletype = "img">
-			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-			<cfset arguments.thestruct.folder_action = false>
+			<cfset attributes.intstruct.folder_id = thedetail.folder_id_r>
+			<cfset attributes.intstruct.folder_action = false>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
-			<cfset arguments.thestruct.folder_action = true>
+			<cfset attributes.intstruct.folder_action = true>
 			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
 		</cfthread>
 		<!--- Flush Cache --->
