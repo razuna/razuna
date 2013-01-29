@@ -311,7 +311,7 @@
 					</tr>
 					<tr>
 						<td>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
-						<td><input type="text" name="collectionname" style="width:400px;" value="#qry_detail.col_name#"></td>
+						<td><input type="text" name="collectionname" id="collectionname" style="width:400px;" value="#qry_detail.col_name#"></td>
 					</tr>
 					<tr>
 						<td>ID</td>
@@ -490,6 +490,12 @@
 		jqtabs("col_detail#col_id#");
 		// Submit Form
 		$("##form#col_id#").submit(function(e){
+			// If collectionname is empty
+			var cn = $('##collectionname').val();
+			if (cn == ""){
+				alert('Please enter a name for your collection!')
+				return false;
+			}
 			$("##updatecol").css("display","");
 			loadinggif('updatecol');
 			// Submit Form

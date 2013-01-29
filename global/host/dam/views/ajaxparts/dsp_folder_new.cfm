@@ -138,6 +138,11 @@
 					</cfloop>
 				</cfif>
 			</cfif>
+			<div style="clear:both;"></div>
+			<div style="float:right;padding-top:10px;padding-right:10px;">
+				<input type="submit" name="submit" value="<cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("button_update")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_add")#</cfif>" class="button">
+				<div id="updatetext" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
+			</div>
 		</div>
 		<!--- Link to Folder --->
 		<cfif attributes.isdetail NEQ "T" AND !application.razuna.isp AND attributes.iscol NEQ "T">
@@ -160,6 +165,10 @@
 					</tr>
 				</table>
 				<div id="addlinkstatus" style="display:none;"></div>
+				<div style="clear:both;"></div>
+				<div style="float:right;padding-top:10px;padding-right:10px;">
+					<input type="button" name="linkbutton" value="Establish link" class="button" onclick="foldersubmit('#attributes.theid#','#attributes.isdetail#','<cfif qry_folder.folder_is_collection EQ "T" OR attributes.iscol EQ "T">T<cfelse>F</cfif>','false',true);return false;">
+				</div>
 			</div>
 		</cfif>
 		<!--- Buttons --->
@@ -179,7 +188,6 @@
 			</cfif> --->
 		</div>
 		<div style="float:right;padding-top:10px;padding-right:10px;">
-			<input type="submit" name="submit" value="<cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("button_update")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_add")#</cfif>" class="button">
 			<div id="updatetext" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 		</div>
 	</div>

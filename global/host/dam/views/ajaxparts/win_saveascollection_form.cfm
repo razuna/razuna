@@ -44,7 +44,7 @@
 		</tr>
 		<tr>
 			<td>#myFusebox.getApplicationData().defaults.trans("header_collection_name")#</td>
-			<td><input type="text" name="collectionname" size="50"></td>
+			<td><input type="text" name="collectionname" id="collectionname" size="50"></td>
 		</tr>
 		<cfif NOT structkeyexists(attributes,"coladd")>
 		<tr>
@@ -72,6 +72,12 @@
 	</form>
 	<script>
 		$("##form_saveascol").submit(function(e){
+			// If collectionname is empty
+			var cn = $('##form_saveascol ##collectionname').val();
+			if (cn == ""){
+				alert('Please enter a name for your collection!')
+				return false;
+			}
 			$("##collectionupdate").css("display","");
 			loadinggif('collectionupdate');
 			// Submit Form
@@ -95,7 +101,7 @@
 				// Hide Window
 				destroywindow(1);
 				// reload collection list
-				loadcontent('rightside','#myself#c.collections&iscol=T&folder_id=col-#attributes.folder_id#');
+				$('##rightside').load('#myself#c.collections&iscol=T&folder_id=col-#attributes.folder_id#');
 			</cfif>
 		}
 	</script>

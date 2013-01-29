@@ -143,7 +143,7 @@
 			else{
 				thevalue = 0;
 			}
-			loadcontent('updatetextshare','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
+			$('##updatetextshare').load('#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
 			$('##reset_dl').html('Reset all individual download setting successfully');
 		}
 		// Activate Chosen

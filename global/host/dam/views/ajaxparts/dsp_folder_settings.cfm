@@ -27,12 +27,12 @@
 <cfoutput>
 	<div id="tabfoldersettings">
 		<ul>
-			<li><a href="##properties" onclick="loadcontent('properties','#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_properties")#</a></li>
+			<li><a href="##properties" onclick="$('##properties').load('#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');savefolderforms();" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_properties")#</a></li>
 			<cfif attributes.iscol EQ "F">
 				<!--- Sharing --->
-				<li><a href="##sharing" onclick="loadcontent('sharing','#myself#c.folder_sharing&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
+				<li><a href="##sharing" onclick="$('##sharing').load('#myself#c.folder_sharing&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');savefolderforms();" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("tab_sharing_options")#</a></li>
 				<!--- Widgets --->
-				<li><a href="##widgets" onclick="loadcontent('widgets','#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
+				<li><a href="##widgets" onclick="$('##widgets').load('#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');savefolderforms();" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
 			</cfif>
 		</ul>
 		<!--- Properties --->
@@ -48,7 +48,14 @@
 		// Set tabs
 		jqtabs("tabfoldersettings");
 		// Load folder properties
-		loadcontent('properties','#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');
+		$('##properties').load('#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');
+		// Save form in the folder edit window
+		<cfif attributes.iscol EQ "F">
+			function savefolderforms(){
+				foldersubmit('#attributes.folder_id#','T','F',true);
+				savesharing('#attributes.folder_id#','F');
+			}
+		</cfif>
 	</script>	
 </cfoutput>
 	

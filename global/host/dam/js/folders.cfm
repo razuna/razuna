@@ -16,8 +16,24 @@
 		});
 	}
 	// when saving folder
-	function foldersubmit(theid,isdetail,iscol){
-		$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+	function foldersubmit(theid,isdetail,iscol,noreload,nocheck){
+		// If nocheck is undefined then simply execute the check of the foldername
+		if (nocheck != true){
+			var checkfolder = $('#folder_name').val();
+			if (checkfolder == ""){
+				alert('Please enter name!');
+				return false;
+			}
+		}
+		// If nocheck is true then it means user wants to establish link
+		if (nocheck == true){
+			var checklink = $('#link_path').val();
+			if (checklink == ""){
+				alert('Please enter an absolute path!');
+				return false;
+			}
+		}
+		// $("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		var url = formaction("form_folder" + theid);
 		var items = formserialize("form_folder" + theid);
 		//alert(iscol);
@@ -42,9 +58,9 @@
 						$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
 					}
 					// Remove loader
-					$("#bodyoverlay").remove();
+					// $("#bodyoverlay").remove();
 					// Reload Explorer
-					loadcontent('explorer','index.cfm?fa=c.explorer');
+					if (noreload != true) $('#explorer').load('index.cfm?fa=c.explorer');
 			   	}
 			});
 		}
@@ -65,9 +81,9 @@
 						$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
 					}
 					// Remove loader
-					$("#bodyoverlay").remove();
+					// $("#bodyoverlay").remove();
 					// Reload Explorer
-					loadcontent('explorer_col','index.cfm?fa=c.explorer_col');
+					$('#explorer_col').load('index.cfm?fa=c.explorer_col');
 			   	}
 			});
 		}
@@ -79,7 +95,7 @@
 			theid = 0;
 		}
 		// Reload Explorer
-		loadcontent('explorer','index.cfm?fa=c.explorer');
+		$('#explorer').load('index.cfm?fa=c.explorer');
 		// Show the update feedback
 		document.getElementById('updatetext').style.visibility = "visible";
 		$("#updatetext").html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
