@@ -782,7 +782,7 @@
 				av_link_url AS cloud_url_org,
 				av_link_title AS filename_org,
 				av_type AS extension,
-				0 AS size,
+				'0' AS size,
 				av_link_url AS local_url_org
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
 				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
