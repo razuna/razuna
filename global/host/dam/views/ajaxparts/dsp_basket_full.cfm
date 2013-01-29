@@ -28,7 +28,7 @@
 <!--- </cfif> --->
 <cfoutput>
 	<div id="basketstatus" style="display:none;padding:10px;font-weight:bold;"></div>
-	<form name="thebasket" id="thebasket" method="post" action="#self#">
+	<form name="thebasket" id="thebasket" method="post" action="#self#" target="_blank">
 	<input type="hidden" name="#theaction#" value="c.basket_download">
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid thumbview">
 		<tr>
@@ -40,7 +40,7 @@
 							<div style="float:left;"><a href="##" onclick="$('##basketaction').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("basket_actions")#</a></div>
 							<div style="float:right;padding-left:2px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##basketaction').toggle();" class="ddicon"></div>
 							<div id="basketaction" class="ddselection_header" style="top:22px;">
-								<p><a href="##" onclick="$('##thebasket').submit();return false;">#myFusebox.getApplicationData().defaults.trans("download")#</a></p>
+								<p><a href="##" onclick="$('##thebasket').submit();$('##basketaction').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("download")#</a></p>
 								<p><a href="##" onclick="basketemail('#qry_basket.cart_order_email#');return false;">#myFusebox.getApplicationData().defaults.trans("send_basket_email")#</a></p>
 								<p><a href="##" onclick="basketftp();return false;">#myFusebox.getApplicationData().defaults.trans("send_basket_ftp")#</a></p>
 								<p><a href="##" onclick="basketsave();return false;">#myFusebox.getApplicationData().defaults.trans("save_basket")#</a></p>
@@ -401,19 +401,19 @@
 		}
 		// Show
 		// $("#basketstatus").fadeTo("fast", 100);
-		$("#basketstatus").css("display","");
-		$("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#myFusebox.getApplicationData().defaults.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email with the download link once the basket is complete.');
+		// $("#basketstatus").css("display","");
+		// $("#basketstatus").html('<img src="<cfoutput>#dynpath#</cfoutput>/global/host/dam/images/loading.gif" border="0" width="16" height="16"> <cfoutput>#myFusebox.getApplicationData().defaults.trans("please_wait")#</cfoutput>... (this can take some time with large assets). You can either wait for it to finish or continue working. We will send you an email with the download link once the basket is complete.');
 		// Submit Form
-		$.ajax({
-			type: "POST",
-			url: url,
-		   	data: items,
-		   	success: function(data){
-		   		$("#basketstatus").html('<span style="color:green;">Your basket is ready.</span> <a href="'+ trim(data) +'">Click on this link to download the basket now!</a>');
-				// $("#basketstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-		   	}
-		});
-		return false;
+		// $.ajax({
+		// 	type: "POST",
+		// 	url: url,
+		//    	data: items
+		  //  	success: function(data){
+		  //  		$("#basketstatus").html('<span style="color:green;">Your basket is ready.</span> <a href="'+ trim(data) +'">Click on this link to download the basket now!</a>');
+				// // $("#basketstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+		  //  	}
+		// });
+		return true;
 	})
 	<!--- If we come from basket_full_remove --->
 	<cfif fa EQ "c.basket_full_remove">

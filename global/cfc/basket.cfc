@@ -177,6 +177,9 @@
 <!--- WRITE FILES IN BASKET TO SYSTEM --->
 <cffunction name="writebasket" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Feedback --->
+	<cfoutput><strong>We are getting your files for your basket ready...</strong><br><br></cfoutput>
+	<cfflush>
 	<!--- Params --->
 	<cfparam default="" name="arguments.thestruct.artofimage">
 	<cfparam default="" name="arguments.thestruct.artofvideo">
@@ -204,6 +207,9 @@
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in removing outgoing folders" dump="#cfcatch#">
 		</cfcatch>
 	</cftry>
+	<!--- Feedback --->
+	<cfoutput><strong>So far, so good. Fetching files...</strong><br><br></cfoutput>
+	<cfflush>
 	<!--- Create directory --->
 	<cfset basketname = createuuid("")>
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
@@ -218,26 +224,41 @@
 		<cfswitch expression="#cart_file_type#">
 			<!--- Images --->
 			<cfcase value="img">
+				<!--- Feedback --->
+				<cfoutput><strong>Getting images...</strong><br><br></cfoutput>
+				<cfflush>
 				<!--- Write Image --->
 				<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
 			</cfcase>
 			<!--- Videos --->
 			<cfcase value="vid">
+				<!--- Feedback --->
+				<cfoutput><strong>Getting videos...</strong><br><br></cfoutput>
+				<cfflush>
 				<!--- Write Video --->
 				<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
 			</cfcase>
 			<!--- Audios --->
 			<cfcase value="aud">
+				<!--- Feedback --->
+				<cfoutput><strong>Getting audios...</strong><br><br></cfoutput>
+				<cfflush>
 				<!--- Write Video --->
 				<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
 			</cfcase>
 			<!--- All other files --->
 			<cfdefaultcase>
+				<!--- Feedback --->
+				<cfoutput><strong>Getting documents...</strong><br><br></cfoutput>
+				<cfflush>
 				<!--- Write file --->
 				<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
 			</cfdefaultcase>
 		</cfswitch>
 	</cfloop>
+	<!--- Feedback --->
+	<cfoutput><strong>Putting it into a nice ZIP archive...</strong><br><br></cfoutput>
+	<cfflush>
 	<!--- All done. Now zip up the folder --->
 	<cfif NOT structkeyexists(arguments.thestruct,"zipname")>
 		<cfset arguments.thestruct.zipname = "basket-" & createuuid("") & ".zip">
@@ -246,7 +267,10 @@
 		<cfset arguments.thestruct.zipname = arguments.thestruct.zipname & ".zip">
 	</cfif>
 	<!--- Zip the folder --->
-	<cfzip action="create" ZIPFILE="#arguments.thestruct.thepath#/outgoing/#arguments.thestruct.zipname#" source="#arguments.thestruct.newpath#" recurse="true" timeout="300" />
+	<cfthread name="#basketname#" intstruct="#arguments.thestruct#">
+		<cfzip action="create" ZIPFILE="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.zipname#" source="#attributes.intstruct.newpath#" recurse="true" timeout="300" />
+	</cfthread>
+	<cfthread action="join" name="#basketname#" />
 	<!--- Remove the temp folder --->
 	<cfdirectory action="delete" directory="#arguments.thestruct.newpath#" recurse="yes">
 	<!--- We are comping from the basket zip action thus move the file to the incoming folder since we need to upload the zip to the server --->
@@ -260,8 +284,11 @@
 	<cfif NOT structkeyexists(arguments.thestruct,"fromzip")>
 		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
+	<!--- Feedback --->
+	<cfoutput><strong style="color:green;">All done. <a href="http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">Here is your basket.</a></strong><br><br></cfoutput>
+	<cfflush>
 	<!--- The output link so we retrieve in in JS --->
-	<cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput>
+	<!--- <cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput> --->
 	<cfreturn arguments.thestruct.zipname>
 </cffunction>
 
