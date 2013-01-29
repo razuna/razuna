@@ -224,6 +224,13 @@
 		<!--- Feedback --->
 		<cfoutput><strong style="color:green;">Import successfully done!</strong><br><br></cfoutput>
 		<cfflush>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1104,10 +1111,6 @@
 				</cfcatch>
 			</cftry>
 		</cfloop>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
@@ -1265,10 +1268,6 @@
 				</cfthread>
 			</cfif>
 		</cfloop>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1426,10 +1425,6 @@
 				</cfthread>
 			</cfif>
 		</cfloop>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("audios")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1730,10 +1725,6 @@
 				</cfthread>
 			</cfif>
 		</cfloop>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("files")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
