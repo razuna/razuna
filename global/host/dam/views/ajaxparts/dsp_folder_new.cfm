@@ -174,11 +174,11 @@
 					<input type="button" name="removefolder" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" class="button" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("remove_folder")#',400,1);" style="margin-right:20px;">
 				</cfif>
 			</cfif>
-			<cfif attributes.isdetail NEQ "T">
+			<!--- <cfif attributes.isdetail NEQ "T">
 				<input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("cancel")#" onclick="destroywindow(1);return false;" class="button"> 
-			</cfif>
+			</cfif> --->
 		</div>
-		<div style="float:right;padding-top:10px">
+		<div style="float:right;padding-top:10px;padding-right:10px;">
 			<input type="submit" name="submit" value="<cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("button_update")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_add")#</cfif>" class="button">
 			<div id="updatetext" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 		</div>
