@@ -252,8 +252,6 @@
 		<cfinvoke method="doimportaudios" thestruct="#arguments.thestruct#" />
 		<!--- Do docs --->
 		<cfinvoke method="doimportdocs" thestruct="#arguments.thestruct#" />
-		<!--- Flush tables --->
-		<cfset resetcachetokenall()>
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
@@ -1106,6 +1104,10 @@
 				</cfcatch>
 			</cftry>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
@@ -1263,6 +1265,10 @@
 <!--- 				</cfthread> --->
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1420,6 +1426,10 @@
 <!--- 				</cfthread> --->
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1720,6 +1730,10 @@
 <!--- 				</cfthread> --->
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
