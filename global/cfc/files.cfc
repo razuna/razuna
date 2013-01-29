@@ -625,22 +625,18 @@
 		<cfparam name="arguments.thestruct.what" default="">
 		<cfparam name="arguments.thestruct.frombatch" default="F">
 		<cfparam name="arguments.thestruct.batch_replace" default="true">
-		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("files")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
 		<!--- Loop over the file_id (important when working on more then one image) --->
 		<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
-			<cfset i = listfirst(i,"-")>
+			<cfset var i = listfirst(i,"-")>
 			<cfset arguments.thestruct.file_id = i>
 			<!--- Save the desc and keywords --->
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 				<!--- If we come from all we need to change the desc and keywords arguments name --->
 				<cfif arguments.thestruct.what EQ "all">
-					<cfset alldesc = "all_desc_#langindex#">
-					<cfset allkeywords = "all_keywords_#langindex#">
-					<cfset thisdesc = "arguments.thestruct.file_desc_#langindex#">
-					<cfset thiskeywords = "arguments.thestruct.file_keywords_#langindex#">
+					<cfset var alldesc = "all_desc_#langindex#">
+					<cfset var allkeywords = "all_keywords_#langindex#">
+					<cfset var thisdesc = "arguments.thestruct.file_desc_#langindex#">
+					<cfset var thiskeywords = "arguments.thestruct.file_keywords_#langindex#">
 					<cfset "#thisdesc#" =  evaluate(alldesc)>
 					<cfset "#thiskeywords#" =  evaluate(allkeywords)>
 				<cfelse>
@@ -648,11 +644,11 @@
 						<cfset thisdesc = "desc_#langindex#">
 						<cfset thiskeywords = "keywords_#langindex#">
 					<cfelse> --->
-						<cfset thisdesc = "file_desc_#langindex#">
-						<cfset thiskeywords = "file_keywords_#langindex#">
+						<cfset var thisdesc = "file_desc_#langindex#">
+						<cfset var thiskeywords = "file_keywords_#langindex#">
 					<!--- </cfif> --->
 				</cfif>
-				<cfset l = langindex>
+				<cfset var l = langindex>
 				<cfif thisdesc CONTAINS l OR thiskeywords CONTAINS l>
 					<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="f">
 						<!--- Query excisting --->
@@ -786,6 +782,10 @@
 			<!--- Log --->
 			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qry.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 	</cffunction>
 	
 	<!--- SERVE THE FILE TO THE BROWSER --->

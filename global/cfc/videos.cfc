@@ -904,16 +904,16 @@
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
 	<!--- Loop over the file_id (important when working on more then one image) --->
 	<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="i">
-	<cfset i = listfirst(i,"-")>
-	<cfset arguments.thestruct.file_id = i>
+		<cfset var i = listfirst(i,"-")>
+		<cfset arguments.thestruct.file_id = i>
 		<!--- Save the desc and keywords --->
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 		<!--- If we come from all we need to change the desc and keywords arguments name --->
 			<cfif arguments.thestruct.what EQ "all">
-				<cfset alldesc = "all_desc_#langindex#">
-				<cfset allkeywords = "all_keywords_#langindex#">
-				<cfset thisdesc = "arguments.thestruct.vid_desc_#langindex#">
-				<cfset thiskeywords = "arguments.thestruct.vid_keywords_#langindex#">
+				<cfset var alldesc = "all_desc_#langindex#">
+				<cfset var allkeywords = "all_keywords_#langindex#">
+				<cfset var thisdesc = "arguments.thestruct.vid_desc_#langindex#">
+				<cfset var thiskeywords = "arguments.thestruct.vid_keywords_#langindex#">
 				<cfset "#thisdesc#" =  evaluate(alldesc)>
 				<cfset "#thiskeywords#" =  evaluate(allkeywords)>
 			<cfelse>
@@ -921,11 +921,11 @@
 					<cfset thisdesc = "desc_#langindex#">
 					<cfset thiskeywords = "keywords_#langindex#">
 				<cfelse> --->
-					<cfset thisdesc = "vid_desc_#langindex#">
-					<cfset thiskeywords = "vid_keywords_#langindex#">
+					<cfset var thisdesc = "vid_desc_#langindex#">
+					<cfset var thiskeywords = "vid_keywords_#langindex#">
 				<!--- </cfif> --->
 			</cfif>
-			<cfset l = langindex>
+			<cfset var l = langindex>
 			<cfif thisdesc CONTAINS l OR thiskeywords CONTAINS l>
 				<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="f">
 					<!--- Query excisting --->
@@ -1019,7 +1019,8 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")> 
 </cffunction>
 
 <!--- CONVERT VIDEO IN A THREAD --->
