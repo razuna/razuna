@@ -754,6 +754,8 @@
 	</fuseaction>
 	<!-- Basket FTP Form -->
 	<fuseaction name="basket_ftp_form">
+		<set name="session.ftp_server" value="" overwrite="false" />
+		<set name="session.ftp_user" value="" overwrite="false" />
 		<!-- Params -->
 		<set name="attributes.frombasket" value="T" />
 		<set name="attributes.file_id" value="0" />
