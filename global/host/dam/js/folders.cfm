@@ -58,7 +58,12 @@
 			   		// Set var for the folderid and trim it
 			   		var fid = trim(data);
 					// Jump into the folder
-					$('#rightside').load('index.cfm?fa=c.collections&col=T&folder_id=col-' + fid);
+					if (isdetail == 'F'){
+						$('#rightside').load('index.cfm?fa=c.collections&col=T&folder_id=col-' + fid);
+					}
+					else{
+						$('#updatetext').html('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#</cfoutput>');
+					}
 					// Remove loader
 					$("#bodyoverlay").remove();
 					// Reload Explorer
