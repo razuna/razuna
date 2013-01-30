@@ -4054,9 +4054,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.thewidth = trim(arguments.thestruct.thewidth)>
 		<cfset arguments.thestruct.theheight = trim(arguments.thestruct.theheight)>
 	</cfif>
-	<cfset consoleoutput(true)>
-<cfset console(arguments.thestruct)>
-
 	<!--- Query to get the settings --->
 	<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrysettings">
 	SELECT set2_path_to_assets
@@ -4083,7 +4080,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset upt = Createuuid("")>
 		<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 			<cfinvoke component="nirvanix" method="Upload">
-				<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#arguments.thestruct.newid#">
+				<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#attributes.intstruct.newid#">
 				<cfinvokeargument name="uploadfile" value="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#">
 				<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 			</cfinvoke>
