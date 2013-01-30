@@ -652,6 +652,8 @@
 <!--- Do the Import ---------------------------------------------------------------------->
 <cffunction name="users_import" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("users")>
 	<!--- Feedback --->
 	<cfoutput><strong>Starting the import</strong><br><br></cfoutput>
 	<cfflush>
