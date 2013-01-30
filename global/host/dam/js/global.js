@@ -46,30 +46,6 @@ function loadcontent(ele,url){
 function loadoverlay(){
 	$("body").append('<div id="bodyoverlay"><img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 }
-// Tooltip
-function mytooltip(){
-	//$("#tooltip a[title]").tooltip('#demotip');
-	$(document).ready(function() {
-		// initialize tooltip
-		$("#tooltip a[title]").tooltip({
-			// use single tooltip element for all tips
-			tip: '#demotip', 
-			// tweak the position
-			offset: [2, 10],
-			// use "slide" effect
-			//effect: 'slide'
-		// add dynamic plugin 
-		}).dynamic( {
-			// customized configuration on bottom edge
-			right: {
-				// slide downwards
-				direction: 'right',
-				// bounce back when closed
-				bounce: true
-			}
-		});
-	});
-}
 // Form: Get Action URL
 function formaction(theid) {
 	var theaction = $('#' + theid).attr("action");

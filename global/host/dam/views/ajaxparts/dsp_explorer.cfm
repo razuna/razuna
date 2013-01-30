@@ -67,8 +67,6 @@
 	</cfif>
 		
 <script language="javascript" type="text/javascript">
-	// Load our tooltips
-	//mytooltip();
 	// Load Folders
 	$(function () { 
 		$("##treeBox").tree({
