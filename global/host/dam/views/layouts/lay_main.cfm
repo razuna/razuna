@@ -62,7 +62,7 @@
 <script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jqtree/lib/jquery.cookie.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jqtree/jquery.tree.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jqtree/jquery.tree.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jqtree/plugins/jquery.tree.cookie.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
