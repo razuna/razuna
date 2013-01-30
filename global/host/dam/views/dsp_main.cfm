@@ -209,6 +209,6 @@
 <cfinclude template="../js/scheduler.cfm" runonce="true">
 <cfif cs.folder_redirect NEQ "0" OR !attributes.redirectmain>
 	<script language="JavaScript" type="text/javascript">
-		$('##rightside').load('#myself#c.folder&col=F&folder_id=#cs.folder_redirect#');
+		<cfoutput>$('##rightside').load('#myself#c.folder&col=F&folder_id=#cs.folder_redirect#');</cfoutput>
 	</script>
 </cfif>
