@@ -1668,3 +1668,18 @@ function SetVideo(source, title) {
 	// 	$('#videoPlayerDiv').dialog('destroy');
 	// });
 }
+// Focus tree
+function loadfolderwithdelay(folderid){
+	try {
+		setTimeout(function() {
+	    	loadfolder(folderid);
+		}, 1250)
+	}
+	catch(e) {};
+}
+function loadfolder(folderid){
+	try {
+		$('#rightside').load('index.cfm?fa=c.folder&folder_id=' + folderid);
+	}
+	catch(e) {};
+}

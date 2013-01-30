@@ -1581,9 +1581,6 @@
 <!--- MOVE FILE IN THREADS --->
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("folders")>
-	<cfset variables.cachetoken = resetcachetoken("videos")>
 	<!--- Loop over files --->
 	<cfthread intstruct="#arguments.thestruct#">	
 		<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
@@ -1594,6 +1591,8 @@
 			</cfif>
 		</cfloop>
 	</cfthread>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("folders")>
 </cffunction>
 
 <!--- MOVE FILE --->
@@ -1634,6 +1633,9 @@
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="error in moving video" dump="#cfcatch#">
 			</cfcatch>
 		</cftry>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset variables.cachetoken = resetcachetoken("videos")>
 	<cfreturn />
 </cffunction>
 

@@ -928,9 +928,6 @@
 	<cffunction name="movethread" output="true">
 		<cfargument name="thestruct" type="struct">
 		<cfparam name="arguments.thestruct.doc_id" default="">
-		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("folders")>
-		<cfset variables.cachetoken = resetcachetoken("files")>
 		<!--- Loop over files --->
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
@@ -941,6 +938,8 @@
 				</cfif>
 			</cfloop>
 		</cfthread>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("folders")>
 	</cffunction>
 	
 	<!--- MOVE FILE --->
@@ -973,6 +972,9 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />	
 			</cfif>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("folders")>
+			<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfreturn />
 	</cffunction>
 	
