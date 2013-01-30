@@ -184,15 +184,12 @@
 					</td>
 				</tr>
 			</table>
-		<cfelse>
-			<script type="text/javascript">
-				loadcontent('rightside','#myself#c.folder&col=F&folder_id=#cs.folder_redirect#');
-			</script>
-		</cfif>
-		<cfif structKeyExists(pl,"pview")>
-			<cfloop list="#pl.pview#" delimiters="," index="i">
-				#evaluate(i)#
-			</cfloop>
+			<!--- Load plugins --->
+			<cfif structKeyExists(pl,"pview")>
+				<cfloop list="#pl.pview#" delimiters="," index="i">
+					#evaluate(i)#
+				</cfloop>
+			</cfif>
 		</cfif>
 	</cfoutput>
 </div>
@@ -210,3 +207,8 @@
 <cfinclude template="../js/users.cfm" runonce="true">
 <!--- JS: SCHEDULER --->
 <cfinclude template="../js/scheduler.cfm" runonce="true">
+<cfif cs.folder_redirect NEQ "0" OR !attributes.redirectmain>
+	<script language="JavaScript" type="text/javascript">
+		$('##rightside').load('#myself#c.folder&col=F&folder_id=#cs.folder_redirect#');
+	</script>
+</cfif>

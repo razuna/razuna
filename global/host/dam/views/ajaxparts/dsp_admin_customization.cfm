@@ -92,7 +92,7 @@
 					#myFusebox.getApplicationData().defaults.trans("custom_users_redirect_desc")#
 					<br />
 					<div>
-					<input type="text" name="folder_name" size="25" disabled="true" value="#qry_foldername#" /> <a href="##" onclick="showwindow('#myself#c.admin_customization_choose_folder','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,1);">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_folder_cap")#</a>
+					<input type="text" name="folder_name" size="25" disabled="true" value="#qry_foldername#" /> <a href="##" onclick="showwindow('#myself#c.admin_customization_choose_folder','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,1);return false;">#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_task_folder_cap")#</a>
 					<br />
 					<input type="checkbox" name="folder_redirect_off" value="true"> #myFusebox.getApplicationData().defaults.trans("custom_users_redirect_off")#
 					</div>
