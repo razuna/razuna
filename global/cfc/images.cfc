@@ -1342,12 +1342,14 @@
 	</cfthread>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("images")>
 </cffunction>
 
 <!--- MOVE FILE --->
 <cffunction name="move" output="false">
 	<cfargument name="thestruct" type="struct">
 		<cfset arguments.thestruct.qryimg = "">
+		<cfset arguments.thestruct.storage = application.razuna.storage>
 		<!--- Move --->
 		<cfinvoke method="filedetail" theid="#arguments.thestruct.img_id#" thecolumn="img_filename, folder_id_r" returnvariable="arguments.thestruct.qryimg">
 		<!--- Ignore if the folder id is the same --->
@@ -1359,23 +1361,24 @@
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Update Dates --->
-			<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.img_id#" />
-			<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
-			<cfset arguments.thestruct.storage = application.razuna.storage>
-			<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
+			<cfthread intstruct="#arguments.thestruct#">
+				<!--- Update Dates --->
+				<cfinvoke component="global" method="update_dates" type="img" fileid="#attributes.intstruct.img_id#" />
+				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
+				<cfinvoke method="moverelated" thestruct="#attributes.intstruct#">
+				<!--- Execute workflow --->
+				<cfset attributes.intstruct.fileid = attributes.intstruct.img_id>
+				<cfset attributes.intstruct.file_name = attributes.intstruct.qryimg.img_filename>
+				<cfset attributes.intstruct.thefiletype = "img">
+				<cfset attributes.intstruct.folder_id = attributes.intstruct.folder_id>
+				<cfset attributes.intstruct.folder_action = false>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
+				<cfset arguments.thestruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />	
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#attributes.intstruct#" />
+			</cfthread>
 			<!--- Log --->
-			<cfset log = #log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid='#arguments.thestruct.img_id#')#>
-			<!--- Execute workflow --->
-			<cfset arguments.thestruct.fileid = arguments.thestruct.img_id>
-			<cfset arguments.thestruct.file_name = arguments.thestruct.qryimg.img_filename>
-			<cfset arguments.thestruct.thefiletype = "img">
-			<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
-			<cfset arguments.thestruct.folder_action = false>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
-			<cfset arguments.thestruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />	
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />		
+			<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid=arguments.thestruct.img_id)>
 		</cfif>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("folders")>
