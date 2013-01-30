@@ -781,7 +781,7 @@ Comment:<br>
 					<cfset foundsome = true>
 					<cfset theids = theids & "," & id>
 					<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br>We checked at: #arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#filenameorg#<br />
-					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#">Remove this asset in the database</a><br />
+					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">Remove this asset in the database</a><br />
 					<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
 					</cfoutput>
 					<cfflush>
@@ -818,7 +818,7 @@ Comment:<br>
 						<cfset foundsome = true>
 						<cfset theids = theids & "," & id>
 						<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br>We checked at: #cloud_url_org#<br />
-						<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#">Remove this asset in the database</a><br />
+						<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">Remove this asset in the database</a><br />
 						<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
 						</cfoutput>
 						<cfflush>
@@ -844,7 +844,7 @@ Comment:<br>
 					<cfset foundsome = true>
 					<cfset theids = theids & "," & id>
 					<cfoutput><strong style="color:red;">Missing Original Asset: #filename#</strong><br />
-					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#">Remove this asset in the database</a><br />
+					<a href="index.cfm?fa=c.admin_cleaner_check_asset_delete&id=#id#&thetype=#arguments.thestruct.thetype#" target="_blank">Remove this asset in the database</a><br />
 					<cfif arguments.thestruct.thetype EQ "doc"><br /></cfif>
 					</cfoutput>
 					<cfflush>

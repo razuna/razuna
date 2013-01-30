@@ -710,7 +710,9 @@
 						<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
 						<cfflush>
 						<!--- Download --->
-						<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
+						<cfif cloud_url_org CONTAINS "://">
+							<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
+						</cfif>
 						<!--- If download was successful --->
 						<cfif fileexists("#arguments.thestruct.qryfile.path#/#file_name_org#")>
 							<!--- Call to update asset --->
