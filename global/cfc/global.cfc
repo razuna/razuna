@@ -809,7 +809,11 @@ Comment:<br>
 					<cfoutput>Checking: #filename#...<br></cfoutput>
 					<cfflush>
 					<!--- Check Original --->
-					<cfhttp url="#cloud_url_org#" />
+					<cfif cloud_url_org DOES NOT CONTAIN "://">
+						<cfset cfhttp.responseheader.status_code = 500>
+					<cfelse>
+						<cfhttp url="#cloud_url_org#" />
+					</cfif>
 					<cfif cfhttp.responseheader.status_code NEQ 200>
 						<cfset foundsome = true>
 						<cfset theids = theids & "," & id>
@@ -822,7 +826,11 @@ Comment:<br>
 					<!--- Check thumbnail --->
 					<cfif arguments.thestruct.thetype EQ "img" OR arguments.thestruct.thetype EQ "vid">
 						<cfif cloud_url NEQ "">
-							<cfhttp url="#cloud_url#" />
+							<cfif cloud_url DOES NOT CONTAIN "://">
+								<cfset cfhttp.responseheader.status_code = 500>
+							<cfelse>
+								<cfhttp url="#cloud_url#" />
+							</cfif>
 							<cfif cfhttp.responseheader.status_code NEQ 200>
 								<cfset foundsome = true>
 								<cfoutput><strong style="color:red;">Missing Thumbnail: #filename#</strong><br>We checked at: #cloud_url#<br />
