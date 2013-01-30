@@ -46,28 +46,28 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#attributes.cachetag#" />
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css?_v=#attributes.cachetag#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css?_v=#URLEncodedFormat(attributes.cachetag)#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#URLEncodedFormat(attributes.cachetag)#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/videoplayer/css/multiple-instances.css?_v=#URLEncodedFormat(attributes.cachetag)#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/tag/css/jquery.tagit.css?_v=#URLEncodedFormat(attributes.cachetag)#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/tagit.css?_v=#URLEncodedFormat(attributes.cachetag)#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/notification/sticky.min.css?_v=#URLEncodedFormat(attributes.cachetag)#" />
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/chosen/chosen.css?_v=#URLEncodedFormat(attributes.cachetag)#" />
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.form.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jqtree/lib/jquery.cookie.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jqtree/jquery.tree.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jqtree/plugins/jquery.tree.cookie.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.form.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jqtree/lib/jquery.cookie.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jqtree/jquery.tree.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jqtree/plugins/jquery.tree.cookie.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/tag/js/tag-it.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js?_v=#URLEncodedFormat(attributes.cachetag)#"></script>
 <!--- Favicon --->
 <link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
 <!--- tooltip styling --->
