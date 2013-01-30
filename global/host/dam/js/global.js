@@ -1673,7 +1673,7 @@ function loadfolderwithdelay(folderid){
 	try {
 		setTimeout(function() {
 	    	loadfolder(folderid);
-		}, 2000)
+		}, 1500)
 	}
 	catch(e) {};
 }

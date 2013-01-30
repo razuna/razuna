@@ -929,15 +929,15 @@
 		<cfargument name="thestruct" type="struct">
 		<cfparam name="arguments.thestruct.doc_id" default="">
 		<!--- Loop over files --->
-		<cfthread intstruct="#arguments.thestruct#">
-			<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
-				<cfset attributes.intstruct.doc_id = "">
-				<cfset attributes.intstruct.doc_id = listfirst(fileid,"-")>
-				<cfif attributes.intstruct.doc_id NEQ "">
-					<cfinvoke method="move" thestruct="#attributes.intstruct#" />
+		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+			<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
+				<cfset arguments.thestruct.doc_id = "">
+				<cfset arguments.thestruct.doc_id = listfirst(fileid,"-")>
+				<cfif arguments.thestruct.doc_id NEQ "">
+					<cfinvoke method="move" thestruct="#arguments.thestruct#" />
 				</cfif>
 			</cfloop>
-		</cfthread>
+		<!--- </cfthread> --->
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("files")>
@@ -976,8 +976,8 @@
 				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id)>
 			</cfif>
 			<!--- Flush Cache --->
-			<cfset resetcachetoken("folders")>
-			<cfset variables.cachetoken = resetcachetoken("files")>
+			<!--- <cfset resetcachetoken("folders")>
+			<cfset variables.cachetoken = resetcachetoken("files")> --->
 		<cfreturn />
 	</cffunction>
 	

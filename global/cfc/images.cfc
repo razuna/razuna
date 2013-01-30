@@ -1331,15 +1331,15 @@
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop over files --->
-	<cfthread intstruct="#arguments.thestruct#">
-		<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
-			<cfset attributes.intstruct.img_id = "">
-			<cfset attributes.intstruct.img_id = listfirst(fileid,"-")>
-			<cfif attributes.intstruct.img_id NEQ "">
-				<cfinvoke method="move" thestruct="#attributes.intstruct#" />
+	<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+		<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
+			<cfset arguments.thestruct.img_id = "">
+			<cfset arguments.thestruct.img_id = listfirst(fileid,"-")>
+			<cfif arguments.thestruct.img_id NEQ "">
+				<cfinvoke method="move" thestruct="#arguments.thestruct#" />
 			</cfif>
 		</cfloop>
-	</cfthread>
+	<!--- </cfthread> --->
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("images")>
@@ -1381,8 +1381,8 @@
 			<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid=arguments.thestruct.img_id)>
 		</cfif>
 		<!--- Flush Cache --->
-		<cfset resetcachetoken("folders")>
-		<cfset variables.cachetoken = resetcachetoken("images")>
+		<!--- <cfset resetcachetoken("folders")>
+		<cfset variables.cachetoken = resetcachetoken("images")> --->
 	<cfreturn />
 </cffunction>
 
