@@ -2725,7 +2725,7 @@
 		<transtext>Tenant Settings</transtext>
 	</transid>
 	<transid name="global_storage_desc">
-		<transtext><![CDATA[Razuna gives you the option to store the asset on your local machine (including network drives attached to this server), on the <a href="http://www.nirvanix.com" target="_blank">Nirvanix SDN</a> (Storage Deliver Network) or on Amazon S3.<br><br><strong style="color:red;">Note: In order to apply your changes you have to restart the Razuna server!</strong>]]></transtext>
+		<transtext><![CDATA[Razuna gives you the option to store the asset on your local machine (including network drives attached to this server), on the <a href="http://www.nirvanix.com" target="_blank">Nirvanix SDN</a> (Storage Delivery Network), on <a href="http://aws.amazon.com/s3/" target="_blank">Amazon S3</a>, on <a href="http://www.eucalyptus.com/" target="_blank">Eucalyptus</a> or on <a href="http://www.akamai.com/" target="_blank">Akamai</a>.<br><br><strong>Please note, that upon selecting a cloud storage provider all of your files will be solely stored at this external location!</strong><br><br><strong style="color:red;">In order to apply your changes you have to restart the Razuna server!</strong>]]></transtext>
 	</transid>
 	<transid name="global_storage_local_desc">
 		<transtext><![CDATA[The local storage option will store all your assets on this server, or on any attached network drive. For each tenant you can define an individual path or just the same path. Each tenant resides its assets in its own directory.]]></transtext>
@@ -3077,5 +3077,8 @@
 	</transid>
 	<transid name="header_wl_main_video_desc">
 		<transtext><![CDATA[Change the static text which appears on the entry page with the textarea below. You can and should use HTML. If you leave this field blank the feedback link will be removed all together.]]></transtext>
+	</transid>
+	<transid name="global_storage_akamai_desc">
+		<transtext><![CDATA[You can store all your files on Akamai and their NetStorage infrastructure. Once enabled, go into each tenant and define the individual URL and file paths. Note: In order for this to work you need to contact your Akamai representative to configure and publish a configuration policy!]]></transtext>
 	</transid>
 </translations>

@@ -125,6 +125,9 @@
 		<!-- Amazon -->
 		<instantiate class="amazon" object="myFusebox.getApplicationData().amazon" overwrite="true">
 		</instantiate>
+		<!-- Akamai -->
+		<instantiate class="akamai" object="myFusebox.getApplicationData().akamai" overwrite="true">
+		</instantiate>
 		<!-- Comments -->
 		<instantiate class="comments" object="myFusebox.getApplicationData().comments" overwrite="true">
 			<argument name="dsn" value="#application.razuna.datasource#" />

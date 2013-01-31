@@ -26,12 +26,12 @@
 <cfoutput>
 	<table width="700" border="0" cellspacing="0" cellpadding="0" class="grid">
 		<!--- Could Storage header --->
-		<tr>
+		<!--- <tr>
 			<th class="textbold" colspan="2">Cloud Storage #defaultsObj.trans("settings")#</th>
 		</tr>
 		<tr>
 			<td colspan="2">#defaultsObj.trans("storage_desc")#</td>
-		</tr>
+		</tr> --->
 		<!--- Nirvanix --->
 		<cfif application.razuna.storage EQ "nirvanix">
 			<tr>
@@ -65,7 +65,7 @@
 			</tr>
 			<tr>
 				<td>Bucket Name</td>
-				<td><input type="text" name="set2_aws_bucket" id="set2_aws_bucket" size="40" value="#prefs.set2_aws_bucket#" /</td>
+				<td><input type="text" name="set2_aws_bucket" id="set2_aws_bucket" size="40" value="#prefs.set2_aws_bucket#" /></td>
 			</tr>
 			<tr>
 				<td></td>
@@ -73,6 +73,37 @@
 				<br />
 				<div id="divvalidateaws"></div>
 				</td>
+			</tr>
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai">
+			<tr>
+				<th class="textbold" colspan="2">Akamai</th>
+			</tr>
+			<tr>
+				<td colspan="2">Every host has their own URL and folder settings for storing assets.</td>
+			</tr>
+			<tr>
+				<td colspan="2">NOTE: In order for this to work you need to contact your Akamai representative to configure and publish a "Akamai configuration"!</td>
+			</tr>
+			<tr>
+				<td nowrap="nowrap">Akamai URL</td>
+				<td><input type="text" name="set2_aka_url" id="set2_aka_url" size="40" value="#prefs.set2_aka_url#" style="width:400px;" /> <em>(inkl. http://)</em></td>
+			</tr>
+			<tr>
+				<td nowrap="nowrap">Images Path</td>
+				<td><input type="text" name="set2_aka_img" id="set2_aka_img" size="40" value="#prefs.set2_aka_img#" style="width:400px;" /> <em>(e.g. /images)</em></td>
+			</tr>
+			<tr>
+				<td nowrap="nowrap">Videos Path</td>
+				<td><input type="text" name="set2_aka_vid" id="set2_aka_vid" size="40" value="#prefs.set2_aka_vid#" style="width:400px;" /> <em>(e.g. /videos)</em></td>
+			</tr>
+			<tr>
+				<td nowrap="nowrap">Documents Path</td>
+				<td><input type="text" name="set2_aka_doc" id="set2_aka_doc" size="40" value="#prefs.set2_aka_doc#" style="width:400px;" /> <em>(e.g. /documents)</em></td>
+			</tr>
+			<tr>
+				<td nowrap="nowrap">Audios Path</td>
+				<td><input type="text" name="set2_aka_aud" id="set2_aka_aud" size="40" value="#prefs.set2_aka_aud#" style="width:400px;" /> <em>(e.g. /audios)</em></td>
 			</tr>
 		</cfif>
 	</table>

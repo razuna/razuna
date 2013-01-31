@@ -223,6 +223,18 @@
 				<set name="attributes.awsbucket" value="#qry_storage.set2_aws_bucket#" />
 			</true>
 		</if>
+		<if condition="application.razuna.storage EQ 'akamai'">
+			<true>
+				<!-- query -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_storage()" returnvariable="qry_storage" />
+				<!-- Set bucket -->
+				<set name="attributes.akaurl" value="#qry_storage.set2_aka_url#" />
+				<set name="attributes.akaimg" value="#qry_storage.set2_aka_img#" />
+				<set name="attributes.akavid" value="#qry_storage.set2_aka_vid#" />
+				<set name="attributes.akaaud" value="#qry_storage.set2_aka_aud#" />
+				<set name="attributes.akadoc" value="#qry_storage.set2_aka_doc#" />
+			</true>
+		</if>
 	</fuseaction>
 	
 	<!-- 

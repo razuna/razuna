@@ -105,6 +105,19 @@
 			<td></td>
 			<td><input type="button" name="validate" value="#defaultsObj.trans("validate")#" class="button" onclick="valaws();" /><div id="divvalidateaws"></div></td>
 		</tr>
+		<!--- Akamai --->
+		<tr>
+			<th class="textbold" colspan="3">Akamai</th>
+		</tr>
+		<tr>
+			<td align="center" valign="top"><input type="radio" name="conf_storage" value="akamai"<cfif gprefs.conf_storage EQ "akamai"> checked</cfif>></td>
+			<td colspan="2">#defaultsObj.trans("global_storage_akamai_desc")#</td>
+		</tr>
+		<tr>
+			<td></td>
+			<td>Security Token</td>
+			<td><input type="text" name="conf_aka_token" id="conf_aka_token" style="width:300px;" value="#gprefs.conf_aka_token#" /></td>
+		</tr>
 	</table>
 	<script type="text/javascript">
 		function valaws(){

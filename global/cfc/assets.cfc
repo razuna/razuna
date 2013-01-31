@@ -1710,7 +1710,7 @@ This is the main function called directly by a single upload else from addassets
 						img_group = <cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
 					</cfif>
 					<!--- For Nirvanix --->
-					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND arguments.thestruct.qryfile.link_kind EQ "">
+					<cfif application.razuna.storage NEQ "local" AND arguments.thestruct.qryfile.link_kind EQ "">
 						,
 						lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 					</cfif>
@@ -2173,6 +2173,42 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 					<cfcatch type="any">
 						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
+					</cfcatch>
+				</cftry>
+			<!--- AKAMAI --->
+			<cfelseif arguments.thestruct.storage EQ "akamai">
+				<cftry>
+					<!--- Upload Original Image --->
+					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+						<cfset upt = Createuuid("")>
+						<cfthread name="#upt#" intstruct="#arguments.thestruct#">
+							<cfinvoke component="akamai" method="Upload">
+								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
+								<cfinvokeargument name="thetype" value="img">
+							</cfinvoke>
+						</cfthread>
+						<cfthread action="join" name="#upt#" />
+					</cfif>
+					<cfabort>
+					<!--- Upload Thumbnail --->
+					<cfif !application.razuna.rfs>
+						<cfset uptn = Createuuid("")>
+						<!--- <cfthread name="#uptn#" intstruct="#arguments.thestruct#">
+							<cfinvoke component="akamai" method="Upload">
+								<cfinvokeargument name="theasset" value="#attributes.intstruct.destinationraw#">
+							</cfinvoke>
+						</cfthread> --->
+						<cfthread action="join" name="#uptn#" />
+						<!--- Get size thumnail --->
+						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
+					<cfelse>
+						<cfset thumbsize = 1>
+						<cfset cloud_url.theurl = "">
+					</cfif>
+					<!--- Get size of original --->
+					<cfset orgsize = arguments.thestruct.qryfile.thesize>
+					<cfcatch type="any">
+						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to akamai" dump="#cfcatch#">
 					</cfcatch>
 				</cftry>
 			</cfif>
