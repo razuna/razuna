@@ -2143,7 +2143,7 @@
 	<cftry>
 		<!--- If there is a 0 in intolevel we assume the folder is coming from level 1, thus assign level 1 so 
 		we can increase the level further down in the code --->
-		<cfif arguments.thestruct.intolevel EQ 0>
+		<cfif arguments.thestruct.intolevel EQ 0 OR arguments.thestruct.intolevel EQ "">
 			<cfset arguments.thestruct.intolevel = 1>
 		</cfif>
 		<!--- Get the Folder Name/Folder Level for the Log --->
@@ -2189,11 +2189,12 @@
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("folders")>
 		<!--- Log --->
-		<cfset log = #log_folders(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#, Level: #foldername.folder_level#)')#>
+		<cfset log_folders(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#, Level: #foldername.folder_level#)')>
 		<!--- Ups something went wrong --->
 		<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error folder move - #cgi.HTTP_HOST#">
 				<cfdump var="#arguments.thestruct#" />
+				<cfdump var="#cfcatch#">
 			</cfmail>
 		</cfcatch>
 	</cftry>
@@ -2308,10 +2309,10 @@
 			SELECT ROWNUM AS rn, id, filename, folder_id_r, ext, filename_org, kind, date_create, date_change, link_kind, 
 			link_path_url, path_to_asset, cloud_url, cloud_url_org, description, keywords, vheight, vwidth, theformat, filename_forsort, size, hashtag, labels
 			FROM (
-				SELECT i.img_id id, i.img_filename filename, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org,
-				'img' as kind, i.img_create_date, i.img_create_time date_create, i.img_change_time date_change, 
+				SELECT i.img_id as id, i.img_filename as filename, i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org,
+				'img' as kind, i.img_create_date, i.img_create_time as date_create, i.img_change_time as date_change, 
 				i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org,
-				it.img_description description, it.img_keywords keywords, '0' as vheight, '0' as vwidth,
+				it.img_description as description, it.img_keywords as keywords, '0' as vheight, '0' as vwidth,
 				(
 					SELECT so.asset_format
 					FROM #session.hostdbprefix#share_options so
@@ -2321,8 +2322,8 @@
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 					GROUP BY so.asset_format
 				) AS theformat,
-				lower(i.img_filename) filename_forsort,
-				i.img_size size,
+				lower(i.img_filename) as filename_forsort,
+				i.img_size as size,
 				i.hashtag, 
 				'' as labels
 				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
@@ -2330,10 +2331,10 @@
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				UNION ALL
-				SELECT v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_extension ext, v.vid_name_image filename_org,
-				'vid' as kind, v.vid_create_time date_create, v.vid_change_time date_change, v.link_kind, v.link_path_url,
+				SELECT v.vid_id as id, v.vid_filename as filename, v.folder_id_r, v.vid_extension as ext, v.vid_name_image as filename_org,
+				'vid' as kind, v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
 				v.path_to_asset, v.cloud_url, v.cloud_url, 
-				vt.vid_description description, vt.vid_keywords keywords, v.vid_height as vheight, v.vid_width as vwidth,
+				vt.vid_description as description, vt.vid_keywords as keywords, v.vid_height as vheight, v.vid_width as vwidth,
 				(
 					SELECT so.asset_format
 					FROM #session.hostdbprefix#share_options so
@@ -2343,8 +2344,8 @@
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 					GROUP BY so.asset_format
 				) AS theformat,
-				lower(v.vid_filename) filename_forsort,
-				v.vid_size size,
+				lower(v.vid_filename) as filename_forsort,
+				v.vid_size as size,
 				v.hashtag, 
 				'' as labels
 				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
@@ -2352,20 +2353,20 @@
 				AND (v.vid_group IS NULL OR v.vid_group = '')
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				UNION ALL
-				SELECT f.file_id id, f.file_name filename, f.folder_id_r, f.file_extension ext, f.file_name_org filename_org,
-				f.file_type as kind, f.file_create_time date_create, f.file_change_time date_change, f.link_kind, 
+				SELECT f.file_id as id, f.file_name as filename, f.folder_id_r, f.file_extension as ext, f.file_name_org as filename_org,
+				f.file_type as kind, f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, 
 				f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url,
-				ft.file_desc description, ft.file_keywords keywords, '0' as vheight, '0' as vwidth, '0' as theformat,
-				lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, 
+				ft.file_desc as description, ft.file_keywords as keywords, '0' as vheight, '0' as vwidth, '0' as theformat,
+				lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, 
 				'' as labels
 				FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 				WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				UNION ALL
-				SELECT a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_extension ext, a.aud_name_org filename_org,
-				a.aud_type as kind, a.aud_create_time date_create, a.aud_change_time date_change, a.link_kind, 
+				SELECT a.aud_id as id, a.aud_name as filename, a.folder_id_r, a.aud_extension as ext, a.aud_name_org as filename_org,
+				a.aud_type as kind, a.aud_create_time as date_create, a.aud_change_time as date_change, a.link_kind, 
 				a.link_path_url, a.path_to_asset, a.cloud_url, i.cloud_url_org,
-				aut.aud_description description, aut.aud_keywords keywords, '0' as vheight, '0' as vwidth,
+				aut.aud_description as description, aut.aud_keywords as keywords, '0' as vheight, '0' as vwidth,
 				(
 					SELECT so.asset_format
 					FROM #session.hostdbprefix#share_options so
@@ -2375,8 +2376,8 @@
 					AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 					GROUP BY so.asset_format
 				) AS theformat,
-				lower(a.aud_name) filename_forsort,
-				a.aud_size size,
+				lower(a.aud_name) as filename_forsort,
+				a.aud_size as size,
 				a.hashtag, 
 				'' as labels
 				FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
@@ -2395,10 +2396,10 @@
 		SELECT /* #variables.cachetoken#getallassets */ id, filename, folder_id_r, ext, filename_org, kind, is_available, date_create, date_change, link_kind, link_path_url,
 		path_to_asset, cloud_url, cloud_url_org, description, keywords, theformat, filename_forsort, size, hashtag
 		FROM (
-			SELECT row_number() over() as rownr, i.img_id id, i.img_filename filename, 
-			i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
-			i.img_create_time date_create, i.img_change_time date_change, i.link_kind, i.link_path_url,
-			i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description description, it.img_keywords keywords, '0' as vheight, '0' as vwidth,
+			SELECT row_number() over() as rownr, i.img_id as id, i.img_filename as filename, 
+			i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org, 'img' as kind, i.is_available,
+			i.img_create_time as date_create, i.img_change_time as date_change, i.link_kind, i.link_path_url,
+			i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description as description, it.img_keywords as keywords, '0' as vheight, '0' as vwidth,
 			(
 				SELECT so.asset_format
 				FROM #session.hostdbprefix#share_options so
@@ -2408,8 +2409,8 @@
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				GROUP BY so.asset_format
 			) AS theformat,
-			lower(i.img_filename) filename_forsort,
-			i.img_size size,
+			lower(i.img_filename) as filename_forsort,
+			i.img_size as size,
 			i.hashtag, 
 			'' as labels
 			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
@@ -2417,10 +2418,10 @@
 			AND (i.img_group IS NULL OR i.img_group = '')
 			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION ALL
-			SELECT row_number() over() as rownr, v.vid_id id, v.vid_filename filename, v.folder_id_r,
-			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
-			v.vid_create_time date_create, v.vid_change_time date_change, v.link_kind, v.link_path_url,
-			v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description description, vt.vid_keywords keywords, v.vid_height as vheight, v.vid_width as vwidth,
+			SELECT row_number() over() as rownr, v.vid_id as id, v.vid_filename as filename, v.folder_id_r,
+			v.vid_extension as ext, v.vid_name_image as filename_org, 'vid' as kind, v.is_available,
+			v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
+			v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description as description, vt.vid_keywords as keywords, v.vid_height as vheight, v.vid_width as vwidth,
 			(
 				SELECT so.asset_format
 				FROM #session.hostdbprefix#share_options so
@@ -2430,8 +2431,8 @@
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				GROUP BY so.asset_format
 			) AS theformat,
-			lower(v.vid_filename) filename_forsort,
-			v.vid_size size,
+			lower(v.vid_filename) as filename_forsort,
+			v.vid_size as size,
 			v.hashtag, 
 			'' as labels
 			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
@@ -2439,10 +2440,10 @@
 			AND (v.vid_group IS NULL OR v.vid_group = '')
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION ALL
-			SELECT row_number() over() as rownr, a.aud_id id, a.aud_name filename, a.folder_id_r,
-			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
-			a.aud_create_time date_create, a.aud_change_time date_change, a.link_kind, a.link_path_url,
-			a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description description, aut.aud_keywords keywords, '0' as vheight, '0' as vwidth,
+			SELECT row_number() over() as rownr, a.aud_id as id, a.aud_name as filename, a.folder_id_r,
+			a.aud_extension as ext, a.aud_name_org as filename_org, 'aud' as kind, a.is_available,
+			a.aud_create_time as date_create, a.aud_change_time as date_change, a.link_kind, a.link_path_url,
+			a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description as description, aut.aud_keywords as keywords, '0' as vheight, '0' as vwidth,
 			(
 				SELECT so.asset_format
 				FROM #session.hostdbprefix#share_options so
@@ -2452,8 +2453,8 @@
 				AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 				GROUP BY so.asset_format
 			) AS theformat,
-			lower(a.aud_name) filename_forsort,
-			a.aud_size size,
+			lower(a.aud_name) as filename_forsort,
+			a.aud_size as size,
 			a.hashtag, 
 			'' as labels
 			FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
@@ -2461,11 +2462,11 @@
 			AND (a.aud_group IS NULL OR a.aud_group = '')
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			UNION ALL
-			SELECT row_number() over() as rownr, f.file_id id, f.file_name filename, f.folder_id_r,
-			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
-			f.file_create_time date_create, f.file_change_time date_change, f.link_kind, f.link_path_url,
-			f.path_to_asset, f.cloud_url, f. cloud_url_org, ft.file_desc description, ft.file_keywords keywords, '0' as vheight, '0' as vwidth, '0' as theformat,
-			lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, '' as labels
+			SELECT row_number() over() as rownr, f.file_id as id, f.file_name as filename, f.folder_id_r,
+			f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
+			f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
+			f.path_to_asset, f.cloud_url, f. cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vheight, '0' as vwidth, '0' as theformat,
+			lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels
 			FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 			WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2482,10 +2483,10 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #max# </cfif>i.img_id id, i.img_filename filename, 
-		i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
-		i.img_create_time date_create, i.img_change_time date_change, i.link_kind, i.link_path_url,
-		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description description, it.img_keywords keywords, '0' as vwidth, '0' as vheight, 
+		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #max# </cfif>i.img_id as id, i.img_filename as filename, 
+		i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org, 'img' as kind, i.is_available,
+		i.img_create_time as date_create, i.img_change_time as date_change, i.link_kind, i.link_path_url,
+		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description as description, it.img_keywords as keywords, '0' as vwidth, '0' as vheight, 
 		(
 			SELECT so.asset_format
 			FROM #session.hostdbprefix#share_options so
@@ -2495,8 +2496,8 @@
 			AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 			GROUP BY so.asset_format
 		) AS theformat,
-		lower(i.img_filename) filename_forsort,
-		i.img_size size,
+		lower(i.img_filename) as filename_forsort,
+		i.img_size as size,
 		i.hashtag,
 		'' as labels
 		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
@@ -2514,10 +2515,10 @@
 			)	
 		</cfif>
 		UNION ALL
-		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>v.vid_id id, v.vid_filename filename, v.folder_id_r, 
-		v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
-		v.vid_create_time date_create, v.vid_change_time date_change, v.link_kind, v.link_path_url,
-		v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description description, vt.vid_keywords keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,
+		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>v.vid_id as id, v.vid_filename as filename, v.folder_id_r, 
+		v.vid_extension as ext, v.vid_name_image as filename_org, 'vid' as kind, v.is_available,
+		v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
+		v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description as description, vt.vid_keywords as keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,
 		(
 			SELECT so.asset_format
 			FROM #session.hostdbprefix#share_options so
@@ -2527,8 +2528,8 @@
 			AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 			GROUP BY so.asset_format
 		) AS theformat,
-		lower(v.vid_filename) filename_forsort,
-		v.vid_size size,
+		lower(v.vid_filename) as filename_forsort,
+		v.vid_size as size,
 		v.hashtag,
 		'' as labels
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
@@ -2546,10 +2547,10 @@
 			)	
 		</cfif>
 		UNION ALL
-		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>a.aud_id id, a.aud_name filename, a.folder_id_r, 
-		a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
-		a.aud_create_time date_create, a.aud_change_time date_change, a.link_kind, a.link_path_url,
-		a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description description, aut.aud_keywords keywords, '0' as vwidth, '0' as vheight,
+		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>a.aud_id as id, a.aud_name as filename, a.folder_id_r, 
+		a.aud_extension as ext, a.aud_name_org as filename_org, 'aud' as kind, a.is_available,
+		a.aud_create_time as date_create, a.aud_change_time as date_change, a.link_kind, a.link_path_url,
+		a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description as description, aut.aud_keywords as keywords, '0' as vwidth, '0' as vheight,
 		(
 			SELECT so.asset_format
 			FROM #session.hostdbprefix#share_options so
@@ -2559,8 +2560,8 @@
 			AND so.asset_selected = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
 			GROUP BY so.asset_format
 		) AS theformat,
-		lower(a.aud_name) filename_forsort,
-		a.aud_size size,
+		lower(a.aud_name) as filename_forsort,
+		a.aud_size as size,
 		a.hashtag,
 		'' as labels
 		FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
@@ -2578,11 +2579,11 @@
 			)	
 		</cfif>
 		UNION ALL
-		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>f.file_id id, f.file_name filename, f.folder_id_r, 
-		f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
-		f.file_create_time date_create, f.file_change_time date_change, f.link_kind, f.link_path_url,
-		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc description, ft.file_keywords keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
-		lower(f.file_name) filename_forsort, f.file_size size, f.hashtag, '' as labels
+		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>f.file_id as id, f.file_name as filename, f.folder_id_r, 
+		f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
+		f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
+		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
+		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels
 		FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
