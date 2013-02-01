@@ -1946,6 +1946,8 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="removefile(attributes)" />
 		<!-- Show the folder listing -->
@@ -1968,6 +1970,8 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimage(attributes)" />
 		<!-- Show the folder listing -->
@@ -2001,6 +2005,8 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="removevideo(attributes)" />
 		<!-- Show the folder listing -->
@@ -2034,6 +2040,8 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudio(attributes)" />
 		<!-- Show the folder listing -->
@@ -2068,6 +2076,8 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
     	<!-- If we dont come fromall then assign session to id -->
     	<if condition="#attributes.kind# NEQ 'all'">
     		<true>
@@ -2093,6 +2103,8 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
     	<!-- If we dont come fromall then assign session to id -->
     	<if condition="#attributes.kind# NEQ 'all'">
     		<true>
@@ -2118,6 +2130,8 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
     	<!-- If we dont come fromall then assign session to id -->
     	<if condition="#attributes.kind# NEQ 'all'">
     		<true>
@@ -2143,6 +2157,8 @@
     	<set name="attributes.theuserid" value="#session.theuserid#" />
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
+    	<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
     	<!-- If we dont come fromall then assign session to id -->
     	<if condition="#attributes.kind# NEQ 'all'">
     		<true>
@@ -2169,6 +2185,8 @@
     	<set name="attributes.hostdbprefix" value="#session.hostdbprefix#" />
     	<set name="attributes.hostid" value="#session.hostid#" />
     	<set name="attributes.id" value="#session.file_id#" />
+    	<!-- HTTP referer for workflow -->
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -2287,6 +2305,7 @@
 		<set name="attributes.thefiletype" value="doc" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<set name="attributes.folder_action" value="true" />
 		<!-- CFC: workflow -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
@@ -2384,6 +2403,7 @@
 		<set name="attributes.thefiletype" value="vid" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<set name="attributes.folder_action" value="true" />
 		<!-- CFC: workflow -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
@@ -2501,6 +2521,7 @@
 		<set name="attributes.thefiletype" value="img" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<set name="attributes.folder_action" value="true" />
 		<!-- CFC: workflow -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
@@ -2596,6 +2617,7 @@
 		<set name="attributes.thefiletype" value="aud" />
 		<set name="attributes.fileid" value="#attributes.file_id#" />
 		<set name="attributes.folder_id" value="#attributes.folder_id#" />
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<set name="attributes.folder_action" value="true" />
 		<!-- CFC: workflow -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
