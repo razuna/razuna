@@ -2184,21 +2184,25 @@ This is the main function called directly by a single upload else from addassets
 						<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="akamai" method="Upload">
 								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
-								<cfinvokeargument name="thetype" value="img">
+								<cfinvokeargument name="thetype" value="#attributes.intstruct.akaimg#">
+								<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+								<cfinvokeargument name="thefilename" value="#attributes.intstruct.qryfile.filename#">
 							</cfinvoke>
 						</cfthread>
 						<cfthread action="join" name="#upt#" />
 					</cfif>
-					<cfabort>
 					<!--- Upload Thumbnail --->
 					<cfif !application.razuna.rfs>
 						<cfset uptn = Createuuid("")>
 						<!--- <cfthread name="#uptn#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="akamai" method="Upload">
 								<cfinvokeargument name="theasset" value="#attributes.intstruct.destinationraw#">
+								<cfinvokeargument name="thetype" value="#attributes.intstruct.akaimg#">
+								<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+								<cfinvokeargument name="thefilename" value="#attributes.intstruct.destination#">
 							</cfinvoke>
 						</cfthread> --->
-						<cfthread action="join" name="#uptn#" />
+						<!--- <cfthread action="join" name="#uptn#" /> --->
 						<!--- Get size thumnail --->
 						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
 					<cfelse>
