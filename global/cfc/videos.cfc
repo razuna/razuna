@@ -40,10 +40,6 @@
 	WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND (vid_group IS NULL OR vid_group = '')
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	<!--- Nirvanix and in Admin --->
-	<cfif session.thisapp EQ "admin" AND application.razuna.storage EQ "nirvanix">
-		AND lower(shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-	</cfif>
 	</cfquery>
 		<!--- todo : filter for file-extension --->
 	<cfreturn qLocal.folderCount />
@@ -141,10 +137,6 @@
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			<!--- Nirvanix and in Admin --->
-			<cfif session.thisapp EQ "admin" AND application.razuna.storage EQ "nirvanix">
-				AND lower(v.shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-			</cfif>
 			ORDER BY #sortby#
 		)
 		<!--- Show the limit only if pages is null or current (from print) --->
@@ -163,10 +155,6 @@
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<!--- Nirvanix and in Admin --->
-		<cfif session.thisapp EQ "admin" AND application.razuna.storage EQ "nirvanix">
-			AND lower(v.shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-		</cfif>
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			AND v.vid_id NOT IN (
@@ -308,10 +296,13 @@
 	<!--- Set the correct path --->
 	<cfset theimage = "#thestorage##arguments.thestruct.videodetails.path_to_asset#/#thevideoimg#">
 	<cfset thevideo = "#thestorage##arguments.thestruct.videodetails.path_to_asset#/#thevideofile#">
-	<!--- For Amazon --->
+	<!--- Nirvanix / Amazon --->
 	<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 		<cfset theimage = arguments.thestruct.videodetails.cloud_url>
 		<cfset thevideo = arguments.thestruct.videodetails.cloud_url_org>
+	<!--- Akamai --->
+	<cfelseif application.razuna.storage EQ "akamai">
+		<cfset thevideo = arguments.thestruct.akaurl & arguments.thestruct.akavid & "/" & thevideofile>
 	</cfif>
 	<!--- Now show video according to extension --->
 	<cfswitch expression="#theextension#">
@@ -742,6 +733,14 @@
 			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thestruct.qrydetail.path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
 			<!--- Versions --->
 			<cfinvoke component="amazon" method="deletefolder" folderpath="versions/vid/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" />
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
+			<cfinvoke component="akamai" method="Delete">
+				<cfinvokeargument name="theasset" value="">
+				<cfinvokeargument name="thetype" value="#arguments.thestruct.akavid#">
+				<cfinvokeargument name="theurl" value="#arguments.thestruct.akaurl#">
+				<cfinvokeargument name="thefilename" value="#arguments.thestruct.qrydetail.filenameorg#">
+			</cfinvoke>
 		</cfif>
 		<!--- REMOVE RELATED FOLDERS ALSO!!!! --->
 		<!--- Get all that have the same vid_id as related --->
@@ -1010,7 +1009,7 @@
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
 		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+		<cfelseif application.razuna.storage NEQ "local">
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid" notfile="T">
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid" notfile="T">
 		</cfif>
@@ -1119,6 +1118,22 @@
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.this_folder#/#attributes.intstruct.qrydetail.vid_name_image#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
+			</cfthread>
+			<!--- Wait for the thread above until the file is downloaded fully --->
+			<cfthread action="join" name="download#tt#" />
+			<cfthread name="convert#tt#" />
+			<!--- Set the input path --->
+			<cfset var inputpath = "#thisfolder#/#thename#">
+			<!--- Set the input path for the still image --->
+			<cfset var inputpathimage = "#thisfolder#/#arguments.thestruct.qrydetail.vid_name_image#">
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai">
+			<!--- Download file --->
+			<cfthread name="download#tt#" intstruct="#arguments.thestruct#">
+				<!--- Download video --->
+				<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akavid#/#attributes.intstruct.qrydetail.vid_name_org#" file="#attributes.intstruct.qrydetail.vid_name_org#" path="#attributes.intstruct.this_folder#"></cfhttp>
+				<!--- Download still images --->
+				
 			</cfthread>
 			<!--- Wait for the thread above until the file is downloaded fully --->
 			<cfthread action="join" name="download#tt#" />
@@ -1372,6 +1387,32 @@
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewimage#" awsbucket="#arguments.thestruct.awsbucket#">
 					<!--- Get signed URLS --->
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qrydetail.folder_id_r#/vid/#arguments.thestruct.newid#/#arguments.thestruct.previewvideo#" awsbucket="#arguments.thestruct.awsbucket#">
+				<!--- Akamai --->
+				<cfelseif application.razuna.storage EQ "akamai">
+					<!--- Set params for thread --->
+					<cfset arguments.thestruct.thispreviewimage = thispreviewimage>
+					<cfset arguments.thestruct.previewimage = previewimage>
+					<cfset arguments.thestruct.previewvideo = previewvideo>
+					<!--- IMAGEMAGICK: copy over the existing still image and resize --->
+					<cfexecute name="#theimexe#" arguments="#inputpathimage# -resize #thewidth#x#theheight# #thispreviewimage#" timeout="5" />
+					<!--- Upload --->
+					<cfthread name="uploadconvert#ttexe##theformat#" intstruct="#arguments.thestruct#">
+						<!--- Upload: Video --->
+						<cfinvoke component="akamai" method="Upload">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.this_folder#/#attributes.intstruct.previewvideo#">
+							<cfinvokeargument name="thetype" value="#attributes.intstruct.akavid#">
+							<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+							<cfinvokeargument name="thefilename" value="#attributes.intstruct.previewvideo#">
+						</cfinvoke>
+						<!--- Upload: Still Image --->
+						<!--- <cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#attributes.intstruct.qrydetail.folder_id_r#/vid/#attributes.intstruct.newid#/#attributes.intstruct.thispreviewimage#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.this_folder#/#attributes.intstruct.previewimage#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						</cfinvoke> --->
+					</cfthread>
+					<!--- Wait for this thread to finish --->
+					<cfthread action="join" name="uploadconvert#ttexe##theformat#" />
 				</cfif>
 				<!--- Add to shared options --->
 				<cftransaction>
@@ -1528,6 +1569,12 @@
 						<cfinvokeargument name="theasset" value="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
+				</cfthread>
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai">
+				<!--- Download file --->
+				<cfthread name="download#art##thevideoid#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akavid#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#"></cfhttp>
 				</cfthread>
 			</cfif>
 		<!--- It is a local link --->

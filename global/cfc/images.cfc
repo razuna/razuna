@@ -439,6 +439,23 @@
 				<!--- Versions --->
 				<cfinvoke component="amazon" method="deletefolder" folderpath="versions/img/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" />
 			</cfif>
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai">
+			<cfif arguments.thestruct.qrydetail.path_to_asset NEQ "">
+				<!--- Remove original --->
+				<cfinvoke component="akamai" method="Delete">
+					<cfinvokeargument name="theasset" value="">
+					<cfinvokeargument name="thetype" value="#arguments.thestruct.akaimg#">
+					<cfinvokeargument name="theurl" value="#arguments.thestruct.akaurl#">
+					<cfinvokeargument name="thefilename" value="#arguments.thestruct.qrydetail.filenameorg#">
+				</cfinvoke>
+				<!--- Remove thumbnail --->
+				<cfif DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#") AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
+					<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#" recurse="true">
+				</cfif>
+				<!--- Versions --->
+				<!--- <cfinvoke component="amazon" method="deletefolder" folderpath="versions/img/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" /> --->
+			</cfif>
 		</cfif>
 		<cfcatch type="any"></cfcatch>
 	</cftry>
@@ -453,7 +470,7 @@
 	<!--- Loop over the found records --->
 	<cfloop query="qry">
 		<cftry>
-			<cfif application.razuna.storage EQ "local">
+			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 				<cfif DirectoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#") AND path_to_asset NEQ "">
 					<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#" recurse="true">
 				</cfif>

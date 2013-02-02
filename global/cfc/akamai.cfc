@@ -77,9 +77,24 @@
 	</cffunction>
 	
 	<!--- Download --->
-	<cffunction name="download" access="public" output="true">
+	<cffunction name="delete" access="public" output="true">
 		<cfargument name="theasset" type="string" required="true" />
-
+		<cfargument name="thetype" type="string" required="true" />
+		<cfargument name="theurl" type="string" required="true" />
+		<cfargument name="thefilename" type="string" required="true" />
+		<!--- Get token --->
+		<cfset var thetoken = createToken(arguments)>
+		<!--- Temp ID --->
+		<cfset var p = createUUID("") & ".sh">
+		<cfset var t = "#getTempDirectory()##p#">
+		<!--- Write Execute --->
+		<cfset var e = "curl -XDELETE #arguments.theurl##thetoken#">
+		<!--- Write script --->
+		<cffile action="write" file="#t#" output="#e#" mode="777" />
+		<!--- Execute --->
+		<cfexecute name="#t#" variable="cf" timeout="900" errorVariable="y" />
+		<!--- Delete script --->
+		<cffile action="delete" file="#t#" />
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

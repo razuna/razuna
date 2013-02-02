@@ -689,7 +689,7 @@
 		<cfoutput><strong>Starting re-indexing...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- CLOUD --->
-		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 			<!--- Params --->
 			<cfset arguments.thestruct.qryfile.path = arguments.thestruct.thispath & "/incoming/reindex_" & application.razuna.processid>
 			<cfset arguments.thestruct.hostid = session.hostid>
@@ -710,7 +710,9 @@
 						<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
 						<cfflush>
 						<!--- Download --->
-						<cfif cloud_url_org CONTAINS "://">
+						<cfif application.razuna.storage EQ "akamai">
+							<cfhttp url="#arguments.thestruct.akaurl##arguments.thestruct.akadoc#/#file_name_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
+						<cfelseif cloud_url_org CONTAINS "://">
 							<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
 						</cfif>
 						<!--- If download was successful --->

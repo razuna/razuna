@@ -397,16 +397,6 @@
 		<cfelse>
 			<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 		</cfif>
-		<!--- Nirvanix: Set Shared on this asset and all related ones
-		<cfif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.link_kind NEQ "url">
-			<!--- Get all related records --->
-			<cfquery datasource="#variables.dsn#" name="qry">
-			SELECT folder_id_r, aud_id theid, aud_name_org thefilename, path_to_asset
-			FROM #session.hostdbprefix#audios
-			WHERE aud_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-		</cfif> --->
 		<!--- Lucene --->
 		<cfset arguments.thestruct.qrydetail.folder_id_r = arguments.thestruct.folder_id>
 		<cfset arguments.thestruct.qrydetail.path_to_asset = qryorg.path_to_asset>
@@ -414,13 +404,13 @@
 		<cfif application.razuna.storage EQ "local">
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud">
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud" online="#arguments.thestruct.aud_online#">
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+		<!--- Cloud --->
+		<cfelseif application.razuna.storage NEQ "local">
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud" notfile="T">
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud" online="#arguments.thestruct.aud_online#" notfile="T">
 		</cfif>
 		<!--- Log --->
-		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.aud_name#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')>
+		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.aud_name#',logfiletype='aud',assetid=arguments.thestruct.file_id)>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
@@ -618,6 +608,16 @@
 			<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thestruct.qrydetail.path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
 			<!--- Versions --->
 			<cfinvoke component="amazon" method="deletefolder" folderpath="versions/aud/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" />
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai">
+			<cfinvoke component="akamai" method="Delete">
+				<cfinvokeargument name="theasset" value="">
+				<cfinvokeargument name="thetype" value="#arguments.thestruct.akaaud#">
+				<cfinvokeargument name="theurl" value="#arguments.thestruct.akaurl#">
+				<cfinvokeargument name="thefilename" value="#arguments.thestruct.qrydetail.filenameorg#">
+			</cfinvoke>
+			<!--- Versions --->
+			<!--- <cfinvoke component="nirvanix" method="DeleteFolders" nvxsession="#arguments.thestruct.nvxsession#" folderpath="/versions/aud/#arguments.thestruct.id#"> --->
 		</cfif>
 		<!--- REMOVE RELATED FOLDERS ALSO!!!! --->
 		<!--- Get all that have the same vid_id as related --->
@@ -917,6 +917,24 @@
 			<cfthread name="convert#tempfolder#" />
 			<!--- Set the input path --->
 			<cfset var inputpath = "#thisfolder#/#arguments.thestruct.thename#">
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.link_kind NEQ "lan">
+			<!--- Check to see if original file is in WAV format if so take it else take the WAV one --->
+			<cfif arguments.thestruct.qry_detail.detail.aud_extension EQ "WAV">
+				<!--- Set Name --->
+				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_org>
+				<!--- Download --->
+				<cfhttp url="#arguments.thestruct.aka##arguments.thestruct.akaaud#/#arguments.thestruct.qry_detail.detail.aud_name_org#" file="#arguments.thestruct.qry_detail.detail.aud_name_org#" path="#arguments.thestruct.thisfolder#"></cfhttp>
+			<cfelse>
+				<!--- Set Name --->
+				<cfset arguments.thestruct.thename = arguments.thestruct.qry_detail.detail.aud_name_noext & ".wav">
+				<!--- Download file --->
+				<cfhttp url="#arguments.thestruct.aka##arguments.thestruct.akaaud#/#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav" file="#arguments.thestruct.qry_detail.detail.aud_name_noext#.wav" path="#arguments.thestruct.thisfolder#"></cfhttp>
+			</cfif>
+			<!--- Wait for the thread above until the file is downloaded fully --->
+			<cfthread name="convert#tempfolder#" />
+			<!--- Set the input path --->
+			<cfset var inputpath = "#arguments.thestruct.thisfolder#/#arguments.thestruct.thename#">
 		<!--- If on LAN --->
 		<cfelseif arguments.thestruct.link_kind EQ "lan">
 			<cfset var inputpath = "#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_detail.detail.path_to_asset#/#arguments.thestruct.thenamenoext#.wav">
@@ -1074,6 +1092,22 @@
 					<cfthread action="join" name="uploadconvert#newid.id#" />
 					<!--- Get signed URLS --->
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#arguments.thestruct.newid#/#arguments.thestruct.finalaudioname#" awsbucket="#arguments.thestruct.awsbucket#">
+				<!--- Akamai --->
+				<cfelseif application.razuna.storage EQ "akamai">
+					<!--- Set variables for thread --->
+					<cfset arguments.thestruct.newid = newid.id>
+					<cfset arguments.thestruct.finalaudioname = finalaudioname>
+					<!--- Upload: Audio --->
+					<cfthread name="uploadconvert#newid.id#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="akamai" method="Upload">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.finalaudioname#">
+							<cfinvokeargument name="thetype" value="#attributes.intstruct.akaaud#">
+							<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+							<cfinvokeargument name="thefilename" value="#attributes.intstruct.finalaudioname#">
+						</cfinvoke>
+					</cfthread>
+					<!--- Wait for this thread to finish --->
+					<cfthread action="join" name="uploadconvert#newid.id#" />
 				</cfif>
 				<!--- Add to shared options --->
 				<cfquery datasource="#application.razuna.datasource#">
@@ -1223,6 +1257,11 @@
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
+			</cfthread>
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
+			<cfthread name="download#art##theaudioid#" intstruct="#arguments.thestruct#">
+				<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaaud#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#"></cfhttp>
 			</cfthread>
 		<!--- If local link --->
 		<cfelseif qry.link_kind EQ "lan">

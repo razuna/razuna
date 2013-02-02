@@ -3705,7 +3705,7 @@
 		<cfflush>
 		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/thumbnails" mode="775">
 		<!--- Download thumbnails --->
-		<cfinvoke method="download_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/thumbnails" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" />
+		<cfinvoke method="download_selected" dl_thumbnails="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/thumbnails" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 	</cfif>
 	<!--- Originals --->
 	<cfif arguments.thestruct.download_originals>
@@ -3714,7 +3714,7 @@
 		<cfflush>
 		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/originals" mode="775">
 		<!--- Download originals --->
-		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/originals" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" />
+		<cfinvoke method="download_selected" dl_originals="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/originals" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 	</cfif>
 	<!--- Renditions --->
 	<cfif arguments.thestruct.download_renditions>
@@ -3723,7 +3723,7 @@
 		<cfflush>
 		<cfdirectory action="create" directory="#arguments.thestruct.newpath#/renditions" mode="775">
 		<!--- Download renditions --->
-		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" />
+		<cfinvoke method="download_selected" dl_renditions="true" dl_query="#arguments.thestruct.qry_files#" dl_folder="#arguments.thestruct.newpath#/renditions" assetpath="#arguments.thestruct.assetpath#" awsbucket="#arguments.thestruct.awsbucket#" thestruct="#arguments.thestruct#" />
 	</cfif>
 	<!--- Feedback --->
 	<cfoutput>Ok. All files are here. Creating a nice ZIP file for you now.<br /></cfoutput>
@@ -3746,6 +3746,7 @@
 	<cfargument name="dl_folder" required="true" type="string">
 	<cfargument name="assetpath" required="true" type="string">
 	<cfargument name="awsbucket" required="false" type="string">
+	<cfargument name="thestruct" required="false" type="struct">
 	<!--- If we are renditions we query again and set some variables --->
 	<cfif arguments.dl_renditions>
 		<!--- Set original --->
@@ -3770,32 +3771,43 @@
 	</cfif>
 	<!--- Loop over records --->
 	<cfloop query="arguments.dl_query">
+		<!--- Set var --->
+		<cfset var theorgname = "">
 		<!--- Feedback --->
 		<cfoutput>. </cfoutput>
 		<cfflush>
 		<!--- If we have to get thumbnails then the name is different --->
 		<cfif arguments.dl_thumbnails AND kind EQ "img">
-			<cfset theorgname = "thumb_#id#.#ext#">
-			<cfset thefinalname = filename>
-			<cfset thiscloudurl = cloud_url>
-			<cfset theorgext = ext>
+			<cfset var theorgname = "thumb_#id#.#ext#">
+			<cfset var thefinalname = theorgname>
+			<cfset var thiscloudurl = cloud_url>
+			<cfset var theorgext = ext>
 		<cfelseif arguments.dl_originals>
-			<cfset theorgname = filename_org>
-			<cfset thefinalname = filename>
-			<cfset thiscloudurl = cloud_url_org>
-			<cfset theorgext = listlast(filename_org,".")>
+			<cfset var theorgname = filename_org>
+			<cfset var thefinalname = filename>
+			<cfset var thiscloudurl = cloud_url_org>
+			<cfset var theorgext = listlast(filename_org,".")>
 			<!--- If rendition we append the currentrow number in order to have same renditions formats still work --->
 			<cfif arguments.dl_renditions>
-				<cfset tn = listfirst(filename,".")>
-				<cfset te = listlast(filename_org,".")>
-				<cfset thefinalname = tn & "_" & currentRow & "." & te>
+				<cfset var tn = listfirst(filename,".")>
+				<cfset var te = listlast(filename_org,".")>
+				<cfset var thefinalname = tn & "_" & currentRow & "." & te>
 			</cfif>
 		</cfif>
+		<cfif kind EQ "img">
+			<cfset var akatype = arguments.thestruct.akaimg>
+		<cfelseif kind EQ "vid">
+			<cfset var akatype = arguments.thestruct.akavid>
+		<cfelseif kind EQ "aud">
+			<cfset var akatype = arguments.thestruct.akaaud>
+		<cfelse>
+			<cfset var akatype = arguments.thestruct.akadoc>
+		</cfif>
 		<!--- Start download but only if theorgname is not empty --->
-		<cfif structkeyexists(variables,"theorgname") AND theorgname NEQ "">
+		<cfif theorgname NEQ "">
 			<!--- Check if thefinalname has an extension. If not add the original one --->
 			<cfif listlast(thefinalname,".") NEQ theorgext>
-				<cfset thefinalname = filename & "." & theorgext>
+				<cfset var thefinalname = filename & "." & theorgext>
 			</cfif>
 			<!--- Local --->
 			<cfif application.razuna.storage EQ "local" AND link_kind EQ "">
@@ -3813,6 +3825,22 @@
 						</cfmail>
 					</cfcatch>
 				</cftry>
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai" AND link_kind EQ "">
+				<!--- For thumbnails we copy from local --->
+				<cfif arguments.dl_thumbnails>
+					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
+				<cfelse>
+					<cftry>
+						<cfhttp url="#arguments.thestruct.akaurl##akatype#/#thefinalname#" file="#thefinalname#" path="#arguments.dl_folder#"></cfhttp>
+						<cfcatch type="any">
+							<cfmail from="server@razuna.com" to="support@razuna.com" subject="Akamai error on download in folder download" type="html">
+								<cfdump var="#cfcatch#">
+								<cfdump var="#session#">
+							</cfmail>
+						</cfcatch>
+					</cftry>
+				</cfif>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND link_kind EQ "">
 				<cfinvoke component="amazon" method="Download">
