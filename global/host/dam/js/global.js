@@ -720,13 +720,15 @@ function aspectwidth(inp,out,theform,theaspect){
 }
 // Save Comment
 function addcomment(fileid,type,folderid){
-	loadcontent('comlist','index.cfm?fa=c.comments_add&folder_id=' + folderid + '&file_id=' + fileid + '&type=' + type + '&comment=' + escape($('#assetComment').val()) );
+	var thecomment = $('#assetComment').val();
+	$('#comlist').load('index.cfm?fa=c.comments_add', { folder_id:folderid, file_id:fileid, type:type, comment:thecomment } );
 	// Reload comment section to re-issue new id
 	loadcontent('divcomments','index.cfm?fa=c.comments&file_id=' + fileid + '&type=' + type + '&folder_id=' + folderid);
 }
 // Update Comment
 function updatecomment(fileid,comid,type,folderid){
-	loadcontent('comlist','index.cfm?fa=c.comments_update&folder_id=' + folderid + '&file_id=' + fileid + '&com_id=' + comid + '&type=' + type + '&comment=' + escape($('#commentup').val()) );
+	var thecomment = $('#commentup').val();
+	$('#comlist').load('index.cfm?fa=c.comments_update', { folder_id:folderid, file_id:fileid, com_id:comid, type:type, comment:thecomment } );
 	// Hide Window
 	destroywindow(2);
 }
