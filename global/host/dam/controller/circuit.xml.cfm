@@ -3371,7 +3371,7 @@
 		<set name="attributes.theid" value="0" overwrite="false" />
 		<set name="attributes.level" value="0" overwrite="false" />
 		<set name="attributes.rid" value="0" overwrite="false" />
-		<set name="attributes.iscol" value="0" overwrite="false" />
+		<set name="attributes.iscol" value="f" overwrite="false" />
 		<set name="attributes.kind" value="" overwrite="false" />
 		<!-- For main page upload do... -->
 		<if condition="attributes.folder_id EQ 'x'">
@@ -3550,7 +3550,11 @@
 		<!-- CFC: Move Folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="move(attributes)" />
 		<!-- Go to show the folder -->
-		<do action="folder" />
+		<if condition="attributes.iscol NEQ 't'">
+			<true>
+				<do action="folder" />
+			</true>
+		</if>
 	</fuseaction>
 	
 	<!--

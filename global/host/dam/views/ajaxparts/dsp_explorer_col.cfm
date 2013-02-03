@@ -39,31 +39,28 @@
 	</div>
 	<div style="clear:both;"></div>
 	<div id="colBox" style="width:200;height:200;float:left;"></div>
-	<div style="clear:both;"></div>
-	
-<script language="javascript" type="text/javascript">
-	// Load Collections
-	$(function () { 
-		$("##colBox").tree({
-			plugins : {
-				cookie : { prefix : "cookiecolbox_" }
-			},
-			types : {
-				"default"  : {
-					deletable : false,
-					renameable : false,
-					draggable : false
+	<div style="clear:both;"></div>	
+	<script language="javascript" type="text/javascript">
+		// Load Collections
+		$(function () { 
+			$("##colBox").tree({
+				plugins : {
+					cookie : { prefix : "cookiecolbox_" }
+				},
+				types : {
+					"default"  : {
+						deletable : false,
+						renameable : false,
+						draggable : false
+					}
+				},
+				data : { 
+					async : true,
+					opts : {
+						url : "#myself#c.getfolderfortree&col=T"
+					}
 				}
-			},
-			data : { 
-				async : true,
-				opts : {
-					url : "#myself#c.getfolderfortree&col=T"
-				}
-			}
+			});
 		});
-	});
-</script>
-
+	</script>
 </cfoutput>
-	

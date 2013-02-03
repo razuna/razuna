@@ -2159,7 +2159,7 @@
 			<cfinvokeargument name="thelevel" value="#foldername.folder_level#">
 		</cfinvoke>
 		<!--- Take the results from the compontent call above and add the root folder id --->
-		<cfset folderids="#folderids#">
+		<cfset var folderids="#folderids#">
 		<!--- Get the folder_main_id_r from the folder we move the folder in --->
 		<cfquery datasource="#variables.dsn#" name="thenewrootid">
 		SELECT folder_main_id_r, folder_name, folder_level
@@ -2187,7 +2187,9 @@
 			</cfquery>
 		</cfloop>
 		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<cfset resetcachetoken("folders")>
+		<!--- Clear session.type --->
+		<cfset session.type = "">
 		<!--- Log --->
 		<cfset log_folders(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#, Level: #foldername.folder_level#)')>
 		<!--- Ups something went wrong --->
@@ -2886,6 +2888,7 @@
 		AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 	</cfif>
 	</cfquery>
+
 	<!--- Create the XML --->
 	<cfif theid EQ 0>
 		<!--- This is the ROOT level  --->
@@ -2919,7 +2922,7 @@
 			</cfif>
 		<!--- movefolder --->
 		<cfelseif session.type EQ "movefolder">
-			<a href="##" onclick="loadcontent('rightside','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);loadcontent('explorer','index.cfm?fa=c.explorer');return false;">
+			<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');});destroywindow(1);return false;">
 		<!--- saveaszip or as a collection --->
 		<cfelseif session.type EQ "saveaszip" OR session.type EQ "saveascollection">
 			<a href="##" onclick="loadcontent('win_choosefolder','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#');">

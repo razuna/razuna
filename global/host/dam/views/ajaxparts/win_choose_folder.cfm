@@ -28,16 +28,16 @@
 	<div id="win_choosefolder"></div>
 	<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 		<div style="clear:both;padding-top:15px;" />
-		<div><a href="##" onclick="loadcontent('rightside','index.cfm?fa=#session.savehere#&intofolderid=#session.thefolderorg#&intolevel=1');destroywindow(1);loadcontent('explorer','index.cfm?fa=c.explorer');return false;">Move the folder to the top level</a></div>
+		<div><a href="##" onclick="movethisfolder();return false;">Move the folder to the top level</a></div>
 	</cfif>
 	<div id="div_choosecol"></div>
 	<div style="clear:both;padding-top:15px;" />
 	<div id="div_choosefolder_status" style="color:green;font-weight:bold;"></div>
-	<cfif session.type EQ "choosecollection" OR session.type EQ "saveascollection">
+	<!--- <cfif session.type EQ "choosecollection" OR session.type EQ "saveascollection">
 		<cfset iscol = "T">
 	<cfelse>
 		<cfset iscol = "F">
-	</cfif>
+	</cfif> --->
 	<script language="javascript" type="text/javascript">
 		// Load Folders
 		$(function () { 
@@ -72,5 +72,19 @@
 				}
 			});
 		});
+		// Move folder call
+		function movethisfolder(){
+			$('##div_forall').load('#myself##session.savehere#&intofolderid=#session.thefolderorg#&intolevel=1&iscol=#attributes.iscol#');
+			destroywindow(1);
+			try {
+				setTimeout(function() {
+			    	delayfolderload();
+				}, 1500)
+			}
+			catch(e) {};
+		}
+		function delayfolderload(){
+			$('##explorer<cfif attributes.iscol EQ "T">_col</cfif>').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
+		}
 	</script>
 </cfoutput>
