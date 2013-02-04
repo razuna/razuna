@@ -1211,7 +1211,7 @@
 		<!-- CFC: Get images -->
 		<invoke object="myFusebox.getApplicationData().images" method="getFolderAssetDetails" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
-			<argument name="columnlist" value="i.img_id, i.img_filename, i.img_custom_id, i.img_create_date, i.img_change_date, i.folder_id_r, i.thumb_extension, i.link_kind, i.link_path_url, i.path_to_asset, i.is_available, i.cloud_url" />
+			<argument name="columnlist" value="i.img_id, i.img_filename, i.img_custom_id, i.img_create_date, i.img_change_date, i.img_create_time, i.img_change_time, i.folder_id_r, i.thumb_extension, i.link_kind, i.link_path_url, i.path_to_asset, i.is_available, i.cloud_url" />
 			<argument name="offset" value="#session.offset#" />
 			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />
@@ -1263,7 +1263,7 @@
 		<!-- CFC: Get Videos -->
 		<invoke object="myFusebox.getApplicationData().videos" method="getFolderAssetDetails" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
-			<argument name="columnlist" value="v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_create_date, v.vid_change_date, v.vid_name_image, v.vid_extension, v.link_kind, v.path_to_asset, v.is_available, v.cloud_url" />
+			<argument name="columnlist" value="v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_create_date, v.vid_change_date, v.vid_create_time, v.vid_change_time, v.vid_name_image, v.vid_extension, v.link_kind, v.path_to_asset, v.is_available, v.cloud_url" />
 			<argument name="offset" value="#session.offset#" />
 			<argument name="rowmaxpage" value="#session.rowmaxpage#" />
 			<argument name="thestruct" value="#attributes#" />

@@ -113,7 +113,7 @@
 								The upload of "#img_filename#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-								#dateformat(img_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(img_create_date, "HH:mm")#
+								#dateformat(img_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(img_create_time, "HH:mm")#
 								<br><br>
 								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
@@ -151,24 +151,32 @@
 				</script>
 				<tr class="thumbview">
 					<td valign="top" width="1%" nowrap="true">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
-							<div id="draggable#img_id#" type="#img_id#-img">
-								<!--- Show assets --->
-								<cfif link_kind EQ "">
-									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-										<cfif cloud_url NEQ "">
-											<img src="#cloud_url#" border="0">
+						<cfif is_available>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
+								<div id="draggable#img_id#" type="#img_id#-img">
+									<!--- Show assets --->
+									<cfif link_kind EQ "">
+										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif>
 										<cfelse>
-											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
 										</cfif>
 									<cfelse>
-										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
+										<img src="#link_path_url#" border="0" width="120">
 									</cfif>
-								<cfelse>
-									<img src="#link_path_url#" border="0" width="120">
-								</cfif>
-							</div>
-						</a>
+								</div>
+							</a>
+						<cfelse>
+							The upload of "#img_filename#" is still in progress!
+							<br /><br>
+							#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+							#dateformat(img_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(img_create_time, "HH:mm")#
+							<br>
+						</cfif>
 						<!--- Icons --->
 						<div style="padding-top:5px;width:130px;white-space:nowrap;">
 							<div style="float:left;">
@@ -245,24 +253,29 @@
 				</script>
 				<tr class="list thumbview">
 					<td align="center">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
-						<!--- Show assets --->
-						<div id="draggable#img_id#-img" type="#img_id#-img">
-							<cfif link_kind NEQ "url">
-								<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-									<cfif cloud_url NEQ "">
-										<img src="#cloud_url#" border="0">
+						<cfif is_available>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;">
+								<!--- Show assets --->
+								<div id="draggable#img_id#-img" type="#img_id#-img">
+									<cfif link_kind NEQ "url">
+										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif>
+										<cfelse>
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
+										</cfif>
 									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										<img src="#link_path_url#" border="0" width="120">
 									</cfif>
-								<cfelse>
-									<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
-								</cfif>
-							<cfelse>
-								<img src="#link_path_url#" border="0" width="120">
-							</cfif>
-						</div>
-						</a>
+								</div>
+							</a>
+						<cfelse>
+							The upload of "#img_filename#" is still in progress!
+							<br />
+						</cfif>
 					</td>
 					<td width="100%" valign="top">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#img_filename#</strong></a>
@@ -287,8 +300,8 @@
 							</div>
 						</div>
 					</td>
-					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(img_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(img_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(img_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(img_change_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				</tr>
 			</cfloop>
 		</cfif>

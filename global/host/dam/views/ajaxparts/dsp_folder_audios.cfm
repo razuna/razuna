@@ -141,11 +141,19 @@
 				</script>
 				<tr>
 					<td valign="top" width="1%" nowrap="true">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;">
-							<div id="draggable#aud_id#" type="#aud_id#-aud">
-								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
-							</div>
-						</a>
+						<cfif is_available>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;">
+								<div id="draggable#aud_id#" type="#aud_id#-aud">
+									<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
+								</div>
+							</a>
+						<cfelse>
+							The upload of "#aud_name#" is still in progress!
+							<br /><br>
+							#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+							#dateformat(aud_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(aud_create_date, "HH:mm")#
+							<br>
+						</cfif>
 						<!--- Icons --->
 						<div style="padding-top:5px;width:130px;white-space:nowrap;">
 							<div style="float:left;">
@@ -226,11 +234,16 @@
 				</script>
 				<tr class="list thumbview">
 					<td valign="top" width="1%" nowrap="true">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;">
-							<div id="draggable#aud_id#-aud" type="#aud_id#-aud">
-								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
-							</div>
-						</a>
+						<cfif is_available>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;">
+								<div id="draggable#aud_id#-aud" type="#aud_id#-aud">
+									<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif aud_extension EQ "mp3" OR aud_extension EQ "wav">#aud_extension#<cfelse>aud</cfif>.png" width="128" height="128" border="0">
+								</div>
+							</a>
+						<cfelse>
+							The upload of "#aud_name#" is still in progress!
+							<br />
+						</cfif>
 					</td>
 					<td width="100%"valign="top">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#aud_id#&what=audios&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(aud_name)#',1000,1);return false;"><strong>#aud_name#</strong></a>

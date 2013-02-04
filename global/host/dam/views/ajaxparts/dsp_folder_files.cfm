@@ -155,27 +155,35 @@
 				</script>
 				<tr class="list thumbview">
 					<td valign="top" width="1%" nowrap="true">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;">
-							<div id="draggable#file_id#" type="#file_id#-doc">
-								<!--- If it is a PDF we show the thumbnail --->
-								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
-									<cfif cloud_url NEQ "">
-										<img src="#cloud_url#" border="0">
+						<cfif is_available>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;">
+								<div id="draggable#file_id#" type="#file_id#-doc">
+									<!--- If it is a PDF we show the thumbnail --->
+									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
+									<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
+										<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
+										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+											<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
+										<cfelse>
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="128" border="0">
+										</cfif>
 									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
 									</cfif>
-								<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
-									<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
-									<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-										<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
-									<cfelse>
-										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="128" border="0">
-									</cfif>
-								<cfelse>
-									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
-								</cfif>
-							</div>
-						</a>
+								</div>
+							</a>
+						<cfelse>
+							The upload of "#file_name#" is still in progress!
+							<br /><br>
+							#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+							#dateformat(file_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(file_create_date, "HH:mm")#
+							<br>
+						</cfif>
 						<!--- Icons --->
 						<div style="padding-top:5px;width:130px;white-space:nowrap;">
 							<div style="float:left;">
@@ -256,27 +264,32 @@
 				</script>
 				<tr class="list thumbview">
 					<td valign="center">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;">
-							<div id="draggable#file_id#" type="#file_id#-doc">
-								<!--- If it is a PDF we show the thumbnail --->
-								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
-									<cfif cloud_url NEQ "">
-										<img src="#cloud_url#" border="0">
+						<cfif is_available>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;">
+								<div id="draggable#file_id#" type="#file_id#-doc">
+									<!--- If it is a PDF we show the thumbnail --->
+									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+										<cfif cloud_url NEQ "">
+											<img src="#cloud_url#" border="0">
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										</cfif>
+									<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
+										<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
+										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+											<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
+										<cfelse>
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="128" border="0">
+										</cfif>
 									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
 									</cfif>
-								<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
-									<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
-									<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-										<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
-									<cfelse>
-										<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="128" border="0">
-									</cfif>
-								<cfelse>
-									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
-								</cfif>
-							</div>
-						</a>
+								</div>
+							</a>
+						<cfelse>
+							The upload of "#file_name#" is still in progress!
+							<br />
+						</cfif>
 					</td>
 					<td width="100%" valign="top">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;"><strong>#file_name#</strong></a>

@@ -113,7 +113,7 @@
 								The upload of "#vid_filename#" is still in progress!
 								<br /><br>
 								#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
-								#dateformat(vid_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(vid_create_date, "HH:mm")#
+								#dateformat(vid_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(vid_create_time, "HH:mm")#
 								<br><br>
 								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;">Delete</a>
 							</cfif>
@@ -147,19 +147,27 @@
 				</script>
 				<tr class="list thumbview">
 					<td valign="top" width="1%" nowrap="true">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
-							<div id="draggable#vid_id#" type="#vid_id#-vid">
-								<cfif link_kind NEQ "url">
-									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-										<img src="#cloud_url#" border="0" width="160">
-									<cfelse>		
-										<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0" width="160">
+						<cfif is_available>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
+								<div id="draggable#vid_id#" type="#vid_id#-vid">
+									<cfif link_kind NEQ "url">
+										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+											<img src="#cloud_url#" border="0" width="160">
+										<cfelse>		
+											<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0" width="160">
+										</cfif>
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
 									</cfif>
-								<cfelse>
-									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0" width="128" height="128">
-								</cfif>
-							</div>
-						</a>
+								</div>
+							</a>
+						<cfelse>
+							The upload of "#vid_filename#" is still in progress!
+							<br /><br>
+							#myFusebox.getApplicationData().defaults.trans("date_created")#:<br>
+							#dateformat(vid_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(vid_create_time, "HH:mm")#
+							<br>
+						</cfif>
 						<!--- Icons --->
 						<div style="padding-top:5px;width:130px;white-space:nowrap;">
 							<div style="float:left;">
@@ -236,23 +244,28 @@
 				</script>
 				<tr class="list thumbview">
 					<td valign="top" width="1%" nowrap="true">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
-							<div id="draggable#vid_id#-vid" type="#vid_id#-vid">
-								<cfif link_kind NEQ "url">
-									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-										<cfif cloud_url NEQ "">
-											<img src="#cloud_url#" border="0">
+						<cfif is_available>
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
+								<div id="draggable#vid_id#-vid" type="#vid_id#-vid">
+									<cfif link_kind NEQ "url">
+										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+											<cfif cloud_url NEQ "">
+												<img src="#cloud_url#" border="0">
+											<cfelse>
+												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											</cfif>
 										<cfelse>
-											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+											<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0">
 										</cfif>
 									<cfelse>
-										<img src="#thestorage##path_to_asset#/#vid_name_image#?#hashtag#" border="0">
+										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
 									</cfif>
-								<cfelse>
-									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
-								</cfif>
-							</div>
-						</a>
+								</div>
+							</a>
+						<cfelse>
+							The upload of "#vid_filename#" is still in progress!
+							<br />
+						</cfif>
 					</td>
 					<td width="100%" valign="top">
 						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;"><strong>#vid_filename#</strong></a>
@@ -277,8 +290,8 @@
 							</div>
 						</div>
 					</td>
-					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(vid_create_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
-					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(vid_change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(vid_create_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
+					<td nowrap="true" width="1%" align="center" valign="top">#dateformat(vid_change_time, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				</tr>
 			</cfloop>
 		</cfif>
