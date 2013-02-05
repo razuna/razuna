@@ -44,7 +44,7 @@
 					| <a href="##" onclick="toggleslide('dive#aud_id#','inpute#aud_id#');return false;">Embed</a>
 					| <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#aud_id#&thetype=aud&cf_show=aud','Metadata',550,2);return false;">Metadata</a>
 					<cfif attributes.folderaccess NEQ "R">
-						 | <a href="##" onclick="loadcontent('relatedaudios','#myself#c.audios_remove_related&id=#aud_id#&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#');">Remove</a>
+						 | <a href="##" onclick="remrenaud('#aud_id#');">Remove</a>
 					</cfif>
 					<!--- Direct link --->
 					<div id="divo#aud_id#" style="display:none;">
@@ -86,4 +86,26 @@
 		</tr>
 	</table>
 </cfif>
+<div id="dialog-confirm-rendition" title="Really remove this rendition?" style="display:none;">
+	<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>The rendition will be permanently deleted and cannot be recovered. Are you sure?</p>
+</div>
+<!--- Js --->
+<script type="text/javascript">
+function remrenaud(id){
+	$( "##dialog-confirm-rendition" ).dialog({
+		resizable: false,
+		height:140,
+		modal: true,
+		buttons: {
+			"Yes, remove rendition": function() {
+				$( this ).dialog( "close" );
+				$('##relatedvideos').load('#myself#c.audios_remove_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadrenaud(); });
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+};
+</script>
 </cfoutput>

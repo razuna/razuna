@@ -1997,7 +1997,7 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimage(attributes)" />
 		<!-- Show the folder listing -->
-		<do action="images_detail_related" />
+		<!-- <do action="images_detail_related" /> -->
 	</fuseaction>
 	<!-- Remove videos -->
 	<fuseaction name="videos_remove">
@@ -2032,7 +2032,7 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="removevideo(attributes)" />
 		<!-- Show the folder listing -->
-		<do action="videos_detail_related" />
+		<!-- <do action="videos_detail_related" /> -->
 	</fuseaction>
 	<!-- Remove Audios -->
 	<fuseaction name="audios_remove">
@@ -2067,7 +2067,7 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudio(attributes)" />
 		<!-- Show the folder listing -->
-		<do action="audios_detail_related" />
+		<!-- <do action="audios_detail_related" /> -->
 	</fuseaction>
 	
 	<!-- Remove files MANY -->

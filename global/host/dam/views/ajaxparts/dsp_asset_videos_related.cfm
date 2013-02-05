@@ -96,7 +96,7 @@ function remren(id){
 		buttons: {
 			"Yes, remove rendition": function() {
 				$( this ).dialog( "close" );
-				$('##relatedvideos').load('#myself#c.videos_remove_related&file_id=#attributes.file_id#&what=videos&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id);
+				$('##relatedvideos').load('#myself#c.videos_remove_related&file_id=#attributes.file_id#&what=videos&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadrenvid(); });
 			},
 			Cancel: function() {
 				$( this ).dialog( "close" );

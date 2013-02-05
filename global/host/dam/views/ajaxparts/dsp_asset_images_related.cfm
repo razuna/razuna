@@ -84,7 +84,7 @@ function remren(id){
 		buttons: {
 			"Yes, remove rendition": function() {
 				$( this ).dialog( "close" );
-				$('##relatedimages').load('#myself#c.images_remove_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id);
+				$('##relatedimages').load('#myself#c.images_remove_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadren(); });
 			},
 			Cancel: function() {
 				$( this ).dialog( "close" );
