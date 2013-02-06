@@ -3206,8 +3206,6 @@
 	<cfloop delimiters="," index="myform" list="#arguments.thestruct.fieldnames#">
 		<!--- Images --->
 		<cfif myform CONTAINS "img_">
-			<!--- Flush Cache --->
-			<cfset resetcachetoken("images")>
 			<!--- First part of the _ --->
 			<cfset theid = listfirst(myform,"_")>
 			<cfif imgid NEQ theid>
@@ -3272,8 +3270,6 @@
 			</cfif>
 		<!--- Videos --->
 		<cfelseif myform CONTAINS "vid_">
-			<!--- Flush Cache --->
-			<cfset resetcachetoken("videos")>
 			<!--- First part of the _ --->
 			<cfset theid = listfirst(myform,"_")>
 			<cfif vidid NEQ theid>
@@ -3339,8 +3335,6 @@
 			</cfif>
 		<!--- Audios --->
 		<cfelseif myform CONTAINS "aud_">
-			<!--- Flush Cache --->
-			<cfset resetcachetoken("audios")>
 			<!--- First part of the _ --->
 			<cfset theid = listfirst(myform,"_")>
 			<cfif audid NEQ theid>
@@ -3410,8 +3404,6 @@
 			</cfif>
 		<!--- Files --->
 		<cfelseif myform CONTAINS "doc_">
-			<!--- Flush Cache --->
-			<cfset resetcachetoken("files")>
 			<!--- First part of the _ --->
 			<cfset theid = listfirst(myform,"_")>
 			<cfif docid NEQ theid>
@@ -3477,8 +3469,12 @@
 		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("images")>
+	<cfset resetcachetoken("videos")> 
+	<cfset resetcachetoken("audios")> 
+	<cfset resetcachetoken("files")> 
 	<cfset resetcachetoken("search")> 
+	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<cfreturn />
 </cffunction>
 
