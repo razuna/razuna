@@ -338,7 +338,7 @@
 	WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND c.col_id = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+	AND ct.lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qry>
@@ -814,7 +814,7 @@
 		UPDATE #session.hostdbprefix#collections_text
 		SET col_name = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_name#">
 		WHERE col_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
-		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.thelangid#">
 		</cfquery>
 	</cfif>
 	<!--- Flush Cache --->
