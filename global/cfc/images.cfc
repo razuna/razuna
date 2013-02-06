@@ -800,18 +800,18 @@
 	<!--- On local link asset we have a different input path --->
 	<cfif arguments.thestruct.link_kind NEQ "lan">
 		<cfif application.razuna.storage EQ "local">
-			<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+			<cfthread name="#tempfolder#" intstruct="#arguments.thestruct#">
 				<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry_detail.path_to_asset#/#attributes.intstruct.qry_detail.img_filename_org#" destination="#attributes.intstruct.thisfolder#/#attributes.intstruct.thename#" mode="775">
 			</cfthread>
 		<!--- Nirvanix --->
 		<cfelseif application.razuna.storage EQ "nirvanix">
-			<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+			<cfthread name="#tempfolder#" intstruct="#arguments.thestruct#">
 				<cfhttp url="#attributes.intstruct.qry_detail.cloud_url_org#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.thisfolder#"></cfhttp>
 			</cfthread>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
 			<!--- Download file --->
-			<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+			<cfthread name="#tempfolder#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="amazon" method="Download">
 					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_detail.path_to_asset#/#attributes.intstruct.qry_detail.img_filename_org#">
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.thename#">
@@ -826,10 +826,10 @@
 		<cfelse>
 			<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.link_path_url," ","\ ","all")>
 		</cfif>
-		<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#" />
+		<cfthread name="#tempfolder#" intstruct="#arguments.thestruct#" />
 	</cfif>
 	<!--- Wait for the thread above until the file is downloaded fully --->
-	<cfthread action="join" name="convert#arguments.thestruct.file_id#" />
+	<cfthread action="join" name="#tempfolder#" />
 
 	<!--- Ok, file is here so continue --->
 
