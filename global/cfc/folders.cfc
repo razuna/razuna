@@ -3884,4 +3884,34 @@
 	<cfset session.thefileid = session.file_id>
 </cffunction>
 
+<!--- Get foldername --->
+<cffunction name="samefoldernamecheck" output="false">
+	<cfargument name="thestruct" required="yes" type="struct">
+	<!--- Param --->
+	<cfset var ishere = false>
+	<cfset var qry = "">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getfoldername */ folder_id
+	FROM #session.hostdbprefix#folders
+	WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.folder_name)#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<cfif arguments.thestruct.folder_id_r EQ 0>
+		AND folder_id_r = folder_id
+	<cfelse>
+		AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
+	</cfif>
+	<cfif arguments.thestruct.folder_id NEQ 0>
+		AND folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfif>
+	</cfquery>
+	<!--- Set to true if found --->
+	<cfif qry.recordCount NEQ 0>
+		<cfset ishere = true>
+	</cfif>
+	<cfreturn ishere>
+</cffunction>
+
 </cfcomponent>

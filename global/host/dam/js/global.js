@@ -1661,3 +1661,10 @@ function loadfolder(folderid){
 	}
 	catch(e) {};
 }
+// Check for same folder name
+function samefoldernamecheck(theid){
+	// Values
+	var foldername = $("#folder_name").val();
+	var folderidr = $("#rid").val();
+	$('#samefoldername').load('index.cfm?fa=c.folder_namecheck', { folder_name:foldername, folder_id_r:folderidr, folder_id:theid } );
+}

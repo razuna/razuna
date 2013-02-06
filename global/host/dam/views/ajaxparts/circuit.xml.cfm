@@ -152,6 +152,10 @@
 	<fuseaction name="folder_settings">
   		<include template="dsp_folder_settings" />
 	</fuseaction>
+	<!-- Folder: samefoldernamecheck -->
+	<fuseaction name="folder_namecheck">
+  		<include template="dsp_folder_namecheck" />
+	</fuseaction>
 	
 	<!-- Collections: List -->
 	<fuseaction name="collections_list">
@@ -730,5 +734,7 @@
 	<fuseaction name="col_copy">
   		<include template="win_collection_copy" />
 	</fuseaction>
+
+
 
 </circuit>

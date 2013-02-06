@@ -1115,6 +1115,13 @@
 		<!-- Show -->
 		<do action="ajax.folder" />
 	</fuseaction>
+	<!-- Check for the same folder name -->
+	<fuseaction name="folder_namecheck">
+		<!-- CFC: check for same name -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="samefoldernamecheck(attributes)" returnvariable="attributes.samefoldername" />
+		<!-- Show -->
+		<do action="ajax.folder_namecheck" />
+	</fuseaction>
 	<!-- Load Folder Properties -->
 	<fuseaction name="folder_edit">
 		<!-- Param -->

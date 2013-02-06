@@ -28,7 +28,7 @@
 	<input type="hidden" name="#theaction#" value="#xfa.submitfolderform#">
 	<input type="hidden" name="theid" value="#attributes.theid#">
 	<input type="hidden" name="level" value="#attributes.level#">
-	<input type="hidden" name="rid" value="#attributes.rid#">
+	<input type="hidden" name="rid" id="rid" value="#attributes.rid#">
 	<input type="hidden" name="langcount" value="#valuelist(qry_langs.lang_id)#">
 	<cfif qry_folder.folder_is_collection EQ "T" OR attributes.iscol EQ "T">
 		<input type="hidden" name="coll_folder" value="T">
@@ -49,7 +49,7 @@
 							<input type="hidden" name="folder_name" id="folder_name" value="#qry_folder.folder_name#">
 							#qry_folder.folder_name#
 						<cfelse>
-							<input type="text" id="folder_name" name="folder_name" style="width:400px;" value="#qry_folder.folder_name#">
+							<div style="float:left;"><input type="text" id="folder_name" name="folder_name" style="width:400px;" value="#qry_folder.folder_name#" onkeyup="samefoldernamecheck('#attributes.theid#');"></div> <div id="samefoldername"></div>
 						</cfif>
 					</td>
 				</tr>
@@ -140,7 +140,7 @@
 			</cfif>
 			<div style="clear:both;"></div>
 			<div style="float:right;padding-top:10px;padding-right:10px;">
-				<input type="submit" name="submit" value="<cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("button_update")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_add")#</cfif>" class="button">
+				<input type="submit" name="submit" id="foldersubmitbutton" value="<cfif attributes.isdetail EQ "T">#myFusebox.getApplicationData().defaults.trans("button_update")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_add")#</cfif>" class="button">
 				<div id="updatetext" style="float:left;color:green;padding-right:10px;padding-top:4px;font-weight:bold;"></div>
 			</div>
 		</div>
