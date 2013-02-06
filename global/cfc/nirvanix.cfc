@@ -453,20 +453,25 @@
 	<cffunction name="DeleteFiles" access="public" output="false">
 		<cfargument name="filePath" type="string" required="true">
 		<cfargument name="nvxsession" type="string" required="false">
-		<!--- Call --->
-		<cfhttp url="http://services.nirvanix.com/ws/IMFS/DeleteFiles.ashx" method="get" throwonerror="no" timeout="30">
-			<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
-			<cfhttpparam name="filePath" value="#arguments.filePath#" type="url">
-		</cfhttp>
-		<!--- Parse XML --->
-		<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
-		<!--- If session timed out --->
-		<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
-			<!--- Get session --->
-			<cfset login()>
-			<!--- Call method again --->
-			<cfinvoke method="DeleteFiles" filePath="#arguments.filePath#" />
-		</cfif>
+		<cftry>
+			<!--- Call --->
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/DeleteFiles.ashx" method="get" throwonerror="no" timeout="30">
+				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
+				<cfhttpparam name="filePath" value="#arguments.filePath#" type="url">
+			</cfhttp>
+			<!--- Parse XML --->
+			<cfset var xmlVar = xmlParse(cfhttp.FileContent)/>
+			<!--- If session timed out --->
+			<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
+				<!--- Get session --->
+				<cfset login()>
+				<!--- Call method again --->
+				<cfinvoke method="DeleteFiles" filePath="#arguments.filePath#" />
+			</cfif>
+			<cfcatch type="any">
+				<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="debug in Nirvanix deletefiles" type="html"><cfdump var="#cfcatch#"></cfmail>
+			</cfcatch>
+		</cftry>
 		<cfreturn />
 	</cffunction>
 	
