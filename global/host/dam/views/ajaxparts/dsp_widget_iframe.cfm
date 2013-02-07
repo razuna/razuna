@@ -144,7 +144,7 @@
 												<cfset thev = "o">
 												<cfset theid = theformat>
 											</cfif>
-											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0">
+											<a href="##" onclick="window.open('#myself#c.si&f=#theid#&v=#thev#&jsessionid=#session.SessionID#','#theid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><img src="#thestorage##path_to_asset#/thumb_#id#.#ext#?#hashtag#" border="0"></a>
 										</cfif>
 									<cfelse>
 										<img src="#link_path_url#" border="0">
