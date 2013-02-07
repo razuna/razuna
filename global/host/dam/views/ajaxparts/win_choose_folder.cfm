@@ -42,9 +42,9 @@
 		// Load Folders
 		$(function () { 
 			$("##win_choosefolder").tree({
-				plugins : {
-					cookie : { prefix : "treemovebox_" }
-				},
+				// plugins : {
+				// 	cookie : { prefix : "treemovebox_" }
+				// },
 				types : {
 					"default"  : {
 						deletable : false,
@@ -67,7 +67,7 @@
 				data : { 
 					async : true,
 					opts : {
-						url : "#myself#c.getfolderfortree&col=#iscol#&actionismove=T&kind=#attributes.kind#"
+						url : "#myself#c.getfolderfortree&col=#attributes.iscol#&actionismove=T&kind=#attributes.kind#"
 					}
 				}
 			});
