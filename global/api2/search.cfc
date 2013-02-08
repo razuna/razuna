@@ -198,8 +198,14 @@
                 			WHERE ic.file_id_r = i.img_id
                 		) AS colid
                 	</cfif>
+                	,
+					x.colorspace,
+					x.xres AS xdpi,
+					x.yres AS ydpi,
+					x.resunit AS unit
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 					WHERE i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreeimg.categorytree)#" list="Yes"></cfif>)
 					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					AND (i.img_group IS NULL OR i.img_group = '')
@@ -296,6 +302,11 @@
 							WHERE vc.file_id_r = v.vid_id
 						) AS colid
 					</cfif>
+					,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit
                     FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 					WHERE v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreevid.categorytree)#" list="Yes"></cfif>)
@@ -393,6 +404,11 @@
 							WHERE ac.file_id_r = a.aud_id
 						) AS colid
 					</cfif>
+					,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 					WHERE a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreeaud.categorytree)#" list="Yes"></cfif>)
@@ -490,6 +506,11 @@
 							WHERE fc.file_id_r = f.file_id
 						) AS colid
 					</cfif>
+					,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 					WHERE f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreedoc.categorytree)#" list="Yes"></cfif>)

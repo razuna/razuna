@@ -100,8 +100,14 @@
 						WHERE ic.file_id_r = i.img_id
 					) AS colid
 				</cfif>
+				,
+				x.colorspace,
+				x.xres AS xdpi,
+				x.yres AS ydpi,
+				x.resunit AS unit
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 				WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				</cfquery>
@@ -643,58 +649,73 @@
 				<cfif arguments.assettype EQ "img">
 					SELECT /* #cachetokenimg#getrenditionsimg */
 					'rendition' as type,
-					img_id id, 
-					img_width width, 
-					img_height height, 
-					path_to_asset, 
-					cloud_url_org,
-					img_filename_org filename_org,
-					img_extension extension,
-					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(img_size as varchar(100)), '0')</cfif> AS size,
+					i.img_id AS id, 
+					i.img_width AS width, 
+					i.img_height AS height, 
+					i.path_to_asset, 
+					i.cloud_url_org,
+					i.img_filename_org AS filename_org,
+					i.img_extension AS extension,
+					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',path_to_asset,'/',img_filename_org) AS local_url_org
+						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + img_filename_org AS local_url_org
+						'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
 					</cfif>
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
-					WHERE img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-					AND img_group IS NOT NULL
+					x.colorspace,
+					x.xres AS xdpi,
+					x.yres AS ydpi,
+					x.resunit AS unit
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
+					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
+					WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					AND i.img_group IS NOT NULL
 					UNION ALL
 					SELECT /* #cachetokenimg#getrenditionsimg */
 					'org' as type,
-					img_id id, 
-					img_width width, 
-					img_height height, 
-					path_to_asset, 
-					cloud_url_org,
-					img_filename_org filename_org,
-					img_extension extension,
-					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(img_size as varchar(100)), '0')</cfif> AS size,
+					i.img_id AS id, 
+					i.img_width AS width, 
+					i.img_height AS height, 
+					i.path_to_asset, 
+					i.cloud_url_org,
+					i.img_filename_org AS filename_org,
+					i.img_extension AS extension,
+					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',path_to_asset,'/',img_filename_org) AS local_url_org
+						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/' + img_filename_org AS local_url_org
+						'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
 					</cfif>
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
-					WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					x.colorspace,
+					x.xres AS xdpi,
+					x.yres AS ydpi,
+					x.resunit AS unit
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
+					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
+					WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 					UNION ALL
 					SELECT /* #cachetokenimg#getrenditionsimg */
-					'thumb' as type,
-					img_id id, 
-					thumb_width width, 
-					thumb_height height, 
-					path_to_asset, 
-					cloud_url_org,
-					img_filename_org filename_org,
-					thumb_extension extension,
-					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(img_size as varchar(100)), '0')</cfif> AS size,
+					'thumb' AS type,
+					i.img_id AS id, 
+					i.thumb_width AS width, 
+					i.thumb_height AS height, 
+					i.path_to_asset, 
+					i.cloud_url_org,
+					i.img_filename_org AS filename_org,
+					i.thumb_extension AS extension,
+					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_size as varchar(100)), '0')</cfif> AS size,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',path_to_asset,'/','thumb_',img_id,'.',thumb_extension) AS local_url_org
+						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_org,
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
-						'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + path_to_asset + '/thumb_'+ img_id + '.' + thumb_extension AS local_url_org
+						'http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/thumb_'+ i.img_id + '.' + i.thumb_extension AS local_url_org,
 					</cfif>
-					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
-					WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					x.colorspace,
+					x.xres AS xdpi,
+					x.yres AS ydpi,
+					x.resunit AS unit
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
+					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
+					WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				<cfelseif arguments.assettype EQ "vid">
 					SELECT /* #cachetokenvid#getrenditionsvid */
 					'rendition' as type,
@@ -783,7 +804,11 @@
 				av_link_title AS filename_org,
 				av_type AS extension,
 				'0' AS size,
-				av_link_url AS local_url_org
+				av_link_url AS local_url_org,
+				'' AS colorspace,
+				'' AS xdpi,
+				'' AS ydpi,
+				'' AS unit
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
 				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			</cfquery>
