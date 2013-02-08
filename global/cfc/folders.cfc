@@ -3914,4 +3914,36 @@
 	<cfreturn ishere>
 </cffunction>
 
+<!--- Get foldername --->
+<cffunction name="getallassetsinfolder" access="remote" output="false" returntype="Query">
+	<cfargument name="folder_id" required="yes" type="string">
+	<cfargument name="columnlist" required="false" type="string" default="">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
+	<!--- Query --->
+	<cfquery name="qry_folder" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#getallassetsinfolder */ img_id AS ID, 'img' as type<cfif arguments.columnlist NEQ "">, #arguments.columnlist#</cfif>
+	FROM #session.hostdbprefix#images
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_id#">
+	UNION ALL
+	SELECT vid_id AS ID, 'vid' as type<cfif arguments.columnlist NEQ "">, #arguments.columnlist#</cfif>
+	FROM #session.hostdbprefix#videos
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_id#">
+	UNION ALL
+	SELECT aud_id AS ID, 'aud' as type<cfif arguments.columnlist NEQ "">, #arguments.columnlist#</cfif>
+	FROM #session.hostdbprefix#audios
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_id#">
+	UNION ALL
+	SELECT file_id AS ID, 'doc' as type<cfif arguments.columnlist NEQ "">, #arguments.columnlist#</cfif>
+	FROM #session.hostdbprefix#files
+	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.folder_id#">
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry_folder />
+</cffunction>
+
 </cfcomponent>

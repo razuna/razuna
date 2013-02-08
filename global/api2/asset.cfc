@@ -820,5 +820,58 @@
 		<cfreturn thexml>
 	</cffunction>
 
+	<!--- Move files --->
+	<cffunction name="move" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" type="string" required="true">
+		<cfargument name="assetid" type="string" required="true">
+		<cfargument name="destination_folder" type="string" required="true">
+		<cfargument name="source_folder" type="string" required="false" default="0">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Params --->
+			<cfset var s = structNew()>
+			<cfset s.folder_id = arguments.destination_folder>
+			<!--- Check if assetid is all and folder id 0 --->
+			<cfif arguments.assetid EQ "all" AND arguments.source_folder EQ 0>
+				<!--- Feedback --->
+				<cfset thexml.responsecode = 1>
+				<cfset thexml.message = "Whoops! If you set the assetid to all you must supply a valid folder id!">
+			<cfelse>
+				<!--- If assetid is "all" we assume user wants to move all assets from sourcefolder to destinationfolder tbus select all file ids in this folder --->
+				<cfif arguments.assetid EQ "all">
+					<!--- Call folder CFC --->
+					<cfinvoke component="global.cfc.folders" method="getallassetsinfolder" folder_id="#arguments.source_folder#" returnvariable="qry_files_in_folder" />
+					<!--- Create a list --->
+					<cfset s.file_id = valueList(qry_files_in_folder.id)>
+				<cfelse>
+					<cfset s.file_id = arguments.assetid>
+				</cfif>
+				<!--- Put the s.file_id into local var --->
+				<cfset var localid = s.file_id>
+				<!--- Chek that s.file_id is not empty --->
+				<cfif s.file_id NEQ "">
+					<!--- images --->
+					<cfinvoke component="global.cfc.images" method="movethread" thestruct="#s#" />
+					<!--- videos --->
+					<cfinvoke component="global.cfc.videos" method="movethread" thestruct="#s#" />
+					<!--- audios --->
+					<cfinvoke component="global.cfc.audios" method="movethread" thestruct="#s#" />
+					<cfset s.file_id = localid>
+					<!--- files --->
+					<cfinvoke component="global.cfc.files" method="movethread" thestruct="#s#" />
+				</cfif>
+				<!--- Feedback --->
+				<cfset thexml.responsecode = 0>
+				<cfset thexml.message = "Asset(s) have been moved successfully">
+			</cfif>
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout()>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
     
 </cfcomponent>
