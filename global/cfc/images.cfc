@@ -1143,6 +1143,26 @@
 			img_meta = <cfqueryparam value="#thedpi#" cfsqltype="cf_sql_varchar">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
+			<!--- Get the colorspace of the original file --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_colorspace">
+			SELECT colorspace
+			FROM #session.hostdbprefix#xmp
+			WHERE id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+			</cfquery>
+			<!--- Add to XMP --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#xmp
+			(id_r, asset_type, host_id, yres, xres, resunit, colorspace)
+			VALUES(
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="inches">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry_colorspace.colorspace#">
+			)
+			</cfquery>
 		</cftransaction>
 		<!--- Update main record with dates --->
 		<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.file_id#" />
