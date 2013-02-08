@@ -32,6 +32,10 @@
 	<input type="hidden" name="thetype" value="#attributes.thetype#">
 	<input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 	<table border="0" width="450" cellpadding="0" cellspacing="0" class="grid">
+		<tr>
+			<td>ID</td>
+			<td>#attributes.file_id#</td>
+		</tr>
 		<!--- Filename --->
 		<tr>
 			<td width="130" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
