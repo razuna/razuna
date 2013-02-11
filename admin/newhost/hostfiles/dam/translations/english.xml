@@ -112,7 +112,7 @@
 		<transtext><![CDATA[Read / Write]]></transtext>
 	</transid>
 	<transid name="per_all">
-		<transtext>Full access</transtext>
+		<transtext>No Restrictions</transtext>
 	</transid>
 	<transid name="everybody">
 		<transtext>Everybody</transtext>
@@ -2387,5 +2387,8 @@
 	</transid>
 	<transid name="admin_watermark_text_content">
 		<transtext>Content</transtext>
+	</transid>
+	<transid name="select_all">
+		<transtext>Select All</transtext>
 	</transid>
 </translations>

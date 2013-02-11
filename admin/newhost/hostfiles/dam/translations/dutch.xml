@@ -2382,4 +2382,7 @@
 	<transid name="admin_watermark_text_content">
 		<transtext>Content</transtext>
 	</transid>
+	<transid name="select_all">
+		<transtext>Select All</transtext>
+	</transid>	
 </translations>

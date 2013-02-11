@@ -35,9 +35,14 @@
 			<th colspan="4">
 				<cfif attributes.fromshare EQ "F">
 					<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("files_in_basket")#</div>
-					<cfif qry_basket.recordcount NEQ 0>
+                    <cfif qry_basket.recordcount NEQ 0>
+                    	<!--- Select All --->
+                    	<div style="float:left; padding-left:30px;">
+                            <a href="##" id="checkall" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>  
+						</div> 					
 						<div style="float:right;">
-							<div style="float:left;"><a href="##" onclick="$('##basketaction').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("basket_actions")#</a></div>
+							<div style="float:left;">
+                            <a href="##" onclick="$('##basketaction').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("basket_actions")#</a></div>
 							<div style="float:right;padding-left:2px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##basketaction').toggle();" class="ddicon"></div>
 							<div id="basketaction" class="ddselection_header" style="top:22px;">
 								<p><a href="##" onclick="$('##thebasket').submit();$('##basketaction').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("download")#</a></p>
@@ -51,6 +56,10 @@
 					</cfif>
 				<cfelse>
 					<div style="float:left;"><cfif qry_basket.recordcount NEQ 0><cfif qry_folder.share_order EQ "F"><a href="##" onclick="$('##thebasket').submit();return false;">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse><a href="##" onclick="showwindow('#myself#ajax.share_order','Order',500,1);return false;">Order Assets in Basket</a></cfif></div>
+					<!--- Select All --->
+					<div style="float:left; padding-left:60px;">
+						<a href="##" id="checkall">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>  
+					</div> 	
 					<div style="float:right;"><a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket_all');">#myFusebox.getApplicationData().defaults.trans("delete_basket")#</a></cfif></div>
 				</cfif>
 			</th>
@@ -419,4 +428,13 @@
 	<cfif fa EQ "c.basket_full_remove">
 		$('#basket').load('<cfoutput>#myself#</cfoutput>c.basket');
 	</cfif>
+
+	<!--- Select All --->
+	$('#checkall').click(function () {
+		var checked = $(this).data('checked');
+		$('#thebasket').find(':checkbox').attr('checked', !checked);
+		$(this).data('checked', !checked);
+	});
 </script>
+
+	
