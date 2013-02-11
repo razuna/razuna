@@ -86,6 +86,7 @@
 			<cfset session.hostdbprefix = pre.host_shard_group>
 			<cfset session.hostid = qry.hostid>
 			<cfset session.theuserid = qry.user_id>
+			<cfset session.thelangid = 1>
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>
