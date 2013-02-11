@@ -22,11 +22,11 @@
 	}
 	// Check eMail
 	function checkemail(){
-		loadcontent('checkemaildiv', '<cfoutput>#myself#</cfoutput>c.checkemail&user_email=' + escape(document.userdetailadd.user_email.value) + '&user_id=' + document.userdetailadd.user_id.value);
+		$('#checkemaildiv').load('<cfoutput>#myself#</cfoutput>c.checkemail&user_email=' + escape(document.userdetailadd.user_email.value) + '&user_id=' + document.userdetailadd.user_id.value);
 	}
 	// Check Username
 	function checkusername(){
-		loadcontent('checkusernamediv', '<cfoutput>#myself#</cfoutput>c.checkusername&user_login_name=' + escape(document.userdetailadd.user_login_name.value) + '&user_id=' + document.userdetailadd.user_id.value);
+		$('#checkusernamediv').load('<cfoutput>#myself#</cfoutput>c.checkusername&user_login_name=' + escape(document.userdetailadd.user_login_name.value) + '&user_id=' + document.userdetailadd.user_id.value);
 	}
 </script>
 

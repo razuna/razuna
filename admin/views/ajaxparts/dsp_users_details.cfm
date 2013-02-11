@@ -212,7 +212,8 @@
 					equalTo: "##user_pass"
 				}
 				</cfif>
-			 }
+			 },
+			onkeyup: function(element) { this.element(element); }
 		});
 	});
 	// Feedback when saving form
@@ -223,11 +224,11 @@
 	}
 	// Check eMail
 	function checkemail(){
-		loadcontent('checkemaildiv', '#myself#c.checkemail&user_id=#attributes.user_id#&user_email=' + $("##user_email").val() );
+		$('##checkemaildiv').load('#myself#c.checkemail&user_id=#attributes.user_id#&user_email=' + $("##user_email").val() );
 	}
 	// Check User
 	function checkusername(){
-		loadcontent('checkusernamediv', '#myself#c.checkusername&user_id=#attributes.user_id#&user_login_name=' + $("##user_login_name").val() );
+		$('##checkusernamediv').load('#myself#c.checkusername&user_id=#attributes.user_id#&user_login_name=' + $("##user_login_name").val() );
 	}
 	
 </script>

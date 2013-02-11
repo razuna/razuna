@@ -272,7 +272,8 @@
 					equalTo: "##user_pass"
 				}
 				</cfif>
-			 }
+			 },
+ 			onkeyup: function(element) { this.element(element); }
 		});
 	});
 	// Feedback when saving form
