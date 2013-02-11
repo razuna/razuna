@@ -410,6 +410,7 @@
 		<!--- Lucene --->
 		<cfset arguments.thestruct.qrydetail.folder_id_r = arguments.thestruct.folder_id>
 		<cfset arguments.thestruct.qrydetail.path_to_asset = qryorg.path_to_asset>
+		<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud">
