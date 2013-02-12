@@ -2670,6 +2670,11 @@
 		<!-- CFC: Save field values -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="savevalues(attributes)" />
 	</fuseaction>
+	<!-- Save custom fields order -->
+	<fuseaction name="custom_fields_save_order">
+		<!-- CFC: Save field values -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="saveorder(attributes)" />
+	</fuseaction>
 	
 	<!--
 		END: SAVE CUSTOM FIELDS VALUES

@@ -23,39 +23,75 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<style>
+	.actionbox {
+		border: 1px solid #D3D3D3;
+		padding: 10px;
+		margin: 10px;
+		background: #E6E6E6;
+		border-radius: 10px;
+		-webkit-border-radius: 10px;
+	    -moz-border-radius: 10px;
+	    cursor: move;
+	}
+	.myplace { 
+		height: 50px; 
+		line-height:50px; 
+		border: 3px dotted grey;
+		padding: 10px;
+		margin: 10px;
+		border-radius: 10px;
+		-webkit-border-radius: 10px;
+	    -moz-border-radius: 10px;
+	}
+</style>
 <cfif qry_fields.recordcount NEQ 0>
+	<cfset sortorder = "">
 	<cfoutput>
-		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-			<tr>
-				<th></th>
-				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("custom_field_type")#</th>
-				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("show_only_for")#</th>
-				<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("enabled")#</th>
-				<th></th>
-			</tr>
+		<div id="thefields">
 			<cfoutput query="qry_fields" group="cf_id">
-				<tr class="list">
-					<td width="100%"><a href="##" onclick="showwindow('#myself#c.custom_fields_detail&cf_id=#cf_id#','#cf_text#',680,1);return false">#cf_text#</a> <em>(ID: #cf_id#)</em></td>
-					<td width="1%" nowrap="true">#cf_type#</td>
-					<td width="1%" nowrap="true">
-						<cfif cf_show EQ "vid">
-							#myFusebox.getApplicationData().defaults.trans("search_for_videos")#
-						<cfelseif cf_show EQ "img">
-							#myFusebox.getApplicationData().defaults.trans("search_for_images")#
-						<cfelseif cf_show EQ "aud">
-							#myFusebox.getApplicationData().defaults.trans("search_for_audios")#
-						<cfelseif cf_show EQ "doc">
-							#myFusebox.getApplicationData().defaults.trans("search_for_documents")#
-						<cfelseif cf_show EQ "all">
-							#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#
-						<cfelseif cf_show EQ "users">
-							Users
-						</cfif>
-					</td>
-					<td width="1%" nowrap="true" align="center"><cfif cf_enabled EQ "T"><img src="#dynpath#/global/host/dam/images/checked.png" width="16" height="16" border="0"></cfif></td>
-					<td width="1%" nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=custom_fields&id=#cf_id#&loaddiv=thefields&order=#cf_order#','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
-				</tr>
+				<div id="#cf_id#" class="actionbox">
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+						<tr>
+							<td nowrap="true"><img src="#dynpath#/global/host/dam/images/arrow-out.png" border="0"></td>
+							<td width="100%"><a href="##" onclick="showwindow('#myself#c.custom_fields_detail&cf_id=#cf_id#','#cf_text#',680,1);return false">#cf_text#</a><br /><em>(ID: #cf_id#)</em></td>
+							<td width="1%" nowrap="true">#cf_type#</td>
+							<td width="1%" nowrap="true">
+								<cfif cf_show EQ "vid">
+									#myFusebox.getApplicationData().defaults.trans("search_for_videos")#
+								<cfelseif cf_show EQ "img">
+									#myFusebox.getApplicationData().defaults.trans("search_for_images")#
+								<cfelseif cf_show EQ "aud">
+									#myFusebox.getApplicationData().defaults.trans("search_for_audios")#
+								<cfelseif cf_show EQ "doc">
+									#myFusebox.getApplicationData().defaults.trans("search_for_documents")#
+								<cfelseif cf_show EQ "all">
+									#myFusebox.getApplicationData().defaults.trans("search_for_allassets")#
+								<cfelseif cf_show EQ "users">
+									Users
+								</cfif>
+							</td>
+							<td width="1%" nowrap="true" align="center"><cfif cf_enabled EQ "T"><img src="#dynpath#/global/host/dam/images/checked.png" width="16" height="16" border="0"></cfif></td>
+							<td width="1%" nowrap="true" align="center"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=custom_fields&id=#cf_id#&loaddiv=thefields&order=#cf_order#','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,1);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
+						</tr>
+					</table>
+				</div>
+				<!--- Set order --->
+				<cfset sortorder = sortorder & "," & cf_id>
 			</cfoutput>
-		</table>
+		</div>
 	</cfoutput>
+	<script type="text/javascript">
+		// Make theactions sortable
+		$('#thefields').sortable({
+			placeholder: "myplace",
+			distance: 15,
+			opacity: 0.6,
+			scroll: true,
+			stop: function( event, ui ) { 
+				var s = $("#thefields").sortable('toArray').toString();
+				$('#div_forall').load('index.cfm?fa=c.custom_fields_save_order', { theorderlist: s });
+			}
+		});
+	</script>
 </cfif>
