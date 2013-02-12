@@ -6559,6 +6559,8 @@
 	<fuseaction name="meta_imp_upload_do">
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().import" methodcall="upload(attributes)" />
+		<!-- Show iframe again -->
+		<do action="ajax.meta_imp_upload" />
 	</fuseaction>
 	<!-- Import DO -->
 	<fuseaction name="meta_imp_do">

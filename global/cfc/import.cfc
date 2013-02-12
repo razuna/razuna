@@ -180,7 +180,7 @@
 	</cffunction>
 	
 	<!--- Upload ---------------------------------------------------------------------->
-	<cffunction name="upload" output="false">
+	<cffunction name="upload" output="false" returntype="String">
 		<cfargument name="thestruct" type="struct">
 		<!--- Upload file to the temp folder --->
 		<cffile action="upload" destination="#GetTempdirectory()#" nameconflict="overwrite" filefield="#arguments.thestruct.thefieldname#" result="thefile">
@@ -190,7 +190,7 @@
 		<!--- Rename --->
 		<cffile action="rename" source="#GetTempdirectory()#/#thefile.serverFile#" destination="#GetTempdirectory()#/#thenamenew#" />
 		<!--- Return --->
-		<cfreturn  />
+		<cfreturn ext />
 	</cffunction>
 	
 	<!--- Do the Import ---------------------------------------------------------------------->
