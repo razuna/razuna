@@ -285,4 +285,25 @@
 	<cfset variables.cachetoken = resetcachetoken("general")>
 </cffunction>
 
+<!--- Save order --->
+<cffunction name="saveorder" output="false" access="public" returntype="void">
+	<cfargument name="thestruct" type="struct">
+	<!--- Init vars --->
+	<cfset theorder = 1>
+	<!--- Loop over fields and update DB --->
+	<cfloop list="#arguments.thestruct.theorderlist#" delimiters="," index="i">
+		<cfif i NEQ "thefields">
+			<!--- Update record --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#custom_fields
+			SET cf_order = <cfqueryparam cfsqltype="cf_sql_numeric" value="#theorder#">
+			WHERE cf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+			</cfquery>
+			<!--- Increase the order --->
+			<cfset theorder = theorder + 1>
+		</cfif>
+	</cfloop>
+	<cfreturn />
+</cffunction>
+
 </cfcomponent>
