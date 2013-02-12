@@ -33,8 +33,7 @@
 </head>
 <body>
 <cfif structKeyExists(form,"fieldnames")>
-    <div id="updummy" style="display:none;"></div>
-    <span style="font-weight:bold;color:green;top:10px;">Your file has been uploaded!</span>
+    <span style="font-weight:bold;color:green;">Your file has been uploaded!</span>
 <cfelse>
     <form action="#self#" name="upme" id="upme" method="post" enctype="multipart/form-data">
         <input type="hidden" name="fa" value="c.meta_imp_upload_do">
