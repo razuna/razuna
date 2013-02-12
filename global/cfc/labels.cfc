@@ -232,7 +232,7 @@
 		SELECT /* #variables.cachetoken#getalllabels */ label_text, label_path, label_id
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-		ORDER BY label_text
+		ORDER BY lower(label_text)
 		</cfquery>
 		<!--- Put into list --->
 		<cfloop query="qry">
@@ -269,7 +269,7 @@
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-			ORDER BY label_text
+			ORDER BY lower(label_text)
 			</cfquery>
 			<!--- Param --->
 			<cfset var l = valuelist(qry.label_id)>
@@ -299,7 +299,7 @@
 			FROM #session.hostdbprefix#labels
 			WHERE label_id IN (<cfqueryparam value="#valuelist(qryct.ct_label_id)#" cfsqltype="cf_sql_varchar" list="true" />)
 			AND host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-			ORDER BY label_text
+			ORDER BY lower(label_text)
 			</cfquery>
 			<!--- Param --->
 			<cfset var l = valuelist(qry.label_path)>
@@ -741,7 +741,7 @@
 		SELECT label_id, label_text
 		FROM #session.hostdbprefix#labels
 		WHERE host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric" />
-		ORDER BY label_text
+		ORDER BY lower(label_text)
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
