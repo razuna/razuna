@@ -2947,6 +2947,14 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 				<!--- If file does not exsist continue else send user an eMail --->
 				<cfif md5here EQ 0>
+					<!--- Check for the name which now contains the directory --->
+					<cfset var thedirlen = listLen(name, FileSeparator()) - 1>
+					<!--- If the above return 0 --->
+					<cfif thedirlen EQ 0>
+						<cfset var thedirlen = 1>
+					</cfif>
+					<!--- Get the directory name at the exact position in the list --->
+					<cfset var thedirname = listGetAt(name, thedirlen, FileSeparator())>
 					<!--- Get folder id with the name of the folder --->
 					<cfquery datasource="#variables.dsn#" name="qryfolderidmain">
 					SELECT f.folder_id, f.folder_name,
@@ -2960,8 +2968,8 @@ This is the main function called directly by a single upload else from addassets
 						ELSE 0
 					END AS ISHERE
 					FROM #session.hostdbprefix#folders f
-					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(listlast("#directory#/#arguments.thestruct.thepathtoname#",FileSeparator()))#">
-					AND folder_main_id_r = <cfqueryparam value="#rootfolderId#" cfsqltype="cf_sql_varchar">
+					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thedirname)#">
+					AND folder_id_r = <cfqueryparam value="#rootfolderId#" cfsqltype="cf_sql_varchar">
 					<!---
 					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
 					--->
