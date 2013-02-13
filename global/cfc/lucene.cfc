@@ -75,6 +75,8 @@
 		<cfargument name="online" type="string" default="F" required="false">
 		<cfargument name="notfile" type="string" default="F" required="false">
 		<cfargument name="fromapi" type="string" default="F" required="false">
+		<!--- Param --->
+		<cfset var folderpath = "">
 		<!--- FOR FILES --->
 		<cfif arguments.category EQ "doc">
 			<!--- Query Record --->
@@ -89,6 +91,11 @@
 			WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Get folder path --->
+			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
+			<cfloop list="#qry_bc#" delimiters=";" index="p">
+				<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
+			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
 			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
@@ -122,7 +129,7 @@
 			SELECT 
 			id, folder, '#thefilename#' as filename, filenameorg, link_kind, lucene_key, '#thekeys#' as keywords, '#thedesc#' as description,
 			rawmetadata, theext, author, rights, authorsposition, captionwriter, webstatement, rightsmarked, '#l#' as labels, 
-			'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, thecategory
+			'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, thecategory, '#folderpath#' as folderpath
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
@@ -134,7 +141,7 @@
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -150,7 +157,8 @@
 					webstatement : "webstatement", 
 					rightsmarked : "rightsmarked",
 					labels : "labels",
-					customfieldvalue : "customfieldvalue"
+					customfieldvalue : "customfieldvalue",
+					folderpath : "folderpath"
 					}
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
@@ -173,6 +181,11 @@
 			WHERE f.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Get folder path --->
+			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
+			<cfloop list="#qry_bc#" delimiters=";" index="p">
+				<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
+			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
 			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
@@ -209,7 +222,7 @@
 			supplementalcategories, urgency, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, 
 			intellectualgenre, instructions, source, usageterms, copyrightstatus, transmissionreference, webstatement, headline, 
 			datecreated, city, ciadrregion, country, countrycode, scene, state, credit, rights, '#l#' as labels, 
-			'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
+			'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
@@ -221,7 +234,7 @@
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -264,7 +277,8 @@
 					credit : "credit", 
 					rights : "rights",
 					labels : "labels",
-					customfieldvalue : "customfieldvalue"
+					customfieldvalue : "customfieldvalue",
+					folderpath : "folderpath"
 					}
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
@@ -282,6 +296,11 @@
 			WHERE f.vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Get folder path --->
+			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
+			<cfloop list="#qry_bc#" delimiters=";" index="p">
+				<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
+			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
 			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
@@ -314,7 +333,7 @@
 			<cfquery dbtype="query" name="qry_all">
 			SELECT id, folder, '#thefilename#' as filename, filenameorg, link_kind, lucene_key,
 		    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
-			theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
+			theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
 			FROM qry_all
 			</cfquery>
 		<!--- FOR AUDIOS --->
@@ -330,6 +349,11 @@
 			WHERE a.aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Get folder path --->
+			<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
+			<cfloop list="#qry_bc#" delimiters=";" index="p">
+				<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
+			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
 			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
@@ -362,7 +386,7 @@
 			<cfquery dbtype="query" name="qry_all">
 			SELECT id, folder, '#thefilename#' as filename, filenameorg, link_kind, lucene_key,
 		    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
-			theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue
+			theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
 			FROM qry_all
 			</cfquery>
 		</cfif>
@@ -377,7 +401,7 @@
 			categoryTree : "id",
 			key : "id",
 			title : "id",
-			body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue",
+			body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath",
 			custommap :{
 				id : "id",
 				filename : "filename",
@@ -387,7 +411,8 @@
 				rawmetadata : "rawmetadata",
 				extension : "theext",
 				labels : "labels",
-				customfieldvalue : "customfieldvalue"
+				customfieldvalue : "customfieldvalue",
+				folderpath : "folderpath"
 				}
 			};
 			results = CollectionIndexCustom( argumentCollection=args );

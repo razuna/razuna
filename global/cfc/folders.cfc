@@ -3594,7 +3594,7 @@
 	<!--- If there is no session for webgroups set --->
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query: Get current folder_id_r --->
-	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
 	<cfif arguments.fromshare>
 		<cfif session.iscol EQ "F">
