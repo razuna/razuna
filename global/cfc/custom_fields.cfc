@@ -303,6 +303,8 @@
 			<cfset theorder = theorder + 1>
 		</cfif>
 	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<cfreturn />
 </cffunction>
 
