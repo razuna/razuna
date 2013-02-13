@@ -26,11 +26,11 @@
 <cfoutput>
 <span class="loginheader">
 	<a href="#myself#c.main">
-		<cfif directoryexists("#pathoneup#global/host/logo/#session.hostid#")>
+		<!--- <cfif directoryexists("#pathoneup#global/host/logo/#session.hostid#")>
 			<img src="#dynpath#/global/host/logo/#session.hostid#/logo.jpg" border="0" />
-		<cfelse>
+		<cfelse> --->
 			<img src="#dynpath#/global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;">
-		</cfif>
+		<!--- </cfif> --->
 	</a>
 </span>
 <div id="navrighttop">
