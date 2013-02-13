@@ -1941,6 +1941,7 @@
 			cf_group 		VARCHAR(100),
 			cf_select_list	nvarchar(max),
 			cf_in_form		VARCHAR(10) DEFAULT 'true',
+			cf_edit			VARCHAR(2000) DEFAULT 'true',
 			HOST_ID			INT,
 			PRIMARY KEY (cf_id),
 		)

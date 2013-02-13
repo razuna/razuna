@@ -48,52 +48,58 @@
 <!--- Add field --->
 <cffunction name="add" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<!--- Params --->
-		<cfset newcfid = createuuid()>
-		<cfparam name="arguments.thestruct.cf_group" default="" />
-		<cftransaction>
-			<!--- Add one up for order --->
-			<cfquery datasource="#application.razuna.datasource#" name="neworder">
-			SELECT 
-			<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(cf_order),0) + 1 AS theorder
-			FROM #session.hostdbprefix#custom_fields
-			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Insert record --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#custom_fields
-			(cf_id, cf_type, cf_order, cf_enabled, cf_show, cf_group, host_id, cf_select_list)
-			VALUES(
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newcfid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_type#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#neworder.theorder#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_enabled#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">
-			)
-			</cfquery>
-			<!--- Add text to related db --->
-			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-				<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
-				<cfif thetext CONTAINS "#langindex#">
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#custom_fields_text
-					(cf_id_r, lang_id_r, cf_text, host_id, rec_uuid)
-					VALUES(
-					<cfqueryparam value="#newcfid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-					<cfqueryparam value="#evaluate(thetext)#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-					)
-					</cfquery>
-				</cfif>
-			</cfloop>
-		</cftransaction>
-		<!--- Flush Cache --->
-		<cfset variables.cachetoken = resetcachetoken("general")>
+	<!--- Params --->
+	<cfset var newcfid = createuuid()>
+	<cfparam name="arguments.thestruct.cf_group" default="" />
+	<!--- If no group is selected --->
+	<cfif !structKeyExists(arguments.thestruct,"cf_edit")>
+		<cfset arguments.thestruct.cf_edit = "true">
+	</cfif>
+	<cftransaction>
+		<!--- Add one up for order --->
+		<cfquery datasource="#application.razuna.datasource#" name="neworder">
+		SELECT 
+		<cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2">NVL<cfelseif application.razuna.thedatabase EQ "mysql">ifnull<cfelseif application.razuna.thedatabase EQ "mssql">isnull</cfif>(max(cf_order),0) + 1 AS theorder
+		FROM #session.hostdbprefix#custom_fields
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Insert record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#custom_fields
+		(cf_id, cf_type, cf_order, cf_enabled, cf_show, cf_group, host_id, cf_select_list, cf_edit)
+		VALUES(
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newcfid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_type#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#neworder.theorder#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_enabled#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">
+		)
+		</cfquery>
+		<!--- Add text to related db --->
+		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+			<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
+			<cfif thetext CONTAINS "#langindex#">
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#custom_fields_text
+				(cf_id_r, lang_id_r, cf_text, host_id, rec_uuid)
+				VALUES(
+				<cfqueryparam value="#newcfid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#evaluate(thetext)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cftransaction>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
+	<!--- Return --->
 	<cfreturn newcfid />
 </cffunction>
 
@@ -104,7 +110,7 @@
 		<cfset variables.cachetoken = getcachetoken("general")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, ct.cf_text, cv.cf_value
+		SELECT /* #variables.cachetoken#getfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_select_list, c.cf_edit, ct.cf_text, cv.cf_value
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c 
 		LEFT JOIN #session.hostdbprefix#custom_fields_values cv ON cv.cf_id_r = c.cf_id AND cv.asset_id_r = '#arguments.thestruct.file_id#'
 		WHERE c.cf_id = ct.cf_id_r
@@ -170,7 +176,8 @@
 		<cfset variables.cachetoken = getcachetoken("general")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, c.cf_select_list, ct.cf_text, ct.lang_id_r, c.cf_in_form
+		SELECT /* #variables.cachetoken#getdetailcustomfields */ c.cf_id, c.cf_type, c.cf_order, c.cf_show, c.cf_enabled, c.cf_group, 
+		c.cf_edit, c.cf_select_list, ct.cf_text, ct.lang_id_r, c.cf_in_form
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c
 		WHERE c.cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.cf_id#">
 		AND ct.cf_id_r = c.cf_id
@@ -229,6 +236,11 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.cf_in_form" default="true" />
+		<cfparam name="arguments.thestruct.cf_group" default="" />
+		<!--- If no group is selected --->
+		<cfif !structKeyExists(arguments.thestruct,"cf_edit")>
+			<cfset arguments.thestruct.cf_edit = "true">
+		</cfif>
 		<!--- Update record --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#custom_fields
@@ -238,7 +250,8 @@
 		cf_show = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_show#">, 
 		cf_group = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_group#">,
 		cf_select_list = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_select_list#">,
-		cf_in_form = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_in_form#">
+		cf_in_form = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_in_form#">,
+		cf_edit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">
 		WHERE cf_id = <cfqueryparam value="#arguments.thestruct.cf_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -289,7 +302,7 @@
 <cffunction name="saveorder" output="false" access="public" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<!--- Init vars --->
-	<cfset theorder = 1>
+	<cfset var theorder = 1>
 	<!--- Loop over fields and update DB --->
 	<cfloop list="#arguments.thestruct.theorderlist#" delimiters="," index="i">
 		<cfif i NEQ "thefields">

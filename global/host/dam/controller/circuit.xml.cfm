@@ -4528,6 +4528,12 @@
 	<fuseaction name="custom_fields">
 		<!-- CFC: Get languages -->
 		<do action="languages" />
+		<!-- CFC: Get groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="mod_id" value="1" />
+		</invoke>
+		<!-- CFC: Get users -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />		
 		<!-- Show -->
 		<do action="ajax.custom_fields" />
 	</fuseaction>
@@ -4547,6 +4553,12 @@
 	<fuseaction name="custom_fields_detail">
 		<!-- CFC: Get languages -->
 		<do action="languages" />
+		<!-- CFC: Get groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="mod_id" value="1" />
+		</invoke>
+		<!-- CFC: Get users -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- CFC: Get fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getdetail(attributes)" returnvariable="qry_field" />
 		<!-- Show -->
