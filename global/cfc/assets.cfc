@@ -4191,6 +4191,8 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 		</cfthread>
 	</cfloop>
+	<!--- Call to GC to clean memory --->
+	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 	<!--- Feedback --->
 	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 	<cfflush>
@@ -4272,6 +4274,8 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 				</cfthread>
 			</cfloop>
+			<!--- Call to GC to clean memory --->
+			<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 			<cfflush>
@@ -4364,6 +4368,8 @@ This is the main function called directly by a single upload else from addassets
 					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 				</cfthread>
 			</cfloop>
+			<!--- Call to GC to clean memory --->
+			<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 			<cfflush>
@@ -4455,6 +4461,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 			</cfthread>
 		</cfloop>
+		<!--- Call to GC to clean memory --->
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -4544,6 +4552,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 			</cfthread>
 		</cfloop>
+		<!--- Call to GC to clean memory --->
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -4633,6 +4643,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 			</cfthread>
 		</cfloop>
+		<!--- Call to GC to clean memory --->
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -4722,6 +4734,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 			</cfthread>
 		</cfloop>
+		<!--- Call to GC to clean memory --->
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -4811,6 +4825,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
 			</cfthread>
 		</cfloop>
+		<!--- Call to GC to clean memory --->
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 		<!---
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
