@@ -4187,9 +4187,13 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 		<cfset arguments.thestruct.orgsize = size>
 		<!--- Now add the asset --->
-		<cfthread intstruct="#arguments.thestruct#">
-			<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		<cfif thefiles.recordcount LT 10>
+			<cfthread intstruct="#arguments.thestruct#">
+				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+			</cfthread>
+		<cfelse>
+			<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+		</cfif>
 	</cfloop>
 	<!--- Call to GC to clean memory --->
 	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
@@ -4270,9 +4274,13 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 				<cfset arguments.thestruct.orgsize = size>
 				<!--- Now add the asset --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-				</cfthread>
+				<cfif thefiles.recordcount LT 10>
+					<cfthread intstruct="#arguments.thestruct#">
+						<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+					</cfthread>
+				<cfelse>
+					<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+				</cfif>
 			</cfloop>
 			<!--- Call to GC to clean memory --->
 			<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
@@ -4364,9 +4372,13 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 				<cfset arguments.thestruct.orgsize = size>
 				<!--- Now add the asset --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-				</cfthread>
+				<cfif thefiles.recordcount LT 10>
+					<cfthread intstruct="#arguments.thestruct#">
+						<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+					</cfthread>
+				<cfelse>
+					<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+				</cfif>
 			</cfloop>
 			<!--- Call to GC to clean memory --->
 			<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
@@ -4457,9 +4469,13 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-			</cfthread>
+			<cfif thefiles.recordcount LT 10>
+				<cfthread intstruct="#arguments.thestruct#">
+					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+				</cfthread>
+			<cfelse>
+				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
 		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
@@ -4548,9 +4564,13 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-			</cfthread>
+			<cfif thefiles.recordcount LT 10>
+				<cfthread intstruct="#arguments.thestruct#">
+					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+				</cfthread>
+			<cfelse>
+				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
 		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
@@ -4639,9 +4659,13 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-			</cfthread>
+			<cfif thefiles.recordcount LT 10>
+				<cfthread intstruct="#arguments.thestruct#">
+					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+				</cfthread>
+			<cfelse>
+				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
 		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
@@ -4730,9 +4754,13 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-			</cfthread>
+			<cfif thefiles.recordcount LT 10>
+				<cfthread intstruct="#arguments.thestruct#">
+					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+				</cfthread>
+			<cfelse>
+				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
 		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
@@ -4821,9 +4849,13 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.filename = listlast(name,FileSeparator())>
 			<cfset arguments.thestruct.orgsize = size>
 			<!--- Now add the asset --->
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
-			</cfthread>
+			<cfif thefiles.recordcount LT 10>
+				<cfthread intstruct="#arguments.thestruct#">
+					<cfinvoke method="addassetpathfiles" thestruct="#attributes.intstruct#" />
+				</cfthread>
+			<cfelse>
+				<cfinvoke method="addassetpathfiles" thestruct="#arguments.thestruct#" />
+			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
 		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
