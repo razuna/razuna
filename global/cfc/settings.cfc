@@ -1044,12 +1044,18 @@
 		<cfcatch type="database">
 			<!--- Since 1.5.2  --->
 			<cfif structkeyexists(cfcatch,"nativeerrorcode") AND cfcatch.nativeerrorcode EQ 42122>
-				<cfquery datasource="razuna_default">
-				alter table razuna_config add conf_wl BOOLEAN DEFAULT false
-				</cfquery>
-				<cfquery datasource="razuna_default">
-				alter table razuna_config add conf_aka_token varchar(200)
-				</cfquery>
+				<cftry>
+					<cfquery datasource="razuna_default">
+					alter table razuna_config add conf_wl BOOLEAN DEFAULT false
+					</cfquery>
+					<cfcatch type="database"></cfcatch>
+				</cftry>
+				<cftry>
+					<cfquery datasource="razuna_default">
+					alter table razuna_config add conf_aka_token varchar(200)
+					</cfquery>
+					<cfcatch type="database"></cfcatch>
+				</cftry>
 			<cfelse>
 				<!--- Create the config DB on the filesystem --->
 				<cfinvoke component="db_h2" method="BDsetDatasource">
