@@ -56,6 +56,32 @@
 				<cflocation url="#theurl#">
 			</cfif>
 		</cfif>
+	<cfelseif application.razuna.storage EQ "akamai">
+		<cfif attributes.type EQ "img">
+			<cfset akatype = attributes.akaimg>
+		<cfelseif attributes.type EQ "vid">
+			<cfset akatype = attributes.akavid>
+		<cfelseif attributes.type EQ "aud">
+			<cfset akatype = attributes.akaaud>
+		<cfelse>
+			<cfset akatype = attributes.akadoc>
+		</cfif>
+		<!--- This is for basket or direct downloads --->
+		<cfif attributes.download EQ "T">
+			<!--- Set the MIME content encoding header and send the contents of as the page output. --->
+			<cfcontent type="#qry_binary.qfile.file_contenttype#/#qry_binary.qfile.file_contentsubtype#" file="#attributes.thepath#/outgoing/#qry_binary.thefilename#" deletefile="true">
+		<cfelse>
+			<!--- Decide on original or preview --->
+			<cfif attributes.v EQ "o">
+				<cfset theurl = "#attributes.akaurl##akatype#/#qry_binary.qfile.filenameorg#">
+			<cfelse>
+				<cfset theurl = "http://#cgi.http_host#/assets/#session.hostid#/#qry_binary.qfile.path_to_asset#/thumb_#qry_binary.qfile.img_id#.#qry_binary.qfile.thumb_extension#">
+			</cfif>
+			<!--- Get file --->
+			<cfhttp url="#theurl#" getasbinary="yes" />
+			<!--- Serve the file --->
+			<cfcontent type="application/force-download" variable="#cfhttp.FileContent#">
+		</cfif>
 	<!--- Local --->
 	<cfelse>
 		<!--- This is for basket or direct downloads --->
@@ -67,7 +93,12 @@
 			<cfif qry_binary.qfile.link_kind EQ "lan">
 				<cfset thefileloc = "#qry_binary.qfile.link_path_url#">
 			<cfelse>
-				<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/#qry_binary.qfile.filenameorg#">
+				<!--- Decide on original or preview --->
+				<cfif attributes.v EQ "o">
+					<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/#qry_binary.qfile.filenameorg#">
+				<cfelse>
+					<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/thumb_#qry_binary.qfile.img_id#.#qry_binary.qfile.thumb_extension#">
+				</cfif>
 			</cfif>
 			<!--- <cffile action="readbinary" file="#thefileloc#" variable="readb"> --->
 			<!--- Serve the file --->

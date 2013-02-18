@@ -1451,7 +1451,7 @@ This is the main function called directly by a single upload else from addassets
 			file_meta = <cfqueryparam value="#file_meta#" cfsqltype="cf_sql_varchar">,
 			path_to_asset =  <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
 			hashtag =  <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfif application.razuna.storage NEQ "local">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">
 			</cfif>
@@ -1598,6 +1598,56 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 			<!--- Add to Lucene --->
 			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qryfile.link_kind NEQ "url">
+			<!--- Upload file --->
+			<cfset upd = Createuuid("")>
+			<cfthread name="#upd#" intupstruct="#arguments.thestruct#">
+				<cfinvoke component="akamai" method="Upload">
+					<cfinvokeargument name="theasset" value="#attributes.intupstruct.qryfile.path#">
+					<cfinvokeargument name="thetype" value="#attributes.intupstruct.akadoc#">
+					<cfinvokeargument name="theurl" value="#attributes.intupstruct.akaurl#">
+					<cfinvokeargument name="thefilename" value="#attributes.intupstruct.qryfile.filename#">
+				</cfinvoke>
+			</cfthread>
+			<cfthread action="join" name="#upd#" />
+			<!--- If we are PDF we need to upload the thumbnail and image as well --->
+<!--- 
+			<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
+				<!--- Upload thumbnail --->		
+				<cfset updt = Createuuid("")>
+				<cfthread name="#updt#" intuptstruct="#arguments.thestruct#">
+					<cfinvoke component="amazon" method="Upload">
+						<cfinvokeargument name="key" value="/#attributes.intuptstruct.qryfile.folder_id#/doc/#attributes.intuptstruct.newid#/#attributes.intuptstruct.thepdfimage#">
+						<cfinvokeargument name="theasset" value="#attributes.intuptstruct.thetempdirectory#/#attributes.intuptstruct.thepdfimage#">
+						<cfinvokeargument name="awsbucket" value="#attributes.intuptstruct.awsbucket#">
+					</cfinvoke>
+				</cfthread>
+				<cfthread action="join" name="#updt#" />
+				<!--- Get signed URLS for the thumbnail --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.thepdfimage#" awsbucket="#arguments.thestruct.awsbucket#">
+				<!--- List all images and then upload them --->
+				<cfdirectory action="list" directory="#arguments.thestruct.thepdfdirectory#" name="pdfjpgs">
+				<!--- Upload images --->
+				<cfloop query="pdfjpgs">
+					<cfinvoke component="amazon" method="Upload">
+						<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/razuna_pdf_images/#name#">
+						<cfinvokeargument name="theasset" value="#arguments.thestruct.thepdfdirectory#/#name#">
+						<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+					</cfinvoke>
+				</cfloop>
+				<!--- Update DB  --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files
+				SET 
+				cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">
+				WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
+			 --->
+			<!--- Add to Lucene --->
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- Link_kind is URL --->
 		<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
 			<!--- Add to Lucene --->
@@ -1709,8 +1759,8 @@ This is the main function called directly by a single upload else from addassets
 						,
 						img_group = <cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
 					</cfif>
-					<!--- For Nirvanix --->
-					<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon") AND arguments.thestruct.qryfile.link_kind EQ "">
+					<!--- For cloud --->
+					<cfif application.razuna.storage NEQ "local" AND arguments.thestruct.qryfile.link_kind EQ "">
 						,
 						lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 					</cfif>
@@ -2175,6 +2225,49 @@ This is the main function called directly by a single upload else from addassets
 						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
 					</cfcatch>
 				</cftry>
+			<!--- AKAMAI --->
+			<cfelseif arguments.thestruct.storage EQ "akamai">
+				<!--- Create folder with the asset id --->
+				<cfif NOT directoryexists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#")>
+					<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" mode="775">
+				</cfif>
+				<cftry>
+					<!--- Upload Original Image --->
+					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+						<cfset upt = Createuuid("")>
+						<cfthread name="#upt#" intstruct="#arguments.thestruct#">
+							<cfinvoke component="akamai" method="Upload">
+								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
+								<cfinvokeargument name="thetype" value="#attributes.intstruct.akaimg#">
+								<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+								<cfinvokeargument name="thefilename" value="#attributes.intstruct.qryfile.filename#">
+							</cfinvoke>
+						</cfthread>
+						<cfthread action="join" name="#upt#" />
+					</cfif>
+					<!--- Move thumbnail --->
+					<cfthread name="uploadt#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+						<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
+							<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
+						<cfelseif !application.razuna.rfs>
+							<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
+						</cfif>
+					</cfthread>
+					<!--- Wait for thread to finish --->
+					<cfthread action="join" name="uploadt#arguments.thestruct.newid#" />
+					<!--- Get size thumnail --->
+					<cfif !application.razuna.rfs>
+						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
+					<cfelse>
+						<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
+						<cfset thumbsize = 1>
+					</cfif>
+					<!--- Get size of original --->
+					<cfset orgsize = arguments.thestruct.qryfile.thesize>
+					<cfcatch type="any">
+						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to akamai" dump="#cfcatch#">
+					</cfcatch>
+				</cftry>
 			</cfif>
 			<!--- Orgsize and thumbsize variables are not here --->
 			<cfif NOT isdefined(orgsize)>
@@ -2532,8 +2625,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cffile action="copy" source="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.qryfile.filename#" mode="775">
 				</cfif>
-			<!--- NIRVANIX / AMAZON --->
-			<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<!--- NIRVANIX / AMAZON /AKMAI --->
+			<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 				<!--- Just assign the current path to the finalpath --->
 				<cfset arguments.thestruct.thisvid.finalpath = "#arguments.thestruct.qryfile.path#">
 				<cfif !arguments.thestruct.importpath>
@@ -2672,6 +2765,33 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 				<!--- Get signed URLS for movie --->
 				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
+			<!--- AKAMAI --->
+			<cfelseif application.razuna.storage EQ "akamai">
+				<!--- Upload Movie Image --->
+				<!--- <cfif !application.razuna.rfs>
+					<cfset upmi = Createuuid("")>
+					<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#/#attributes.intstruct.thisvid.theorgimage#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thetempdirectory#/#attributes.intstruct.thisvid.theorgimage#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="#upmi#" />
+				</cfif> --->
+				<!--- Upload Movie --->
+				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+					<cfset upmt = Createuuid("")>
+					<cfthread name="#upmt#" intstruct="#arguments.thestruct#">
+						<cfinvoke component="akamai" method="Upload">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
+							<cfinvokeargument name="thetype" value="#attributes.intstruct.akavid#">
+							<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+							<cfinvokeargument name="thefilename" value="#attributes.intstruct.qryfile.filename#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="#upmt#" />
+				</cfif>
 			</cfif>
 			<cfset var ts = arguments.thestruct.qryfile.thesize>
 			<cfif !application.razuna.rfs>
@@ -2746,9 +2866,12 @@ This is the main function called directly by a single upload else from addassets
 			,
 			vid_name_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
 		</cfif>
+		<cfif application.razuna.storage NEQ "local">
+			,
+			lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+		</cfif>
 		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 			,
-			lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">
@@ -2787,7 +2910,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.thisvid.newid#" category="vid" online="#arguments.thestruct.vid_online#">
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid='#arguments.thestruct.thisvid.newid#')#>
+		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid=arguments.thestruct.thisvid.newid)>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("videos")>
 		<cfset resetcachetoken("folders")>
@@ -3334,7 +3457,7 @@ This is the main function called directly by a single upload else from addassets
 			host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
 			hashtag = <cfqueryparam value="#arguments.thestruct.qryfile.md5hash#" cfsqltype="cf_sql_varchar">
-			<cfif arguments.thestruct.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfif application.razuna.storage NEQ "local">
 				, lucene_key = <cfqueryparam value="#arguments.thestruct.theorgfile#" cfsqltype="cf_sql_varchar">
 			</cfif>
 			WHERE aud_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
@@ -3517,11 +3640,53 @@ This is the main function called directly by a single upload else from addassets
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 				</cfquery>
 			</cfif>
-		<!--- link_kind is url --->
-		<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
-		</cfif>
+			<!--- AKAMAI --->
+			<cfelseif application.razuna.storage EQ "akamai">
+				<!--- Unique --->
+				<cfset upa = Createuuid("")>
+				<cfset upw = "w" & upa>
+				<cfset upmp = "m" & upa>
+				<!--- Add to Lucene --->
+				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
+				<!--- Upload file --->
+				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+					<cfthread name="#upa#" audstruct="#arguments.thestruct#">
+						<cfinvoke component="akamai" method="Upload">
+							<cfinvokeargument name="theasset" value="#arguments.thestruct.theorgfile#">
+							<cfinvokeargument name="thetype" value="#attributes.intstruct.akaaud#">
+							<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+							<cfinvokeargument name="thefilename" value="#arguments.thestruct.qryfile.filename#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="#upa#" />
+				</cfif>
+				<!--- Upload the WAV --->
+				<!--- <cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
+					<cfthread name="#upw#" audstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav">
+							<cfinvokeargument name="theasset" value="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.wav">
+							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="#upw#" />
+				</cfif> --->
+				<!--- Move the MP3 but only if local asset link --->
+				<!--- <cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3")>
+					<cfthread name="#upmp#" audstruct="#arguments.thestruct#">
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3">
+							<cfinvokeargument name="theasset" value="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.mp3">
+							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="#upmp#" />
+				</cfif> --->
+			<!--- link_kind is url --->
+			<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
+				<!--- Add to Lucene --->
+				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
+			</cfif>
 		<!--- Update DB to make asset available --->
 		<cfif !application.razuna.rfs>
 			<cfquery datasource="#application.razuna.datasource#">
@@ -3786,21 +3951,23 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Loop over file id --->
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
 		<cftry>
-			<cfset cloud_url = structnew()>
+			<cfset var cloud_url = structnew()>
 			<!--- Get the ID and the type --->
-			<cfset theid = listfirst(i,"-")>
-			<cfset thetype = listlast(i,"-")>
+			<cfset var theid = listfirst(i,"-")>
+			<cfset var thetype = listlast(i,"-")>
 			<!--- Create variables according to type --->
 			<cfif thetype EQ "vid">
-				<cfset thedb = "#session.hostdbprefix#videos">
-				<cfset theflush = "#session.theuserid#_videos">
-				<cfset therecid = "vid_id">
-				<cfset thecolumns = "path_to_asset, vid_name_image, vid_name_org orgname, cloud_url_org">
+				<cfset var thedb = "#session.hostdbprefix#videos">
+				<cfset var theflush = "#session.theuserid#_videos">
+				<cfset var therecid = "vid_id">
+				<cfset var thecolumns = "path_to_asset, vid_name_image, vid_name_org orgname, cloud_url_org">
+				<cfset var theakatype = arguments.thestruct.akavid>
 			<cfelseif thetype EQ "img">
-				<cfset thedb = "#session.hostdbprefix#images">
-				<cfset theflush = "#session.theuserid#_images">
-				<cfset therecid = "img_id">
-				<cfset thecolumns = "path_to_asset, folder_id_r, img_filename_org orgname, img_extension, img_filename, cloud_url_org">
+				<cfset var thedb = "#session.hostdbprefix#images">
+				<cfset var theflush = "#session.theuserid#_images">
+				<cfset var therecid = "img_id">
+				<cfset var thecolumns = "path_to_asset, folder_id_r, img_filename_org orgname, img_extension, img_filename, cloud_url_org">
+				<cfset var theakatype = arguments.thestruct.akaimg>
 			</cfif>
 			<!--- Query current thumbnail info --->
 			<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qry_existing">
@@ -3871,6 +4038,14 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Amazon & Nirvanix download file --->
 				<cfelseif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 					<cfhttp url="#arguments.thestruct.qry_existing.cloud_url_org#" file="#arguments.thestruct.qry_existing.orgname#" path="#arguments.thestruct.filepath#"></cfhttp>
+				<!--- Akamai --->
+				<cfelseif application.razuna.storage EQ "akamai">
+					<!--- Delete old thumb (if there) --->
+					<cfif fileexists(arguments.thestruct.thumbpath)>
+						<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+					</cfif>
+					<!--- Download original --->
+					<cfhttp url="#arguments.thestruct.akaurl##arguments.thestruct.theakatype#/#arguments.thestruct.qry_existing.orgname#" file="#arguments.thestruct.qry_existing.orgname#" path="#arguments.thestruct.filepath#"></cfhttp>
 				</cfif>
 				<!--- Convert image to thumbnail --->
 				<cfthread name="con#thescript#" intstruct="#arguments.thestruct#">
@@ -3947,6 +4122,14 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Delete old thumb (if there) --->
 					<cfif fileexists(arguments.thestruct.thumbpath)>
 						<cffile action="delete" file="#arguments.thestruct.thumbpath#" />
+					</cfif>
+				<!--- Akamai --->
+				<cfelseif application.razuna.storage EQ "akamai">
+					<!--- Movie thumbnail to local directory --->
+					<cffile action="move" destination="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qry_existing.path_to_asset#/#arguments.thestruct.thumbname#" source="#arguments.thestruct.thumbpath#" mode="775" />
+					<!--- Remove the original --->
+					<cfif fileexists("#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#")>
+						<cffile action="delete" file="#arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#" />
 					</cfif>
 				</cfif>
 			</cfif>
@@ -4114,6 +4297,20 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke component="amazon" method="signedurl" returnVariable="cloudurl" key="#arguments.thestruct.folder_id#/#attributes.intstruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" awsbucket="#arguments.thestruct.awsbucket#">
 		<!--- Set the URL --->
 		<cfset arguments.thestruct.av_link_url = cloudurl.theurl>
+	<!--- Akamai --->
+	<cfelseif application.razuna.storage EQ "akamai">
+		<cfset upt = Createuuid("")>
+		<cfthread name="#upt#" intstruct="#arguments.thestruct#">
+			<cfinvoke component="akamai" method="Upload">
+				<cfinvokeargument name="theasset" value="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#">
+				<cfinvokeargument name="thetype" value="#attributes.intstruct.akaimg#">
+				<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+				<cfinvokeargument name="thefilename" value="#attributes.intstruct.thefilename#">
+			</cfinvoke>
+		</cfthread>
+		<cfthread action="join" name="#upt#" />
+		<!--- Set the URL --->
+		<cfset arguments.thestruct.av_link_url = "/#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#">
 	</cfif>
 	<!--- Set values for function call below --->
 	<cfset arguments.thestruct.av_link = "0">

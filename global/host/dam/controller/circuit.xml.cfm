@@ -223,6 +223,18 @@
 				<set name="attributes.awsbucket" value="#qry_storage.set2_aws_bucket#" />
 			</true>
 		</if>
+		<if condition="application.razuna.storage EQ 'akamai'">
+			<true>
+				<!-- query -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_storage()" returnvariable="qry_storage" />
+				<!-- Set bucket -->
+				<set name="attributes.akaurl" value="#qry_storage.set2_aka_url#" />
+				<set name="attributes.akaimg" value="#qry_storage.set2_aka_img#" />
+				<set name="attributes.akavid" value="#qry_storage.set2_aka_vid#" />
+				<set name="attributes.akaaud" value="#qry_storage.set2_aka_aud#" />
+				<set name="attributes.akadoc" value="#qry_storage.set2_aka_doc#" />
+			</true>
+		</if>
 	</fuseaction>
 	
 	<!-- 
@@ -1300,9 +1312,9 @@
 			<argument name="vid_id" value="#attributes.vid_id#" />
 			<argument name="columnlist" value="v.vid_extension, v.vid_width vwidth, v.vid_height vheight, v.vid_preview_width, v.vid_preview_heigth, v.vid_name_org, v.vid_name_image, v.vid_name_pre, v.vid_name_pre_img, v.folder_id_r, v.vid_filename, v.path_to_asset, v.cloud_url, v.cloud_url_org" />
 		</invoke>
-		<!-- Action: Check storage
+		<!-- Action: Check storage -->
 		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
+		<do action="storage" />
 		<!-- CFC: Get video output -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="showvideo(attributes)" returnvariable="thevideo" />
 		<!-- Show -->
@@ -2326,6 +2338,8 @@
 		<set name="attributes.thispath" value="#thispath#" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
+		<!-- CFC: Get asset path -->
+		<do action="storage" />
 		<!-- CFC: Serve the file -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="servefile(attributes)" returnvariable="qry_binary" />
 		<!-- Get the Cache tag -->
@@ -3748,9 +3762,9 @@
 		<!-- Params -->
 		<set name="attributes.file_id" value="#attributes.f#" />
 		<set name="attributes.type" value="img" />
-		<!-- Action: Check storage
+		<!-- Action: Check storage -->
 		<set name="attributes.isbrowser" value="#session.isbrowser#" />
-		<do action="storage" /> -->
+		<do action="storage" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Get images -->
@@ -3791,8 +3805,9 @@
 		<set name="attributes.link_path_url" value="#qry_detail_aud.detail.link_path_url#" />
 		<set name="attributes.cloud_url" value="#qry_detail_aud.detail.cloud_url#" />
 		<set name="attributes.cloud_url_org" value="#qry_detail_aud.detail.cloud_url_org#" />
-		<!-- Action: Check storage
-		<do action="storage" /> -->
+		<!-- Action: Check storage -->
+		<set name="attributes.isbrowser" value="#session.isbrowser#" />
+		<do action="storage" />
 		<!-- Do -->
 		<do action="ajax.audios_detail_flash" />
 	</fuseaction>

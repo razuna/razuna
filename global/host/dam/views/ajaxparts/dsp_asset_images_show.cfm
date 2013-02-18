@@ -23,9 +23,8 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfoutput>
-	<cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
-	<cfset thestorageurl = "//#cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
+<cfset thestorage = "#attributes.assetpath#/#session.hostid#/">
+<cfset thestorageurl = "//#cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
 <!--- Decide on extensions --->
 <cfif attributes.v EQ "o">
 	<cfset theext = qry_detail.img_extension>
@@ -36,49 +35,53 @@
 	<cfset thew = qry_detail.thumb_width>
 	<cfset theh = qry_detail.thumb_height>
 </cfif>
-<!--- Serve directly for PSD, AI and EPS --->
-<cfswitch expression="#theext#">
-	<cfcase value="jpg,gif,png">
-		<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
-		<html><head><title></title>
-		</head>
-		<body>
-		<div style="padding-top:20px;">
-			<cfif attributes.v EQ "o">
-				<!--- Original file --->
-				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-					<img src="#qry_detail.cloud_url_org#" border="0">
-				<cfelse>
-					<img src="#thestorageurl##qry_detail.path_to_asset#/#qry_detail.img_filename_org#?#qry_detail.hashtag#" border="0">
-				</cfif>
-			<cfelse>	
-				<!--- Thumbnail --->
-				<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-					<img src="#qry_detail.cloud_url#" border="0">
-				<cfelse>
-					<img src="#thestorageurl##qry_detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.thumb_extension#?#qry_detail.hashtag#" border="0">
-				</cfif>
+<cfoutput>
+	<!--- Serve directly for PSD, AI and EPS --->
+	<cfswitch expression="#theext#">
+		<cfcase value="jpg,gif,png">
+			<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd" >
+			<html><head><title></title></head>
+			<body>
+				<div style="padding-top:20px;">
+					<cfif attributes.v EQ "o">
+						<!--- Amazon / Nirvanix --->
+						<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+							<img src="#qry_detail.cloud_url_org#" border="0">
+						<!--- Akamai --->
+						<cfelseif application.razuna.storage EQ "akamai">
+							<img src="#attributes.akaurl##attributes.akaimg#/#qry_detail.img_filename_org#?#qry_detail.hashtag#" border="0">
+						<cfelse>
+							<img src="#thestorageurl##qry_detail.path_to_asset#/#qry_detail.img_filename_org#?#qry_detail.hashtag#" border="0">
+						</cfif>
+					<cfelse>	
+						<!--- Thumbnail --->
+						<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+							<img src="#qry_detail.cloud_url#" border="0">
+						<cfelse>
+							<img src="#thestorageurl##qry_detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.thumb_extension#?#qry_detail.hashtag#" border="0">
+						</cfif>
+					</cfif>
+				</div>
+			</body>
+			</html>
+		</cfcase>
+		<cfdefaultcase>
+			<!--- Default file name when prompted to download --->
+			<cfheader name="content-disposition" value="attachment; filename=#qry_detail.img_filename#" />
+			<!--- Nirvanix & Amazon--->
+			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+				<!--- Get file --->
+				<cflocation url="#qry_detail.cloud_url_org#?disposition=attachment">
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai">
+				<cflocation url="#attributes.akaurl##attributes.akaimg#/#qry_detail.img_filename_org#">
+			<!--- Local --->
+			<cfelse>
+				<cffile action="readbinary" file="#thestorage##qry_detail.path_to_asset#/#qry_detail.img_filename_org#" variable="readb">
+				<!--- Serve the file --->
+				<cfcontent variable="#readb#">
 			</cfif>
-		</div>
-		
-		</body>
-		</html>
-	</cfcase>
-	<cfdefaultcase>
-		<!--- Default file name when prompted to download --->
-		<cfheader name="content-disposition" value="attachment; filename=#qry_detail.img_filename#" />
-		<!--- Nirvanix & Amazon--->
-		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
-			<!--- Get file --->
-			<cflocation url="#qry_detail.cloud_url_org#?disposition=attachment">
-		<!--- Local --->
-		<cfelse>
-			<cffile action="readbinary" file="#thestorage##qry_detail.path_to_asset#/#qry_detail.img_filename_org#" variable="readb">
-			<!--- Serve the file --->
-			<cfcontent variable="#readb#">
-		</cfif>
-	</cfdefaultcase>
-</cfswitch>
-
+		</cfdefaultcase>
+	</cfswitch>
 </cfoutput>
 

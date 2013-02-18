@@ -632,6 +632,19 @@
 					</cfquery>
 					<cfset fs.awsbucket = qry.set2_aws_bucket>
 					<cfset createObject("component","global.cfc.amazon").init("#application.razuna.api.awskey#,#application.razuna.api.awskeysecret#")>
+				<!--- Akamai --->
+				<cfelseif application.razuna.api.storage EQ "akamai">
+					<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+					SELECT set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc
+					FROM #application.razuna.api.prefix["#arguments.api_key#"]#settings_2
+					WHERE set2_id = <cfqueryparam value="#application.razuna.api.setid#" cfsqltype="cf_sql_numeric">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					</cfquery>
+					<cfset fs.akaurl = qry.set2_aka_url>
+					<cfset fs.akaimg = qry.set2_aka_img>
+					<cfset fs.akavid = qry.set2_aka_vid>
+					<cfset fs.akaaud = qry.set2_aka_aud>
+					<cfset fs.akadoc = qry.set2_aka_doc>
 				</cfif>
 				<!--- Put in Struct --->
 				<cfset fs.folder_id = arguments.folder_id>

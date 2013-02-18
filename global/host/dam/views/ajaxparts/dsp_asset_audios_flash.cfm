@@ -65,6 +65,8 @@ div##wrapper {
 	</cfif>
 	<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 		<cfset audiopath = attributes.cloud_url_org>
+	<cfelseif application.razuna.storage EQ "akamai">
+		<cfset audiopath = arguments.thestruct.akaurl & arguments.thestruct.akaaud & "/" & attributes.aud_name>
 	</cfif>
 	<!--- Switch --->
 	<cfswitch expression="#attributes.aud_extension#">

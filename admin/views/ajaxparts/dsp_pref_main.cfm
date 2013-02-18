@@ -42,7 +42,7 @@
 				<!--- <li><a href="##pimage" onclick="savesettings();loadcontent('pimage','#myself#c.prefs_image');">#defaultsObj.trans("image_settings")#</a></li>
 				<li><a href="##pvideo" onclick="savesettings();loadcontent('pvideo','#myself#c.prefs_video');">#defaultsObj.trans("video_settings_global")#</a></li> --->
 				<!--- If Nirvanix enabled --->
-				<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+				<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 					<li><a href="##pstorage" onclick="savesettings();loadcontent('pstorage','#myself#c.prefs_storage');">Cloud Storage</a></li>
 				</cfif>
 			</ul>
@@ -51,7 +51,7 @@
 			<div id="pdam"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 			<!--- <div id="pimage"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 			<div id="pvideo"><img src="images/loading.gif" border="0" style="padding:10px;"></div> --->
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 				<div id="pstorage"><img src="images/loading.gif" border="0" style="padding:10px;"></div>
 			</cfif>
 		</div>

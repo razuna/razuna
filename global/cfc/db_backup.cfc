@@ -790,7 +790,12 @@
 		  SET2_AWS_BUCKET				VARCHAR(100),
 		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 't',
 		  SET2_MD5CHECK					VARCHAR(5) DEFAULT 'false',
-		  rec_uuid			VARCHAR(100)
+		  SET2_AKA_URL					VARCHAR(500),
+		  SET2_AKA_IMG					VARCHAR(200),
+		  SET2_AKA_VID					VARCHAR(200),
+		  SET2_AKA_AUD					VARCHAR(200),
+		  SET2_AKA_DOC					VARCHAR(200),
+		  rec_uuid						VARCHAR(100)
 		)
 		</cfquery>
 				

@@ -9,7 +9,7 @@
 		<cfelse>
 			<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" target="_blank">
 		</cfif>
-		View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p">Download</a>
+		View</a> | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=img&v=p" target="_blank">Download</a>
 		<!--- Nirvanix --->
 		<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
 			<br><i>#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#</i>

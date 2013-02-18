@@ -41,7 +41,7 @@
 		AND (img_group IS NULL OR img_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- Nirvanix and in Admin --->
-		<cfif session.thisapp EQ "admin" AND application.razuna.storage EQ "nirvanix">
+		<cfif session.thisapp EQ "admin">
 			AND lower(shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		</cfif>
 		<!--- todo : filter for file-extension --->
@@ -439,6 +439,23 @@
 				<!--- Versions --->
 				<cfinvoke component="amazon" method="deletefolder" folderpath="versions/img/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" />
 			</cfif>
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai">
+			<cfif arguments.thestruct.qrydetail.path_to_asset NEQ "">
+				<!--- Remove original --->
+				<cfinvoke component="akamai" method="Delete">
+					<cfinvokeargument name="theasset" value="">
+					<cfinvokeargument name="thetype" value="#arguments.thestruct.akaimg#">
+					<cfinvokeargument name="theurl" value="#arguments.thestruct.akaurl#">
+					<cfinvokeargument name="thefilename" value="#arguments.thestruct.qrydetail.filenameorg#">
+				</cfinvoke>
+				<!--- Remove thumbnail --->
+				<cfif DirectoryExists("#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#") AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
+					<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#arguments.thestruct.hostid#/#arguments.thestruct.qrydetail.path_to_asset#" recurse="true">
+				</cfif>
+				<!--- Versions --->
+				<!--- <cfinvoke component="amazon" method="deletefolder" folderpath="versions/img/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" /> --->
+			</cfif>
 		</cfif>
 		<cfcatch type="any"></cfcatch>
 	</cftry>
@@ -453,7 +470,7 @@
 	<!--- Loop over the found records --->
 	<cfloop query="qry">
 		<cftry>
-			<cfif application.razuna.storage EQ "local">
+			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 				<cfif DirectoryExists("#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#") AND path_to_asset NEQ "">
 					<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#" recurse="true">
 				</cfif>
@@ -818,6 +835,11 @@
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai">
+			<cfthread name="convert#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+				<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaimg#/#attributes.intstruct.thename#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.thisfolder#"></cfhttp>
+			</cfthread>
 		</cfif>
 	<!--- On a LAN asset --->
 	<cfelse>
@@ -1092,6 +1114,25 @@
 			<!--- Get signed URLS --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/#arguments.thestruct.thenamenoext#.#arguments.thestruct.theformat#" awsbucket="#arguments.thestruct.awsbucket#">
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.file_id#.#arguments.thestruct.qry_settings_image.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai">
+			<cfthread name="upload#theformat##arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+				<!--- Upload Original Image --->
+				<cfinvoke component="akamai" method="Upload">
+					<cfinvokeargument name="theasset" value="#attributes.intstruct.thisfolder#/#attributes.intstruct.thenamenoext#.#attributes.intstruct.theformat#">
+					<cfinvokeargument name="thetype" value="#attributes.intstruct.akaimg#">
+					<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+					<cfinvokeargument name="thefilename" value="#attributes.intstruct.thenamenoext#.#attributes.intstruct.theformat#">
+				</cfinvoke>
+				<!--- Upload Thumbnail --->
+				<!--- <cfinvoke component="nirvanix" method="Upload">
+					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_detail.folder_id_r#/img/#attributes.intstruct.newid#">
+					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thisfolder#/thumb_#attributes.intstruct.file_id#.#attributes.intstruct.qry_settings_image.set2_img_format#">
+					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+				</cfinvoke> --->
+			</cfthread>
+			<!--- Wait for thread to finish --->
+			<cfthread action="join" name="upload#theformat##arguments.thestruct.newid#" />
 		</cfif>
 		<!--- Add to shared options --->
 		<cftransaction>
@@ -1297,6 +1338,11 @@
 						<cfinvokeargument name="theasset" value="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#/#attributes.intstruct.thefinalname#">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
+				</cfthread>
+			<!--- Nirvanix --->
+			<cfelseif application.razuna.storage EQ "akamai">
+				<cfthread name="download#art##theimageid#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaimg#/#attributes.intstruct.theimgname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.tempfolder#/#attributes.intstruct.art#"></cfhttp>
 				</cfthread>
 			</cfif>
 		<!--- It is a local link --->

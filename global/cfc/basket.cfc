@@ -337,6 +337,11 @@
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
 				</cfthread>
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
+				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akadoc#/#attributes.intstruct.thename#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+				</cfthread>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif arguments.thestruct.qry.link_kind EQ "url">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
@@ -453,6 +458,17 @@
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
 				</cfthread>
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
+				<cfif theart EQ "thumb">
+					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
+						<cffile action="copy" source="#attributes.intstruct.assetpath#/#attributes.intstruct.hostid#/#attributes.intstruct.qry.path_to_asset#/#attributes.intstruct.theimgname#" destination="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thefinalname#" mode="775">
+					</cfthread>
+				<cfelse>
+					<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
+						<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaimg#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thefinalname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+					</cfthread>
+				</cfif>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#thethreadid#" intstruct="#arguments.thestruct#">
@@ -561,6 +577,11 @@
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
 				</cfthread>
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
+				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akavid#/#attributes.intstruct.thenewname#" file="#attributes.intstruct.thenewname#" path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
+				</cfthread>		
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">
 				<cfthread name="#wvt#" intstruct="#arguments.thestruct#">
@@ -661,6 +682,11 @@
 						<cfinvokeargument name="theasset" value="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#/#attributes.intstruct.thenewname#">
 						<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 					</cfinvoke>
+				</cfthread>
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai" AND qry.link_kind EQ "">
+				<cfthread name="download#theart##theaudid#" intstruct="#arguments.thestruct#">
+					<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akaaud#/#attributes.intstruct.thefinalname#" file="#attributes.intstruct.thenewname# " path="#attributes.intstruct.newpath#/#attributes.intstruct.thefname#/#attributes.intstruct.theart#"></cfhttp>
 				</cfthread>
 			<!--- If this is a URL we write a file in the directory with the PATH --->
 			<cfelseif qry.link_kind EQ "url">

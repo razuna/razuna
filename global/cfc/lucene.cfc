@@ -422,7 +422,7 @@
 		<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
 			<cftry>
 				<!--- Nirvanix or Amazon --->
-				<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon")>
+				<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
 					<!--- Check if windows or not --->
 					<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 					<cfif !isWindows>
@@ -486,7 +486,7 @@
 					<cfif application.razuna.storage EQ "local">
 						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
 					<!--- Storage: Nirvanix --->
-					<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon")>
+					<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
 						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
 					</cfif>
 				<!--- For linked local assets --->
@@ -714,7 +714,7 @@
 		<cfoutput><strong>Starting re-indexing...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- CLOUD --->
-		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 			<!--- Params --->
 			<cfset arguments.thestruct.qryfile.path = arguments.thestruct.thispath & "/incoming/reindex_" & application.razuna.processid>
 			<cfset arguments.thestruct.hostid = session.hostid>
@@ -735,7 +735,9 @@
 						<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
 						<cfflush>
 						<!--- Download --->
-						<cfif cloud_url_org CONTAINS "://">
+						<cfif application.razuna.storage EQ "akamai">
+							<cfhttp url="#arguments.thestruct.akaurl##arguments.thestruct.akadoc#/#file_name_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
+						<cfelseif cloud_url_org CONTAINS "://">
 							<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
 						</cfif>
 						<!--- If download was successful --->
@@ -815,7 +817,7 @@
 			<cfinvokeargument name="category" value="#arguments.assetcategory#">
 			<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
 			<cfinvokeargument name="fromapi" value="t">
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 				<cfinvokeargument name="notfile" value="f">
 			</cfif>
 		</cfinvoke>

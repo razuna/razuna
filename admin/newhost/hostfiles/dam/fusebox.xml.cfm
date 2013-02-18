@@ -60,6 +60,7 @@
 		<class alias="import" classpath="global.cfc.import" type="component" constructor="init"/>
 		<class alias="plugins" classpath="global.cfc.plugins" type="component" constructor="init"/>
 		<class alias="api" classpath="global.cfc.api" type="component" constructor="init"/>
+		<class alias="akamai" classpath="global.cfc.akamai" type="component" constructor="init"/>
 	</classes>
 
 	<parameters>

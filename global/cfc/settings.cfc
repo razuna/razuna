@@ -65,7 +65,7 @@
 	set2_email_server_port,
 	<!--- set2_vid_preview_width, set2_vid_preview_heigth, set2_vid_preview_time, set2_vid_preview_start, ---> 
 	set2_url_sp_video_preview, set2_vid_preview_author, set2_vid_preview_copyright, set2_cat_vid_web, set2_cat_vid_intra,
-	set2_create_vidfolders_where, set2_path_to_assets, set2_aws_bucket
+	set2_create_vidfolders_where, set2_path_to_assets, set2_aws_bucket, set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -215,7 +215,9 @@
 <cffunction name="prefs_storage">
 	<cfset variables.cachetoken = getcachetoken("settings")>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_storage */ set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket
+	SELECT /* #variables.cachetoken#prefs_storage */ 
+	set2_nirvanix_name, set2_nirvanix_pass, set2_aws_bucket, 
+	set2_aka_url, set2_aka_img, set2_aka_vid, set2_aka_aud, set2_aka_doc
 	FROM #session.hostdbprefix#settings_2
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -402,7 +404,8 @@
 <cffunction name="get_global" access="remote" returnType="query">
 	<!--- Select --->
 	<cfquery datasource="razuna_default" name="qry" region="razcache" cachedwithin="1">
-	SELECT /* #variables.cachetoken#get_global */ conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, 
+	SELECT /* #variables.cachetoken#get_global */ 
+	conf_database, conf_schema, conf_datasource, conf_storage, conf_nirvanix_appkey, conf_nirvanix_master_name, conf_aka_token,
 	conf_nirvanix_master_pass, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm
 	FROM razuna_config
 	</cfquery>
@@ -484,6 +487,10 @@
 		<cfif commad EQ "T">,</cfif>conf_rendering_farm = <cfqueryparam value="#arguments.thestruct.conf_rendering_farm#" cfsqltype="CF_SQL_DOUBLE">
 		<cfset commad = "T">
 	</cfif>
+	<cfif StructKeyExists(#arguments.thestruct#, "conf_aka_token")>
+		<cfif commad EQ "T">,</cfif>conf_aka_token = <cfqueryparam value="#arguments.thestruct.conf_aka_token#" cfsqltype="cf_sql_varchar">
+		<cfset commad = "T">
+	</cfif>
 	</cfquery>
 	<!--- Set application scopes --->
 	<cfif StructKeyExists(#arguments.thestruct#, "conf_nirvanix_appkey")>
@@ -498,6 +505,10 @@
 	<!--- Set rendering setting in application scope --->
 	<cfif StructKeyExists(arguments.thestruct, "conf_rendering_farm")>
 		<cfset application.razuna.rfs = arguments.thestruct.conf_rendering_farm>
+	</cfif>
+	<!--- Akamai --->
+	<cfif StructKeyExists(arguments.thestruct, "conf_aka_token")>
+		<cfset application.razuna.akatoken = arguments.thestruct.conf_aka_token>
 	</cfif>
 	<!--- Save in global setting the rendering farm location --->
 	<cfif StructKeyExists(arguments.thestruct, "rendering_farm_location")>
@@ -862,6 +873,26 @@
 			<cfif commad EQ "T">,</cfif>set2_aws_bucket = <cfqueryparam value="#lcase(arguments.thestruct.set2_aws_bucket)#" cfsqltype="cf_sql_varchar">
 			<cfset commad = "T">
 		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_url")>
+			<cfif commad EQ "T">,</cfif>set2_aka_url = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_url)#" cfsqltype="cf_sql_varchar">
+			<cfset commad = "T">
+		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_img")>
+			<cfif commad EQ "T">,</cfif>set2_aka_img = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_img)#" cfsqltype="cf_sql_varchar">
+			<cfset commad = "T">
+		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_vid")>
+			<cfif commad EQ "T">,</cfif>set2_aka_vid = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_vid)#" cfsqltype="cf_sql_varchar">
+			<cfset commad = "T">
+		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_aud")>
+			<cfif commad EQ "T">,</cfif>set2_aka_aud = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_aud)#" cfsqltype="cf_sql_varchar">
+			<cfset commad = "T">
+		</cfif>
+		<cfif StructKeyExists(#arguments.thestruct#, "set2_aka_doc")>
+			<cfif commad EQ "T">,</cfif>set2_aka_doc = <cfqueryparam value="#lcase(arguments.thestruct.set2_aka_doc)#" cfsqltype="cf_sql_varchar">
+			<cfset commad = "T">
+		</cfif>
 		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -1007,14 +1038,17 @@
 		<cfquery datasource="razuna_default" name="qry">
 		SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
 		conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
-		conf_rendering_farm, conf_serverid, conf_wl
+		conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
-			<!--- Since 1.5.2 is installed we only added the white labeling --->
+			<!--- Since 1.5.2  --->
 			<cfif structkeyexists(cfcatch,"nativeerrorcode") AND cfcatch.nativeerrorcode EQ 42122>
 				<cfquery datasource="razuna_default">
-				Alter table razuna_config add conf_wl BOOLEAN DEFAULT false
+				alter table razuna_config add conf_wl BOOLEAN DEFAULT false
+				</cfquery>
+				<cfquery datasource="razuna_default">
+				alter table razuna_config add conf_aka_token varchar(200)
 				</cfquery>
 			<cfelse>
 				<!--- Create the config DB on the filesystem --->
@@ -1057,13 +1091,14 @@
 					conf_firsttime				BOOLEAN,
 					conf_rendering_farm			BOOLEAN,
 					conf_serverid				VARCHAR(100),
-					conf_wl 					BOOLEAN DEFAULT false
+					conf_wl 					BOOLEAN DEFAULT false,
+					conf_aka_token				VARCHAR(200)
 				)
 				</cfquery>
 				<!--- Insert values --->
 				<cfquery datasource="razuna_default">
 				INSERT INTO razuna_config
-				(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, 
+				(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_aka_token,
 				conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_rendering_farm, conf_serverid, conf_wl)
 				VALUES(
 				'h2',
@@ -1083,7 +1118,7 @@
 				<cfquery datasource="razuna_default" name="qry">
 				SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
 				conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
-				conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl
+				conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
 				FROM razuna_config
 				</cfquery>
 			</cfif>
@@ -1177,6 +1212,7 @@
 	<cfset application.razuna.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
+	<cfset application.razuna.akatoken = qry.conf_aka_token>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1186,7 +1222,7 @@
 	<cfquery datasource="razuna_default" name="qry">
 	SELECT conf_database, conf_datasource, conf_setid, conf_storage, 
 	conf_nirvanix_appkey, conf_nirvanix_url_services, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, 
-	conf_rendering_farm, conf_isp
+	conf_rendering_farm, conf_isp, conf_aka_token
 	FROM razuna_config
 	</cfquery>
 	<!--- Now put config values into application scope, but only if they differ or scope not exist --->
@@ -1201,6 +1237,7 @@
 	<cfset application.razuna.api.awslocation = qry.conf_aws_location>
 	<cfset application.razuna.api.rfs = qry.conf_rendering_farm>
 	<cfset application.razuna.api.isp = qry.conf_isp>
+	<cfset application.razuna.api.akatoken = qry.conf_aka_token>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1208,7 +1245,7 @@
 <cffunction name="getconfigdefault" output="false">
 	<!--- Query --->
 	<cfquery datasource="razuna_default" name="qry">
-	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
+	SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey, conf_aka_token,
 	conf_nirvanix_url_services, conf_isp, conf_aws_access_key, conf_aws_secret_access_key, conf_aws_location, conf_rendering_farm, conf_wl
 	FROM razuna_config
 	</cfquery>
@@ -1228,6 +1265,7 @@
 	<cfset application.razuna.s3ds = AmazonRegisterDataSource("aws",qry.conf_aws_access_key,qry.conf_aws_secret_access_key,qry.conf_aws_location)>
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.dynpath = cgi.context_path>
+	<cfset application.razuna.akatoken = qry.conf_aka_token>
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->

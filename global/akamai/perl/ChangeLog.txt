@@ -1,0 +1,4 @@
+Akamai/Edge/Auth package for Perl
+
+version 1.1.1 (2006/12/15):
+	* Initial Perl version

@@ -1330,10 +1330,15 @@
 		  SET2_AWS_BUCKET				VARCHAR(100),
 		  SET2_LABELS_USERS				VARCHAR(2) DEFAULT 'f',
 		  SET2_MD5CHECK					VARCHAR(5) DEFAULT 'false',
+		  SET2_AKA_URL					VARCHAR(500),
+		  SET2_AKA_IMG					VARCHAR(200),
+		  SET2_AKA_VID					VARCHAR(200),
+		  SET2_AKA_AUD					VARCHAR(200),
+		  SET2_AKA_DOC					VARCHAR(200),
 		  rec_uuid						VARCHAR(100),
 		  PRIMARY KEY (rec_uuid),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS_2_FK FOREIGN KEY (HOST_ID)
-		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#SETTINGS_2_FK FOREIGN KEY (HOST_ID)
+		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)
 		</cfquery>
 		

@@ -39,10 +39,6 @@
 	FROM #session.hostdbprefix#files
 	WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	<!--- Nirvanix and in Admin --->
-	<cfif session.thisapp EQ "admin" AND application.razuna.storage EQ "nirvanix">
-		AND lower(shared) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
-	</cfif>
 	<cfif Len(Arguments.file_extension)>
 		AND
 		<!--- if doc or xls also add office 2007 format to query --->
@@ -493,6 +489,16 @@
 				<cfinvoke component="amazon" method="deletefolder" folderpath="#arguments.thestruct.qrydetail.path_to_asset#" awsbucket="#arguments.thestruct.awsbucket#" />
 				<!--- Versions --->
 				<cfinvoke component="amazon" method="deletefolder" folderpath="versions/doc/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" />
+			<!--- Akamai --->
+			<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qrydetail.path_to_asset NEQ "">
+				<cfinvoke component="akamai" method="Delete">
+					<cfinvokeargument name="theasset" value="">
+					<cfinvokeargument name="thetype" value="#arguments.thestruct.akadoc#">
+					<cfinvokeargument name="theurl" value="#arguments.thestruct.akaurl#">
+					<cfinvokeargument name="thefilename" value="#arguments.thestruct.qrydetail.filenameorg#">
+				</cfinvoke>
+				<!--- Versions --->
+				<!--- <cfinvoke component="amazon" method="deletefolder" folderpath="versions/doc/#arguments.thestruct.id#" awsbucket="#arguments.thestruct.awsbucket#" /> --->
 			</cfif>
 			<cfcatch type="any">
 				<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error on removing a file from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#)" dump="#cfcatch#">
@@ -587,7 +593,7 @@
 			<cfset qry.pdfxmp = pdfxmp>
 		</cfif>
 		<!--- Get file size on file system --->
-		<cfif (application.razuna.storage NEQ "nirvanix" OR application.razuna.storage NEQ "amazon") AND (details.file_size EQ "0" OR details.file_size EQ "0" AND details.link_kind NEQ "url")>
+		<cfif (application.razuna.storage NEQ "nirvanix" OR application.razuna.storage NEQ "amazon" OR application.razuna.storage NEQ "akamai") AND (details.file_size EQ "0" OR details.file_size EQ "0" AND details.link_kind NEQ "url")>
 			<cfset thefilepath = "#details.set2_path_to_assets#/#session.hostid#/#details.path_to_asset#/#details.file_name_org#">
 			<cfinvoke component="global" method="getfilesize" filepath="#thefilepath#" returnvariable="theassetsize">
 		<cfelse>
@@ -775,7 +781,7 @@
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 			<!--- Nirvanix --->
-			<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
+			<cfelseif application.razuna.storage NEQ "local">
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
 			</cfif>
@@ -900,6 +906,11 @@
 					<cfinvokeargument name="theasset" value="#attributes.intstruct.thepath#/outgoing/#attributes.intstruct.getbin.file_name_org#">
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
+			</cfthread>
+		<!--- Akamai --->
+		<cfelseif application.razuna.storage EQ "akamai" AND getbin.link_kind EQ "">
+			<cfthread name="download#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+				<cfhttp url="#attributes.intstruct.akaurl##attributes.intstruct.akadoc#/#attributes.intstruct.getbin.file_name_org#" file="#attributes.intstruct.getbin.file_name_org#" path="#attributes.intstruct.thepath#/outgoing"></cfhttp>
 			</cfthread>
 		<!--- If this is a linked asset --->
 		<cfelseif getbin.link_kind EQ "lan">
