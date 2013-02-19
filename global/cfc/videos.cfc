@@ -1234,13 +1234,17 @@
 			<cfswitch expression="#theformat#">
 				<!--- if AVI --->
 				<cfcase value="avi">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -ac 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p  -ac 2 -async 1 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- if 3GP --->
 				<cfcase value="3gp">
 					<!--- If we convert a VOB file then --->
 					<cfif arguments.thestruct.qrydetail.vid_extension EQ "vob">
-						<cfset var theacodec = "libfaac">
+						<cfif isWindows>
+							<cfset var theacodec = "libvo_aacenc">
+						<cfelse>
+							<cfset var theacodec = "libfaac">
+						</cfif>
 					<cfelse>
 						<cfset var theacodec = "copy">
 					</cfif>
@@ -1265,10 +1269,12 @@
 				</cfcase>
 				<cfdefaultcase>
 					<cfif isWindows>
-						<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -async 1 -y #thispreviewvideo#">
+						<cfset var theaac = "libvo_aacenc">
 					<cfelse>
-						<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -acodec libfaac -crf 22 -threads 2 -async 1 -y #thispreviewvideo#">
+						<cfset var theaac = "libfaac">
 					</cfif>
+
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p -acodec #theaac# -crf 22 -threads 2 -async 1 -movflags +faststart -y #thispreviewvideo#">
 				</cfdefaultcase>
 			</cfswitch>
 			<!--- FFMPEG: CONVERT THE VIDEO --->
