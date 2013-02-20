@@ -113,19 +113,19 @@
 	function subadvfields(theform){
 		// Get values
 		var searchtext = '';
-		var searchfor = document.forms[theform].searchfor.value;
-		var keywords = document.forms[theform].keywords.value;
-		var description = document.forms[theform].description.value;
-		var filename = document.forms[theform].filename.value;
-		var extension = document.forms[theform].extension.value;
-		var rawmetadata = document.forms[theform].rawmetadata.value;
+		var searchfor = document.forms[theform].searchfor.value.replace(/["']/g, '\\"');
+		var keywords = document.forms[theform].keywords.value.replace(/["']/g, '\\"');
+		var description = document.forms[theform].description.value.replace(/["']/g, '\\"');
+		var filename = document.forms[theform].filename.value.replace(/["']/g, '\\"');
+		var extension = document.forms[theform].extension.value.replace(/["']/g, '\\"');
+		var rawmetadata = document.forms[theform].rawmetadata.value.replace(/["']/g, '\\"');
 		var labels = $('#' + theform + ' [name="labels"]').val();
 		if(labels != null) var labels = labels.toString().replace(/,/g, " ");
 		var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 		// Custom fields (get values)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			<cfif cf_type EQ "text" OR cf_type EQ "textarea">
-				var value_#cfid# = document.forms[theform].cf#cfid#.value.split(' ').join(' +');
+				var value_#cfid# = document.forms[theform].cf#cfid#.value.split(' ').join(' +').replace(/["']/g, '\\"');
 			<cfelseif cf_type EQ "select">
 				var value_#cfid# = document.forms[theform].cf#cfid#.options[document.forms[theform].cf#cfid#.selectedIndex].value.split(' ').join(' +');
 			<cfelseif cf_type EQ "radio">

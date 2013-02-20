@@ -390,7 +390,7 @@ function checkentry(){
 	// Only allow chars
 	var illegalChars = /(\*|\?)/;
 	// Parse the entry
-	var theentry = $('#simplesearchtext').val();
+	var theentry = $('#simplesearchtext').val().replace(/["']/g, '\\"');
 	var thetype = $('#simplesearchthetype').val();
 	if (theentry == "" | theentry == "Quick Search"){
 		return false;
@@ -1258,12 +1258,12 @@ function loadbasket(){
 }
 function subadvfieldsdoc(theform,searchtext){
 	// Get values
-	var author = document.forms[theform].author.value;
-	var authorsposition = document.forms[theform].authorsposition.value;
-	var captionwriter = document.forms[theform].captionwriter.value;
-	var webstatement = document.forms[theform].webstatement.value;
-	var rights = document.forms[theform].rights.value;
-	var rightsmarked = document.forms[theform].rightsmarked.value;
+	var author = document.forms[theform].author.value.replace(/["']/g, '\\"');
+	var authorsposition = document.forms[theform].authorsposition.value.replace(/["']/g, '\\"');
+	var captionwriter = document.forms[theform].captionwriter.value.replace(/["']/g, '\\"');
+	var webstatement = document.forms[theform].webstatement.value.replace(/["']/g, '\\"');
+	var rights = document.forms[theform].rights.value.replace(/["']/g, '\\"');
+	var rightsmarked = document.forms[theform].rightsmarked.value.replace(/["']/g, '\\"');
 	var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 	// Put together the search
 	if (author != '') var author = 'author:' + author;
@@ -1313,39 +1313,39 @@ function subadvfieldsdoc(theform,searchtext){
 }
 function subadvfieldsimg(theform,searchtext){
 	// Get values
-	var subjectcode = document.forms[theform].subjectcode.value;
-	var creator = document.forms[theform].creator.value;
-	var title = document.forms[theform].title.value;
-	var authorsposition = document.forms[theform].authorsposition.value;
-	var captionwriter = document.forms[theform].captionwriter.value;
-	var ciadrextadr = document.forms[theform].ciadrextadr.value;
-	var category = document.forms[theform].category.value;
-	var supplementalcategories = document.forms[theform].supplementalcategories.value;
-	var urgency = document.forms[theform].urgency.value;
-	var ciadrcity = document.forms[theform].ciadrcity.value;
-	var ciadrctry = document.forms[theform].ciadrctry.value;
-	var location = document.forms[theform].location.value;
-	var ciadrpcode = document.forms[theform].ciadrpcode.value;
-	var ciemailwork = document.forms[theform].ciemailwork.value;
-	var ciurlwork = document.forms[theform].ciurlwork.value;
-	var citelwork = document.forms[theform].citelwork.value;
-	var intellectualgenre = document.forms[theform].intellectualgenre.value;
-	var instructions = document.forms[theform].instructions.value;
-	var source = document.forms[theform].source.value;
-	var usageterms = document.forms[theform].usageterms.value;
-	var copyrightstatus = document.forms[theform].copyrightstatus.value;
-	var transmissionreference = document.forms[theform].transmissionreference.value;
-	var webstatement = document.forms[theform].webstatement.value;
-	var headline = document.forms[theform].headline.value;
-	var datecreated = document.forms[theform].datecreated.value;
-	var city = document.forms[theform].city.value;
-	var ciadrregion = document.forms[theform].ciadrregion.value;
-	var country = document.forms[theform].country.value;
-	var countrycode = document.forms[theform].countrycode.value;
-	var scene = document.forms[theform].scene.value;
-	var state = document.forms[theform].state.value;
-	var credit = document.forms[theform].credit.value;
-	var rights = document.forms[theform].rights.value;
+	var subjectcode = document.forms[theform].subjectcode.value.replace(/["']/g, '\\"');
+	var creator = document.forms[theform].creator.value.replace(/["']/g, '\\"');
+	var title = document.forms[theform].title.value.replace(/["']/g, '\\"');
+	var authorsposition = document.forms[theform].authorsposition.value.replace(/["']/g, '\\"');
+	var captionwriter = document.forms[theform].captionwriter.value.replace(/["']/g, '\\"');
+	var ciadrextadr = document.forms[theform].ciadrextadr.value.replace(/["']/g, '\\"');
+	var category = document.forms[theform].category.value.replace(/["']/g, '\\"');
+	var supplementalcategories = document.forms[theform].supplementalcategories.value.replace(/["']/g, '\\"');
+	var urgency = document.forms[theform].urgency.value.replace(/["']/g, '\\"');
+	var ciadrcity = document.forms[theform].ciadrcity.value.replace(/["']/g, '\\"');
+	var ciadrctry = document.forms[theform].ciadrctry.value.replace(/["']/g, '\\"');
+	var location = document.forms[theform].location.value.replace(/["']/g, '\\"');
+	var ciadrpcode = document.forms[theform].ciadrpcode.value.replace(/["']/g, '\\"');
+	var ciemailwork = document.forms[theform].ciemailwork.value.replace(/["']/g, '\\"');
+	var ciurlwork = document.forms[theform].ciurlwork.value.replace(/["']/g, '\\"');
+	var citelwork = document.forms[theform].citelwork.value.replace(/["']/g, '\\"');
+	var intellectualgenre = document.forms[theform].intellectualgenre.value.replace(/["']/g, '\\"');
+	var instructions = document.forms[theform].instructions.value.replace(/["']/g, '\\"');
+	var source = document.forms[theform].source.value.replace(/["']/g, '\\"');
+	var usageterms = document.forms[theform].usageterms.value.replace(/["']/g, '\\"');
+	var copyrightstatus = document.forms[theform].copyrightstatus.value.replace(/["']/g, '\\"');
+	var transmissionreference = document.forms[theform].transmissionreference.value.replace(/["']/g, '\\"');
+	var webstatement = document.forms[theform].webstatement.value.replace(/["']/g, '\\"');
+	var headline = document.forms[theform].headline.value.replace(/["']/g, '\\"');
+	var datecreated = document.forms[theform].datecreated.value.replace(/["']/g, '\\"');
+	var city = document.forms[theform].city.value.replace(/["']/g, '\\"');
+	var ciadrregion = document.forms[theform].ciadrregion.value.replace(/["']/g, '\\"');
+	var country = document.forms[theform].country.value.replace(/["']/g, '\\"');
+	var countrycode = document.forms[theform].countrycode.value.replace(/["']/g, '\\"');
+	var scene = document.forms[theform].scene.value.replace(/["']/g, '\\"');
+	var state = document.forms[theform].state.value.replace(/["']/g, '\\"');
+	var credit = document.forms[theform].credit.value.replace(/["']/g, '\\"');
+	var rights = document.forms[theform].rights.value.replace(/["']/g, '\\"');
 	var andor = document.forms[theform].andor.options[document.forms[theform].andor.selectedIndex].value;
 	// Put together the search
 	if (subjectcode != '') var subjectcode = 'subjectcode:' + subjectcode;
