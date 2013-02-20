@@ -1284,7 +1284,7 @@
 			country					nvarchar(300),
 			countrycode				nvarchar(300),
 			scene					nvarchar(300),
-			state					vnarchar(300),
+			state					nvarchar(300),
 			credit					nvarchar(300),
 			rights					NVARCHAR(max),
 			colorspace				nvarchar(50),
