@@ -34,13 +34,23 @@
 		<tr>
 			<th colspan="4">
 				<cfif attributes.fromshare EQ "F">
-					<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("files_in_basket")#</div>
+					<!--- <div style="float:left;">#myFusebox.getApplicationData().defaults.trans("files_in_basket")#</div> --->
                     <cfif qry_basket.recordcount NEQ 0>
+                    	<!--- Buttons --->
+                    	<div style="float:left;">
+                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("download")#" onclick="$('##thebasket').submit();return false;" class="button">
+                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_basket")#" onclick="basketsave();return false;" class="button">
+                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("send_basket_email")#" onclick="basketemail('#qry_basket.cart_order_email#');return false;" class="button">
+                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("send_basket_ftp")#" onclick="basketftp();return false;" class="button">
+                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#" onclick="showwindow('#myself#c.meta_export&what=basket','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',600,1);return false;" class="button">
+                    		<input type="button" value="#myFusebox.getApplicationData().defaults.trans("delete_basket")#" onclick="showwindow('#myself#ajax.remove_basket','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("delete_basket"))#',400,1);return false;" class="button">
+                    	</div>
+                    	<div style="clear:both;"></div>
                     	<!--- Select All --->
-                    	<div style="float:left; padding-left:30px;">
-                            <a href="##" id="checkall" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>  
-						</div> 					
-						<div style="float:right;">
+                    	<div style="float:left;padding:10px 0px 0px 0px;">
+                            <a href="##" id="checkall" style="text-decoration:underline;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>  
+						</div>
+						<!--- <div style="float:right;">
 							<div style="float:left;">
                             <a href="##" onclick="$('##basketaction').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("basket_actions")#</a></div>
 							<div style="float:right;padding-left:2px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##basketaction').toggle();" class="ddicon"></div>
@@ -52,15 +62,22 @@
 								<p><a href="##" onclick="showwindow('#myself#c.meta_export&what=basket','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',600,1);$('##basketaction').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#</a></p>
 								<p><a href="##" onclick="showwindow('#myself#ajax.remove_basket','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("delete_basket"))#',400,1);$('##basketaction').toggle();return false;">#myFusebox.getApplicationData().defaults.trans("delete_basket")#</a></p>
 							</div>
-						</div>
+						</div> --->
 					</cfif>
 				<cfelse>
-					<div style="float:left;"><cfif qry_basket.recordcount NEQ 0><cfif qry_folder.share_order EQ "F"><a href="##" onclick="$('##thebasket').submit();return false;">#myFusebox.getApplicationData().defaults.trans("download")#</a><cfelse><a href="##" onclick="showwindow('#myself#ajax.share_order','Order',500,1);return false;">Order Assets in Basket</a></cfif></div>
-					<!--- Select All --->
-					<div style="float:left; padding-left:60px;">
-						<a href="##" id="checkall">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>  
-					</div> 	
-					<div style="float:right;"><a href="##" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket_all');">#myFusebox.getApplicationData().defaults.trans("delete_basket")#</a></cfif></div>
+					<div style="float:left;">
+						<cfif qry_basket.recordcount NEQ 0>
+							<cfif qry_folder.share_order EQ "F">
+								<input type="button" value="#myFusebox.getApplicationData().defaults.trans("download")#" onclick="$('##thebasket').submit();return false;" class="button">
+								<input type="button" value="#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#" onclick="showwindow('#myself#c.meta_export&what=basket','#myFusebox.getApplicationData().defaults.trans("header_export_metadata")#',600,1);return false;" class="button">
+							<cfelse>
+								<input type="button" value="Order the selected files below" onclick="showwindow('#myself#ajax.share_order','Order',500,1);return false;" class="button">
+							</cfif>
+						</div>	
+						<div style="float:right;">
+							<input type="button" value="#myFusebox.getApplicationData().defaults.trans("delete_basket")#" onclick="loadcontent('shared_basket','#myself#c.share_remove_basket_all');" class="button">
+						</cfif>
+					</div>
 				</cfif>
 			</th>
 		</tr>
@@ -69,6 +86,12 @@
 				<td>#myFusebox.getApplicationData().defaults.trans("empty_basket")#</td>
 			</tr>
 		<cfelse>
+			<!--- Select All --->
+			<tr>
+				<td colspan="4">
+					<a href="##" id="checkall" style="text-decoration:underline;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
+				</td>
+			</tr>
 			<cfif attributes.fromshare EQ "T" AND qry_folder.share_order EQ "T">
 				<tr>
 					<td colspan="4">#myFusebox.getApplicationData().defaults.trans("basket_order")#</td>
@@ -91,6 +114,9 @@
 					<td colspan="4">If you have finished processing the order you can change the status here: <a href="##" onclick="loadcontent('order_done','#myself#c.order_done&cart_id=#session.thecart#');">This order has been processed.</a><div id="order_done"></div></td>
 				</tr>
 			</cfif>
+			<tr>
+				<td colspan="4" style="padding:10px;"></td>
+			</tr>
 			<cfloop query="qry_basket">
 				<cfset myid = #cart_product_id#>
 				<cfswitch expression="#cart_file_type#">
