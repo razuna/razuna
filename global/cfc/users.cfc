@@ -165,8 +165,9 @@
 	<cfargument name="thestruct" type="Struct">
 	<cfset variables.cachetoken = getcachetoken("users")>
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, user_first_name, user_last_name, user_in_admin, user_create_date,
-	user_active,USER_COMPANY,USER_PHONE,USER_MOBILE,USER_FAX,user_in_dam, user_salutation
+	select /* #variables.cachetoken#detailsusers */ user_id, user_login_name, user_email, user_pass, 
+	user_first_name, user_last_name, user_in_admin, user_create_date, user_active, user_company, user_phone, 
+	user_mobile, user_fax, user_in_dam, user_salutation
 	from users
 	where user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.user_id#">
 	</cfquery>
@@ -198,6 +199,7 @@
 <!--- Add user --->
 <cffunction name="add">
 	<cfargument name="thestruct" type="Struct">
+	<!--- Params --->
 	<cfparam default="F" name="arguments.thestruct.user_active">
 	<cfparam default="F" name="arguments.thestruct.adminuser">
 	<cfparam default="F" name="arguments.thestruct.intrauser">
@@ -270,7 +272,11 @@
 		<cfelse>
 			<cfset logsection = "Admin">
 		</cfif>
-		<cfset log = #log_users(theuserid=newid,logaction='Add',logsection='#logsection#',logdesc='Added: UserID: #newid# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')#>
+		<cfset log_users(theuserid=newid,logaction='Add',logsection='#logsection#',logdesc='Added: UserID: #newid# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')>
+		<!--- Send email to user --->
+		<cfif arguments.thestruct.emailinfo>
+			<cfinvoke method="emailinfo" user_id="#newid#" userpass="#arguments.thestruct.user_pass#" >
+		</cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("users")>
 	<cfelse>
@@ -395,13 +401,17 @@
 			)
 			</cfquery>
 		</cfloop>
+		<!--- Send email to user --->
+		<cfif arguments.thestruct.emailinfo>
+			<cfinvoke method="emailinfo" user_id="#arguments.thestruct.user_id#" userpass="#arguments.thestruct.user_pass#" >
+		</cfif>
 		<!--- Log --->
 		<cfif structkeyexists(arguments.thestruct,"dam")>
 			<cfset logsection = "DAM">
 		<cfelse>
 			<cfset logsection = "Admin">
 		</cfif>
-		<cfset log = #log_users(theuserid=arguments.thestruct.user_id,logsection='#logsection#',logaction='Update',logdesc='Updated: UserID: #arguments.thestruct.user_id# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')#>
+		<cfset log_users(theuserid=arguments.thestruct.user_id,logsection='#logsection#',logaction='Update',logdesc='Updated: UserID: #arguments.thestruct.user_id# eMail: #arguments.thestruct.user_email# First Name: #arguments.thestruct.user_first_name# Last Name: #arguments.thestruct.user_last_name#')>
 	</cfif>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("users")>
@@ -785,5 +795,18 @@
 	<cfreturn checklogin />
 </cffunction>
 
+<!--- Send email to user --->
+<cffunction name="emailinfo" output="true">
+	<cfargument name="user_id" required="true" type="string">
+	<cfargument name="userpass" required="true" type="string">
+	<!--- Get the record --->
+	<cfinvoke method="details" thestruct="#arguments#" returnvariable="qry_user" />
+	<!--- The message --->
+	<cfsavecontent variable="m"><cfoutput>Hi,<br /><br />Your Razuna account login information are as follows:<br /><br />Login: http://#cgi.http_host#/<br />Username: #qry_user.user_email#<cfif arguments.userpass NEQ ""><br />Password: #arguments.userpass#</cfif><br /><br />Please feel free to contact us if you have any questions.</cfoutput>
+	</cfsavecontent>
+	<!--- Send the email --->
+	<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="Your Razuna account" themessage="#m#">
+	<cfreturn />
+</cffunction>
 
 </cfcomponent>

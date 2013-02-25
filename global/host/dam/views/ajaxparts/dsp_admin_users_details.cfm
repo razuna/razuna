@@ -236,7 +236,9 @@
 		<div id="tab_api"></div>
 	</cfif>
 </div>
-<div id="submit" style="float:right;padding:10px;"><div id="updatetext" style="color:green;padding:10px;display:none;float:left;"></div><input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
+<div id="updatetext" style="color:green;display:none;float:left;font-weight:bold;padding:15px 0px 0px 10px;"></div>
+<div id="submit" style="float:right;padding:10px;">
+	<cfif !attributes.myinfo><input type="checkbox" value="true" name="emailinfo" /> <span style="padding-right:15px;">Send user welcome email</span></cfif><input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 
 </form>
 
@@ -282,7 +284,8 @@
 			destroywindow(1);
 		<cfelse>
 			$("##updatetext").css("display","");
-			$("##updatetext").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#");
+			$("##updatetext").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#")
+			$("##updatetext").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
 		</cfif>
 		<cfif !attributes.myinfo>
 			loadcontent('admin_users', '#myself#c.users');

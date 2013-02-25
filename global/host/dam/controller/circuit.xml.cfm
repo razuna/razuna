@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2012.10.17.1" />
+		<set name="attributes.cachetag" value="2013.02.25.1" />
 	</fuseaction>
 
 	<!--
@@ -3946,6 +3946,7 @@
 		<set name="attributes.dam" value="T" />
 		<set name="attributes.intrauser" value="T" />
 		<set name="attributes.hostid" value="#session.hostid#" />
+		<set name="attributes.emailinfo" value="false" overwrite="false" />
 		<!-- CFC: If it is a new user then add, else update -->
 		<if condition="#attributes.user_id# EQ 0">
 			<true>
