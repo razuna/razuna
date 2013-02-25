@@ -112,7 +112,7 @@
 		<transtext><![CDATA[Lesen / Schreiben]]></transtext>
 	</transid>
 	<transid name="per_all">
-		<transtext>Keine Einschränkung</transtext>
+		<transtext>Voller Zugriff</transtext>
 	</transid>
 	<transid name="everybody">
 		<transtext>Alle</transtext>
@@ -2386,6 +2386,6 @@
 		<transtext>Content</transtext>
 	</transid>
 	<transid name="select_all">
-		<transtext>Select All</transtext>
-	</transid>	
+		<transtext>Alle auswählen</transtext>
+	</transid>
 </translations>
