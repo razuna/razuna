@@ -953,7 +953,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- If we store assets on the file system check if folder id exists in the assets path --->
-	<cfif application.razuna.storage EQ "local" AND arguments.thestruct.qryfile.link_kind NEQ "url">
+	<cfif (application.razuna.storage EQ "local" AND arguments.thestruct.qryfile.link_kind NEQ "url") OR application.razuna.storage EQ "akamai">
 		<cftry>
 			<cfdirectory action="list" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#" name="mydir">
 			<!--- Dir not found thus create it --->
@@ -4350,7 +4350,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Add the folder --->
 	<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 	<!--- If we store on the file system we create the folder here --->
-	<cfif application.razuna.storage EQ "local">
+	<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
 		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
 		<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
@@ -4434,7 +4434,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
@@ -4532,7 +4532,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
@@ -4630,7 +4630,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
@@ -4725,7 +4725,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
@@ -4820,7 +4820,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
@@ -4915,7 +4915,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
@@ -5010,7 +5010,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Add the folder --->
 		<cfinvoke component="folders" method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="new_folder_id">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/img">
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/vid">
