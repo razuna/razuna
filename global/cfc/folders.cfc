@@ -332,7 +332,7 @@
 				<cfset newfolderid = trim(newfolderid)>
 				<cfoutput>#newfolderid#</cfoutput>
 				<!--- If we store on the file system we create the folder here --->
-				<cfif application.razuna.storage EQ "local">
+				<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 					<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 						<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 					</cfif>
@@ -389,7 +389,7 @@
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<cfoutput>#trim(newfolderid)#</cfoutput>
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -467,7 +467,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -549,7 +549,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 					<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -631,7 +631,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -713,7 +713,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -795,7 +795,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -877,7 +877,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -959,7 +959,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -1041,7 +1041,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
@@ -1123,7 +1123,7 @@
 		<!--- Add the folder --->
 		<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 		<!--- If we store on the file system we create the folder here --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif !directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#")>
 				<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#newfolderid#" mode="775">
 			</cfif>
