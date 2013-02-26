@@ -89,7 +89,9 @@
 			<!--- Select All --->
 			<tr>
 				<td colspan="4">
-					<a href="##" id="checkall" style="text-decoration:underline;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
+					<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
+					<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect Originals</a>
+					<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
 				</td>
 			</tr>
 			<cfif attributes.fromshare EQ "T" AND qry_folder.share_order EQ "T">
@@ -450,17 +452,50 @@
 		// });
 		return true;
 	})
-	<!--- If we come from basket_full_remove --->
+	// If we come from basket_full_remove
 	<cfif fa EQ "c.basket_full_remove">
 		$('#basket').load('<cfoutput>#myself#</cfoutput>c.basket');
 	</cfif>
 
-	<!--- Select All --->
+	// Select All
 	$('#checkall').click(function () {
-		var checked = $(this).data('checked');
-		$('#thebasket').find(':checkbox').attr('checked', !checked);
-		$(this).data('checked', !checked);
+		$('#thebasket :checkbox').each( function() {
+			if(this.checked){
+				$(this).attr('checked', false);
+			}
+			else{
+				$(this).attr('checked', true);
+			}
+		})
+		return false;
 	});
+
+	// Select Originals
+	$('#checkorg').click(function() {
+		$('#thebasket').find('[id*="imgorg"],[id*="vid"],[id*="aud"],[id*="doc"]').each( function() {
+			if(this.checked){
+				$(this).attr('checked', false);
+			}
+			else{
+				$(this).attr('checked', true);
+			}
+		})
+		return false;
+	});
+
+	// Select Thumbnails
+	$('#checkthumb').click(function() {
+		$('#thebasket').find('[id*="imgt"]').each( function() {
+			if(this.checked){
+				$(this).attr('checked', false);
+			}
+			else{
+				$(this).attr('checked', true);
+			}
+		})
+		return false;
+	});
+
 </script>
 
 	
