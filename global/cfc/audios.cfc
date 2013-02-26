@@ -846,7 +846,7 @@
 		<!--- Get details --->
 		<cfinvoke method="detail" thestruct="#arguments.thestruct#" returnvariable="arguments.thestruct.qry_detail">
 		<!--- Update main record with dates --->
-		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.qry_detail.aud_group#" />
+		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.qry_detail.detail.aud_group#" />
 		<!--- Create a temp directory to hold the video file (needed because we are doing other files from it as well) --->
 		<cfset var tempfolder = "aud#createuuid('')#">
 		<!--- set the folder path in a var --->
