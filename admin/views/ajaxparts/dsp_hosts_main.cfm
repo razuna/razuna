@@ -96,7 +96,7 @@
 					<td><input type="text" name="oracle_url" id="oracle_url" size="60" class="text" value="http://oracledb.mydomain.com:7777"><br /><em>#defaultsObj.trans("header_url_app_server_desc")#</em></td>
 				</tr>
 			<!--- For file system enter here the absolute paths to the assets --->
-			<cfelseif application.razuna.storage EQ "local">
+			<cfelseif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 				<tr>
 					<th colspan="2">#defaultsObj.trans("path_to_assets")#</th>
 				</tr>
@@ -107,6 +107,14 @@
 					<td>#defaultsObj.trans("path_to_assets")#</td>
 					<td><input type="text" name="path_assets" size="60" class="text" value="#pathoneup#assets"></td>
 				</tr>
+				<cfif application.razuna.storage EQ "akamai">
+					<tr>
+						<th colspan="2">Cloud Storage Settings</th>
+					</tr>
+					<tr>
+						<td colspan="2">You are using #ucase(application.razuna.storage)# as your Cloud Storage Provider. Please go into the host settings afterwards to define the individual settings.</td>
+					</tr>
+				</cfif>
 			<cfelseif application.razuna.storage NEQ "local">
 				<tr>
 					<th colspan="2">Cloud Storage Settings</th>
