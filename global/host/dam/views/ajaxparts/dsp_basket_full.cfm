@@ -47,9 +47,9 @@
                     	</div>
                     	<div style="clear:both;"></div>
                     	<!--- Select All --->
-                    	<div style="float:left;padding:10px 0px 0px 0px;">
+                    	<!--- <div style="float:left;padding:10px 0px 0px 0px;">
                             <a href="##" id="checkall" style="text-decoration:underline;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>  
-						</div>
+						</div> --->
 						<!--- <div style="float:right;">
 							<div style="float:left;">
                             <a href="##" onclick="$('##basketaction').toggle();" style="text-decoration:none;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("basket_actions")#</a></div>
