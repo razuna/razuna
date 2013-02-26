@@ -1456,7 +1456,7 @@
 	<!--- If no asset is found which has this folder id in its path then it is safe to remove the folder --->
 	<cfif qryfolder.recordcount EQ 0>
 		<!--- Delete Folder --->
-		<cfif application.razuna.storage EQ "local">
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<cfif directoryexists("#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thefolderid#")>
 				<cfdirectory action="delete" directory="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thefolderid#" recurse="true">
 			</cfif>
