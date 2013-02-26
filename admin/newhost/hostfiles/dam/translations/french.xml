@@ -216,6 +216,9 @@
 	<transid name="put_in_basket">
 		<transtext>Ajouter au panier</transtext>
 	</transid>
+	<transid name="add_it_in_favorites">
+		<transtext>Ajoutez-le dans vos favoris</transtext>
+	</transid>
 	<transid name="file_detail">
 		<transtext><![CDATA[Détails]]></transtext>
 	</transid>

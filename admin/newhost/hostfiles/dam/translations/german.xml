@@ -216,6 +216,9 @@
 	<transid name="put_in_basket">
 		<transtext>In Arbeitsmappe ablegen</transtext>
 	</transid>
+	<transid name="add_it_in_favorites">
+		<transtext>Fügen Sie es in Favoriten</transtext>
+	</transid>
 	<transid name="file_detail">
 		<transtext>Details</transtext>
 	</transid>

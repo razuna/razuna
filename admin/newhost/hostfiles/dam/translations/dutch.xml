@@ -216,6 +216,9 @@
 	<transid name="put_in_basket">
 		<transtext>Plaats in mandje</transtext>
 	</transid>
+	<transid name="add_it_in_favorites">
+		<transtext>Voeg het toe in favorieten</transtext>
+	</transid>
 	<transid name="file_detail">
 		<transtext>Details</transtext>
 	</transid>
