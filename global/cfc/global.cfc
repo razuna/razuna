@@ -374,9 +374,14 @@ Comment:<br>
 			<cfelseif arguments.thestruct.kind EQ "aud">
 				<cfset var thelist = valuelist(arguments.thestruct.qry_detail.detail.aud_id) & "," & valuelist(arguments.thestruct.qry_related.aud_id)>
 			</cfif>
+			<!--- If thelist is only a comma --->
+			<cfif thelist EQ ",">
+				<cfset var thelist = 0>
+			</cfif>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#get_share_options2 */ asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
+			SELECT /* #variables.cachetoken#get_share_options2 */ 
+			asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="Yes">)
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -384,7 +389,8 @@ Comment:<br>
 		<cfelse>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#get_share_options3 */ asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
+			SELECT /* #variables.cachetoken#get_share_options3 */ 
+			asset_id_r, group_asset_id, asset_format, asset_dl, asset_order, asset_selected
 			FROM #session.hostdbprefix#share_options
 			WHERE group_asset_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
