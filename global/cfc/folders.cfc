@@ -3746,6 +3746,11 @@
 	<cfargument name="assetpath" required="true" type="string">
 	<cfargument name="awsbucket" required="false" type="string">
 	<cfargument name="thestruct" required="false" type="struct">
+	<!--- Params --->
+	<cfparam name="arguments.thestruct.akaimg" default="" />
+	<cfparam name="arguments.thestruct.akavid" default="" />
+	<cfparam name="arguments.thestruct.akaaud" default="" />
+	<cfparam name="arguments.thestruct.akadoc" default="" />
 	<!--- If we are renditions we query again and set some variables --->
 	<cfif arguments.dl_renditions>
 		<!--- Set original --->
@@ -3793,15 +3798,6 @@
 				<cfset var thefinalname = tn & "_" & currentRow & "." & te>
 			</cfif>
 		</cfif>
-		<cfif kind EQ "img">
-			<cfset var akatype = arguments.thestruct.akaimg>
-		<cfelseif kind EQ "vid">
-			<cfset var akatype = arguments.thestruct.akavid>
-		<cfelseif kind EQ "aud">
-			<cfset var akatype = arguments.thestruct.akaaud>
-		<cfelse>
-			<cfset var akatype = arguments.thestruct.akadoc>
-		</cfif>
 		<!--- Start download but only if theorgname is not empty --->
 		<cfif theorgname NEQ "">
 			<!--- Check if thefinalname has an extension. If not add the original one --->
@@ -3826,6 +3822,16 @@
 				</cftry>
 			<!--- Akamai --->
 			<cfelseif application.razuna.storage EQ "akamai" AND link_kind EQ "">
+				<!--- Define the Akamai type --->
+				<cfif kind EQ "img">
+					<cfset var akatype = arguments.thestruct.akaimg>
+				<cfelseif kind EQ "vid">
+					<cfset var akatype = arguments.thestruct.akavid>
+				<cfelseif kind EQ "aud">
+					<cfset var akatype = arguments.thestruct.akaaud>
+				<cfelse>
+					<cfset var akatype = arguments.thestruct.akadoc>
+				</cfif>
 				<!--- For thumbnails we copy from local --->
 				<cfif arguments.dl_thumbnails>
 					<cffile action="copy" source="#arguments.assetpath#/#session.hostid#/#path_to_asset#/#theorgname#" destination="#arguments.dl_folder#/#thefinalname#" mode="775">
