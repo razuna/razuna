@@ -47,7 +47,7 @@
 						<cfif qry_folder.share_upload EQ "T">
 							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#&jsessionid=#session.SessionID#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | 
 						</cfif>
-						#qry.qry_filecount.thetotal# #myFusebox.getApplicationData().defaults.trans("share_content_count")#
+						<cfif qry.qry_filecount.thetotal EQ "">0<cfelse>#qry.qry_filecount.thetotal#</cfif> #myFusebox.getApplicationData().defaults.trans("share_content_count")#
 						<!--- BreadCrumb --->
 						<cfif structkeyexists(url,"folder_id_r")>
 							<cfif listlen(qry_breadcrumb)>

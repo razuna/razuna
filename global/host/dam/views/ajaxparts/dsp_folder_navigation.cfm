@@ -25,6 +25,6 @@
 --->
 <cfoutput>
 <div style="float:right;">
-	<a href="##" onclick="showwindow('#myself#ajax.folder_settings&folder_id=#attributes.folder_id#&iscol=#attributes.iscol#','#myFusebox.getApplicationData().defaults.trans("folder_properties")#',800,1);return false;">#myFusebox.getApplicationData().defaults.trans("folder_properties")#</a>
+	<a href="##" onclick="showwindow('#myself#ajax.folder_settings&folder_id=#attributes.folder_id#&iscol=#attributes.iscol#','<cfif attributes.iscol EQ "f">#myFusebox.getApplicationData().defaults.trans("folder_properties")#<cfelse>Collection Settings</cfif>',800,1);return false;"><cfif attributes.iscol EQ "f">#myFusebox.getApplicationData().defaults.trans("folder_properties")#<cfelse>Collection Settings</cfif></a>
 </div>
 </cfoutput>
