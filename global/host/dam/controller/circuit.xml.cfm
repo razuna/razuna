@@ -3399,6 +3399,11 @@
 		<set name="attributes.rid" value="0" overwrite="false" />
 		<set name="attributes.iscol" value="f" overwrite="false" />
 		<set name="attributes.kind" value="" overwrite="false" />
+		<if condition="session.type NEQ 'movefile' AND session.type NEQ 'movefolder'">
+			<true>
+				<set name="session.thefolderorg" value="0" />
+			</true>
+		</if>
 		<!-- For main page upload do... -->
 		<if condition="attributes.folder_id EQ 'x'">
 			<true>

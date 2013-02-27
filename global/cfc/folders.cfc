@@ -2883,12 +2883,11 @@
 	FROM qry
 	WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	<!--- If this is a move then dont show the folder that we are moving --->
-	<cfif session.type NEQ "choosecollection" AND (session.type EQ "uploadinto" OR session.type EQ "movefolder" OR arguments.thestruct.actionismove EQ "T")>
+	<cfif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR session.type EQ "movefile" OR session.type EQ "choosecollection">
 		AND (permfolder = 'W' OR permfolder = 'X')
-		AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+		<!--- AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#"> --->
 	</cfif>
 	</cfquery>
-
 	<!--- Create the XML --->
 	<cfif theid EQ 0>
 		<!--- This is the ROOT level  --->
@@ -2912,38 +2911,43 @@
 	<!--- If we come from a move action --->
 	<cfelse>
 		<cfoutput query="qRet">
-		<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>>
-		<!--- movefile --->
-		<cfif session.type EQ "movefile">
-			<cfif arguments.thestruct.kind EQ "search">
-				<a href="##" onclick="$('##div_choosefolder_status').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status').html('Asset(s) have been moved. Close this window now.');});">
-			<cfelse>
-				<a href="##" onclick="<cfif session.thefileid CONTAINS ",">loadoverlay();</cfif>$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){loadfolderwithdelay('#session.thefolderorg#');$('##bodyoverlay').remove();});destroywindow<cfif NOT session.thefileid CONTAINS ",">(2)<cfelse>(1)</cfif>;<cfif NOT session.thefileid CONTAINS ",">loadcontent('thewindowcontent1','index.cfm?fa=c.<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>_detail&file_id=#session.thefileid#&what=<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>&loaddiv=&folder_id=#folder_id#')</cfif>;">
-			</cfif>
-		<!--- movefolder --->
-		<cfelseif session.type EQ "movefolder">
-			<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');});destroywindow(1);return false;">
-		<!--- saveaszip or as a collection --->
-		<cfelseif session.type EQ "saveaszip" OR session.type EQ "saveascollection">
-			<a href="##" onclick="loadcontent('win_choosefolder','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#');">
-		<!--- upload --->
-		<cfelseif session.type EQ "uploadinto">
-			<a href="##" onclick="showwindow('index.cfm?fa=c.asset_add&folder_id=#folder_id#','Add your files',650,1);return false;">
-		<!--- customization --->
-		<cfelseif session.type EQ "customization">
-			<a href="##" onclick="javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);">
-		<!--- scheduler --->
-		<cfelseif session.type EQ "scheduler">
-			<a href="##" onclick="javascript:document.schedulerform.folder_id.value = '#folder_id#'; document.schedulerform.folder_name.value = '#folder_name#';destroywindow(2);">
-		<!--- choose a collection --->
-		<cfelseif session.type EQ "choosecollection">
-			<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
-		<!--- Plugin --->
-		<cfelseif session.type EQ "plugin">
-			<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">
-		</cfif>
-		<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif></a>
-		</li>
+			<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>>
+				<!--- movefile --->
+				<cfif session.type EQ "movefile">
+					<cfif session.thefolderorg NEQ folder_id>
+						<cfif arguments.thestruct.kind EQ "search">
+							<a href="##" onclick="$('##div_choosefolder_status').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#', function(){$('##div_choosefolder_status').html('Asset(s) have been moved. Close this window now.');});">
+						<cfelse>
+							<a href="##" onclick="<cfif session.thefileid CONTAINS ",">loadoverlay();</cfif>$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){loadfolderwithdelay('#session.thefolderorg#');$('##bodyoverlay').remove();});destroywindow<cfif NOT session.thefileid CONTAINS ",">(2)<cfelse>(1)</cfif>;<cfif NOT session.thefileid CONTAINS ",">loadcontent('thewindowcontent1','index.cfm?fa=c.<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>_detail&file_id=#session.thefileid#&what=<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>&loaddiv=&folder_id=#folder_id#')</cfif>;">
+						</cfif>
+					</cfif>
+				<!--- movefolder --->
+				<cfelseif session.type EQ "movefolder">
+					<cfif session.thefolderorg NEQ folder_id>
+						<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');});destroywindow(1);return false;">
+					</cfif>
+				<!--- saveaszip or as a collection --->
+				<cfelseif session.type EQ "saveaszip" OR session.type EQ "saveascollection">
+					<a href="##" onclick="loadcontent('win_choosefolder','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&folder_name=#URLEncodedFormat(folder_name)#');">
+				<!--- upload --->
+				<cfelseif session.type EQ "uploadinto">
+					<a href="##" onclick="showwindow('index.cfm?fa=c.asset_add&folder_id=#folder_id#','Add your files',650,1);return false;">
+				<!--- customization --->
+				<cfelseif session.type EQ "customization">
+					<a href="##" onclick="javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);">
+				<!--- scheduler --->
+				<cfelseif session.type EQ "scheduler">
+					<a href="##" onclick="javascript:document.schedulerform.folder_id.value = '#folder_id#'; document.schedulerform.folder_name.value = '#folder_name#';destroywindow(2);">
+				<!--- choose a collection --->
+				<cfelseif session.type EQ "choosecollection">
+					<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
+				<!--- Plugin --->
+				<cfelseif session.type EQ "plugin">
+					<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">
+				</cfif>
+				<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif>
+				<cfif session.thefolderorg NEQ folder_id></a></cfif>
+			</li>
 		</cfoutput>
 	</cfif>
 	<cfreturn />
