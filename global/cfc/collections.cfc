@@ -116,27 +116,51 @@
 	<!--- Collection not here thus continue --->
 	<cfif here.recordcount EQ 0>
 		<!--- Create a new ID --->
-		<cfset newcolid = createuuid("")>
+		<cfset var newcolid = createuuid("")>
+		<!--- Param --->
+		<cfset var col_shared = "F">
+		<cfset var share_dl_org = "F">
+		<cfset var share_comments = "F">
+		<cfset var share_upload = "F">
+		<!--- Get custom settings --->
+		<cfinvoke component="settings" method="get_customization" returnvariable="cs" />
+		<!--- Set settings according to settings --->
+		<cfif cs.share_folder>
+			<cfset var col_shared = "T">
+		</cfif>
+		<cfif cs.share_download_original>
+			<cfset var share_dl_org = "T">
+		</cfif>
+		<cfif cs.share_comments>
+			<cfset var share_comments = "T">
+		</cfif>
+		<cfif cs.share_uploading>
+			<cfset var share_upload = "T">
+		</cfif>
 		<!--- Add to main table --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#collections
-		(COL_ID,FOLDER_ID_R,COL_OWNER,CREATE_DATE,CREATE_TIME,CHANGE_DATE,CHANGE_TIME, host_id)
+		(col_id,folder_id_r,col_owner,create_date,create_time,change_date,change_time, host_id, col_shared, share_dl_org, share_comments, share_upload)
 		VALUES(
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newcolid#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-		<cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-		<cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newcolid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+			<cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
+			<cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
+			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_shared#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#share_dl_org#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#share_comments#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#share_upload#">
 		)
 		</cfquery>
 		<!--- Add name, description and keywords --->
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-			<cfset thisdesc="arguments.thestruct.col_desc_" & "#langindex#">
-			<cfset thiskeys="arguments.thestruct.col_keywords_" & "#langindex#">
-			<cfif #thisdesc# CONTAINS "#langindex#">
+			<cfset thisdesc = "arguments.thestruct.col_desc_" & "#langindex#">
+			<cfset thiskeys = "arguments.thestruct.col_keywords_" & "#langindex#">
+			<cfif thisdesc CONTAINS "#langindex#">
 				<cfquery datasource="#variables.dsn#">
 					insert into #session.hostdbprefix#collections_text
 					(col_id_r, lang_id_r, col_desc, col_keywords, col_name, host_id, rec_uuid)
@@ -671,7 +695,14 @@
 <!--- Get all assets of this collection (for share) --->
 <cffunction name="getallassets" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
-	<cfset qry = structnew()>
+	<!--- Param --->
+	<cfset var qry = structnew()>
+	<!--- If the collection has no files then set the the "IN" value to 0 or else we get errors in SQL --->
+	<cfif arguments.thestruct.qry_files.recordcount NEQ 0>
+		<cfset var thelist = valueList(arguments.thestruct.qry_files.cart_product_id)>
+	<cfelse>
+		<cfset var thelist = 0>
+	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry.qry_files" cachedwithin="1" region="razcache">
 	SELECT DISTINCT /* #variables.cachetoken#getallassetscol */ i.img_id id, i.img_filename filename, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, i.is_available,
@@ -692,7 +723,7 @@
 			AND ct.col_file_type = 'img'
 		) AS theformat
 	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
-	WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.thestruct.qry_files.cart_product_id)#" list="true">)
+	WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = i.img_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">
 	AND (i.img_group IS NULL OR i.img_group = '')
@@ -715,7 +746,7 @@
 			AND ct.col_file_type = 'vid'
 		) AS theformat
 	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
-	WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.thestruct.qry_files.cart_product_id)#" list="true">)
+	WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = v.vid_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="vid">
 	AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -738,7 +769,7 @@
 			AND ct.col_file_type = 'aud'
 		) AS theformat
 	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
-	WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.thestruct.qry_files.cart_product_id)#" list="true">)
+	WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = a.aud_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="aud">
 	AND (a.aud_group IS NULL OR a.aud_group = '')
@@ -761,7 +792,7 @@
 			AND ct.col_file_type = 'doc' 
 		) AS theformat
 	FROM #session.hostdbprefix#collections_ct_files ct, #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
-	WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.thestruct.qry_files.cart_product_id)#" list="true">)
+	WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = f.file_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="doc">
 	ORDER BY theorder
