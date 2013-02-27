@@ -1767,6 +1767,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.button_print = true>
 	<cfset v.button_move = true>
 	<cfset v.button_delete = true>
+	<cfset v.share_folder = false>
+	<cfset v.share_download_original = false>
+	<cfset v.share_comments = false>
+	<cfset v.share_uploading = false>
 	<!--- Loop over query --->
 	<cfloop query="qry">
 		<cfif custom_id EQ "folder_redirect">
@@ -1945,6 +1949,18 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfif>
 		<cfif custom_id EQ "button_delete" AND !custom_value>
 			<cfset v.button_delete = false>
+		</cfif>
+		<cfif custom_id EQ "share_folder" AND custom_value>
+			<cfset v.share_folder = true>
+		</cfif>
+		<cfif custom_id EQ "share_download_original" AND custom_value>
+			<cfset v.share_download_original = true>
+		</cfif>
+		<cfif custom_id EQ "share_uploading" AND custom_value>
+			<cfset v.share_uploading = true>
+		</cfif>
+		<cfif custom_id EQ "share_comments" AND custom_value>
+			<cfset v.share_comments = true>
 		</cfif>
 	</cfloop>
 	<!--- Return --->

@@ -67,7 +67,7 @@
 					<tr>
 						<td colspan="2">#myFusebox.getApplicationData().defaults.trans("login_image_desc")#</td>
 					</tr>
-					<tr class="list">
+					<tr>
 						<td valign="top">
 							<div id="iframeimg">
 								<iframe src="#myself#ajax.isp_settings_upload&loginimg=true" frameborder="false" scrolling="false" style="border:0px;width:550px;height:70px;"></iframe>
@@ -91,7 +91,7 @@
 					<tr>
 						<th>User Options</th>
 					</tr>
-					<tr class="list">
+					<tr>
 						<td>
 							#myFusebox.getApplicationData().defaults.trans("custom_users_desc")#
 							<br /><br />
@@ -202,7 +202,7 @@
 					<tr>
 						<th>#myFusebox.getApplicationData().defaults.trans("header_customization_explorer")#</th>
 					</tr>
-					<tr class="list">
+					<tr>
 						<td>
 							#myFusebox.getApplicationData().defaults.trans("header_customization_explorer_desc")#
 							<br /><br />
@@ -231,7 +231,7 @@
 					<tr>
 						<th>#myFusebox.getApplicationData().defaults.trans("header_customization_upload")#</th>
 					</tr>
-					<tr class="list">
+					<tr>
 						<td>
 							#myFusebox.getApplicationData().defaults.trans("header_customization_upload_desc")#
 							<br /><br />
@@ -264,6 +264,36 @@
 				</table>
 			</div>
 			<div stlye="clear:both;"><br /></div>
+			<!--- Shared settings --->
+			<a href="##" onclick="$('##sharedoptions').slideToggle('slow');return false;"><div class="headers">&gt; Shared Folder/Collection Options</div></a>
+			<div id="sharedoptions" style="display:none;padding-top:10px;">
+				<!--- Share --->
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+					<tr>
+						<td>
+							#myFusebox.getApplicationData().defaults.trans("custom_sharedoptions_desc")#
+							<br /><br />
+							#myFusebox.getApplicationData().defaults.trans("custom_share_folder")#
+							<br />
+							<div><input type="radio" name="share_folder" value="true"<cfif qry_customization.share_folder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="share_folder" value="false"<cfif !qry_customization.share_folder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("custom_share_download_originals")#
+							<br />
+							<div><input type="radio" name="share_download_original" value="true"<cfif qry_customization.share_download_original> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="share_download_original" value="false"<cfif !qry_customization.share_download_original> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("custom_share_comments")#
+							<br />
+							<div><input type="radio" name="share_comments" value="true"<cfif qry_customization.share_comments> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="share_comments" value="false"<cfif !qry_customization.share_comments> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("custom_share_uploading")#
+							<br />
+							<div><input type="radio" name="share_uploading" value="true"<cfif qry_customization.share_uploading> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="share_uploading" value="false"<cfif !qry_customization.share_uploading> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+						</td>
+					</tr>
+				</table>
+			</div>
+			<div stlye="clear:both;"><br /></div>
 			<!--- Folder View --->
 			<a href="##" onclick="$('##folderview').slideToggle('slow');return false;"><div class="headers">&gt; Folderview</div></a>
 			<div id="folderview" style="display:none;padding-top:10px;">
@@ -272,7 +302,7 @@
 					<tr>
 						<th>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview")#</th>
 					</tr>
-					<tr class="list">
+					<tr>
 						<td>
 							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_desc")#
 							<br /><br />
@@ -403,7 +433,7 @@
 					<tr>
 						<th>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview")#</th>
 					</tr>
-					<tr class="list">
+					<tr>
 						<td>
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_desc")#
 							<br /><br />

@@ -2391,4 +2391,19 @@
 	<transid name="select_all">
 		<transtext>Select All</transtext>
 	</transid>
+	<transid name="custom_sharedoptions_desc">
+		<transtext><![CDATA[These options take place in each shared folder/collection setting.]]></transtext>
+	</transid>
+	<transid name="custom_share_folder">
+		<transtext><![CDATA[Share the folder/collection by default]]></transtext>
+	</transid>
+	<transid name="custom_share_download_originals">
+		<transtext><![CDATA[By default originals are never set to be downloaded. If you set this to "Yes" then originals will always be made downloadable!]]></transtext>
+	</transid>
+	<transid name="custom_share_comments">
+		<transtext><![CDATA[Allow commenting on your files.]]></transtext>
+	</transid>
+	<transid name="custom_share_uploading">
+		<transtext><![CDATA[Allow users to upload to the shared folder/collection.]]></transtext>
+	</transid>
 </translations>

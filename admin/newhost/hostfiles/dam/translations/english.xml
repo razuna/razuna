@@ -1315,13 +1315,13 @@
 		<transtext>Share Settings</transtext>
 	</transid>
 	<transid name="share_folder_desc">
-		<transtext><![CDATA[When you share a folder all assets are shown under the below URL with the same permissions as set above.<br><br><b>NOTE</b>: There is one big difference to the "Everyone" group above. If you allow the "Everyone" group to access this folder then the folder is open to the world and everyone can access the folder <b>without</b> login in.]]></transtext>
+		<transtext><![CDATA[When you share a folder all files are accessible with the same group permissions.<br><br><b>NOTE</b>: There is one big difference to the "Everyone" group. If you allow the "Everyone" group to access this folder then the folder is open to the world and everyone can access the folder <b>without</b> login in.]]></transtext>
 	</transid>
 	<transid name="share_collection">
 		<transtext>Share Collection</transtext>
 	</transid>
 	<transid name="share_collection_desc">
-		<transtext><![CDATA[When you share a collection all assets are shown under the below URL with the same permissions as set above.<br><br><b>NOTE</b>: There is one big difference to the "Everyone" group above. If you allow the "Everyone" group to access this collection then the folder is open to the world and everyone can access the collection <b>without</b> login in.]]></transtext>
+		<transtext><![CDATA[When you share a collection all files are are accessible with the same group permissions.<br><br><b>NOTE</b>: There is one big difference to the "Everyone" group. If you allow the "Everyone" group to access this collection then the folder is open to the world and everyone can access the collection <b>without</b> login in.]]></transtext>
 	</transid>
 	<transid name="collection">
 		<transtext>Collection</transtext>
@@ -2390,5 +2390,20 @@
 	</transid>
 	<transid name="select_all">
 		<transtext>Select All</transtext>
+	</transid>
+	<transid name="custom_sharedoptions_desc">
+		<transtext><![CDATA[These options take place in each shared folder/collection setting.]]></transtext>
+	</transid>
+	<transid name="custom_share_folder">
+		<transtext><![CDATA[Share the folder/collection by default]]></transtext>
+	</transid>
+	<transid name="custom_share_download_originals">
+		<transtext><![CDATA[By default originals are never set to be downloaded. If you set this to "Yes" then originals will always be made downloadable!]]></transtext>
+	</transid>
+	<transid name="custom_share_comments">
+		<transtext><![CDATA[Allow commenting on your files.]]></transtext>
+	</transid>
+	<transid name="custom_share_uploading">
+		<transtext><![CDATA[Allow users to upload to the shared folder/collection.]]></transtext>
 	</transid>
 </translations>
