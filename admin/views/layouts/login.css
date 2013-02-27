@@ -10,6 +10,9 @@ body {
     font-size:12px;
     font-family: 'Helvetica Neue',Helvetica,Arial,"Nimbus Sans L",sans-serif;
 	margin: 0;
+	background-image: url('../../images/pimsbg.jpg');
+	background-repeat: no-repeat;
+  	background-size: cover;
 }
 input, select {
 	font-size:12px;
@@ -84,11 +87,12 @@ select {
 }
 #outer {
 	width: 850px;
-	background-color: #FFFFFF;
+	/*background-color: #FFFFFF;*/
 	margin-top: 0px;
 	margin-left: auto;
 	margin-right: auto;
 	padding-top: 75px;
+	background-color: transparent;
 }
 #loginform {
 	font-size: 14px;
