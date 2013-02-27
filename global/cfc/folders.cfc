@@ -1271,12 +1271,46 @@
 			</cftransaction>
 		</cfif>
 	</cfloop>
+	<!--- Apply custom setting to new folder --->
+	<cfinvoke method="apply_custom_shared_setting" folder_id="#newfolderid#" />
 	<!--- Log --->
-	<cfset log = #log_folders(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.folder_name# (ID: #newfolderid#, Level: #arguments.thestruct.level#)')#>
+	<cfset log_folders(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.folder_name# (ID: #newfolderid#, Level: #arguments.thestruct.level#)')>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<!--- Return --->
 	<cfreturn newfolderid />
+</cffunction>
+
+<!--- ------------------------------------------------------------------------------------- --->
+<!--- REMOVE THIS FOLDER ALL SUBFOLDER AND FILES WITHIN --->
+<cffunction name="apply_custom_shared_setting" output="false" returntype="void">
+	<cfargument name="folder_id" type="string">
+	<!--- Param --->
+	<cfset var s = structNew()>
+	<cfset s.theid = arguments.folder_id>
+	<cfset s.folder_shared = "F">
+	<cfset s.share_dl_org = "F">
+	<cfset s.share_comments = "F">
+	<cfset s.share_upload = "F">
+	<!--- Get custom settings --->
+	<cfinvoke component="settings" method="get_customization" returnvariable="cs" />
+	<!--- Set settings according to settings --->
+	<cfif cs.share_folder>
+		<cfset s.folder_shared = "T">
+	</cfif>
+	<cfif cs.share_download_original>
+		<cfset s.share_dl_org = "T">
+	</cfif>
+	<cfif cs.share_comments>
+		<cfset s.share_comments = "T">
+	</cfif>
+	<cfif cs.share_uploading>
+		<cfset s.share_upload = "T">
+	</cfif>
+	<!--- Call internal function to update shared settings --->
+	<cfinvoke method="update_sharing" thestruct="#s#" />
+	<!--- Return --->
+	<cfreturn />
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
@@ -1487,6 +1521,7 @@
 	<!--- Params --->
 	<cfparam name="arguments.thestruct.folder_shared" default="F">
 	<cfparam name="arguments.thestruct.folder_name_shared" default="#arguments.thestruct.theid#">
+	<cfparam name="arguments.thestruct.share_order" default="F">
 	<cfparam name="arguments.thestruct.share_order_user" default="0">
 	<!--- Update Folders DB --->
 	<cfquery datasource="#application.razuna.datasource#">
@@ -2885,7 +2920,9 @@
 	<!--- If this is a move then dont show the folder that we are moving --->
 	<cfif session.type EQ "uploadinto" OR session.type EQ "movefolder" OR session.type EQ "movefile" OR session.type EQ "choosecollection">
 		AND (permfolder = 'W' OR permfolder = 'X')
-		<!--- AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#"> --->
+		<cfif session.type EQ "movefolder">
+			AND folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
+		</cfif>
 	</cfif>
 	</cfquery>
 	<!--- Create the XML --->
