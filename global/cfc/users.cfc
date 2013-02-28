@@ -209,6 +209,7 @@
 	<cfparam default="" name="arguments.thestruct.user_mobile">
 	<cfparam default="" name="arguments.thestruct.user_fax">
 	<cfparam default="" name="arguments.thestruct.user_salutation">
+	<cfparam default="false" name="arguments.thestruct.emailinfo">
 	<!--- Check that there is no user already with the same email address --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 	SELECT u.user_email, u.user_login_name
