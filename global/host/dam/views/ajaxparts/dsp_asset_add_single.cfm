@@ -24,7 +24,7 @@
 *
 --->
 <cfif cgi.http_user_agent CONTAINS "chromeframe" OR cgi.http_user_agent CONTAINS "msie">
-	<cfset session.pluploadruntimes = "flash">
+	<cfset session.pluploadruntimes = "flash,silverlight">
 <cfelse>
 	<cfset session.pluploadruntimes = "html5,flash,silverlight">
 </cfif>
