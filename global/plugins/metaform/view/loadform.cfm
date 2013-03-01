@@ -4,7 +4,7 @@
 		<!--- If we don't have any files we redirect to the folder --->
 		<cfif result.cfc.pl.loadform.qry_files.recordcount EQ 0>
 			<h1>Upload error</h1>
-			<h2>There was an error in your upload or the file already exists in the system. Click on the left to naviagte back.</h2>
+			<h2>There was an error in your upload or the file already exists in the system. Click on the left to navigate back to the folder.</h2>
 		<cfelse>
 			<form id="saveform_metaform" method="post" action="index.cfm?fa=c.plugin_direct">
 			<input type="hidden" name="comp" value="metaform.cfc.settings">
