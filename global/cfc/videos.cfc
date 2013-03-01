@@ -602,6 +602,8 @@
 	</cfquery>
 	<!--- Delete labels --->
 	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+	<!--- Custom field values --->
+	<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
 	<cfset variables.cachetoken = resetcachetoken("folders")>
@@ -681,6 +683,8 @@
 		</cftransaction>
 		<!--- Delete labels --->
 		<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
+		<!--- Custom field values --->
+		<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" />
 		<!--- Delete from file system --->
 		<cfset arguments.thestruct.id = i>
 		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>

@@ -485,6 +485,7 @@
 		<!--- Log Result --->
 		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')#>
 		<!--- Return query --->
+		<cfdump var="#qry#"><cfabort>
 		<cfreturn qry>
 	</cffunction>
 

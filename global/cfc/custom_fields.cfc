@@ -321,4 +321,19 @@
 	<cfreturn />
 </cffunction>
 
+<!--- Delete values --->
+<cffunction name="delete_values" output="false" access="public" returntype="void">
+	<cfargument name="fileid" type="string">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM #session.hostdbprefix#custom_fields_values
+	WHERE asset_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
+	<cfreturn />
+</cffunction>
+
+
 </cfcomponent>
