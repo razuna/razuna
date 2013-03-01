@@ -2,7 +2,7 @@
 	<cfset forjs = "">
 	<cfoutput>
 		<!--- If we don't have any files we redirect to the folder --->
-		<cfif result.cfc.pl.loadform.qry_files.recorcount EQ 0>
+		<cfif result.cfc.pl.loadform.qry_files.recordcount EQ 0>
 			<script type="text/javascript">
 				$('##rightside').load('index.cfm?fa=c.folder&col=F&folder_id=#result.cfc.pl.loadform.qry_files.folder_id#');
 			</script>
