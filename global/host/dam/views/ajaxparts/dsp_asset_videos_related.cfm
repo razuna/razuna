@@ -48,7 +48,7 @@
 						<input type="text" id="inputo#vid_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" />
 						<br />
 						<cfif application.razuna.storage EQ "local">
-							<input type="text" id="inputo#vid_id#d" style="width:100%;" value="http://#cgi.http_host#/assets/#session.hostid#/#path_to_asset#/#vid_name_org#" />
+							<input type="text" id="inputo#vid_id#d" style="width:100%;" value="http://#cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#vid_name_org#" />
 						<cfelse>
 							<input type="text" id="inputo#vid_id#d" style="width:100%;" value="#cloud_url_org#" />
 						</cfif>
