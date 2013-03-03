@@ -228,11 +228,11 @@
 		x.yres AS ydpi,
 		x.resunit AS unit,
 		i.hashtag AS md5hash,
-		fo.folder_name
+		fo.folder_name,
+		lower(i.img_filename) filename_forsort
 		<!--- for UI --->
 		<cfif arguments.istruct.ui>
 			,
-			lower(i.img_filename) filename_forsort,
 			i.img_group groupid,
 			i.folder_id_r,
 			i.thumb_extension ext,
@@ -287,7 +287,7 @@
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
-		<cfif arguments.istruct.folderid NEQ "">
+		<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
 			AND i.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#">
 		</cfif>
 		<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -382,11 +382,11 @@
 		'' AS ydpi,
 		'' AS unit,
 		v.hashtag AS md5hash,
-		fo.folder_name
+		fo.folder_name,
+		lower(v.vid_filename) filename_forsort
 		<!--- for UI --->
 		<cfif arguments.vstruct.ui>
 			,
-			lower(v.vid_filename) filename_forsort,
 			v.vid_group groupid,
 			v.folder_id_r,
 			v.vid_extension ext,
@@ -440,7 +440,7 @@
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
-		<cfif arguments.vstruct.folderid NEQ "">
+		<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
 			AND v.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#">
 		</cfif>
 		<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -530,11 +530,11 @@
 		'' AS ydpi,
 		'' AS unit,
 		a.hashtag AS md5hash,
-		fo.folder_name
+		fo.folder_name,
+		lower(a.aud_name) filename_forsort
 		<!--- for UI --->
 		<cfif arguments.astruct.ui>
 			,
-			lower(a.aud_name) filename_forsort,
 			a.aud_group groupid,
 			a.folder_id_r,
 			a.aud_extension ext,
@@ -588,7 +588,7 @@
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
-		<cfif arguments.astruct.folderid NEQ "">
+		<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
 			AND a.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#">
 		</cfif>
 		<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -685,11 +685,11 @@
 		'' AS ydpi,
 		'' AS unit,
 		f.hashtag AS md5hash,
-		fo.folder_name
+		fo.folder_name,
+		lower(f.file_name) filename_forsort
 		<!--- for UI --->
 		<cfif arguments.fstruct.ui>
 			,
-			lower(f.file_name) filename_forsort,
 			'' as groupid,
 			f.folder_id_r,
 			f.file_extension ext,
@@ -742,7 +742,7 @@
 			</cfif>
 		</cfif>
 		<!--- If we have a folderid --->
-		<cfif arguments.fstruct.folderid NEQ "">
+		<cfif arguments.fstruct.folderid NEQ "" AND arguments.fstruct.folderid NEQ 0>
 			AND f.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.folderid#">
 		</cfif>
 		<cfif application.razuna.api.thedatabase EQ "mssql">

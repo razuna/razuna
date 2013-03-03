@@ -30,7 +30,7 @@
 
 	<!--- Application Settings --->
 	<cffunction name="onApplicationStart" returnType="boolean" output="false">
-		
+		<!--- Application vars --->
 		<cfset application.razuna.api.theurl = "http://" & cgi.http_host & "/assets/">
 		<cfset application.razuna.api.thispath = ExpandPath(".")>
 		<!--- Dynamic path --->
@@ -39,16 +39,20 @@
 		<cfelse>
 			<cfset application.razuna.api.dynpath = "">
 		</cfif>
-		
 		<!--- Get config values --->
 		<cfinvoke component="global.cfc.settings" method="getconfigdefaultapi" />
-		
+		<!--- Return --->
 		<cfreturn true>
 	</cffunction>
 	
 	<!--- Nothing else below here for you to take care off! --->
 
-	
+	<cffunction name="onSessionStart" output="false">
+		<!--- Session vars --->
+		<cfparam name="session.offset" default="0">
+		<cfparam name="session.rowmaxpage" default="25">
+	</cffunction>
+
 	<cffunction name="onError" returntype="string">
 	    <cfargument name="Exception" required="true">
 	    <cfargument type="String" name="EventName" required="true">

@@ -1027,7 +1027,7 @@
 		</cfif>
 		<!--- Calculate the total found files together --->
 		<cfset qry.thetotal = qdocc + qimgc + qvidc + qaudc>
-		<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
+		<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
 		<cfif qry.thetotal LTE session.rowmaxpage>
 			<cfset session.offset = 0>
 		</cfif>
