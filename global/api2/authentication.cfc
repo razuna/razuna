@@ -87,6 +87,7 @@
 			<cfset session.hostid = qry.hostid>
 			<cfset session.theuserid = qry.user_id>
 			<cfset session.thelangid = 1>
+			<cfset session.login = "T">
 		</cfif>
 		<!--- Return --->
 		<cfreturn status>
