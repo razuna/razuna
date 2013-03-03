@@ -26,13 +26,15 @@
 <cfoutput>
 <div id="rightside"></div>
 <!--- If attributes.show is there and it is folder --->
-<cfif structKeyExists(attributes, "show")>
-	<cfif attributes.show EQ "folder">
+<cfif structKeyExists(attributes, "showpart")>
+	<!--- FOLDER --->
+	<cfif attributes.showpart EQ "folder">
 		<script type="text/javascript">
 			$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folderid#&cv=true&fileid=#attributes.fileid#');
 		</script>
 	</cfif>
-	<cfif attributes.show EQ "upload">
+	<!--- UPLOAD --->
+	<cfif attributes.showpart EQ "upload">
 		<cfif attributes.folderid EQ "x">
 			<cfset faction = "c.choose_folder">
 		<cfelse>
@@ -40,6 +42,12 @@
 		</cfif>
 		<script type="text/javascript">
 			$('##rightside').load('#myself##faction#&col=F&folder_id=#attributes.folderid#');
+		</script>
+	</cfif>
+	<!--- SEARCH --->
+	<cfif attributes.showpart EQ "search">
+		<script type="text/javascript">
+			$('##rightside').load('#myself#c.search_simple_custom', { cv: "true", searchtext: "#attributes.searchfor#", <cfloop collection="#attributes#" item="i"><cfif i NEQ "fa" AND i NEQ "fuseaction" AND i NEQ "fusebox.password">#i#: "#attributes["#i#"]#",</cfif></cfloop> });
 		</script>
 	</cfif>
 </cfif>

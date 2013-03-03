@@ -3069,8 +3069,8 @@
 		START: SEARCH
 	--> 
 	
-	<!-- Simple Search -->
-	<fuseaction name="search_simple">
+	<!-- INCLUDE for Search -->
+	<fuseaction name="search_include">
 		<!-- Param -->
 		<set name="attributes.newsearch" value="t" overwrite="false" />
 		<set name="attributes.folder_id" value="0" overwrite="false" />
@@ -3091,6 +3091,9 @@
 		<set name="attributes.on_day" value="" overwrite="false" />
 		<set name="attributes.on_month" value="" overwrite="false" />
 		<set name="attributes.on_year" value="" overwrite="false" />
+		<set name="attributes.change_day" value="" overwrite="false" />
+		<set name="attributes.change_month" value="" overwrite="false" />
+		<set name="attributes.change_year" value="" overwrite="false" />
 		<set name="attributes.thetype" value="all" overwrite="false" />
 		<set name="attributes.kind" value="search" />
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
@@ -3098,6 +3101,7 @@
 		<set name="session.file_id" value="" overwrite="false" />
 		<set name="session.view" value="" />
 		<set name="attributes.share" value="F" overwrite="false" />
+		<set name="attributes.cv" value="false" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />
@@ -3110,6 +3114,11 @@
 		<xfa name="detailvid" value="c.videos_detail" />
 		<xfa name="detailaud" value="c.audios_detail" />
 		<xfa name="sendemail" value="c.email_send" />
+		<if condition="!attributes.cv">
+			<true>
+				<set name="session.customaccess" value="" />
+			</true>
+		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- Action: Get asset path -->
@@ -3121,6 +3130,21 @@
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="recfolder(attributes.folder_id)" returnvariable="attributes.list_recfolders" />
 			</true>
 		</if>
+		<!-- Get labels -->
+		<do action="labels" />
+		<!-- CFC: Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Folder access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+	</fuseaction>
+
+
+	<!-- Simple Search -->
+	<fuseaction name="search_simple">
+		<!-- Include the aearch include -->
+		<do action="search_include" />
 		<!-- ACTION: Search all -->
 		<if condition="attributes.thetype EQ 'all'">
 			<true>
@@ -3144,7 +3168,7 @@
 			</true>
 		</if>
 		<!-- ACTION: Search Files -->
-		<if condition="#attributes.thetype# EQ 'doc'">
+		<if condition="attributes.thetype EQ 'doc'">
 			<true>
 				<!-- Search -->
 				<do action="search_files" />
@@ -3157,7 +3181,7 @@
 			</true>
 		</if>
 		<!-- ACTION: Search Images -->
-		<if condition="#attributes.thetype# EQ 'img'">
+		<if condition="attributes.thetype EQ 'img'">
 			<true>
 				<!-- Search -->
 				<do action="search_images" />
@@ -3170,7 +3194,7 @@
 			</true>
 		</if>
 		<!-- ACTION: Search Videos -->
-		<if condition="#attributes.thetype# EQ 'vid'">
+		<if condition="attributes.thetype EQ 'vid'">
 			<true>
 				<!-- Search -->
 				<do action="search_videos" />
@@ -3183,7 +3207,7 @@
 			</true>
 		</if>
 		<!-- ACTION: Search Audios -->
-		<if condition="#attributes.thetype# EQ 'aud'">
+		<if condition="attributes.thetype EQ 'aud'">
 			<true>
 				<!-- Search -->
 				<do action="search_audios" />
@@ -3195,16 +3219,8 @@
 				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
 			</true>
 		</if>
-		<!-- Get labels -->
-		<do action="labels" />
-		<!-- CFC: Custom fields -->
-		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
-		<!-- CFC: Customization -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
-		<!-- CFC: Folder access -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
-		<if condition="#attributes.folder_id# EQ 0 AND !#attributes.fcall#">
+		<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
 			<true>
 				<do action="ajax.search" />
 			</true>
@@ -6859,6 +6875,40 @@
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show main page -->
 		<do action="v.view_custom" />
+	</fuseaction>
+
+	<!-- Simple Search -->
+	<fuseaction name="search_simple_custom">
+		<!-- Params -->
+		<set name="attributes.searchtext" value="#attributes.searchfor#" />
+		<set name="attributes.ui" value="true" />
+		<set name="application.razuna.api.dynpath" value="#dynpath#" />
+		<!-- Include the search include -->
+		<do action="search_include" />
+		<!-- Call search API -->
+		<invoke object="myFusebox.getApplicationData().search" methodcall="search_api(attributes)" returnvariable="qry_files" />
+		<!-- Put id's into lists -->
+		<set name="attributes.listdocid" value="#session.listdocid#" />
+		<set name="attributes.listimgid" value="#session.listimgid#" />
+		<set name="attributes.listvidid" value="#session.listvidid#" />
+		<set name="attributes.listaudid" value="#session.listaudid#" />
+		<!-- Set each query -->
+		<set name="qry_files.qimg.cnt" value="#session.qimg#" />
+		<set name="qry_files.qvid.cnt" value="#session.qvid#" />
+		<set name="qry_files.qaud.cnt" value="#session.qaud#" />
+		<set name="qry_files.qdoc.cnt" value="#session.qdoc#" />
+		<!-- Set the total -->
+		<set name="qry_filecount.thetotal" value="#session.thetotal#" />
+		<!-- Show -->
+		<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
+			<true>
+				<do action="ajax.search" />
+			</true>
+			<false>
+				<!-- Do -->
+				<do action="folder_content_results" />
+			</false>
+		</if>
 	</fuseaction>
 
 </circuit>

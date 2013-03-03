@@ -138,8 +138,10 @@
 				ELSE 'locked'
 			END as perm,
 		</cfif>
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 			'X' as permfolder
+		<cfelseif session.customaccess NEQ "">
+			'#session.customaccess#' as permfolder
 		<cfelse>
 			CASE
 				WHEN (SELECT fg3.grp_permission
@@ -263,7 +265,7 @@
 			</cfloop>
 		</cfif>
 		<!--- Log Result --->
-		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='doc')#>
+		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='doc')>
 		<!--- Return query --->
 		<cfreturn qry>
 	</cffunction>
@@ -391,8 +393,10 @@
 				ELSE 'locked'
 			END as perm,
 		</cfif>
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 			'X' as permfolder
+		<cfelseif session.customaccess NEQ "">
+			'#session.customaccess#' as permfolder
 		<cfelse>
 			CASE
 				WHEN (SELECT fg3.grp_permission
@@ -483,9 +487,8 @@
 			</cfloop>
 		</cfif>
 		<!--- Log Result --->
-		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')#>
+		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')>
 		<!--- Return query --->
-		<cfdump var="#qry#"><cfabort>
 		<cfreturn qry>
 	</cffunction>
 
@@ -611,8 +614,10 @@
 				ELSE 'locked'
 			END as perm,
 		</cfif>
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 			'X' as permfolder
+		<cfelseif session.customaccess NEQ "">
+			'#session.customaccess#' as permfolder
 		<cfelse>
 			CASE
 				WHEN (SELECT fg3.grp_permission
@@ -703,7 +708,7 @@
 			</cfloop>
 		</cfif>
 		<!--- Log Result --->
-		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='vid')#>
+		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='vid')>
 		<!--- Return query --->
 		<cfreturn qry>
 	</cffunction>
@@ -830,8 +835,10 @@
 				ELSE 'locked'
 			END as perm,
 		</cfif>
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser() AND session.customaccess EQ "">
 			'X' as permfolder
+		<cfelseif session.customaccess NEQ "">
+			'#session.customaccess#' as permfolder
 		<cfelse>
 			CASE
 				WHEN (SELECT fg3.grp_permission
@@ -922,7 +929,7 @@
 			</cfloop>
 		</cfif>
 		<!--- Log Result --->
-		<cfset log = #log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='aud')#>
+		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='aud')>
 		<!--- Return query --->
 		<cfreturn qry>
 	</cffunction>
@@ -974,6 +981,8 @@
 			<cfset var sortby = "date_create DESC">
 		<cfelseif session.sortby EQ "datechanged">
 			<cfset var sortby = "date_change DESC">
+		<cfelse>
+			<cfset var sortby = "filename_forsort">
 		</cfif>
 		<!--- Union the 4 query results into one --->
 		<cfquery name="qry.qall" dbtype="query">
@@ -1025,5 +1034,50 @@
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction> 
+
+	<!--- Call Search API --->
+	<cffunction name="search_api" access="public" output="false">
+		<cfargument name="thestruct" type="struct" required="true">
+		<!--- Param --->
+		<cfset var qry_search = structNew()>
+		<!--- Set vars for API --->
+		<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
+		<cfset application.razuna.api.dsn = application.razuna.datasource>
+		<cfset application.razuna.api.setid = application.razuna.setid>
+		<cfset application.razuna.api.storage = application.razuna.storage>
+		<!--- Params --->
+		<cfparam name="arguments.thestruct.show" default="all">
+		<cfparam name="arguments.thestruct.doctype" default="">
+		<cfparam name="arguments.thestruct.datechange" default="">
+		<cfparam name="arguments.thestruct.folderid" default="">
+		<cfparam name="arguments.thestruct.datecreateparam" default="">
+		<cfparam name="arguments.thestruct.datecreatestart" default="">
+		<cfparam name="arguments.thestruct.datecreatestop" default="">
+		<cfparam name="arguments.thestruct.datechangeparam" default="">
+		<cfparam name="arguments.thestruct.datechangestart" default="">
+		<cfparam name="arguments.thestruct.datechangestop" default="">
+		<cfparam name="arguments.thestruct.sortby" default="name">
+		<cfparam name="arguments.thestruct.ui" default="false">
+		<!--- Fire of search --->
+		<cfinvoke component="global.api2.search" method="searchassets" returnvariable="qry_search.qall">
+			<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+			<cfinvokeargument name="searchfor" value="#arguments.thestruct.searchfor#">
+			<cfinvokeargument name="show" value="#arguments.thestruct.show#">
+			<cfinvokeargument name="doctype" value="#arguments.thestruct.doctype#">
+			<cfinvokeargument name="datechange" value="#arguments.thestruct.datechange#">
+			<cfinvokeargument name="folderid" value="#arguments.thestruct.folderid#">
+			<cfinvokeargument name="datecreateparam" value="#arguments.thestruct.datecreateparam#">
+			<cfinvokeargument name="datecreatestart" value="#arguments.thestruct.datecreatestart#">
+			<cfinvokeargument name="datecreatestop" value="#arguments.thestruct.datecreatestop#">
+			<cfinvokeargument name="datechangeparam" value="#arguments.thestruct.datechangeparam#">
+			<cfinvokeargument name="datechangestart" value="#arguments.thestruct.datechangestart#">
+			<cfinvokeargument name="datechangestop" value="#arguments.thestruct.datechangestop#">
+			<cfinvokeargument name="sortby" value="#arguments.thestruct.sortby#">
+			<cfinvokeargument name="ui" value="#arguments.thestruct.ui#">
+		</cfinvoke>
+		<!--- Return --->
+		<cfreturn qry_search>
+	</cffunction> 
+
 
 </cfcomponent>

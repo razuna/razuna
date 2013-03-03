@@ -39,6 +39,7 @@
 			<input type="hidden" name="listimgid" id="s_listimgid" value="#attributes.listimgid#">
 			<input type="hidden" name="listvidid" id="s_listvidid" value="#attributes.listvidid#">
 			<input type="hidden" name="listaudid" id="s_listaudid" value="#attributes.listaudid#">
+			<input type="hidden" name="cv" id="cv" value="#attributes.cv#">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
 				<tr>
 					<th colspan="4">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
@@ -245,8 +246,9 @@
 				var fdesc = $('#s_description').val();
 				var fext = $('#s_extension').val();
 				var fmeta = $('#s_metadata').val();
+				var cv = $('#cv').val();
 				// Post the search
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab}, function(){
+				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv}, function(){
 						$("#bodyoverlay").remove();
 					});
 			}
