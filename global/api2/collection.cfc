@@ -108,7 +108,8 @@
 				x.colorspace,
 				x.xres AS xdpi,
 				x.yres AS ydpi,
-				x.resunit AS unit
+				x.resunit AS unit,
+				i.hashtag AS md5hash
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct ON ct.file_id_r = i.img_id AND ct.col_id_r = '#arguments.collectionid#'
@@ -174,7 +175,8 @@
 				'' AS colorspace,
 				'' AS xdpi,
 				'' AS ydpi,
-				'' AS unit
+				'' AS unit,
+				v.hashtag AS md5hash
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct ON ct.file_id_r = v.vid_id AND ct.col_id_r = '#arguments.collectionid#'
@@ -237,7 +239,8 @@
 				'' AS colorspace,
 				'' AS xdpi,
 				'' AS ydpi,
-				'' AS unit
+				'' AS unit,
+				a.hashtag AS md5hash
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct ON ct.file_id_r = a.aud_id AND ct.col_id_r = '#arguments.collectionid#'
@@ -277,7 +280,8 @@
 				'' AS colorspace,
 				'' AS xdpi,
 				'' AS ydpi,
-				'' AS unit
+				'' AS unit,
+				f.hashtag AS md5hash
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 				WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)

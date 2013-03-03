@@ -104,7 +104,8 @@
 				x.colorspace,
 				x.xres AS xdpi,
 				x.yres AS ydpi,
-				x.resunit AS unit
+				x.resunit AS unit,
+				i.hashtag AS md5hash
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
@@ -137,6 +138,7 @@
 				v.vid_meta metadata,
 				v.vid_create_time dateadd,
 				v.vid_change_time datechange,
+				v.hashtag AS md5hash,
 				(
 					SELECT 
 						CASE 
@@ -205,6 +207,7 @@
 				a.aud_meta metadata,
 				a.aud_create_time dateadd,
 				a.aud_change_time datechange,
+				a.hashtag AS md5hash,
 				(
 					SELECT 
 						CASE 
@@ -273,6 +276,7 @@
 				f.file_create_time dateadd,
 				f.file_change_time datechange,
 				'false' as subassets,
+				f.hashtag AS md5hash,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
@@ -678,7 +682,8 @@
 					x.colorspace,
 					x.xres AS xdpi,
 					x.yres AS ydpi,
-					x.resunit AS unit
+					x.resunit AS unit,
+					i.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 					WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
@@ -702,7 +707,8 @@
 					x.colorspace,
 					x.xres AS xdpi,
 					x.yres AS ydpi,
-					x.resunit AS unit
+					x.resunit AS unit,
+					i.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 					WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
@@ -725,7 +731,8 @@
 					x.colorspace,
 					x.xres AS xdpi,
 					x.yres AS ydpi,
-					x.resunit AS unit
+					x.resunit AS unit,
+					i.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 					WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
@@ -739,6 +746,7 @@
 					cloud_url_org,
 					vid_name_org filename_org,
 					vid_extension extension,
+					hashtag AS md5hash,
 					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(vid_size as varchar(100)), '0')</cfif> AS size,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',path_to_asset,'/',vid_name_org) AS local_url_org
@@ -758,6 +766,7 @@
 					cloud_url_org,
 					vid_name_org filename_org,
 					vid_extension extension,
+					hashtag AS md5hash,
 					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(vid_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(vid_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(vid_size as varchar(100)), '0')</cfif> AS size,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',path_to_asset,'/',vid_name_org) AS local_url_org
@@ -777,6 +786,7 @@
 					cloud_url_org,
 					aud_name_org filename_org,
 					aud_extension extension,
+					hashtag AS md5hash,
 					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(aud_size as varchar(100)), '0')</cfif> AS size,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',path_to_asset,'/',aud_name_org) AS local_url_org
@@ -796,6 +806,7 @@
 					cloud_url_org,
 					aud_name_org filename_org,
 					aud_extension extension,
+					hashtag AS md5hash,
 					<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(aud_size as varchar(100)), '0')</cfif> AS size,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('http://#cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',path_to_asset,'/',aud_name_org) AS local_url_org
@@ -821,7 +832,8 @@
 				'' AS colorspace,
 				'' AS xdpi,
 				'' AS ydpi,
-				'' AS unit
+				'' AS unit,
+				'' AS md5hash
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
 				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			</cfquery>

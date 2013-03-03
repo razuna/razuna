@@ -120,7 +120,8 @@
 					x.colorspace,
 					x.xres AS xdpi,
 					x.yres AS ydpi,
-					x.resunit AS unit
+					x.resunit AS unit,
+					i.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
@@ -196,7 +197,8 @@
 					'' AS colorspace,
 					'' AS xdpi,
 					'' AS ydpi,
-					'' AS unit
+					'' AS unit,
+					v.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 					WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -270,7 +272,8 @@
 					'' AS colorspace,
 					'' AS xdpi,
 					'' AS ydpi,
-					'' AS unit
+					'' AS unit,
+					a.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 					WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -336,7 +339,8 @@
 					'' AS colorspace,
 					'' AS xdpi,
 					'' AS ydpi,
-					'' AS unit
+					'' AS unit,
+					f.hashtag AS md5hash
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 					WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
