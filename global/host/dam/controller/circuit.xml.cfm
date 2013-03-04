@@ -1913,6 +1913,7 @@
 		<set name="attributes.thepath" value="#thispath#" />
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.av" value="false" overwrite="false" />
 		<!-- Query folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolder(attributes.theid)" returnvariable="qry" />
 		<set name="attributes.level" value="#qry.folder_level#" />
@@ -1922,7 +1923,14 @@
 		<!-- Action: Check storage -->
 		<do action="storage" />
 		<!-- CFC: Add path -->
-		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
+		<if condition="!attributes.av">
+			<true>
+				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetpath(attributes)" />
+			</true>
+			<false>
+				<invoke object="myFusebox.getApplicationData().assets" methodcall="add_av_from_path(attributes)" />
+			</false>
+		</if>
 	</fuseaction>
 	
 	<!-- Load history asset log -->

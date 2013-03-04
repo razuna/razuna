@@ -32,7 +32,6 @@
 			<td colspan="2">#myFusebox.getApplicationData().defaults.trans("adiver_header_desc")#</td>
 		</tr>
 	</table>
-	<hr class="theline" />
 <cfif session.hosttype EQ 0>
 	<cfinclude template="dsp_host_upgrade.cfm">
 <cfelse>
@@ -44,13 +43,13 @@
 			<td colspan="4">#myFusebox.getApplicationData().defaults.trans("adiver_link_header_desc")#</td>
 		</tr>
 		<tr>
-			<th>#myFusebox.getApplicationData().defaults.trans("title")#</th>
-			<th colspan="3">URL</th>
+			<td>#myFusebox.getApplicationData().defaults.trans("title")#</td>
+			<td colspan="3">URL</td>
 		</tr>
 		<tr class="list">
-			<td><input type="text" style="width:300px" name="av_link_title" id="av_link_title"></td>
-			<td><input type="text" style="width:300px" name="av_link_url" id="av_link_url"></td>
-			<td colspan="2"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="av_add_link()";></td>
+			<td width="1%"><input type="text" style="width:300px" name="av_link_title" id="av_link_title"></td>
+			<td width="1%"><input type="text" style="width:300px" name="av_link_url" id="av_link_url"></td>
+			<td colspan="2" width="100%"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_add")#" class="button" onclick="av_add_link()";></td>
 		</tr>
 		<!--- Show exsiting --->
 		<cfloop query="qry_av.links">
@@ -65,6 +64,7 @@
 	
 	<hr class="theline" />
 	
+	<!--- Additional Renditions / Uploaded --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
 			<th colspan="4">#myFusebox.getApplicationData().defaults.trans("adiver_asset_header")#</th>
@@ -73,15 +73,30 @@
 			<td colspan="4">#myFusebox.getApplicationData().defaults.trans("adiver_asset_header_desc")#</td>
 		</tr>
 		<tr>
-			<td colspan="4" align="right"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("adiver_asset_header")#" class="button" onclick="showwindow('#myself#c.asset_add_single&folder_id=#attributes.folder_id#&nopreview=1&av=1','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("adiver_asset_header"))#',650,2);return false;";></td>
+			<td colspan="4">
+				<table>
+					<tr>
+						<td>
+							<strong>Add by uploading files</strong><br />
+							<input type="button" value="#myFusebox.getApplicationData().defaults.trans("adiver_asset_header")#" class="button" onclick="showwindow('#myself#c.asset_add_single&folder_id=#attributes.folder_id#&nopreview=1&av=1','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("adiver_asset_header"))#',650,2);return false;";>
+						</td>
+						<td style="padding-left:15px;">
+							<cfif !application.razuna.isp>
+								<strong>... or add from an absolute path on your server (getting files from one folder).</strong><br />
+								<input type="text" style="width:300px;" id="folder_path" /> <input type="button" value="#myFusebox.getApplicationData().defaults.trans("import_from_folder_button")#" onclick="importfiles();" class="button" />
+							</cfif>
+						</td>
+					</tr>
+				</table>
+			</td>
 		</tr>
+		<!--- Show exsiting --->
 		<cfif qry_av.assets.recordcount NEQ 0>
 			<tr>
 				<th>#myFusebox.getApplicationData().defaults.trans("title")#</th>
 				<th colspan="3">URL</th>
 			</tr>
 		</cfif>
-		<!--- Show exsiting --->
 		<cfloop query="qry_av.assets">
 			<tr class="list">
 				<td valign="top" nowrap="nowrap" style="width:400px"><a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a> <em>(#myFusebox.getApplicationData().global.converttomb('#thesize#')#MB<cfif av_type EQ "img" OR av_type EQ "vid">, #thewidth#x#theheight# pixel</cfif>)</em></td>
@@ -114,6 +129,13 @@
 					loadrenaud();
 				</cfif>
 			}
+		}
+		// Submit path
+		function importfiles(){
+			// Get values
+			var thepath = $('##folder_path').val();
+			// Open window
+			window.open('#myself#c.asset_add_path&theid=#attributes.folder_id#&v=#createuuid("")#&av=true&folder_path=' + escape(thepath) );
 		}
 	</script>
 
