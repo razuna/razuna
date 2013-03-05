@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<div><strong>Choose from the folder list below in order to store the asset(s).</strong></div>
+	<div><strong><cfif attributes.iscol EQ "F">Choose from the folder list below:<cfelse>Choose a collection folder first...</cfif></strong></div>
 	<div id="win_choosefolder"></div>
 	<cfif session.type EQ "movefolder" AND session.thefolderorglevel NEQ 1 AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 		<div style="clear:both;padding-top:15px;" />
