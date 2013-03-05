@@ -5224,7 +5224,18 @@ This is the main function called directly by a single upload else from addassets
 	<cfoutput>List files of this folder...<br><br></cfoutput>
 	<cfflush>
 	<!--- Now add all assets of this folder --->
-	<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thefiles" type="file">
+	<cftry>
+		<cfdirectory action="list" directory="#arguments.thestruct.folder_path#" name="thefiles" type="file" />
+		<cfcatch type="any">
+			<cfoutput>
+				<h2 style="color:red;">Oops, an error occured. Please make sure Razuna is able to read from your path!</h2>
+				<p>Details: #cfcatch.detail#</p>
+				<p>#cfcatch: message#</p>
+			</cfoutput>
+			<cfflush>
+			<cfabort>
+		</cfcatch>
+	</cftry>
 	<!--- Filter out hidden dirs --->
 	<cfquery dbtype="query" name="thefiles">
 	SELECT *
