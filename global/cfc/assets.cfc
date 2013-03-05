@@ -5230,7 +5230,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfoutput>
 				<h2 style="color:red;">Oops, an error occured. Please make sure Razuna is able to read from your path!</h2>
 				<p>Details: #cfcatch.detail#</p>
-				<p>#cfcatch: message#</p>
+				<p>#cfcatch.message#</p>
 			</cfoutput>
 			<cfflush>
 			<cfabort>
