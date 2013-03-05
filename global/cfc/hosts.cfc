@@ -537,6 +537,8 @@
 <!--- Update Host --->
 <cffunction name="update" output="false" access="public" returntype="void">
 	<cfargument name="thestruct" type="Struct">
+	<!--- Param --->
+	<cfparam name="arguments.thestruct.host_name_custom" default="">
 	<!--- Update --->
 	<cfquery datasource="#variables.dsn#">
 	UPDATE hosts

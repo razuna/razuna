@@ -77,6 +77,7 @@
 			// Feedback
 			$("##feedback").css("display","");
 			$("##feedback").html('#defaultsObj.trans("success")#');
+			loadcontent('hostslist', '#myself#c.hosts_list');
 			return false;
 		});
 	</script>
