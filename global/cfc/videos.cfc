@@ -1278,7 +1278,7 @@
 						<cfset var theaac = "libfaac">
 					</cfif>
 
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p -acodec #theaac# -crf 22 -threads 2 -async 1 -movflags +faststart -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p -acodec #theaac# -crf 22 -threads 2 -async 1 -y #thispreviewvideo#">
 				</cfdefaultcase>
 			</cfswitch>
 			<!--- FFMPEG: CONVERT THE VIDEO --->
