@@ -1362,7 +1362,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Log --->
-			<cfset log = #log_folders(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#, Level: #foldername.folder_level#)')#>
+			<cfset log_folders(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#, Level: #foldername.folder_level#)')>
 			<!--- Flush Cache --->
 			<cfset variables.cachetoken = resetcachetoken("folders")>
 			<!--- The rest goes in a thread since it can run in the background --->
