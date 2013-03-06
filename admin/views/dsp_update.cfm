@@ -31,7 +31,7 @@
 	<br />
 	<br />
 	<cfif attributes.updatedone NEQ "T">
-		<cfif updatedb.update>
+		<cfif attributes.updatedb>
 			#defaultsObj.trans("db_update_here")#
 			<br />
 			<br />
@@ -48,7 +48,7 @@
 		#defaultsObj.trans("db_update_done")#
 		<br />
 		<br />
-		Note: You should check the <a href="http://#cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Upload Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worry, it only means you already have the update for that one table done! 
+		Note: You should check the <a href="http://#cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Update Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worries, it only means you already have the update for that one table done! 
 		<br />
 		<br />
 		<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update_continue")#" class="button" onclick="location.href='#self#';">

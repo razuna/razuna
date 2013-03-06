@@ -137,6 +137,8 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="applicationcheck()" returnvariable="appcheck" />
 		<!-- CFC: Check if a new version is available -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="check_update()" returnvariable="newversion" />
+		<!-- CFC: check if db update is there -->
+		<do action="update" />
 		<!-- Show main page -->
 	 	<do action="v.main" />
 	 </fuseaction>
@@ -1227,9 +1229,14 @@
 		<set name="attributes.firsttime" value="T" overwrite="false" />
 		<set name="attributes.updatedone" value="F" overwrite="false" />
 		<!-- CFC: Check if there is an update for this DB -->
-		<invoke object="myFusebox.getApplicationData().update" methodcall="update_for()" returnvariable="updatedb" />
+		<invoke object="myFusebox.getApplicationData().update" methodcall="update_for()" returnvariable="attributes.updatedb" />
 		<!-- Show -->
-		<do action="v.update" />
+		<if condition="attributes.updatedb">
+			<true>
+				<!-- <do action="v.update" /> -->
+				<relocate url="http://#cgi.http_host##dynpath#/#myself#v.update&amp;updatedone=F&amp;updatedb=#attributes.updatedb#&amp;_v=#createuuid('')#" />
+			</true>
+		</if>
 	</fuseaction>
 	<!-- Do the update -->
 	<fuseaction name="update_do">
