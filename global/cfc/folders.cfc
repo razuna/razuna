@@ -245,7 +245,7 @@
 	<cfargument name="folder_id" default="" required="yes" type="string">
 	<cfargument name="qrygroup" required="yes" type="query">
 	<!--- Set --->
-	<cfset thegroups = 0>
+	<cfset var thegroups = 0>
 	<!--- Query --->
 	<cfif arguments.qrygroup.recordcount NEQ 0>
 		<cfquery datasource="#variables.dsn#" name="thegroups" cachedwithin="1" region="razcache">
@@ -329,7 +329,7 @@
 				<!--- Add folder --->
 				<cfinvoke method="fnew_detail" thestruct="#arguments.thestruct#" returnvariable="newfolderid">
 				<!--- Trim folderid --->
-				<cfset newfolderid = trim(newfolderid)>
+				<cfset var newfolderid = trim(newfolderid)>
 				<cfoutput>#newfolderid#</cfoutput>
 				<!--- If we store on the file system we create the folder here --->
 				<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
@@ -485,7 +485,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -567,7 +567,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -649,7 +649,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -731,7 +731,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -813,7 +813,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -895,7 +895,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -977,7 +977,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -1059,7 +1059,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -1141,7 +1141,7 @@
 			</cfif>
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.link_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.link_path#/#name#">
 		<!--- Now add all assets of this folder --->
 		<cfdirectory action="list" directory="#subfolderpath#" name="thefiles" type="file">
 		<!--- Filter out hidden files --->
@@ -1232,7 +1232,7 @@
 	<!--- Insert the DESCRIPTION (only if not from CFC files.extractZip coming) --->
 	<cfif StructIsEmpty(arguments.thefolderparam)>
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-			<cfset thisfield="arguments.thestruct.folder_desc_" & "#langindex#">
+			<cfset var thisfield="arguments.thestruct.folder_desc_" & "#langindex#">
 			<cfif #thisfield# CONTAINS "#langindex#">
 				<cftransaction>
 					<cfquery datasource="#application.razuna.datasource#">
@@ -1253,9 +1253,9 @@
 	<!--- Insert the Group and Permission --->
 	<cfloop collection="#arguments.thestruct#" item="myform">
 		<cfif myform CONTAINS "grp_">
-			<cfset grpid = ReplaceNoCase(myform, "grp_", "")>
-			<cfset grpidno = Replace(grpid, "-", "", "all")>
-			<cfset theper = "per_" & "#grpidno#">
+			<cfset var grpid = ReplaceNoCase(myform, "grp_", "")>
+			<cfset var grpidno = Replace(grpid, "-", "", "all")>
+			<cfset var theper = "per_" & "#grpidno#">
 			<cftransaction>
 				<cfquery datasource="#application.razuna.datasource#">
 				INSERT INTO #session.hostdbprefix#folders_groups
@@ -1578,7 +1578,7 @@
 		</cfquery>
 		<!--- Update the Desc --->
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-			<cfset thisfield="arguments.thestruct.folder_desc_" & "#langindex#">
+			<cfset var thisfield="arguments.thestruct.folder_desc_" & "#langindex#">
 			<cfif #thisfield# CONTAINS "#langindex#">
 				<!--- Check if description in this language exists --->
 				<cfquery datasource="#variables.dsn#" name="langDesc">
@@ -1623,9 +1623,9 @@
 		<cfloop delimiters="," index="myform" list="#arguments.thestruct.fieldnames#">
 			<cfif myform CONTAINS "grp_">
 				<cfset arguments.thestruct.grpno = "F">
-				<cfset grpid = ReplaceNoCase(#myform#, "grp_", "", "one")>
-				<cfset grpidno = Replace(grpid, "-", "", "all")>
-				<cfset theper = "per_" & "#grpidno#">
+				<cfset var grpid = ReplaceNoCase(#myform#, "grp_", "", "one")>
+				<cfset var grpidno = Replace(grpid, "-", "", "all")>
+				<cfset var theper = "per_" & "#grpidno#">
 				<cfquery datasource="#variables.dsn#">
 				INSERT INTO #session.hostdbprefix#folders_groups
 				(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
@@ -1677,7 +1677,7 @@
 			</cfif>
 		</cfif>
 		<!--- Log --->
-		<cfset log = #log_folders(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.folder_name# (ID: #arguments.thestruct.folder_id#)')#>
+		<cfset log_folders(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #arguments.thestruct.folder_name# (ID: #arguments.thestruct.folder_id#)')>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("search")>
 		<cfset variables.cachetoken = resetcachetoken("folders")>
@@ -1705,9 +1705,9 @@
 		<!--- Now add the new groups --->
 		<cfloop collection="#arguments.thestruct#" item="myform">
 			<cfif myform CONTAINS "grp_">
-				<cfset grpid = ReplaceNoCase(myform, "grp_", "")>
-				<cfset grpidno = Replace(grpid, "-", "", "all")>
-				<cfset theper = "per_" & "#grpidno#">
+				<cfset var grpid = ReplaceNoCase(myform, "grp_", "")>
+				<cfset var grpidno = Replace(grpid, "-", "", "all")>
+				<cfset var theper = "per_" & "#grpidno#">
 				<cfloop index="thisfolderid" list="#thefolderidlist#">
 					<!--- Insert permission into folder_groups --->
 					<cfquery datasource="#variables.dsn#">
@@ -1813,7 +1813,7 @@
 <cffunction name="apifiletotaltype" output="false">
 	<cfargument name="folder_id" default="" required="yes" type="string">
 	<!--- Set struct --->
-	<cfset totaltypes = structnew()>
+	<cfset var totaltypes = structnew()>
 	<cfset arguments.thestruct = structnew()>
 	<cfset arguments.thestruct.folder_id = arguments.folder_id>
 	<!--- Call function for IMG --->
@@ -1849,9 +1849,9 @@
 	<!--- Show assets from subfolders or not --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke method="getfoldersinlist" dsn="#application.razuna.datasource#" folder_id="#arguments.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
-		<cfset thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
+		<cfset var thefolderlist = arguments.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
-		<cfset thefolderlist = arguments.folder_id & ",">
+		<cfset var thefolderlist = arguments.folder_id & ",">
 	</cfif>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="total" cachedwithin="1" region="razcache">
@@ -1945,9 +1945,9 @@
 	<cfif arguments.thestruct.folder_id NEQ "">
 		<cfif session.showsubfolders EQ "T">
 			<cfinvoke method="getfoldersinlist" dsn="#application.razuna.datasource#" folder_id="#arguments.thestruct.folder_id#" database="#application.razuna.thedatabase#" hostid="#session.hostid#" returnvariable="thefolders">
-			<cfset thefolderlist = arguments.thestruct.folder_id & "," & ValueList(thefolders.folder_id)>
+			<cfset var thefolderlist = arguments.thestruct.folder_id & "," & ValueList(thefolders.folder_id)>
 		<cfelse>
-			<cfset thefolderlist = arguments.thestruct.folder_id & ",">
+			<cfset var thefolderlist = arguments.thestruct.folder_id & ",">
 		</cfif>
 	</cfif>
 	<!--- Images --->
@@ -2118,39 +2118,39 @@
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Loop over query set --->
 	<cfloop query="fprop">
-		<cfset grppos = listfind(session.thegroupofuser, grp_id_r)>
+		<cfset var grppos = listfind(session.thegroupofuser, grp_id_r)>
 		<cfif grppos NEQ 0>
-			<cfset thegrp = listgetat(session.thegroupofuser, grppos)>
+			<cfset var thegrp = listgetat(session.thegroupofuser, grppos)>
 		<cfelse>
-			<cfset thegrp = 0>
+			<cfset var thegrp = 0>
 		</cfif>
 		<!--- if the groupid is emtpy --->
 		<cfif grp_id_r EQ "">
-			<cfset folderaccess = "n">
+			<cfset var folderaccess = "n">
 		<!--- if the groupid is set to all --->
 		<cfelseif grp_id_r EQ 0>
-			<cfset folderaccess = grp_permission>
+			<cfset var folderaccess = grp_permission>
 		<!--- if we find the groupid in the webgroups of this user --->
 		<cfelseif grp_id_r EQ thegrp AND grppos NEQ 0>
 			<!--- Set the session --->
 			<cfif folderaccess EQ "n">
-				<cfset folderaccess = grp_permission>
+				<cfset var folderaccess = grp_permission>
 			<cfelseif folderaccess EQ "R">
-				<cfset folderaccess = grp_permission>
+				<cfset var folderaccess = grp_permission>
 			<cfelseif folderaccess EQ "W" AND grp_permission NEQ "R">
-				<cfset folderaccess = grp_permission>
+				<cfset var folderaccess = grp_permission>
 			<cfelseif folderaccess NEQ "X">
-				<cfset folderaccess = grp_permission>
+				<cfset var folderaccess = grp_permission>
 			</cfif>
 		</cfif>
 	</cfloop>
 	<!--- If the user is a sys or admin or the owner of the folder give full access --->
 	<cfif (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
-		<cfset folderaccess = "x">
+		<cfset var folderaccess = "x">
 	</cfif>
 	<!--- If session.customaccess is here and is not empty --->
 	<cfif structKeyExists(session,"customaccess") AND session.customaccess NEQ "">
-		<cfset folderaccess = session.customaccess>
+		<cfset var folderaccess = session.customaccess>
 	</cfif>
 	<cfreturn folderaccess />
 </cffunction>
@@ -2295,9 +2295,9 @@
 	<!--- Show assets from subfolders or not --->
 	<cfif session.showsubfolders EQ "T">
 		<cfinvoke method="getfoldersinlist" dsn="#variables.dsn#" folder_id="#arguments.thestruct.folder_id#" database="#variables.database#" hostid="#session.hostid#" returnvariable="thefolders">
-		<cfset thefolderlist = arguments.thestruct.folder_id & "," & ValueList(thefolders.folder_id)>
+		<cfset var thefolderlist = arguments.thestruct.folder_id & "," & ValueList(thefolders.folder_id)>
 	<cfelse>
-		<cfset thefolderlist = arguments.thestruct.folder_id & ",">
+		<cfset var thefolderlist = arguments.thestruct.folder_id & ",">
 	</cfif>
 	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 		<!--- Set the session for offset correctly if the total count of assets in lower the the total rowmaxpage --->
@@ -2315,7 +2315,7 @@
 			<cfset var min = session.offset * session.rowmaxpage>
 			<cfset var max = (session.offset + 1) * session.rowmaxpage>
 			<cfif variables.database EQ "db2">
-				<cfset min = min + 1>
+				<cfset var min = min + 1>
 			</cfif>
 		</cfif>
 	<cfelse>
@@ -2674,7 +2674,7 @@
 <!--- Remove all selected records. Mixed data types thus get them here --->
 <cffunction name="removeall" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
-	<cfset theids = structnew()>
+	<cfset var theids = structnew()>
 	<cfset theids.imgids = "">
 	<cfset theids.docids = "">
 	<cfset theids.vidids = "">
@@ -2682,16 +2682,16 @@
 	<!--- Get the ids and put them into the right struct --->
 	<cfloop list="#arguments.thestruct.id#" delimiters="," index="i">
 		<cfif i CONTAINS "-img">
-			<cfset imgid = listfirst(i,"-")>
+			<cfset var imgid = listfirst(i,"-")>
 			<cfset theids.imgids = imgid & "," & theids.imgids >
 		<cfelseif  i CONTAINS "-doc">
-			<cfset docid = listfirst(i,"-")>
+			<cfset var docid = listfirst(i,"-")>
 			<cfset theids.docids = docid & "," & theids.docids >
 		<cfelseif  i CONTAINS "-vid">
-			<cfset vidid = listfirst(i,"-")>
+			<cfset var vidid = listfirst(i,"-")>
 			<cfset theids.vidids = vidid & "," & theids.vidids >
 		<cfelseif  i CONTAINS "-aud">
-			<cfset audid = listfirst(i,"-")>
+			<cfset var audid = listfirst(i,"-")>
 			<cfset theids.audids = audid & "," & theids.audids >
 		</cfif>
 	</cfloop>
@@ -3001,7 +3001,7 @@
 <cffunction name="sharecheckperm" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
 	<!--- Param --->
-	<cfset shared = structnew()>
+	<cfset var shared = structnew()>
 	<cfparam name="session.theuserid" default="">
 	<cfparam name="session.iscol" default="F">
 	<!--- Check if folder is even shared or not --->
@@ -3121,8 +3121,8 @@
 	<!--- Loop over the file ids --->
 	<cfloop list="#arguments.thestruct.file_ids#" index="i">
 		<!--- Get the ID and the type --->
-		<cfset theid = listfirst(i,"-")>
-		<cfset thetype = listlast(i,"-")>
+		<cfset var theid = listfirst(i,"-")>
+		<cfset var thetype = listlast(i,"-")>
 		<!--- Decide on the type what to do --->
 		<!--- DOCUMENTS --->
 		<cfif thetype EQ "doc">
@@ -3248,14 +3248,14 @@
 		<!--- Images --->
 		<cfif myform CONTAINS "img_">
 			<!--- First part of the _ --->
-			<cfset theid = listfirst(myform,"_")>
+			<cfset var theid = listfirst(myform,"_")>
 			<cfif imgid NEQ theid>
 				<!--- Set the file name --->
-				<cfset fname = theid & "_img_filename">
+				<cfset var fname = theid & "_img_filename">
 				<!--- Set the description --->
-				<cfset fdesc = theid & "_img_desc_1">
+				<cfset var fdesc = theid & "_img_desc_1">
 				<!--- Set the keywords --->
-				<cfset fkeys = theid & "_img_keywords_1">
+				<cfset var fkeys = theid & "_img_keywords_1">
 				<!--- Finally update the record --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#images
@@ -3298,7 +3298,7 @@
 					</cfquery>
 				</cfif>
 				<!--- Store the id in a temp var --->
-				<cfset imgid = theid>
+				<cfset var imgid = theid>
 				<cfset arguments.thestruct.theid = theid>
 				<!--- Lucene --->
 				<cfthread intstruct="#arguments.thestruct#">
@@ -3312,14 +3312,14 @@
 		<!--- Videos --->
 		<cfelseif myform CONTAINS "vid_">
 			<!--- First part of the _ --->
-			<cfset theid = listfirst(myform,"_")>
+			<cfset var theid = listfirst(myform,"_")>
 			<cfif vidid NEQ theid>
 				<!--- Set the file name --->
-				<cfset fname = theid & "_vid_filename">
+				<cfset var fname = theid & "_vid_filename">
 				<!--- Set the description --->
-				<cfset fdesc = theid & "_vid_desc_1">
+				<cfset var fdesc = theid & "_vid_desc_1">
 				<!--- Set the keywords --->
-				<cfset fkeys = theid & "_vid_keywords_1">
+				<cfset var fkeys = theid & "_vid_keywords_1">
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#videos
@@ -3363,7 +3363,7 @@
 					</cfquery>
 				</cfif>
 				<!--- Store the id in a temp var --->
-				<cfset vidid = theid>
+				<cfset var vidid = theid>
 				<cfset arguments.thestruct.theid = theid>
 				<!--- Lucene --->
 				<cfthread intstruct="#arguments.thestruct#">
@@ -3377,14 +3377,14 @@
 		<!--- Audios --->
 		<cfelseif myform CONTAINS "aud_">
 			<!--- First part of the _ --->
-			<cfset theid = listfirst(myform,"_")>
+			<cfset var theid = listfirst(myform,"_")>
 			<cfif audid NEQ theid>
 				<!--- Set the file name --->
-				<cfset fname = theid & "_aud_filename">
+				<cfset var fname = theid & "_aud_filename">
 				<!--- Set the description --->
-				<cfset fdesc = theid & "_aud_desc_1">
+				<cfset var fdesc = theid & "_aud_desc_1">
 				<!--- Set the keywords --->
-				<cfset fkeys = theid & "_aud_keywords_1">
+				<cfset var fkeys = theid & "_aud_keywords_1">
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#audios
@@ -3427,7 +3427,7 @@
 					</cfquery>
 				</cfif>
 				<!--- Store the id in a temp var --->
-				<cfset audid = theid>	
+				<cfset var audid = theid>	
 				<cfset arguments.thestruct.theid = theid>
 				<!--- Lucene --->
 				<cfthread intstruct="#arguments.thestruct#">
@@ -3446,14 +3446,14 @@
 		<!--- Files --->
 		<cfelseif myform CONTAINS "doc_">
 			<!--- First part of the _ --->
-			<cfset theid = listfirst(myform,"_")>
+			<cfset var theid = listfirst(myform,"_")>
 			<cfif docid NEQ theid>
 				<!--- Set the file name --->
-				<cfset fname = theid & "_doc_filename">
+				<cfset var fname = theid & "_doc_filename">
 				<!--- Set the description --->
-				<cfset fdesc = theid & "_doc_desc_1">
+				<cfset var fdesc = theid & "_doc_desc_1">
 				<!--- Set the keywords --->
-				<cfset fkeys = theid & "_doc_keywords_1">
+				<cfset var fkeys = theid & "_doc_keywords_1">
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#files
@@ -3496,7 +3496,7 @@
 					</cfquery>
 				</cfif>
 				<!--- Store the id in a temp var --->
-				<cfset docid = theid>
+				<cfset var docid = theid>
 				<cfset arguments.thestruct.theid = theid>
 				<!--- Lucene --->
 				<cfthread intstruct="#arguments.thestruct#">
@@ -3523,7 +3523,7 @@
 <cffunction name="link_check" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
 		<!--- Param --->
-		<cfset status = structnew()>
+		<cfset var status = structnew()>
 		<!--- Does the dir exists --->
 		<cfset status.dir = directoryexists("#arguments.thestruct.link_path#")>
 		<cfif status.dir>
@@ -3631,6 +3631,7 @@
 	<cfargument name="folderlist" required="false" type="string" default="">
 	<cfargument name="fromshare" required="false" type="string" default="false">
 	<!--- Param --->
+	<cfset var qry = "">
 	<cfparam name="flist" default="">
 	<!--- If there is no session for webgroups set --->
 	<cfparam default="0" name="session.thegroupofuser">
@@ -3693,7 +3694,7 @@
 	</cfif>
 	<cfif qry.recordcount NEQ 0>
 		<!--- Set the current values into the list --->
-		<cfset flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
+		<cfset var flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
 		<!--- If the folder_id_r is not the same the passed one --->
 		<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 			<!--- Call this function again --->
@@ -3905,9 +3906,9 @@
 			</cfif>
 		</cfif>
 		<!--- Reset variables --->
-		<cfset theorgname = "">
-		<cfset thefinalname = "">
-		<cfset thiscloudurl = "">
+		<cfset var theorgname = "">
+		<cfset var thefinalname = "">
+		<cfset var thiscloudurl = "">
 	</cfloop>
 	<!--- Feedback --->
 	<cfoutput><br /></cfoutput>
@@ -3984,7 +3985,7 @@
 	</cfquery>
 	<!--- Set to true if found --->
 	<cfif qry.recordCount NEQ 0>
-		<cfset ishere = true>
+		<cfset var ishere = true>
 	</cfif>
 	<cfreturn ishere>
 </cffunction>

@@ -54,14 +54,14 @@
 	</cfif>
 	<!--- Put the rest into a thread --->
 	<cfthread intstruct="#arguments.thestruct#">
-		<cfset md5hash = "">
+		<cfset var md5hash = "">
 		<!--- Rename the file so that we can remove any spaces --->
 		<cfinvoke component="global" method="convertname" returnvariable="thefilename" thename="#attributes.intstruct.thefile.serverFile#">
 		<cfinvoke component="global" method="convertname" returnvariable="thefilenamenoext" thename="#attributes.intstruct.thefile.serverFileName#">
 		<cffile action="rename" source="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefile.serverFile#" destination="#attributes.intstruct.theincomingtemppath#/#thefilename#">
 		<!--- MD5 Hash --->
 		<cfif FileExists("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
-			<cfset md5hash = hashbinary("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
+			<cfset var md5hash = hashbinary("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
 		</cfif>
 		<!--- Check if we have to check for md5 records --->
 		<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -69,7 +69,7 @@
 		<cfif checkformd5>
 			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
 		<cfelse>
-			<cfset md5here = 0>
+			<cfset var md5here = 0>
 		</cfif>
 		<!--- If file does not exsist continue else send user an eMail --->
 		<cfif md5here EQ 0>
@@ -120,12 +120,12 @@
 	<cfparam name="session.currentupload" default="0">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
-		<cfset md5hash = "">
+		<cfset var md5hash = "">
 		<!--- If we are coming from a scheduled task then... --->
 		<cfif structkeyexists(arguments.thestruct,"sched")>
-			<cfset x = i>
+			<cfset var x = i>
 			<!--- Get the filename --->
-			<cfset i = listlast(i, "/")>
+			<cfset var i = listlast(i, "/")>
 			<!--- Get the folderpath --->
 			<cfset arguments.thestruct.folderpath = replacenocase(x, "/#i#", "", "ALL")>
 		</cfif>
@@ -140,12 +140,12 @@
 		<!--- Copy the file into the temp dir --->
 		<cffile action="copy" source="#arguments.thestruct.folderpath#/#i#" destination="#arguments.thestruct.theincomingtemppath#/#i#" mode="775">
 		<!--- Get file extension --->
-		<cfset theextension = listlast("#i#",".")>
+		<cfset var theextension = listlast("#i#",".")>
 		<!--- If the extension is longer then 9 chars --->
 		<cfif len(theextension) GT 9>
-			<cfset theextension = "txt">
+			<cfset var theextension = "txt">
 		</cfif>
-		<cfset namenoext = replacenocase("#i#",".#theextension#","","All")>
+		<cfset var namenoext = replacenocase("#i#",".#theextension#","","All")>
 		<!--- Store the original filename --->
 		<cfset arguments.thestruct.thefilenameoriginal = i>
 		<!--- Rename the file so that we can remove any spaces --->
@@ -157,7 +157,7 @@
 		<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 		<!--- MD5 Hash --->
 		<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
-			<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+			<cfset var md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 		</cfif>
 		<!--- Check if we have to check for md5 records --->
 		<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -217,21 +217,21 @@
 		<cfpop action="getall" server="#session.email_server#" username="#session.email_address#" password="#session.email_pass#" name="qrymessage" messagenumber="#i#" attachmentpath="#arguments.thestruct.thepath#/incoming/emails" generateuniquefilenames="no" timeout="3600">
 		<cfoutput query="qrymessage">
 			<!--- Check that there is an attachment. If so loop over it --->
-			<cfset numattachments = listlen(attachments)>
+			<cfset var numattachments = listlen(attachments)>
 			<!--- If the number of attachments is greater then 0 continue --->
 			<cfif numattachments GT 0>
 				<!--- Loop over the attachments and get one by one --->
 				<cfloop list="#attachmentfiles#" delimiters="," index="at">
 					<!--- Sometimes attachments contain unwanted file --->
 					<cfif NOT at CONTAINS "smime">
-						<cfset md5hash = "">
+						<cfset var md5hash = "">
 						<!--- Set names --->
 						<cfset arguments.thestruct.thefilename = listlast(#at#, "/\")>
-						<cfset theextension = listlast("#arguments.thestruct.thefilename#",".")>
+						<cfset var theextension = listlast("#arguments.thestruct.thefilename#",".")>
 						<cfset arguments.thestruct.thefilenamenoext = replacenocase("#arguments.thestruct.thefilename#",".#theextension#","","All")>
 						<!--- If the extension is longer then 9 chars --->
 						<cfif len(theextension) GT 9>
-							<cfset theextension = "txt">
+							<cfset var theextension = "txt">
 						</cfif>
 						<!--- Create a unique name for the temp directory to hold the file --->
 						<cfset arguments.thestruct.tempid = createuuid("")>
@@ -247,7 +247,7 @@
 						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 						<!--- MD5 Hash --->
 						<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
-							<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+							<cfset var md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 						</cfif>
 						<!--- Check if we have to check for md5 records --->
 						<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -323,7 +323,7 @@
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i">
 		<cftry>
-			<cfset md5hash = "">
+			<cfset var md5hash = "">
 			<!--- Create a unique name for the temp directory to hold the file --->
 			<cfset arguments.thestruct.tempid = createuuid("")>
 			<!--- Put current id into session --->
@@ -335,11 +335,11 @@
 				<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
 			</cfif>
 			<!--- Get file extension --->
-			<cfset theextension = listlast("#i#",".")>
-			<cfset namenoext = replacenocase("#i#",".#theextension#","","All")>
+			<cfset var theextension = listlast("#i#",".")>
+			<cfset var namenoext = replacenocase("#i#",".#theextension#","","All")>
 			<!--- If the extension is longer then 9 chars --->
 			<cfif len(theextension) GT 9>
-				<cfset theextension = "txt">
+				<cfset var theextension = "txt">
 			</cfif>
 			<!--- Rename the file so that we can remove any spaces --->
 			<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#i#">
@@ -348,14 +348,14 @@
 			
 			<!--- If we are coming from a scheduled task then... --->
 			<cfif structkeyexists(arguments.thestruct,"sched")>
-				<cfset remote_file = arguments.thestruct.folderpath & "/" & i>
+				<cfset var remote_file = arguments.thestruct.folderpath & "/" & i>
 			<cfelse>
-				<cfset remote_file = arguments.thestruct.folderpath & "/" & i>
+				<cfset var remote_file = arguments.thestruct.folderpath & "/" & i>
 			</cfif>
 			<!--- Get file from FTP --->
 			<cfset arguments.thestruct.remote_file = remote_file>
 			<!--- Create uuid --->
-			<cfset tt = createUUID("")>
+			<cfset var tt = createUUID("")>
 			<cfthread name="#tt#" intstruct="#arguments.thestruct#">
 				<!--- Open connection --->
 				<cfset o = ftpopen(server=attributes.intstruct.ftp_server,username=attributes.intstruct.ftp_user,password=attributes.intstruct.ftp_pass,passive=attributes.intstruct.ftp_passive)>
@@ -370,7 +370,7 @@
 			<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
 			<!--- MD5 Hash --->
 			<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
-				<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+				<cfset var md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 			</cfif>
 			<!--- Check if we have to check for md5 records --->
 			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -519,7 +519,7 @@
 						<cfset metaarray[#metacounter#][1] = replacenocase(thefield,"meta_","","ONE")>
 						<cfset metaarray[#metacounter#][2] = arguments.thestruct["#thefield#"]>
 						<!--- Increase the array --->
-						<cfset metacounter = metacounter + 1>
+						<cfset var metacounter = metacounter + 1>
 					</cfif>
 				</cfloop>
 				<!--- Serialize it to JSON and put it into struct --->
@@ -547,7 +547,7 @@
 			<!--- If we come from plupload or the value isbinary is true then we look for the binary --->
 			<cfif arguments.thestruct.isbinary>
 				<!--- Set the file as struct --->
-				<cfset thefile = structnew()>
+				<cfset var thefile = structnew()>
 				<!--- Set filename --->
 				<cfset thefile.serverFile = arguments.thestruct.name>
 				<cfset thefile.serverFileName = arguments.thestruct.name>
@@ -582,9 +582,9 @@
 			<cfelse>
 				<!--- If plupload --->
 				<cfif arguments.thestruct.plupload>
-					<cfset thefilefield = "file">
+					<cfset var thefilefield = "file">
 				<cfelse>
-					<cfset thefilefield = "filedata">
+					<cfset var thefilefield = "filedata">
 				</cfif>
 				<!--- Upload file --->
 				<cffile action="upload" destination="#arguments.thestruct.theincomingtemppath#" nameconflict="overwrite" filefield="#thefilefield#" result="thefile">
@@ -600,7 +600,7 @@
 			<cffile action="rename" source="#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
 			<!--- MD5 Hash --->
 			<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
-				<cfset md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
+				<cfset var md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
 			</cfif>
 			<!--- Check if we have to check for md5 records --->
 			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -656,9 +656,9 @@
 				</cfquery>
 				<!--- set attributes of file structure --->
 				<cfif fileType.recordCount GT 0>
-					<cfset thefiletype = fileType.type_type>
+					<cfset var thefiletype = fileType.type_type>
 				<cfelse>
-					<cfset thefiletype = "other">
+					<cfset var thefiletype = "other">
 				</cfif>
 				<!--- Return Message --->
 				<cfsavecontent variable="thexml"><cfoutput><?xml version="1.0" encoding="UTF-8"?>
@@ -674,9 +674,9 @@
 				<cfif structkeyexists(arguments.thestruct,"redirectto")>
 					<!--- If additional params are passed --->
 					<cfif structkeyexists(arguments.thestruct,"redirecttoparams")>
-						<cfset redirvar = "#arguments.thestruct.redirectto#?responsecode=0&message=success&assetid=#arguments.thestruct.tempid#&filetype=#thefiletype#&#arguments.thestruct.redirecttoparams#">
+						<cfset var redirvar = "#arguments.thestruct.redirectto#?responsecode=0&message=success&assetid=#arguments.thestruct.tempid#&filetype=#thefiletype#&#arguments.thestruct.redirecttoparams#">
 					<cfelse>
-						<cfset redirvar = "#arguments.thestruct.redirectto#?responsecode=0&message=success&assetid=#arguments.thestruct.tempid#&filetype=#thefiletype#">
+						<cfset var redirvar = "#arguments.thestruct.redirectto#?responsecode=0&message=success&assetid=#arguments.thestruct.tempid#&filetype=#thefiletype#">
 					</cfif>
 					<!--- Redirect --->
 					<cflocation url="#redirvar#" addToken="yes">
@@ -748,18 +748,18 @@
 		<cfset var thefilenamenoext = listfirst(thefilename,".")>
 		<!--- If the extension is longer then 9 chars --->
 		<cfif len(theext) GT 9>
-			<cfset theext = "txt">
+			<cfset var theext = "txt">
 		</cfif>
 		<!--- If the user did not enter a filename we read the filename from the file --->
 		<cfif arguments.thestruct.link_file_name NEQ "">
-			<cfset thefilename = arguments.thestruct.link_file_name>
+			<cfset var thefilename = arguments.thestruct.link_file_name>
 		</cfif>
 		<!--- Replace any p or br in the textarea --->
 		<cfset arguments.thestruct.link_path_url = Replace(arguments.thestruct.link_path_url, "#chr(10)##chr(13)#", "", "ALL")>
 		<!--- If this is a video with embeeded player we set extension manually --->
 		<cfif arguments.thestruct.link_kind EQ "urlvideo">
 			<cfset arguments.thestruct.link_kind = "url">
-			<cfset theext = "mov">
+			<cfset var theext = "mov">
 		</cfif>
 		<!--- If this is a local link --->
 		<cfif arguments.thestruct.link_kind EQ "lan">
@@ -767,12 +767,12 @@
 			<cfif NOT structkeyexists(arguments.thestruct,"orgsize")>
 				<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.link_path_url#" returnvariable="orgsize">
 			<cfelse>
-				<cfset orgsize = arguments.thestruct.orgsize>
+				<cfset var orgsize = arguments.thestruct.orgsize>
 			</cfif>
 			<cfset arguments.thestruct.lanorgname = listlast(arguments.thestruct.link_path_url,"/\")>
 			<!--- MD5 Hash --->
 			<cfif FileExists("#arguments.thestruct.link_path_url#")>
-				<cfset md5hash = hashbinary("#arguments.thestruct.link_path_url#")>
+				<cfset var md5hash = hashbinary("#arguments.thestruct.link_path_url#")>
 			</cfif>
 			<!--- Check if we have to check for md5 records --->
 			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -1045,7 +1045,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Move --->
 			<cfelseif arguments.thestruct.qryfile.sched_action EQ 1>
 				<!--- Create the moved directory, if it is already there do nothing --->
-				<cfset schedfolder = "scheduleduploads_done_" & #dateformat(now(),"yyyy_mm_dd")#>
+				<cfset var schedfolder = "scheduleduploads_done_" & #dateformat(now(),"yyyy_mm_dd")#>
 				<cftry>
 					<cfdirectory action="create" directory="#arguments.thestruct.folderpath#/#schedfolder#" mode="775">
 					<cfcatch type="any"></cfcatch>
@@ -1230,7 +1230,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.theorgfile = arguments.thestruct.qryfile.path>
 			<cfset arguments.thestruct.theorgfileraw = arguments.thestruct.qryfile.path>
 			<!--- The name for the pdf --->
-			<cfset getlast = listlast(arguments.thestruct.qryfile.path,"/\")>
+			<cfset var getlast = listlast(arguments.thestruct.qryfile.path,"/\")>
 			<cfset arguments.thestruct.thepdfimage = replacenocase(getlast,".pdf",".jpg","all")>
 		<!--- For importpath --->
 		<cfelseif arguments.thestruct.importpath>
@@ -1391,11 +1391,11 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke component="xmp" method="getpdfxmp" thestruct="#arguments.thestruct#" />
 		</cfif>
 		<!--- Grab the keywords --->
-		<cfset thekeywords = trim(listlast(thekeywords,":"))>
-		<cfset theapplekeywords = trim(listlast(theapplekeywords,":"))>
+		<cfset var thekeywords = trim(listlast(thekeywords,":"))>
+		<cfset var theapplekeywords = trim(listlast(theapplekeywords,":"))>
 		<!--- If XMP keywords is empty take the PDF:Keywords var --->
 		<cfif thekeywords EQ "">
-			<cfset thekeywords = theapplekeywords>
+			<cfset var thekeywords = theapplekeywords>
 		</cfif>
 		<!--- Append keywords and description to DB --->
 		<cfif structkeyexists(arguments.thestruct,"langcount")>
@@ -1484,7 +1484,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- NIRVANIX --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qryfile.link_kind NEQ "url">
-			<cfset ttu = createuuid("")>
+			<cfset var ttu = createuuid("")>
 			<cfthread name="#ttu#" upstruct="#arguments.thestruct#">
 				<cfinvoke component="nirvanix" method="Upload">
 					<cfinvokeargument name="destFolderPath" value="/#attributes.upstruct.qryfile.folder_id#/doc/#attributes.upstruct.newid#">
@@ -1496,7 +1496,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfthread action="join" name="#ttu#" />	
 			<!--- If we are PDF we need to upload the thumbnail and image as well --->
 			<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
-				<cfset ttut = createuuid("")>
+				<cfset var ttut = createuuid("")>
 				<cfthread name="#ttut#" upstruct="#arguments.thestruct#">
 					<cfinvoke component="nirvanix" method="Upload">
 						<cfinvokeargument name="destFolderPath" value="/#attributes.upstruct.qryfile.folder_id#/doc/#attributes.upstruct.newid#">
@@ -1543,7 +1543,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- AMAZON --->
 		<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Upload file --->
-			<cfset upd = Createuuid("")>
+			<cfset var upd = Createuuid("")>
 			<cfthread name="#upd#" intupstruct="#arguments.thestruct#">
 				<cfinvoke component="amazon" method="Upload">
 					<cfinvokeargument name="key" value="/#attributes.intupstruct.qryfile.folder_id#/doc/#attributes.intupstruct.newid#/#attributes.intupstruct.qryfile.filename#">
@@ -1555,7 +1555,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- If we are PDF we need to upload the thumbnail and image as well --->
 			<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
 				<!--- Upload thumbnail --->		
-				<cfset updt = Createuuid("")>
+				<cfset var updt = Createuuid("")>
 				<cfthread name="#updt#" intuptstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Upload">
 						<cfinvokeargument name="key" value="/#attributes.intuptstruct.qryfile.folder_id#/doc/#attributes.intuptstruct.newid#/#attributes.intuptstruct.thepdfimage#">
@@ -1601,7 +1601,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Akamai --->
 		<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Upload file --->
-			<cfset upd = Createuuid("")>
+			<cfset var upd = Createuuid("")>
 			<cfthread name="#upd#" intupstruct="#arguments.thestruct#">
 				<cfinvoke component="akamai" method="Upload">
 					<cfinvokeargument name="theasset" value="#attributes.intupstruct.qryfile.path#">
@@ -1615,7 +1615,7 @@ This is the main function called directly by a single upload else from addassets
 <!--- 
 			<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
 				<!--- Upload thumbnail --->		
-				<cfset updt = Createuuid("")>
+				<cfset var updt = Createuuid("")>
 				<cfthread name="#updt#" intuptstruct="#arguments.thestruct#">
 					<cfinvoke component="amazon" method="Upload">
 						<cfinvokeargument name="key" value="/#attributes.intuptstruct.qryfile.folder_id#/doc/#attributes.intuptstruct.newid#/#attributes.intuptstruct.thepdfimage#">
@@ -1999,7 +1999,7 @@ This is the main function called directly by a single upload else from addassets
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 		</cfif>	
 		<!--- check if image is an anmiated GIF --->
-		<cfset isAnimGIF = isAnimatedGIF("#arguments.thestruct.thesource#", arguments.thestruct.thetools.imagemagick)>
+		<cfset var isAnimGIF = isAnimatedGIF("#arguments.thestruct.thesource#", arguments.thestruct.thetools.imagemagick)>
 		<!--- animated GIFs can only be converted to GIF --->
 		<cfif isAnimGIF>
 			<cfset QuerySetCell(arguments.thestruct.qrysettings, "set2_img_format", "gif", 1)>
@@ -2132,16 +2132,16 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Wait for thread to finish --->
 			<cfthread action="join" name="uploadt#arguments.thestruct.newid#" />
 			<!--- Get size of original and thumnail --->
-			<cfset orgsize = arguments.thestruct.qryfile.thesize>
+			<cfset var orgsize = arguments.thestruct.qryfile.thesize>
 			<cfif !application.razuna.rfs>
 				<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
 			<cfelse>
 				<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
-				<cfset thumbsize = 1>
+				<cfset var thumbsize = 1>
 			</cfif>
 			<!--- NIRVANIX --->
 			<cfelseif arguments.thestruct.storage EQ "nirvanix">
-				<cfset uplt = "u" & Createuuid("")>
+				<cfset var uplt = "u" & Createuuid("")>
 				<!--- Upload Original Image --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cftry>
@@ -2176,11 +2176,11 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Get signed URL --->
 					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
 				<cfelse>
-					<cfset thumbsize = 1>
+					<cfset var thumbsize = 1>
 					<cfset cloud_url.theurl = "">
 				</cfif>
 				<!--- Get size of original --->
-				<cfset orgsize = arguments.thestruct.qryfile.thesize>
+				<cfset var orgsize = arguments.thestruct.qryfile.thesize>
 				<!--- Get signed URLS for original --->
 				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
 			<!--- AMAZON --->
@@ -2188,7 +2188,7 @@ This is the main function called directly by a single upload else from addassets
 				<cftry>
 					<!--- Upload Original Image --->
 					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-						<cfset upt = Createuuid("")>
+						<cfset var upt = Createuuid("")>
 						<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="amazon" method="Upload">
 								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
@@ -2200,7 +2200,7 @@ This is the main function called directly by a single upload else from addassets
 					</cfif>
 					<!--- Upload Thumbnail --->
 					<cfif !application.razuna.rfs>
-						<cfset uptn = Createuuid("")>
+						<cfset var uptn = Createuuid("")>
 						<cfthread name="#uptn#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="amazon" method="Upload">
 								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
@@ -2214,11 +2214,11 @@ This is the main function called directly by a single upload else from addassets
 						<!--- Get signed URLS for thumb --->
 						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
 					<cfelse>
-						<cfset thumbsize = 1>
+						<cfset var thumbsize = 1>
 						<cfset cloud_url.theurl = "">
 					</cfif>
 					<!--- Get size of original --->
-					<cfset orgsize = arguments.thestruct.qryfile.thesize>
+					<cfset var orgsize = arguments.thestruct.qryfile.thesize>
 					<!--- Get signed URLS original --->
 					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
 					<cfcatch type="any">
@@ -2234,7 +2234,7 @@ This is the main function called directly by a single upload else from addassets
 				<cftry>
 					<!--- Upload Original Image --->
 					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-						<cfset upt = Createuuid("")>
+						<cfset var upt = Createuuid("")>
 						<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 							<cfinvoke component="akamai" method="Upload">
 								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
@@ -2260,10 +2260,10 @@ This is the main function called directly by a single upload else from addassets
 						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
 					<cfelse>
 						<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
-						<cfset thumbsize = 1>
+						<cfset var thumbsize = 1>
 					</cfif>
 					<!--- Get size of original --->
-					<cfset orgsize = arguments.thestruct.qryfile.thesize>
+					<cfset var orgsize = arguments.thestruct.qryfile.thesize>
 					<cfcatch type="any">
 						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to akamai" dump="#cfcatch#">
 					</cfcatch>
@@ -2271,10 +2271,10 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 			<!--- Orgsize and thumbsize variables are not here --->
 			<cfif NOT isdefined(orgsize)>
-				<cfset orgsize = arguments.thestruct.qryfile.thesize>
+				<cfset var orgsize = arguments.thestruct.qryfile.thesize>
 			</cfif>
 			<cfif NOT isdefined(thumbsize)>
-				<cfset thumbsize = 0>
+				<cfset var thumbsize = 0>
 			</cfif>
 			<!--- Update DB with the sizes from above --->
 			<cftransaction>
@@ -2316,15 +2316,15 @@ This is the main function called directly by a single upload else from addassets
 	<cfelse>
 		<cfset var theidentify = "#Arguments.thepathim#/identify">
 		<cfset var thearguments = replace(arguments.imagepath," ","\ ","all")>
-		<cfset thearguments = replace(thearguments,"&","\&","all")>
-		<cfset thearguments = replace(thearguments,"'","\'","all")>
+		<cfset var thearguments = replace(thearguments,"&","\&","all")>
+		<cfset var thearguments = replace(thearguments,"'","\'","all")>
 	</cfif>
 	<!--- get image information as string using identify (ImageMagick)
 	<cfexecute name="#theidentify#" arguments="#arguments.imagepath#" timeout="5" variable="theidentifyresult" /> --->
 	<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
 	<!--- On Windows a bat --->
 	<cfif isWindows()>
-		<cfset thesh = gettempdirectory() & "/#thescript#.bat">
+		<cfset var thesh = gettempdirectory() & "/#thescript#.bat">
 	</cfif>
 	<!--- Write files --->
 	<cffile action="write" file="#thesh#" output="#theidentify# #thearguments#" mode="777">
@@ -2379,7 +2379,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- ImageMagick: Create Thumbnail.
 		Some images can not be converted thus we just copy the original so we have a thumbnail --->
-		<cfset reimtt = Createuuid("")>
+		<cfset var reimtt = Createuuid("")>
 		<!--- Write the sh script files --->
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#reimtt#.sh">
 		<cfset arguments.thestruct.theshm = GetTempDirectory() & "/#reimtt#m.sh">
@@ -2404,7 +2404,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
-			<cfset theImgConvertParams = "-coalesce " & theImgConvertParams>
+			<cfset var theImgConvertParams = "-coalesce " & theImgConvertParams>
 		</cfif>
 		<cfset arguments.thestruct.theimargumentsmog = "">
 		<!--- Switch to create correct arguments to pass for executables --->
@@ -2449,8 +2449,8 @@ This is the main function called directly by a single upload else from addassets
 		<cfexecute name="#arguments.thestruct.theshht#" timeout="60" variable="thumbheight" />
 		<cfexecute name="#arguments.thestruct.theshwt#" timeout="60" variable="thumbwidth" />
 		<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
-		<cfset thumbheight = trim(listlast(thumbheight," "))>
-		<cfset thumbwidth = trim(listlast(thumbwidth," "))>
+		<cfset var thumbheight = trim(listlast(thumbheight," "))>
+		<cfset var thumbwidth = trim(listlast(thumbwidth," "))>
 		<!--- Remove the temp file sh --->
 		<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<cffile action="delete" file="#arguments.thestruct.theshm#">
@@ -2459,11 +2459,11 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Sometimes identify does not get height and width thus we set it here --->
 		<cfif arguments.thestruct.thexmp.orgwidth EQ "">
 			<cfset arguments.thestruct.thexmp.orgwidth = 0>
-			<cfset thumbwidth = 0>
+			<cfset var thumbwidth = 0>
 		</cfif>
 		<cfif arguments.thestruct.thexmp.orgheight EQ "">
 			<cfset arguments.thestruct.thexmp.orgheight = 0>
-			<cfset thumbheight = 0>
+			<cfset var thumbheight = 0>
 		</cfif>
 		<!--- Set original and thumbnail width and height --->
 		<cftransaction>
@@ -2501,7 +2501,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset fileNameExt.theExt  = "#lcase(listLast(listRest(arguments.thefilename, '.'), '.'))#">
 	<!--- Get the file name --->
 	<cfif fileNameExt.theExt NEQ "">
-		<cfset lenFile = #len(arguments.thefilename)# - #len(fileNameExt.theExt)# - 1>
+		<cfset var lenFile = #len(arguments.thefilename)# - #len(fileNameExt.theExt)# - 1>
 		<cfset fileNameExt.theName = "#left(arguments.thefilename, lenFile)#">
 	<cfelse>
 		<cfset fileNameExt.theName = "#arguments.thefilename#">
@@ -2568,13 +2568,13 @@ This is the main function called directly by a single upload else from addassets
 		<cfif arguments.thestruct.fieldname NEQ "NewFile" AND structkeyexists(arguments.thestruct,"langcount")>
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 				<cfif arguments.thestruct.uploadkind EQ "many">
-					<cfset desc="file_desc_" & "#countnr#" & "_" & "#langindex#">
-					<cfset keywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
-					<cfset title="file_title_" & "#countnr#" & "_" & "#langindex#">
+					<cfset var desc="file_desc_" & "#countnr#" & "_" & "#langindex#">
+					<cfset var keywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
+					<cfset var title="file_title_" & "#countnr#" & "_" & "#langindex#">
 				<cfelse>
-					<cfset desc="arguments.thestruct.file_desc_" & "#langindex#">
-					<cfset keywords="arguments.thestruct.file_keywords_" & "#langindex#">
-					<cfset title="arguments.thestruct.file_title_" & "#langindex#">
+					<cfset var desc="arguments.thestruct.file_desc_" & "#langindex#">
+					<cfset var keywords="arguments.thestruct.file_keywords_" & "#langindex#">
+					<cfset var title="arguments.thestruct.file_title_" & "#langindex#">
 				</cfif>
 				<cfif desc CONTAINS "#langindex#">
 					<!--- check if form-vars are present. They will be missing if not coming from a user-interface (assettransfer, etc.) --->
@@ -2691,8 +2691,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="orgwidth" />
 				<cfexecute name="#arguments.thestruct.thesht#" timeout="60" variable="orgheight" />
 				<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
-				<cfset orgwidth = trim(listlast(orgwidth," "))>
-				<cfset orgheight = trim(listlast(orgheight," "))>
+				<cfset var orgwidth = trim(listlast(orgwidth," "))>
+				<cfset var orgheight = trim(listlast(orgheight," "))>
 				<cfpause interval=2 />
 			</cfif>
 			<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
@@ -2707,7 +2707,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfif application.razuna.storage EQ "nirvanix">
 				<!--- Upload Movie Image --->
 				<cfif !application.razuna.rfs>
-					<cfset upmi = Createuuid("")>
+					<cfset var upmi = Createuuid("")>
 					<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#">
@@ -2722,7 +2722,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 				<!--- Upload Movie --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-					<cfset upmt = Createuuid("")>
+					<cfset var upmt = Createuuid("")>
 					<cfthread name="#upmt#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="nirvanix" method="Upload">
 							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#">
@@ -2739,7 +2739,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfelseif application.razuna.storage EQ "amazon">
 				<!--- Upload Movie Image --->
 				<cfif !application.razuna.rfs>
-					<cfset upmi = Createuuid("")>
+					<cfset var upmi = Createuuid("")>
 					<cfthread name="#upmi#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#/#attributes.intstruct.thisvid.theorgimage#">
@@ -2753,7 +2753,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 				<!--- Upload Movie --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-					<cfset upmt = Createuuid("")>
+					<cfset var upmt = Createuuid("")>
 					<cfthread name="#upmt#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="amazon" method="Upload">
 							<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/vid/#attributes.intstruct.thisvid.newid#/#attributes.intstruct.qryfile.filename#">
@@ -2781,7 +2781,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif> --->
 				<!--- Upload Movie --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-					<cfset upmt = Createuuid("")>
+					<cfset var upmt = Createuuid("")>
 					<cfthread name="#upmt#" intstruct="#arguments.thestruct#">
 						<cfinvoke component="akamai" method="Upload">
 							<cfinvokeargument name="theasset" value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#">
@@ -2948,11 +2948,11 @@ This is the main function called directly by a single upload else from addassets
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- set root folder id to keep top folder during creating folder out of zip archive --->
-		<cfset rootfolderId = arguments.thestruct.qryfile.folder_id>
-		<cfset folderIdr = arguments.thestruct.qryfile.folder_id>
-		<cfset folderId = arguments.thestruct.qryfile.folder_id>
-		<cfset folderlevel = folders.folder_level>
-		<cfset loopname = "">
+		<cfset var rootfolderId = arguments.thestruct.qryfile.folder_id>
+		<cfset var folderIdr = arguments.thestruct.qryfile.folder_id>
+		<cfset var folderId = arguments.thestruct.qryfile.folder_id>
+		<cfset var folderlevel = folders.folder_level>
+		<cfset var loopname = "">
 		<!--- Loop over the zip directories and rename them if needed --->
 		<cfset var ttf = "rec" & thetemp>
 		<!--- <cfthread name="#ttf#" intstruct="#arguments.thestruct#"> --->
@@ -2984,12 +2984,12 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Create Directories --->
 		<cfloop query="thedir">
 			<!--- Check how long the folder list is --->
-			<cfset namelistlen = listlen(name,FileSeparator())>
+			<cfset var namelistlen = listlen(name,FileSeparator())>
 			<!--- If longer then 1 we need to get the folder_id_r of the previous folder --->
 			<cfif namelistlen GT 1>
 				<!--- Get the list entry at one higher then the current len --->
-				<cfset lenminusone = namelistlen - 1>
-				<cfset fnameforqry = ListGetAt(name, lenminusone, FileSeparator())>
+				<cfset var lenminusone = namelistlen - 1>
+				<cfset var fnameforqry = ListGetAt(name, lenminusone, FileSeparator())>
 				<!--- Query to get the folder_id_r --->
 				<cfquery datasource="#variables.dsn#" name="qryfidr">
 				SELECT folder_id
@@ -2998,11 +2998,11 @@ This is the main function called directly by a single upload else from addassets
 				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 				<!--- Set the folder_id_r in var --->
-				<cfset fidr = qryfidr.folder_id>
-				<cfset fname = listlast(name, FileSeparator())>
+				<cfset var fidr = qryfidr.folder_id>
+				<cfset var fname = listlast(name, FileSeparator())>
 			<cfelse>
-				<cfset fname = name>
-				<cfset fidr = folderIdr>
+				<cfset var fname = name>
+				<cfset var fidr = folderIdr>
 			</cfif>
 			<!--- Add the Folder to DB --->
 			<cfquery datasource="#variables.dsn#">
@@ -3027,7 +3027,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
 			<cfif fileexists("#directory#/#name#")>
-				<cfset md5hash = "">
+				<cfset var md5hash = "">
 				<!--- Set Original FileName --->
 				<cfset arguments.thestruct.theoriginalfilename = listlast(name,FileSeparator())>
 				<cfset arguments.thestruct.thepathtoname = replacenocase(name,arguments.thestruct.theoriginalfilename,"","one")>
@@ -3036,7 +3036,7 @@ This is the main function called directly by a single upload else from addassets
 				<cffile action="rename" source="#directory#/#name#" destination="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#">
 				<!--- Detect file extension --->
 				<cfinvoke method="getFileExtension" theFileName="#newFileName#" returnvariable="fileNameExt">
-				<cfset file = structnew()>
+				<cfset var file = structnew()>
 				<cfset file.fileSize = "#size#">
 				<cfset file.oldFileSize = "#size#">
 				<cfset file.dateLastAccessed = "#dateLastModified#">
@@ -3058,7 +3058,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.theincomingtemppath = "#directory#/#arguments.thestruct.thepathtoname#">
 				<!--- MD5 Hash --->
 				<cfif FileExists("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
-					<cfset md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
+					<cfset var md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
 				</cfif>
 				<!--- Check if we have to check for md5 records --->
 				<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -3228,7 +3228,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Loop over the directories only to check for any foreign chars and convert it --->
 	<cfloop query="thedir">
 		<!--- All foreign chars are now converted, except the FileSeparator and - --->
-		<cfset d = Rereplacenocase(name,"[^0-9A-Za-z\_\-\#FileSeparator()#]","-","ALL")>
+		<cfset var d = Rereplacenocase(name,"[^0-9A-Za-z\_\-\#FileSeparator()#]","-","ALL")>
 		<!--- Rename --->
 		<cfif directoryExists("#directory#/#name#") AND "#directory#/#name#" NEQ "#directory#/#d#">
 			<cfdirectory action="rename" directory="#directory#/#name#" newdirectory="#directory#/#d#">
@@ -3253,7 +3253,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- If not the same folder here continue else abort --->
 	<cfif ishere.recordcount EQ 0> --->
 		<!--- Create a new ID --->
-		<cfset newfolderid = createuuid("")>
+		<cfset var newfolderid = createuuid("")>
 		<!--- Add the Folder --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#folders
@@ -3378,7 +3378,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.qryfile.filenamenoext = replace(arguments.thestruct.qryfile.filenamenoext,"'","\'","all")>
 			</cfif>
 			<!--- Write the script --->
-			<cfset thescript = Createuuid("")>
+			<cfset var thescript = Createuuid("")>
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 			<!--- On Windows a .bat --->
 			<cfif arguments.thestruct.iswindows>
@@ -3427,7 +3427,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		<!--- If link_kind is url --->
 		<cfelse>
-			<cfset idtags = "">
+			<cfset var idtags = "">
 		</cfif>
 		<!--- append to the DB --->
 		<cftransaction>
@@ -3466,8 +3466,8 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Add the TEXTS to the DB. We have to hide this if we are coming from FCK --->
 		<cfif arguments.thestruct.fieldname NEQ "NewFile" AND structkeyexists(arguments.thestruct,"langcount")>
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-				<cfset desc="arguments.thestruct.file_desc_" & "#langindex#">
-				<cfset keywords="arguments.thestruct.file_keywords_" & "#langindex#">
+				<cfset var desc="arguments.thestruct.file_desc_" & "#langindex#">
+				<cfset var keywords="arguments.thestruct.file_keywords_" & "#langindex#">
 				<cfif desc CONTAINS "#langindex#">
 					<!--- check if form-vars are present. They will be missing if not coming from a user-interface (assettransfer, etc.) --->
 					<cfif IsDefined(desc) and IsDefined(keywords)>
@@ -3580,9 +3580,9 @@ This is the main function called directly by a single upload else from addassets
 			<!--- AMAZON --->
 			<cfelseif application.razuna.storage EQ "amazon">
 				<!--- Unique --->
-				<cfset upa = Createuuid("")>
-				<cfset upw = "w" & upa>
-				<cfset upmp = "m" & upa>
+				<cfset var upa = Createuuid("")>
+				<cfset var upw = "w" & upa>
+				<cfset var upmp = "m" & upa>
 				<!--- Add to Lucene --->
 				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 				<!--- Upload file --->
@@ -3643,9 +3643,9 @@ This is the main function called directly by a single upload else from addassets
 			<!--- AKAMAI --->
 			<cfelseif application.razuna.storage EQ "akamai">
 				<!--- Unique --->
-				<cfset upa = Createuuid("")>
-				<cfset upw = "w" & upa>
-				<cfset upmp = "m" & upa>
+				<cfset var upa = Createuuid("")>
+				<cfset var upw = "w" & upa>
+				<cfset var upmp = "m" & upa>
 				<!--- Add to Lucene --->
 				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 				<!--- Upload file --->
@@ -3846,7 +3846,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
 			</cfinvoke>
 			<!--- Upload it --->
-			<cfset upa = Createuuid("")>
+			<cfset var upa = Createuuid("")>
 			<cfthread name="#upa#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="nirvanix" method="Upload">
 					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qry_existing.path_to_asset#">
@@ -3876,7 +3876,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		<!--- Amazon --->
 		<cfelseif application.razuna.storage EQ "amazon">
-			<cfset upa = Createuuid("")>
+			<cfset var upa = Createuuid("")>
 			<cfthread name="#upa#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="amazon" method="Upload">
 					<cfinvokeargument name="key" value="/#attributes.intstruct.qry_existing.path_to_asset#/#attributes.intstruct.newname#">
@@ -3938,15 +3938,15 @@ This is the main function called directly by a single upload else from addassets
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Check the platform and then decide on the ImageMagick tag --->
 	<cfif isWindows()>
-		<cfset theexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
-		<cfset thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
-		<cfset themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
-		<cfset theffmpeg = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
+		<cfset var theexe = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
+		<cfset var thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
+		<cfset var themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
+		<cfset var theffmpeg = """#arguments.thestruct.thetools.ffmpeg#/ffmpeg.exe""">
 	<cfelse>
-		<cfset theexe = "#arguments.thestruct.thetools.imagemagick#/convert">
-		<cfset thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
-		<cfset themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
-		<cfset theffmpeg = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
+		<cfset var theexe = "#arguments.thestruct.thetools.imagemagick#/convert">
+		<cfset var thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
+		<cfset var themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
+		<cfset var theffmpeg = "#arguments.thestruct.thetools.ffmpeg#/ffmpeg">
 	</cfif>
 	<!--- Loop over file id --->
 	<cfloop list="#arguments.thestruct.file_id#" index="i" delimiters=",">
@@ -3978,13 +3978,13 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 			<!--- If the cloud_url_org column is empty skip it --->
 			<cfif arguments.thestruct.qry_existing.cloud_url_org EQ "" AND (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix")>
-				<cfset conti = false>
+				<cfset var conti = false>
 			<cfelse>
-				<cfset conti = true>
+				<cfset var conti = true>
 			</cfif>
 			<cfif conti>
 				<!--- Create script files --->
-				<cfset thescript = Createuuid("")>
+				<cfset var thescript = Createuuid("")>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 				<cfset arguments.thestruct.theshdc = GetTempDirectory() & "/#thescript#dc.sh">
 				<cfset arguments.thestruct.theshw = GetTempDirectory() & "/#thescript#w.sh">
@@ -4005,7 +4005,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfif thetype EQ "vid">
 					<cfset arguments.thestruct.thumbname = arguments.thestruct.qry_existing.vid_name_image>
 					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
-					<cfset theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vframes 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
+					<cfset var theargs = "#theffmpeg# -i #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -vframes 1 -f image2 -vcodec mjpeg #arguments.thestruct.thumbpath#">
 				<cfelseif thetype EQ "img">
 					<cfset arguments.thestruct.thumbname = "thumb_#theid#.#arguments.thestruct.qry_settings_image.set2_img_format#">
 					<cfset arguments.thestruct.thumbpath = arguments.thestruct.filepath & arguments.thestruct.thumbname>
@@ -4013,16 +4013,16 @@ This is the main function called directly by a single upload else from addassets
 					<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
 						<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 						<cfcase value="psd,eps,ai,png">
-							<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB -flatten #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB -flatten #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For RAW images we take dcraw --->
 						<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
-							<cfset theargs = "#thedcraw# -w -b 1.8 -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
-							<cfset theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#thedcraw# -w -b 1.8 -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
+							<cfset var theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For everything else --->
 						<cfdefaultcase>
-							<cfset theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
 						</cfdefaultcase>
 					</cfswitch>
 				</cfif>
@@ -4239,9 +4239,9 @@ This is the main function called directly by a single upload else from addassets
 			<cfset var theshh = "#GetTempDirectory()#/h#arguments.thestruct.newid#.sh">
 			<!--- On LAN --->
 			<cfset var theserverfile = "#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#">
-			<cfset theserverfile = replace(theserverfile," ","\ ","all")>
-			<cfset theserverfile = replace(theserverfile,"&","\&","all")>
-			<cfset theserverfile = replace(theserverfile,"'","\'","all")>
+			<cfset var theserverfile = replace(theserverfile," ","\ ","all")>
+			<cfset var theserverfile = replace(theserverfile,"&","\&","all")>
+			<cfset var theserverfile = replace(theserverfile,"'","\'","all")>
 			<!--- Write Script --->
 			<cffile action="write" file="#theshw#" output="#theexe# -S -s -imagewidth #theserverFile#" mode="777">
 			<cffile action="write" file="#theshh#" output="#theexe# -S -s -ImageHeight #theserverFile#" mode="777">
@@ -4287,7 +4287,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- NIRVANIX --->
 	<cfelseif application.razuna.storage EQ "nirvanix">
 		<!--- Upload Original --->
-		<cfset upt = Createuuid("")>
+		<cfset var upt = Createuuid("")>
 		<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 			<cfinvoke component="nirvanix" method="Upload">
 				<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#attributes.intstruct.newid#">
@@ -4303,7 +4303,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.av_link_url = cloudurl.theurl>
 	<!--- AMAZON --->
 	<cfelseif application.razuna.storage EQ "amazon">
-		<cfset upt = Createuuid("")>
+		<cfset var upt = Createuuid("")>
 		<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 			<cfinvoke component="amazon" method="Upload">
 				<cfinvokeargument name="key" value="/#attributes.intstruct.folder_id#/#attributes.intstruct.thefiletype#/#attributes.intstruct.newid#/#attributes.intstruct.thefilename#">
@@ -4318,7 +4318,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.av_link_url = cloudurl.theurl>
 	<!--- Akamai --->
 	<cfelseif application.razuna.storage EQ "akamai">
-		<cfset upt = Createuuid("")>
+		<cfset var upt = Createuuid("")>
 		<cfthread name="#upt#" intstruct="#arguments.thestruct#">
 			<cfinvoke component="akamai" method="Upload">
 				<cfinvokeargument name="theasset" value="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefilename#">
@@ -4460,7 +4460,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.folder_path#/#name#">
 		<!--- Feedback --->
 		<cfoutput>List files of this folder...<br><br></cfoutput>
 		<cfflush>
@@ -4846,7 +4846,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.folder_path#/#name#">
 		<!--- Feedback --->
 		<cfoutput>List files of this folder...<br><br></cfoutput>
 		<cfflush>
@@ -4941,7 +4941,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.folder_path#/#name#">
 		<!--- Feedback --->
 		<cfoutput>List files of this folder...<br><br></cfoutput>
 		<cfflush>
@@ -5036,7 +5036,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfdirectory action="create" directory="#arguments.thestruct.assetpath#/#session.hostid#/#new_folder_id#/aud">
 		</cfif>
 		<!--- Add the dirname to the link_path --->
-		<cfset subfolderpath = "#arguments.thestruct.folder_path#/#name#">
+		<cfset var subfolderpath = "#arguments.thestruct.folder_path#/#name#">
 		<!--- Feedback --->
 		<cfoutput>List files of this folder...<br><br></cfoutput>
 		<cfflush>
@@ -5130,13 +5130,13 @@ This is the main function called directly by a single upload else from addassets
 		<cffile action="rename" source="#arguments.thestruct.filepath#" destination="#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#">
 		<!--- If the extension is longer then 9 chars --->
 		<cfif len(theextension) GT 9>
-			<cfset theextension = "txt">
+			<cfset var theextension = "txt">
 		</cfif>
 		<!--- Store the original filename --->
 		<cfset arguments.thestruct.thefilenameoriginal = arguments.thestruct.filename>
 		<!--- MD5 Hash --->
 		<cfif FileExists("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
-			<cfset md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
+			<cfset var md5hash = hashbinary("#arguments.thestruct.thedir#/#arguments.thestruct.thefilename#")>
 		</cfif>
 			<!--- Check if we have to check for md5 records --->
 			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -5198,15 +5198,15 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Audios --->
 	<cfinvoke component="audios" method="checkmd5" md5hash="#arguments.md5hash#" returnvariable="qryaud" />
 	<!--- Put each result into var --->
-	<cfset rec = qryimg.recordcount>
+	<cfset var rec = qryimg.recordcount>
 	<cfif !rec>
-		<cfset rec = qryvid.recordcount>
+		<cfset var rec = qryvid.recordcount>
 	</cfif>
 	<cfif !rec>
-		<cfset rec = qrydoc.recordcount>
+		<cfset var rec = qrydoc.recordcount>
 	</cfif>
 	<cfif !rec>
-		<cfset rec = qryaud.recordcount>
+		<cfset var rec = qryaud.recordcount>
 	</cfif>
 	<!--- Return --->
 	<cfreturn rec />
