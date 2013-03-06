@@ -320,6 +320,7 @@
 	<cffunction name="getcollections" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
 		<cfargument name="folderid" type="string" required="true">
+		<cfargument name="released" type="string" required="false" default="">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -361,6 +362,9 @@
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE c.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folderid#" list="true">)
 			AND c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+			<cfif arguments.released NEQ "">
+				AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.released#">
+			</cfif>
 			ORDER BY lower(ct.col_name)
 			</cfquery>
 		<!--- No session found --->
@@ -385,7 +389,7 @@
 		<cfif thesession>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
-			SELECT c.folder_id_r
+			SELECT DISTINCT c.folder_id_r
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections c
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
@@ -402,12 +406,12 @@
 				AND lower(ct.col_desc) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.description)#%">
 			</cfif>
 			<cfif arguments.released NEQ "">
-				AND lower(c.col_released) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.released)#%">
+				AND lower(c.col_released) = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#lcase(arguments.released)#">
 			</cfif>
 			</cfquery>
 			<!--- Get getcollections --->
 			<cfif qry.recordcount NEQ 0>
-				<cfset var thexml = getcollections(api_key=arguments.api_key,folderid=valueList(qry.folder_id_r))>
+				<cfset var thexml = getcollections(api_key=arguments.api_key,folderid=valueList(qry.folder_id_r),released=arguments.released)>
 			<cfelse>
 				<cfset thexml = querynew("responsecode,message")>
 				<cfset queryaddrow(thexml,1)>
