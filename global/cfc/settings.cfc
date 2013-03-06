@@ -1017,7 +1017,7 @@
 
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- PARSE THE CONFIG FILE OF THE ADMIN SECTION --->
-<cffunction name="getconfig" output="false" returntype="string" hint="PARSE THE CONFIG FILE OF THE ADMIN SECTION">
+<!--- <cffunction name="getconfig" output="false" returntype="string" hint="PARSE THE CONFIG FILE OF THE ADMIN SECTION">
 <cfargument name="thenode" default="" required="yes" type="string" hint="the nodename which you want to parse">
 <cfinvoke component="defaults" method="getAbsolutePath" returnvariable="xmlFile">
 	<cfinvokeargument name="pathSourceAbsolute" value="#GetCurrentTemplatePath()#">
@@ -1027,6 +1027,29 @@
 <cfset xmlVar=xmlParse(myVar)/>
 <cfset theconfig=xmlSearch(xmlVar, "configuration/configid[@name='#arguments.thenode#']")>
 <cfreturn trim(#theconfig[1].thetext.xmlText#)>
+</cffunction> --->
+<cffunction name="getconfig" output="false" returntype="string" hint="PARSE THE CONFIG FILE OF THE ADMIN SECTION">
+<cfargument name="thenode" default="" required="yes" type="string" hint="the nodename which you want to parse">
+<cfinvoke component="defaults" method="getAbsolutePath" returnvariable="xmlFile">
+	<cfinvokeargument name="pathSourceAbsolute" value="#GetCurrentTemplatePath()#">
+	<cfinvokeargument name="pathTargetRelative" value="../config/config.ini">
+</cfinvoke>
+<!--- Return --->
+<cfreturn trim(getProfileString(xmlFile, "default", arguments.thenode))>
+</cffunction>
+
+<!--- Set the value int he config file --->
+<cffunction name="setconfig" output="false" returntype="void">
+<cfargument name="thenode" default="" required="yes" type="string">
+<cfargument name="thevalue" default="" required="yes" type="string">
+<cfinvoke component="defaults" method="getAbsolutePath" returnvariable="xmlFile">
+	<cfinvokeargument name="pathSourceAbsolute" value="#GetCurrentTemplatePath()#">
+	<cfinvokeargument name="pathTargetRelative" value="../config/config.ini">
+</cfinvoke>
+<!--- Update string --->
+<cfset setProfileString(xmlFile, "default", arguments.thenode, arguments.thevalue)>
+<!--- Return --->
+<cfreturn />
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
