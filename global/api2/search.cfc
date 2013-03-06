@@ -291,7 +291,8 @@
 			AND i.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#">
 		</cfif>
 		<cfif application.razuna.api.thedatabase EQ "mssql">
-			GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords<cfif arguments.istruct.ui>, folder_name, folder_id_r, ext, is_available, date_create,
+			GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+				<cfif arguments.istruct.ui>, folder_name, folder_id_r, ext, is_available, date_create,
     		date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
 		</cfif>
 		ORDER BY filename 
@@ -444,7 +445,8 @@
 			AND v.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#">
 		</cfif>
 		<cfif application.razuna.api.thedatabase EQ "mssql">
-			GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time<cfif arguments.vstruct.ui>, folder_name, folder_id_r, ext, is_available, date_create,
+			GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+				<cfif arguments.vstruct.ui>, folder_name, folder_id_r, ext, is_available, date_create,
     		date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
 		</cfif>
 		ORDER BY filename 
@@ -592,9 +594,11 @@
 			AND a.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.astruct.folderid#">
 		</cfif>
 		<cfif application.razuna.api.thedatabase EQ "mssql">
-			GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time<cfif arguments.astruct.ui>, folder_name, folder_id_r, ext, is_available, date_create,
-    		date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
-		</cfif>
+			GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time,
+				colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+				<cfif arguments.astruct.ui>, folder_name, folder_id_r, ext, is_available, date_create,
+		    		date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
+				</cfif>
 		ORDER BY filename 
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
@@ -746,10 +750,13 @@
 			AND f.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fstruct.folderid#">
 		</cfif>
 		<cfif application.razuna.api.thedatabase EQ "mssql">
-			GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time<cfif arguments.fstruct.ui>, folder_name, folder_id_r, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
+			GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
+				colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+				<cfif arguments.fstruct.ui>, folder_name, folder_id_r, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
 		</cfif>
 		<cfif application.razuna.api.thedatabase NEQ "mssql">
-        	GROUP BY id, filename, folder_id, extension, filename_org, path_to_asset, cloud_url, cloud_url_org, size, description, keywords, dateadd, datechange <cfif arguments.fstruct.ui>, folder_name, folder_id_r, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
+        	GROUP BY id, filename, folder_id, extension, filename_org, path_to_asset, cloud_url, cloud_url_org, size, description, keywords, dateadd, datechange, colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+        		<cfif arguments.fstruct.ui>, folder_name, folder_id_r, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
         </cfif>
         ORDER BY filename 
 		</cfquery>
