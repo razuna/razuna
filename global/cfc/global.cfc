@@ -892,12 +892,12 @@ Comment:<br>
 		</cfhttp> --->
 		<!--- Convert WDDX --->
 		<!--- <cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="account" /> --->
-		<cfquery datasource="razuna_account" name="account" region="razcache" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfquery datasource="razuna_account" name="account" region="razcache" cachedwithin="#CreateTimeSpan(0,0,10,0)#">
 		SELECT /* #arguments.thehostid# */ account_type
 		FROM hosted_users
 		WHERE host_id = <cfqueryparam value="#arguments.thehostid#" cfsqltype="cf_sql_numeric" />
 		</cfquery>
-		<cfquery datasource="razuna_account" name="qry" region="razcache" cachedwithin="#CreateTimeSpan(0,1,0,0)#">
+		<cfquery datasource="razuna_account" name="qry" region="razcache" cachedwithin="#CreateTimeSpan(0,0,10,0)#">
 		SELECT /* #arguments.thehostid# */ b.bill_id, b.bill_date, b.bill_total, u.user_id, u.account_type
 		FROM hosted_bills b, hosted_users u
 		WHERE u.host_id = <cfqueryparam value="#arguments.thehostid#" cfsqltype="cf_sql_numeric" />
