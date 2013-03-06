@@ -1238,7 +1238,7 @@
 			<cfswitch expression="#theformat#">
 				<!--- if AVI --->
 				<cfcase value="avi">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p  -ac 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p  -ac 2 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- if 3GP --->
 				<cfcase value="3gp">
@@ -1252,24 +1252,24 @@
 					<cfelse>
 						<cfset var theacodec = "copy">
 					</cfif>
-					<cfset var theargument="-i #inputpath# -vcodec h263 -acodec #theacodec# -ac 1 -ar 8000 -r 25 -ab 12.2k -s #thewidth#x#theheight# -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -vcodec h263 -acodec #theacodec# -ac 1 -ar 8000 -r 25 -ab 12.2k -s #thewidth#x#theheight# -y #thispreviewvideo#">
 				</cfcase>
 				<!--- MXF --->
 				<cfcase value="mxf">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -acodec pcm_s16le -ar 48000 -ac 2 -vsync 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -acodec pcm_s16le -ar 48000 -ac 2 -vsync 2 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- WMV --->
 				<cfcase value="wmv">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec wmv2 -acodec wmav2 -ar 48000 -ab 400k -ac 2 -vsync 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec wmv2 -acodec wmav2 -ar 48000 -ab 400k -ac 2 -vsync 2 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- OGV --->
 				<cfcase value="ogv">
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -acodec libvorbis -vsync 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -acodec libvorbis -vsync 2 -y #thispreviewvideo#">
 				</cfcase>
 				<!--- WebM --->
 				<cfcase value="webm">
 					<!--- <cfset bitrate = thebitrate * 1024> --->
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -vcodec libvpx -acodec libvorbis -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -crf 22 -threads 2 -vcodec libvpx -acodec libvorbis -y #thispreviewvideo#">
 				</cfcase>
 				<cfdefaultcase>
 					<cfif isWindows>
@@ -1278,7 +1278,7 @@
 						<cfset var theaac = "libfaac">
 					</cfif>
 
-					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p -acodec #theaac# -crf 22 -threads 2 -async 1 -y #thispreviewvideo#">
+					<cfset var theargument="-i #inputpath# -s #thewidth#x#theheight# -vcodec libx264 -pix_fmt yuv420p -acodec #theaac# -crf 22 -threads 2 -y #thispreviewvideo#">
 				</cfdefaultcase>
 			</cfswitch>
 			<!--- FFMPEG: CONVERT THE VIDEO --->
