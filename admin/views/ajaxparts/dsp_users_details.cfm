@@ -174,7 +174,14 @@
 			</cfloop>
 		</table>
 	</div>
-	<div id="submit" style="float:right;padding:10px;"><div id="updatetext" style="color:green;padding:10px;display:none;float:left;"></div><input type="submit" name="Submit" value="#defaultsObj.trans("save")#" class="button" tabindex="13"></div>
+	<!--- <div id="submit" style="float:right;padding:10px;"><input type="submit" name="Submit" value="#defaultsObj.trans("save")#" class="button" tabindex="13"></div> --->
+
+	<div id="updatetext" style="color:green;display:none;float:left;font-weight:bold;padding:15px 0px 0px 10px;"></div>
+	<div id="submit" style="float:right;padding:10px;">
+		<input type="checkbox" value="true" name="emailinfo" /> <span style="padding-right:15px;">Send user welcome email</span><input type="submit" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("save")#" class="button"></div>
+
+	</form>
+
 </div>
 </form>
 

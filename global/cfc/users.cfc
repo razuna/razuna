@@ -337,6 +337,7 @@
 	<cfparam default="F" name="arguments.thestruct.user_active">
 	<cfparam default="F" name="arguments.thestruct.adminuser">
 	<cfparam default="F" name="arguments.thestruct.intrauser">
+	<cfparam default="false" name="arguments.thestruct.emailinfo">
 	<!--- Check that there is no user already with the same email address. Since this is the detail we already have a user with the same email address so we exclude this user from the search --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 	SELECT u.user_email, u.user_id
