@@ -278,6 +278,7 @@
 		<!--- Params --->
 		<cfparam name="arguments.args.folder_action" default="false" />
 		<cfparam name="arguments.args.nameOfVariable" default="pl" />
+		<cfparam name="arguments.args.comingfrom" default="#cgi.http_referer#" />
 		<cfset var result = structnew()>
 		<cfset result.pcfc = "">
 		<cfset result.pview = "">
@@ -353,6 +354,22 @@
 		</cfif>
 		<!--- Return --->
 		<cfreturn result />
+	</cffunction>
+
+	<!--- getpluginactions --->
+	<cffunction name="mailme" returntype="Struct">
+		<cfargument name="theaction" required="true" />
+		<cfargument name="args" default="#structnew()#" required="false" />
+		<!--- Params --->
+		<cfparam name="arguments.args.folder_action" default="false" />
+		<cfparam name="arguments.args.nameOfVariable" default="pl" />
+		<cfparam name="arguments.args.comingfrom" default="#cgi.http_referer#" />
+		<cfset var result = structnew()>
+		<cfset result.pcfc = "">
+		<cfset result.pview = "">
+		<cfset var qry = "">
+		<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="debug" type="html"><cfdump var="#arguments#"></cfmail>
+
 	</cffunction>
 
 </cfcomponent>

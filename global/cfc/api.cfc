@@ -434,4 +434,24 @@
 		<cfreturn qry />
 	</cffunction>
 
+	<!--- Execute workflow --->
+	<cffunction name="executeWorkflow" access="public" returntype="void">
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="thetype" type="string" required="true" />
+		<cfargument name="workflow" type="string" required="true" />
+		<cfargument name="folderid" type="string" required="true" />
+		<!--- Params --->
+		<cfset var s = {}>
+		<cfset s.fileid = arguments.fileid>
+		<cfset s.thefiletype = arguments.thetype>
+		<cfset s.folder_id = arguments.folderid>
+		<!--- Loop over fileid and execute workflow for each file --->
+		<cfset s.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" />
+		<cfset s.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" />
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

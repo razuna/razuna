@@ -155,10 +155,10 @@
 		<cfloop list="#arguments.args.fieldnames#" delimiters="," index="i">
 			<cfif i CONTAINS "_">
 				<!--- Get the fileid --->
-				<cfset thefileid = listFirst(i,"_")>
+				<cfset var thefileid = listFirst(i,"_")>
 				<!--- Get the fieldname --->
-				<cfset thefield = listLast(i,"_")>
-				<!--- If thefield contains a - then we are custom fields --->
+				<cfset var thefield = listLast(i,"_")>
+				<!--- If thefield contains a - then we are CUSTOM FIELDS --->
 				<cfif thefield CONTAINS "-">
 					<!--- Set application values for the api --->
 					<cfset application.razuna.api.storage = application.razuna.storage>
@@ -227,8 +227,16 @@
 						--->
 					</cfswitch>
 				</cfif>
-				<br />
 			</cfif>
+		</cfloop>
+		<!--- Loop over filewithtype and call workflow for each file --->
+		<cfloop list="#arguments.args.filewithtype#" delimiters="," index="i">
+			<!--- First is fileid --->
+			<cfset var theid = listFirst(i,"_")>
+			<!--- Last is type --->
+			<cfset var thetype = listLast(i,"_")>
+			<!--- Now call workflow --->
+			<cfset executeWorkflow(workflow="on_file_edit",fileid=theid,thetype=thetype,folderid=session.fid)>
 		</cfloop>
 		<!--- Reset session --->
 		<cfset session.currentupload = 0>

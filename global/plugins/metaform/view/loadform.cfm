@@ -24,6 +24,7 @@
 					</tr> --->
 					<!--- Loop over files --->
 					<cfloop query="result.cfc.pl.loadform.qry_files">
+						<input type="hidden" name="filewithtype" value="#id#_#type#">
 						<cfset id = id>
 						<tr<cfif result.cfc.pl.loadform.qry_files.recordcount NEQ 1> class="list"</cfif>>
 							<!--- Filename on the left --->
