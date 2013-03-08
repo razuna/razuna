@@ -720,37 +720,44 @@
 			<!--- Feedback --->
 			<cfoutput>Found new user with the eMail address "#email#". Adding record now.<br></cfoutput>
 			<cfflush>
-			<!--- Create structure for function --->
-			<cfset arguments.thestruct.user_login_name = login_name>
-			<cfset arguments.thestruct.user_email = email>
-			<cfset arguments.thestruct.user_pass = password>
-			<cfset arguments.thestruct.user_first_name = first_name>
-			<cfset arguments.thestruct.user_last_name = last_name>
-			<cfset arguments.thestruct.user_active = active>
-			<cfset arguments.thestruct.hostid = session.hostid>
-			<!--- Call function --->
-			<cfinvoke method="add" thestruct="#arguments.thestruct#" returnvariable="userid" />
-			<!--- Add to groups --->
-			<cfif groupid NEQ "">
-				<cfloop list="#groupid#" delimiters="," index="i">
-					<cftry>
-						<cfquery datasource="#application.razuna.datasource#">
-						INSERT INTO	ct_groups_users
-						(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
-						VALUES(
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#userid#">,
-							<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
-						)
-						</cfquery>
-						<cfcatch type="database">
-							<!--- Feedback --->
-							<cfoutput><span style="color:red;">The groupid (#i#) does not exists.</span><br></cfoutput>
-							<cfflush>
-						</cfcatch>
-					</cftry>
-				</cfloop>
-			</cfif>
+			<cftry>
+				<!--- Create structure for function --->
+				<cfset arguments.thestruct.user_login_name = login_name>
+				<cfset arguments.thestruct.user_email = email>
+				<cfset arguments.thestruct.user_pass = password>
+				<cfset arguments.thestruct.user_first_name = first_name>
+				<cfset arguments.thestruct.user_last_name = last_name>
+				<cfset arguments.thestruct.user_active = active>
+				<cfset arguments.thestruct.hostid = session.hostid>
+				<!--- Call function --->
+				<cfinvoke method="add" thestruct="#arguments.thestruct#" returnvariable="userid" />
+				<!--- Add to groups --->
+				<cfif groupid NEQ "">
+					<cfloop list="#groupid#" delimiters="," index="i">
+						<cftry>
+							<cfquery datasource="#application.razuna.datasource#">
+							INSERT INTO	ct_groups_users
+							(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+							VALUES(
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#userid#">,
+								<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+							)
+							</cfquery>
+							<cfcatch type="database">
+								<!--- Feedback --->
+								<cfoutput><span style="color:red;">The groupid (#i#) does not exists.</span><br></cfoutput>
+								<cfflush>
+							</cfcatch>
+						</cftry>
+					</cfloop>
+				</cfif>
+				<cfcatch type="any">
+					<!--- Feedback --->
+					<cfoutput><span style="color:red;">Something's wrong here: #cfcatch.detail# - #cfcatch.message#</span><br></cfoutput>
+					<cfflush>
+				</cfcatch>
+			</cftry>
 		</cfif>
 	</cfloop>
 	<!--- Feedback --->
