@@ -729,6 +729,7 @@
 				<cfset arguments.thestruct.user_last_name = last_name>
 				<cfset arguments.thestruct.user_active = active>
 				<cfset arguments.thestruct.hostid = session.hostid>
+				<cfset arguments.thestruct.intrauser = "T">
 				<!--- Call function --->
 				<cfinvoke method="add" thestruct="#arguments.thestruct#" returnvariable="userid" />
 				<!--- Add to groups --->
