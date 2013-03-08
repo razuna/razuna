@@ -1324,6 +1324,10 @@
 				</cfif>
 				<!--- Get size of original --->
 				<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#previewvideo#" returnvariable="orgsize">
+				<!--- MD5 Hash --->
+				<cfif FileExists("#thisfolder#/#previewvideo#")>
+					<cfset var md5hash = hashbinary("#thisfolder#/#previewvideo#")>
+				</cfif>
 				<!--- Storage: Local --->
 				<cfif application.razuna.storage EQ "local">
 					<!--- IMAGEMAGICK: copy over the existing still image and resize --->
@@ -1469,7 +1473,8 @@
 				 	cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">,
 				 	cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">,
 					cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">,
-					is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+					is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+					hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
 					WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>

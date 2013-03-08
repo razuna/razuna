@@ -590,6 +590,14 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_additional_versions add column hashtag #thevarchar#(100)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 
 		<!--- Add to internal table --->
 		<cftry>

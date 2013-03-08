@@ -1060,6 +1060,10 @@
 		<!--- Get width and height --->
 		<cfexecute name="#theexif#" arguments="-S -s -ImageHeight #theformatconv#" timeout="60" variable="theheight" />
 		<cfexecute name="#theexif#" arguments="-S -s -ImageWidth #theformatconv#" timeout="60" variable="thewidth" />
+		<!--- MD5 Hash --->
+		<cfif FileExists("#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#")>
+			<cfset var md5hash = hashbinary("#thisfolder#/#arguments.thestruct.thenamenoext#.#theformat#")>
+		</cfif>
 		<!---Create record--->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#images
@@ -1185,7 +1189,8 @@
 			cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">, 
 			cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">, 
 			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-			img_meta = <cfqueryparam value="#thedpi#" cfsqltype="cf_sql_varchar">
+			img_meta = <cfqueryparam value="#thedpi#" cfsqltype="cf_sql_varchar">,
+			hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
 			<!--- Get the colorspace of the original file --->

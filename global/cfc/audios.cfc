@@ -1055,6 +1055,10 @@
 			<cfelse>
 				<!--- Get size of original --->
 				<cfinvoke component="global" method="getfilesize" filepath="#thisfolder#/#finalaudioname#" returnvariable="orgsize">
+				<!--- MD5 Hash --->
+				<cfif FileExists("#thisfolder#/#finalaudioname#")>
+					<cfset var md5hash = hashbinary("#thisfolder#/#finalaudioname#")>
+				</cfif>
 				<!--- Storage: Local --->
 				<cfif application.razuna.storage EQ "local">
 					<!--- Now move the files to its own folder --->
@@ -1148,12 +1152,13 @@
 			 	path_to_asset = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qry_detail.detail.folder_id_r#/aud/#newid.id#">,
 			 	cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">,
 				cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">,
-				is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+				is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+				hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid.id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Log --->
-				<cfset log = log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')>
+				<cfset log_assets(theuserid=session.theuserid,logaction='Convert',logdesc='Converted: #arguments.thestruct.qry_detail.detail.aud_name# to #finalaudioname#',logfiletype='aud',assetid='#arguments.thestruct.file_id#')>
 				<!--- Call Plugins --->
 				<cfset arguments.thestruct.fileid = newid.id>
 				<cfset arguments.thestruct.file_name = finalaudioname>

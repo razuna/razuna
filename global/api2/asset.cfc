@@ -833,7 +833,7 @@
 				'' AS xdpi,
 				'' AS ydpi,
 				'' AS unit,
-				'' AS md5hash
+				hashtag AS md5hash
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
 				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			</cfquery>

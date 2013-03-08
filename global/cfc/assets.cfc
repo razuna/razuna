@@ -4256,6 +4256,10 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.thewidth = trim(arguments.thestruct.thewidth)>
 		<cfset arguments.thestruct.theheight = trim(arguments.thestruct.theheight)>
 	</cfif>
+	<!--- MD5 Hash --->
+	<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#")>
+		<cfset arguments.thestruct.md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#")>
+	</cfif>
 	<!--- Query to get the settings --->
 	<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrysettings">
 	SELECT set2_path_to_assets
