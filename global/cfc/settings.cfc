@@ -1121,13 +1121,13 @@
 					conf_rendering_farm			BOOLEAN,
 					conf_serverid				VARCHAR(100),
 					conf_wl 					BOOLEAN DEFAULT false,
-					conf_aka_token				VARCHAR(200)
+					conf_aka_token				VARCHAR(200) DEFAULT ''
 				)
 				</cfquery>
 				<!--- Insert values --->
 				<cfquery datasource="razuna_default">
 				INSERT INTO razuna_config
-				(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_aka_token,
+				(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage,
 				conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_rendering_farm, conf_serverid, conf_wl)
 				VALUES(
 				'h2',
