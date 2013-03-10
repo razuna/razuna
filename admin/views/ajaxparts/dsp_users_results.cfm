@@ -26,10 +26,10 @@
 <cfoutput>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 	<tr>
-		<th colspan="7"><div align="left" style="float:left;">#defaultsObj.trans("searchresults_header")#</div><div align="right"><a href="##" onclick="loadcontent('rightside','#myself#c.users');return false;">#defaultsObj.trans("clear_search")#</a></div></th>
+		<th colspan="6"><div align="left" style="float:left;">#defaultsObj.trans("searchresults_header")#</div><div align="right"><a href="##" onclick="loadcontent('rightside','#myself#c.users');return false;">#defaultsObj.trans("clear_search")#</a></div></th>
 	</tr>
 	<tr>
-		<td></td>
+		<!--- <td></td> --->
 		<td>#defaultsObj.trans("username")#</td>
 		<td nowrap="true">#defaultsObj.trans("user_first_name")# #defaultsObj.trans("user_last_name")#</td>
 		<td>#defaultsObj.trans("user_company")#</td>
@@ -38,7 +38,7 @@
 	</tr>
 	<cfloop query="qry_users">
 	<tr>
-		<td valign="top" nowrap width="1%"><input type="checkbox" name="theuserid" value="#user_id#" /></td>
+		<!--- <td valign="top" nowrap width="1%"><input type="checkbox" name="theuserid" value="#user_id#" /></td> --->
 		<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_login_name#</a></td>
 		<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_first_name# #user_last_name#</a></td>
 		<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_company#</a></td>

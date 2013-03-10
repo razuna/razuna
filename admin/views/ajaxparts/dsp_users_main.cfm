@@ -55,7 +55,7 @@
 			<div id="uresults">
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 					<tr>
-						<th nowrap="nowrap" colspan="2">#defaultsObj.trans("username")#</th>
+						<th nowrap="nowrap">#defaultsObj.trans("username")#</th>
 						<th nowrap="nowrap">#defaultsObj.trans("user_first_name")# #defaultsObj.trans("user_last_name")#</th>
 						<th nowrap="nowrap">#defaultsObj.trans("user_company")#</th>
 						<th nowrap="nowrap">eMail</th>
@@ -63,7 +63,7 @@
 					</tr>
 					<cfoutput query="qry_users" group="user_id">
 						<tr>
-							<td valign="top" nowrap width="1%"><input type="checkbox" name="theuserid" value="#user_id#" /></td>
+							<!--- <td valign="top" nowrap width="1%"><input type="checkbox" name="theuserid" value="#user_id#" /></td> --->
 							<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;"<cfif listfind(ct_g_u_grp_id,"1")> style="font-weight:bold;color:green;"</cfif>>#user_login_name#</a></td>
 							<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_first_name# #user_last_name#</a></td>
 							<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_company#</a></td>

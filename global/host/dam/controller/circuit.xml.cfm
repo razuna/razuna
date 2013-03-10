@@ -3900,10 +3900,17 @@
 
 	<!-- Users List -->
 	<fuseaction name="users">
-		<!-- Set rowmax and rowmin -->
-		<set name="attributes.rowmax" value="1000" />
-		<set name="attributes.rowmin" value="0" />
+		<!-- Param -->
 		<set name="attributes.dam" value="T" />
+		<!-- Set the offset -->
+		<if condition="structkeyexists(attributes,'offset')">
+			<true>
+				<set name="session.offset" value="#attributes.offset#" />
+			</true>
+			<false>
+				<set name="session.offset" value="0" />
+			</false>
+		</if>
 		<!-- CFC: Get all users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="getall(attributes)" returnvariable="qry_users" />
 		<!-- Show  -->
@@ -3911,7 +3918,9 @@
 	</fuseaction>
 	<!-- Users Search -->
 	<fuseaction name="users_search">
+		<!-- Param -->
 		<set name="attributes.dam" value="T" />
+		<set name="session.offset" value="0" />
 		<!-- CFC: Search users -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="quicksearch(attributes)" returnvariable="qry_users" />
 		<!-- Show  -->
@@ -4069,6 +4078,13 @@
 		<invoke object="myFusebox.getApplicationData().import" methodcall="upload(attributes)" />
 		<!-- Show -->
 		<do action="ajax.users_import_upload" />
+	</fuseaction>
+	<!-- Remove users coming from the select -->
+	<fuseaction name="users_remove_select">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="delete_selects(attributes)" />
+		<!-- Show -->
+		<!-- <do action="users" /> -->
 	</fuseaction>
 	
 	<!--  -->

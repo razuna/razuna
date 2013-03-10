@@ -109,14 +109,16 @@
 <!--- Get all users --->
 <cffunction name="getall">
 	<cfargument name="thestruct" type="Struct" required="false">
-	<cfparam name="arguments.thestruct" default="#structnew()#">
 	<!--- Params --->
 	<cfset var localquery = 0>
+	<cfset var countquery = 0>
+	<cfparam name="arguments.thestruct" default="#structnew()#">
 	<!--- Get cachetoken --->
 	<cfset variables.cachetoken = getcachetoken("users")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getallusers */ u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
+	SELECT u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
+	0 AS thetotal,
 		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT ct_g_u_grp_id ORDER BY ct_g_u_grp_id SEPARATOR ',') AS grpid
@@ -315,7 +317,7 @@
 	<cfif NOT structkeyexists(arguments.thestruct,("logsection"))>
 		<cfset arguments.thestruct.logsection = "admin">
 	</cfif>
-	<cfset log = #log_users(theuserid=arguments.thestruct.id,logaction='Delete',logsection='#arguments.thestruct.logsection#',logdesc='Deleted: UserID: #arguments.thestruct.id# eMail: #theuser.user_email# First Name: #theuser.user_first_name# Last Name: #theuser.user_last_name#')#>
+	<cfset log_users(theuserid=arguments.thestruct.id,logaction='Delete',logsection='#arguments.thestruct.logsection#',logdesc='Deleted: UserID: #arguments.thestruct.id# eMail: #theuser.user_email# First Name: #theuser.user_first_name# Last Name: #theuser.user_last_name#')>
 	<!--- Remove from the User Table --->
 	<cfquery datasource="#application.razuna.datasource#">
 	DELETE FROM users
@@ -817,6 +819,35 @@
 	</cfsavecontent>
 	<!--- Send the email --->
 	<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="Your Razuna account" themessage="#m#">
+	<cfreturn />
+</cffunction>
+
+<!--- Delete selected users --->
+<cffunction name="delete_selects" returntype="void">
+	<cfargument name="thestruct" type="Struct">
+	<!--- If this is for ALL users --->
+	<cfif arguments.thestruct.allusers>
+		<!--- Query all users --->
+		<cfinvoke method="getall" thestruct="#arguments.thestruct#" returnvariable="qry_users" />
+		<!--- Now filter out all users in admin group --->
+		<cfquery dbtype="query" name="qry_users">
+		SELECT *
+		FROM qry_users
+		WHERE ct_g_u_grp_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="2">
+		</cfquery>
+		<!--- Put all the userids into a list --->
+		<cfset arguments.thestruct.theuserid = valueList(qry_users.user_id,",")>
+	</cfif>
+	<!--- Loop over the userid --->
+	<cfloop list="#arguments.thestruct.theuserid#" delimiters="," index="i">
+		<!--- Delete user --->
+		<cfset arguments.thestruct.id = i>
+		<cfinvoke method="delete" thestruct="#arguments.thestruct#" />
+		<!--- Delete in groups users --->
+		<cfset arguments.thestruct.newid = i>
+		<cfinvoke component="groups_users" method="deleteUser" thestruct="#arguments.thestruct#" />
+	</cfloop>
+	<!--- Return --->
 	<cfreturn />
 </cffunction>
 
