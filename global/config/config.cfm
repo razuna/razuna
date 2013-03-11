@@ -1,3 +1,4 @@
+<cfabort>
 [default]
 version=1.6
 prerelease=false

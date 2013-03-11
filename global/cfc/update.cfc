@@ -635,6 +635,15 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<cftry>
+			<cfquery datasource="razuna_default">
+			alter table razuna_config add conf_wl BOOLEAN DEFAULT false
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		
 
 		<!--- 
 		<cftry>
