@@ -141,7 +141,7 @@
 				
 			});
 			// Set the div correct
-			$('##showuserselect').html('<strong>#session.rowmaxpage# users on this page are selected</strong><br /><a href="##" onclick="selectallusers();return false;">Select all of your #qry_users.recordcount# users</a> (Note: Users in group "Administrator" are never selected!)');
+			$('##showuserselect').html('All users on this page are selected</strong><br /><a href="##" onclick="selectallusers();return false;">Select all of your #qry_users.recordcount# users</a> (Note: Users in group "Administrator" are never selected!)');
 			// Show select all div
 			$('##showuserselect').toggle('slow');
 			// Hide / show delete
