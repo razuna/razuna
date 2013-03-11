@@ -92,10 +92,12 @@ $(function() {
 						parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');
 					<cfelse>
 						// This is for the metaform plugin
-						// close window
-						parent.$('##thewindowcontent1').dialog('close');
-						// load metaform
-						parent.$('##rightside').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
+						try {
+							setTimeout(function() {
+						    	delayloadingplugin();
+							}, 1250)
+						}
+						catch(e) {};
 						// parent.$('##tab_addassets').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
 					</cfif>
 				});
@@ -104,6 +106,13 @@ $(function() {
 		
 	});
 	
+	function delayloadingplugin(){
+		// close window
+		parent.$('##thewindowcontent1').dialog('close');
+		// load metaform
+		parent.$('##rightside').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
+	}
+
 	$("##uploader").pluploadQueue.bind('UploadFile', function(up, file){
 	    uploader.settings.url = uploader.settings.url.split('&filename')[0] + '&filename='+file.name;
 	    return true;
