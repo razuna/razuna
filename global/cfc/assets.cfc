@@ -54,14 +54,14 @@
 	</cfif>
 	<!--- Put the rest into a thread --->
 	<cfthread intstruct="#arguments.thestruct#">
-		<cfset var md5hash = "">
+		<cfset md5hash = "">
 		<!--- Rename the file so that we can remove any spaces --->
 		<cfinvoke component="global" method="convertname" returnvariable="thefilename" thename="#attributes.intstruct.thefile.serverFile#">
 		<cfinvoke component="global" method="convertname" returnvariable="thefilenamenoext" thename="#attributes.intstruct.thefile.serverFileName#">
 		<cffile action="rename" source="#attributes.intstruct.theincomingtemppath#/#attributes.intstruct.thefile.serverFile#" destination="#attributes.intstruct.theincomingtemppath#/#thefilename#">
 		<!--- MD5 Hash --->
 		<cfif FileExists("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
-			<cfset var md5hash = hashbinary("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
+			<cfset md5hash = hashbinary("#attributes.intstruct.theincomingtemppath#/#thefilename#")>
 		</cfif>
 		<!--- Check if we have to check for md5 records --->
 		<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
@@ -69,7 +69,7 @@
 		<cfif checkformd5>
 			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
 		<cfelse>
-			<cfset var md5here = 0>
+			<cfset md5here = 0>
 		</cfif>
 		<!--- If file does not exsist continue else send user an eMail --->
 		<cfif md5here EQ 0>
@@ -1153,54 +1153,26 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.newid = 1>
 	<!--- New ID --->
 	<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
-	<!--- Insert --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#files
-	(file_id, is_available, folder_id_r, host_id, file_name, file_create_time)
-	VALUES(
-		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
-		<cfelse>
-			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
-		</cfif>
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
-		)
-	</cfquery>
-	<!--- If there are metadata fields then add them here --->
-	<cfif arguments.thestruct.metadata EQ 1>
-		<!--- Check if API is called the old way --->
-		<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
-			<cfinvoke component="global.api.asset" method="setmetadata">
-				<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
-				<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
-				<cfinvokeargument name="assettype" value="doc">
-				<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
-			</cfinvoke>
-		<cfelse>
-			<!--- API2 --->
-			<cfinvoke component="global.api2.asset" method="setmetadata">
-				<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
-				<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
-				<cfinvokeargument name="assettype" value="doc">
-				<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
-			</cfinvoke>
-			<!--- Add custom fields --->
-			<cfinvoke component="global.api2.customfield" method="setfieldvalue">
-				<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
-				<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
-				<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
-			</cfinvoke>
-		</cfif>
+	<!--- We insert a new record here already since the metaform plugin needs to have a record. Only done if not a new version --->
+	<cfif arguments.thestruct.qryfile.file_id EQ 0>
+		<!--- Insert --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#files
+		(file_id, is_available, folder_id_r, host_id, file_name, file_create_time)
+		VALUES(
+			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+				<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
+			<cfelse>
+				<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
+			</cfif>
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			)
+		</cfquery>
 	</cfif>
-	<!--- Flush Cache --->
-	<cfset resetcachetoken("files")>
-	<cfset resetcachetoken("folders")>
-	<cfset resetcachetoken("search")> 
-	<cfset resetcachetoken("general")>
 	<!--- Set Params --->
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
 	<cfset arguments.thestruct.iswindows = iswindows()>
@@ -1357,72 +1329,103 @@ This is the main function called directly by a single upload else from addassets
 	<cfif arguments.thestruct.qryfile.link_kind EQ "url">
 		<cfset arguments.thestruct.qryfile.path = arguments.thestruct.pathorg>
 	</cfif>
-	<!--- Get Metadata for PDF --->
-	<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND arguments.thestruct.qryfile.link_kind NEQ "url">
-		<!--- On Windows reparse the metadata again (doesnt work properly with the bat file) --->
-		<cfif arguments.thestruct.isWindows>
-			<cfexecute name="#arguments.thestruct.theexif#" arguments="-b -subject #arguments.thestruct.theorgfile#" timeout="60" variable="thesubject" />
-			<cfexecute name="#arguments.thestruct.theexif#" arguments="-keywords #arguments.thestruct.theorgfile#" timeout="60" variable="thekeywords" />
-			<cfexecute name="#arguments.thestruct.theexif#" arguments="-applekeywords #arguments.thestruct.theorgfile#" timeout="60" variable="theapplekeywords" />
-			<cfexecute name="#arguments.thestruct.theexif#" arguments="-a -g #arguments.thestruct.theorgfile#" timeout="60" variable="file_meta" />
-			<cfexecute name="#arguments.thestruct.theexif#" arguments="-X #arguments.thestruct.theorgfile#" timeout="60" variable="arguments.thestruct.pdf_xmp" />
-		<cfelse>
-			<!--- Script: Exiftool Commands --->
-			<cffile action="write" file="#arguments.thestruct.theshexs#" output="#arguments.thestruct.theexif# -b -subject #arguments.thestruct.theorgfile#" mode="777">
-			<cffile action="write" file="#arguments.thestruct.theshexk#" output="#arguments.thestruct.theexif# -XMP-PDF:keywords #arguments.thestruct.theorgfile#" mode="777">
-			<cffile action="write" file="#arguments.thestruct.theshexak#" output="#arguments.thestruct.theexif# -PDF:keywords #arguments.thestruct.theorgfile#" mode="777">
-			<cffile action="write" file="#arguments.thestruct.theshexmeta#" output="#arguments.thestruct.theexif# -a -g #arguments.thestruct.theorgfile#" mode="777">
-			<cffile action="write" file="#arguments.thestruct.theshexmetaxmp#" output="#arguments.thestruct.theexif# -X #arguments.thestruct.theorgfile#" mode="777">
-			<!--- Execute scripts --->
-			<cfexecute name="#arguments.thestruct.theshexs#" timeout="60" variable="thesubject" />
-			<cfexecute name="#arguments.thestruct.theshexk#" timeout="60" variable="thekeywords" />
-			<cfexecute name="#arguments.thestruct.theshexak#" timeout="60" variable="theapplekeywords" />
-			<cfexecute name="#arguments.thestruct.theshexmeta#" timeout="60" variable="file_meta" />
-			<cfexecute name="#arguments.thestruct.theshexmetaxmp#" timeout="60" variable="arguments.thestruct.pdf_xmp" />
-			<!--- Delete scripts --->
-			<cffile action="delete" file="#arguments.thestruct.theshexs#">
-			<cffile action="delete" file="#arguments.thestruct.theshexk#">
-			<cffile action="delete" file="#arguments.thestruct.theshexak#">
-			<cffile action="delete" file="#arguments.thestruct.theshexmeta#">
-			<cffile action="delete" file="#arguments.thestruct.theshexmetaxmp#">							
-		</cfif>
-		<!--- Parse PDF XMP and write to DB --->
-		<cfif structKeyExists(arguments.thestruct,"pdf_xmp") AND arguments.thestruct.pdf_xmp NEQ "">
-			<cfinvoke component="xmp" method="getpdfxmp" thestruct="#arguments.thestruct#" />
-		</cfif>
-		<!--- Grab the keywords --->
-		<cfset var thekeywords = trim(listlast(thekeywords,":"))>
-		<cfset var theapplekeywords = trim(listlast(theapplekeywords,":"))>
-		<!--- If XMP keywords is empty take the PDF:Keywords var --->
-		<cfif thekeywords EQ "">
-			<cfset var thekeywords = theapplekeywords>
-		</cfif>
-		<!--- Append keywords and description to DB --->
-		<cfif structkeyexists(arguments.thestruct,"langcount")>
-			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#files_desc
-				(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
-				values(
-				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				)
-				</cfquery>
-			</cfloop>
-		</cfif>
-	</cfif>
-	<!--- Put file_meta into struct for api --->
-	<cfset arguments.thestruct.file_meta = file_meta>
 	<!--- If we are a new version --->
 	<cfif arguments.thestruct.qryfile.file_id NEQ 0>
 		<!--- Call versions component to do the versions thingy --->
 		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
 	<!--- This is for normal adding --->
 	<cfelse>
+		<!--- If there are metadata fields then add them here --->
+		<cfif arguments.thestruct.metadata EQ 1>
+			<!--- Check if API is called the old way --->
+			<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
+				<cfinvoke component="global.api.asset" method="setmetadata">
+					<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+					<cfinvokeargument name="assettype" value="doc">
+					<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+				</cfinvoke>
+			<cfelse>
+				<!--- API2 --->
+				<cfinvoke component="global.api2.asset" method="setmetadata">
+					<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+					<cfinvokeargument name="assettype" value="doc">
+					<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+				</cfinvoke>
+				<!--- Add custom fields --->
+				<cfinvoke component="global.api2.customfield" method="setfieldvalue">
+					<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+					<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+					<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
+				</cfinvoke>
+			</cfif>
+		</cfif>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
+		<cfset resetcachetoken("general")>
+		<!--- Get Metadata for PDF --->
+		<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND arguments.thestruct.qryfile.link_kind NEQ "url">
+			<!--- On Windows reparse the metadata again (doesnt work properly with the bat file) --->
+			<cfif arguments.thestruct.isWindows>
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-b -subject #arguments.thestruct.theorgfile#" timeout="60" variable="thesubject" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-keywords #arguments.thestruct.theorgfile#" timeout="60" variable="thekeywords" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-applekeywords #arguments.thestruct.theorgfile#" timeout="60" variable="theapplekeywords" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-a -g #arguments.thestruct.theorgfile#" timeout="60" variable="file_meta" />
+				<cfexecute name="#arguments.thestruct.theexif#" arguments="-X #arguments.thestruct.theorgfile#" timeout="60" variable="arguments.thestruct.pdf_xmp" />
+			<cfelse>
+				<!--- Script: Exiftool Commands --->
+				<cffile action="write" file="#arguments.thestruct.theshexs#" output="#arguments.thestruct.theexif# -b -subject #arguments.thestruct.theorgfile#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexk#" output="#arguments.thestruct.theexif# -XMP-PDF:keywords #arguments.thestruct.theorgfile#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexak#" output="#arguments.thestruct.theexif# -PDF:keywords #arguments.thestruct.theorgfile#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexmeta#" output="#arguments.thestruct.theexif# -a -g #arguments.thestruct.theorgfile#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.theshexmetaxmp#" output="#arguments.thestruct.theexif# -X #arguments.thestruct.theorgfile#" mode="777">
+				<!--- Execute scripts --->
+				<cfexecute name="#arguments.thestruct.theshexs#" timeout="60" variable="thesubject" />
+				<cfexecute name="#arguments.thestruct.theshexk#" timeout="60" variable="thekeywords" />
+				<cfexecute name="#arguments.thestruct.theshexak#" timeout="60" variable="theapplekeywords" />
+				<cfexecute name="#arguments.thestruct.theshexmeta#" timeout="60" variable="file_meta" />
+				<cfexecute name="#arguments.thestruct.theshexmetaxmp#" timeout="60" variable="arguments.thestruct.pdf_xmp" />
+				<!--- Delete scripts --->
+				<cffile action="delete" file="#arguments.thestruct.theshexs#">
+				<cffile action="delete" file="#arguments.thestruct.theshexk#">
+				<cffile action="delete" file="#arguments.thestruct.theshexak#">
+				<cffile action="delete" file="#arguments.thestruct.theshexmeta#">
+				<cffile action="delete" file="#arguments.thestruct.theshexmetaxmp#">							
+			</cfif>
+			<!--- Parse PDF XMP and write to DB --->
+			<cfif structKeyExists(arguments.thestruct,"pdf_xmp") AND arguments.thestruct.pdf_xmp NEQ "">
+				<cfinvoke component="xmp" method="getpdfxmp" thestruct="#arguments.thestruct#" />
+			</cfif>
+			<!--- Grab the keywords --->
+			<cfset var thekeywords = trim(listlast(thekeywords,":"))>
+			<cfset var theapplekeywords = trim(listlast(theapplekeywords,":"))>
+			<!--- If XMP keywords is empty take the PDF:Keywords var --->
+			<cfif thekeywords EQ "">
+				<cfset var thekeywords = theapplekeywords>
+			</cfif>
+			<!--- Append keywords and description to DB --->
+			<cfif structkeyexists(arguments.thestruct,"langcount")>
+				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#files_desc
+					(id_inc, file_id_r, lang_id_r, file_desc, file_keywords, host_id)
+					values(
+					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+					<cfqueryparam value="#thesubject#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#thekeywords#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+					</cfquery>
+				</cfloop>
+			</cfif>
+		</cfif>
+		<!--- Put file_meta into struct for api --->
+		<cfset arguments.thestruct.file_meta = file_meta>
 		<!--- append to the DB --->
 		<cftransaction>
 			<cfquery datasource="#application.razuna.datasource#">
@@ -3289,23 +3292,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.newid = 1>
 	<!--- Get new id --->
 	<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
-	<!--- Add record --->
-	<cfquery datasource="#application.razuna.datasource#">
-	INSERT INTO #session.hostdbprefix#audios
-	(aud_id, is_available, folder_id_r, host_id, aud_create_time, aud_name)
-	VALUES(
-		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
-		<cfelse>
-			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-		</cfif>
-	)
-	</cfquery>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("audios")>
 	<cfset resetcachetoken("folders")>
@@ -3335,6 +3321,23 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
 	<!--- This is for normal adding --->
 	<cfelse>
+		<!--- Add record --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#audios
+		(aud_id, is_available, folder_id_r, host_id, aud_create_time, aud_name)
+		VALUES(
+			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+			<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+				<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+			</cfif>
+		)
+		</cfquery>
 		<!--- Dont do this if the link_kind is a url --->
 		<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Set the correct path --->

@@ -46,7 +46,16 @@
         <span style="font-weight:bold;color:green;">We are processing your new version now.</span><br />You should be able to see the new version after a refresh of the list below. 
         <br />#myFusebox.getApplicationData().defaults.trans("versions_create_progress")#
         <script type="text/javascript">
-            parent.$('##versionlist').load('index.cfm?fa=c.versions_add&file_id=#attributes.file_id#&type=#attributes.type#&tempid=#attributes.tempid#');
+            // Delay
+            try {
+                    setTimeout(function() {
+                        callwithdelay();
+                    }, 2000)
+                }
+            catch(e) {};
+            function callwithdelay(){
+                parent.$('##versionlist').load('index.cfm?fa=c.versions_add&file_id=#attributes.file_id#&type=#attributes.type#&tempid=#attributes.tempid#');
+            }
         </script>
     </cfif>
 <cfelse>

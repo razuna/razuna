@@ -504,7 +504,7 @@
 			<!--- Put together the filenames --->
 			<cfset arguments.thestruct.thisvid.theorgimage = "#arguments.thestruct.qryfile.filenamenoext#" & ".jpg">
 			<!--- Just assign the current path to the finalpath --->
-			<cfset arguments.thestruct.thisvid.finalpath = "#arguments.thestruct.qryfile.path#">
+			<cfset arguments.thestruct.thisvid.finalpath = arguments.thestruct.qryfile.path>
 			<cfset arguments.thestruct.thisvid.newid = arguments.thestruct.therandom>
 			<cfset arguments.thestruct.thetempdirectory = GetTempDirectory()>
 			<!--- Create thumbnail --->
@@ -513,6 +513,8 @@
 			</cfthread>
 			<!--- Wait until Thumbnail is done --->
 			<cfthread action="join" name="p#arguments.thestruct.therandom#" timeout="6000" />
+			<!--- Move thumbnail to incoming directory --->
+			<cffile action="move" source="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thisvid.theorgimage#" destination="#arguments.thestruct.thisvid.finalpath#/#arguments.thestruct.thisvid.theorgimage#" mode="775" />
 			<!--- Check the platform and then decide on the ImageMagick tag --->
 			<cfif FindNoCase("Windows", server.os.name)>
 				<cfset arguments.thestruct.theidentify = """#arguments.thestruct.thetools.imagemagick#/identify.exe""">
