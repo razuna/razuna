@@ -29,8 +29,35 @@
 	<cffunction name="update_for">
 		<!--- Param --->
 		<cfset var dbup = false>
-		<!--- Read config file --->
-		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbup">
+		<!--- Check in database for the latest update value --->
+		<cfquery datasource="#application.razuna.datasource#" name="updatenumber">
+		SELECT opt_value
+		FROM options
+		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
+		</cfquery>
+		<!--- If no record has been found then insert 0 --->
+		<cfif updatenumber.recordcount EQ 0>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO options
+			(opt_id, opt_value, rec_uuid)
+			VALUES(
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="0">,
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+			)
+			</cfquery>
+			<!--- set var --->
+			<cfset var dbup = true>
+		<!--- Record found compare with current number --->
+		<cfelse>
+			<!--- Read config file for dbupdate number --->
+			<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
+			<!--- Set var --->
+			<cfif dbupdateconfig GT updatenumber.opt_value>
+				<cfset var dbup = true>
+			</cfif>
+		</cfif>
 		<!--- Return --->
 		<cfreturn dbup>
 	</cffunction>
@@ -621,8 +648,14 @@
 		</cftry>
 		 --->
 
-		<!--- Set config ini value --->
-		<cfinvoke component="settings" method="setconfig" thenode="dbupdate" thevalue="false" />
+		<!--- Read config file for dbupdate number --->
+		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
+		<!--- Update value in db --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE options
+		SET opt_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dbupdateconfig#">
+		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
+		</cfquery>
 		<!--- Done --->
 	</cffunction>
 

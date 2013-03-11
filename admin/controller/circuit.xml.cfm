@@ -33,6 +33,9 @@
 				<do action="v.firsttime" />
 			</true>
 			<false>
+				<!-- CFC: check if db update is there -->
+				<do action="update" />
+				<!-- Show login page -->
 				<do action="v.login" />
 			</false>
 		</if>
@@ -137,8 +140,6 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="applicationcheck()" returnvariable="appcheck" />
 		<!-- CFC: Check if a new version is available -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="check_update()" returnvariable="newversion" />
-		<!-- CFC: check if db update is there -->
-		<do action="update" />
 		<!-- Show main page -->
 	 	<do action="v.main" />
 	 </fuseaction>
@@ -1227,14 +1228,13 @@
 	<fuseaction name="update">
 		<!-- Param -->
 		<set name="attributes.firsttime" value="T" overwrite="false" />
-		<set name="attributes.updatedone" value="F" overwrite="false" />
 		<!-- CFC: Check if there is an update for this DB -->
-		<invoke object="myFusebox.getApplicationData().update" methodcall="update_for()" returnvariable="attributes.updatedb" />
+		<invoke object="myFusebox.getApplicationData().update" methodcall="update_for()" returnvariable="session.updatedb" />
 		<!-- Show -->
-		<if condition="attributes.updatedb">
+		<if condition="session.updatedb">
 			<true>
 				<!-- <do action="v.update" /> -->
-				<relocate url="http://#cgi.http_host##dynpath#/#myself#v.update&amp;updatedone=F&amp;updatedb=#attributes.updatedb#&amp;_v=#createuuid('')#" />
+				<relocate url="http://#cgi.http_host##dynpath#/#myself#v.update&amp;_v=#createuuid('')#" />
 			</true>
 		</if>
 	</fuseaction>
@@ -1242,7 +1242,7 @@
 	<fuseaction name="update_do">
 		<!-- Param -->
 		<set name="attributes.firsttime" value="T" overwrite="false" />
-		<set name="attributes.updatedone" value="T" overwrite="false" />
+		<set name="session.updatedb" value="false" />
 		<!-- CFC: Get all Hosts -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="attributes.qryhosts" />
 		<!-- CFC: Do the DB update -->

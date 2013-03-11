@@ -24,31 +24,24 @@
 *
 --->
 <cfoutput>
-<div id="ft">
+<div id="ft" style="padding:15px;">
 
 	<!--- Page output starts here --->
-	<span class="loginform_header">Razuna Update</span>
+	<span class="loginform_header">Razuna Database Update Required!</span>
 	<br />
 	<br />
-	<cfif attributes.updatedone NEQ "T">
-		<cfif attributes.updatedb>
-			#defaultsObj.trans("db_update_here")#
-			<br />
-			<br />
-			<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update")#" class="button" onclick="showupdate();">
-			<br />
-			<div id="updatestatus"></div>
-		<cfelse>
-			#defaultsObj.trans("db_update_here_not")#
-			<br />
-			<br />
-			<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update_continue")#" class="button" onclick="location.href='#self#';">
-		</cfif>
+	<cfif session.updatedb>
+		#defaultsObj.trans("db_update_here")#
+		<br />
+		<br />
+		<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update")#" class="button" onclick="showupdate();">
+		<br />
+		<div id="updatestatus"></div>
 	<cfelse>
 		#defaultsObj.trans("db_update_done")#
+		<!--- <br />
 		<br />
-		<br />
-		Note: You should check the <a href="http://#cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Update Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worries, it only means you already have the update for that one table done! 
+		Note: You should check the <a href="http://#cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Update Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worries, it only means you already have the update for that one table done!  --->
 		<br />
 		<br />
 		<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update_continue")#" class="button" onclick="location.href='#self#';">

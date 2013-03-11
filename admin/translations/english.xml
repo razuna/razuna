@@ -2656,7 +2656,7 @@
 		<transtext><![CDATA[Please enter the absolute path to an <b>existing</b> folder where you want to store your assets. On Windows this should start with "C:\" and on Linux/MaxOS X with "/", but with <b>NO TRAILING SLASH</b>. The path can be on a network volume or local one, it does not matter as long as Razuna can read/write to it.<br>NOTE: If you move this folder outside the Razuna web root you will need to create a virtual directory within your web server!!!<br>CAUTION: If you change this path on a production system, then make sure that you copy the content of the asset folder to the new location AFTER you have changed the path!]]></transtext>
 	</transid>
 	<transid name="db_update_here">
-		<transtext>We have updated Razuna and a database update is required. Please press the button below to update your installation now.</transtext>
+		<transtext><![CDATA[We have updated Razuna and a database update is required. Before you continue we need to update your database. Please press the button below to update your installation now.<br /><br />The update process may take a little while, so please be patient.]]></transtext>
 	</transid>
 	<transid name="db_update_here_not">
 		<transtext>We have updated Razuna successfully and no database was harmed during the update process. Please continue using Razuna.</transtext>
@@ -2668,7 +2668,7 @@
 		<transtext>Continue using Razuna</transtext>
 	</transid>
 	<transid name="db_update_done">
-		<transtext>We have updated the Razuna database successfully. Have fun continuing storing your assets the most efficient way.</transtext>
+		<transtext>Your Razuna database is now up-to-date!</transtext>
 	</transid>
 	<transid name="header_exiftool">
 		<transtext>Exiftool</transtext>
