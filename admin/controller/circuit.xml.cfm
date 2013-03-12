@@ -1234,7 +1234,7 @@
 		<if condition="session.updatedb">
 			<true>
 				<!-- <do action="v.update" /> -->
-				<relocate url="http://#cgi.http_host##dynpath#/#myself#v.update&amp;_v=#createuuid('')#" />
+				<relocate url="#myself#v.update&amp;_v=#createuuid('')#" />
 			</true>
 		</if>
 	</fuseaction>
