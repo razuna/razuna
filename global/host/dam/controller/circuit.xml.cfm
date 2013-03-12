@@ -6907,6 +6907,14 @@
 		<set name="attributes.searchtext" value="#attributes.searchfor#" />
 		<set name="attributes.ui" value="true" />
 		<set name="application.razuna.api.dynpath" value="#dynpath#" />
+		<set name="session.qimg" value="" overwrite="false" />
+		<set name="session.qvid" value="" overwrite="false" />
+		<set name="session.qaud" value="" overwrite="false" />
+		<set name="session.qdoc" value="" overwrite="false" />
+		<set name="session.listdocid" value="" overwrite="false" />
+		<set name="session.listimgid" value="" overwrite="false" />
+		<set name="session.listvidid" value="" overwrite="false" />
+		<set name="session.listaudid" value="" overwrite="false" />
 		<!-- Include the search include -->
 		<do action="search_include" />
 		<!-- Call search API -->
