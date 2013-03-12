@@ -31,4 +31,13 @@
 >
 <cferror type="exception" template="error.cfm">
 <cferror type="request" template="error_request.cfm">
-<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
+<!--- Decide on production or dev mode for FB --->
+<cfif structKeyExists(application.fusebox,"mode") AND cgi.http_host DOES NOT CONTAIN "local">
+	<cfset application.fusebox.mode = "production">
+	<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
+<cfelse>
+	<cfset application.fusebox.mode = "development-full-load">
+	<cflock scope="Application" timeout="30">
+		<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
+	</cflock>
+</cfif>
