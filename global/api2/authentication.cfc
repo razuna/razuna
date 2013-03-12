@@ -36,6 +36,10 @@
 		<cfargument name="api_key" type="string" required="true">
 		<!--- Param --->
 		<cfparam name="thehostid" default="" />
+		<!--- If api key is empty --->
+		<cfif arguments.api_key EQ "">
+			<cfset arguments.api_key = 0>
+		</cfif>
 		<!--- Check to see if api key has a hostid --->
 		<cfif arguments.api_key contains "-">
 			<cfset var thehostid = listfirst(arguments.api_key,"-")>
