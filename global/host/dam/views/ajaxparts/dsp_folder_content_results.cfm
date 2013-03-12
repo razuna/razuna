@@ -149,14 +149,14 @@
 										<input type="checkbox" name="file_id" value="#theid#-img" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-img") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=img&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=img&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-img&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=img','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=img');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<cfif permfolder EQ "X">
-											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 								</cfif>
@@ -237,14 +237,14 @@
 										<input type="checkbox" name="file_id" value="#theid#-vid" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-vid") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=vid&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=vid&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-vid&thetype=#theid#-vid');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=vid','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=vid');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=vid');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<cfif permfolder EQ "X">
-											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 								</cfif>
@@ -313,14 +313,14 @@
 										<input type="checkbox" name="file_id" value="#theid#-aud" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-aud") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=aud&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=aud&folderaccess=#permfolder#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-aud&thetype=#theid#-aud');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=aud','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=aud');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<cfif permfolder EQ "X">
-											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 								</cfif>
@@ -403,14 +403,14 @@
 										<input type="checkbox" name="file_id" value="#theid#-doc" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-doc") NEQ 0> checked="checked"</cfif>>
 									</div>
 									<div style="float:right;padding:6px 0px 0px 0px;">
-										<a href="#myself#c.serve_file&file_id=#theid#&type=doc"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+										<a href="#myself#c.serve_file&file_id=#theid#&type=doc" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 										<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-doc&thetype=#theid#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 										<cfif cs.button_send_email>
 											<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=doc','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 										</cfif>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=doc');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 										<cfif permfolder EQ "X">
-											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 										</cfif>
 									</div>
 								</cfif>
@@ -507,16 +507,16 @@
 									<input type="checkbox" name="file_id" value="#theid#-#kind#" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-#kind#") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
-									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
 										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif cs.show_bottom_part>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 							</div>
@@ -582,16 +582,16 @@
 									<input type="checkbox" name="file_id" value="#theid#-#kind#" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-#kind#") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
-									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
 										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif cs.show_bottom_part>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 							</div>
@@ -653,16 +653,16 @@
 									<input type="checkbox" name="file_id" value="#theid#-#kind#" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-#kind#") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
-									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-img');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
 										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif cs.show_bottom_part>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 							</div>
@@ -741,16 +741,16 @@
 									<input type="checkbox" name="file_id" value="#theid#-#kind#" onclick="enablesub('searchform#attributes.thetype#');"<cfif listfindnocase(session.file_id,"#theid#-#kind#") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding-top:2px;">
-									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
+									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#theid#&kind=#kind#&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
 									<cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropbasket','#myself#c.basket_put&file_id=#theid#-#kind#&thetype=#theid#-doc');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#"><img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" /></a></cfif>
 									<cfif cs.button_send_email>
 										<a href="##" onclick="showwindow('#myself##xfa.sendemail#&file_id=#theid#&thetype=#kind#','#myFusebox.getApplicationData().defaults.trans("send_with_email")#',600,2);return false;" title="#myFusebox.getApplicationData().defaults.trans("send_with_email")#"><img src="#dynpath#/global/host/dam/images/mail-message-new-3.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif cs.show_bottom_part>
-										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#theid#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#theid#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
 							</div>
