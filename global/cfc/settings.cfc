@@ -1065,76 +1065,92 @@
 		FROM razuna_config
 		</cfquery>
 		<cfcatch type="database">
-			<!--- Create the config DB on the filesystem --->
-			<cfinvoke component="db_h2" method="BDsetDatasource">
-				<cfinvokeargument name="name" value="razuna_default" />
-				<cfinvokeargument name="databasename" value="razuna_default" />
-				<cfinvokeargument name="logintimeout" value="120" />
-				<cfinvokeargument name="initstring" value="" />
-				<cfinvokeargument name="connectionretries" value="0" />
-				<cfinvokeargument name="connectiontimeout" value="120" />
-				<cfinvokeargument name="username" value="razuna" />
-				<cfinvokeargument name="password" value="razunaconfig" />
-				<cfinvokeargument name="sqlstoredprocedures" value="true" />
-				<cfinvokeargument name="hoststring" value="jdbc:h2:#arguments.pathoneup#db/razuna_default;CACHE_SIZE=100000;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;CACHE_TYPE=SOFT_LRU;AUTO_SERVER=TRUE" />
-				<cfinvokeargument name="sqlupdate" value="true" />
-				<cfinvokeargument name="sqlselect" value="true" />
-				<cfinvokeargument name="sqlinsert" value="true" />
-				<cfinvokeargument name="sqldelete" value="true" />
-				<cfinvokeargument name="perrequestconnections" value="false" />
-				<cfinvokeargument name="drivername" value="org.h2.Driver" />
-				<cfinvokeargument name="maxconnections" value="24" />
-			</cfinvoke>
-			<!--- Create Table --->
-			<cfquery datasource="razuna_default">
-			CREATE TABLE razuna_config
-			(
-				conf_database				VARCHAR(100),
-				conf_schema					VARCHAR(100),
-				conf_datasource				VARCHAR(100),
-				conf_setid					VARCHAR(100),
-				conf_storage				VARCHAR(100),
-				conf_aws_access_key			VARCHAR(100),
-				conf_aws_secret_access_key	VARCHAR(100),
-				conf_aws_location			VARCHAR(100),
-				conf_nirvanix_appkey		VARCHAR(100),
-				conf_nirvanix_master_name	VARCHAR(100),
-				conf_nirvanix_master_pass	VARCHAR(100),
-				conf_nirvanix_url_services	VARCHAR(100),
-				conf_isp					VARCHAR(100),
-				conf_firsttime				BOOLEAN,
-				conf_rendering_farm			BOOLEAN,
-				conf_serverid				VARCHAR(100),
-				conf_wl 					BOOLEAN DEFAULT false,
-				conf_aka_token				VARCHAR(200) DEFAULT ''
-			)
-			</cfquery>
-			<!--- Insert values --->
-			<cfquery datasource="razuna_default">
-			INSERT INTO razuna_config
-			(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage,
-			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_rendering_farm, conf_serverid, conf_wl)
-			VALUES(
-			'h2',
-			'razuna',
-			'h2',
-			'1',
-			'local',
-			'http://services.nirvanix.com',
-			'false',
-			true,
-			false,
-			'#createuuid()#',
-			false
-			)
-			</cfquery>
-			<!--- Query again --->
-			<cfquery datasource="razuna_default" name="qry">
-			SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
-			conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
-			conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
-			FROM razuna_config
-			</cfquery>
+			<!--- This is not needed anymore for post 1.6 installations --->
+			<cfif structkeyexists(cfcatch,"nativeerrorcode") AND cfcatch.nativeerrorcode EQ 42122>
+				<cftry>
+					<cfquery datasource="razuna_default">
+					alter table razuna_config add conf_wl BOOLEAN DEFAULT false
+					</cfquery>
+					<cfcatch type="database"></cfcatch>
+				</cftry>
+				<cftry>
+					<cfquery datasource="razuna_default">
+					alter table razuna_config add conf_aka_token varchar(200)
+					</cfquery>
+					<cfcatch type="database"></cfcatch>
+				</cftry>
+			<cfelse>
+				<!--- Create the config DB on the filesystem --->
+				<cfinvoke component="db_h2" method="BDsetDatasource">
+					<cfinvokeargument name="name" value="razuna_default" />
+					<cfinvokeargument name="databasename" value="razuna_default" />
+					<cfinvokeargument name="logintimeout" value="120" />
+					<cfinvokeargument name="initstring" value="" />
+					<cfinvokeargument name="connectionretries" value="0" />
+					<cfinvokeargument name="connectiontimeout" value="120" />
+					<cfinvokeargument name="username" value="razuna" />
+					<cfinvokeargument name="password" value="razunaconfig" />
+					<cfinvokeargument name="sqlstoredprocedures" value="true" />
+					<cfinvokeargument name="hoststring" value="jdbc:h2:#arguments.pathoneup#db/razuna_default;CACHE_SIZE=100000;IGNORECASE=TRUE;MODE=Oracle;AUTO_RECONNECT=TRUE;CACHE_TYPE=SOFT_LRU;AUTO_SERVER=TRUE" />
+					<cfinvokeargument name="sqlupdate" value="true" />
+					<cfinvokeargument name="sqlselect" value="true" />
+					<cfinvokeargument name="sqlinsert" value="true" />
+					<cfinvokeargument name="sqldelete" value="true" />
+					<cfinvokeargument name="perrequestconnections" value="false" />
+					<cfinvokeargument name="drivername" value="org.h2.Driver" />
+					<cfinvokeargument name="maxconnections" value="24" />
+				</cfinvoke>
+				<!--- Create Table --->
+				<cfquery datasource="razuna_default">
+				CREATE TABLE razuna_config
+				(
+					conf_database				VARCHAR(100),
+					conf_schema					VARCHAR(100),
+					conf_datasource				VARCHAR(100),
+					conf_setid					VARCHAR(100),
+					conf_storage				VARCHAR(100),
+					conf_aws_access_key			VARCHAR(100),
+					conf_aws_secret_access_key	VARCHAR(100),
+					conf_aws_location			VARCHAR(100),
+					conf_nirvanix_appkey		VARCHAR(100),
+					conf_nirvanix_master_name	VARCHAR(100),
+					conf_nirvanix_master_pass	VARCHAR(100),
+					conf_nirvanix_url_services	VARCHAR(100),
+					conf_isp					VARCHAR(100),
+					conf_firsttime				BOOLEAN,
+					conf_rendering_farm			BOOLEAN,
+					conf_serverid				VARCHAR(100),
+					conf_wl 					BOOLEAN DEFAULT false,
+					conf_aka_token				VARCHAR(200) DEFAULT ''
+				)
+				</cfquery>
+				<!--- Insert values --->
+				<cfquery datasource="razuna_default">
+				INSERT INTO razuna_config
+				(conf_database, conf_schema, conf_datasource, conf_setid, conf_storage,
+				conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_rendering_farm, conf_serverid, conf_wl)
+				VALUES(
+				'h2',
+				'razuna',
+				'h2',
+				'1',
+				'local',
+				'http://services.nirvanix.com',
+				'false',
+				true,
+				false,
+				'#createuuid()#',
+				false
+				)
+				</cfquery>
+				<!--- Query again --->
+				<cfquery datasource="razuna_default" name="qry">
+				SELECT conf_database, conf_schema, conf_datasource, conf_setid, conf_storage, conf_nirvanix_appkey,
+				conf_nirvanix_url_services, conf_isp, conf_firsttime, conf_aws_access_key, conf_aws_secret_access_key, 
+				conf_aws_location, conf_rendering_farm, conf_serverid, conf_wl, conf_aka_token
+				FROM razuna_config
+				</cfquery>
+			</cfif>
 		</cfcatch>
 	</cftry>
 	<!--- Check BACKUP STATUS --->
