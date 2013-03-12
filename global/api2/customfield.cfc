@@ -194,7 +194,8 @@
 			<cfset cachetoken = getcachetoken(arguments.api_key,"general")>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT DISTINCT /* #cachetoken#getfieldsofasset */ ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value
+			SELECT DISTINCT /* #cachetoken#getfieldsofasset */ 
+			ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value, c.cf_order
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_text ct, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields c, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values cv
 			WHERE cv.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.asset_id#" list="Yes">)
 			AND ct.cf_id_r = cv.cf_id_r
