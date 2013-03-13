@@ -827,13 +827,16 @@
 				av_link_url AS cloud_url_org,
 				av_link_title AS filename_org,
 				av_type AS extension,
+				hashtag AS md5hash,
 				'0' AS size,
-				av_link_url AS local_url_org,
-				'' AS colorspace,
-				'' AS xdpi,
-				'' AS ydpi,
-				'' AS unit,
-				hashtag AS md5hash
+				av_link_url AS local_url_org
+				<cfif arguments.assettype EQ "img">
+					,
+					'' AS colorspace,
+					'' AS xdpi,
+					'' AS ydpi,
+					'' AS unit
+				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#additional_versions
 				WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			</cfquery>
