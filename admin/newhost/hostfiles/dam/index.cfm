@@ -23,5 +23,4 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfset attributes.cfapplicationname = hash(right(replacenocase(getDirectoryFromPath(getCurrentTemplatePath()),"/","","all"),64))>
 <cfinclude template="/global/host/dam/index.cfm" />
