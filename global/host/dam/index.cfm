@@ -32,7 +32,7 @@
 <cferror type="exception" template="error.cfm">
 <cferror type="request" template="error_request.cfm">
 <!--- Decide on production or dev mode for FB --->
-<cfif structKeyExists(application.fusebox,"mode") AND cgi.http_host DOES NOT CONTAIN "local">
+<cfif structKeyExists(application,"fusebox") AND cgi.http_host DOES NOT CONTAIN "local">
 	<cfset application.fusebox.mode = "production">
 	<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
 <cfelse>
