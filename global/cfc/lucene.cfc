@@ -77,6 +77,7 @@
 		<cfargument name="fromapi" type="string" default="F" required="false">
 		<!--- Param --->
 		<cfset var folderpath = "">
+		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
 		<!--- FOR FILES --->
 		<cfif arguments.category EQ "doc">
 			<!--- Query Record --->
@@ -121,13 +122,13 @@
 			<cfset var l = valuelist(qry_l.label_path," ")>
 			<cfset var l = replace(l,"/"," ","all")>
 			<!--- Remove foreign chars for some columns --->
-			<cfset var thefilename = REReplaceNoCase(qry_all.filename, "[^[:alnum:]]", " ", "ALL")>
-			<cfset var thedesc = REReplaceNoCase(qry_all.description, "[^[:alnum:]]", " ", "ALL")>
-			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, "[^[:alnum:]]", " ", "ALL")>
+			<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
+			<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
+			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
 			<!--- Add labels to the query --->
 			<cfquery dbtype="query" name="qry_all">
 			SELECT 
-			id, folder, '#thefilename#' as filename, filenameorg, link_kind, lucene_key, '#thekeys#' as keywords, '#thedesc#' as description,
+			id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key, '#thekeys#' as keywords, '#thedesc#' as description,
 			rawmetadata, theext, author, rights, authorsposition, captionwriter, webstatement, rightsmarked, '#l#' as labels, 
 			'#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, thecategory, '#folderpath#' as folderpath
 			FROM qry_all
@@ -211,13 +212,13 @@
 			<cfset var l = valuelist(qry_l.label_path," ")>
 			<cfset var l = replace(l,"/"," ","all")>
 			<!--- Remove foreign chars for some columns --->
-			<cfset var thefilename = REReplaceNoCase(qry_all.filename, "[^[:alnum:]]", " ", "ALL")>
-			<cfset var thedesc = REReplaceNoCase(qry_all.description, "[^[:alnum:]]", " ", "ALL")>
-			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, "[^[:alnum:]]", " ", "ALL")>
+			<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
+			<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
+			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
 			<!--- Add labels to the query --->
 			<cfquery dbtype="query" name="qry_all">
 			SELECT 
-			id, folder, '#thefilename#' as filename, filenameorg, link_kind, lucene_key, '#thedesc#' as description, '#thekeys#' as keywords,
+			id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key, '#thedesc#' as description, '#thekeys#' as keywords,
 			theext, rawmetadata, thecategory, subjectcode, creator, title, authorsposition, captionwriter, ciadrextadr, category, 
 			supplementalcategories, urgency, ciadrcity, ciadrctry, location, ciadrpcode, ciemailwork, ciurlwork, citelwork, 
 			intellectualgenre, instructions, source, usageterms, copyrightstatus, transmissionreference, webstatement, headline, 
@@ -326,12 +327,12 @@
 			<cfset var l = valuelist(qry_l.label_path," ")>
 			<cfset var l = replace(l,"/"," ","all")>
 			<!--- Remove foreign chars for some columns --->
-			<cfset var thefilename = REReplaceNoCase(qry_all.filename, "[^[:alnum:]]", " ", "ALL")>
-			<cfset var thedesc = REReplaceNoCase(qry_all.description, "[^[:alnum:]]", " ", "ALL")>
-			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, "[^[:alnum:]]", " ", "ALL")>
+			<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
+			<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
+			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
 			<!--- Add labels to the query --->
 			<cfquery dbtype="query" name="qry_all">
-			SELECT id, folder, '#thefilename#' as filename, filenameorg, link_kind, lucene_key,
+			SELECT id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key,
 		    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
 			theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
 			FROM qry_all
@@ -379,12 +380,12 @@
 			<cfset var l = valuelist(qry_l.label_path," ")>
 			<cfset var l = replace(l,"/"," ","all")>
 			<!--- Remove foreign chars for some columns --->
-			<cfset var thefilename = REReplaceNoCase(qry_all.filename, "[^[:alnum:]]", " ", "ALL")>
-			<cfset var thedesc = REReplaceNoCase(qry_all.description, "[^[:alnum:]]", " ", "ALL")>
-			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, "[^[:alnum:]]", " ", "ALL")>
+			<cfset var thefilename = REReplaceNoCase(qry_all.filename, theregchars, " ", "ALL")>
+			<cfset var thedesc = REReplaceNoCase(qry_all.description, theregchars, " ", "ALL")>
+			<cfset var thekeys = REReplaceNoCase(qry_all.keywords, theregchars, " ", "ALL")>
 			<!--- Add labels to the query --->
 			<cfquery dbtype="query" name="qry_all">
-			SELECT id, folder, '#thefilename#' as filename, filenameorg, link_kind, lucene_key,
+			SELECT id, folder, '#thefilename# #qry_all.filename#' as filename, filenameorg, link_kind, lucene_key,
 		    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
 			theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
 			FROM qry_all
