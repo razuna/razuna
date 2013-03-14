@@ -134,36 +134,38 @@
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
-			<cfscript>
-				args = {
-				collection : session.hostid,
-				query : qry_all,
-				category : "thecategory",
-				categoryTree : "id",
-				key : "id",
-				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath",
-				custommap :{
-					id : "id",
-					filename : "filename",
-					filenameorg : "filenameorg",
-					keywords : "keywords",
-					description : "description",
-					rawmetadata : "rawmetadata",
-					extension : "theext",
-					author : "author",
-					rights : "rights",
-					authorsposition : "authorsposition", 
-					captionwriter : "captionwriter", 
-					webstatement : "webstatement", 
-					rightsmarked : "rightsmarked",
-					labels : "labels",
-					customfieldvalue : "customfieldvalue",
-					folderpath : "folderpath"
-					}
-				};
-				results = CollectionIndexCustom( argumentCollection=args );
-			</cfscript>
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+				<cfscript>
+					args = {
+					collection : session.hostid,
+					query : qry_all,
+					category : "thecategory",
+					categoryTree : "id",
+					key : "id",
+					title : "id",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath",
+					custommap :{
+						id : "id",
+						filename : "filename",
+						filenameorg : "filenameorg",
+						keywords : "keywords",
+						description : "description",
+						rawmetadata : "rawmetadata",
+						extension : "theext",
+						author : "author",
+						rights : "rights",
+						authorsposition : "authorsposition", 
+						captionwriter : "captionwriter", 
+						webstatement : "webstatement", 
+						rightsmarked : "rightsmarked",
+						labels : "labels",
+						customfieldvalue : "customfieldvalue",
+						folderpath : "folderpath"
+						}
+					};
+					results = CollectionIndexCustom( argumentCollection=args );
+				</cfscript>
+			</cflock>
 		<!--- FOR IMAGES --->
 		<cfelseif arguments.category EQ "img">
 			<!--- Query Record --->
@@ -227,63 +229,65 @@
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
-			<cfscript>
-				args = {
-				collection : session.hostid,
-				query : qry_all,
-				category : "thecategory",
-				categoryTree : "id",
-				key : "id",
-				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath",
-				custommap :{
-					id : "id",
-					filename : "filename",
-					filenameorg : "filenameorg",
-					keywords : "keywords",
-					description : "description",
-					rawmetadata : "rawmetadata",
-					extension : "theext",
-					subjectcode : "subjectcode",
-					creator : "creator",
-					title : "title", 
-					authorsposition : "authorsposition", 
-					captionwriter : "captionwriter", 
-					ciadrextadr : "ciadrextadr", 
-					category : "category",
-					supplementalcategories : "supplementalcategories", 
-					urgency : "urgency",
-					ciadrcity : "ciadrcity", 
-					ciadrctry : "ciadrctry", 
-					location : "location", 
-					ciadrpcode : "ciadrpcode", 
-					ciemailwork : "ciemailwork", 
-					ciurlwork : "ciurlwork", 
-					citelwork : "citelwork", 
-					intellectualgenre : "intellectualgenre", 
-					instructions : "instructions", 
-					source : "source",
-					usageterms : "usageterms", 
-					copyrightstatus : "copyrightstatus", 
-					transmissionreference : "transmissionreference", 
-					webstatement : "webstatement", 
-					headline : "headline", 
-					datecreated : "datecreated", 
-					city : "city", 
-					ciadrregion : "ciadrregion", 
-					country : "country", 
-					countrycode : "countrycode", 
-					scene : "scene", 
-					state : "state", 
-					credit : "credit", 
-					rights : "rights",
-					labels : "labels",
-					customfieldvalue : "customfieldvalue",
-					folderpath : "folderpath"
-					}
-				};
-				results = CollectionIndexCustom( argumentCollection=args );
-			</cfscript>
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+				<cfscript>
+					args = {
+					collection : session.hostid,
+					query : qry_all,
+					category : "thecategory",
+					categoryTree : "id",
+					key : "id",
+					title : "id",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath",
+					custommap :{
+						id : "id",
+						filename : "filename",
+						filenameorg : "filenameorg",
+						keywords : "keywords",
+						description : "description",
+						rawmetadata : "rawmetadata",
+						extension : "theext",
+						subjectcode : "subjectcode",
+						creator : "creator",
+						title : "title", 
+						authorsposition : "authorsposition", 
+						captionwriter : "captionwriter", 
+						ciadrextadr : "ciadrextadr", 
+						category : "category",
+						supplementalcategories : "supplementalcategories", 
+						urgency : "urgency",
+						ciadrcity : "ciadrcity", 
+						ciadrctry : "ciadrctry", 
+						location : "location", 
+						ciadrpcode : "ciadrpcode", 
+						ciemailwork : "ciemailwork", 
+						ciurlwork : "ciurlwork", 
+						citelwork : "citelwork", 
+						intellectualgenre : "intellectualgenre", 
+						instructions : "instructions", 
+						source : "source",
+						usageterms : "usageterms", 
+						copyrightstatus : "copyrightstatus", 
+						transmissionreference : "transmissionreference", 
+						webstatement : "webstatement", 
+						headline : "headline", 
+						datecreated : "datecreated", 
+						city : "city", 
+						ciadrregion : "ciadrregion", 
+						country : "country", 
+						countrycode : "countrycode", 
+						scene : "scene", 
+						state : "state", 
+						credit : "credit", 
+						rights : "rights",
+						labels : "labels",
+						customfieldvalue : "customfieldvalue",
+						folderpath : "folderpath"
+						}
+					};
+					results = CollectionIndexCustom( argumentCollection=args );
+				</cfscript>
+			</cflock>
 		<!--- FOR VIDEOS --->
 		<cfelseif arguments.category EQ "vid">
 			<!--- Query Record --->
@@ -394,30 +398,32 @@
 		<!--- Only for video and audio files --->
 		<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
 			<!--- Indexing --->
-			<cfscript>
-			args = {
-			collection : session.hostid,
-			query : qry_all,
-			category : "thecategory",
-			categoryTree : "id",
-			key : "id",
-			title : "id",
-			body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath",
-			custommap :{
-				id : "id",
-				filename : "filename",
-				filenameorg : "filenameorg",
-				keywords : "keywords",
-				description : "description",
-				rawmetadata : "rawmetadata",
-				extension : "theext",
-				labels : "labels",
-				customfieldvalue : "customfieldvalue",
-				folderpath : "folderpath"
-				}
-			};
-			results = CollectionIndexCustom( argumentCollection=args );
-			</cfscript>
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+				<cfscript>
+				args = {
+				collection : session.hostid,
+				query : qry_all,
+				category : "thecategory",
+				categoryTree : "id",
+				key : "id",
+				title : "id",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath",
+				custommap :{
+					id : "id",
+					filename : "filename",
+					filenameorg : "filenameorg",
+					keywords : "keywords",
+					description : "description",
+					rawmetadata : "rawmetadata",
+					extension : "theext",
+					labels : "labels",
+					customfieldvalue : "customfieldvalue",
+					folderpath : "folderpath"
+					}
+				};
+				results = CollectionIndexCustom( argumentCollection=args );
+				</cfscript>
+			</cflock>
 		</cfif>
 		<!--- Index the file itself, but not video (since video throws an error) --->
 		<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
@@ -433,16 +439,22 @@
 					</cfif>
 					<!--- Index: Update file --->
 					<cfif fileExists(qry_all.lucene_key)>
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+							<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
+						</cflock>
 					</cfif>
 				<!--- Local Storage --->
 				<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 					<!--- Index: Update file --->
-					<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
+					</cflock>
 				<!--- Linked file --->
 				<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 					<!--- Index: Update file --->
-					<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
+					</cflock>
 				</cfif>
 				<cfcatch type="any">
 					
@@ -485,18 +497,26 @@
 				<cfif arguments.thestruct.link_kind EQ "">
 					<!--- Storage: Local --->
 					<cfif application.razuna.storage EQ "local">
-						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
+						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
+						</cflock>
 					<!--- Storage: Nirvanix --->
 					<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
-						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
+						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
+						</cflock>
 					</cfif>
 				<!--- For linked local assets --->
 				<cfelseif arguments.thestruct.link_kind EQ "lan">
-					<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.link_path_url#">
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.link_path_url#">
+					</cflock>
 				</cfif>
 			</cfif>
 			<!--- Index: delete records --->
-			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+				<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
+			</cflock>
 			<cfcatch type="any">
 				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="lucene delete index">
 					<cfdump var="#cfcatch#" />
@@ -654,7 +674,9 @@
 		<cfflush>
 		<!--- Remove the index --->
 		<cfif application.razuna.storage EQ "local">
-			<cfindex action="purge" collection="#session.hostid#">
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="5">
+				<cfindex action="purge" collection="#session.hostid#" />
+			</cflock>
 		</cfif>
 		<!--- Feedback --->
 		<cfoutput><strong>Let's see how many documents we have to re-index...</strong><br><br></cfoutput>
