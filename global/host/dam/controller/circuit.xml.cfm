@@ -1058,6 +1058,8 @@
 	</fuseaction>
 	<!-- Just get the collection of this col folder -->
 	<fuseaction name="collection_chooser">
+		<!-- CFC: Get access to this folder -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get Collection to choose from -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="getAll(session.thelangid,attributes)" returnvariable="qry_col_list" />
 		<!-- Show collection list -->

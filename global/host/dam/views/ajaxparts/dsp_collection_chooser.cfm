@@ -25,15 +25,21 @@
 --->
 <br><br>
 <cfoutput>
-	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-top:20px;">
-		<tr>
-			<td>Please choose in which Collection you want to save your asset(s):</td>
-		</tr>
-		<cfloop query="qry_col_list.collist">
+	<table border="0" cellpadding="0" cellspacing="0" width="100%" style="padding-top:15px;">
+		<cfif qry_col_list.collist.recordcount EQ 0>
 			<tr>
-				<td valign="top" style="padding-left:15px;"><a href="##" onclick="choosecollectiondone('#session.savehere#','#col_id#');return false;"><strong>#col_name#</strong></a></td>
+				<td>There are no collections here. <cfif attributes.folderaccess NEQ "R"><a href="##" onclick="showwindow('#myself#c.saveascollection_form&folder_id=#attributes.folder_id#&coladd=T&norefresh=true','#myFusebox.getApplicationData().defaults.trans("collection_create")#',600,2);">Maybe create one now?</a></cfif></td>
 			</tr>
-		</cfloop>
+		<cfelse>
+			<tr>
+				<td>Please choose in which Collection you want to save your asset(s):</td>
+			</tr>
+			<cfloop query="qry_col_list.collist">
+				<tr>
+					<td valign="top" style="padding-left:15px;"><a href="##" onclick="choosecollectiondone('#session.savehere#','#col_id#');return false;"><strong>#col_name#</strong></a></td>
+				</tr>
+			</cfloop>
+		</cfif>
 	</table>
 	<div id="colfeedback" style="width:98%;float:left;padding:10px;color:green;font-weight:bold;display:none;"></div>
 	<div id="coldummy"></div>

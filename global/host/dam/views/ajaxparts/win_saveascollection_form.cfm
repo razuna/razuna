@@ -94,14 +94,21 @@
 			return false;
 		})
 		function colfeedback() {
-			<cfif NOT structkeyexists(attributes,"coladd")>
-				$("##collectionupdate").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("save_collection_done"))#");
-			   	$("##collectionupdate").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-			<cfelse>
+			<cfif structkeyexists(attributes,"norefresh")>
 				// Hide Window
-				destroywindow(1);
-				// reload collection list
-				$('##rightside').load('#myself#c.collections&iscol=T&folder_id=col-#attributes.folder_id#');
+				destroywindow(2);
+				// Reload the collectiin list
+				loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#attributes.folder_id#');
+			<cfelse>
+				<cfif NOT structkeyexists(attributes,"coladd")>
+					$("##collectionupdate").html("#JSStringFormat(myFusebox.getApplicationData().defaults.trans("save_collection_done"))#");
+				   	$("##collectionupdate").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+				<cfelse>
+					// Hide Window
+					destroywindow(1);
+					// reload collection list
+					$('##rightside').load('#myself#c.collections&iscol=T&folder_id=col-#attributes.folder_id#');
+				</cfif>
 			</cfif>
 		}
 	</script>
