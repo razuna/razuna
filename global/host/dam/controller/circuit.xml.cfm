@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2013.02.25.1" />
+		<set name="attributes.cachetag" value="2013.03.16.1" />
 	</fuseaction>
 
 	<!--
@@ -1162,6 +1162,12 @@
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="attributes.issearch" value="false" overwrite="false" />
+		<if condition="!structkeyexists(attributes,'offset')">
+			<true>
+				<set name="session.file_id" value="" />
+				<set name="session.thefileid" value="#session.file_id#" />
+			</true>
+		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- Action: Get asset path -->
@@ -1214,6 +1220,12 @@
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="attributes.issearch" value="false" overwrite="false" />
+		<if condition="!structkeyexists(attributes,'offset')">
+			<true>
+				<set name="session.file_id" value="" />
+				<set name="session.thefileid" value="#session.file_id#" />
+			</true>
+		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- CFC: Get folder name -->
@@ -1264,6 +1276,12 @@
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="attributes.issearch" value="false" overwrite="false" />
+		<if condition="!structkeyexists(attributes,'offset')">
+			<true>
+				<set name="session.file_id" value="" />
+				<set name="session.thefileid" value="#session.file_id#" />
+			</true>
+		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- CFC: Get folder name -->
@@ -1332,6 +1350,12 @@
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="attributes.issearch" value="false" overwrite="false" />
+		<if condition="!structkeyexists(attributes,'offset')">
+			<true>
+				<set name="session.file_id" value="" />
+				<set name="session.thefileid" value="#session.file_id#" />
+			</true>
+		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- CFC: Get folder name -->
@@ -1389,6 +1413,12 @@
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
 		<set name="attributes.issearch" value="false" overwrite="false" />
+		<if condition="!structkeyexists(attributes,'offset')">
+			<true>
+				<set name="session.file_id" value="" />
+				<set name="session.thefileid" value="#session.file_id#" />
+			</true>
+		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
 		<!-- Action: Get asset path -->
@@ -1427,8 +1457,8 @@
 	<!-- Load Folder Content -->
 	<fuseaction name="folder_content">
 		<!-- Reset session -->
-		<set name="session.file_id" value="" />
-		<set name="session.thefileid" value="" />
+		<!-- <set name="session.file_id" value="" /> -->
+		<!-- <set name="session.thefileid" value="" /> -->
 		<!-- Get Include -->
 		<do action="folder_content_include" />
 		<!-- Show -->

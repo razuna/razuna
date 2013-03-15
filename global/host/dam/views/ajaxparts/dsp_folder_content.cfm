@@ -1067,7 +1067,7 @@
 		// Focus tree
 		razunatreefocus('#attributes.folder_id#');
 		<cfif session.file_id NEQ "">
-			enablesub('#kind#form');
+			enablesub('#kind#form', true);
 		</cfif>
 		// Submit form
 		function combinedsaveall(){

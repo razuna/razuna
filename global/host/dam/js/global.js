@@ -204,33 +204,41 @@ function aspectwidth(inp,out,theform){
 		}
 }
 // Enable folderselection in list
-function enablesub(myform) {
+function enablesub(myform,nostore) {
+	// Set nostore to false
+	if (nostore == ''){
+		var nostore = false;
+	}
 	// Check if there are any files selected. If so ignore below
 	var anyselect = $('div').hasClass('ui-selected'); 
-	if (!anyselect){
-	// Check state of selection box
-    var isclosed = $("#folderselection" + myform).is(':hidden');
-    // get how many are selected
-    var n = $('#' + myform + ' input:checked').length;
-    // Open or close selection
-    if (n == 1 && isclosed) {
-		$("#folderselection" + myform).slideToggle('slow');
-		$("#folderselectionb" + myform).slideToggle('slow');
-	}
-	if (n == 0 && !isclosed) {
-		$("#folderselection" + myform).slideToggle('slow');
-		$("#folderselectionb" + myform).slideToggle('slow');
-		// Store IDs
-		storeids(myform);
-	}
-	// if selection is here
-	if (n != 0){
-		// Hide select all status
-		// $("#selectstore" + myform).css("display","none");
-		// $("#selectstoreb" + myform).css("display","none");
-		// Store IDs
-		storeids(myform);
-	}
+	if (!anyselect) {
+		// Check state of selection box
+	    var isclosed = $("#folderselection" + myform).is(':hidden');
+	    // get how many are selected
+	    var n = $('#' + myform + ' input:checked').length;
+	    // Open or close selection
+	    if (n > 0 && isclosed) {
+			$("#folderselection" + myform).slideToggle('slow');
+			$("#folderselectionb" + myform).slideToggle('slow');
+		}
+		if (n == 0 && !isclosed) {
+			$("#folderselection" + myform).slideToggle('slow');
+			$("#folderselectionb" + myform).slideToggle('slow');
+			// Store IDs
+			if (!nostore){
+				storeids(myform);
+			}
+		}
+		// if selection is here
+		if (n != 0) {
+			// Show select all desc
+			$("#selectstore" + myform).css("display","");
+			$("#selectstoreb" + myform).css("display","");
+			// Store IDs
+			if (!nostore){
+				storeids(myform);
+			}
+		}
 	}
 }
 // Enable folderselection in list
@@ -461,7 +469,7 @@ function storeids(theform){
 	// };
 }
 // Check all checkboxes
-function CheckAll(myform,folderid,thediv) {
+function CheckAll(myform,folderid,thediv,thekind) {
 	// Set var
 	var ischk = true;
 	// Enable select all text again. cloud be set hidden from single selection
@@ -488,7 +496,7 @@ function CheckAll(myform,folderid,thediv) {
 	}
 	// Decide if this is from the search
 	if(folderid != 'x'){
-		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid );
+		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid + '&thekind=' + thekind );
 	}
 	else{
 		// Get the ids from the hidden field
@@ -505,6 +513,9 @@ function CheckAllNot(myform){
 	// Hide bar
 	$("#folderselection" + myform).slideToggle('slow');
 	$("#folderselectionb" + myform).slideToggle('slow');
+	// Hide the selectall desc
+	$("#selectstore" + myform).css("display","none");
+	$("#selectstoreb" + myform).css("display","none");
 	// Get the ids from the hidden field
 	$('#div_forall').load('index.cfm?fa=c.store_file_search', { fileids: 0 })
 }
