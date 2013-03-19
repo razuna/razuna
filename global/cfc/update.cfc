@@ -421,7 +421,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_custom <cfif application.razuna.thedatabase EQ "mssql">alter column custom_value #thevarchar#(100)<cfelse>change custom_value custom_value #thevarchar#(100)</cfif>
+			alter table raz1_custom <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column custom_value #thevarchar#(100)<cfelse>change custom_value custom_value #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -437,7 +437,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_assets_temp <cfif application.razuna.thedatabase EQ "mssql">alter column thesize #thevarchar#(100)<cfelse>change thesize thesize #thevarchar#(100)</cfif>
+			alter table raz1_assets_temp <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column thesize #thevarchar#(100)<cfelse>change thesize thesize #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -445,7 +445,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql">alter column img_size #thevarchar#(100)<cfelse>change img_size img_size #thevarchar#(100)</cfif>
+			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column img_size #thevarchar#(100)<cfelse>change img_size img_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -453,7 +453,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql">alter column thumb_size #thevarchar#(100)<cfelse>change thumb_size thumb_size #thevarchar#(100)</cfif>
+			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column thumb_size #thevarchar#(100)<cfelse>change thumb_size thumb_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -461,7 +461,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_videos <cfif application.razuna.thedatabase EQ "mssql">alter column vid_size #thevarchar#(100)<cfelse>change vid_size vid_size #thevarchar#(100)</cfif>
+			alter table raz1_videos <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column vid_size #thevarchar#(100)<cfelse>change vid_size vid_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -469,7 +469,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_audios <cfif application.razuna.thedatabase EQ "mssql">alter column aud_size #thevarchar#(100)<cfelse>change aud_size aud_size #thevarchar#(100)</cfif>
+			alter table raz1_audios <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column aud_size #thevarchar#(100)<cfelse>change aud_size aud_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -477,7 +477,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_files <cfif application.razuna.thedatabase EQ "mssql">alter column file_size #thevarchar#(100)<cfelse>change file_size file_size #thevarchar#(100)</cfif>
+			alter table raz1_files <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column file_size #thevarchar#(100)<cfelse>change file_size file_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -485,7 +485,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql">alter column img_size #thevarchar#(100)<cfelse>change img_size img_size #thevarchar#(100)</cfif>
+			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column img_size #thevarchar#(100)<cfelse>change img_size img_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -493,7 +493,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql">alter column thumb_size #thevarchar#(100)<cfelse>change thumb_size thumb_size #thevarchar#(100)</cfif>
+			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column thumb_size #thevarchar#(100)<cfelse>change thumb_size thumb_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -501,7 +501,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql">alter column vid_size #thevarchar#(100)<cfelse>change vid_size vid_size #thevarchar#(100)</cfif>
+			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column vid_size #thevarchar#(100)<cfelse>change vid_size vid_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -557,7 +557,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_upload_templates_val <cfif application.razuna.thedatabase EQ "mssql">alter column upl_temp_format #thevarchar#(10)<cfelse>change upl_temp_format upl_temp_format #thevarchar#(10)</cfif>
+			alter table raz1_upload_templates_val <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column upl_temp_format #thevarchar#(10)<cfelse>change upl_temp_format upl_temp_format #thevarchar#(10)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
