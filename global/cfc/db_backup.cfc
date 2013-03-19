@@ -1238,7 +1238,8 @@
 		  av_link 				varchar(2) DEFAULT '1',
 		  thesize 				varchar(100) DEFAULT '0',
   		  thewidth 				varchar(50) DEFAULT '0',
-  		  theheight				varchar(50) DEFAULT '0'
+  		  theheight				varchar(50) DEFAULT '0',
+  		  hashtag 				varchar(100)
 		)
 		</cfquery>
 		
