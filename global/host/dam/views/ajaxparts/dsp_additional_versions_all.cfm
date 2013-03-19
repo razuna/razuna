@@ -30,8 +30,44 @@
 		<strong><a href="#av_link_url#" target="_blank">#av_link_title#</a></strong><br />
 	</cfloop>
 	<cfloop query="qry_av.assets">
-		<strong><a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a></strong> <em>(#myFusebox.getApplicationData().global.converttomb('#thesize#')#MB<cfif av_type EQ "img" OR av_type EQ "vid">, #thewidth#x#theheight# pixel</cfif>)</em><br />
+		 <strong>#av_link_title#</strong> (<cfif av_type EQ "img" OR av_type EQ "vid">#thewidth#x#theheight# pixel</cfif> #myFusebox.getApplicationData().global.converttomb('#thesize#')# MB)<br />
+			<a href="<cfif application.razuna.storage EQ "local">http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">View</a>
+			| <a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank">Download</a>
+			| <a href="##" onclick="toggleslide('divavo#av_id#','inputavo#av_id#');return false;">Direct Link</a>
+			<cfif attributes.folderaccess NEQ "R">
+				 | <a href="##" onclick="remavren('#av_id#','#av_type#');return false;">Remove</a>
+			</cfif>
+			<div id="divavo#av_id#" style="display:none;">
+				<cfif application.razuna.storage EQ "local">
+					<input type="text" id="inputavo#av_id#" style="width:100%;" value="http://#cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
+				<cfelse>
+					<input type="text" id="inputavo#av_id#" style="width:100%;" value="#av_link_url#" />
+				</cfif>		
+			</div>
 		<br />
 	</cfloop>
+	<!--- Js --->
+	<script type="text/javascript">
+	function remavren(id,type){
+		$( "##dialog-confirm-rendition" ).dialog({
+			resizable: false,
+			height:140,
+			modal: true,
+			buttons: {
+				"Yes, remove rendition": function() {
+					$( this ).dialog( "close" );
+					$('##div_forall').load('#myself#c.av_link_remove_new&file_id=#attributes.file_id#&id=' + id, function(){ 
+						if (type == 'img')loadren();
+						if (type == 'vid')loadrenvid();
+						if (type == 'aud')loadrenaud();
+					});
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
+	</script>
 </cfif>
 </cfoutput>

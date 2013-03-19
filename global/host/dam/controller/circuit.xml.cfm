@@ -6264,8 +6264,10 @@
 		<set name="session.asset_id_r" value="#attributes.file_id#" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
-		<!-- CFC: Query Widgets -->
+		<!-- CFC: Query -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
+		<!-- CFC: Get access to this folder -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
 		<do action="ajax.adi_versions" />
 	</fuseaction>
@@ -6279,9 +6281,14 @@
 	<!-- Remove Link -->
 	<fuseaction name="av_link_remove">
 		<!-- CFC: Query Widgets -->
-		<invoke object="myFusebox.getApplicationData().global" methodcall="remove_av_link(attributes)" />
+		<do action="av_link_remove_new" />
 		<!-- Show -->
 		<do action="adi_versions" />
+	</fuseaction>
+	<!-- Remove Link 2 -->
+	<fuseaction name="av_link_remove_new">
+		<!-- CFC: Query Widgets -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="remove_av_link(attributes)" />
 	</fuseaction>
 	<!-- Edit Link -->
 	<fuseaction name="av_edit">
@@ -6297,6 +6304,8 @@
 	</fuseaction>
 	<!-- Called from the detail pages -->
 	<fuseaction name="av_load">
+		<!-- CFC: Get access to this folder -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Query Widgets -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
 		<!-- Show -->
@@ -6817,7 +6826,7 @@
 		<!-- Show -->
 		<do action="ajax.file_download" />
 	</fuseaction>
-	<!-- Show metadata for rendttions -->
+	<!-- Show metadata for renditions -->
 	<fuseaction name="rend_meta">
 		<!-- Get Languages -->
 		<do action="languages" />

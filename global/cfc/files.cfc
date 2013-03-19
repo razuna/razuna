@@ -804,56 +804,74 @@
 		<!--- Params --->
 		<cfparam name="arguments.thestruct.zipit" default="T">
 		<cfparam name="arguments.thestruct.v" default="o">
+		<cfparam name="arguments.thestruct.av" default="false">
 		<cfset var qry = structnew()>
 		<cfset qry.thefilename = "">
-		<!--- Images --->
-		<cfif arguments.thestruct.type EQ "img">
-			<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#servefileimg */ img_id, img_filename, img_extension, thumb_extension, img_filename_org filenameorg, folder_id_r,
-			link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org
-			FROM #session.hostdbprefix#images
-			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+		<cfset qry.av = false>
+		<!--- If this is for additional renditions --->
+		<cfif arguments.thestruct.av>
+			<!--- Query version --->
+			<cfquery name="qFile" datasource="#variables.dsn#">
+			SELECT av_link_url AS path_to_asset, av_link_url AS cloud_url, av_link_url AS cloud_url_org, 
+			'' AS link_kind, av_link_title AS filenameorg, av_link_title AS thefilename
+			FROM #session.hostdbprefix#additional_versions
+			WHERE av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Correct filename for thumbnail or original --->
-			<cfif arguments.thestruct.v EQ "o">
-				<cfset qry.thefilename = listfirst(qfile.img_filename, ".") & "." & qfile.img_extension>
-			<cfelse>
-				<cfset qry.thefilename = "thumb_" & qfile.img_id & "." & qfile.thumb_extension>
-			</cfif>
-		<!--- Videos --->
-		<cfelseif arguments.thestruct.type EQ "vid">
-			<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#servefilevid */ vid_filename, vid_extension, vid_name_org filenameorg, folder_id_r, link_kind, link_path_url,
-			path_to_asset, cloud_url, cloud_url_org
-			FROM #session.hostdbprefix#videos
-			WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Correct filename --->
-			<cfset qry.thefilename = listfirst(qfile.vid_filename, ".") & "." & qfile.vid_extension>
-		<!--- Audios --->
-		<cfelseif arguments.thestruct.type EQ "aud">
-			<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#servefileaud */ aud_name, aud_extension, aud_name_org filenameorg, folder_id_r, link_kind, link_path_url,
-			path_to_asset, cloud_url, cloud_url_org
-			FROM #session.hostdbprefix#audios
-			WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Correct filename --->
-			<cfset qry.thefilename = listfirst(qfile.aud_name, ".") & "." & qfile.aud_extension>
-		<!--- Documents --->
+			<!--- Set filename --->
+			<cfset qry.thefilename = qFile.thefilename>
+			<!--- Set av value --->
+			<cfset qry.av = true>
 		<cfelse>
-			<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#servefilefile */ file_name, file_extension, file_name_org filenameorg, folder_id_r, link_path_url, link_kind, 
-			link_path_url, path_to_asset, cloud_url, cloud_url_org
-			FROM #session.hostdbprefix#files
-			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Correct filename --->
-			<cfset qry.thefilename = listfirst(qfile.file_name, ".") & "." & qfile.file_extension>
+			<!--- Images --->
+			<cfif arguments.thestruct.type EQ "img">
+				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetoken#servefileimg */ img_id, img_filename, img_extension, thumb_extension, img_filename_org filenameorg, folder_id_r,
+				link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org
+				FROM #session.hostdbprefix#images
+				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Correct filename for thumbnail or original --->
+				<cfif arguments.thestruct.v EQ "o">
+					<cfset qry.thefilename = listfirst(qfile.img_filename, ".") & "." & qfile.img_extension>
+				<cfelse>
+					<cfset qry.thefilename = "thumb_" & qfile.img_id & "." & qfile.thumb_extension>
+				</cfif>
+			<!--- Videos --->
+			<cfelseif arguments.thestruct.type EQ "vid">
+				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetoken#servefilevid */ vid_filename, vid_extension, vid_name_org filenameorg, folder_id_r, link_kind, link_path_url,
+				path_to_asset, cloud_url, cloud_url_org
+				FROM #session.hostdbprefix#videos
+				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Correct filename --->
+				<cfset qry.thefilename = listfirst(qfile.vid_filename, ".") & "." & qfile.vid_extension>
+			<!--- Audios --->
+			<cfelseif arguments.thestruct.type EQ "aud">
+				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetoken#servefileaud */ aud_name, aud_extension, aud_name_org filenameorg, folder_id_r, link_kind, link_path_url,
+				path_to_asset, cloud_url, cloud_url_org
+				FROM #session.hostdbprefix#audios
+				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Correct filename --->
+				<cfset qry.thefilename = listfirst(qfile.aud_name, ".") & "." & qfile.aud_extension>
+			<!--- Documents --->
+			<cfelse>
+				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetoken#servefilefile */ file_name, file_extension, file_name_org filenameorg, folder_id_r, link_path_url, link_kind, 
+				link_path_url, path_to_asset, cloud_url, cloud_url_org
+				FROM #session.hostdbprefix#files
+				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+				<!--- Correct filename --->
+				<cfset qry.thefilename = listfirst(qfile.file_name, ".") & "." & qfile.file_extension>
+			</cfif>	
 		</cfif>
 		<!--- If name contains spaces then convert them to _ or else an incorrect name is being shown during download --->
 		<cfset qry.thefilename = replacenocase(qry.thefilename," ","_","all")>

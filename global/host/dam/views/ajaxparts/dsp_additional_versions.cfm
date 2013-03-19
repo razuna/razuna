@@ -91,7 +91,7 @@
 			</td>
 		</tr>
 		<!--- Show exsiting --->
-		<cfif qry_av.assets.recordcount NEQ 0>
+		<!--- <cfif qry_av.assets.recordcount NEQ 0>
 			<tr>
 				<th>#myFusebox.getApplicationData().defaults.trans("title")#</th>
 				<th colspan="3">URL</th>
@@ -104,7 +104,7 @@
 				<td><a href="##" onclick="showwindow('#myself#c.av_edit&av_id=#av_id#&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#','#myFusebox.getApplicationData().defaults.trans("edit")#',550,2);return false"><img src="#dynpath#/global/host/dam/images/edit.png" width="16" height="16" border="0"></a></td>
 				<td valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=av_link&id=#av_id#&loaddiv=moreversions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#&iswin=two','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,2);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 			</tr>
-		</cfloop>
+		</cfloop> --->
 	</table>
 	
 	<div id="previewimage_prev"></div>

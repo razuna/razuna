@@ -39,7 +39,7 @@
 		 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;">Direct Link</a>
 		 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">Metadata</a>
 		<cfif attributes.folderaccess NEQ "R">
-			 | <a href="##" onclick="remren('#img_id#');">Remove</a>
+			 | <a href="##" onclick="remren('#img_id#');return false;">Remove</a>
 		</cfif>
 		<div id="divo#img_id#" style="display:none;">
 			<input type="text" id="inputo#img_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" />
@@ -84,7 +84,7 @@ function remren(id){
 		buttons: {
 			"Yes, remove rendition": function() {
 				$( this ).dialog( "close" );
-				$('##relatedimages').load('#myself#c.images_remove_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadren(); });
+				$('##div_forall').load('#myself#c.images_remove_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&s=#attributes.s#&id=' + id, function(){ loadren(); });
 			},
 			Cancel: function() {
 				$( this ).dialog( "close" );

@@ -292,7 +292,7 @@
 		<cfif qry_detail.detail.link_kind NEQ "url">
 			$('##relatedvideos').load('#myself#c.videos_detail_related&file_id=#attributes.file_id#&what=videos&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');
 		</cfif>
-		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#');
+		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
 		<cfif cs.tab_additional_renditions>
 			$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
 		</cfif>

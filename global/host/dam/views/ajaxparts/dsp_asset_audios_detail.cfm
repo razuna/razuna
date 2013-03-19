@@ -268,7 +268,7 @@
 			<cfif qry_detail.detail.link_kind NEQ "url">
 				$('##relatedaudios').load('#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">&cloud_url_org=#urlencodedformat(qry_detail.detail.cloud_url_org)#</cfif>');
 			</cfif>
-			$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#');
+			$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
 			<cfif cs.tab_additional_renditions>
 				$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
 			</cfif>

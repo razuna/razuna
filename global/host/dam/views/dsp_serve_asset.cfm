@@ -95,7 +95,11 @@
 			<cfelse>
 				<!--- Decide on original or preview --->
 				<cfif attributes.v EQ "o">
-					<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/#qry_binary.qfile.filenameorg#">
+					<cfif qry_binary.av>
+						<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#">
+					<cfelse>
+						<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/#qry_binary.qfile.filenameorg#">
+					</cfif>
 				<cfelse>
 					<cfset thefileloc = "#thestorage##qry_binary.qfile.path_to_asset#/thumb_#qry_binary.qfile.img_id#.#qry_binary.qfile.thumb_extension#">
 				</cfif>
