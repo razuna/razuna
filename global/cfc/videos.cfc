@@ -333,8 +333,8 @@
 		</cfcase>
 		<!--- Quicktime only MOV --->
 		<cfcase value="mov,mpg,m4v">
-			<!--- <cflocation url="#thevideo#"> --->
-			<cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
+			<cflocation url="#thevideo#">
+			<!--- <cfset theheight = #arguments.thestruct.videodetails.vheight# + 16>
 			<cfset thewidth = #arguments.thestruct.videodetails.vwidth#>
 			<cfsavecontent variable="thevideo"><cfoutput>
 			<script type="text/javascript">
@@ -344,7 +344,7 @@
 			     'autoplay','true'
 			     );
 			</script>
-			</cfoutput></cfsavecontent>
+			</cfoutput></cfsavecontent> --->
 			<!--- <cfif cgi.user_agent CONTAINS "safari" AND NOT cgi.user_agent CONTAINS "chrome">
 				<video controls="" autoplay="" style="margin: auto; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" name="media" src="#thevideo#"></video>
 			<cfelse>
@@ -387,23 +387,22 @@
 		</cfcase>
 		<!--- MP4 / HTML5 --->
 		<cfcase value="ogv,webm,mp4">
-			<cfsavecontent variable="thevideo"><cfoutput>
 			<cfif cgi.HTTP_USER_AGENT CONTAINS "Firefox">
 				<cflocation url="#thevideo#" />
 			<cfelse>
-			If the video does not play properly try to <a href="#thevideo#">watch it directly</a>.<br>
-			<video autoplay="true" controls="true" style="margin: auto; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" name="media">
-				<cfif theextension EQ "ogv">
-					<source src="#thevideo#" type="video/ogg" />
-				<cfelseif theextension EQ "webm">
-					<source src="#thevideo#" type="video/webm" />
-				<cfelseif theextension EQ "mp4">
-					<source src="#thevideo#" type="video/mp4" />
-				</cfif>
-			<video>
+				<cfsavecontent variable="thevideo"><cfoutput>
+				If the video does not play properly try to <a href="#thevideo#">watch it directly</a>.<br>
+				<video autoplay="true" controls="true" style="margin: auto; position: absolute; top: 0; right: 0; bottom: 0; left: 0;" name="media">
+					<cfif theextension EQ "ogv">
+						<source src="#thevideo#" type="video/ogg" />
+					<cfelseif theextension EQ "webm">
+						<source src="#thevideo#" type="video/webm" />
+					<cfelseif theextension EQ "mp4">
+						<source src="#thevideo#" type="video/mp4" />
+					</cfif>
+				<video>
+				</cfoutput></cfsavecontent>
 			</cfif>
-			</cfoutput>
-			</cfsavecontent>
 		</cfcase>
 		<!--- WMV --->
 		<cfcase value="wmv,avi">
