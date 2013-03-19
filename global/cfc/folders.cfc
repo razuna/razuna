@@ -1373,9 +1373,9 @@
 				</cfinvoke>
 				<!--- MSSQL: Drop all constraints --->
 				<cfif application.razuna.thedatabase EQ "mssql">
-					<cfquery datasource="#application.razuna.datasource#">
+					<!--- <cfquery datasource="#application.razuna.datasource#">
 					ALTER TABLE #application.razuna.theschema#.#session.hostdbprefix#folders DROP CONSTRAINT
-					</cfquery>
+					</cfquery> --->
 				<!--- MySQL --->
 				<cfelseif application.razuna.thedatabase EQ "mysql">
 					<cfquery datasource="#application.razuna.datasource#">
@@ -2913,8 +2913,6 @@
 				)
 		</cfif>
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		ORDER BY lower(folder_name)
-
 		) as itb
 	WHERE itb.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 	<!--- If this is a move then dont show the folder that we are moving --->
@@ -2924,6 +2922,7 @@
 			AND itb.folder_id != <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thefolderorg#">
 		</cfif>
 	</cfif>
+	ORDER BY lower(folder_name)
 	</cfquery>
 	<!--- Create the XML --->
 	<cfif theid EQ 0>
