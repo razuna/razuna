@@ -1204,8 +1204,6 @@
 		</cfquery>
 		<!--- Set the ID into application scope --->
 		<cfset application.razuna.serverid = theid>
-	<cfelse>
-		<cfset application.razuna.serverid = qry.conf_serverid>
 	</cfif>
 	<!--- Check for config file --->
 	<cfif fileExists("#arguments.pathoneup#/global/config/keys.cfm")>
@@ -1226,6 +1224,7 @@
 		</cfquery>
 	</cfif>
 	<!--- Now put config values into application scope --->
+	<cfset application.razuna.serverid = qry.conf_serverid>
 	<cfset application.razuna.thedatabase = qry.conf_database>
 	<cfset application.razuna.datasource = qry.conf_datasource>
 	<cfset application.razuna.theschema = qry.conf_schema>
