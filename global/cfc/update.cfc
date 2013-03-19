@@ -444,7 +444,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql">alter column img_size #thevarchar#(100)</cfelse>change img_size img_size #thevarchar#(100)</cfif>
+			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql">alter column img_size #thevarchar#(100)<cfelse>change img_size img_size #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
