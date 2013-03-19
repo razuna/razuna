@@ -156,78 +156,6 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_xmp add column colorspace #thevarchar#(50)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_xmp add column xres #thevarchar#(10)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_xmp add column yres #thevarchar#(50)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_xmp add column resunit #thevarchar#(20)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table users add column user_api_key #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_labels add column label_id_r #thevarchar#(100) default '0'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_labels add column label_path #thevarchar#(500)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_custom_fields add column cf_select_list #thevarchar#(2000)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			update raz1_labels set label_path = label_text where label_id_r = '0'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
 			CREATE TABLE raz1_custom 
 			(
 			  custom_id #thevarchar#(200),
@@ -252,22 +180,6 @@
 			  profile_pic_url #thevarchar#(1000)
 			)
 			#tableoptions#
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_custom change custom_value custom_value #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_settings_2 add column set2_md5check #thevarchar#(5) default 'false'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -344,78 +256,6 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_assets_temp change thesize thesize #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_images change img_size img_size #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_images change thumb_size thumb_size #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_videos change vid_size vid_size #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_audios change aud_size aud_size #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_files change file_size file_size #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_versions change img_size img_size #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_versions change thumb_size thumb_size #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_versions change vid_size vid_size #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
 			CREATE TABLE options 
 			(
 			  opt_id #thevarchar#(100) NOT NULL DEFAULT '',
@@ -441,70 +281,6 @@
 			  PRIMARY KEY (news_id)
 			)
 			#tableoptions#
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_additional_versions add column thesize #thevarchar#(100) DEFAULT '0'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_additional_versions add column thewidth #thevarchar#(50) DEFAULT '0'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_additional_versions add column theheight #thevarchar#(50) DEFAULT '0'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_custom_fields add column cf_in_form #thevarchar#(10) DEFAULT 'true'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_collections add column col_released #thevarchar#(5) DEFAULT 'false'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_collections add column col_copied_from #thevarchar#(100)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_upload_templates_val change upl_temp_format upl_temp_format #thevarchar#(10)
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_schedules add column sched_upl_template #thevarchar#(100)
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -569,9 +345,10 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<!--- Alter tables --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_settings_2 add column set2_aka_url #thevarchar#(500)
+			alter table raz1_xmp add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> colorspace #thevarchar#(50)
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -579,7 +356,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_settings_2 add column set2_aka_img #thevarchar#(200)
+			alter table raz1_xmp add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> xres #thevarchar#(10)
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -587,7 +364,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_settings_2 add column set2_aka_vid #thevarchar#(200)
+			alter table raz1_xmp add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> yres #thevarchar#(50)
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -595,7 +372,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_settings_2 add column set2_aka_aud #thevarchar#(200)
+			alter table raz1_xmp add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> resunit #thevarchar#(20)
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -603,7 +380,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_settings_2 add column set2_aka_doc #thevarchar#(200)
+			alter table users add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> user_api_key #thevarchar#(100)
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -611,7 +388,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_custom_fields add column cf_edit #thevarchar#(2000) default 'true'
+			alter table raz1_labels add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> label_id_r #thevarchar#(100) default '0'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -619,7 +396,231 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_additional_versions add column hashtag #thevarchar#(100)
+			alter table raz1_labels add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> label_path #thevarchar#(500)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_custom_fields add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> cf_select_list #thevarchar#(2000)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			update raz1_labels set label_path = label_text where label_id_r = '0'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_custom <cfif application.razuna.thedatabase EQ "mssql">alter column custom_value #thevarchar#(100)<cfelse>change custom_value custom_value #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_md5check #thevarchar#(5) default 'false'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_assets_temp <cfif application.razuna.thedatabase EQ "mssql">alter column thesize #thevarchar#(100)<cfelse>change thesize thesize #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql">alter column img_size #thevarchar#(100)</cfelse>change img_size img_size #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql">alter column thumb_size #thevarchar#(100)<cfelse>change thumb_size thumb_size #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_videos <cfif application.razuna.thedatabase EQ "mssql">alter column vid_size #thevarchar#(100)<cfelse>change vid_size vid_size #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_audios <cfif application.razuna.thedatabase EQ "mssql">alter column aud_size #thevarchar#(100)<cfelse>change aud_size aud_size #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_files <cfif application.razuna.thedatabase EQ "mssql">alter column file_size #thevarchar#(100)<cfelse>change file_size file_size #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql">alter column img_size #thevarchar#(100)<cfelse>change img_size img_size #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql">alter column thumb_size #thevarchar#(100)<cfelse>change thumb_size thumb_size #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_versions <cfif application.razuna.thedatabase EQ "mssql">alter column vid_size #thevarchar#(100)<cfelse>change vid_size vid_size #thevarchar#(100)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_additional_versions add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> thesize #thevarchar#(100) DEFAULT '0'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_additional_versions add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> thewidth #thevarchar#(50) DEFAULT '0'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_additional_versions add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> theheight #thevarchar#(50) DEFAULT '0'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_custom_fields add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> cf_in_form #thevarchar#(10) DEFAULT 'true'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_collections add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> col_released #thevarchar#(5) DEFAULT 'false'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_collections add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> col_copied_from #thevarchar#(100)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_upload_templates_val <cfif application.razuna.thedatabase EQ "mssql">alter column upl_temp_format #thevarchar#(10)<cfelse>change upl_temp_format upl_temp_format #thevarchar#(10)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_schedules add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> sched_upl_template #thevarchar#(100)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_aka_url #thevarchar#(500)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_aka_img #thevarchar#(200)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_aka_vid #thevarchar#(200)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_aka_aud #thevarchar#(200)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_aka_doc #thevarchar#(200)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_custom_fields add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> cf_edit #thevarchar#(2000) default 'true'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_additional_versions add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> hashtag #thevarchar#(100)
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
