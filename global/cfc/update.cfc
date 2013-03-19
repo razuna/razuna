@@ -95,10 +95,10 @@
 	<!--- DO DB update --->
 	<cffunction name="update_do">
 		<cfargument name="thestruct" type="struct">
+		<!--- Param --->
+		<cfset var tableoptions = "">
 		<!--- Name for the log --->
 		<cfset var logname = "razuna_update_" & dateformat(now(),"mm_dd_yyyy") & "_" & timeformat(now(),"HH-mm-ss")>
-		<!--- For MySQL you have to append the tableoptions here --->
-		<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin">
 		<!--- Detault types --->
 		<cfset var theclob = "clob">
 		<cfset var theint = "int">
@@ -106,6 +106,7 @@
 		<cfset var thetimestamp = "timestamp">
 		<!--- Map different types according to database --->
 		<cfif application.razuna.thedatabase EQ "mysql">
+			<cfset var tableoptions = "ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_bin">
 			<cfset var theclob = "text">
 		<cfelseif application.razuna.thedatabase EQ "mssql">
 			<cfset var theclob = "NVARCHAR(max)">
