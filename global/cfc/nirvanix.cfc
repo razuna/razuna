@@ -836,12 +836,7 @@
 					FROM users
 					WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 					</cfquery>
-					<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#lp#) could not be added to the system. The error message is:<br />Code: #respcode# <br />Message: #d.Response.ErrorMessage[1].XmlText# <br /><br />We have been notified of this and will look into it asap.">
-					<cfmail from="server@razuna.com" to="nitai@razuna.com" subject="signedURL error" type="html">
-						<cfdump var="#d#" label="thexml">
-						<cfdump var="#arguments.thestruct#" label="arguments">
-						<cfdump var="#session.hostid#">
-					</cfmail>
+					<cfinvoke component="email" method="send_email" prefix="#session.hostdbprefix#" to="#qryuser.user_email#" subject="Error on adding your asset" themessage="Your asset (#lp#) could not be added to the system. The error message is:<br />Code: #respcode# <br />Message: #d.Response.ErrorMessage[1].XmlText#">
 				</cfif>
 			</cfif>
 			<cfcatch type="any">
