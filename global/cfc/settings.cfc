@@ -1793,6 +1793,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.share_download_original = false>
 	<cfset v.share_comments = false>
 	<cfset v.share_uploading = false>
+	<cfset v.request_access = true>
 	<!--- Loop over query --->
 	<cfloop query="qry">
 		<cfif custom_id EQ "folder_redirect">
@@ -1983,6 +1984,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		</cfif>
 		<cfif custom_id EQ "share_comments" AND custom_value>
 			<cfset v.share_comments = true>
+		</cfif>
+		<cfif custom_id EQ "request_access" AND !custom_value>
+			<cfset v.request_access = false>
 		</cfif>
 	</cfloop>
 	<!--- Return --->

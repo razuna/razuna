@@ -2400,4 +2400,10 @@
 	<transid name="custom_share_uploading">
 		<transtext><![CDATA[Allow users to upload to the shared folder/collection.]]></transtext>
 	</transid>
+	<transid name="custom_users_request_access">
+		<transtext><![CDATA[Allow users to request access to your system]]></transtext>
+	</transid>
+	<transid name="custom_users_request_access_desc">
+		<transtext><![CDATA[By default users are allowed to request access to your system with the "Request Access" link at the login page of Razuna. If you want to remove that link, simply disable it below.]]></transtext>
+	</transid>
 </translations>

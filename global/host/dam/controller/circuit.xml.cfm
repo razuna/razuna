@@ -44,6 +44,8 @@
 		</if>
 		<!-- Get the Cache tag -->
 		<do action="cachetag" />
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="v.login" />
 	</fuseaction>

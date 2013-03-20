@@ -117,6 +117,13 @@
 							<br />
 							<div><input type="radio" name="myfolder_upload" value="true"<cfif qry_customization.myfolder_upload> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("enabled")# <input type="radio" name="myfolder_upload" value="false"<cfif !qry_customization.myfolder_upload> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("disabled")#</div>
 							<br />
+							<!--- Request access --->
+							<strong>#myFusebox.getApplicationData().defaults.trans("custom_users_request_access")#</strong>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("custom_users_request_access_desc")#
+							<br />
+							<div><input type="radio" name="request_access" value="true"<cfif qry_customization.request_access> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("enabled")# <input type="radio" name="request_access" value="false"<cfif !qry_customization.request_access> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("disabled")#</div>
+							<br />
 						</td>
 					</tr>
 				</table>
