@@ -187,7 +187,8 @@
 					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
 						<cfdump var="#storagenode#" label="storagenode">
 						<cfdump var="#arguments#" label="arguments">
-						<cfdump var="#cfcatch#" />
+						<cfdump var="#cfcatch#" label="the catch">
+						<cfdump var="#session#" label="sessions">
 					</cfmail>
 					<cfabort>
 				</cfcatch>
@@ -210,7 +211,7 @@
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 				<cfhttpparam name="fileOverwrite" value="true" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
-				<cfhttpparam name="excludedNode" value="node4" type="url">
+				<!--- <cfhttpparam name="excludedNode" value="node4" type="url"> --->
 			</cfhttp>
 			<!--- GetStorageNode --->
 			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
@@ -791,7 +792,8 @@
 		<cftry>
 			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetOptimalUrls.ashx" method="get" throwonerror="no">
 				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
-				<cfhttpparam name="filePath" value="//razuna/#session.hostid#/#arguments.thestruct.theasset#" type="url">
+				<!--- <cfhttpparam name="filePath" value="//razuna/#session.hostid#/#arguments.thestruct.theasset#" type="url"> --->
+				<cfhttpparam name="filePath" value="/#arguments.thestruct.theasset#" type="url">
 				<cfhttpparam name="expiration" value="#arguments.thestruct.newepoch#" type="url">
 			</cfhttp>
 			<!--- Parse XML --->
