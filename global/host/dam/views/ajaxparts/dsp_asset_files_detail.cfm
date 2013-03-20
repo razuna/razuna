@@ -36,7 +36,7 @@
 	<input type="hidden" name="file_extension" value="#qry_detail.detail.file_extension#">
 	<div id="tab_detail#file_id#">
 		<ul>
-			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
+			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<cfif cs.tab_metadata>
 				<li><a href="##meta">Metadata</a></li>
 			</cfif>
@@ -357,7 +357,7 @@
 	<script language="JavaScript" type="text/javascript">
 		// Initialize Tabs
 		jqtabs("tab_detail#file_id#");
-		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#');
+		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
 		// Submit form
 		function filesubmit(){
 			$("##updatefile").css("display","");
