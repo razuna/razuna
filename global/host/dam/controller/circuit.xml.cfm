@@ -3432,6 +3432,14 @@
 	
 	<!-- Search: Advanced -->
 	<fuseaction name="search_advanced">
+		<if condition="structkeyexists(attributes,'fromshare')">
+			<true>
+				<set name="attributes.fromshare" value="true" />
+			</true>
+			<false>
+				<set name="attributes.fromshare" value="false" />
+			</false>
+		</if>
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- CFC: Custom fields -->
@@ -5300,6 +5308,8 @@
 		<xfa name="forgotpass" value="c.forgotpass" />
 		<xfa name="switchlang" value="c.switchlang" />
 		<set name="jr_enable" value="false" overwrite="false" />
+		<!-- CFC: Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<if condition="#session.hostid# NEQ ''">
 			<true>
 				<!-- CFC: Get languages -->
@@ -5390,6 +5400,8 @@
 				<set name="session.fid" value="#attributes.fid#" />
 			</true>
 		</if>
+		<!-- CFC: Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Param -->
 		<set name="shared.everyone" value="F" overwrite="false" />
 		<do action="v.share" />

@@ -40,7 +40,7 @@
 			<tr>
 				<td>
 					<div style="float:left;color:red;font-weight:bold;">No assets found!</div>
-					<div style="float:left;padding-left:10px;"><a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">Try to search again</a></div>
+					<div style="float:left;padding-left:10px;"><cfif session.fromshare EQ "T"><a href="#cgi.http_referer#">Go back to the share</cfif></div>
 				</td>
 			</tr>
 		</table>

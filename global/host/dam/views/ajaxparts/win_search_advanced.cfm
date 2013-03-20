@@ -38,7 +38,7 @@
 		<div id="loading_searchadv" style="width:100%;text-align:center;padding-top:5px;"></div>
 		<!--- All --->
 		<div id="all_assets">
-			<form name="advsearch_all" id="advsearch_all" method="post" onsubmit="searchadv_all('advsearch_all','c.search_simple','#attributes.folder_id#');return false;">
+			<form name="advsearch_all" id="advsearch_all" method="post" onsubmit="searchadv_all('advsearch_all','c.search_simple','#attributes.folder_id#','#attributes.fromshare#');return false;">
 				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 					<!--- Include advanced fields --->
 					<cfset myvar.thetype = "all">
