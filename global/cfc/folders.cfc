@@ -3964,9 +3964,6 @@
 		</cfif>
 	</Cfif>
 	</cfquery>
-	<cfset consoleoutput(true)>
-<cfset console(qry)>
-
 	<!--- Set the valuelist --->
 	<cfset var l = valuelist(qry.id)>
 	<!--- Set the sessions --->
