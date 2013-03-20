@@ -185,6 +185,7 @@
 				</cfif>
 				<cfcatch type="any">
 					<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="upload nirvanix error">
+						<cfdump var="#cfhttp#" label="cfhttp response">
 						<cfdump var="#storagenode#" label="storagenode">
 						<cfdump var="#arguments#" label="arguments">
 						<cfdump var="#cfcatch#" label="the catch">
@@ -211,7 +212,7 @@
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 				<cfhttpparam name="fileOverwrite" value="true" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
-				<!--- <cfhttpparam name="excludedNode" value="node4" type="url"> --->
+				<cfhttpparam name="excludedNode" value="node4" type="url">
 			</cfhttp>
 			<!--- GetStorageNode --->
 			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
