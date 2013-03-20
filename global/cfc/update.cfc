@@ -54,7 +54,7 @@
 			<!--- Read config file for dbupdate number --->
 			<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 			<!--- Set var --->
-			<cfif dbupdateconfig GT updatenumber.opt_value>
+			<cfif dbupdateconfig GT updatenumber.opt_value AND NOT dbupdateconfig EQ updatenumber.opt_value>
 				<cfset var dbup = true>
 			</cfif>
 		</cfif>
