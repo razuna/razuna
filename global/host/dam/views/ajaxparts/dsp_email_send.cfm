@@ -271,52 +271,39 @@
 </table>
 </form>
 <script type="text/javascript">
-
-$("##sendemailform").validate({
-	// When the form is being submited
-	submitHandler: function(form) {
+	$("##sendemailform").submit(function(e){
 		// Get values
-		var url = formaction("sendemailform");
-		var items = formserialize("sendemailform");
-		// Submit Form
-		$.ajax({
-			type: "POST",
-			url: url,
-		   	data: items,
-		   	success: function(){
-		   		$("##successemail").css("display","");
-		   		$("##successemail").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');
-		   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-		   	}
-		});
-		return false;
-	},
-	rules: {
-		to: "required",
-		subject: "required"
-	 }
-})
-
-/*
-$("##sendemailform").submit(function(e){
-	$("##successemail").css("display","");
-	loadinggif('successemail');
-	// Submit Form
-	// Get values
-	var url = formaction("sendemailform");
-	var items = formserialize("sendemailform");
-	// Submit Form
-	$.ajax({
-		type: "POST",
-		url: url,
-	   	data: items,
-	   	success: function(){
+		var getto = $('##to').val();
+		var getsubject = $('##subject').val();
+		// Check if to is not empty
+		if (getto == '') {
+			alert('The TO field is empty!');
+			return false;
+		}
+		// Check for subject
+		if (getsubject == '') {
+			alert('The SUBJECT field is empty!');
+			return false;
+		}
+		// Only if to and subject is not empty
+		if (getto != '' && getsubject != ''){
+			// Show status
+			$("##successemail").css("display","");
 	   		$("##successemail").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("message_sent"))#');
-	   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
-	   	}
+			// Get values
+			var url = formaction("sendemailform");
+			var items = formserialize("sendemailform");
+			// Submit Form
+			$.ajax({
+				type: "POST",
+				url: url,
+			   	data: items,
+			   	success: function(){
+			   		$("##successemail").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
+			   	}
+			});
+			return false;
+		}
 	});
-	return false;
-})
-*/
 </script>
 </cfoutput>

@@ -1370,15 +1370,18 @@
 		</cfif>
 		<!--- If the art id not thumb and original we need to get the name from the parent record --->
 		<cfif qry.img_group NEQ "">
-			<cfquery name="qry" datasource="#variables.dsn#">
+			<cfquery name="qry_fn" datasource="#variables.dsn#">
 			SELECT img_filename
 			FROM #session.hostdbprefix#images
 			WHERE img_id = <cfqueryparam value="#qry.img_group#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<cfset var thefilename = qry_fn.img_filename>
+		<cfelse>
+			<cfset var thefilename = qry.img_filename>
 		</cfif>
 		<!--- If filename contains /\ --->
-		<cfset thenewname = replace(qry.img_filename,"/","-","all")>
+		<cfset thenewname = replace(thefilename,"/","-","all")>
 		<cfset thenewname = replace(thenewname,"\","-","all")>
 		<cfset thenewname = listfirst(thenewname, ".") & "." & theext>
 		<!--- Rename the file --->

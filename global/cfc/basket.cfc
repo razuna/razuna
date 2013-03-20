@@ -177,14 +177,17 @@
 <!--- WRITE FILES IN BASKET TO SYSTEM --->
 <cffunction name="writebasket" output="true">
 	<cfargument name="thestruct" type="struct">
-	<!--- Feedback --->
-	<cfoutput><strong>We are getting your files for your basket ready...</strong><br><br></cfoutput>
-	<cfflush>
 	<!--- Params --->
 	<cfparam default="" name="arguments.thestruct.artofimage">
 	<cfparam default="" name="arguments.thestruct.artofvideo">
 	<cfparam default="" name="arguments.thestruct.artoffile">
 	<cfparam default="" name="arguments.thestruct.artofaudio">
+	<cfparam default="false" name="arguments.thestruct.noemail">
+	<!--- Feedback --->
+	<cfif !arguments.thestruct.noemail>
+		<cfoutput><strong>We are getting your files for your basket ready...</strong><br><br></cfoutput>
+		<cfflush>
+	</cfif>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
@@ -208,8 +211,10 @@
 		</cfcatch>
 	</cftry>
 	<!--- Feedback --->
-	<cfoutput><strong>So far, so good. Fetching files...</strong><br><br></cfoutput>
-	<cfflush>
+	<cfif !arguments.thestruct.noemail>
+		<cfoutput><strong>So far, so good. Fetching files...</strong><br><br></cfoutput>
+		<cfflush>
+	</cfif>
 	<!--- Create directory --->
 	<cfset basketname = createuuid("")>
 	<cfset arguments.thestruct.newpath = arguments.thestruct.thepath & "/outgoing/#basketname#">
@@ -225,40 +230,50 @@
 			<!--- Images --->
 			<cfcase value="img">
 				<!--- Feedback --->
-				<cfoutput><strong>Getting images...</strong><br><br></cfoutput>
-				<cfflush>
+				<cfif !arguments.thestruct.noemail>
+					<cfoutput><strong>Getting images...</strong><br><br></cfoutput>
+					<cfflush>
+				</cfif>
 				<!--- Write Image --->
 				<cfinvoke method="writeimages" thestruct="#arguments.thestruct#">
 			</cfcase>
 			<!--- Videos --->
 			<cfcase value="vid">
 				<!--- Feedback --->
-				<cfoutput><strong>Getting videos...</strong><br><br></cfoutput>
-				<cfflush>
+				<cfif !arguments.thestruct.noemail>
+					<cfoutput><strong>Getting videos...</strong><br><br></cfoutput>
+					<cfflush>
+				</cfif>
 				<!--- Write Video --->
 				<cfinvoke method="writevideos" thestruct="#arguments.thestruct#">
 			</cfcase>
 			<!--- Audios --->
 			<cfcase value="aud">
 				<!--- Feedback --->
-				<cfoutput><strong>Getting audios...</strong><br><br></cfoutput>
-				<cfflush>
+				<cfif !arguments.thestruct.noemail>
+					<cfoutput><strong>Getting audios...</strong><br><br></cfoutput>
+					<cfflush>
+				</cfif>
 				<!--- Write Video --->
 				<cfinvoke method="writeaudios" thestruct="#arguments.thestruct#">
 			</cfcase>
 			<!--- All other files --->
 			<cfdefaultcase>
 				<!--- Feedback --->
-				<cfoutput><strong>Getting documents...</strong><br><br></cfoutput>
-				<cfflush>
+				<cfif !arguments.thestruct.noemail>
+					<cfoutput><strong>Getting documents...</strong><br><br></cfoutput>
+					<cfflush>
+				</cfif>
 				<!--- Write file --->
 				<cfinvoke method="writefiles" thestruct="#arguments.thestruct#">
 			</cfdefaultcase>
 		</cfswitch>
 	</cfloop>
 	<!--- Feedback --->
-	<cfoutput><strong>Putting it into a nice ZIP archive...</strong><br><br></cfoutput>
-	<cfflush>
+	<cfif !arguments.thestruct.noemail>
+		<cfoutput><strong>Putting it into a nice ZIP archive...</strong><br><br></cfoutput>
+		<cfflush>
+	</cfif>
 	<!--- All done. Now zip up the folder --->
 	<cfif NOT structkeyexists(arguments.thestruct,"zipname")>
 		<cfset arguments.thestruct.zipname = "basket-" & createuuid("") & ".zip">
@@ -281,12 +296,14 @@
 	<cfset var sn = replacenocase(cgi.script_name,"/index.cfm","","one")>
 	<cfset var thehost = listlast(arguments.thestruct.pathoneup,"/\")>
 	<!--- Send the user an email that his basket is ready --->
-	<cfif NOT structkeyexists(arguments.thestruct,"fromzip")>
+	<cfif NOT structkeyexists(arguments.thestruct,"fromzip") AND !arguments.thestruct.noemail>
 		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- Feedback --->
-	<cfoutput><strong style="color:green;">All done. <a href="http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">Here is your basket.</a></strong><br><br></cfoutput>
-	<cfflush>
+	<cfif !arguments.thestruct.noemail>
+		<cfoutput><strong style="color:green;">All done. <a href="http://#cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">Here is your basket.</a></strong><br><br></cfoutput>
+		<cfflush>
+	</cfif>
 	<!--- The output link so we retrieve in in JS --->
 	<!--- <cfoutput>outgoing/#arguments.thestruct.zipname#</cfoutput> --->
 	<cfreturn arguments.thestruct.zipname>

@@ -735,16 +735,17 @@
 	</fuseaction>
 	<!-- Basket eMail Form -->
 	<fuseaction name="basket_email_send">
-		<!-- Params -->
 		<!-- Put session into attributes -->
 		<set name="attributes.artofimage" value="#session.artofimage#" />
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
 		<set name="attributes.artofaudio" value="#session.artofaudio#" />
 		<set name="attributes.artoffile" value="#session.artoffile#" />
 		<set name="attributes.hostid" value="#session.hostid#" />
+		<!-- Params -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.noemail" value="true" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -782,10 +783,11 @@
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
 		<set name="attributes.artofaudio" value="#session.artofaudio#" />
 		<set name="attributes.artoffile" value="#session.artoffile#" />
+		<!-- Params -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
-		<!-- Params -->
 		<set name="attributes.hostid" value="#session.hostid#" />
+		<set name="attributes.noemail" value="true" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
