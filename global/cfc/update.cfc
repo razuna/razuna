@@ -679,4 +679,16 @@
 		<!--- Done --->
 	</cffunction>
 
+	<!--- Simply update options db --->
+	<cffunction name="setoptionupdate" returntype="void" access="Public">
+		<!--- Read config file for dbupdate number --->
+		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
+		<!--- Update value in db --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE options
+		SET opt_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dbupdateconfig#">
+		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
+		</cfquery>
+	</cffunction>
+
 </cfcomponent>

@@ -477,6 +477,8 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="update_tools(attributes)" />
 		<!-- CFC: Set internal firsttime value to false -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
+		<!-- CFC: Set update db -->
+		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate()" />
 	</fuseaction>
 	
 	<!-- Call firsttime run -->
