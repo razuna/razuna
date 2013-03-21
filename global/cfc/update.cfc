@@ -685,9 +685,13 @@
 		<cfinvoke component="settings" method="getconfig" thenode="dbupdate" returnvariable="dbupdateconfig">
 		<!--- Update value in db --->
 		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE options
-		SET opt_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dbupdateconfig#">
-		WHERE lower(opt_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">
+		INSERT INTO options
+		(opt_id, opt_value, rec_uuid)
+		VALUES(
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="dbupdate">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#dbupdateconfig#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#createuuid()#">
+		)
 		</cfquery>
 	</cffunction>
 
