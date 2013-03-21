@@ -24,7 +24,7 @@
 *
 --->
 <cfapplication
-	name="#getCurrentTemplatePath()#"
+	name="#attributes.cfapplicationname#"
 	sessionmanagement="Yes"
 	sessiontimeout="#CreateTimeSpan(0,3,0,0)#"
 	setClientCookies="yes"
