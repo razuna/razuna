@@ -130,11 +130,11 @@
 									<cfset thisid = lang_id>
 									<tr>
 										<td valign="top" width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("description")#</td>
-										<td ><textarea name="img_desc_#thisid#" class="text" style="width:400px;height:30px;" onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value;document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
+										<td ><textarea name="img_desc_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value;document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
 									</tr>
 									<tr>
 										<td valign="top" width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("keywords")#</td>
-										<td><textarea name="img_keywords_#thisid#" class="text" style="width:400px;height:30px;" onchange="document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value;document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value;"><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
+										<td><textarea name="img_keywords_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value;document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
 									</tr>
 								</cfif>
 							</cfloop>
@@ -212,37 +212,35 @@
 		<!--- Meta Data --->
 		<cfif cs.tab_metadata>
 			<div id="meta" class="collapsable">
-				<cfif cs.tab_description_keywords>
-					<!--- Description & Keywords --->
-					<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
-					<div id="detaildesc" style="padding-top:10px;">
-						<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
-							<!--- Filename --->
+				<!--- Description & Keywords --->
+				<a href="##" onclick="$('##detaildesc').slideToggle('slow');return false;"><div class="headers">&gt; #myFusebox.getApplicationData().defaults.trans("asset_desc")#</div></a>
+				<div id="detaildesc" style="padding-top:10px;">
+					<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+						<!--- Filename --->
+						<tr>
+							<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
+							<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+						</tr>
+						<!--- Desc --->
+						<cfloop query="qry_langs">
+							<cfset thisid = lang_id>
 							<tr>
-								<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
-								<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+								<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
+								<td class="td2" width="100%"><textarea name="<cfif lang_id NEQ 1>img_</cfif>desc_#thisid#" class="text" style="width:400px;height:50px;" <cfif lang_id EQ 1>onchange="document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.<cfif lang_id NEQ 1>img_</cfif>desc_#thisid#.value;document.form#attributes.file_id#.img_desc_#thisid#.value = document.form#attributes.file_id#.<cfif lang_id NEQ 1>img_</cfif>desc_#thisid#.value"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
 							</tr>
-							<!--- Desc --->
-							<cfloop query="qry_langs">
-								<cfset thisid = lang_id>
-								<tr>
-									<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-									<td class="td2" width="100%"><textarea name="<cfif lang_id NEQ 1>img_</cfif>desc_#thisid#" class="text" style="width:400px;height:50px;" <cfif lang_id EQ 1>onchange="document.form#attributes.file_id#.iptc_content_description_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;document.form#attributes.file_id#.img_desc_#thisid#.value = document.form#attributes.file_id#.img_desc_#thisid#.value"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_description#</cfif></cfloop></textarea></td>
-								</tr>
-								<tr>
-									<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-									<td class="td2" width="100%"><textarea name="<cfif lang_id NEQ 1>img_</cfif>keywords_#thisid#" class="text" style="width:400px;height:50px;" <cfif lang_id EQ 1>onchange="document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value = document.form#attributes.file_id#.keywords_#thisid#.value;document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.img_keywords_#thisid#.value"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
-								</tr>
-							</cfloop>
 							<tr>
-								<td class="td2"></td>
-								<td class="td2">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#</td>
+								<td class="td2" valign="top" width="1%" nowrap="true"><strong>#lang_name#: #myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
+								<td class="td2" width="100%"><textarea name="<cfif lang_id NEQ 1>img_</cfif>keywords_#thisid#" class="text" style="width:400px;height:50px;" <cfif lang_id EQ 1>onchange="document.form#attributes.file_id#.iptc_content_keywords_#thisid#.value = document.form#attributes.file_id#.<cfif lang_id NEQ 1>img_</cfif>keywords_#thisid#.value;document.form#attributes.file_id#.img_keywords_#thisid#.value = document.form#attributes.file_id#.<cfif lang_id NEQ 1>img_</cfif>keywords_#thisid#.value"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#img_keywords#</cfif></cfloop></textarea></td>
 							</tr>
+						</cfloop>
+						<tr>
+							<td class="td2"></td>
+							<td class="td2">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#</td>
+						</tr>
 
-						</table>
-					</div>
-					<div stlye="clear:both;"></div>
-				</cfif>
+					</table>
+				</div>
+				<div stlye="clear:both;"></div>
 				<!--- Custom fields --->
 				<cfif qry_cf.recordcount NEQ 0 AND cs.tab_custom_fields>
 					<br />

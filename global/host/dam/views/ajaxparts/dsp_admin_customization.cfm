@@ -449,13 +449,13 @@
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_metadata_desc")#
 							<br />
 							<div><input type="radio" name="tab_metadata" value="true"<cfif qry_customization.tab_metadata> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_metadata" value="false"<cfif !qry_customization.tab_metadata> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
-							<br />
+							<!--- <br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_description_keywords")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_description_keywords_desc")#
 							<br />
 							<div><input type="radio" name="tab_description_keywords" value="true"<cfif qry_customization.tab_description_keywords> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_description_keywords" value="false"<cfif !qry_customization.tab_description_keywords> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
-							<!--- <br />
+							<br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_custom_fields")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_assetview_tab_custom_fields_desc")#
