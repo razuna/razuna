@@ -1178,8 +1178,12 @@
 			img_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
 			thumb_width = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">,
 			thumb_height = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
-			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">,
-			img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">, 
+			<cfif isNumeric(#thewidth#)>
+				img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">,
+			</cfif>
+			<cfif isNumeric(#theheight#)>
+				img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">,
+			</cfif>
 			img_filename_org = <cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">,
 			img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
 			thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
