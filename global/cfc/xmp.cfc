@@ -507,14 +507,15 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<!--- Download image --->
 			<cfhttp url="http://services.nirvanix.com/#arguments.thestruct.nvxsession#/razuna/#session.hostid#/#arguments.thestruct.path_to_asset#/#arguments.thestruct.filenameorg#" file="#arguments.thestruct.filenameorg#" path="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#"></cfhttp>
 			<!--- Remove file on Nirvanix or else we get errors during uploading --->
-			<cfthread name="rem#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+			<cfset var remtt = createUUID("")>
+			<cfthread name="#remtt#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="nirvanix" method="DeleteFiles">
 					<cfinvokeargument name="filePath" value="/#attributes.intstruct.path_to_asset#/#attributes.intstruct.filenameorg#">
 					<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
 				</cfinvoke>
 			</cfthread>
 			<!--- Wait --->
-			<cfthread action="join" name="rem#arguments.thestruct.file_id#" />
+			<cfthread action="join" name="#remtt#" />
 			<!--- Write XMP to image with Exiftool --->
 			<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" timeout="10" />
 			<!--- Upload file again to its original position --->
