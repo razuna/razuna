@@ -207,6 +207,13 @@
 	GLOBAL Fuseaction for storage
 	 -->
 	 <fuseaction name="storage">
+	 	<!-- Params -->
+	 	<!-- Set bucket -->
+		<set name="attributes.akaurl" value="" overwrite="false" />
+		<set name="attributes.akaimg" value="" overwrite="false" />
+		<set name="attributes.akavid" value="" overwrite="false" />
+		<set name="attributes.akaaud" value="" overwrite="false" />
+		<set name="attributes.akadoc" value="" overwrite="false" />
 	 	<if condition="application.razuna.storage EQ 'nirvanix'">
 			<true>
 				<!-- Get username and password from nirvanix settings -->
