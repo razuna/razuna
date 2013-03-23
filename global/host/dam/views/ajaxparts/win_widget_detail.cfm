@@ -109,8 +109,8 @@
 					<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</td>
 					<td><input type="radio" value="t" name="widget_dl_thumb" id="widget_dl_thumb"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_thumb EQ "t"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="f" name="widget_dl_thumb" id="widget_dl_thumb"<cfif qry_widget.widget_dl_thumb EQ "f"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 						<br />
-						<a href="##" onclick="resetdlw();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
-					<div id="reset_dl_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
+						<a href="##" onclick="resetdl('widget_dl_org','widget_dl_thumb','#attributes.folder_id#','wreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+					<div id="wreset_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
 					</td>
 				</tr>
 				<tr class="list">
@@ -127,8 +127,8 @@
 					<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
 					<td><input type="radio" value="t" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_dl_org EQ "t"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="f" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_org EQ "f"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 					<br />
-					<a href="##" onclick="resetdlw();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
-					<div id="reset_dl_w" style="color:green;font-weight:bold;padding-top:5px;"></div>
+					<a href="##" onclick="resetdl('widget_dl_org','widget_dl_thumb','#attributes.folder_id#','wreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+					<div id="wreset_org" style="color:green;font-weight:bold;padding-top:5px;"></div>
 					</td>
 				</tr>
 				<!--- Upload --->
@@ -203,26 +203,6 @@
 			$('##widget_id').val(trimmed);
 			// Update background widget list
 			$('##widgets').load('#myself#c.widgets&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#');
-		}
-		// Reset DL
-		function resetdlw(){
-			var thevalue = $('##widget_dl_org:checked').val();
-			if (thevalue == 't'){
-				thevalue = 1;
-			}
-			else{
-				thevalue = 0;
-			}
-			var thevaluethumb = $('##widget_dl_thumb:checked').val();
-			if (thevaluethumb == 't'){
-				thevaluethumb = 1;
-			}
-			else{
-				thevaluethumb = 0;
-			}
-			loadcontent('widgetstatus','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue + '&settothumb=' + thevaluethumb);
-			$('##reset_dl_w').html('Reset all individual download setting successfully');
-			$('##reset_dl_thumb').html('Reset all individual download setting successfully');
 		}
 	</script>	
 </cfoutput>

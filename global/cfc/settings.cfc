@@ -1793,6 +1793,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.button_delete = true>
 	<cfset v.share_folder = false>
 	<cfset v.share_download_original = false>
+	<cfset v.share_download_thumb = true>
 	<cfset v.share_comments = false>
 	<cfset v.share_uploading = false>
 	<cfset v.request_access = true>
@@ -1978,6 +1979,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			</cfif>
 			<cfif custom_id EQ "share_folder" AND custom_value>
 				<cfset v.share_folder = true>
+			</cfif>
+			<cfif custom_id EQ "share_download_thumb" AND !custom_value>
+				<cfset v.share_download_thumb = false>
 			</cfif>
 			<cfif custom_id EQ "share_download_original" AND custom_value>
 				<cfset v.share_download_original = true>

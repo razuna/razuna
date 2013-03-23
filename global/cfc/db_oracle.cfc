@@ -1698,6 +1698,7 @@
 		  COL_SHARED		VARCHAR2(2 CHAR) DEFAULT 'F',
 		  COL_NAME_SHARED	VARCHAR2(200 CHAR),
 		  share_dl_org		varchar2(1 char) DEFAULT 'f',
+		  share_dl_thumb	varchar2(1 char) DEFAULT 't',
      	  share_comments	varchar2(1 char) DEFAULT 'f',
 		  share_upload		varchar2(1 char) DEFAULT 'f',
 		  share_order		varchar2(1 char) DEFAULT 'f',

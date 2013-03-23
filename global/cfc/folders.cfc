@@ -159,7 +159,7 @@
 	<cfquery name="qLocal" datasource="#Variables.dsn#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfolder */ f.folder_id, f.folder_id_r, f.folder_name, f.folder_level, f.folder_of_user,
 	f.folder_is_collection, f.folder_owner, folder_main_id_r rid, f.folder_shared, f.folder_name_shared,
-	share_dl_org, share_comments, share_upload, share_order, share_order_user, share_dl_thumb
+	share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, share_dl_thumb
 	FROM #session.hostdbprefix#folders f
 	WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -218,7 +218,7 @@
 	<cfquery name="qLocal" datasource="#Variables.dsn#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfolderproperties */ f.folder_id, f.folder_id_r, f.folder_name, f.folder_level, f.folder_of_user,
 	f.folder_is_collection, f.folder_owner, folder_main_id_r rid, f.folder_shared, f.folder_name_shared,
-	share_dl_org, share_comments, share_upload, share_order, share_order_user
+	share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user
 	FROM #session.hostdbprefix#folders f
 	WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1290,6 +1290,7 @@
 	<cfset s.theid = arguments.folder_id>
 	<cfset s.folder_shared = "F">
 	<cfset s.share_dl_org = "F">
+	<cfset s.share_dl_thumb = "F">
 	<cfset s.share_comments = "F">
 	<cfset s.share_upload = "F">
 	<!--- Get custom settings --->
@@ -1297,6 +1298,9 @@
 	<!--- Set settings according to settings --->
 	<cfif cs.share_folder>
 		<cfset s.folder_shared = "T">
+	</cfif>
+	<cfif cs.share_download_thumb>
+		<cfset s.share_dl_thumb = "T">
 	</cfif>
 	<cfif cs.share_download_original>
 		<cfset s.share_dl_org = "T">

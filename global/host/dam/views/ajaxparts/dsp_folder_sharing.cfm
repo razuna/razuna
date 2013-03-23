@@ -63,8 +63,8 @@
 					<tr>
 						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</td>
 						<td class="td2"><input type="radio" value="T" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_folder.share_dl_thumb EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_folder.share_dl_thumb EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")# 
-						<a href="##" onclick="resetdl();return false;" style="padding-left:30px;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
-						<div id="reset_dl_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
+						<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.theid#','fsreset');return false;" style="padding-left:30px;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<div id="fsreset_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
 						</td>
 					</tr>
 					<!--- Download Original --->
@@ -80,8 +80,8 @@
 					<tr>
 						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
 						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")# 
-						<a href="##" onclick="resetdl();return false;" style="padding-left:30px;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
-						<div id="reset_dl" style="color:green;font-weight:bold;padding-top:5px;"></div>
+						<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.theid#');return false;" style="padding-left:30px;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<div id="fsreset_org" style="color:green;font-weight:bold;padding-top:5px;"></div>
 						</td>
 					</tr>
 					<!--- Comments --->
@@ -147,29 +147,8 @@
 		</div>
 	</div>
 	</form>
-
 	<!--- JS --->
 	<script language="JavaScript" type="text/javascript">
-		// Reset DL
-		function resetdl(){
-			var thevalue = $('##share_dl_org:checked').val();
-			if (thevalue == 'T'){
-				thevalue = 1;
-			}
-			else{
-				thevalue = 0;
-			}
-			var thevaluethumb = $('##share_dl_thumb:checked').val();
-			if (thevaluethumb == 'T'){
-				thevaluethumb = 1;
-			}
-			else{
-				thevaluethumb = 0;
-			}
-			$('##updatetextshare').load('#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue + '&settothumb=' + thevaluethumb);
-			$('##reset_dl').html('Reset all individual download setting successfully');
-			$('##reset_dl_thumb').html('Reset all individual download setting successfully');
-		}
 		// Activate Chosen
 		$(".chzn-select").chosen();
 	</script>

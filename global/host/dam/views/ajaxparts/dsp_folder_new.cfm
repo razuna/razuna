@@ -200,8 +200,6 @@
 			jqtabs("folder#attributes.theid#-#attributes.isdetail#");
 			// Check link
 			function jschecklink(){
-				// Loading gif
-				
 				// Check link
 				loadcontent('foldercheck','#myself#c.folder_link_check&link_path=' + escape($('##link_path').val()));
 			}
@@ -210,18 +208,6 @@
 	<script language="JavaScript" type="text/javascript">
 		// Focus on the folder_name
 		$('##folder_name').focus();
-		// Reset DL
-		function resetdl(){
-			var thevalue = $('##share_dl_org:checked').val();
-			if (thevalue){
-				thevalue = 1;
-			}
-			else{
-				thevalue = 0;
-			}
-			loadcontent('updatetext','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
-			$('##reset_dl').html('Reset all individual download setting successfully');
-		}
 		// Activate Chosen
 		$(".chzn-select").chosen();
 	</script>

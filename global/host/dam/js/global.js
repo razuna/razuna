@@ -1679,3 +1679,23 @@ function samefoldernamecheck(theid){
 	var folderidr = $("#rid").val();
 	$('#samefoldername').load('index.cfm?fa=c.folder_namecheck', { folder_name:foldername, folder_id_r:folderidr, folder_id:theid } );
 }
+// Reset DL
+function resetdl(divorg,divthumb,folderid,thestatusddiv){
+	var thevalue = $('#' + divorg + ':checked').val();
+	if (thevalue == 'T'){
+		thevalue = 1;
+	}
+	else{
+		thevalue = 0;
+	}
+	var thevaluethumb = $('#' + divthumb + ':checked').val();
+	if (thevaluethumb == 'T'){
+		thevaluethumb = 1;
+	}
+	else{
+		thevaluethumb = 0;
+	}
+	$('#div_forall').load('index.cfm?fa=c.share_reset_dl&folder_id=' + folderid + '&setto=' + thevalue + '&settothumb=' + thevaluethumb);
+	$('#' + thestatusddiv + '_thumb').html('Reset all individual download setting successfully');
+	$('#' + thestatusddiv + '_org').html('Reset all individual download setting successfully');
+}

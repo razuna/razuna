@@ -284,6 +284,11 @@
 							<br />
 							<div><input type="radio" name="share_folder" value="true"<cfif qry_customization.share_folder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="share_folder" value="false"<cfif !qry_customization.share_folder> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
 							<br />
+							#myFusebox.getApplicationData().defaults.trans("custom_share_download_thumb")#
+							<br />
+							<div><input type="radio" name="share_download_thumb" value="true"<cfif qry_customization.share_download_thumb> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="share_download_thumb" value="false"<cfif !qry_customization.share_download_thumb> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+							<br />
 							#myFusebox.getApplicationData().defaults.trans("custom_share_download_originals")#
 							<br />
 							<div><input type="radio" name="share_download_original" value="true"<cfif qry_customization.share_download_original> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="share_download_original" value="false"<cfif !qry_customization.share_download_original> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>

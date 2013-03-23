@@ -120,6 +120,7 @@
 		<!--- Param --->
 		<cfset var col_shared = "F">
 		<cfset var share_dl_org = "F">
+		<cfset var share_dl_thumb = "F">
 		<cfset var share_comments = "F">
 		<cfset var share_upload = "F">
 		<!--- Get custom settings --->
@@ -127,6 +128,9 @@
 		<!--- Set settings according to settings --->
 		<cfif cs.share_folder>
 			<cfset var col_shared = "T">
+		</cfif>
+		<cfif cs.share_download_thumb>
+			<cfset var share_dl_thumb = "T">
 		</cfif>
 		<cfif cs.share_download_original>
 			<cfset var share_dl_org = "T">
@@ -140,7 +144,7 @@
 		<!--- Add to main table --->
 		<cfquery datasource="#variables.dsn#">
 		INSERT INTO #session.hostdbprefix#collections
-		(col_id,folder_id_r,col_owner,create_date,create_time,change_date,change_time, host_id, col_shared, share_dl_org, share_comments, share_upload)
+		(col_id,folder_id_r,col_owner,create_date,create_time,change_date,change_time, host_id, col_shared, share_dl_org, share_dl_thumb, share_comments, share_upload)
 		VALUES(
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newcolid#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
@@ -152,6 +156,7 @@
 			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#col_shared#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#share_dl_org#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#share_dl_thumb#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#share_comments#">,
 			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#share_upload#">
 		)
@@ -316,7 +321,8 @@
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, c.share_comments, c.col_released, c.share_upload, c.share_order, c.share_order_user
+	SELECT /* #variables.cachetoken#detailscol */ ct.col_name, ct.col_desc, ct.col_keywords, ct.lang_id_r, c.col_shared, c.col_name_shared, c.share_dl_org, 
+	c.share_dl_thumb, c.share_comments, c.col_released, c.share_upload, c.share_order, c.share_order_user
 	<!--- Permfolder --->
 	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 		, 'X' as colaccess
@@ -525,6 +531,7 @@
 	<cfparam name="arguments.thestruct.col_name_shared" default="#arguments.thestruct.col_id#">
 	<cfparam name="arguments.thestruct.share_order_user" default="0">
 	<cfparam name="arguments.thestruct.share_dl_org" default="f">
+	<cfparam name="arguments.thestruct.share_dl_thumb" default="t">
 	<!--- Check if a collection by this name exists in this folder --->
 	<cfquery datasource="#variables.dsn#" name="here">
 	SELECT ct.col_name
@@ -547,6 +554,7 @@
 		col_shared = <cfqueryparam value="#arguments.thestruct.col_shared#" cfsqltype="cf_sql_varchar">,
 		col_name_shared = <cfqueryparam value="#arguments.thestruct.col_name_shared#" cfsqltype="cf_sql_varchar">,
 		share_dl_org = <cfqueryparam value="#arguments.thestruct.share_dl_org#" cfsqltype="cf_sql_varchar">,
+		share_dl_thumb = <cfqueryparam value="#arguments.thestruct.share_dl_thumb#" cfsqltype="cf_sql_varchar">,
 		share_upload = <cfqueryparam value="#arguments.thestruct.share_upload#" cfsqltype="cf_sql_varchar">,
 		share_comments = <cfqueryparam value="#arguments.thestruct.share_comments#" cfsqltype="cf_sql_varchar">,
 		share_order = <cfqueryparam value="#arguments.thestruct.share_order#" cfsqltype="cf_sql_varchar">,
@@ -868,7 +876,7 @@
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#collections
 		(col_id, folder_id_r, col_owner, create_date, create_time, change_date, change_time, col_template, col_shared, col_name_shared, share_dl_org, share_comments, share_upload, share_order, share_order_user, host_id, col_released, col_copied_from)
-		SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, folder_id_r, col_owner, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, col_template, col_shared, col_name_shared, share_dl_org, share_comments, share_upload, share_order, share_order_user, host_id, 'true', col_id
+		SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, folder_id_r, col_owner, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, col_template, col_shared, col_name_shared, share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, host_id, 'true', col_id
 		FROM #session.hostdbprefix#collections
 		WHERE col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
 		</cfquery>

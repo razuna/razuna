@@ -2412,4 +2412,13 @@
 	<transid name="custom_users_request_access_desc">
 		<transtext><![CDATA[By default users are allowed to request access to your system with the "Request Access" link at the login page of Razuna. If you want to remove that link, simply disable it below.]]></transtext>
 	</transid>
+	<transid name="share_allow_download_thumbnail">
+		<transtext><![CDATA[Allow download of thumbnail]]></transtext>
+	</transid>
+	<transid name="share_allow_download_thumbnail_desc">
+		<transtext><![CDATA[By default the thumbnail will be made available to download. With the option below you can disable this for this shared folder. Individually you can enable the download of thumbnail in the detail view of the asset itself.]]></transtext>
+	</transid>
+	<transid name="custom_share_download_thumb">
+		<transtext><![CDATA[By default thumbnails are always downloadable. You can turn this on/off for newly created folders and collections below!]]></transtext>
+	</transid>
 </translations>

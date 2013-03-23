@@ -402,6 +402,24 @@
 						<td class="td2" valign="top">#myFusebox.getApplicationData().defaults.trans("collection")# URL</td>
 						<td class="td2"><!--- http://#cgi.http_host##replacenocase(cgi.script_name,"/index.cfm","","ALL")#/sharec/#attributes.col_id#/<input type="text" id="col_name_shared" name="col_name_shared" size="20" value="#qry_detail.col_name_shared#"><br /> ---><a href="http://#cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#&v=#createuuid()#" target="_blank">http://#cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#</a></td>
 					</tr>
+					<!--- Download Thumbnail --->
+					<tr>
+						<td colspan="2" class="list"></td>
+					</tr>
+					<tr>
+						<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</strong></td>
+					</tr>
+					<tr>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail_desc")#</td>
+					</tr>
+					<tr>
+						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_detail.share_dl_thumb EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_detail.share_dl_thumb EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
+						<br><br>
+						<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.folder_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<div id="colreset_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
+						</td>
+					</tr>
 					<!--- Download Original --->
 					<tr>
 						<td colspan="2" class="list"></td>
@@ -416,8 +434,8 @@
 						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
 						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_detail.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
 						<br><br>
-						<a href="##" onclick="resetdl();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
-						<div id="reset_dl" style="color:green;font-weight:bold;padding-top:5px;"></div>
+						<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.folder_id#','colreset');return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<div id="colreset_org" style="color:green;font-weight:bold;padding-top:5px;"></div>
 						</td>
 					</tr>
 					<!--- Comments --->
