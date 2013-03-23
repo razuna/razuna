@@ -148,7 +148,7 @@
 		SELECT folder_id
 		FROM #session.hostdbprefix#folders
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		AND folder_is_collection IS NULL
+		AND lower(folder_is_collection) <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="t">
 		</cfquery>
 		<!--- Not here thus create --->
 		<cfif ishere.recordcount EQ 0>
