@@ -1344,6 +1344,7 @@
 		  FOLDER_NAME_SHARED	NVARCHAR(200),
 		  LINK_PATH				VARCHAR(200),
 		  share_dl_org			varchar(1) DEFAULT 'f',
+		  share_dl_thumb		varchar(1) DEFAULT 't',
      	  share_comments		nvarchar(1) DEFAULT 'f',
 		  share_upload			varchar(1) DEFAULT 'f',
 		  share_order			varchar(1) DEFAULT 'f',
@@ -2167,6 +2168,7 @@
 		  widget_password 		nvarchar(100),
 		  widget_style 			varchar(2),
 		  widget_dl_org 		varchar(2),
+		  widget_dl_thumb 		varchar(2) DEFAULT 't',
 		  widget_uploading 		varchar(2),
 		  host_id 				int,
 		  PRIMARY KEY (widget_id)

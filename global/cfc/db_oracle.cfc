@@ -1313,6 +1313,7 @@
 		  FOLDER_NAME_SHARED	VARCHAR2(200 CHAR),
 		  LINK_PATH				VARCHAR2(200 CHAR),
 		  share_dl_org			varchar2(1 char) DEFAULT 'f',
+		  share_dl_thumb		varchar2(1 char) DEFAULT 't',
      	  share_comments		varchar2(1 char) DEFAULT 'f',
 		  share_upload			varchar2(1 char) DEFAULT 'f',
 		  share_order			varchar2(1 char) DEFAULT 'f',
@@ -2147,6 +2148,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		  widget_password 		varchar2(100 CHAR),
 		  widget_style 			varchar2(2 CHAR),
 		  widget_dl_org 		varchar2(2 CHAR),
+		  widget_dl_thumb 		varchar2(2 CHAR) DEFAULT 't',
 		  widget_uploading 		varchar2(2 CHAR),
 		  host_id 				number,
 		  PRIMARY KEY (widget_id)

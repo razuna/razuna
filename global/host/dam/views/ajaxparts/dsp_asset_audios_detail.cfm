@@ -40,7 +40,7 @@
 	<input type="hidden" name="link_kind" id="link_kind" value="#qry_detail.detail.link_kind#">
 	<div id="tab_detail#file_id#">
 		<ul>
-			<li><a href="##detailinfo" onclick="loadcontent('relatedaudios','#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
+			<li><a href="##detailinfo" onclick="loadcontent('relatedaudios','#myself#c.audios_detail_related&file_id=#attributes.file_id#&what=audios&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#qry_detail.detail.folder_id_r#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<!--- Convert --->
 			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
 				<li><a href="##convertt" onclick="loadrenaud();return false;">#myFusebox.getApplicationData().defaults.trans("convert")#</a></li>

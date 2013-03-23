@@ -50,7 +50,7 @@
 		<cfparam name="arguments.thestruct.external" default="f">
 		<!--- Query --->
 		<cfquery dataSource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#detailwidget */ widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading
+		SELECT /* #variables.cachetoken#detailwidget */ widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, widget_dl_thumb
 		FROM #session.hostdbprefix#widgets
 		WHERE widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -73,7 +73,7 @@
 			<!--- Insert --->
 			<cfquery dataSource="#variables.dsn#">
 			INSERT INTO #session.hostdbprefix#widgets
-			(widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, host_id)
+			(widget_id, col_id_r, folder_id_r, widget_name, widget_description, widget_permission, widget_password, widget_style, widget_dl_org, widget_uploading, host_id, widget_dl_thumb)
 			VALUES(
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#newid#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">,
@@ -85,7 +85,8 @@
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_style#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_dl_org#">,
 			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_uploading#">,
-			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+			<cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_dl_thumb#">
 			)
 			</cfquery>
 			<cfset arguments.thestruct.widget_id = newid>
@@ -100,6 +101,7 @@
 			widget_password = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_password#">,
 			widget_style = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_style#">,
 			widget_dl_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_dl_org#">,
+			widget_dl_thumb = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_dl_thumb#">,
 			widget_uploading = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_uploading#">
 			WHERE widget_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.widget_id#">
 			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">

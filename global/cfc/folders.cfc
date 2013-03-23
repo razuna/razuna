@@ -159,7 +159,7 @@
 	<cfquery name="qLocal" datasource="#Variables.dsn#" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getfolder */ f.folder_id, f.folder_id_r, f.folder_name, f.folder_level, f.folder_of_user,
 	f.folder_is_collection, f.folder_owner, folder_main_id_r rid, f.folder_shared, f.folder_name_shared,
-	share_dl_org, share_comments, share_upload, share_order, share_order_user
+	share_dl_org, share_comments, share_upload, share_order, share_order_user, share_dl_thumb
 	FROM #session.hostdbprefix#folders f
 	WHERE folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folder_id#">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1532,6 +1532,7 @@
 	folder_shared = <cfqueryparam value="#arguments.thestruct.folder_shared#" cfsqltype="cf_sql_varchar">,
 	folder_name_shared = <cfqueryparam value="#arguments.thestruct.folder_name_shared#" cfsqltype="cf_sql_varchar">,
 	share_dl_org = <cfqueryparam value="#arguments.thestruct.share_dl_org#" cfsqltype="cf_sql_varchar">,
+	share_dl_thumb = <cfqueryparam value="#arguments.thestruct.share_dl_thumb#" cfsqltype="cf_sql_varchar">,
 	share_upload = <cfqueryparam value="#arguments.thestruct.share_upload#" cfsqltype="cf_sql_varchar">,
 	share_comments = <cfqueryparam value="#arguments.thestruct.share_comments#" cfsqltype="cf_sql_varchar">,
 	share_order = <cfqueryparam value="#arguments.thestruct.share_order#" cfsqltype="cf_sql_varchar">,

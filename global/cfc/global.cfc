@@ -479,6 +479,13 @@ Comment:<br>
 			AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="org">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#share_options
+			SET asset_dl = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.settothumb#">
+			WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
+			AND asset_format = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="thumb">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("images")>

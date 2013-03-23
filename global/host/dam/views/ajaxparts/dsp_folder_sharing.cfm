@@ -50,6 +50,23 @@
 						<td class="td2" valign="top">#myFusebox.getApplicationData().defaults.trans("folder")# URL</td>
 						<td class="td2"><!--- http://#cgi.http_host##replacenocase(cgi.script_name,"/index.cfm","","ALL")#/share/#attributes.theid#/<input type="text" id="folder_name_shared" name="folder_name_shared" size="20" value="#qry_folder.folder_name_shared#"><br /> ---><a href="http://#cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#&v=#createuuid()#" target="_blank">http://#cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#</a></td>
 					</tr>
+					<!--- Download Thumbnails --->
+					<tr>
+						<td colspan="2" class="list"></td>
+					</tr>
+					<tr>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</th>
+					</tr>
+					<tr>
+						<td colspan="2" class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail_desc")#</td>
+					</tr>
+					<tr>
+						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</td>
+						<td class="td2"><input type="radio" value="T" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_folder.share_dl_thumb EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_thumb" id="share_dl_thumb"<cfif qry_folder.share_dl_thumb EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")# 
+						<a href="##" onclick="resetdl();return false;" style="padding-left:30px;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<div id="reset_dl_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
+						</td>
+					</tr>
 					<!--- Download Original --->
 					<tr>
 						<td colspan="2" class="list"></td>
@@ -62,9 +79,8 @@
 					</tr>
 					<tr>
 						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
-						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
-						<br><br>
-						<a href="##" onclick="resetdl();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")# 
+						<a href="##" onclick="resetdl();return false;" style="padding-left:30px;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 						<div id="reset_dl" style="color:green;font-weight:bold;padding-top:5px;"></div>
 						</td>
 					</tr>
@@ -143,8 +159,16 @@
 			else{
 				thevalue = 0;
 			}
-			$('##updatetextshare').load('#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
+			var thevaluethumb = $('##share_dl_thumb:checked').val();
+			if (thevaluethumb == 'T'){
+				thevaluethumb = 1;
+			}
+			else{
+				thevaluethumb = 0;
+			}
+			$('##updatetextshare').load('#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue + '&settothumb=' + thevaluethumb);
 			$('##reset_dl').html('Reset all individual download setting successfully');
+			$('##reset_dl_thumb').html('Reset all individual download setting successfully');
 		}
 		// Activate Chosen
 		$(".chzn-select").chosen();

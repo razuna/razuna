@@ -627,6 +627,22 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_folders add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> share_dl_thumb #thevarchar#(1) default 't'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_widgets add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> widget_dl_thumb #thevarchar#(1) default 't'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 
 		<!--- Add to internal table --->
 		<cftry>

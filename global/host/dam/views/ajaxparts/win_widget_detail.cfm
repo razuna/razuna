@@ -41,7 +41,7 @@
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr>
 					<td nowrap="nowrap" width="1%"><strong>#myFusebox.getApplicationData().defaults.trans("widget_name")#</strong></td>
-					<td><input type="text" name="widget_name" style="width:300px;" class="textbold" value="#qry_widget.widget_name#"></td>
+					<td><input type="text" name="widget_name" id="widget_name" style="width:300px;" class="textbold" value="#qry_widget.widget_name#"></td>
 				</tr>
 				<tr>
 					<td nowrap="nowrap" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
@@ -98,6 +98,24 @@
 				<tr class="list">
 					<td colspan="2"></td>
 				</tr>
+				<!--- Download Thumbnail --->
+				<tr>
+					<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</strong></td>
+				</tr>
+				<tr>
+					<td colspan="2">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail_desc")#</td>
+				</tr>
+				<tr>
+					<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_thumbnail")#</td>
+					<td><input type="radio" value="t" name="widget_dl_thumb" id="widget_dl_thumb"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_thumb EQ "t"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="f" name="widget_dl_thumb" id="widget_dl_thumb"<cfif qry_widget.widget_dl_thumb EQ "f"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
+						<br />
+						<a href="##" onclick="resetdlw();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+					<div id="reset_dl_thumb" style="color:green;font-weight:bold;padding-top:5px;"></div>
+					</td>
+				</tr>
+				<tr class="list">
+					<td colspan="2"></td>
+				</tr>
 				<!--- Download Original --->
 				<tr>
 					<td colspan="2"><strong>#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</strong></td>
@@ -107,8 +125,8 @@
 				</tr>
 				<tr>
 					<td nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
-					<td ><input type="radio" value="t" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_dl_org EQ "t"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="f" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_org EQ "f"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
-					<br><br>
+					<td><input type="radio" value="t" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_dl_org EQ "t"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="f" name="widget_dl_org" id="widget_dl_org"<cfif qry_widget.widget_id EQ "" OR qry_widget.widget_dl_org EQ "f"> checked="checked"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
+					<br />
 					<a href="##" onclick="resetdlw();return false;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 					<div id="reset_dl_w" style="color:green;font-weight:bold;padding-top:5px;"></div>
 					</td>
@@ -147,21 +165,30 @@
 		jqtabs("widget_tab");
 		// Submit Form
 		$("##form_widget").submit(function(e){
-			// Get values
-			var url = formaction("form_widget");
-			var items = formserialize("form_widget");
-			// Submit Form
-			$.ajax({
-				type: "POST",
-				url: url,
-			   	data: items,
-			   	success: function(data){
-					$("##widgetstatus").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#');
-					$("##widgetstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
-					widgetreload(data);
-			   	}
-			});
-			return false;
+			// Check for widget name
+			var widgetname = $('##widget_name').val();
+			// If empty
+			if (widgetname == ''){
+				alert("Please enter a name for your widget!");
+				return false;
+			}
+			else {
+				// Get values
+				var url = formaction("form_widget");
+				var items = formserialize("form_widget");
+				// Submit Form
+				$.ajax({
+					type: "POST",
+					url: url,
+				   	data: items,
+				   	success: function(data){
+						$("##widgetstatus").html('#JSStringFormat(myFusebox.getApplicationData().defaults.trans("success"))#');
+						$("##widgetstatus").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+						widgetreload(data);
+				   	}
+				});
+				return false;
+			}
 		});
 		// Reload widget list
 		function widgetreload(data){
@@ -186,8 +213,16 @@
 			else{
 				thevalue = 0;
 			}
-			loadcontent('widgetstatus','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue);
+			var thevaluethumb = $('##widget_dl_thumb:checked').val();
+			if (thevaluethumb == 't'){
+				thevaluethumb = 1;
+			}
+			else{
+				thevaluethumb = 0;
+			}
+			loadcontent('widgetstatus','#myself#c.share_reset_dl&folder_id=#attributes.folder_id#&setto=' + thevalue + '&settothumb=' + thevaluethumb);
 			$('##reset_dl_w').html('Reset all individual download setting successfully');
+			$('##reset_dl_thumb').html('Reset all individual download setting successfully');
 		}
 	</script>	
 </cfoutput>
