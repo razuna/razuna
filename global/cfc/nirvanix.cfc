@@ -212,10 +212,10 @@
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 				<cfhttpparam name="fileOverwrite" value="true" type="url">
 				<cfhttpparam name="destFolderPath" value="#arguments.thepath#" type="url">
-				<cfhttpparam name="excludedNode" value="node4" type="url">
+				<!--- <cfhttpparam name="excludedNode" value="node4" type="url"> --->
 			</cfhttp>
 			<!--- GetStorageNode --->
-			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="30">
+			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="60">
 				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 			</cfhttp> --->
@@ -236,8 +236,9 @@
 				<cfinvoke component="email" method="send_email" subject="Razuna: Error during adding your file!" themessage="Unfortunately something went wrong during uploading your file to the storage. Thus your file is not available on Razuna.<br /><br />The Razuna support team has been notified of this and will look into it immediately.">
 				<!--- Send us the error --->
 				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="GetStorageNode nirvanix error">
+					<cfdump var="#cfhttp.filecontent#" label="cfhttp">
 					<cfdump var="#arguments#" label="arguments">
-					<cfdump var="#cfcatch#" />
+					<cfdump var="#cfcatch#" label="catch">
 				</cfmail>
 				<cfabort>
 			</cfcatch>

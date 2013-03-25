@@ -795,6 +795,7 @@
 	<cfset cloud_url_2.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
 	<cfset var thetempids = "">
+	<cfset var md5hash = "">
 	<cfparam name="arguments.thestruct.upl_template" default="0">
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
