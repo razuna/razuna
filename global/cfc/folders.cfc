@@ -2128,16 +2128,12 @@
 	</cfquery>
 	<!--- Loop over results --->
 	<cfloop query="fprop">
-		<cfif grp_id_r EQ 0>
-			<cfset folderaccess = grp_permission>
-		<cfelse>
-			<cfif folderaccess EQ "R">
-				<cfset var folderaccess = grp_permission>
-			<cfelseif folderaccess EQ "W" AND folderaccess NEQ "R">
-				<cfset var folderaccess = grp_permission>
-			<cfelseif folderaccess NEQ "X">
-				<cfset var folderaccess = grp_permission>
-			</cfif>	
+		<cfif grp_permission EQ "R" AND folderaccess NEQ "W" AND folderaccess NEQ "X">
+			<cfset var folderaccess = grp_permission>
+		<cfelseif grp_permission EQ "W" AND folderaccess NEQ "X">
+			<cfset var folderaccess = grp_permission>
+		<cfelseif grp_permission EQ "X">
+			<cfset var folderaccess = grp_permission>
 		</cfif>
 	</cfloop>
 	<!--- If the user is a sys or admin or the owner of the folder give full access --->
