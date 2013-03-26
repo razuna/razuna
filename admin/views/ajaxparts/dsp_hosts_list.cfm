@@ -55,8 +55,8 @@
 			<td width="1%" nowrap><cfif !application.razuna.isp><a href="##" onclick="showwindow('#myself#ajax.hosts_recreate&host_id=#host_id#','#host_name#',500,1);return false;">Upgrade Settings</a></cfif></td>
 			<td width="1%" nowrap><cfif !application.razuna.isp><a href="http://#cgi.http_host##dynpath#/raz#host_id#/dam/index.cfm?fusebox.loadclean=true&fusebox.password=#application.fusebox.password#&fusebox.parseall=true&v=#createuuid()#" target="_blank">Reset Cache</a></cfif></td>
 			<cfif qry_hostslist.recordcount NEQ 1 AND session.hostid NEQ host_id>
-				<td width="1%" nowrap>
-					<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=hosts&id=#host_id#&pathoneup=#urlencodedformat(pathoneup)#&loaddiv=hostslist','#defaultsObj.trans("remove_selected")#',400,1);return false"><img src="images/trash.gif" width="16" height="16" border="0"></a>
+				<td width="1%" nowrap="nowrap" style="padding-left:50px;">
+					<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=hosts&id=#host_id#&pathoneup=#urlencodedformat(pathoneup)#&loaddiv=hostslist','#defaultsObj.trans("remove_selected")#',400,1);return false">Delete</a>
 				</td>
 			</cfif>
 		</tr>
