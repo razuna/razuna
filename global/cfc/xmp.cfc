@@ -519,7 +519,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<!--- Write XMP to image with Exiftool --->
 			<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" timeout="10" />
 			<!--- Upload file again to its original position --->
-			<cfthread name="upload#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
+			<cfset var uptt = createUUID("")>
+			<cfthread name="#uptt#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="nirvanix" method="Upload">
 					<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.path_to_asset#">
 					<cfinvokeargument name="uploadfile" value="#attributes.intstruct.thepath#/incoming/#attributes.intstruct.tempfolder#/#attributes.intstruct.filenameorg#">
@@ -527,7 +528,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				</cfinvoke>
 			</cfthread>
 			<!--- Wait --->
-			<cfthread action="join" name="upload#arguments.thestruct.file_id#" />
+			<cfthread action="join" name="#uptt#" />
 			<!--- Lucene: Delete Records --->
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 			<!--- Lucene: Update Records --->
