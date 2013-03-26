@@ -1202,8 +1202,10 @@
 		UPDATE razuna_config
 		SET conf_serverid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 		</cfquery>
+		<!--- Alter query --->
+		<cfset querySetCell(qry, "conf_serverid", theid)>
 		<!--- Set the ID into application scope --->
-		<cfset application.razuna.serverid = theid>
+		<!--- <cfset application.razuna.serverid = theid> --->
 	</cfif>
 	<!--- Check for config file --->
 	<cfif fileExists("#arguments.pathoneup#/global/config/keys.cfm")>
@@ -1222,6 +1224,13 @@
 		UPDATE razuna_config
 		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#swl#">
 		</cfquery>
+	<cfelse>
+		<!--- Update --->
+		<cfquery datasource="razuna_default">
+		UPDATE razuna_config
+		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="false">
+		</cfquery>
+		<cfset QuerySetCell(qry, "conf_wl", false)>
 	</cfif>
 	<!--- Now put config values into application scope --->
 	<cfset application.razuna.serverid = qry.conf_serverid>
