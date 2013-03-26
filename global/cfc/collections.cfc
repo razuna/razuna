@@ -875,7 +875,7 @@
 		<!--- Copy the main record --->
 		<cfquery datasource="#application.razuna.datasource#">
 		INSERT INTO #session.hostdbprefix#collections
-		(col_id, folder_id_r, col_owner, create_date, create_time, change_date, change_time, col_template, col_shared, col_name_shared, share_dl_org, share_comments, share_upload, share_order, share_order_user, host_id, col_released, col_copied_from)
+		(col_id, folder_id_r, col_owner, create_date, create_time, change_date, change_time, col_template, col_shared, col_name_shared, share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, host_id, col_released, col_copied_from)
 		SELECT <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newid#">, folder_id_r, col_owner, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">, <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">, col_template, col_shared, col_name_shared, share_dl_org, share_dl_thumb, share_comments, share_upload, share_order, share_order_user, host_id, 'true', col_id
 		FROM #session.hostdbprefix#collections
 		WHERE col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.col_id#">
@@ -937,6 +937,8 @@
 		<!--- Call internal release function --->
 		<cfset dorelease(arguments.thestruct)>
 	</cfif>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
