@@ -2112,41 +2112,32 @@
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Set the access rights for this folder --->
 	<cfset var folderaccess = "n">
+	<!--- If there is no session for webgroups set --->
+	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="fprop" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#setaccess */ f.folder_owner, fg.grp_id_r, fg.grp_permission
 	FROM #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND f.host_id = fg.host_id
 	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND (
+		fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
+		OR
+		fg.grp_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		)
 	</cfquery>
-	<!--- If there is no session for webgroups set --->
-	<cfparam default="0" name="session.thegroupofuser">
-	<!--- Loop over query set --->
+	<!--- Loop over results --->
 	<cfloop query="fprop">
-		<cfset var grppos = listfind(session.thegroupofuser, grp_id_r)>
-		<cfif grppos NEQ 0>
-			<cfset var thegrp = listgetat(session.thegroupofuser, grppos)>
+		<cfif grp_id_r EQ 0>
+			<cfset folderaccess = grp_permission>
 		<cfelse>
-			<cfset var thegrp = 0>
-		</cfif>
-		<!--- if the groupid is emtpy --->
-		<cfif grp_id_r EQ "">
-			<cfset var folderaccess = "n">
-		<!--- if the groupid is set to all --->
-		<cfelseif grp_id_r EQ 0>
-			<cfset var folderaccess = grp_permission>
-		<!--- if we find the groupid in the webgroups of this user --->
-		<cfelseif grp_id_r EQ thegrp AND grppos NEQ 0>
-			<!--- Set the session --->
-			<cfif folderaccess EQ "n">
+			<cfif folderaccess EQ "R">
 				<cfset var folderaccess = grp_permission>
-			<cfelseif folderaccess EQ "R">
-				<cfset var folderaccess = grp_permission>
-			<cfelseif folderaccess EQ "W" AND grp_permission NEQ "R">
+			<cfelseif folderaccess EQ "W" AND folderaccess NEQ "R">
 				<cfset var folderaccess = grp_permission>
 			<cfelseif folderaccess NEQ "X">
 				<cfset var folderaccess = grp_permission>
-			</cfif>
+			</cfif>	
 		</cfif>
 	</cfloop>
 	<!--- If the user is a sys or admin or the owner of the folder give full access --->
@@ -2744,7 +2735,7 @@
 	</cfif>
 	<!--- If this use is not in the admin groups clear the showmyfolder session --->
 	<cfif NOT Request.securityObj.CheckSystemAdminUser() AND NOT Request.securityObj.CheckAdministratorUser()>
-		<cfset session.showmyfolder = "">
+		<cfset session.showmyfolder = "F">
 	</cfif>
 	<!--- Param --->
 	<cfparam default="0" name="session.thefolderorg">

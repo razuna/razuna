@@ -550,7 +550,7 @@
 		<set name="attributes.col" value="F" overwrite="false" />
 		<set name="attributes.id" value="0" overwrite="false" />
 		<set name="attributes.actionismove" value="F" overwrite="false" />
-		<set name="session.showmyfolder" value="F" overwrite="false" />
+		<set name="session.showmyfolder" value="T" overwrite="false" />
 		<!-- Get folder record -->
 		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="qFolder">
 			<argument name="thestruct" value="#attributes#" />
@@ -558,8 +558,6 @@
 			<argument name="col" value="#attributes.col#" />
 		</invoke>
 	</fuseaction>
-	
-	
 	
 	<!--
 		END: EXPLORER
