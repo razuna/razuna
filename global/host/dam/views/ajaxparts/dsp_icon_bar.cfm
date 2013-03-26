@@ -24,6 +24,7 @@
 *
 --->
 <cfoutput>
+	<cfparam name="attributes.bot" default="false" />
 	<cfif kind EQ "img">
 		<cfset thefa = "c.folder_images">
 		<cfset thediv = "img">
@@ -68,30 +69,32 @@
 							</a>
 						</cfif>
 					</cfif>
-					<!--- Select --->
-					<cfif cs.icon_select>
-						<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>','#kind#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
-							<div style="float:left;padding-top:5px;">
-								<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
-							</div>
-							<div style="float:left;padding-right:15px;padding-top:5px;">Select all</div>
-						</a>
+					<cfif !attributes.bot>
+						<!--- Select --->
+						<cfif cs.icon_select>
+							<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>','#kind#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
+								<div style="float:left;padding-top:5px;">
+									<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
+								</div>
+								<div style="float:left;padding-right:15px;padding-top:5px;">Select all</div>
+							</a>
+						</cfif>
+						<!--- Search --->
+						<cfif cs.icon_search>
+							<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
+								<div style="float:left;padding-top:5px;">
+									<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" />
+								</div>
+								<div style="float:left;padding-right:15px;padding-top:5px;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
+							</a>
+						</cfif>
+						<!--- More actions --->
+						<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
+						<div style="float:left;padding-right:15px;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
+						<!--- Views --->
+						<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##dropviews#thediv#').toggle();" style="text-decoration:none;" class="ddicon">Views</a></div>
+						<div style="float:left;;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##dropviews#thediv#').toggle();"></div>
 					</cfif>
-					<!--- Search --->
-					<cfif cs.icon_search>
-						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
-							<div style="float:left;padding-top:5px;">
-								<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" />
-							</div>
-							<div style="float:left;padding-right:15px;padding-top:5px;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
-						</a>
-					</cfif>
-					<!--- More actions --->
-					<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##drop#thediv#').toggle();" style="text-decoration:none;" class="ddicon">More actions</a></div>
-					<div style="float:left;padding-right:15px;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##drop#thediv#').toggle();"></div>
-					<!--- Views --->
-					<div style="float:left;padding-top:5px;"><a href="##" onclick="$('##dropviews#thediv#').toggle();" style="text-decoration:none;" class="ddicon">Views</a></div>
-					<div style="float:left;;padding-top:5px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" class="ddicon" onclick="$('##dropviews#thediv#').toggle();"></div>
 				</div>
 				<!--- More actions menu --->	
 				<div>

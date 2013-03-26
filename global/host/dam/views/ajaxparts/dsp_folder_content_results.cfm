@@ -871,7 +871,7 @@
 		<!--- Icon Bar --->
 		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
 			<tr>
-				<td colspan="6" style="border:0px;"><cfset attributes.bot = "T"><cfinclude template="dsp_icon_bar_search.cfm"></td>
+				<td colspan="6" style="border:0px;"><cfset attributes.bot = true><cfinclude template="dsp_icon_bar_search.cfm"></td>
 			</tr>
 		</cfif>
 	</table>

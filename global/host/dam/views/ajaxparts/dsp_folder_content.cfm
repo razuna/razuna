@@ -1057,7 +1057,7 @@
 		</cfif>
 		<!--- Icon Bar --->
 		<tr>
-			<td colspan="6" style="border:0px;"><cfset attributes.bot = "T"><cfinclude template="dsp_icon_bar.cfm"></td>
+			<td colspan="6" style="border:0px;"><cfset attributes.bot = true><cfinclude template="dsp_icon_bar.cfm"></td>
 		</tr>
 	</table>
 	</form>

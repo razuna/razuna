@@ -321,7 +321,7 @@
 		</cfif>
 		<!--- Icon Bar --->
 		<tr>
-			<td colspan="6" class="gridno"><cfset attributes.bot = "T"><cfinclude template="dsp_icon_bar.cfm"></td>
+			<td colspan="6" class="gridno"><cfset attributes.bot = true><cfinclude template="dsp_icon_bar.cfm"></td>
 		</tr>
 	</table>
 	</form>
