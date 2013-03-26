@@ -306,7 +306,7 @@
 	<strong>All files in this <cfif kind EQ "all">folder<cfelse>section</cfif> have been selected</strong> <a href="##" onclick="CheckAllNot('#kind#form');return false;">Deselect all</a>
 </div>
 <!--- Put in basket button / Action Menu --->
-<div id="folderselection<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form" class="actiondropdown">
+<div id="folderselection#kind#form" class="actiondropdown">
 	<!--- Select all link --->
 	<!--- <div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>#kind#form">
 	 	<a href="##" onclick="CheckAllNot('#kind#form');return false;">Deselect all</a>

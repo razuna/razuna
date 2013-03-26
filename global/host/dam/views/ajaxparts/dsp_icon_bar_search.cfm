@@ -110,7 +110,7 @@
 </table>
 
 <!--- action with selection --->
-<div id="folderselection<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#" class="actiondropdown">
+<div id="folderselectionsearchform#attributes.thetype#" class="actiondropdown">
 	<!--- Select all link --->
 	<div style="float:left;padding-right:15px;padding-bottom:5px;" id="selectstore<cfif structkeyexists(attributes,"bot")>b</cfif>searchform#attributes.thetype#">
 		#qry_filecount.thetotal# files select. <a href="##" onclick="CheckAllNot('searchform#attributes.thetype#');return false;">Deselect all</a>

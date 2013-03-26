@@ -470,22 +470,12 @@ function storeids(theform){
 }
 // Check all checkboxes
 function CheckAll(myform,folderid,thediv,thekind) {
-	// Set var
-	var ischk = true;
 	// Enable select all text again. cloud be set hidden from single selection
-	// Hide select all status
 	$("#selectstore" + myform).css("display","");
 	$("#selectstoreb" + myform).css("display","");
-	// Loop over checkboxes and check/uncheck and set var
+	// Loop over checkboxes and check all
 	$('#' + myform + ' :checkbox').each( function() {
-		// if(this.checked){
-		// 	$(this).attr('checked', false);
-		// 	ischk = false;
-		// }
-		// else{
-			$(this).attr('checked', true);
-			// ischk = true;
-		// }
+		$(this).attr('checked', true);
 	})
 	// Depending on the var set or unset
 	if($("#folderselection" + myform).is(':hidden')){
