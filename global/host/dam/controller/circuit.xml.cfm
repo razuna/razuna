@@ -559,8 +559,6 @@
 		</invoke>
 	</fuseaction>
 	
-	
-	
 	<!--
 		END: EXPLORER
 	 -->
@@ -6598,6 +6596,9 @@
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="session.showsubfolders" value="#attributes.showsubfolders#" />
 		<set name="attributes.view" value="" overwrite="false" />
+		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
+		<set name="session.sortby" value="#attributes.sortby#" />
+		
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: get label text -->

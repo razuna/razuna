@@ -448,6 +448,24 @@
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="label_kind" type="string" required="true">
 		<cfargument name="fromapi" required="false" default="false">
+		
+		
+		<!--- Set sortby variable --->
+		<cfset var sortby = session.sortby>
+		<!--- Set the order by --->
+		<cfif session.sortby EQ "name">
+			<cfset var sortby = "filename_org">
+		<cfelseif session.sortby EQ "sizedesc">
+			<cfset var sortby = "size DESC">
+		<cfelseif session.sortby EQ "sizeasc">
+			<cfset var sortby = "size ASC">
+		<cfelseif session.sortby EQ "dateadd">
+			<cfset var sortby = "date_create DESC">
+		<cfelseif session.sortby EQ "datechanged">
+			<cfset var sortby = "date_change DESC">
+		</cfif>
+		
+		
 		<!--- If there is no session for webgroups set --->
 		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Get the cachetoken for here --->
@@ -456,7 +474,7 @@
 		<cfif arguments.label_kind EQ "assets">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#labels_assets */ i.img_id id, i.img_filename filename, 
-			i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
+			i.folder_id_r,i.img_size as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
 			i.path_to_asset, i.cloud_url
 			<cfif !arguments.fromapi>
@@ -504,7 +522,7 @@
 			AND ct.ct_id_r = i.img_id
 			AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
 			UNION ALL
-			SELECT f.file_id id, f.file_name filename, f.folder_id_r, 
+			SELECT f.file_id id, f.file_name filename, f.folder_id_r,  f.file_size as size, f.hashtag,
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
 			f.path_to_asset, f.cloud_url
@@ -553,7 +571,7 @@
 			AND ct.ct_id_r = f.file_id
 			AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
 			UNION ALL
-			SELECT v.vid_id id, v.vid_filename filename, v.folder_id_r, 
+			SELECT v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_size as size, v.hashtag,
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
 			v.path_to_asset, v.cloud_url
@@ -602,7 +620,7 @@
 			AND ct.ct_id_r = v.vid_id
 			AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
 			UNION ALL
-			SELECT a.aud_id id, a.aud_name filename, a.folder_id_r, 
+			SELECT a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_size as size, a.hashtag,
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
 			a.path_to_asset, a.cloud_url
@@ -650,6 +668,7 @@
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = a.aud_id
 			AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
+			ORDER BY #sortby#
 			</cfquery>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
