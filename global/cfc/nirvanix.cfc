@@ -458,7 +458,7 @@
 		<cfargument name="nvxsession" type="string" required="false">
 		<cftry>
 			<!--- Call --->
-			<cfhttp url="http://services.nirvanix.com/ws/IMFS/DeleteFiles.ashx" method="get" throwonerror="no" timeout="30">
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/DeleteFiles.ashx" method="get" throwonerror="no" timeout="60">
 				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="filePath" value="#arguments.filePath#" type="url">
 			</cfhttp>
