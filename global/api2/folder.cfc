@@ -671,7 +671,65 @@
 		<cfreturn thexml>
 	</cffunction>
 	
-	
+	<!--- Set Custom Field Value --->
+	<cffunction name="setFolderPermissions" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="permissions" required="true">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Deserialize the JSON back into a struct --->
+			<cfset thejson = DeserializeJSON(arguments.permissions)>
+			
+			<!--- Loop over struct --->
+			<cfloop array="#thejson#" index="f">
+				<!--- Check to see if there is a record --->
+				<cfquery datasource="#application.razuna.api.dsn#" name="qry">
+				SELECT rec_uuid
+				FROM #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups
+				WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+				AND grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[2]#">
+				AND host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
+				</cfquery>
+				<!--- Insert --->
+				<cfif qry.recordcount EQ 0>
+					<cfquery datasource="#application.razuna.api.dsn#">
+					INSERT INTO #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups
+					(folder_id_r, grp_id_r, grp_permission , host_id, rec_uuid)
+					VALUES(
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#f[2]#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#f[3]#">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
+					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+					)
+					</cfquery>
+				<!--- Update --->
+				<cfelse>
+					<cfquery datasource="#application.razuna.api.dsn#">
+					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#folders_groups
+					SET grp_permission = <cfqueryparam cfsqltype="cf_sql_varchar" value="#f[3]#">
+					WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
+					AND grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[2]#">
+					AND host_id = #application.razuna.api.hostid["#arguments.api_key#"]#
+					</cfquery>
+				</cfif>
+			</cfloop>
+			
+			<!--- Flush cache --->
+			<cfset resetcachetoken(arguments.api_key,"folders")>
+			<!--- Feedback --->
+			<cfset thexml.responsecode = 0>
+			<cfset thexml.message = "Folder permissions successfully updated">
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+		
 	<!--- Private Functions --->
 	
 		
