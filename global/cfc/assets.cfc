@@ -914,7 +914,7 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 	<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 	<!--- Thread --->
 	<cfif arguments.thestruct.qryfile.tempid NEQ "">
-		<!--- <cfthread intstruct="#arguments.thestruct#" priority="LOW"> --->
+		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 			<cfinvoke method="addassetthread" thestruct="#arguments.thestruct#" />
 		<!--- </cfthread> --->
 	</cfif>
@@ -1079,7 +1079,7 @@ This is the main function called directly by a single upload else from addassets
 <!--- DELETE IN DB AND FILE SYSTEM -------------------------------------------------------------------->
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
-	<cfthread intvars="#arguments.thestruct#" priority="LOW">
+	<cfthread intvars="#arguments.thestruct#">
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -6, "#now()#")>
 		<!--- Clear assets dbs from records which have no path_to_asset --->
@@ -1273,7 +1273,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Script: Create images --->
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfile# #arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Execute --->
-			<cfthread name="#ttpdf#" pdfintstruct="#arguments.thestruct#" priority="LOW">
+			<cfthread name="#ttpdf#" pdfintstruct="#arguments.thestruct#">
 				<cfexecute name="#attributes.pdfintstruct.thesh#" timeout="900" />
 				<cfif application.razuna.storage NEQ "amazon">
 					<cfexecute name="#attributes.pdfintstruct.thesht#" timeout="900" />
@@ -1719,7 +1719,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Call the import/imagemagick method --->
 		<!--- Puttin the below method call NOT in a thread solves some issues we have seen were some images are not added --->
 		<cfinvoke method="importimagesthread" thestruct="#arguments.thestruct#">
-		<!--- <cfthread intstruct="#arguments.thestruct#" priority="LOW">
+		<!--- <cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="importimagesthread" thestruct="#attributes.intstruct#" />
 		</cfthread> --->
 		<!--- If above return x we failed for the image --->
@@ -1867,7 +1867,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="importimages" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- <cfinvoke method="importimagesthread" thestruct="#arguments.thestruct#" /> --->
-	<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="importimagesthread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 </cffunction>
@@ -2369,7 +2369,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfif !application.razuna.rfs>
 		<!--- ID for thread --->
 		<cfset var tri = createuuid("")>
-		<cfthread name="#tri#" intstruct="#arguments.thestruct#" priority="LOW">
+		<cfthread name="#tri#" intstruct="#arguments.thestruct#">
 			<cfinvoke method="resizeImagethread" thestruct="#attributes.intstruct#" />
 		</cfthread>
 		<cfthread action="join" name="#tri#" timeout="240000" />
@@ -2449,13 +2449,13 @@ This is the main function called directly by a single upload else from addassets
 		<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimarguments#" mode="777">
 		<cffile action="write" file="#arguments.thestruct.theshm#" output="#arguments.thestruct.theimargumentsmog#" mode="777">
 		<!--- Convert the original --->
-		<cfthread name="c#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" priority="LOW">
+		<cfthread name="c#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
 			<cfexecute name="#attributes.intstruct.thesh#" timeout="240000" />
 		</cfthread>
 		<!--- Wait until Thumbnail is done --->
 		<cfthread action="join" name="c#arguments.thestruct.newid#" timeout="240000" />
 		<!--- Convert for raw --->
-		<cfthread name="m#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" priority="LOW">
+		<cfthread name="m#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
 			<cfexecute name="#attributes.intstruct.theshm#" timeout="240000" />
 		</cfthread>
 		<!--- Wait until Thumbnail is done --->
@@ -2656,7 +2656,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfif>
 			<!--- Create thumbnail --->
-			<cfthread name="preview#arguments.thestruct.thisvid.newid#" intstruct="#arguments.thestruct#" priority="LOW">
+			<cfthread name="preview#arguments.thestruct.thisvid.newid#" intstruct="#arguments.thestruct#">
 				<cfinvoke component="videos" method="create_previews" thestruct="#attributes.intstruct#">
 			</cfthread>
 			<!--- Wait --->
@@ -3946,7 +3946,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Params --->
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<!--- <cfinvoke method="recreatepreviewimagethread" thestruct="#arguments.thestruct#" /> --->
-	<cfthread intstruct="#arguments.thestruct#" priority="LOW">
+	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="recreatepreviewimagethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
 </cffunction>

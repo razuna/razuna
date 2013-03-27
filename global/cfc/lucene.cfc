@@ -27,7 +27,7 @@
 
 	<!--- Check if collection exists for this host --->
 	<cffunction name="exists" access="public" output="false">
-		<cfthread priority="LOW">
+		<cfthread>
 			<cftry>
 				<!--- Get the collection --->
 				<cfset CollectionStatus(session.hostid)>
