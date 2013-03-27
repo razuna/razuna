@@ -34,8 +34,15 @@
 	<!--- Create token --->
 	<cffunction name="createToken" access="private" output="false">
 		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- Check for windows --->
+		<cfinvoke component="global" method="isWindows" returnvariable="isWindows" />
+		<cfif isWindows>
+			<cfset var theext = ".bat">
+		<cfelse>
+			<cfset var theext = ".sh">
+		</cfif>
 		<!--- Temp ID --->
-		<cfset var tid = createUUID("") & ".sh">
+		<cfset var tid = createUUID("") & theext>
 		<!--- Path to executable --->
 		<cfset var exe = "#expandPath("../")#akamai/perl/">
 		<!--- Write Execute --->
@@ -61,8 +68,15 @@
 		<cfargument name="thefilename" type="string" required="true" />
 		<!--- Get token --->
 		<cfset var thetoken = createToken(arguments)>
+		<!--- Check for windows --->
+		<cfinvoke component="global" method="isWindows" returnvariable="isWindows" />
+		<cfif isWindows>
+			<cfset var theext = ".bat">
+		<cfelse>
+			<cfset var theext = ".sh">
+		</cfif>
 		<!--- Temp ID --->
-		<cfset var p = createUUID("") & ".sh">
+		<cfset var p = createUUID("") & theext>
 		<cfset var t = "#getTempDirectory()##p#">
 		<!--- Write Execute --->
 		<cfset var e = "curl --data-binary @'#arguments.theasset#' #arguments.theurl##thetoken#">
@@ -84,8 +98,15 @@
 		<cfargument name="thefilename" type="string" required="true" />
 		<!--- Get token --->
 		<cfset var thetoken = createToken(arguments)>
+		<!--- Check for windows --->
+		<cfinvoke component="global" method="isWindows" returnvariable="isWindows" />
+		<cfif isWindows>
+			<cfset var theext = ".bat">
+		<cfelse>
+			<cfset var theext = ".sh">
+		</cfif>
 		<!--- Temp ID --->
-		<cfset var p = createUUID("") & ".sh">
+		<cfset var p = createUUID("") & theext>
 		<cfset var t = "#getTempDirectory()##p#">
 		<!--- Write Execute --->
 		<cfset var e = "curl -XDELETE #arguments.theurl##thetoken#">
