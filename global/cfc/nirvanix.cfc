@@ -220,7 +220,7 @@
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 			</cfhttp> --->
 			<!--- Parse --->
-			<cfset var xmlVar = xmlParse(cfhttp.filecontent)/>
+			<cfset var xmlVar = xmlParse(trim(cfhttp.filecontent))/>
 			<!--- If session timed out --->
 			<cfif xmlvar.Response.Responsecode[1].XmlText EQ "80006" OR xmlvar.Response.Responsecode[1].XmlText EQ "80101">
 				<!--- Get session --->
