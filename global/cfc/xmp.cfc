@@ -559,26 +559,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfset var thexmlcode = "">
 	<cfset var themeta = "">
 	<cftry>
-		<!--- Create empty records in the table because we sometimes have images without XMP --->
-		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-			<!--- Define params if we come from upload where there are not textareas --->
-			<cfparam name="arguments.thestruct.file_keywords_#langindex#" default="">
-			<cfparam name="arguments.thestruct.file_desc_#langindex#" default="">
-			<!--- Insert --->
-			<cftransaction>
-				<cfquery datasource="#arguments.thestruct.dsn#">
-				INSERT INTO #session.hostdbprefix#images_text
-				(id_inc, img_id_r, lang_id_r, host_id)
-				VALUES(
-				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
-				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				)
-				</cfquery>
-			</cftransaction>
-		</cfloop>
-		<!--- FILESYSTEM --->
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 		<!--- Check the platform and then decide on the Exiftool tag --->
