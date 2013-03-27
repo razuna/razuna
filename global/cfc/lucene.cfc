@@ -134,7 +134,7 @@
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
-			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 					args = {
 					collection : session.hostid,
@@ -229,7 +229,7 @@
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
-			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 					args = {
 					collection : session.hostid,
@@ -398,7 +398,7 @@
 		<!--- Only for video and audio files --->
 		<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
 			<!--- Indexing --->
-			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 				args = {
 				collection : session.hostid,
@@ -439,20 +439,20 @@
 					</cfif>
 					<!--- Index: Update file --->
 					<cfif fileExists(qry_all.lucene_key)>
-						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 							<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
 						</cflock>
 					</cfif>
 				<!--- Local Storage --->
 				<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 					<!--- Index: Update file --->
-					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cflock>
 				<!--- Linked file --->
 				<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 					<!--- Index: Update file --->
-					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cflock>
 				</cfif>
@@ -497,24 +497,24 @@
 				<cfif arguments.thestruct.link_kind EQ "">
 					<!--- Storage: Local --->
 					<cfif application.razuna.storage EQ "local">
-						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#arguments.thestruct.qrydetail.path_to_asset#/#arguments.thestruct.filenameorg#">
 						</cflock>
 					<!--- Storage: Nirvanix --->
 					<cfelseif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
-						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 							<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.lucene_key#">
 						</cflock>
 					</cfif>
 				<!--- For linked local assets --->
 				<cfelseif arguments.thestruct.link_kind EQ "lan">
-					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 						<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.qrydetail.link_path_url#">
 					</cflock>
 				</cfif>
 			</cfif>
 			<!--- Index: delete records --->
-			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
 			</cflock>
 			<cfcatch type="any">
@@ -671,7 +671,7 @@
 		<cfflush>
 		<!--- Remove the index --->
 		<cfif application.razuna.storage EQ "local">
-			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="90">
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfindex action="purge" collection="#session.hostid#" />
 			</cflock>
 		</cfif>
