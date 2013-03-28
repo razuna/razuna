@@ -196,6 +196,8 @@
 			</cfquery>
 			<!--- We don't need to send an email --->
 			<cfset arguments.thestruct.sendemail = false>
+			<!--- Create inserts --->
+			<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 			<!--- Call the addasset function --->
 			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
@@ -280,6 +282,8 @@
 							</cfquery>
 							<!--- We don't need to send an email --->
 							<cfset arguments.thestruct.sendemail = false>
+							<!--- Create inserts --->
+							<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 							<!--- Call the addasset function --->
 							<cfthread intstruct="#arguments.thestruct#">
 								<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
@@ -403,6 +407,8 @@
 				</cfquery>
 				<!--- We don't need to send an email --->
 				<cfset arguments.thestruct.sendemail = false>
+				<!--- Create inserts --->
+				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 				<!--- Call the addasset function --->
 				<cfthread intstruct="#arguments.thestruct#">
 					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
@@ -569,16 +575,6 @@
 				<!--- Get Size --->
 				<cfset var thefileinfo = getfileinfo("#arguments.thestruct.theincomingtemppath#/#thefile.serverFile#")>
 				<cfset thefile.filesize = thefileinfo.size>
-				<!--- Set mimetypes --->
-				<cfquery dataSource="#variables.dsn#" name="qry_mime">
-				SELECT type_mimecontent, type_mimesubcontent
-				FROM file_types
-				WHERE lower(type_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.serverFileExt#">
-				</cfquery>
-				<!---
-<cfset thefile.contentType = qry_mime.type_mimecontent>
-				<cfset thefile.contentSubType = qry_mime.type_mimesubcontent>
---->
 			<cfelse>
 				<!--- If plupload --->
 				<cfif arguments.thestruct.plupload>
@@ -620,7 +616,7 @@
 				<cftransaction>
 					<cfquery datasource="#variables.dsn#">
 					INSERT INTO #session.hostdbprefix#assets_temp
-					(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<!--- , mimetype --->, thesize, file_id, host_id, md5hash)
+					(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, thesize, file_id, host_id, md5hash)
 					VALUES(
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
@@ -630,7 +626,6 @@
 					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theuserid#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-					<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.contentType#/#listfirst(thefile.contentSubType,";")#">, --->
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#thefile.filesize#">,
 					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
 					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
@@ -644,6 +639,8 @@
 				<cfset arguments.thestruct.sendemail = false>
 				<!--- Add the original file name in a session since it is stored as lower case in the temp DB --->
 				<cfset arguments.thestruct.theoriginalfilename = thefile.serverFile>
+				<!--- Create inserts --->
+				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 				<!--- Call the addasset function --->
 				<cfthread intstruct="#arguments.thestruct#">
 					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
@@ -721,6 +718,184 @@
 	</cftry>
 	<!--- Return --->
 	<cfreturn thexml />
+</cffunction>
+
+<!--- Create Inserts --->
+<cffunction name="create_inserts" output="true" access="public">
+	<cfargument name="tempid" type="string">
+	<cfargument name="thstruct" type="struct">
+	<!--- Params --->
+	<cfset var qry_file = "">
+	<cfset var qry_mime = "">
+	<cfparam default="" name="arguments.thestruct.uploadkind">
+	<!--- Get the file --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_file">
+	SELECT tempid, filename, extension, folder_id, file_id, link_kind
+	FROM #session.hostdbprefix#assets_temp
+	WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.tempid#">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+<cftry>
+	<!--- Don't need to do any inserts for URL and versions --->
+	<cfif qry_file.file_id EQ 0>
+		<!--- Get the file type --->
+		<cfquery dataSource="#application.razuna.datasource#" name="qry_mime">
+		SELECT type_type
+		FROM file_types
+		WHERE lower(type_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.extension#">
+		</cfquery>
+		<!--- IMAGES --->
+		<cfif qry_mime.type_type EQ "img">
+			<!--- Add records to the DB - We do this here so that fast subsequent calls from the API work --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#images
+			(img_id, host_id, folder_id_r, is_available, img_filename, img_create_time)
+			VALUES(
+			<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#qry_file.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+			<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+				<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.filename#">
+			</cfif>,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			)
+			</cfquery>
+			<!--- Create empty records in the table because we sometimes have images without XMP --->
+			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+				<!--- Insert --->
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#images_text
+				(id_inc, img_id_r, lang_id_r, host_id)
+				VALUES(
+				<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">, 
+				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
+				</cfquery>
+			</cfloop>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#xmp
+			(id_r)
+			VALUES(
+				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("images")>
+		<!--- VIDEOS --->
+		<cfelseif qry_mime.type_type EQ "vid">
+			<!--- Insert record --->		
+			<cfquery datasource="#variables.dsn#">
+			INSERT INTO #session.hostdbprefix#videos
+			(vid_id, vid_name_org, vid_filename, host_id, folder_id_r, path_to_asset, is_available, vid_create_time)
+			VALUES(
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qry_file.tempid#">,
+			<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+				<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.filename#">
+			</cfif>,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.filename#">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qry_file.folder_id#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.folder_id#/vid/#qry_file.tempid#">,
+			<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+			)
+			</cfquery>
+			<!--- Add the TEXTS to the DB. We have to hide this is if we are coming from FCK --->
+			<cfif structkeyexists(arguments.thestruct,"langcount")>
+				<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+					<cfif arguments.thestruct.uploadkind EQ "many">
+						<cfset var desc="file_desc_" & "#countnr#" & "_" & "#langindex#">
+						<cfset var keywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
+						<cfset var title="file_title_" & "#countnr#" & "_" & "#langindex#">
+					<cfelse>
+						<cfset var desc="arguments.thestruct.file_desc_" & "#langindex#">
+						<cfset var keywords="arguments.thestruct.file_keywords_" & "#langindex#">
+						<cfset var title="arguments.thestruct.file_title_" & "#langindex#">
+					</cfif>
+					<cfif desc CONTAINS "#langindex#">
+						<!--- check if form-vars are present. They will be missing if not coming from a user-interface (assettransfer, etc.) --->
+						<cfif IsDefined(desc) and IsDefined(keywords) and IsDefined(title)>
+							<cfquery datasource="#variables.dsn#">
+								INSERT INTO #session.hostdbprefix#videos_text
+								(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, vid_title, host_id)
+								VALUES(
+								<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+								<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
+								<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+								<cfqueryparam value="#evaluate(desc)#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">,
+								<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								)
+							</cfquery>
+						</cfif>
+					</cfif>
+				</cfloop>
+			</cfif>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("videos")>
+		<!--- AUDIOS --->
+		<cfelseif qry_mime.type_type EQ "aud">
+			<!--- Add record --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#audios
+			(aud_id, is_available, folder_id_r, host_id, aud_create_time, aud_name)
+			VALUES(
+				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
+				<cfqueryparam value="#qry_file.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+					<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+				<cfelse>
+					<cfqueryparam value="#qry_file.filename#" cfsqltype="cf_sql_varchar">
+				</cfif>
+			)
+			</cfquery>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("audios")>
+		<!--- DOCUMENTS --->
+		<cfelse>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#files
+			(file_id, is_available, folder_id_r, host_id, file_name, file_create_time)
+			VALUES(
+				<cfqueryparam value="#qry_file.tempid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#qry_file.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
+					<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
+				<cfelse>
+					<cfqueryparam value="#qry_file.filename#" cfsqltype="cf_sql_varchar">,
+				</cfif>
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
+				)
+			</cfquery>
+			<!--- Flush Cache --->
+			<cfset resetcachetoken("files")>
+		</cfif>
+		<!--- Flush the rest of the cache --->
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
+		<cfset resetcachetoken("general")>
+	</cfif>
+
+	<cfcatch type="any">
+		<cfset consoleoutput(true)>
+		<cfset console(cfcatch)>
+	</cfcatch>
+	</cftry>
+	<!--- Return --->
 </cffunction>
 
 <!--- INSERT FROM LINK --->
@@ -812,6 +987,8 @@
 			</cfquery>
 			<!--- We don't need to send an email --->
 			<cfset arguments.thestruct.sendemail = false>
+			<!--- Create inserts --->
+			<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 			<!--- Call the addasset function --->
 			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
@@ -1153,26 +1330,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.newid = 1>
 	<!--- New ID --->
 	<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
-	<!--- We insert a new record here already since the metaform plugin needs to have a record. Only done if not a new version --->
-	<cfif arguments.thestruct.qryfile.file_id EQ 0>
-		<!--- Insert --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#files
-		(file_id, is_available, folder_id_r, host_id, file_name, file_create_time)
-		VALUES(
-			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="0" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-				<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">,
-			<cfelse>
-				<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">,
-			</cfif>
-			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
-			)
-		</cfquery>
-	</cfif>
 	<!--- Set Params --->
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
 	<cfset arguments.thestruct.iswindows = iswindows()>
@@ -1894,75 +2051,14 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Random ID for script --->
 	<cfset var imguuid = arguments.thestruct.newid>
 	<!--- When we add a URL image we don't need to do the below --->
-	<cfif arguments.thestruct.qryfile.link_kind EQ "url">
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #session.hostdbprefix#images
-		(img_id, host_id, folder_id_r, is_available, img_filename, img_create_time)
-		VALUES(
-		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+	<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
 		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
-		<cfelse>
-			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-		</cfif>,
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
-		)
-		</cfquery>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
-		<cfset resetcachetoken("general")>
-	<cfelse>
-		<!--- Add records to the DB - We do this here so that fast subsequent calls from the API work --->
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #session.hostdbprefix#images
-		(img_id, host_id, folder_id_r, is_available, img_filename, img_create_time)
-		VALUES(
-		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
-		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
-		<cfelse>
-			<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-		</cfif>,
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
-		)
-		</cfquery>
-		<!--- Create empty records in the table because we sometimes have images without XMP --->
-		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-			<!--- Define params if we come from upload where there are not textareas --->
-			<cfparam name="arguments.thestruct.file_keywords_#langindex#" default="">
-			<cfparam name="arguments.thestruct.file_desc_#langindex#" default="">
-			<!--- Insert --->
-			<cfquery datasource="#arguments.thestruct.dsn#">
-			INSERT INTO #session.hostdbprefix#images_text
-			(id_inc, img_id_r, lang_id_r, host_id)
-			VALUES(
-			<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">, 
-			<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			)
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET img_filename = <cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			</cfquery>
-		</cfloop>
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		INSERT INTO #session.hostdbprefix#xmp
-		(id_r)
-		VALUES(
-			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-		)
-		</cfquery>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("images")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
-		<cfset resetcachetoken("general")>
+		</cfif>
 		<!--- Grab stuff for exiftool and getting raw metadata from image --->
 		<cfif isWindows()>
 			<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
@@ -2075,6 +2171,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Store XMP values in DB --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
 			UPDATE #session.hostdbprefix#xmp
+			SET 
 			asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">, 
 			subjectcode = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.iptcsubjectcode#">, 
 			creator = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thexmp.creator#">, 
@@ -2567,62 +2664,6 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Create a new ID for the video --->
 		<cfset arguments.thestruct.thisvid.newid = arguments.thestruct.qryfile.tempid>
 		<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
-		<!--- Insert record --->		
-		<cfquery datasource="#variables.dsn#">
-		INSERT INTO #session.hostdbprefix#videos
-		(vid_id, vid_name_org, vid_filename, host_id, folder_id_r, path_to_asset, is_available, vid_create_time)
-		VALUES(
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.thisvid.newid#">,
-		<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-			<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
-		<cfelse>
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.filename#">
-		</cfif>,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.filename#">,
-		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.folder_id#">,
-		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.folder_id#/vid/#arguments.thestruct.thisvid.newid#">,
-		<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">
-		)
-		</cfquery>
-		<!--- Add the TEXTS to the DB. We have to hide this is if we are coming from FCK --->
-		<cfif arguments.thestruct.fieldname NEQ "NewFile" AND structkeyexists(arguments.thestruct,"langcount")>
-			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-				<cfif arguments.thestruct.uploadkind EQ "many">
-					<cfset var desc="file_desc_" & "#countnr#" & "_" & "#langindex#">
-					<cfset var keywords="file_keywords_" & "#countnr#" & "_" & "#langindex#">
-					<cfset var title="file_title_" & "#countnr#" & "_" & "#langindex#">
-				<cfelse>
-					<cfset var desc="arguments.thestruct.file_desc_" & "#langindex#">
-					<cfset var keywords="arguments.thestruct.file_keywords_" & "#langindex#">
-					<cfset var title="arguments.thestruct.file_title_" & "#langindex#">
-				</cfif>
-				<cfif desc CONTAINS "#langindex#">
-					<!--- check if form-vars are present. They will be missing if not coming from a user-interface (assettransfer, etc.) --->
-					<cfif IsDefined(desc) and IsDefined(keywords) and IsDefined(title)>
-						<cfquery datasource="#variables.dsn#">
-							INSERT INTO #session.hostdbprefix#videos_text
-							(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, vid_title, host_id)
-							VALUES(
-							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
-							<cfqueryparam value="#arguments.thestruct.thisvid.newid#" cfsqltype="CF_SQL_VARCHAR">,
-							<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-							<cfqueryparam value="#evaluate(desc)#" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam value="#evaluate(keywords)#" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam value="#evaluate(title)#" cfsqltype="cf_sql_varchar">,
-							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							)
-						</cfquery>
-					</cfif>
-				</cfif>
-			</cfloop>
-		</cfif>
-		<!--- Flush Cache --->
-		<cfset resetcachetoken("videos")>
-		<cfset resetcachetoken("folders")>
-		<cfset resetcachetoken("search")> 
-		<cfset resetcachetoken("general")>
 		<!--- Put together the filenames --->
 		<cfset arguments.thestruct.thisvid.theorgimage = replacenocase(arguments.thestruct.qryfile.filename,".#arguments.thestruct.qryfile.extension#",".jpg","one")>
 		<!--- All below only if NOT from a link --->
@@ -2717,10 +2758,9 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var orgheight = trim(listlast(orgheight," "))>
 				<cfpause interval=2 />
 			</cfif>
-			<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
-				<cfexecute name="#arguments.thestruct.theshex#" timeout="60" variable="vid_meta" />
-				<cfset arguments.thestruct.vid_meta = vid_meta>
-			</cfif>
+			<!--- Get video metadata --->
+			<cfexecute name="#arguments.thestruct.theshex#" timeout="60" variable="vid_meta" />
+			<cfset arguments.thestruct.vid_meta = vid_meta>
 			<!--- Delete scripts --->
 			<cffile action="delete" file="#arguments.thestruct.thesh#">
 			<cffile action="delete" file="#arguments.thestruct.thesht#">
@@ -3340,23 +3380,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke component="versions" method="create" thestruct="#arguments.thestruct#">
 	<!--- This is for normal adding --->
 	<cfelse>
-		<!--- Add record --->
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO #session.hostdbprefix#audios
-		(aud_id, is_available, folder_id_r, host_id, aud_create_time, aud_name)
-		VALUES(
-			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="0">,
-			<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-			<cfif structkeyexists(arguments.thestruct, "theoriginalfilename")>
-				<cfqueryparam value="#arguments.thestruct.theoriginalfilename#" cfsqltype="cf_sql_varchar">
-			<cfelse>
-				<cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-			</cfif>
-		)
-		</cfquery>
 		<!--- Dont do this if the link_kind is a url --->
 		<cfif arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Set the correct path --->
@@ -5197,6 +5220,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.sendemail = false>
 				<!--- We set that this is from this function --->
 				<cfset arguments.thestruct.importpath = true>
+				<!--- Create inserts --->
+				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 				<!--- Call the addasset function --->
 				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">

@@ -629,6 +629,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfloop list="#arguments.thestruct.langcount#" index="langindex">
 				<cfset newkeywords = "">
 				<cfset newdescription = "">
+				<cfparam name="arguments.thestruct.file_desc_#langindex#" default="">
+				<cfparam name="arguments.thestruct.file_keywords_#langindex#" default="">
 				<!--- Grab the user input --->
 				<cfif arguments.thestruct.uploadkind EQ "many">
 					<cfset userdesc="file_desc_" & "#countnr#" & "_" & "#langindex#">

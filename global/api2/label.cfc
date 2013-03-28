@@ -146,6 +146,7 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
+			<cfpause interval="2" />
 			<!--- If we replace, then remove all labels for this record first --->
 			<cfif !arguments.append>
 				<cfquery datasource="#application.razuna.api.dsn#">
