@@ -150,9 +150,9 @@
 		<!--- widget_code --->
 		<div id="widget_code">
 			<strong>Link to Widget</strong><br />
-			<input type="text" style="width:450px;" id="widget_text" readonly="readonly" value="http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#"> <a href="http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#" target="_blank" id="widget_link">Jump to</a><br />
+			<input type="text" style="width:450px;" id="widget_text" readonly="readonly" value="#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#"> <a href="#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#" target="_blank" id="widget_link">Jump to</a><br />
 			<strong>Embed Code</strong><br />
-			<textarea id="widget_textarea" style="width:450px;height:100px;" readonly="readonly"><iframe frameborder="0" src="http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#" scrolling="auto" width="100%" height="500"></iframe></textarea>
+			<textarea id="widget_textarea" style="width:450px;height:100px;" readonly="readonly"><iframe frameborder="0" src="#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#attributes.widget_id#" scrolling="auto" width="100%" height="500"></iframe></textarea>
 		</div>
 		<!--- Loading Bars --->
 		<div style="float:left;padding:10px;color:green;font-weight:bold;display:none;" id="widgetstatus"></div>
@@ -195,8 +195,8 @@
 			// Trim the returning ID
 			var trimmed = data.replace(/^\s+|\s+$/g, '');
 			// Update the textarea field
-			var thetextarea = '&lt;iframe frameborder="0" src="http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=' + trimmed + '" scrolling="auto" width="100%" height="500"></iframe>';
-			var thetext = 'http://#cgi.http_host##cgi.script_name#?fa=c.w&wid=' + trimmed;
+			var thetextarea = '&lt;iframe frameborder="0" src="#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=' + trimmed + '" scrolling="auto" width="100%" height="500"></iframe>';
+			var thetext = '#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=' + trimmed;
 			$('##widget_textarea').html(thetextarea);
 			$('##widget_text').val(thetext);
 			$('##widget_link').attr('href',thetext);

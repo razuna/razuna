@@ -1900,7 +1900,7 @@
 		<cfelse>
 			<cfinvoke component="settings" method="savesetting" thefield="sched_backup" thevalue="#arguments.interval#" />
 			<!--- Get Server URL --->
-			<cfset serverUrl = "http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
+			<cfset serverUrl = "#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
 			<cfset startDate = LSDateFormat(now(), "mm/dd/yyyy")>
 			<cfset startTime = LSTimeFormat(now(), "HH:mm")>
 			<!--- Save scheduled event in CFML scheduling engine --->

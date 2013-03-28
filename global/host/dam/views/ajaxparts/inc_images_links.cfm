@@ -5,7 +5,7 @@
 		<!--- Preview --->
 		<strong>#myFusebox.getApplicationData().defaults.trans("preview")#</strong> (#ucase(qry_detail.detail.thumb_extension)#, #qry_detail.theprevsize# MB, #qry_detail.detail.thumbwidth#x#qry_detail.detail.thumbheight# pixel)<br /> 
 		<cfif qry_detail.detail.shared EQ "F">
-			<a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" target="_blank">
+			<a href="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" target="_blank">
 		<cfelse>
 			<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" target="_blank">
 		</cfif>
@@ -16,10 +16,10 @@
 		</cfif>
 		 | <a href="##" onclick="toggleslide('divp#attributes.file_id#','inputp#attributes.file_id#');return false;">Direct Link</a>
 		<div id="divp#attributes.file_id#" style="display:none;">
-			<input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" />
+			<input type="text" id="inputp#attributes.file_id#" style="width:100%;" value="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" />
 			<br />
 			<cfif application.razuna.storage EQ "local">
-				<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="http://#cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" />
+				<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/thumb_#attributes.file_id#.#qry_detail.detail.thumb_extension#" />
 			<cfelse>
 				<input type="text" id="inputp#attributes.file_id#d" style="width:100%;" value="#qry_detail.detail.cloud_url_org#" />
 			</cfif>
@@ -43,7 +43,7 @@
 				<cfif qry_detail.detail.shared EQ "F">
 					<strong>Original</strong> (#ucase(qry_detail.detail.img_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.orgwidth#x#qry_detail.detail.orgheight# pixel)
 					<br />
-					<a href="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" target="_blank">
+					<a href="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" target="_blank">
 				<cfelse>
 					<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.img_filename_org#">
 				</cfif>
@@ -59,9 +59,9 @@
 			</cfif>
 			 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
 			<div id="divo#attributes.file_id#" style="display:none;">
-				<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="http://#cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" />
+				<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o" />
 				<cfif application.razuna.storage EQ "local">
-					<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="http://#cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.img_filename_org#" />
+					<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.img_filename_org#" />
 				<cfelse>
 					<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#qry_detail.detail.cloud_url_org#" />
 				</cfif>

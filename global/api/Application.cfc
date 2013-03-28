@@ -31,7 +31,7 @@
 	<!--- Application Settings --->
 	<cffunction name="onApplicationStart" returnType="boolean" output="false">
 		
-		<cfset application.razuna.api.theurl = "http://" & cgi.http_host & "/assets/">
+		<cfset application.razuna.api.theurl = "#variables.thehttp#" & cgi.http_host & "/assets/">
 		<cfset application.razuna.api.thispath = ExpandPath(".")>
 		<!--- Dynamic path --->
 		<cfif listfirst(cgi.SCRIPT_NAME,"/") EQ "razuna">

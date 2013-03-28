@@ -30,7 +30,7 @@
 <title>Uploading from API</title>
 </head>
 <body>
-<form action="http://(yourip)/index.cfm" name="up" method="post" enctype="multipart/form-data">
+<form action="#variables.thehttp#(yourip)/index.cfm" name="up" method="post" enctype="multipart/form-data">
 <input type="hidden" name="fa" value="c.apiupload">
 <input type="hidden" name="sessiontoken" value="(sessiontoken)">
 <input type="hidden" name="destfolderid" value="(folderid)">

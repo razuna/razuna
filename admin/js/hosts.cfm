@@ -40,9 +40,9 @@
 			return false;
 			}
 		else {
-			//var inpath = '<cfoutput>#replace("#getcurrentURL()#", "http://", "", "ALL")#</cfoutput>/' + thefield + '/dam/incoming';
-			//var inbatchpath = '<cfoutput>#replace("#getcurrentURL()#", "http://", "", "ALL")#</cfoutput>/' + thefield + '/dam/incoming_batch';
-			//var outpath = '<cfoutput>#replace("#getcurrentURL()#", "http://", "", "ALL")#</cfoutput>/' + thefield + '/dam/outgoing';
+			//var inpath = '<cfoutput>#replace("#getcurrentURL()#", "#variables.thehttp#", "", "ALL")#</cfoutput>/' + thefield + '/dam/incoming';
+			//var inbatchpath = '<cfoutput>#replace("#getcurrentURL()#", "#variables.thehttp#", "", "ALL")#</cfoutput>/' + thefield + '/dam/incoming_batch';
+			//var outpath = '<cfoutput>#replace("#getcurrentURL()#", "#variables.thehttp#", "", "ALL")#</cfoutput>/' + thefield + '/dam/outgoing';
 			//var urlweb = '<cfoutput>#getcurrentURL()#</cfoutput>/' + thefield + '/web';
 			thefield = thefield.substring(0,4);
 			var dbprefix = thefield;

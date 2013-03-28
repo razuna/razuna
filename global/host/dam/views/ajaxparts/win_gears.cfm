@@ -29,7 +29,7 @@
 		<p>Razuna UpDrive is a technology based on <a href="http://code.google.com/apis/gears/" target="_blank">Gears</a>, which adds offline capabilities to your web browser.<br /><br />
 		After you install and enable the plugin most of Razuna's images, scripts, and CSS files will be stored locally on your computer. This speeds up page load time.<br /><br />
 		We advise you to not install this on a public or shared computer.<br /><br />
-		<input type="button" name="ginstall" onclick="window.location = 'http://gears.google.com/?action=install&return=http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#';" value="Install Now" class="button"></p>
+		<input type="button" name="ginstall" onclick="window.location = 'http://gears.google.com/?action=install&return=#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#';" value="Install Now" class="button"></p>
 	</div>
 	<div id="gears_store">
 		<h1>Razuna UpDrive</h1>

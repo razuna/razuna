@@ -12,11 +12,11 @@
 <!--- Work out where the scaffolding.xml file might be found. --->
 <cfparam name="url.scaffolding.filename" default="scaffolding.xml">
 <cfparam name="url.scaffolding.configFilePath" default="#baseDirectory##url.scaffolding.filename#">
-<cfset configFileURL = "http://#cgi.SERVER_NAME#:#cgi.SERVER_PORT##baseURL##getFileFromPath(url.scaffolding.configFilePath)#">
+<cfset configFileURL = "#variables.thehttp##cgi.SERVER_NAME#:#cgi.SERVER_PORT##baseURL##getFileFromPath(url.scaffolding.configFilePath)#">
 
 <!--- Work out the path for the call to the metadata cfc  --->
-<!--- <cfset metadataURL = "http://#cgi.SERVER_NAME#:#cgi.SERVER_PORT#/Scaffolder/scaffolder/xmlProxy.cfm"> --->
-<cfset metadataURL = "http://#cgi.SERVER_NAME#/Scaffolder/scaffolder/xmlProxy.cfm">
+<!--- <cfset metadataURL = "#variables.thehttp##cgi.SERVER_NAME#:#cgi.SERVER_PORT#/Scaffolder/scaffolder/xmlProxy.cfm"> --->
+<cfset metadataURL = "#variables.thehttp##cgi.SERVER_NAME#/Scaffolder/scaffolder/xmlProxy.cfm">
 
 <!--- Get a recordset of available datasources. --->
 <cfinvoke component="#thisCFCPath#scaffolder.Metadata" method="GetSupportedDatasourcesAsQuery" returnvariable="qDatasources" />

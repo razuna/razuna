@@ -53,7 +53,7 @@
 				<tr class="list">
 					<td>
 					Razuna keeps an internal template cache to speed things up. If you feel that there is an error or have been instructed by us to do so, you can re-built the cache with the button below.<br /><br />
-					<a href="http://#cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" target="_blank" style="text-decoration:none;"><input type="button" name="rebuiltcache" value="Flush template cache now" class="button" /></a>
+					<a href="#variables.thehttp##cgi.http_host##cgi.script_name#?fusebox.loadclean=true&fusebox.password=razfbreload&fusebox.parseall=true&_v=#createuuid('')#" target="_blank" style="text-decoration:none;"><input type="button" name="rebuiltcache" value="Flush template cache now" class="button" /></a>
 					<br /><br />
 					</td>
 				</tr>
