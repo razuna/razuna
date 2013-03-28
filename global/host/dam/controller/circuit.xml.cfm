@@ -6598,13 +6598,20 @@
 		<set name="attributes.view" value="" overwrite="false" />
 		<set name="attributes.sortby" value="#session.sortby#" overwrite="false" />
 		<set name="session.sortby" value="#attributes.sortby#" />
+		<set name="attributes.rowmaxpage" value="#session.rowmaxpage#" overwrite="false" />
+		<set name="session.rowmaxpage" value="#attributes.rowmaxpage#" />
+		<set name="attributes.offset" value="#session.offset#" overwrite="false" />
+		<set name="session.offset" value="#attributes.offset#" />
 		
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: get label text -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabeltext(attributes.label_id)" returnvariable="qry_labels_text" />
 		<!-- CFC: count how many label types there are -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_assets(attributes.label_id, attributes.label_kind)" returnvariable="qry_labels_assets" />
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_assets(attributes.label_id, attributes.label_kind,attributes.rowmaxpage,attributes.offset)" returnvariable="qry_labels_assets" />
+		
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_count(attributes.label_id)" returnvariable="qry_labels_count" />
+		
 		<!-- Show -->
 		<do action="ajax.labels_main_assets" />
 	</fuseaction>

@@ -447,8 +447,11 @@
 	<cffunction name="labels_assets" output="false" access="public">
 		<cfargument name="label_id" type="string" required="true">
 		<cfargument name="label_kind" type="string" required="true">
+		<cfargument name="rowmaxpage" type="string" required="false" default="25">
+		<cfargument name="offset" type="string" required="false" default="0">
 		<cfargument name="fromapi" required="false" default="false">
 		
+		<cfset var offset = session.offset * session.rowmaxpage>
 		
 		<!--- Set sortby variable --->
 		<cfset var sortby = session.sortby>
@@ -668,7 +671,7 @@
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = a.aud_id
 			AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
-			ORDER BY #sortby#
+			ORDER BY #sortby# LIMIT #offset#,#arguments.rowmaxpage# 
 			</cfquery>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
@@ -750,6 +753,7 @@
 			</cfquery>
 		</cfif>
 		<!--- Return --->
+			
 		<cfreturn qry />
 	</cffunction>
 	
