@@ -50,6 +50,13 @@
 <!--- Set this app --->
 <cfparam name="session.thisapp" default="admin">
 
+<!--- Set HTTP or HTTPS --->
+<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
+	<cfset variables.thehttp = "https://">
+<cfelse>
+	<cfset variables.thehttp = "http://">
+</cfif>
+
 <!--- Call the default components which we need on every page. To do this the FB way is quite cubersome --->
 <cfinvoke component="global.cfc.defaults" method="init" returnvariable="defaultsObj">
 	<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
