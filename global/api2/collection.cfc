@@ -81,11 +81,11 @@
 					WHERE isub.img_group = i.img_id
 				) as subassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
-					concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb,
+					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
+					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/','thumb_',i.img_id,'.',i.thumb_extension) AS local_url_thumb,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
-					'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + 'thumb_' + i.img_id + '.' + i.thumb_extension AS local_url_thumb,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + i.img_filename_org AS local_url_org,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + 'thumb_' + i.img_id + '.' + i.thumb_extension AS local_url_thumb,
 				</cfif>
 				CASE
 					WHEN (ct.col_file_format = 'original' OR ct.col_file_format = 'thumb') THEN i.img_id
@@ -94,15 +94,15 @@
 				CASE
 					WHEN (ct.col_file_format = 'original' OR ct.col_file_format = 'thumb') THEN 
 						<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-							concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org)
+							concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org)
 						<cfelseif application.razuna.api.thedatabase EQ "mssql">
-							'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + i.img_filename_org
+							'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + i.path_to_asset + '/' + i.img_filename_org
 						</cfif>
 					ELSE 
 						<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-							concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',(SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#images WHERE img_id = ct.col_file_format),'/',(SELECT img_filename_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#images WHERE img_id = ct.col_file_format))
+							concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',(SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#images WHERE img_id = ct.col_file_format),'/',(SELECT img_filename_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#images WHERE img_id = ct.col_file_format))
 						<cfelseif application.razuna.api.thedatabase EQ "mssql">
-							'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + (SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#images WHERE img_id = ct.col_file_format) + '/' + (SELECT img_filename_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#images WHERE img_id = ct.col_file_format)
+							'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + (SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#images WHERE img_id = ct.col_file_format) + '/' + (SELECT img_filename_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#images WHERE img_id = ct.col_file_format)
 						</cfif>
 				END as rendition_url,
 				x.colorspace,
@@ -148,11 +148,11 @@
 					WHERE vsub.vid_group = v.vid_id
 				) as subassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
-					concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
+					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
+					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_image) AS local_url_thumb,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
-					'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_org AS local_url_org,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_image AS local_url_thumb,
 				</cfif>
 				CASE
 					WHEN (ct.col_file_format = 'video') THEN v.vid_id
@@ -161,15 +161,15 @@
 				CASE
 					WHEN (ct.col_file_format = 'video') THEN 
 						<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-							concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org)
+							concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org)
 						<cfelseif application.razuna.api.thedatabase EQ "mssql">
-							'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_org
+							'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + v.path_to_asset + '/' + v.vid_name_org
 						</cfif>
 					ELSE 
 						<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-							concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',(SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos WHERE vid_id = ct.col_file_format),'/',(SELECT vid_name_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos WHERE vid_id = ct.col_file_format))
+							concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',(SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos WHERE vid_id = ct.col_file_format),'/',(SELECT vid_name_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos WHERE vid_id = ct.col_file_format))
 						<cfelseif application.razuna.api.thedatabase EQ "mssql">
-							'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + (SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos WHERE vid_id = ct.col_file_format) + '/' + (SELECT vid_name_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos WHERE vid_id = ct.col_file_format)
+							'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + (SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos WHERE vid_id = ct.col_file_format) + '/' + (SELECT vid_name_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos WHERE vid_id = ct.col_file_format)
 						</cfif>
 				END as rendition_url,
 				'' AS colorspace,
@@ -215,9 +215,9 @@
 					WHERE asub.aud_group = a.aud_id
 				) as subassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
+					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + a.path_to_asset + '/' + a.aud_name_org AS local_url_org,
 				</cfif>
 				'0' as local_url_thumb,
 				CASE
@@ -227,13 +227,13 @@
 				CASE
 					WHEN (ct.col_file_format = '' OR ct.col_file_format = 'audio') THEN 
 						<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-							concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org)
+							concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org)
 						</cfif>
 					ELSE 
 						<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-							concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',(SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios WHERE aud_id = ct.col_file_format),'/',(SELECT aud_name_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios WHERE aud_id = ct.col_file_format))
+							concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',(SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios WHERE aud_id = ct.col_file_format),'/',(SELECT aud_name_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios WHERE aud_id = ct.col_file_format))
 						<cfelseif application.razuna.api.thedatabase EQ "mssql">
-							'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + (SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios WHERE aud_id = ct.col_file_format) + '/' + (SELECT aud_name_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios WHERE aud_id = ct.col_file_format)
+							'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + (SELECT path_to_asset FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios WHERE aud_id = ct.col_file_format) + '/' + (SELECT aud_name_org FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios WHERE aud_id = ct.col_file_format)
 						</cfif>
 				END as rendition_url,
 				'' AS colorspace,
@@ -270,9 +270,9 @@
 				f.file_change_time datechange,
 				'false' as subassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
-					concat('#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
+					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',f.path_to_asset,'/',f.file_name_org) AS local_url_org,
 				<cfelseif application.razuna.api.thedatabase EQ "mssql">
-					'#variables.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + f.path_to_asset + '/' + f.file_name_org AS local_url_org,
+					'#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/' + f.path_to_asset + '/' + f.file_name_org AS local_url_org,
 				</cfif>
 				'0' as local_url_thumb,
 				'0' as rendition_id,
@@ -425,6 +425,4 @@
 		<!--- Return --->
 		<cfreturn thexml />
 	</cffunction>
-
-
 </cfcomponent>

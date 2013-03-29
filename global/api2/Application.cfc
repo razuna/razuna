@@ -30,15 +30,25 @@
 
 	<!--- Application Settings --->
 	<cffunction name="onApplicationStart" returnType="boolean" output="false">
+		
+		<!--- Set HTTP or HTTPS --->
+		<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
+			<cfset application.razuna.api.thehttp = "https://">
+		<cfelse>
+			<cfset application.razuna.api.thehttp = "http://">
+		</cfif>
+		
 		<!--- Application vars --->
-		<cfset application.razuna.api.theurl = "#variables.thehttp#" & cgi.http_host & "/assets/">
+		<cfset application.razuna.api.theurl = "#application.razuna.api.thehttp#" & cgi.http_host & "/assets/">
 		<cfset application.razuna.api.thispath = ExpandPath(".")>
+		
 		<!--- Dynamic path --->
 		<cfif listfirst(cgi.SCRIPT_NAME,"/") EQ "razuna">
 			<cfset application.razuna.api.dynpath = "/razuna">
 		<cfelse>
 			<cfset application.razuna.api.dynpath = "">
 		</cfif>
+		
 		<!--- Get config values --->
 		<cfinvoke component="global.cfc.settings" method="getconfigdefaultapi" />
 		<!--- Return --->
@@ -69,6 +79,4 @@
 		    <cfoutput>#serializejson(x)#</cfoutput>
 	    </cfif>
 	</cffunction>
-
-
 </cfcomponent>

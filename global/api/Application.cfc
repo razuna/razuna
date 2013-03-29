@@ -31,8 +31,16 @@
 	<!--- Application Settings --->
 	<cffunction name="onApplicationStart" returnType="boolean" output="false">
 		
-		<cfset application.razuna.api.theurl = "#variables.thehttp#" & cgi.http_host & "/assets/">
+		<!--- Set HTTP or HTTPS --->
+		<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
+			<cfset application.razuna.api.thehttp = "https://">
+		<cfelse>
+			<cfset application.razuna.api.thehttp = "http://">
+		</cfif>
+		
+		<cfset application.razuna.api.theurl = "#application.razuna.api.thehttp#" & cgi.http_host & "/assets/">
 		<cfset application.razuna.api.thispath = ExpandPath(".")>
+		
 		<!--- Dynamic path --->
 		<cfif listfirst(cgi.SCRIPT_NAME,"/") EQ "razuna">
 			<cfset application.razuna.api.dynpath = "/razuna">
@@ -74,8 +82,5 @@
 	            <cfdump var="#Arguments.Exception.rootcause#"></p>
 	        </cfoutput> --->
 	    </cfif>
-	    
 	</cffunction>
-
-
 </cfcomponent>
