@@ -7,7 +7,7 @@
 	<fuseaction name="cachetag">
 		<set name="attributes.cachetag" value="2013.03.26.1" />
 	</fuseaction>
-
+	
 	<!--
 		Default fuseaction for application, uses model and view circuits
 		to do all of its work:

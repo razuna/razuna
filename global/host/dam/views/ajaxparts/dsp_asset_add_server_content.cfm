@@ -114,7 +114,7 @@
 		   	success: function(){
 		   		setTimeout(function() {
 			    	calledwithdelayserver();
-				}, 1250)
+				}, 3000)
 		   	}
 		});
 		return false;

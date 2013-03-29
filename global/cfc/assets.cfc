@@ -33,6 +33,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.file_id" default="0">
+	<cfparam name="arguments.thestruct.skip_event" default="">
 	<!--- Change tempid a bit --->
 	<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
 	<!--- Create a unique name for the temp directory to hold the file --->
@@ -106,9 +107,13 @@
 <cffunction name="addassetserver" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Thread --->
-	<cfthread intstruct="#arguments.thestruct#">
+	<cfinvoke method="addassetserverthread" thestruct="#arguments.thestruct#" />
+	<!--- <cfset var tt = createUUID()>
+	<cfthread name="#tt#" intstruct="#arguments.thestruct#">
 		<cfinvoke method="addassetserverthread" thestruct="#attributes.intstruct#" />
 	</cfthread>
+	<!--- Wait --->
+	<cfthread name="#tt#" action="join" /> --->
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -118,6 +123,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfparam name="session.currentupload" default="0">
+	<cfparam name="arguments.thestruct.skip_event" default="">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
 		<cfset var md5hash = "">
@@ -196,6 +202,8 @@
 			</cfquery>
 			<!--- We don't need to send an email --->
 			<cfset arguments.thestruct.sendemail = false>
+			<!--- Call the on_pre_process workflow --->
+			<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 			<!--- Create inserts --->
 			<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 			<!--- Call the addasset function --->
@@ -213,6 +221,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfparam name="session.currentupload" default="0">
+	<cfparam name="arguments.thestruct.skip_event" default="">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.emailid#" index="i">
 		<!--- Retrieve the message --->
@@ -282,6 +291,8 @@
 							</cfquery>
 							<!--- We don't need to send an email --->
 							<cfset arguments.thestruct.sendemail = false>
+							<!--- Call the on_pre_process workflow --->
+							<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 							<!--- Create inserts --->
 							<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 							<!--- Call the addasset function --->
@@ -324,6 +335,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfparam name="session.currentupload" default="0">
+	<cfparam name="arguments.thestruct.skip_event" default="">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i">
 		<cftry>
@@ -407,6 +419,8 @@
 				</cfquery>
 				<!--- We don't need to send an email --->
 				<cfset arguments.thestruct.sendemail = false>
+				<!--- Call the on_pre_process workflow --->
+				<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 				<!--- Create inserts --->
 				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 				<!--- Call the addasset function --->
@@ -435,8 +449,10 @@
 	<cfparam name="arguments.thestruct.metadata" default="0">
 	<cfparam name="arguments.thestruct.av" default="0">
 	<cfparam name="arguments.thestruct.dam" default="false">
-	<cfset var md5hash = "">
 	<cfparam name="session.currentupload" default="0">
+	<cfparam name="arguments.thestruct.skip_event" default="">
+	<cfset var md5hash = "">
+	<cfset arguments.thestruct.thejsonbody = "">
 	<!--- Put HTTP referer into var --->
 	<cfset arguments.thestruct.comingfrom = cgi.http_referer>
 	<!--- If developer wants to debug  --->
@@ -588,7 +604,7 @@
 				<!--- If the extension is longer then 9 chars --->
 				<cfif len(thefile.serverFileExt) GT 9>
 					<cfset thefile.serverFileExt = "txt">
-				</cfif>	
+				</cfif>
 			</cfif>
 			<!--- Rename the file so that we can remove any spaces --->
 			<cfinvoke component="global.cfc.global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#thefile.serverFile#">
@@ -606,11 +622,14 @@
 			<cfelse>
 				<cfset var md5here = 0>
 			</cfif>
+
 			<!--- If file does not exsist continue else send user an eMail --->
 			<cfif md5here EQ 0>
 				<!--- If we only have the folder_id as variable --->
 				<cfif structkeyexists(arguments.thestruct,"folder_id")>
 					<cfset arguments.thestruct.destfolderid = arguments.thestruct.folder_id>
+				<cfelseif !structkeyexists(arguments.thestruct,"folder_id")>
+					<cfset arguments.thestruct.folder_id = arguments.thestruct.destfolderid>
 				</cfif>
 				<!--- Add to temp db --->
 				<cftransaction>
@@ -639,6 +658,8 @@
 				<cfset arguments.thestruct.sendemail = false>
 				<!--- Add the original file name in a session since it is stored as lower case in the temp DB --->
 				<cfset arguments.thestruct.theoriginalfilename = thefile.serverFile>
+				<!--- Call the on_pre_process workflow --->
+				<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 				<!--- Create inserts --->
 				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 				<!--- Call the addasset function --->
@@ -664,7 +685,8 @@
 <message>success</message>
 <assetid>#xmlformat(arguments.thestruct.tempid)#</assetid>
 <filetype>#xmlformat(thefiletype)#</filetype>
-<comingfrom>#xmlFormat(arguments.thestruct.comingfrom)#</comingfrom>
+<comingfrom><![CDATA[#arguments.thestruct.comingfrom#]]></comingfrom>
+<renamefilebody><![CDATA[#arguments.thestruct.thejsonbody#]]></renamefilebody>
 </Response></cfoutput>
 				</cfsavecontent>
 				<!--- When the redirect param is here then --->
@@ -903,6 +925,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfparam default="" name="arguments.thestruct.link_file_name">
+	<cfparam name="arguments.thestruct.skip_event" default="">
 	<!--- If variables do not exist --->
 	<cfif NOT structkeyexists(variables,"dsn")>
 		<cfset variables.dsn = arguments.thestruct.dsn>
@@ -1012,6 +1035,7 @@
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.sendemail" default="true">
 	<cfparam name="arguments.thestruct.tempid" default="0">
+	<cfparam name="arguments.thestruct.skip_event" default="">
 	<cfset arguments.thestruct.qryfile = 0>
 	<!--- Query the file to get filename and other stuff. This qry is also used within adding assets --->
 	<cfif arguments.thestruct.tempid NEQ 0>
@@ -5325,5 +5349,33 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
+
+<!--- Run Workflow --->
+<cffunction name="run_workflow" output="true" access="public">
+	<cfargument name="thestruct" type="struct">
+	<cfargument name="workflow_event" type="string">
+	<!--- Check if we need to skip the on_pre_process event --->
+	<cfif listFind(arguments.thestruct.skip_event, arguments.workflow_event) EQ 0>
+		<!--- Call the on_pre_process workflow --->
+		<cfset arguments.thestruct.folder_action = true>
+		<!--- Check on any plugin that call the on_pre_process action --->
+		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow_event#" args="#arguments.thestruct#" returnvariable="return_pre_process" />
+		<!--- Evaluate the return from the plugin call above --->
+		<cfif structKeyExists(return_pre_process,"pcfc")>
+			<cfloop list="#return_pre_process.pcfc#" delimiters="," index="i">
+				<cfset var er = evaluate("return_pre_process." & i & ".rename_file_return")>
+				<cfset arguments.thestruct.thejsonbody = er.jsonbody>
+				<cfif er.thefilename NEQ "">
+					<cfset arguments.thestruct.thefilename = er.thefilename>
+				</cfif>
+				<cfif er.thefilenamenoext NEQ "">
+					<cfset arguments.thestruct.theoriginalfilename = er.thefilenamenoext>
+				</cfif>
+			</cfloop>
+		</cfif>
+	</cfif>
+	<!--- Return --->
+	<cfreturn />
+</Cffunction>
 
 </cfcomponent>

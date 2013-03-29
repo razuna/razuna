@@ -320,7 +320,7 @@
 				<cfset result.pview = result.pview & "," & "#arguments.args.nameOfVariable#.view.#arguments.args.nameOfVariable#.#func#">
 			</cfif>
 			<!--- Put cfc path into list for easier retrieval --->
-			<cfset result.pcfc = result.pcfc & "," & "#arguments.args.nameOfVariable#.cfc.#arguments.args.nameOfVariable#.#func#">
+			<cfset result.pcfc = result.pcfc & "," & "cfc.#arguments.args.nameOfVariable#.#func#">
 		</cfloop>
 		<!--- Return --->
 		<cfreturn result />
