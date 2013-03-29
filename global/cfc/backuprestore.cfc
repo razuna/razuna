@@ -59,10 +59,8 @@
 		<cfflush>
 		<!--- Loop over the prefixes and create tables --->
 		<cfloop query="qryhost">
-			<!--- Create tables --->
-			<cfset arguments.thestruct.host_db_prefix = host_shard_group>
+			<!--- Create backup tables --->
 			<cfinvoke component="db_backup" method="setup" thestruct="#arguments.thestruct#" />
-			<cfinvoke component="db_backup" method="create_tables" thestruct="#arguments.thestruct#" />
 		</cfloop>
 		<!--- Insert creation date into status db --->
 		<cfquery datasource="#arguments.thestruct.dsn#">
