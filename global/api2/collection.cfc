@@ -391,10 +391,11 @@
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry">
 			SELECT DISTINCT c.folder_id_r
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections c
-			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r
 			WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+			AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			<cfif arguments.id NEQ "">
-				AND c.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
+				AND c.col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
 			</cfif>
 			<cfif arguments.name NEQ "">
 				AND lower(ct.col_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="%#lcase(arguments.name)#%">
