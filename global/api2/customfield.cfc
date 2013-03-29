@@ -141,29 +141,34 @@
 				SET 
 				img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 				img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
-				WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+				WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update #application.razuna.api.prefix["#arguments.api_key#"]#videos
 				SET 
 				vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 				vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
-				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update #application.razuna.api.prefix["#arguments.api_key#"]#audios
 				SET 
 				aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 				aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
-				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update #application.razuna.api.prefix["#arguments.api_key#"]#files
 				SET 
 				file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 				file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
-				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
+				<!--- Initiate the index --->
+				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="img">
+				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="vid">
+				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="aud">
+				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="doc">
 			</cfloop>
 			<!--- Reset cache --->
 			<cfset resetcachetoken(arguments.api_key,"images")>
