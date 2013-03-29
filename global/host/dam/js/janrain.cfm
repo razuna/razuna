@@ -6,7 +6,7 @@
     if (typeof window.janrain !== 'object') window.janrain = {};
     if (typeof window.janrain.settings !== 'object') window.janrain.settings = {};
     
-    janrain.settings.tokenUrl = 'http://<cfoutput>#cgi.http_host##cgi.script_name#?fa=c.login_janrain&shared=#attributes.shared#&fid=#attributes.fid#&wid=#attributes.wid#</cfoutput>';
+    janrain.settings.tokenUrl = '<cfoutput>#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.login_janrain&shared=#attributes.shared#&fid=#attributes.fid#&wid=#attributes.wid#</cfoutput>';
 
 	janrain.settings.appUrl = '<cfoutput>#jr_url#</cfoutput>';
 

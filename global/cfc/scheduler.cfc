@@ -115,7 +115,7 @@
 		 <cfif schedData.endTime is not "">, <cfqueryparam value="#schedData.endTime#" cfsqltype="cf_sql_timestamp"></cfif> )
 		</cfquery>
 		<!--- Get Server URL --->
-		<cfset serverUrl = "http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
+		<cfset serverUrl = "#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
 		<!--- Save scheduled event in CFML scheduling engine --->
 		<cfschedule action="update"
 					task="RazScheduledUploadEvent[#newschid#]" 
@@ -372,7 +372,7 @@
 		WHERE sched_id = <cfqueryparam value="#schedData.sched_id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<cfset serverUrl = "http://#cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
+		<cfset serverUrl = "#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#">
 		<!--- Update scheduled event in CF scheduling engine --->
 		<cfschedule action="update"
 			task="RazScheduledUploadEvent[#schedData.sched_id#]" 

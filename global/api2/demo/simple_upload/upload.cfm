@@ -30,7 +30,7 @@
 <title>Uploading with the API</title>
 </head>
 <body>
-<form action="http://(yourip):8080/raz1/dam/index.cfm" name="up" method="post" enctype="multipart/form-data">
+<form action="#application.razuna.api.thehttp#(yourip):8080/raz1/dam/index.cfm" name="up" method="post" enctype="multipart/form-data">
 <input type="hidden" name="fa" value="c.apiupload">
 <input type="hidden" name="api_key" value="(put your apikey here)">
 <input type="hidden" name="destfolderid" value="(put the folderid here)">

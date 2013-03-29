@@ -75,7 +75,7 @@
 			<cfif attributes.v EQ "o">
 				<cfset theurl = "#attributes.akaurl##akatype#/#qry_binary.qfile.filenameorg#">
 			<cfelse>
-				<cfset theurl = "http://#cgi.http_host#/assets/#session.hostid#/#qry_binary.qfile.path_to_asset#/thumb_#qry_binary.qfile.img_id#.#qry_binary.qfile.thumb_extension#">
+				<cfset theurl = "#variables.thehttp##cgi.http_host#/assets/#session.hostid#/#qry_binary.qfile.path_to_asset#/thumb_#qry_binary.qfile.img_id#.#qry_binary.qfile.thumb_extension#">
 			</cfif>
 			<!--- Get file --->
 			<cfhttp url="#theurl#" getasbinary="yes" />
