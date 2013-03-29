@@ -310,6 +310,15 @@
 		<cfargument name="thestruct" type="struct">
 		<!--- Get file detail for log --->
 		<cfinvoke method="filedetail" theid="#arguments.thestruct.id#" thecolumn="file_name, folder_id_r, file_name_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+		<cfset arguments.thestruct.file_name = thedetail.file_name>
+		<cfset arguments.thestruct.thefiletype = "doc">
+		<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
 			<cfinvokeargument name="theuserid" value="#session.theuserid#">
@@ -361,15 +370,6 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
-		<!--- Execute workflow --->
-		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
-		<cfset arguments.thestruct.file_name = thedetail.file_name>
-		<cfset arguments.thestruct.thefiletype = "doc">
-		<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-		<cfset arguments.thestruct.folder_action = false>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-		<cfset arguments.thestruct.folder_action = true>
-		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
@@ -396,6 +396,17 @@
 			WHERE file_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
+			<!--- Execute workflow --->
+			<cfif !arguments.thestruct.fromfolderremove>
+				<cfset arguments.thestruct.fileid = i>
+				<cfset arguments.thestruct.file_name = thedetail.file_name>
+				<cfset arguments.thestruct.thefiletype = "doc">
+				<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+				<cfset arguments.thestruct.folder_action = false>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+				<cfset arguments.thestruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			</cfif>
 			<!--- Log --->
 			<cfinvoke component="extQueryCaching" method="log_assets">
 				<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
@@ -449,17 +460,6 @@
 			<cfthread intstruct="#arguments.thestruct#">
 				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 			</cfthread>
-			<!--- Execute workflow --->
-			<cfif !arguments.thestruct.fromfolderremove>
-				<cfset arguments.thestruct.fileid = i>
-				<cfset arguments.thestruct.file_name = thedetail.file_name>
-				<cfset arguments.thestruct.thefiletype = "doc">
-				<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-				<cfset arguments.thestruct.folder_action = false>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-				<cfset arguments.thestruct.folder_action = true>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>

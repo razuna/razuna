@@ -559,6 +559,15 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Get file detail for log --->
 	<cfinvoke method="getdetails" vid_id="#arguments.thestruct.id#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, v.lucene_key, v.link_kind, v.link_path_url, v.path_to_asset, v.vid_group" returnvariable="thedetail">
+	<!--- Execute workflow --->
+	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+	<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+	<cfset arguments.thestruct.thefiletype = "vid">
+	<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+	<cfset arguments.thestruct.folder_action = false>
+	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+	<cfset arguments.thestruct.folder_action = true>
+	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<!--- Update main record with dates --->
 	<cfinvoke component="global" method="update_dates" type="vid" fileid="#thedetail.vid_group#" />
 	<!--- Log --->
@@ -615,15 +624,6 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
-	<!--- Execute workflow --->
-	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
-	<cfset arguments.thestruct.file_name = thedetail.vid_filename>
-	<cfset arguments.thestruct.thefiletype = "vid">
-	<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-	<cfset arguments.thestruct.folder_action = false>
-	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-	<cfset arguments.thestruct.folder_action = true>
-	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<cfreturn />
 </cffunction>
 
@@ -640,6 +640,17 @@
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
 		<cfinvoke method="getdetails" vid_id="#i#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
+		<!--- Execute workflow --->
+		<cfif !arguments.thestruct.fromfolderremove>
+			<cfset arguments.thestruct.fileid = i>
+			<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+			<cfset arguments.thestruct.thefiletype = "vid">
+			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+			<cfset arguments.thestruct.folder_action = false>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			<cfset arguments.thestruct.folder_action = true>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		</cfif>
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
 			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
@@ -693,17 +704,6 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
-		<!--- Execute workflow --->
-		<cfif !arguments.thestruct.fromfolderremove>
-			<cfset arguments.thestruct.fileid = i>
-			<cfset arguments.thestruct.file_name = thedetail.vid_filename>
-			<cfset arguments.thestruct.thefiletype = "vid">
-			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-			<cfset arguments.thestruct.folder_action = false>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-			<cfset arguments.thestruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>

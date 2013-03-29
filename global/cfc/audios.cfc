@@ -429,6 +429,15 @@
 	WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Execute workflow --->
+	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+	<cfset arguments.thestruct.file_name = details.aud_name>
+	<cfset arguments.thestruct.thefiletype = "aud">
+	<cfset arguments.thestruct.folder_id = details.folder_id_r>
+	<cfset arguments.thestruct.folder_action = false>
+	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+	<cfset arguments.thestruct.folder_action = true>
+	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<!--- Update main record with dates --->
 	<cfinvoke component="global" method="update_dates" type="aud" fileid="#details.aud_group#" />
 	<!--- Log --->
@@ -482,15 +491,6 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
-	<!--- Execute workflow --->
-	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
-	<cfset arguments.thestruct.file_name = details.aud_name>
-	<cfset arguments.thestruct.thefiletype = "aud">
-	<cfset arguments.thestruct.folder_id = details.folder_id_r>
-	<cfset arguments.thestruct.folder_action = false>
-	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-	<cfset arguments.thestruct.folder_action = true>
-	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
 	<cfset resetcachetoken("folders")>
@@ -516,6 +516,17 @@
 		WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 		</cfquery>
+		<!--- Execute workflow --->
+		<cfif !arguments.thestruct.fromfolderremove>
+			<cfset arguments.thestruct.fileid = i>
+			<cfset arguments.thestruct.file_name = thedetail.aud_name>
+			<cfset arguments.thestruct.thefiletype = "aud">
+			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+			<cfset arguments.thestruct.folder_action = false>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			<cfset arguments.thestruct.folder_action = true>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		</cfif>
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
 			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
@@ -569,17 +580,6 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
-		<!--- Execute workflow --->
-		<cfif !arguments.thestruct.fromfolderremove>
-			<cfset arguments.thestruct.fileid = i>
-			<cfset arguments.thestruct.file_name = thedetail.aud_name>
-			<cfset arguments.thestruct.thefiletype = "aud">
-			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-			<cfset arguments.thestruct.folder_action = false>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-			<cfset arguments.thestruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>

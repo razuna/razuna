@@ -261,6 +261,15 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<!--- Get file detail for log --->
 			<cfinvoke method="filedetail" theid="#attributes.intstruct.id#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset, thumb_extension, img_group" returnvariable="thedetail">
+			<!--- Execute workflow --->
+			<cfset attributes.intstruct.fileid = attributes.intstruct.id>
+			<cfset attributes.intstruct.file_name = thedetail.img_filename>
+			<cfset attributes.intstruct.thefiletype = "img">
+			<cfset attributes.intstruct.folder_id = thedetail.folder_id_r>
+			<cfset attributes.intstruct.folder_action = false>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
+			<cfset attributes.intstruct.folder_action = true>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
 			<!--- Update main record with dates --->
 			<cfinvoke component="global" method="update_dates" type="img" fileid="#thedetail.img_group#" />
 			<!--- Delete from files DB (including referenced data) --->
@@ -312,15 +321,6 @@
 			<cfset attributes.intstruct.link_kind = thedetail.link_kind>
 			<cfset attributes.intstruct.filenameorg = thedetail.filenameorg>
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
-			<!--- Execute workflow --->
-			<cfset attributes.intstruct.fileid = attributes.intstruct.id>
-			<cfset attributes.intstruct.file_name = thedetail.img_filename>
-			<cfset attributes.intstruct.thefiletype = "img">
-			<cfset attributes.intstruct.folder_id = thedetail.folder_id_r>
-			<cfset attributes.intstruct.folder_action = false>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
-			<cfset attributes.intstruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
 		</cfthread>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("images")>
@@ -342,6 +342,17 @@
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
 		<cfinvoke method="filedetail" theid="#i#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset, thumb_extension" returnvariable="thedetail">
+		<!--- Execute workflow (but only if we DO NOT come from the remove folder) --->
+		<cfif !arguments.thestruct.fromfolderremove>
+			<cfset arguments.thestruct.fileid = i>
+			<cfset arguments.thestruct.file_name = thedetail.img_filename>
+			<cfset arguments.thestruct.thefiletype = "img">
+			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+			<cfset arguments.thestruct.folder_action = false>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			<cfset arguments.thestruct.folder_action = true>
+			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		</cfif>
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
 			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
@@ -395,17 +406,6 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
-		<!--- Execute workflow (but only if we DO NOT come from the remove folder) --->
-		<cfif !arguments.thestruct.fromfolderremove>
-			<cfset arguments.thestruct.fileid = i>
-			<cfset arguments.thestruct.file_name = thedetail.img_filename>
-			<cfset arguments.thestruct.thefiletype = "img">
-			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-			<cfset arguments.thestruct.folder_action = false>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-			<cfset arguments.thestruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-		</cfif>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("images")>
