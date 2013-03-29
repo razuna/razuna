@@ -207,7 +207,7 @@
 		<!--- Call --->
 		<cftry>
 			<!--- GetStorageNodeExtended --->
-			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="post" throwonerror="no" timeout="30">
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNodeExtended.ashx" method="get" throwonerror="no" timeout="30">
 				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 				<cfhttpparam name="fileOverwrite" value="true" type="url">
@@ -215,7 +215,7 @@
 				<!--- <cfhttpparam name="excludedNode" value="node4" type="url"> --->
 			</cfhttp>
 			<!--- GetStorageNode --->
-			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="post" throwonerror="no" timeout="60">
+			<!--- <cfhttp url="http://services.nirvanix.com/ws/IMFS/GetStorageNode.ashx" method="get" throwonerror="no" timeout="60">
 				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="sizeBytes" value="50000" type="url">
 			</cfhttp> --->
@@ -297,7 +297,7 @@
 		<cfargument name="nvxsession" type="string" required="false">
 		<cftry>
 			<!--- Call --->
-			<cfhttp url="http://services.nirvanix.com/ws/IMFS/RenameFolder.ashx" method="post" throwonerror="no" timeout="30">
+			<cfhttp url="http://services.nirvanix.com/ws/IMFS/RenameFolder.ashx" method="get" throwonerror="no" timeout="30">
 				<cfhttpparam name="sessionToken" value="#session.nvxsession#" type="url">
 				<cfhttpparam name="folderPath" value="#arguments.folderpath#" type="url">
 				<cfhttpparam name="newFolderName" value="#arguments.newFolderName#" type="url">
