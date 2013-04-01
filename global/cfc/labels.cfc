@@ -412,7 +412,7 @@
 		<cfargument name="label_id" type="string">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT  /* #variables.cachetoken#labels_count */
+		SELECT /* #variables.cachetoken#labels_count */
 			(
 				SELECT count(ct_label_id)
 				FROM ct_labels
@@ -450,7 +450,13 @@
 		<cfargument name="rowmaxpage" type="string" required="false" default="25">
 		<cfargument name="offset" type="string" required="false" default="0">
 		<cfargument name="fromapi" required="false" default="false">
+		<cfargument name="labels_count" required="false" default="#QueryNew("count_assets,count_comments,count_folders,count_collections")#" type="query">
 		
+		<!--- Reset the offset if there are no more files in this folder the rowmaxpage --->
+		<cfif arguments.labels_count.count_assets LTE session.rowmaxpage>
+			<cfset session.offset = 0>
+		</cfif>
+
 		<cfset var offset = session.offset * session.rowmaxpage>
 		<cfif session.offset EQ 0>
 			<cfset var min = 0>

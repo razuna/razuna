@@ -6608,10 +6608,15 @@
 		<!-- CFC: get label text -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabeltext(attributes.label_id)" returnvariable="qry_labels_text" />
 		<!-- CFC: count how many label types there are -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_assets(attributes.label_id, attributes.label_kind,attributes.rowmaxpage,attributes.offset)" returnvariable="qry_labels_assets" />
-		
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_count(attributes.label_id)" returnvariable="qry_labels_count" />
-		
+		<!-- Get the assets -->
+		<invoke object="myFusebox.getApplicationData().labels" method="labels_assets" returnvariable="qry_labels_assets">
+			<argument name="label_id" value="#attributes.label_id#" />
+			<argument name="label_kind" value="#attributes.label_kind#" />
+			<argument name="rowmaxpage" value="#attributes.rowmaxpage#" />
+			<argument name="offset" value="#attributes.offset#" />
+			<argument name="labels_count" value="#qry_labels_count#" />
+		</invoke>
 		<!-- Show -->
 		<do action="ajax.labels_main_assets" />
 	</fuseaction>
@@ -6620,7 +6625,10 @@
 		<!-- CFC: get label text -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabeltext(attributes.label_id)" returnvariable="qry_labels_text" />
 		<!-- CFC: count how many label types there are -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_assets(attributes.label_id, attributes.label_kind)" returnvariable="qry_labels_folders" />
+		<invoke object="myFusebox.getApplicationData().labels" method="labels_assets" returnvariable="qry_labels_folders">
+			<argument name="label_id" value="#attributes.label_id#" />
+			<argument name="label_kind" value="#attributes.label_kind#" />
+		</invoke>
 		<!-- Show -->
 		<do action="ajax.labels_main_folders" />
 	</fuseaction>
@@ -6629,7 +6637,10 @@
 		<!-- CFC: get label text -->
 		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabeltext(attributes.label_id)" returnvariable="qry_labels_text" />
 		<!-- CFC: count how many label types there are -->
-		<invoke object="myFusebox.getApplicationData().labels" methodcall="labels_assets(attributes.label_id, attributes.label_kind)" returnvariable="qry_labels_collections" />
+		<invoke object="myFusebox.getApplicationData().labels" method="labels_assets" returnvariable="qry_labels_collections">
+			<argument name="label_id" value="#attributes.label_id#" />
+			<argument name="label_kind" value="#attributes.label_kind#" />
+		</invoke>
 		<!-- Show -->
 		<do action="ajax.labels_main_collections" />
 	</fuseaction>
