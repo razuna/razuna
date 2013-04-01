@@ -30,6 +30,13 @@
 			<th>#myFusebox.getApplicationData().defaults.trans("label")#: #qry_labels_text#</th>
 		</tr>
 		<tr>
+			<td colspan="6" style="border:0px;">
+				<cfset thetype = "all">
+				<cfset thediv = "lab_content">
+				<cfinclude template="dsp_label_pagination.cfm">
+			</td>
+		</tr>
+		<tr>
 			<td style="border:0px;">
 				<cfloop query="qry_labels_assets">
 					<!--- Images --->
@@ -237,6 +244,9 @@
 					</cfif>
 				</cfloop>
 			</td>
+		</tr>
+		<tr>
+			<td colspan="6" style="border:0px;"><cfinclude template="dsp_label_pagination.cfm"></td>
 		</tr>
 	</table>
 </cfoutput>
