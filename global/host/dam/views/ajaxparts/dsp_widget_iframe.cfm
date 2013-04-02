@@ -105,7 +105,11 @@
 						<div class="assetbox" style="text-align:center;">
 							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&jsessionid=#session.SessionID#">
 								<div class="theimg">
-									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+									<cfif directoryexists("#ExpandPath("../..")#global/host/floderthumbnail/#session.hostid#") and directoryexists("#ExpandPath("../..")#global/host/floderthumbnail/#session.hostid#") and fileExists('#ExpandPath("../..")#/global/host/floderthumbnail/#session.hostid#/#qry_subfolders.folder_id#.jpg')>
+										<img src="#dynpath#/global/host/floderthumbnail/#session.hostid#/#qry_subfolders.folder_id#.jpg" border="0"><br />
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+									</cfif>
 								</div>
 							<strong>#folder_name#</strong></a>
 						</div>

@@ -28,6 +28,7 @@
 	<!--- If no record is in this folder --->
 	<cfif qry_files.recordcount EQ 0>
 		<form id="#kind#form"></form>
+		<cfdump var="#qry_breadcrumb#">
 		<div style="float:left;">
 			<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 		</div>
@@ -60,7 +61,11 @@
 						<div class="assetbox" style="text-align:center;">
 							<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
 								<div class="theimg">
-									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+									<cfif directoryexists("#ExpandPath("../..")#global/host/floderthumbnail/#session.hostid#") and  fileExists('#ExpandPath("../..")#/global/host/floderthumbnail/#session.hostid#/#qry_subfolders.folder_id#.jpg')>
+										<img src="#dynpath#/global/host/floderthumbnail/#session.hostid#/#qry_subfolders.folder_id#.jpg" border="0"><br />
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+									</cfif>
 								</div>
 								<strong>#folder_name#</strong>
 							</a>

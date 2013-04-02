@@ -23,6 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<cfdump var="#qry_labels_folders#">
 <cfoutput>
 	<cfif qry_labels_folders.recordcount NEQ 0>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -42,7 +43,11 @@
 								</cfif>
 								<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=#thef#');">
 									<div class="theimg">
-										<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+										<cfif directoryexists("#ExpandPath("../..")#global/host/floderthumbnail/#session.hostid#") and fileExists('#ExpandPath("../..")#/global/host/floderthumbnail/#session.hostid#/#qry_labels_folders.folder_id#.jpg')>
+											<img src="#dynpath#/global/host/floderthumbnail/#session.hostid#/#qry_labels_folders.folder_id#.jpg" border="0"><br />
+										<cfelse>
+											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+										</cfif>
 									</div>
 									<strong>#folder_name#</strong>
 								</a>

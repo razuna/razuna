@@ -957,6 +957,54 @@
 	<cfreturn s />
 </cffunction>
 
+
+<cffunction hint="Upload folder Thumbnail" name="Upload_folderThumbnail" access="public" output="false">
+	<cfargument name="thestruct" type="Struct">
+	
+	<cfif arguments.thestruct.thumb_folder_file neq ""  or arguments.thestruct.thumb_folder neq "">
+		<!--- Create directory if not there already to hold this floderthumbnail --->
+		<cfif  not directoryexists("#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\">
+		</cfif>
+		
+		<cfif  fileExists("#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#arguments.thestruct.folderId#.jpg")>
+			<cffile action="delete" file="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#arguments.thestruct.folderId#.jpg" >
+		</cfif>	
+	
+		<cfif len(arguments.thestruct.thumb_folder)>
+			<cffile action="copy" destination="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#arguments.thestruct.folderId#.jpg" 
+					source="#arguments.thestruct.thepathup#\assets\#session.hostid#\#arguments.thestruct.folderId#\img\#arguments.thestruct.thumb_folder#">
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.jpg">
+		</cfif>	
+	
+		<cfif arguments.thestruct.thumb_folder_file neq "">
+			<cffile action="upload" destination="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\" filefield="thumb_folder_file" result="result" >
+			
+			<cffile action="rename" destination="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#arguments.thestruct.folderId#.jpg"
+					 source="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#result.serverFile#" >
+		
+		
+		<cfset this.thefilename = result.serverFileName>
+	
+		<!--- Get Size --->
+			<cfinvoke component="global" method="converttomb" thesize="#result.filesize#" returnvariable="thesize">
+			<cfset this.thesize = thesize>
+		</cfif>	
+			
+		<!--- Return --->
+		<cfreturn this />	
+	</cfif>
+	
+</cffunction>
+
+
+
+
+
+
+
+
+
 <!--- Get API key --->
 <cffunction name="getapikey" output="false" returntype="string">
 	<cfargument name="reset" required="false" default="false">
@@ -1202,10 +1250,8 @@
 		UPDATE razuna_config
 		SET conf_serverid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 		</cfquery>
-		<!--- Alter query --->
-		<cfset querySetCell(qry, "conf_serverid", theid)>
 		<!--- Set the ID into application scope --->
-		<!--- <cfset application.razuna.serverid = theid> --->
+		<cfset application.razuna.serverid = theid>
 	</cfif>
 	<!--- Check for config file --->
 	<cfif fileExists("#arguments.pathoneup#/global/config/keys.cfm")>
@@ -1224,13 +1270,6 @@
 		UPDATE razuna_config
 		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#swl#">
 		</cfquery>
-	<cfelse>
-		<!--- Update --->
-		<cfquery datasource="razuna_default">
-		UPDATE razuna_config
-		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="false">
-		</cfquery>
-		<cfset QuerySetCell(qry, "conf_wl", false)>
 	</cfif>
 	<!--- Now put config values into application scope --->
 	<cfset application.razuna.serverid = qry.conf_serverid>
