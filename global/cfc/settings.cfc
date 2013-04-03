@@ -963,25 +963,25 @@
 	
 	<cfif arguments.thestruct.thumb_folder_file neq ""  or arguments.thestruct.thumb_folder neq "">
 		<!--- Create directory if not there already to hold this floderthumbnail --->
-		<cfif  not directoryexists("#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\")>
-			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\">
+		<cfif  not directoryexists("#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/">
 		</cfif>
 		
-		<cfif  fileExists("#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#arguments.thestruct.folderId#.jpg")>
-			<cffile action="delete" file="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#arguments.thestruct.folderId#.jpg" >
+		<cfif  fileExists("#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.jpg")>
+			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.jpg" >
 		</cfif>	
 	
 		<cfif len(arguments.thestruct.thumb_folder)>
-			<cffile action="copy" destination="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#arguments.thestruct.folderId#.jpg" 
-					source="#arguments.thestruct.thepathup#\assets\#session.hostid#\#arguments.thestruct.folderId#\img\#arguments.thestruct.thumb_folder#">
+			<cffile action="copy" destination="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.jpg" 
+					source="#arguments.thestruct.thepathup#/assets/#session.hostid#/#arguments.thestruct.folderId#/img/#arguments.thestruct.thumb_folder#">
 			<cfset this.thefilename = "#arguments.thestruct.folderId#.jpg">
 		</cfif>	
 	
 		<cfif arguments.thestruct.thumb_folder_file neq "">
-			<cffile action="upload" destination="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\" filefield="thumb_folder_file" result="result" >
+			<cffile action="upload" destination="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/" filefield="thumb_folder_file" result="result" >
 			
-			<cffile action="rename" destination="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#arguments.thestruct.folderId#.jpg"
-					 source="#arguments.thestruct.thepathup#global\host\floderthumbnail\#session.hostid#\#result.serverFile#" >
+			<cffile action="rename" destination="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.jpg"
+					 source="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#result.serverFile#" >
 		
 		
 		<cfset this.thefilename = result.serverFileName>

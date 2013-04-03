@@ -38,7 +38,11 @@
 <!--- 								showwindow('#myself##xfa.collectiondetail#&col_id=#col_id#&folder_id=#folder_id#','#col_name#',700,1);return false; --->
 								<a href="##" onclick="showwindow('#myself#c.collection_detail&col_id=#col_id#&folder_id=#folder_id_r#','#col_name#',700,1);return false;">
 									<div class="theimg">
+									<cfif directoryexists("#ExpandPath("../..")#global/host/floderthumbnail/#session.hostid#") and  fileExists('#ExpandPath("../..")#/global/host/floderthumbnail/#session.hostid#/#qry_labels_collections.folder_id#.jpg')>
+										<img src="#dynpath#/global/host/floderthumbnail/#session.hostid#/#qry_labels_collections.folder_id#.jpg" border="0"><br />
+									<cfelse>	
 										<img src="#dynpath#/global/host/dam/images/folder-image.png" border="0"><br />
+									</cfif>	
 									</div>
 									<strong>#col_name#</strong>
 								</a>

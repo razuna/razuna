@@ -76,7 +76,7 @@
 		<div style="float:left;padding-top:10px;padding-bottom:10px;">
 			<input type="submit" name="submit" id="foldersubmitbutton" value="#myFusebox.getApplicationData().defaults.trans("upload")#" class="button">
 			<div id="updatetextthumb" style="float:right;color:green;padding-right:10px;padding-top:4px;font-weight:bold;">
-				<cfif structkeyexists(form,"fieldnames")> &nbsp;Image uploaded successfully. Please click on refresh.</cfif>
+				<cfif structkeyexists(form,"fieldnames")> &nbsp;Image uploaded successfully.</cfif>
 			</div>
 		</div>
 	</div>
@@ -89,7 +89,6 @@
 		// Activate Chosen
 		$(".chzn-select").chosen();
 		
-		//$('##folderThumb_load').load('#myself#ajax.prefs_floderThumb&folder_id=#attributes.folder_id#');
 		
 		$('##thumb_folder').change(function(){
 			image=$('##thumb_folder').val();

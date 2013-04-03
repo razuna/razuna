@@ -46,13 +46,8 @@
 			
 			<div id="thumbnail">
 				<div><strong>#myFusebox.getApplicationData().defaults.trans("header_thumbnail")#</strong></div>
-				<div id="folderThumbload"></div>
-				<div>
-					<a href="##" id="refresh" onclick="loadcontent('folderThumbload','#myself#ajax.prefs_floderThumb&folder_id=#attributes.folder_id#');return false;">Refresh</a>
-				</div>
 				
 				<iframe src="#myself#c.folder_thumbnail&folder_id=#attributes.folder_id#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:300px;overflow:hidden;"></iframe>
-			
 			</div>
 		</cfif>
 	</div>

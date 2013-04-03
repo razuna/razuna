@@ -413,12 +413,6 @@
 	<fuseaction name="prefs_loadlogo">
   		<include template="dsp_admin_settings_loadlogo" />
 	</fuseaction>
-	
-	<!-- Floder: Floder Thumb Logo -->
-	<fuseaction name="prefs_floderThumb">
-  		<include template="dsp_floder_thumbload" />
-	</fuseaction>
-	
 	<!-- ADMIN: Load Login Image -->
 	<fuseaction name="prefs_loadloginimg">
   		<include template="dsp_admin_settings_loadloginimg" />
