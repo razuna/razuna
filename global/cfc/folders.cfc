@@ -3685,7 +3685,7 @@
 	</cfif>
 	<cfif qry.recordcount NEQ 0>
 		<!--- Set the current values into the list --->
-		<cfset var flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
+		<cfset flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
 		<!--- If the folder_id_r is not the same the passed one --->
 		<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 			<!--- Call this function again --->
