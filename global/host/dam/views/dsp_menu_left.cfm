@@ -24,6 +24,16 @@
 *
 --->
 <cfoutput>
+	<div>
+		<select id="" data-placeholder="Choose a Section" class="chzn-select" style="width:260px;" tabindex="-1">
+			<option value=""></option>
+			<option value="United Kingdom">Smart Folders</option> 
+			<option value="Afghanistan">Collections</option> 
+			<option value="Aland Islands">Labels</option> 
+		</select>
+	</div>
+	<div style="clear:both;"></div>
+	<br />
 <!--- Tabs --->
 <div id="tabs_left">
 	<ul>
@@ -35,8 +45,11 @@
 	<cfif cs.tab_collections><div id="explorer_col" style="margin-left:0;padding-left:0;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
 	<cfif cs.tab_labels><div id="labels" style="margin-left:0;padding-left:0;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
 </div>
+<div>Collapse Menu</div>
 <div id="apMiddle" style="z-index:10;"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div>
 <script language="JavaScript" type="text/javascript">
+	// Activate Chosen
+	$(".chzn-select").chosen({ disable_search_threshold: 5 });
 	jqtabs("tabs_left");
 	loadcontent('explorer','#myself#c.explorer');
 	// Show or hide left side
