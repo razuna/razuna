@@ -70,7 +70,7 @@
 <cfparam name="attributes.to" default="">
 
 <!--- Set the session for the language --->
-<cfparam name="session.thelang" default="english">
+<cfparam name="session.thelang" default="English">
 
 <!--- Set the session for the login --->
 <cfparam name="session.login" default="F">

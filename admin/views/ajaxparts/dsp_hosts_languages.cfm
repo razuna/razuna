@@ -29,7 +29,7 @@
 		<!--- Upper Case Lang name --->
 		<cfset upname = "#ucase(mid(name,1,1))##listfirst(mid(name,2,20),".")#">
 		<!--- Get Lang ID --->
-		<cfinvoke component="global.cfc.defaults" method="xmllangid" thetransfile="#thispath#/newhost/hostfiles/dam/translations/#name#" returnvariable="lang_id">
+		<cfinvoke component="global.cfc.defaults" method="propertiesfilelangid" thetransfile="#thispath#/newhost/hostfiles/dam/translations/#name#/HomePage.properties" returnvariable="lang_id">
 		<tr>
 			<td width="1%" nowrap="true"><input type="checkbox" name="langs_selected" value="#lang_id#_#upname#"<cfif lang_id EQ 1> checked="checked"</cfif>></td>
 			<td width="100%">#upname#</td>
