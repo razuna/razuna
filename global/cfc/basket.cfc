@@ -297,11 +297,11 @@
 	<cfset var thehost = listlast(arguments.thestruct.pathoneup,"/\")>
 	<!--- Send the user an email that his basket is ready --->
 	<cfif NOT structkeyexists(arguments.thestruct,"fromzip") AND !arguments.thestruct.noemail>
-		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='#variables.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>#variables.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
+		<cfinvoke component="email" method="send_email" subject="Your basket is available for download" themessage="Your basket is now available to download at <a href='#arguments.thestruct.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#'>#arguments.thestruct.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#</a>">
 	</cfif>
 	<!--- Feedback --->
 	<cfif !arguments.thestruct.noemail>
-		<cfoutput><strong style="color:green;">All done. <a href="#variables.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">Here is your basket.</a></strong><br><br></cfoutput>
+		<cfoutput><strong style="color:green;">All done. <a href="#arguments.thestruct.thehttp##cgi.HTTP_HOST##sn#/outgoing/#arguments.thestruct.zipname#" style="color:green;">Here is your basket.</a></strong><br><br></cfoutput>
 		<cfflush>
 	</cfif>
 	<!--- The output link so we retrieve in in JS --->
