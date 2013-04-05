@@ -671,9 +671,7 @@
 		<cfflush>
 		<!--- Remove the index --->
 		<cfif application.razuna.storage EQ "local">
-			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
-				<cfindex action="purge" collection="#session.hostid#" />
-			</cflock>
+			<cfindex action="purge" collection="#session.hostid#" />
 		</cfif>
 		<!--- Feedback --->
 		<cfoutput><strong>Let's see how many documents we have to re-index...</strong><br><br></cfoutput>
