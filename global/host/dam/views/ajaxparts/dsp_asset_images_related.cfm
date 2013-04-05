@@ -23,7 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfoutput><cfdump var="#variables.thehttp##cgi.http_host##cgi.script_name#"><cfabort>
+<cfoutput>
 <cfif qry_related.recordcount NEQ 0>
 	<br />
 	<cfloop query="qry_related">
