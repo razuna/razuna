@@ -444,7 +444,7 @@
 	<cfinvoke component="extQueryCaching" method="log_assets">
 		<cfinvokeargument name="theuserid" value="#session.theuserid#">
 		<cfinvokeargument name="logaction" value="Delete">
-		<cfinvokeargument name="logdesc" value="Removed: #details.aud_name#">
+		<cfinvokeargument name="logdesc" value="Deleted: #details.aud_name#">
 		<cfinvokeargument name="logfiletype" value="aud">
 		<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
 	</cfinvoke>
@@ -529,9 +529,9 @@
 		</cfif>
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
-			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
+			<cfinvokeargument name="theuserid" value="#session.theuserid#">
 			<cfinvokeargument name="logaction" value="Delete">
-			<cfinvokeargument name="logdesc" value="Removed: #thedetail.aud_name#">
+			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.aud_name#">
 			<cfinvokeargument name="logfiletype" value="aud">
 			<cfinvokeargument name="assetid" value="#i#">
 		</cfinvoke>
