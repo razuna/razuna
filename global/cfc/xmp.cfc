@@ -497,6 +497,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<!--- LOCATION OF XMP FILE --->
 			<cfset thexmpfile = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/xmp-#arguments.thestruct.file_id#">
 			<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#arguments.thestruct.tempfolder#.sh">
+			<!--- Set source --->
+			<cfset arguments.thestruct.thesource = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#">
 			<!--- On Windows --->
 			<cfif iswindows>
 				<cfset thexmpfile = """#thexmpfile#""">
@@ -533,20 +535,26 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 			<!--- Lucene: Update Records --->
 			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
-			<!--- Update images db with the new Lucene_Key --->
-			<cftransaction>
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#images
-				SET lucene_key = <cfqueryparam value="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" cfsqltype="cf_sql_varchar">
-				WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-			</cftransaction>
 			<!--- Remove the tempfolder but only if image has been uploaded already --->
 			<cfif directoryExists("#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#")>
 				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
 			</cfif>
 		</cfif>
+		<!--- MD5 hash file again since it has changed now --->
+		<cfif FileExists(arguments.thestruct.thesource)>
+			<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+		</cfif>
+		<!--- Update images db with the new Lucene_Key --->
+		<cftransaction>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET 
+			lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
+			hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cftransaction>
 	</cfloop>
 </cffunction>
 
@@ -1265,6 +1273,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Start the thread for updating --->
 	<!--- <cfset tt = CreateUUid()> --->
+	<!--- <cfinvoke method="metatofilethread" thestruct="#arguments.thestruct#" /> --->
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="metatofilethread" thestruct="#attributes.intstruct#" />
 	</cfthread>
@@ -1325,7 +1334,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- Reset the xmlxmp struct --->
 		<cfset xmlxmp = structnew()>
 		<!--- call the compontent to read the XMP --->
-		 returnvariable="xmlxmp" thestruct="#arguments.thestruct#">
+		<cfinvoke method="xmpparse" returnvariable="xmlxmp" thestruct="#arguments.thestruct#">
 		<!--- If there are values in the existing image then set the desc and keywords, thus we ADD the values from batching --->
 		<cfset arguments.thestruct.img_desc = xmlxmp.description>
 		<cfset arguments.thestruct.img_keywords = xmlxmp.keywords>
@@ -1406,6 +1415,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<cfset arguments.thestruct.tempfolder = createuuid("")>
 		<cfdirectory action="create" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" mode="775">
 		<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#">
+		<!--- Set the source --->
+		<cfset arguments.thestruct.thesource = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#">
 		<!--- Download file --->
 		<cfif application.razuna.storage EQ "nirvanix">
 			<!--- Finally download --->
@@ -1453,19 +1464,27 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 		<!--- Lucene: Update Records --->
 		<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
-		<!--- Update images db with the new Lucene_Key --->
-		<cftransaction>
-			<cfquery datasource="#variables.dsn#">
-			UPDATE #session.hostdbprefix#files
-			SET lucene_key = <cfqueryparam value="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" cfsqltype="cf_sql_varchar">
-			WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-			</cfquery>
-		</cftransaction>
 		<!--- Remove the tempfolder but only if image has been uploaded already --->
 		<!--- <cfthread action="join" name="upload#arguments.thestruct.file_id#" /> --->
 		<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
 	</cfif>
+	<!--- MD5 hash file again since it has changed now --->
+	<cfif FileExists(arguments.thestruct.thesource)>
+		<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+	</cfif>
+	<!--- Update images db with the new Lucene_Key --->
+	<cftransaction>
+		<cfquery datasource="#variables.dsn#">
+		UPDATE #session.hostdbprefix#files
+		SET 
+		lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
+		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cftransaction>
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("files")>
 </cffunction>
 
 <!--- Get metadata for PDF --->
