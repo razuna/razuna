@@ -2125,7 +2125,7 @@
 	<!--- If there is no session for webgroups set --->
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="fprop" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="fprop" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#setaccess */ f.folder_owner, fg.grp_id_r, fg.grp_permission
 	FROM #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND f.host_id = fg.host_id
 	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">

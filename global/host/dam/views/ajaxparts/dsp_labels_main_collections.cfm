@@ -34,7 +34,7 @@
 					<!--- Show Subfolders --->
 					<cfloop query="qry_labels_collections">
 						<div class="assetbox" style="text-align:center;">
-							<cfif perm EQ "unlocked">
+							<cfif perm NEQ "R">
 <!--- 								showwindow('#myself##xfa.collectiondetail#&col_id=#col_id#&folder_id=#folder_id#','#col_name#',700,1);return false; --->
 								<a href="##" onclick="showwindow('#myself#c.collection_detail&col_id=#col_id#&folder_id=#folder_id_r#','#col_name#',700,1);return false;">
 									<div class="theimg">

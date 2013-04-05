@@ -451,12 +451,10 @@
 		<cfargument name="offset" type="string" required="false" default="0">
 		<cfargument name="fromapi" required="false" default="false">
 		<cfargument name="labels_count" required="false" default="#QueryNew("count_assets,count_comments,count_folders,count_collections")#" type="query">
-		
 		<!--- Reset the offset if there are no more files in this folder the rowmaxpage --->
 		<cfif arguments.labels_count.count_assets LTE session.rowmaxpage>
 			<cfset session.offset = 0>
 		</cfif>
-
 		<cfset var offset = session.offset * session.rowmaxpage>
 		<cfif session.offset EQ 0>
 			<cfset var min = 0>
@@ -468,7 +466,6 @@
 				<cfset var min = min + 1>
 			</cfif>
 		</cfif>
-		
 		<!--- Set sortby variable --->
 		<cfset var sortby = session.sortby>
 		<!--- Set the order by --->
@@ -483,8 +480,6 @@
 		<cfelseif session.sortby EQ "datechanged">
 			<cfset var sortby = "date_change DESC">
 		</cfif>
-		
-		
 		<!--- If there is no session for webgroups set --->
 		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Get the cachetoken for here --->
@@ -492,7 +487,6 @@
 		<!--- Get assets --->
 		<cfif arguments.label_kind EQ "assets">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-				
 			<cfif variables.database EQ "oracle">
 				SELECT rn, id,filename,folder_id_r,size,hashtag,ext,filename_org,kind,is_available,date_create,date_change,link_kind,link_path_url,
 				path_to_asset,cloud_url	<cfif !arguments.fromapi>,permfolder</cfif>
@@ -512,47 +506,7 @@
 			 i.img_id id, i.img_filename filename, 
 			i.folder_id_r,i.img_size as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
 			i.img_create_time date_create, i.img_change_date date_change, i.link_kind, i.link_path_url,
-			i.path_to_asset, i.cloud_url
-			<cfif !arguments.fromapi>
-				<!--- Permfolder --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					, 'X' as permfolder
-				<cfelse>
-					,
-					CASE
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = i.folder_id_r
-						AND fg3.grp_id_r = '0') = 'R' THEN 'R'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = i.folder_id_r
-						AND fg3.grp_id_r = '0') = 'W' THEN 'W'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = i.folder_id_r
-						AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = i.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'R' THEN 'R'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = i.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'W' THEN 'W'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = i.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'X' THEN 'X'
-					END as permfolder
-				</cfif>
-			</cfif>
+			i.path_to_asset, i.cloud_url, 'R' as permfolder
 			FROM #session.hostdbprefix#images i, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = i.img_id
@@ -573,47 +527,7 @@
 				f.file_id id, f.file_name filename, f.folder_id_r,  f.file_size as size, f.hashtag,
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
 			f.file_create_time date_create, f.file_change_date date_change, f.link_kind, f.link_path_url,
-			f.path_to_asset, f.cloud_url
-			<cfif !arguments.fromapi>
-				<!--- Permfolder --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					, 'X' as permfolder
-				<cfelse>
-					,
-					CASE
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = f.folder_id_r
-						AND fg3.grp_id_r = '0') = 'R' THEN 'R'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = f.folder_id_r
-						AND fg3.grp_id_r = '0') = 'W' THEN 'W'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = f.folder_id_r
-						AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = f.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'R' THEN 'R'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = f.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'W' THEN 'W'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = f.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'X' THEN 'X'
-					END as permfolder
-				</cfif>
-			</cfif>
+			f.path_to_asset, f.cloud_url, 'R' as permfolder
 			FROM #session.hostdbprefix#files f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.file_id
@@ -634,47 +548,7 @@
 			v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_size as size, v.hashtag,
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
 			v.vid_create_time date_create, v.vid_change_date date_change, v.link_kind, v.link_path_url,
-			v.path_to_asset, v.cloud_url
-			<cfif !arguments.fromapi>
-				<!--- Permfolder --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					, 'X' as permfolder
-				<cfelse>
-					,
-					CASE
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = v.folder_id_r
-						AND fg3.grp_id_r = '0') = 'R' THEN 'R'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = v.folder_id_r
-						AND fg3.grp_id_r = '0') = 'W' THEN 'W'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = v.folder_id_r
-						AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = v.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'R' THEN 'R'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = v.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'W' THEN 'W'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = v.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'X' THEN 'X'
-					END as permfolder
-				</cfif>
-			</cfif>
+			v.path_to_asset, v.cloud_url, 'R' as permfolder
 			FROM #session.hostdbprefix#videos v, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = v.vid_id
@@ -695,47 +569,7 @@
 			a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_size as size, a.hashtag,
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
 			a.aud_create_time date_create, a.aud_change_date date_change, a.link_kind, a.link_path_url,
-			a.path_to_asset, a.cloud_url
-			<cfif !arguments.fromapi>
-				<!--- Permfolder --->
-				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-					, 'X' as permfolder
-				<cfelse>
-					,
-					CASE
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = a.folder_id_r
-						AND fg3.grp_id_r = '0') = 'R' THEN 'R'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = a.folder_id_r
-						AND fg3.grp_id_r = '0') = 'W' THEN 'W'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = a.folder_id_r
-						AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = a.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'R' THEN 'R'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = a.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'W' THEN 'W'
-						WHEN (SELECT fg3.grp_permission
-						FROM #session.hostdbprefix#folders_groups fg3
-						WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						AND fg3.folder_id_r = a.folder_id_r
-						AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)) = 'X' THEN 'X'
-					END as permfolder
-				</cfif>
-			</cfif>
+			a.path_to_asset, a.cloud_url, 'R' as permfolder
 			FROM #session.hostdbprefix#audios a, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = a.aud_id
@@ -763,76 +597,32 @@
 				WHERE rn > <cfqueryparam cfsqltype="cf_sql_numeric" value="#min#">
 			</cfif>
 			</cfquery>
+			<!--- Get proper folderaccess --->
+			<cfloop query="qry">
+				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+				<!--- Add labels query --->
+				<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+			</cfloop>
 		<!--- Get folders --->
 		<cfelseif arguments.label_kind EQ "folders">
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getlabelsfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection
-			<cfif !arguments.fromapi>
-				,
-				<!--- Permission follow but not for sysadmin and admin --->
-				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-					CASE
-						<!--- If this folder is protected with a group and this user belongs to this group --->
-						WHEN EXISTS(
-							SELECT fg.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg, ct_groups_users gu
-							WHERE fg.folder_id_r = f.folder_id
-							AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-							AND gu.ct_g_u_grp_id = fg.grp_id_r
-							AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							) THEN 'unlocked'
-						WHEN EXISTS(
-							SELECT fg2.folder_id_r
-							FROM #session.hostdbprefix#folders_groups fg2 LEFT JOIN ct_groups_users gu2 ON gu2.ct_g_u_grp_id = fg2.grp_id_r AND gu2.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-							WHERE fg2.folder_id_r = f.folder_id
-							AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-							AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-							) THEN 'unlocked'
-						<!--- If this is the user folder or he is the owner --->
-						WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' ) THEN 'unlocked'
-						<!--- If this is the upload bin --->
-						WHEN f.folder_id = 1 THEN 'unlocked'
-						<!--- If nothing meets the above lock the folder --->
-						ELSE 'locked'
-					END AS perm
-				<cfelse>
-					CASE
-						WHEN ( lower(f.folder_of_user) = 't' AND f.folder_owner = '#Session.theUserID#' AND lower(f.folder_name) = 'my folder') THEN 'unlocked'
-						WHEN ( lower(f.folder_of_user) = 't' AND lower(f.folder_name) = 'my folder') THEN 'locked'
-						ELSE 'unlocked'
-					END AS perm
-				</cfif>
-			</cfif>
+			SELECT /* #variables.cachetoken#getlabelsfolders */ f.folder_id, f.folder_name, f.folder_id_r, f.folder_is_collection, '' AS perm
 			FROM #session.hostdbprefix#folders f, ct_labels ct
 			WHERE ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			AND ct.ct_id_r = f.folder_id
 			AND ct.ct_type = <cfqueryparam value="folder" cfsqltype="cf_sql_varchar" />
 			</cfquery>
+			<!--- Get proper folderaccess --->
+			<cfloop query="qry">
+				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+				<!--- Add labels query --->
+				<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+			</cfloop>
 		<!--- Get collections --->
 		<cfelseif arguments.label_kind EQ "collections">
 			<!--- Query for collections and get permissions --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getlabelscol */ c.col_id, c.folder_id_r, ct.col_name
-			<cfif !arguments.fromapi>	
-				,
-				<!--- Permission follow but not for sysadmin and admin --->
-				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
-					CASE
-						<!--- If this collection is protected with a group and this user belongs to this group --->
-						WHEN EXISTS(
-							SELECT cg.col_id_r
-							FROM #session.hostdbprefix#collections_groups cg, ct_groups_users gu
-							WHERE cg.col_id_r = c.col_id
-							AND gu.ct_g_u_user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">
-							AND gu.ct_g_u_grp_id = cg.grp_id_r
-							AND lower(cg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-						) THEN 'unlocked'
-						else 'locked'
-					END AS perm
-				<cfelse>
-					'unlocked' AS perm
-				</cfif>
-			</cfif>
+			SELECT /* #variables.cachetoken#getlabelscol */ c.col_id, c.folder_id_r, ct.col_name, '' AS perm
 			FROM ct_labels ctl, #session.hostdbprefix#collections c
 			LEFT JOIN #session.hostdbprefix#collections_text ct ON c.col_id = ct.col_id_r 
 			WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -841,9 +631,14 @@
 			AND ctl.ct_type = <cfqueryparam value="collection" cfsqltype="cf_sql_varchar" />
 			GROUP BY c.col_id, c.folder_id_r, ct.col_name
 			</cfquery>
+			<!--- Get proper folderaccess --->
+			<cfloop query="qry">
+				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+				<!--- Add labels query --->
+				<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+			</cfloop>
 		</cfif>
 		<!--- Return --->
-			
 		<cfreturn qry />
 	</cffunction>
 	

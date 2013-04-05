@@ -792,38 +792,7 @@
 	SELECT /* #variables.cachetoken#detailforbasketvid */ v.vid_id, v.vid_filename filename, v.vid_extension, v.vid_mimetype, v.vid_group, v.vid_preview_width, 
 	v.vid_preview_heigth, v.folder_id_r, v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, 
 	v.vid_prev_size vprevlength, v.vid_name_image, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url,
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-		'unlocked' as perm
-	<cfelse>
-		CASE
-			<!--- Check permission on this folder --->
-			WHEN EXISTS(
-				SELECT fg.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg
-				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg.folder_id_r = v.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
-				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				) THEN 'unlocked'
-			<!--- When folder is shared for everyone --->
-			WHEN EXISTS(
-				SELECT fg2.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg2
-				WHERE fg2.grp_id_r = '0'
-				AND fg2.folder_id_r = v.folder_id_r
-				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-				) THEN 'unlocked'
-			WHEN lower(v.vid_owner) = (
-				SELECT lower(fo.folder_of_user) 
-				FROM #session.hostdbprefix#folders fo 
-				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
-				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
-				AND fo.folder_id = v.folder_id_r
-				) THEN 'unlocked'
-			ELSE 'locked'
-		END as perm
-	</cfif>
+	'' as perm
 	FROM #session.hostdbprefix#videos v
 	WHERE 
 	<cfif arguments.thestruct.related EQ "T">
@@ -838,6 +807,12 @@
 	</cfif>
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Get proper folderaccess --->
+	<cfloop query="qry">
+		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+		<!--- Add labels query --->
+		<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+	</cfloop>
 	<cfreturn qry>
 </cffunction>
 
@@ -854,7 +829,7 @@
 	v.vid_selection, v.vid_in_progress, v.vid_license, v.vid_name_org, v.shared, v.path_to_asset,
 	v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, v.vid_name_image, v.vid_meta, v.hashtag,
 	s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website, u.user_first_name, u.user_last_name,
-	fo.folder_name
+	fo.folder_name, '' as perm
 	FROM #session.hostdbprefix#videos v 
 	LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#"> AND s.host_id = v.host_id
 	LEFT JOIN users u ON u.user_id = v.vid_owner
@@ -862,6 +837,10 @@
 	WHERE v.vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<!--- Get proper folderaccess --->
+	<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
+	<!--- Add labels query --->
+	<cfset QuerySetCell(details, "perm", theaccess)>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#variables.dsn#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detaildescvid */ vid_description, vid_keywords, lang_id_r, vid_description as thedesc, vid_keywords as thekeys
