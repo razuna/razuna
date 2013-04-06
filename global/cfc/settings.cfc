@@ -300,7 +300,7 @@
 	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/translations" name="thelangs" />
 	<cfquery dbtype="query" name="thelangs">
 	SELECT *
-	FROM thelangs where TYPE = 'Dir'
+	FROM thelangs where TYPE = 'Dir' and name != 'Custom'
 	ORDER BY name
 	</cfquery>
 	
