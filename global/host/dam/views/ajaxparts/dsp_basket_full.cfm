@@ -88,7 +88,7 @@
 		<cfelse>
 			<!--- Select All --->
 			<tr>
-				<td colspan="4">
+				<td colspan="4" style="padding-top:15px;">
 					<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
 					<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect Originals</a>
 					<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
@@ -120,7 +120,7 @@
 				<td colspan="4" style="padding:10px;"></td>
 			</tr>
 			<cfloop query="qry_basket">
-				<cfset myid = #cart_product_id#>
+				<cfset myid = cart_product_id>
 				<cfswitch expression="#cart_file_type#">
 					<!--- IMAGES --->
 					<cfcase value="img">
