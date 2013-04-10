@@ -1558,7 +1558,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Param --->
-	<cfset arguments.thestruct.meta_fields = "id,type,filename,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+	<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	<!--- Set for custom fields --->
 	<cfset arguments.thestruct.cf_show = "all">
 	<!--- Add another query structure for gettext --->
@@ -1585,7 +1585,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<cfset var qry = "">
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT img_id AS theid, 'img' AS thetype
+		SELECT img_id AS theid, 'img' AS thetype,folder_id_r,img_filename as url_file_name 
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1593,7 +1593,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT vid_id AS theid, 'vid' AS thetype
+		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name
 		FROM #session.hostdbprefix#videos
 		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1601,7 +1601,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT aud_id AS theid, 'aud' AS thetype
+		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name
 		FROM #session.hostdbprefix#audios
 		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1609,13 +1609,19 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT file_id AS theid, 'doc' AS thetype
+		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		</cfquery>
+		
+		<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
+			<cfset variables.thehttp = "https://">
+		<cfelse>
+			<cfset variables.thehttp = "http://">
+		</cfif>
 		<!--- Loop over items --->
 		<cfloop query="qry">
 			<!--- Set query --->
@@ -1623,6 +1629,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfset QuerySetCell(arguments.thestruct.qry, "id", theid)>
 			<cfset arguments.thestruct.file_id = theid>
 			<cfset arguments.thestruct.filetype = thetype>
+			<cfset arguments.thestruct.file_url = "#variables.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#folder_id_r#/#thetype#/#theid#/#url_file_name#">
+			
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
@@ -1809,6 +1817,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 <!--- Add to query --->
 <cffunction name="add_to_query" output="false">
 	<cfargument name="thestruct" type="struct">
+	
 	<!--- Add row local query --->
 	<cfset QueryAddRow(arguments.thestruct.tq,1)>
 	<!--- Add id --->
@@ -1817,6 +1826,8 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfset QuerySetCell(arguments.thestruct.tq, "type", arguments.thestruct.filetype)>
 	<!--- Add filename --->
 	<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
+	<!--- Add file_url --->
+	<cfset QuerySetCell(arguments.thestruct.tq, "file_url", arguments.thestruct.file_url)>
 	<!--- Add Labels --->
 	<cfif arguments.thestruct.qry_labels NEQ "">
 		<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
