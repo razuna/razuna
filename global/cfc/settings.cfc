@@ -906,11 +906,14 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.loginimg" default="false" />
+	<cfparam name="arguments.thestruct.favicon" default="false" />
 	<!--- Logo or loginimg --->
-	<cfif !arguments.thestruct.loginimg>
+	<cfif !arguments.thestruct.loginimg AND !arguments.thestruct.favicon>
 		<cfset var theimgpath = "logo">
-	<cfelse>
+	<cfelseif arguments.thestruct.loginimg AND !arguments.thestruct.favicon>
 		<cfset var theimgpath = "login">
+	<cfelse>
+		<cfset var theimgpath = "favicon">
 		<!--- just remove any previous directory (like this we prevent having more the one image) --->
 		<cftry>
 			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" recurse="true" />

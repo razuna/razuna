@@ -417,6 +417,10 @@
 	<fuseaction name="prefs_loadloginimg">
   		<include template="dsp_admin_settings_loadloginimg" />
 	</fuseaction>
+	<!-- ADMIN: Load Favicon Image -->
+	<fuseaction name="prefs_loadfavicon">
+  		<include template="dsp_admin_settings_loadfavicon" />
+	</fuseaction>
 	<!-- Users Randompass -->
 	<fuseaction name="randompass">
   		<include template="dsp_randompass" />

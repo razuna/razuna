@@ -4733,8 +4733,6 @@
 		<!-- Show  -->
 		<do action="ajax.isp_settings_upload" />
 	</fuseaction>
-	
-	<!--  -->
 	<!-- ADMIN: ISP SETTINGS END -->
 	<!--  -->
 	
