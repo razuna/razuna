@@ -327,15 +327,21 @@
 					<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 				</cfif>
 				<!--- Query for existence of the record --->
-				<cfquery dataSource="#application.razuna.datasource#" name="found">
-				SELECT img_id, path_to_asset, img_filename AS filenameorg, lucene_key, link_path_url
-				FROM #session.hostdbprefix#images
-				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-				<cfif arguments.thestruct.expwhat NEQ "all">
-					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-				</cfif>
-				</cfquery>
+				<cftry>
+					<cfquery dataSource="#application.razuna.datasource#" name="found">
+					SELECT img_id, path_to_asset, img_filename AS filenameorg, lucene_key, link_path_url
+					FROM #session.hostdbprefix#images
+					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+					<cfif arguments.thestruct.expwhat NEQ "all">
+						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+					</cfif>
+					</cfquery>
+					<cfcatch type="database">
+						<h2>Oops... #cfcatch.message#</h2>
+						<cfabort>
+					</cfcatch>
+				</cftry>
 				<!--- If record is found continue --->
 				<cfif found.recordcount NEQ 0>
 					<!--- Feedback --->
@@ -1144,15 +1150,21 @@
 				<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 			</cfif>
 			<!--- Query for existence of the record --->
-			<cfquery dataSource="#application.razuna.datasource#" name="found">
-			SELECT vid_id, path_to_asset, vid_filename AS filenameorg, lucene_key, link_path_url
-			FROM #session.hostdbprefix#videos
-			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-			<cfif arguments.thestruct.expwhat NEQ "all">
-				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-			</cfif>
-			</cfquery>
+			<cftry>
+				<cfquery dataSource="#application.razuna.datasource#" name="found">
+				SELECT vid_id, path_to_asset, vid_filename AS filenameorg, lucene_key, link_path_url
+				FROM #session.hostdbprefix#videos
+				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				<cfif arguments.thestruct.expwhat NEQ "all">
+					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				</cfif>
+				</cfquery>
+				<cfcatch type="database">
+					<h2>Oops... #cfcatch.message#</h2>
+					<cfabort>
+				</cfcatch>
+			</cftry>
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
@@ -1301,15 +1313,21 @@
 				<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 			</cfif>
 			<!--- Query for existence of the record --->
-			<cfquery dataSource="#application.razuna.datasource#" name="found">
-			SELECT aud_id, path_to_asset, aud_name AS filenameorg, lucene_key, link_path_url
-			FROM #session.hostdbprefix#audios
-			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-			<cfif arguments.thestruct.expwhat NEQ "all">
-				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-			</cfif>
-			</cfquery>
+			<cftry>
+				<cfquery dataSource="#application.razuna.datasource#" name="found">
+				SELECT aud_id, path_to_asset, aud_name AS filenameorg, lucene_key, link_path_url
+				FROM #session.hostdbprefix#audios
+				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				<cfif arguments.thestruct.expwhat NEQ "all">
+					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				</cfif>
+				</cfquery>
+				<cfcatch type="database">
+					<h2>Oops... #cfcatch.message#</h2>
+					<cfabort>
+				</cfcatch>
+			</cftry>
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
@@ -1465,15 +1483,21 @@
 				<cfset c_thisid = arguments.thestruct.template.impkey.imp_field>
 			</cfif>
 			<!--- Query for existence of the record --->
-			<cfquery dataSource="#application.razuna.datasource#" name="found">
-			SELECT file_id, path_to_asset, file_name AS filenameorg, lucene_key, link_path_url
-			FROM #session.hostdbprefix#files
-			WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-			AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-			<cfif arguments.thestruct.expwhat NEQ "all">
-				AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
-			</cfif>
-			</cfquery>
+			<cftry>
+				<cfquery dataSource="#application.razuna.datasource#" name="found">
+				SELECT file_id, path_to_asset, file_name AS filenameorg, lucene_key, link_path_url
+				FROM #session.hostdbprefix#files
+				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+				<cfif arguments.thestruct.expwhat NEQ "all">
+					AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+				</cfif>
+				</cfquery>
+				<cfcatch type="database">
+					<h2>Oops... #cfcatch.message#</h2>
+					<cfabort>
+				</cfcatch>
+			</cftry>
 			<!--- If record is found continue --->
 			<cfif found.recordcount NEQ 0>
 				<!--- Feedback --->
