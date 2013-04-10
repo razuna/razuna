@@ -438,6 +438,7 @@
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			) AS count_collections
 		FROM ct_labels
+		GROUP BY count_assets, count_comments, count_folders, count_collections
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
