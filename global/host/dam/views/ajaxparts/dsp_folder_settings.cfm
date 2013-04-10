@@ -34,7 +34,7 @@
 				<!--- Widgets --->
 				<li><a href="##widgets" onclick="$('##widgets').load('#myself#c.widgets&col_id=&folder_id=#attributes.folder_id#');savefolderforms();" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("header_widget")#</a></li>
 				<!--- Thumbnail --->
-				<li><a href="##thumbnail" >#myFusebox.getApplicationData().defaults.trans("header_thumbnail")#</a></li>
+				<li><a href="##thumbnail" >#myFusebox.getApplicationData().defaults.trans("header_img_thumbnail")#</a></li>
 			</cfif>
 		</ul>
 		<!--- Properties --->
@@ -45,7 +45,7 @@
 			<div id="widgets">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
 			
 			<div id="thumbnail">
-				<div><strong>#myFusebox.getApplicationData().defaults.trans("header_thumbnail")#</strong></div>
+				<div><strong>#myFusebox.getApplicationData().defaults.trans("header_img_thumbnail")#</strong></div>
 				
 				<iframe src="#myself#c.folder_thumbnail&folder_id=#attributes.folder_id#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:300px;overflow:hidden;"></iframe>
 			</div>
