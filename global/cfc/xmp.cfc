@@ -1585,7 +1585,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<cfset var qry = "">
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT img_id AS theid, 'img' AS thetype,folder_id_r,img_filename as url_file_name 
+		SELECT img_id AS theid, 'img' AS thetype,folder_id_r,img_filename as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1593,7 +1593,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name
+		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#videos
 		WHERE (vid_group IS NULL OR vid_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1601,7 +1601,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name
+		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#audios
 		WHERE (aud_group IS NULL OR aud_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1609,7 +1609,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
-		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name
+		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1629,8 +1629,11 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfset QuerySetCell(arguments.thestruct.qry, "id", theid)>
 			<cfset arguments.thestruct.file_id = theid>
 			<cfset arguments.thestruct.filetype = thetype>
-			<cfset arguments.thestruct.file_url = "#variables.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#folder_id_r#/#thetype#/#theid#/#url_file_name#">
-			
+			<cfif application.razuna.storage EQ "local">
+				<cfset arguments.thestruct.file_url = "#variables.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#folder_id_r#/#thetype#/#theid#/#url_file_name#">
+			<cfelse>
+				<cfset arguments.thestruct.file_url = cloud_url_org>
+			</cfif>
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
