@@ -163,6 +163,12 @@
 				<cfset listCFC = replaceNoCase(listCFC, ".cfc", "", "all")>
 			</cfif>
 			 --->
+		<cfelse>
+			<!--- Remove from ct table for all hosts --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM ct_plugins_hosts
+			WHERE ct_pl_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.p_id#">
+			</cfquery>
 		</cfif>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#">
