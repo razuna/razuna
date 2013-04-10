@@ -53,7 +53,7 @@
 		<cfset thefa = "c.folder_files">
 		<cfset thediv = "other">
 	</cfif>
-	<cfset qry_labelcount.thetotal = qry_labels_count.count_assets>
+	<!--- <cfset qry_labelcount.thetotal = qry_labels_count.count_assets> --->
 	
 <table border="0" width="100%" cellspacing="0" cellpadding="0" class="gridno">
 	<tr>
