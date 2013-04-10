@@ -105,7 +105,7 @@
 <!--- PARSE THE LANGUAGE AND TRANSLATION FROM THE XML FILE --->
 <cffunction name="trans" output="false" returntype="string" hint="Get the correct translation">
 	<cfargument name="transid" default="" required="yes" type="string">
-	<cfargument name="thetransfile" default="#session.thelang#.xml" required="yes" type="string">
+	<!--- <cfargument name="thetransfile" default="English" required="yes" type="string"> --->
 	<!--- init function internal vars --->
 	<!---<cfset var xmlFile=expandpath("translations/#arguments.thetransfile#")/>
 	<cfset var xmlVar = "">

@@ -33,6 +33,7 @@
 <!--- Set the session for the language --->
 <cfparam name="session.thelang" default="english">
 <cfparam name="session.thelangid" default="1">
+<cfparam name="session.locale" type="string" default="en">
 
 <!--- Set the session for the login --->
 <cfparam name="session.login" default="F">
