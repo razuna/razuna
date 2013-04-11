@@ -55,16 +55,31 @@
 		<cfif fileExists(variables.resourcePackagePath  & '/' & 'Custom' & '/' & currentLocale & '/' & arguments.resourceBundleName & '.properties')>
 			<cfset propertyFile.load( createObject('java', 'java.io.InputStreamReader').init( createObject('java', 'java.io.FileInputStream').init( variables.resourcePackagePath  & '/' & 'Custom' & '/' & currentLocale & '/' & arguments.resourceBundleName & '.properties' ), variables.propertiesEncoding ) ) />
 		 	<cfset result = propertyFile.getProperty(arguments.key)>
+			<cfif arrayLen(arguments.values) neq 0 >
+				<cfloop index="valueCount" from="1" to="#arrayLen(arguments.values)#">
+            		<cfset result = replaceNoCase(result, '$'&valueCount, arguments.values[valueCount], 'all') />
+          		</cfloop>
+			</cfif>
 		</cfif>	 
 		  
 		<cfif result eq ''>
 			<cfset propertyFile.load( createObject('java', 'java.io.InputStreamReader').init( createObject('java', 'java.io.FileInputStream').init( variables.resourcePackagePath & '/' & currentLocale & '/' & arguments.resourceBundleName & '.properties' ), variables.propertiesEncoding ) ) />
 			<cfset result = propertyFile.getProperty(arguments.key)>
+			<cfif arrayLen(arguments.values) neq 0 >
+				<cfloop index="valueCount" from="1" to="#arrayLen(arguments.values)#">
+            		<cfset result = replaceNoCase(result, '$'&valueCount, arguments.values[valueCount], 'all') />
+          		</cfloop>
+			</cfif>
 		</cfif>
 		
 		<cfif result eq ''>
 			<cfset propertyFile.load( createObject('java', 'java.io.InputStreamReader').init( createObject('java', 'java.io.FileInputStream').init( variables.resourcePackagePath & '/' & 'English' & '/' & arguments.resourceBundleName & '.properties' ), variables.propertiesEncoding ) ) />
 			<cfset result = propertyFile.getProperty(arguments.key)>
+			<cfif arrayLen(arguments.values) neq 0 >
+				<cfloop index="valueCount" from="1" to="#arrayLen(arguments.values)#">
+            		<cfset result = replaceNoCase(result, '$'&valueCount, arguments.values[valueCount], 'all') />
+          		</cfloop>
+			</cfif>
 		</cfif>
 		
 		<cfif result neq ''>
@@ -77,7 +92,7 @@
 				<cfthrow type="com.bealearts.util.Internationalisation.RESOURCE_NOT_FOUND" message="Resource not found" detail="Resource key '#arguments.key#' in Resource Bundle '#arguments.resourceBundleName#' in locale or fall back locale not found for '#currentLocale#'" />
 			</cfif>
 		</cfif>
-
+		
 		<cfthrow type="com.bealearts.util.Internationalisation.RESOURCE_NOT_FOUND" message="Resource not found" detail="Resource key '#arguments.key#' in Resource Bundle '#arguments.resourceBundleName#' in locale or fall back locale not found for '#currentLocale#'" />	
 
 	</cffunction>
