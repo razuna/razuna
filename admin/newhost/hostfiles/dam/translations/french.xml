@@ -1398,6 +1398,12 @@
 	<transid name="logo_desc">
 		<transtext><![CDATA[Vous pouvez afficher votre logo à la place de celui de Razuna. Chargez votre logo ci-dessous. Note: le logo doit s'appeler "logo.jpg" ! (La taille recommandée est de 200x29 pixels)]]></transtext>
 	</transid>
+	<transid name="favicon_header">
+		<transtext>votre Favicon</transtext>
+	</transid>
+	<transid name="favicon_desc">
+		<transtext><![CDATA[Vous pouvez afficher votre favicon à la place de celui de Razuna. Chargez votre favicon ci-dessous. Note: le favicon doit s'appeler "favicon.ico" ! (La taille recommandée est de 16x16 pixels)]]></transtext>
+	</transid>
 	<transid name="tooltip_refresh_tree">
 		<transtext><![CDATA[Recharger l'arborescence (en général inutile, sauf dans certains cas)]]></transtext>
 	</transid>
