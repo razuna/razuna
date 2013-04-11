@@ -1274,7 +1274,7 @@
 	<!--- Apply custom setting to new folder --->
 	<cfinvoke method="apply_custom_shared_setting" folder_id="#newfolderid#" />
 	<!--- Log --->
-	<cfset log_folders(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.folder_name# (ID: #newfolderid#, Level: #arguments.thestruct.level#)')>
+	<cfset log_folders(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.folder_name# (ID: #newfolderid#)')>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("folders")>
 	<!--- Return --->
@@ -1366,7 +1366,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Log --->
-			<cfset log_folders(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#, Level: #foldername.folder_level#)')>
+			<cfset log_folders(theuserid=session.theuserid,logaction='Delete',logdesc='Deleted: #foldername.folder_name# (ID: #arguments.thestruct.folder_id#)')>
 			<!--- Flush Cache --->
 			<cfset variables.cachetoken = resetcachetoken("folders")>
 			<!--- The rest goes in a thread since it can run in the background --->
@@ -1397,19 +1397,29 @@
 				<cfinvoke method="deleteassetsinfolder" thefolderid="#attributes.intstruct.folder_id#" thestruct="#attributes.intstruct#" />
 				<!--- Loop to remove folder --->
 				<cfloop list="#folderids#" index="thefolderid" delimiters=",">
-					<cfset attributes.intstruct.folder_id = thefolderid>
-					<!--- Delete in Lucene --->
-					<cfinvoke component="lucene" method="index_delete_folder" thestruct="#attributes.intstruct#" dsn="#application.razuna.datasource#">
-					<!--- Delete folder in DB --->
-					<cfquery datasource="#application.razuna.datasource#">
-					DELETE FROM	#session.hostdbprefix#folders
-					WHERE folder_id = <cfqueryparam value="#thefolderid#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-					<!--- Delete labels --->
-					<cfinvoke component="labels" method="label_ct_remove" id="#thefolderid#" />
-					<!--- Delete all files which have the same folder_id_r, meaning they have not been moved --->
-					<cfinvoke method="deleteassetsinfolder" thefolderid="#thefolderid#" thestruct="#attributes.intstruct#" />
+					<cfif thefolderid NEQ attributes.intstruct.folder_id>
+						<!--- Set folderid into arguments struct for other methods --->
+						<cfset attributes.intstruct.folder_id = thefolderid>
+						<!--- Get the Folder Name for the Log --->
+						<cfquery datasource="#application.razuna.datasource#" name="foldernamesub">
+						SELECT folder_name
+						FROM #session.hostdbprefix#folders
+						WHERE folder_id = <cfqueryparam value="#thefolderid#" cfsqltype="CF_SQL_VARCHAR">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						</cfquery>
+						<!--- Log --->
+						<cfinvoke component="extQueryCaching" method="log_folders" theuserid="#session.theuserid#" logaction="Delete" logdesc="Deleted: #foldernamesub.folder_name# (ID: #thefolderid#)" />
+						<!--- Delete folder in DB --->
+						<cfquery datasource="#application.razuna.datasource#">
+						DELETE FROM	#session.hostdbprefix#folders
+						WHERE folder_id = <cfqueryparam value="#thefolderid#" cfsqltype="CF_SQL_VARCHAR">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						</cfquery>
+						<!--- Delete labels --->
+						<cfinvoke component="labels" method="label_ct_remove" id="#thefolderid#" />
+						<!--- Delete all files which have the same folder_id_r, meaning they have not been moved --->
+						<cfinvoke method="deleteassetsinfolder" thefolderid="#thefolderid#" thestruct="#attributes.intstruct#" />
+					</cfif>
 				</cfloop>
 			</cfthread>
 		</cfif>
@@ -2115,7 +2125,7 @@
 	<!--- If there is no session for webgroups set --->
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
-	<cfquery datasource="#variables.dsn#" name="fprop" cachedwithin="1" region="razcache">
+	<cfquery datasource="#application.razuna.datasource#" name="fprop" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#setaccess */ f.folder_owner, fg.grp_id_r, fg.grp_permission
 	FROM #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND f.host_id = fg.host_id
 	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -2218,7 +2228,7 @@
 		<!--- Clear session.type --->
 		<cfset session.type = "">
 		<!--- Log --->
-		<cfset log_folders(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#, Level: #foldername.folder_level#)')>
+		<cfset log_folders(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #foldername.folder_name# (ID: #arguments.thestruct.tomovefolderid#)')>
 		<!--- Ups something went wrong --->
 		<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error folder move - #cgi.HTTP_HOST#">
@@ -3685,7 +3695,7 @@
 	</cfif>
 	<cfif qry.recordcount NEQ 0>
 		<!--- Set the current values into the list --->
-		<cfset var flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
+		<cfset flist = qry.folder_name & "|" & qry.folder_id & "|" & qry.folder_id_r & ";" & arguments.folderlist>
 		<!--- If the folder_id_r is not the same the passed one --->
 		<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 			<!--- Call this function again --->

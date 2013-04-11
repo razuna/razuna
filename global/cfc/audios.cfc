@@ -207,45 +207,18 @@
 	a.aud_name_org, a.aud_name_org filenameorg, a.shared, a.aud_size, a.aud_meta, a.link_kind, a.link_path_url, 
 	a.path_to_asset, a.lucene_key, s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website,
 	u.user_first_name, u.user_last_name, fo.folder_name,
-	<cfif listfind(session.thegroupofuser,"1",",") NEQ 0 OR listfind(session.thegroupofuser,"2",",") NEQ 0>
-		'unlocked' as perm
-	<cfelse>
-		CASE
-			<!--- Check permission on this folder --->
-			WHEN EXISTS(
-				SELECT fg.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg
-				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg.folder_id_r = a.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
-				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				) THEN 'unlocked'
-			<!--- When folder is shared for everyone --->
-			WHEN EXISTS(
-				SELECT fg2.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg2
-				WHERE fg2.grp_id_r = '0'
-				AND fg2.folder_id_r = a.folder_id_r
-				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-				) THEN 'unlocked'
-			WHEN lower(a.aud_owner) = (
-				SELECT lower(fo.folder_of_user) 
-				FROM #session.hostdbprefix#folders fo 
-				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
-				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
-				AND fo.folder_id = a.folder_id_r
-				) THEN 'unlocked'
-			ELSE 'locked'
-		END as perm
-	</cfif>
+	'' as perm
 	FROM #session.hostdbprefix#audios a 
 	LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#"> AND s.host_id = a.host_id
 	LEFT JOIN users u ON u.user_id = a.aud_owner
 	LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
 	WHERE a.aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>	
+	</cfquery>
+	<!--- Get proper folderaccess --->
+	<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
+	<!--- Add labels query --->
+	<cfset QuerySetCell(details, "perm", theaccess)>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detaildescaud */ aud_description, aud_keywords, lang_id_r, aud_description as thedesc, aud_keywords as thekeys
@@ -444,7 +417,7 @@
 	<cfinvoke component="extQueryCaching" method="log_assets">
 		<cfinvokeargument name="theuserid" value="#session.theuserid#">
 		<cfinvokeargument name="logaction" value="Delete">
-		<cfinvokeargument name="logdesc" value="Removed: #details.aud_name#">
+		<cfinvokeargument name="logdesc" value="Deleted: #details.aud_name#">
 		<cfinvokeargument name="logfiletype" value="aud">
 		<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
 	</cfinvoke>
@@ -529,9 +502,9 @@
 		</cfif>
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
-			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
+			<cfinvokeargument name="theuserid" value="#session.theuserid#">
 			<cfinvokeargument name="logaction" value="Delete">
-			<cfinvokeargument name="logdesc" value="Removed: #thedetail.aud_name#">
+			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.aud_name#">
 			<cfinvokeargument name="logfiletype" value="aud">
 			<cfinvokeargument name="assetid" value="#i#">
 		</cfinvoke>
@@ -760,38 +733,7 @@
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailforbasketaud */ a.aud_id, a.aud_name filename, a.aud_extension, a.aud_group, a.folder_id_r, a.aud_size, 
 	a.link_kind, a.link_path_url, a.path_to_asset,
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-		'unlocked' as perm
-	<cfelse>
-		CASE
-			<!--- Check permission on this folder --->
-			WHEN EXISTS(
-				SELECT fg.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg
-				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg.folder_id_r = a.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
-				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				) THEN 'unlocked'
-			<!--- When folder is shared for everyone --->
-			WHEN EXISTS(
-				SELECT fg2.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg2
-				WHERE fg2.grp_id_r = '0'
-				AND fg2.folder_id_r = a.folder_id_r
-				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-				) THEN 'unlocked'
-			WHEN lower(a.aud_owner) = (
-				SELECT lower(fo.folder_of_user) 
-				FROM #session.hostdbprefix#folders fo 
-				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
-				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
-				AND fo.folder_id = a.folder_id_r
-				) THEN 'unlocked'
-			ELSE 'locked'
-		END as perm
-	</cfif>
+	'' as perm
 	FROM #session.hostdbprefix#audios a
 	WHERE 
 	<cfif arguments.thestruct.related EQ "T">
@@ -805,6 +747,12 @@
 	IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.thestruct.qrybasket.cart_product_id)#" list="true">)
 	</cfif>
 	</cfquery>
+	<!--- Get proper folderaccess --->
+	<cfloop query="qry">
+		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+		<!--- Add labels query --->
+		<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+	</cfloop>
 	<cfreturn qry>
 </cffunction>
 

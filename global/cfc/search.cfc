@@ -143,41 +143,7 @@
 		<cfelseif session.customaccess NEQ "">
 			'#session.customaccess#' as permfolder
 		<cfelse>
-			CASE
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r = '0') = 'R' THEN 'R'
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r = '0') = 'W' THEN 'W'
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'R' THEN 'R'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'W' THEN 'W'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = f.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'X' THEN 'X'
-			END as permfolder
+			'R' as permfolder
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
@@ -264,6 +230,12 @@
 				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
 			</cfloop>
 		</cfif>
+		<!--- Get proper folderaccess --->
+		<cfloop query="qry">
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+			<!--- Add labels query --->
+			<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+		</cfloop>
 		<!--- Log Result --->
 		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='doc')>
 		<!--- Return query --->
@@ -398,41 +370,7 @@
 		<cfelseif session.customaccess NEQ "">
 			'#session.customaccess#' as permfolder
 		<cfelse>
-			CASE
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r = '0') = 'R' THEN 'R'
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r = '0') = 'W' THEN 'W'
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'R' THEN 'R'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'W' THEN 'W'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = i.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'X' THEN 'X'
-			END as permfolder
+			'R' as permfolder
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
@@ -486,6 +424,12 @@
 				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
 			</cfloop>
 		</cfif>
+		<!--- Get proper folderaccess --->
+		<cfloop query="qry">
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+			<!--- Add labels query --->
+			<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+		</cfloop>
 		<!--- Log Result --->
 		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')>
 		<!--- Return query --->
@@ -619,41 +563,7 @@
 		<cfelseif session.customaccess NEQ "">
 			'#session.customaccess#' as permfolder
 		<cfelse>
-			CASE
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r = '0') = 'R' THEN 'R'
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r = '0') = 'W' THEN 'W'
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'R' THEN 'R'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'W' THEN 'W'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = v.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'X' THEN 'X'
-			END as permfolder
+			'R' as permfolder
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
@@ -707,6 +617,12 @@
 				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
 			</cfloop>
 		</cfif>
+		<!--- Get proper folderaccess --->
+		<cfloop query="qry">
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+			<!--- Add labels query --->
+			<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+		</cfloop>
 		<!--- Log Result --->
 		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='vid')>
 		<!--- Return query --->
@@ -840,41 +756,7 @@
 		<cfelseif session.customaccess NEQ "">
 			'#session.customaccess#' as permfolder
 		<cfelse>
-			CASE
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r = '0') = 'R' THEN 'R'
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r = '0') = 'W' THEN 'W'
-				WHEN (SELECT fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r = '0') = 'X' THEN 'X'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'R' THEN 'R'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'W' THEN 'W'
-				WHEN (SELECT <cfif variables.database EQ "mssql">TOP 1 </cfif>fg3.grp_permission
-				FROM #session.hostdbprefix#folders_groups fg3
-				WHERE fg3.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg3.folder_id_r = a.folder_id_r
-				AND fg3.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				<cfif variables.database NEQ "mssql">LIMIT 1</cfif>) = 'X' THEN 'X'
-			END as permfolder
+			'R' as permfolder
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
@@ -928,6 +810,12 @@
 				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
 			</cfloop>
 		</cfif>
+		<!--- Get proper folderaccess --->
+		<cfloop query="qry">
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+			<!--- Add labels query --->
+			<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
+		</cfloop>
 		<!--- Log Result --->
 		<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='aud')>
 		<!--- Return query --->

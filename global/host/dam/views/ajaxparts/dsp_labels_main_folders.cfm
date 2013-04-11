@@ -34,7 +34,7 @@
 					<!--- Show Subfolders --->
 					<cfloop query="qry_labels_folders">
 						<div class="assetbox" style="text-align:center;">
-							<cfif perm EQ "unlocked">
+							<cfif perm NEQ "R">
 								<cfif folder_is_collection EQ "T">
 									<cfset thef = "c.collections&folder_id=col-#folder_id#">
 								<cfelse>

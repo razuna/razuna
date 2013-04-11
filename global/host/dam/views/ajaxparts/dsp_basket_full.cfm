@@ -88,7 +88,7 @@
 		<cfelse>
 			<!--- Select All --->
 			<tr>
-				<td colspan="4">
+				<td colspan="4" style="padding-top:15px;">
 					<a href="##" id="checkall" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
 					<a href="##" id="checkorg" style="text-decoration:underline;padding-right:10px;" class="ddicon">Select/Deselect Originals</a>
 					<a href="##" id="checkthumb" style="text-decoration:underline;" class="ddicon">Select/Deselect Thumbnails</a>
@@ -120,12 +120,12 @@
 				<td colspan="4" style="padding:10px;"></td>
 			</tr>
 			<cfloop query="qry_basket">
-				<cfset myid = #cart_product_id#>
+				<cfset myid = cart_product_id>
 				<cfswitch expression="#cart_file_type#">
 					<!--- IMAGES --->
 					<cfcase value="img">
 						<tr class="list">
-							<td width="1%" nowrap="true">
+							<td width="1%" nowrap="true" valign="top">
 								<cfloop query="qry_theimage">
 									<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 										<cfif myid EQ img_id>
@@ -162,7 +162,7 @@
 													</tr>
 												</cfif>
 											<cfelse>
-												<cfif perm EQ "unlocked" OR qry_share_options CONTAINS "#img_id#-org-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-org-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="imgorg#myid#" value="#myid#-original" checked="true" onchange="checksel('#myid#','imgorg#myid#','img');" /></td>
 														<td width="100%">Original<cfif link_kind EQ ""> #ucase(img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB) (#orgwidth#x#orgheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
@@ -198,7 +198,7 @@
 													</tr>
 												</cfif>
 											<cfelse>
-												<cfif perm EQ "unlocked" OR qry_share_options CONTAINS "#img_id#-#img_id#-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#img_id#-#img_id#-1">
 													<tr>
 														<td><input type="checkbox" name="artofimage" id="#myid#-#img_id#" value="#myid#-#img_id#" onchange="checksel('#myid#','#myid#-#img_id#','img');" /></td>
 														<td width="100%">#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)</td>
@@ -213,7 +213,7 @@
 					<!--- VIDEOS --->
 					<cfcase value="vid">
 						<tr class="list">
-							<td width="1%" nowrap="true">
+							<td width="1%" nowrap="true" valign="top">
 								<cfloop query="qry_thevideo">
 									<cfif myid EQ vid_id>
 										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
@@ -250,7 +250,7 @@
 													</tr>
 												</cfif>																					
 											<cfelse>
-												<cfif perm EQ "unlocked" OR qry_share_options CONTAINS "#vid_id#-org-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="vid#myid#" value="#myid#-video" checked="true" onchange="checksel('#myid#','vid#myid#','vid');" /></td>
 														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB) (#vwidth#x#vheight# pixel)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
@@ -270,7 +270,7 @@
 													</tr>
 												</cfif>
 											<cfelse>
-												<cfif perm EQ "unlocked" OR qry_share_options CONTAINS "#vid_id#-#vid_id#-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#vid_id#-#vid_id#-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofvideo" id="#myid#-#vid_id#" value="#myid#-#vid_id#" onchange="checksel('#myid#','#myid#-#vid_id#','vid');" /></td>
 														<td width="100%">#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_preview_width#x#vid_preview_heigth# pixel)</td>
@@ -285,7 +285,7 @@
 					<!--- AUDIOS --->
 					<cfcase value="aud">
 						<tr class="list">
-							<td width="1%" nowrap="true">
+							<td width="1%" nowrap="true" valign="top">
 								<cfloop query="qry_theaudio">
 									<cfif myid EQ aud_id>
 										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
@@ -314,7 +314,7 @@
 													</tr>											
 												</cfif>
 											<cfelse>
-												<cfif perm EQ "unlocked" OR qry_share_options CONTAINS "#aud_id#-org-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="aud#myid#" value="#myid#-audio" checked="true" onchange="checksel('#myid#','aud#myid#','aud');" /></td>
 														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>
@@ -334,7 +334,7 @@
 													</tr>
 												</cfif>
 											<cfelse>
-												<cfif perm EQ "unlocked" OR qry_share_options CONTAINS "#aud_id#-#aud_id#-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#aud_id#-#aud_id#-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artofaudio" id="#myid#-#aud_id#" value="#myid#-#aud_id#" onchange="checksel('#myid#','#myid#-#aud_id#','aud');" checked="checked" /></td>
 														<td width="100%">#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB</td>
@@ -390,7 +390,7 @@
 													</tr>
 												</cfif>																					
 											<cfelse>
-												<cfif perm EQ "unlocked" OR qry_share_options CONTAINS "#file_id#-org-1">
+												<cfif perm NEQ "R" OR qry_share_options CONTAINS "#file_id#-org-1">
 													<tr>
 														<td width="1%"><input type="checkbox" name="artoffile" id="doc#myid#" value="#myid#-doc" checked="true" onchange="checksel('#myid#','doc#myid#','doc');" /></td>
 														<td width="100%">Original<cfif link_kind NEQ "url"> #ucase(file_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#file_size#")# MB)</cfif><cfif link_kind EQ "url"> <em>(#myFusebox.getApplicationData().defaults.trans("link_is_url")#*)</em></cfif></td>

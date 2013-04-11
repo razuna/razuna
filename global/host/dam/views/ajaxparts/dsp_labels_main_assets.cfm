@@ -246,7 +246,7 @@
 			</td>
 		</tr>
 		<tr>
-			<td colspan="6" style="border:0px;"><cfinclude template="dsp_label_pagination.cfm"></td>
+			<td colspan="6" style="border:0px;"><cfset attributes.bot = true><cfinclude template="dsp_label_pagination.cfm"></td>
 		</tr>
 	</table>
 </cfoutput>

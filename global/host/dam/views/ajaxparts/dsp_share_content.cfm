@@ -39,15 +39,17 @@
 		<li><a href="##shared_basket" id="tabs_shared_basket" onclick="loadcontent('shared_basket','#myself#c.share_basket&jsessionid=#session.SessionID#');">Basket</a></li>
 	</ul>
 	<div id="shared_thumbs">
+		<form id="formsharedcontent" name="formsharedcontent">
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<!--- Header --->
 			<tr>
 				<td colspan="5">
 					<div style="float:left;">
 						<cfif qry_folder.share_upload EQ "T">
-							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#&jsessionid=#session.SessionID#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | 
+							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#&jsessionid=#session.SessionID#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" style="padding-right:10px;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("add_file")#</button></a> 
 						</cfif>
 						<cfif qry.qry_filecount.thetotal EQ "">0<cfelse>#qry.qry_filecount.thetotal#</cfif> #myFusebox.getApplicationData().defaults.trans("share_content_count")#
+						<a href="##" id="checkallcontent" style="text-decoration:underline;padding-right:10px;padding-left:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
 						<!--- BreadCrumb --->
 						<cfif structkeyexists(url,"folder_id_r")>
 							<cfif listlen(qry_breadcrumb)>
@@ -80,6 +82,8 @@
 								</select>
 						</cfif>
 					</div>
+					<div id="showselect" style="display:none;float:left;padding-top:3px;"><a href="##" id="checkallnone">Deselect all</a><a href="##" style="padding-left:10px;" id="allinbasket">Put selected file(s) in basket</a></div>
+					<div id="showselectall" style="display:none;;float:left;padding-left:15px;padding-top:3px;"><strong>All files in this share have been selected!</strong></div>
 				</td>
 			</tr>
 			<tr>
@@ -114,8 +118,8 @@
 										</cfif>
 									</div>
 									<div>
-										<!--- <img src="#dynpath#/global/host/dam/images/icons/icon_tiff.png" width="16" height="16" border="0" /> --->
-										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a><!--- <img src="#dynpath#/global/host/dam/images/go-down-7.png" width="16" height="16" border="0" /> --->
+										<input type="checkbox" name="file_id" value="#id#-img" onclick="selectone();">
+										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-img&thetype=#id#-img&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
 									<strong>#filename#</strong>
@@ -129,7 +133,7 @@
 										<cfif link_kind NEQ "url"><cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix"><img src="#cloud_url#" border="0"><cfelse><img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0" width="160"></cfif><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0"></cfif>
 									</div>
 									<div>
-<!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" width="16" height="16" border="0" /> --->
+										<input type="checkbox" name="file_id" value="#id#-vid" onclick="selectone();">
 										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-vid&thetype=#id#-vid&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
@@ -144,7 +148,7 @@
 										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">
 									</div>
 									<div>
-<!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_aud.png" width="16" height="16" border="0" /> --->
+										<input type="checkbox" name="file_id" value="#id#-aud" onclick="selectone();">
 										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-aud&thetype=#id#-aud&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
@@ -170,7 +174,7 @@
 										</cfif>
 									</div>
 									<div>
-<!--- 										<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="16" height="16" border="0" /> --->
+										<input type="checkbox" name="file_id" value="#id#-doc" onclick="selectone();">
 										<a href="##" onclick="loadcontent('shared_basket','#myself#c.basket_put_include&file_id=#id#-doc&thetype=#id#-doc&jsessionid=#session.SessionID#');flash_footer('basket');return false;" title="#myFusebox.getApplicationData().defaults.trans("put_in_basket")#">#myFusebox.getApplicationData().defaults.trans("put_in_basket")#</a>
 									</div>
 									<br>
@@ -184,6 +188,7 @@
 				</td>
 			</tr>
 		</table>
+		</form>
 	</div>
 	<!--- List View --->
 	<cfif qry_folder.share_comments EQ "T">
@@ -310,5 +315,61 @@
 	<cfif structkeyexists(attributes,"tab")>
 		$('##tabs_shared').tabs('select',1);
 	</cfif>
+	// Select All from Content
+	$('##checkallcontent').click(function () {
+		// Loop over the checkboxes
+		$('##shared_thumbs :checkbox').each( function() {
+			// Check all and display divs
+			$(this).attr('checked', true);
+			$('##showselect').css('display','');
+			$('##showselectall').css('display','');
+		})
+		// Store all
+		$('##loaddummy').load('#myself#c.store_file_all', { folder_id: "#thefid#", thekind: "all" });
+		return false;
+	});
+	// Deselect all
+	$('##checkallnone').click(function () {
+		$('##shared_thumbs :checkbox').each( function() {
+			$(this).attr('checked', false);
+			$('##showselect').css('display','none');
+			$('##showselectall').css('display','none');
+		})
+		// Empty storage
+		$('##loaddummy').load('#myself#c.store_file_search', { fileids: 0 });
+		return false;
+	});
+	// Put all into basket
+	$('##allinbasket').click(function () {
+		// Add the to the basket
+		$('##loaddummy').load('#myself#c.basket_put_include', { jsessionid: '#session.SessionID#', fromshare: "T" }, function(){
+	   		$.sticky('<span style="color:green;font-weight:bold;">All files have been added to the basket</span>');
+	   	});
+		return false;
+	});
+	// Select one
+	function selectone(){
+		// get how many are selected
+	    var n = $('##shared_thumbs input:checked').length;
+	    // Open or close selection
+	    if (n > 0) {
+			$('##showselect').css('display','');
+		}
+		if (n == 0) {
+			$('##showselect').css('display','none');
+		}
+		// Always hide the status of select all
+		$('##showselectall').css('display','none');
+		// Set empty var
+		var theids = '';
+		// Loop over all checked boxes and add them
+		$('##shared_thumbs :checkbox:checked').each( function() {
+			$(this).attr('checked', true);
+			$('##showselect').css('display','');
+			theids += $(this).val() + ',';
+		})
+		// Store IDs
+		$('##loaddummy').load('#myself#c.store_file_values', { folder_id: "#thefid#", file_id: theids });
+	}
 </script>
 </cfoutput>

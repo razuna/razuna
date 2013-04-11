@@ -65,7 +65,7 @@ Page output starts here
 			<tr>
 		        <td style="padding-bottom:10px;">
 			        <cfset thelangs = #defaultsObj.getlangsadmin(thispath)#>
-					<select name="app_lang" onChange="javascript:changelang('loginform');">
+					<select name="app_lang" onChange="javascript:changelang('form_login');">
 						<option value="javascript:void();" selected>#defaultsObj.trans("changelang")#</option>
 						<cfloop query="thelangs">
 						<cfset thislang = replacenocase("#name#", ".xml", "", "ALL")>

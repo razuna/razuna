@@ -257,69 +257,68 @@
 <!--- REMOVE THE IMAGE --->
 <cffunction name="removeimage" output="false">
 	<cfargument name="thestruct" type="struct">
-		<!--- Remove the file in the thread below --->
+		<!--- Get file detail for log --->
+		<cfinvoke method="filedetail" theid="#arguments.thestruct.id#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset, thumb_extension, img_group" returnvariable="thedetail">
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+		<cfset arguments.thestruct.file_name = thedetail.img_filename>
+		<cfset arguments.thestruct.thefiletype = "img">
+		<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="img" fileid="#thedetail.img_group#" />
+		<!--- Delete from files DB (including referenced data) --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#images
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Delete from collection --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#collections_ct_files
+		WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND col_file_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Delete from favorites --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#users_favorites
+		WHERE fav_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND fav_kind = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
+		AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Delete from Versions --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#versions
+		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND ver_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Delete from Share Options --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#share_options
+		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Delete labels --->
+		<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+		<!--- Custom field values --->
+		<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
+		<!--- Log --->
+		<cfinvoke component="extQueryCaching" method="log_assets">
+			<cfinvokeargument name="theuserid" value="#session.theuserid#">
+			<cfinvokeargument name="logaction" value="Delete">
+			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.img_filename#">
+			<cfinvokeargument name="logfiletype" value="img">
+			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+		</cfinvoke>
+		<!--- Delete from file system --->
+		<cfset arguments.thestruct.hostid = session.hostid>
+		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
+		<cfset arguments.thestruct.qrydetail = thedetail>
+		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
+		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
 		<cfthread intstruct="#arguments.thestruct#">
-			<!--- Get file detail for log --->
-			<cfinvoke method="filedetail" theid="#attributes.intstruct.id#" thecolumn="img_filename, folder_id_r, img_filename_org filenameorg, lucene_key, link_kind, link_path_url, path_to_asset, thumb_extension, img_group" returnvariable="thedetail">
-			<!--- Execute workflow --->
-			<cfset attributes.intstruct.fileid = attributes.intstruct.id>
-			<cfset attributes.intstruct.file_name = thedetail.img_filename>
-			<cfset attributes.intstruct.thefiletype = "img">
-			<cfset attributes.intstruct.folder_id = thedetail.folder_id_r>
-			<cfset attributes.intstruct.folder_action = false>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
-			<cfset attributes.intstruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#attributes.intstruct#" />
-			<!--- Update main record with dates --->
-			<cfinvoke component="global" method="update_dates" type="img" fileid="#thedetail.img_group#" />
-			<!--- Delete from files DB (including referenced data) --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#images
-			WHERE img_id = <cfqueryparam value="#attributes.intstruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Delete from collection --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#collections_ct_files
-			WHERE file_id_r = <cfqueryparam value="#attributes.intstruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND col_file_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
-			</cfquery>
-			<!--- Delete from favorites --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#users_favorites
-			WHERE fav_id = <cfqueryparam value="#attributes.intstruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND fav_kind = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
-			AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
-			<!--- Delete from Versions --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#versions
-			WHERE asset_id_r = <cfqueryparam value="#attributes.intstruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND ver_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
-			</cfquery>
-			<!--- Delete from Share Options --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#share_options
-			WHERE asset_id_r = <cfqueryparam value="#attributes.intstruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
-			<!--- Delete labels --->
-			<cfinvoke component="labels" method="label_ct_remove" id="#attributes.intstruct.id#" />
-			<!--- Custom field values --->
-			<cfinvoke component="custom_fields" method="delete_values" fileid="#attributes.intstruct.id#" />
-			<!--- Log --->
-			<cfinvoke component="extQueryCaching" method="log_assets">
-				<cfinvokeargument name="theuserid" value="#session.theuserid#">
-				<cfinvokeargument name="logaction" value="Delete">
-				<cfinvokeargument name="logdesc" value="Removed: #thedetail.img_filename#">
-				<cfinvokeargument name="logfiletype" value="img">
-				<cfinvokeargument name="assetid" value="#attributes.intstruct.id#">
-			</cfinvoke>
-			<!--- Delete from file system --->
-			<cfset attributes.intstruct.hostid = session.hostid>
-			<cfset attributes.intstruct.folder_id_r = thedetail.folder_id_r>
-			<cfset attributes.intstruct.qrydetail = thedetail>
-			<cfset attributes.intstruct.link_kind = thedetail.link_kind>
-			<cfset attributes.intstruct.filenameorg = thedetail.filenameorg>
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 		<!--- Flush Cache --->
@@ -355,9 +354,9 @@
 		</cfif>
 		<!--- Log --->
 		<cfinvoke component="extQueryCaching" method="log_assets">
-			<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
+			<cfinvokeargument name="theuserid" value="#session.theuserid#">
 			<cfinvokeargument name="logaction" value="Delete">
-			<cfinvokeargument name="logdesc" value="Removed: #thedetail.img_filename#">
+			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.img_filename#">
 			<cfinvokeargument name="logfiletype" value="img">
 			<cfinvokeargument name="assetid" value="#i#">
 		</cfinvoke>
@@ -514,38 +513,7 @@
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one,
 	i.img_remarks, i.img_extension, i.shared, s.set2_img_download_org, i.link_kind, i.link_path_url, i.img_meta,
 	s.set2_intranet_gen_download, s.set2_url_website, u.user_first_name, u.user_last_name, fo.folder_name,
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-		'unlocked' as perm
-	<cfelse>
-		CASE
-			<!--- Check permission on this folder --->
-			WHEN EXISTS(
-				SELECT fg.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg
-				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg.folder_id_r = i.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
-				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				) THEN 'unlocked'
-			<!--- When folder is shared for everyone --->
-			WHEN EXISTS(
-				SELECT fg2.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg2
-				WHERE fg2.grp_id_r = '0'
-				AND fg2.folder_id_r = i.folder_id_r
-				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-				) THEN 'unlocked'
-			WHEN lower(i.img_owner) = (
-				SELECT lower(fo.folder_of_user) 
-				FROM #session.hostdbprefix#folders fo 
-				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
-				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
-				AND fo.folder_id = i.folder_id_r
-				) THEN 'unlocked'
-			ELSE 'locked'
-		END as perm
-	</cfif>
+	'' as perm
 	FROM #session.hostdbprefix#images i 
 	LEFT JOIN #session.hostdbprefix#settings_2 s ON s.set2_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.setid#"> AND s.host_id = i.host_id
 	LEFT JOIN users u ON u.user_id = i.img_owner
@@ -553,6 +521,12 @@
 	WHERE i.img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
+	<cfif details.recordcount NEQ 0>
+		<!--- Get proper folderaccess --->
+		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
+		<!--- Add labels query --->
+		<cfset QuerySetCell(details, "perm", theaccess)>
+	</cfif>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detaildescimg */ img_description, img_keywords, lang_id_r, img_description as thedesc, img_keywords as thekeys
@@ -584,38 +558,7 @@
 	SELECT /* #variables.cachetoken#detailforbasketimg */ i.img_id, i.img_extension, i.thumb_extension, i.img_group, 
 	i.folder_id_r, i.path_to_asset, i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, i.cloud_url, 
 	i.thumb_height thumbheight, i.img_size ilength,	i.thumb_size thumblength, i.link_kind, i.link_path_url, i.img_filename filename,
-	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-		'unlocked' as perm
-	<cfelse>
-		CASE
-			<!--- Check permission on this folder --->
-			WHEN EXISTS(
-				SELECT fg.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg
-				WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND fg.folder_id_r = i.folder_id_r
-				AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="w,x" list="true">)
-				AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
-				) THEN 'unlocked'
-			<!--- When folder is shared for everyone --->
-			WHEN EXISTS(
-				SELECT fg2.folder_id_r
-				FROM #session.hostdbprefix#folders_groups fg2
-				WHERE fg2.grp_id_r = '0'
-				AND fg2.folder_id_r = i.folder_id_r
-				AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
-				) THEN 'unlocked'
-			WHEN lower(i.img_owner) = (
-				SELECT lower(fo.folder_of_user) 
-				FROM #session.hostdbprefix#folders fo 
-				WHERE lower(fo.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t"> 
-				AND fo.folder_owner = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
-				AND fo.folder_id = i.folder_id_r
-				) THEN 'unlocked'
-			ELSE 'locked'
-		END as perm
-	</cfif>
+	'' as perm
 	FROM #session.hostdbprefix#images i
 	WHERE 
 	<cfif arguments.thestruct.related EQ "T">
@@ -629,6 +572,12 @@
 	IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.thestruct.qrybasket.cart_product_id)#" list="true">)
 	</cfif>
 	</cfquery>
+	<!--- Get proper folderaccess --->
+	<cfloop query="qry">
+		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+		<!--- Add labels query --->
+		<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+	</cfloop>
 	<cfreturn qry>
 </cffunction>
 

@@ -80,7 +80,7 @@
 					<tr>
 						<td class="td2" nowrap="nowrap" valign="top">#myFusebox.getApplicationData().defaults.trans("share_allow_download_original")#</td>
 						<td class="td2"><input type="radio" value="T" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "T"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" value="F" name="share_dl_org" id="share_dl_org"<cfif qry_folder.share_dl_org EQ "F"> checked="true"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")# 
-						<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.theid#');return false;" style="padding-left:30px;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
+						<a href="##" onclick="resetdl('share_dl_org','share_dl_thumb','#attributes.theid#','fsreset');return false;" style="padding-left:30px;">#myFusebox.getApplicationData().defaults.trans("share_folder_download_reset")#</a>
 						<div id="fsreset_org" style="color:green;font-weight:bold;padding-top:5px;"></div>
 						</td>
 					</tr>

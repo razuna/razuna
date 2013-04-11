@@ -54,12 +54,12 @@
 						<td><select name="change_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="01" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#">#theday#</option></cfloop></select> <select name="change_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#">#themonth#</option></cfloop></select> <select name="change_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_all','change');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 					</tr>
 					<tr>
-						<td>And/Or</td>
+						<td>Match</td>
 						<td>
 							<select name="andor" id="andor">
-								<option value="AND" selected="true">AND</option>
-								<option value="OR">OR</option>
-							</select>
+							<option value="AND" selected="true">Match ALL terms</option>
+							<option value="OR">Match ANY term</option>
+						</select>
 						</td>
 					</tr>
 					<tr>
@@ -99,11 +99,11 @@
 					<td><select name="change_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="01" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#">#theday#</option></cfloop></select> <select name="change_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#">#themonth#</option></cfloop></select> <select name="change_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_files','change');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 				</tr>
 				<tr>
-					<td>And/Or</td>
+					<td>Match</td>
 					<td>
 						<select name="andor" id="andor">
-							<option value="AND" selected="true">AND</option>
-							<option value="OR">OR</option>
+							<option value="AND" selected="true">Match ALL terms</option>
+							<option value="OR">Match ANY term</option>
 						</select>
 					</td>
 				</tr>
@@ -177,11 +177,11 @@
 					<td><select name="change_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="01" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#">#theday#</option></cfloop></select> <select name="change_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#">#themonth#</option></cfloop></select> <select name="change_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_images','change');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 				</tr>
 				<tr>
-					<td>And/Or</td>
+					<td>Match</td>
 					<td>
 						<select name="andor" id="andor">
-							<option value="AND" selected="true">AND</option>
-							<option value="OR">OR</option>
+							<option value="AND" selected="true">Match ALL terms</option>
+							<option value="OR">Match ANY term</option>
 						</select>
 					</td>
 				</tr>
@@ -362,11 +362,11 @@
 					<td><select name="change_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="01" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#">#theday#</option></cfloop></select> <select name="change_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#">#themonth#</option></cfloop></select> <select name="change_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_videos','change');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 				</tr>
 				<tr>
-					<td>And/Or</td>
+					<td>Match</td>
 					<td>
 						<select name="andor" id="andor">
-							<option value="AND" selected="true">AND</option>
-							<option value="OR">OR</option>
+							<option value="AND" selected="true">Match ALL terms</option>
+							<option value="OR">Match ANY term</option>
 						</select>
 					</td>
 				</tr>
@@ -395,11 +395,11 @@
 					<td><select name="change_day" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("day")#</option><cfloop from="01" to="31" index="theday"><option value="<cfif len(theday) EQ 1>0</cfif>#theday#">#theday#</option></cfloop></select> <select name="change_month" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("month")#</option><cfloop from="01" to="12" index="themonth"><option value="<cfif len(themonth) EQ 1>0</cfif>#themonth#">#themonth#</option></cfloop></select> <select name="change_year" class="text"><option value="">#myFusebox.getApplicationData().defaults.trans("year")#</option><cfloop from="#lastyear#" to="#newyear#" index="theyear"><option value="#theyear#">#theyear#</option></cfloop></select> <a href="##" onclick="settoday('advsearch_audios','change');return false;">#myFusebox.getApplicationData().defaults.trans("today")#</a></td>
 				</tr>
 				<tr>
-					<td>And/Or</td>
+					<td>Match</td>
 					<td>
 						<select name="andor" id="andor">
-							<option value="AND" selected="true">AND</option>
-							<option value="OR">OR</option>
+							<option value="AND" selected="true">Match ALL terms</option>
+							<option value="OR">Match ANY term</option>
 						</select>
 					</td>
 				</tr>

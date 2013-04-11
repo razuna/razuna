@@ -46,9 +46,9 @@
 			<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="search_labels_#myvar.thetype#" multiple="multiple">
 				<option value=""></option>
 				<cfloop query="attributes.thelabelsqry">
-					<cfset l = replace(label_path," "," +","all")>
-					<cfset l = replace(l,"/"," +","all")>
-					<option value="+#l#">#label_path#</option>
+					<cfset l = replace(label_path," "," ","all")>
+					<cfset l = replace(l,"/"," ","all")>
+					<option value="#l#">#label_path#</option>
 				</cfloop>
 			</select>
 		</td>

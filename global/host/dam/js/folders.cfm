@@ -145,7 +145,16 @@
 		if (filename != '') var filename = 'filename:' + filename;
 		if (extension != '') var extension = 'extension:' + extension;
 		if (rawmetadata != '') var rawmetadata = 'rawmetadata:' + rawmetadata;
-		if (labels != '') var labels = 'labels:(' + labels + ')';
+		if (labels != ''){
+			if (andor == "OR"){
+				var labels = 'labels:(' + labels + ')';
+			}
+			else {
+				var con1 = '\+';
+				var con2 = labels.split(' ').join(' +');
+				var labels = con1.concat(con2);
+			}
+		}
 		// Custom fields (Put together and prefix with custom field id)
 		<cfloop query="qry_cf_fields"><cfset cfid = replace(cf_id,"-","","all")><cfoutput>
 			if (value_#cfid# != '') var value_#cfid# = 'customfieldvalue:(+#cf_id# +' +value_#cfid# + ')';
