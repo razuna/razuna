@@ -46,10 +46,10 @@
 				<td colspan="5">
 					<div style="float:left;">
 						<cfif qry_folder.share_upload EQ "T">
-							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#&jsessionid=#session.SessionID#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | 
+							<a href="##" onclick="showwindow('#myself#c.asset_add_single&folder_id=#thefid#&jsessionid=#session.SessionID#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" style="padding-right:10px;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("add_file")#</button></a> 
 						</cfif>
 						<cfif qry.qry_filecount.thetotal EQ "">0<cfelse>#qry.qry_filecount.thetotal#</cfif> #myFusebox.getApplicationData().defaults.trans("share_content_count")#
-						| <a href="##" id="checkallcontent" style="text-decoration:underline;padding-right:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
+						<a href="##" id="checkallcontent" style="text-decoration:underline;padding-right:10px;padding-left:10px;" class="ddicon">#myFusebox.getApplicationData().defaults.trans("select_all")#</a>
 						<!--- BreadCrumb --->
 						<cfif structkeyexists(url,"folder_id_r")>
 							<cfif listlen(qry_breadcrumb)>
@@ -82,8 +82,8 @@
 								</select>
 						</cfif>
 					</div>
-					<div id="showselect" style="display:none;float:left;padding-left:10px;"><a href="##">Put selected file(s) in basket</a></div>
-					<div id="showselectall" style="display:none;;float:left;padding-left:15px;"><strong>All files in this share have been selected!</strong></div>
+					<div id="showselect" style="display:none;float:left;padding-top:3px;"><a href="##" id="checkallnone">Deselect all</a><a href="##" style="padding-left:10px;" id="allinbasket">Put selected file(s) in basket</a></div>
+					<div id="showselectall" style="display:none;;float:left;padding-left:15px;padding-top:3px;"><strong>All files in this share have been selected!</strong></div>
 				</td>
 			</tr>
 			<tr>
@@ -317,17 +317,34 @@
 	</cfif>
 	// Select All from Content
 	$('##checkallcontent').click(function () {
+		// Loop over the checkboxes
 		$('##shared_thumbs :checkbox').each( function() {
-			if(this.checked){
-				$(this).attr('checked', false);
-				$('##showselect').css('display','none');
-			}
-			else{
-				$(this).attr('checked', true);
-				$('##showselect').css('display','');
-				$('##showselectall').css('display','');
-			}
+			// Check all and display divs
+			$(this).attr('checked', true);
+			$('##showselect').css('display','');
+			$('##showselectall').css('display','');
 		})
+		// Store all
+		$('##loaddummy').load('#myself#c.store_file_all', { folder_id: "#thefid#", thekind: "all" });
+		return false;
+	});
+	// Deselect all
+	$('##checkallnone').click(function () {
+		$('##shared_thumbs :checkbox').each( function() {
+			$(this).attr('checked', false);
+			$('##showselect').css('display','none');
+			$('##showselectall').css('display','none');
+		})
+		// Empty storage
+		$('##loaddummy').load('#myself#c.store_file_search', { fileids: 0 });
+		return false;
+	});
+	// Put all into basket
+	$('##allinbasket').click(function () {
+		// Add the to the basket
+		$('##loaddummy').load('#myself#c.basket_put_include', { jsessionid: '#session.SessionID#', fromshare: "T" }, function(){
+	   		$.sticky('<span style="color:green;font-weight:bold;">All files have been added to the basket</span>');
+	   	});
 		return false;
 	});
 	// Select one
@@ -341,7 +358,18 @@
 		if (n == 0) {
 			$('##showselect').css('display','none');
 		}
+		// Always hide the status of select all
 		$('##showselectall').css('display','none');
+		// Set empty var
+		var theids = '';
+		// Loop over all checked boxes and add them
+		$('##shared_thumbs :checkbox:checked').each( function() {
+			$(this).attr('checked', true);
+			$('##showselect').css('display','');
+			theids += $(this).val() + ',';
+		})
+		// Store IDs
+		$('##loaddummy').load('#myself#c.store_file_values', { folder_id: "#thefid#", file_id: theids });
 	}
 </script>
 </cfoutput>

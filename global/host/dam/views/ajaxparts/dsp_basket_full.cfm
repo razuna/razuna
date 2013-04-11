@@ -125,7 +125,7 @@
 					<!--- IMAGES --->
 					<cfcase value="img">
 						<tr class="list">
-							<td width="1%" nowrap="true">
+							<td width="1%" nowrap="true" valign="top">
 								<cfloop query="qry_theimage">
 									<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.imagedetail#&file_id=#img_id#&what=images&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
 										<cfif myid EQ img_id>
@@ -213,7 +213,7 @@
 					<!--- VIDEOS --->
 					<cfcase value="vid">
 						<tr class="list">
-							<td width="1%" nowrap="true">
+							<td width="1%" nowrap="true" valign="top">
 								<cfloop query="qry_thevideo">
 									<cfif myid EQ vid_id>
 										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.videodetail#&file_id=#vid_id#&what=files&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
@@ -285,7 +285,7 @@
 					<!--- AUDIOS --->
 					<cfcase value="aud">
 						<tr class="list">
-							<td width="1%" nowrap="true">
+							<td width="1%" nowrap="true" valign="top">
 								<cfloop query="qry_theaudio">
 									<cfif myid EQ aud_id>
 										<cfif attributes.fromshare EQ "F"><a href="##" onclick="showwindow('#myself##xfa.audiodetail#&file_id=#aud_id#&what=audios&loaddiv=&folder_id=#folder_id_r#','#Jsstringformat(filename)#',1000,1);return false;"></cfif>
