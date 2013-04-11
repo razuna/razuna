@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2013.03.26.1" />
+		<set name="attributes.cachetag" value="2013.03.23.1" />
 	</fuseaction>
 	
 	<!--
@@ -550,7 +550,7 @@
 		<set name="attributes.col" value="F" overwrite="false" />
 		<set name="attributes.id" value="0" overwrite="false" />
 		<set name="attributes.actionismove" value="F" overwrite="false" />
-		<set name="session.showmyfolder" value="T" overwrite="false" />
+		<set name="session.showmyfolder" value="F" overwrite="false" />
 		<!-- Get folder record -->
 		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="qFolder">
 			<argument name="thestruct" value="#attributes#" />
@@ -558,6 +558,8 @@
 			<argument name="col" value="#attributes.col#" />
 		</invoke>
 	</fuseaction>
+	
+	
 	
 	<!--
 		END: EXPLORER
@@ -6023,6 +6025,55 @@
 	
 	<!--  -->
 	<!-- VIEWS: STOP -->
+	<!--  -->
+	
+	<!--  -->
+	<!-- FLODER THUMBNAIL: START -->
+	<!--  -->
+	
+	<!-- Initial View -->
+	<fuseaction name="folder_thumbnail">
+		<!-- Param -->
+		<set name="attributes.isdetail" value="T" />
+		<set name="attributes.theid" value="0" overwrite="false" />
+		<set name="attributes.level" value="0" overwrite="false" />
+		<set name="attributes.iscol" value="F" overwrite="false" />
+		<set name="attributes.qry_filecount" value="0"  />
+		<set name="attributes.kind" value="img"  />
+		<xfa name="submitfolderform" value="c.folder_thumbnail_save" overwrite="false" />
+		
+		<!-- CFC: Load record -->
+		<!-- CFC: Get images -->
+		<invoke object="myFusebox.getApplicationData().images" method="getFolderAssetDetails" returnvariable="qry_files">
+			<argument name="folder_id" value="#attributes.folder_id#" />
+			<argument name="columnlist" value="i.img_id, i.img_filename, i.img_custom_id, i.img_create_date, i.img_change_date, i.img_create_time, i.img_change_time, i.folder_id_r, i.thumb_extension, i.link_kind, i.link_path_url, i.path_to_asset, i.is_available, i.cloud_url" />
+			<argument name="offset" value="0" />
+			<argument name="rowmaxpage" value="1000" />
+			<argument name="thestruct" value="#attributes#" />
+		</invoke>
+		
+		<!-- Show -->
+		<do action="ajax.folder_thumbnail" />
+	</fuseaction>
+	
+	<fuseaction name="folder_thumbnail_save">
+		<xfa name="submitfolderform" value="c.folder_thumbnail_save" overwrite="false" />
+		<set name="attributes.uploadnow" value="F" overwrite="false" />
+		<set name="attributes.folder_id" value="#attributes.folderid#" overwrite="false" />
+		<set name="attributes.theid" value="0" overwrite="false" />
+		<!-- CFC: Upload file -->
+		<if condition="attributes.uploadnow EQ 'T'">
+			<true>
+				<!-- CFC: upload logo -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="Upload_folderThumbnail(attributes)" returnvariable="result" />
+			</true>
+		</if>
+		<!-- Show  -->
+		<do action="c.folder_thumbnail" />
+		
+	</fuseaction>
+	<!--  -->
+	<!-- FLODER THUMBNAIL: STOP -->
 	<!--  -->
 	
 	<!--  -->

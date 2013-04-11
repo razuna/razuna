@@ -1,4 +1,4 @@
-<!---
+﻿<!---
 *
 * Copyright (C) 2005-2008 Razuna
 *
@@ -25,18 +25,6 @@
 --->
 <cfoutput>
 <!--- Show Subfolders --->
-<cfloop query="qry_subfolders">
-	<div class="assetbox" style="text-align:center;">
-		<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
-			<div class="theimg">
-				<cfif directoryexists("#ExpandPath("../..")#global/host/floderthumbnail/#session.hostid#") and fileExists('#ExpandPath("../..")#/global/host/floderthumbnail/#session.hostid#/#folder_id#.jpg')>
-					<img src="#dynpath#/global/host/floderthumbnail/#session.hostid#/#qry_subfolders.folder_id#.jpg" border="0"><br />
-				<cfelse>
-					<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
-				</cfif>
-			</div>
-			<strong>#folder_name#</strong>
-		</a>
-	</div>
-</cfloop>
+	
+		<img src="#dynpath#/global/host/floderthumbnail/#session.hostid#/#attributes.folder_id#.jpg" border="0" height="100px;" width="100px;"><br />
 </cfoutput>
