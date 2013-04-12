@@ -28,7 +28,7 @@
 	<!--- If no record is in this folder --->
 	<cfif qry_files.recordcount EQ 0>
 		<form id="#kind#form"></form>
-		<cfdump var="#qry_breadcrumb#">
+		
 		<div style="float:left;">
 			<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 		</div>
@@ -61,10 +61,12 @@
 						<div class="assetbox" style="text-align:center;">
 							<a href="##" onclick="razunatreefocusbranch('#folder_id_r#','#folder_id#');loadcontent('rightside','index.cfm?fa=c.folder&folder_id=#folder_id#');">
 								<div class="theimg">
-									<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#")>
-										<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\" type="file">
+								
+									<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
+										
+										<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\#folder_id#\" type="file">
 										<cfif myDir.RecordCount>
-											<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#myDir.name#" border="0"><br />
+											<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 										</cfif>

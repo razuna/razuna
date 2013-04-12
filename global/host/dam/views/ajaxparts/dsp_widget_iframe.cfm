@@ -105,10 +105,10 @@
 						<div class="assetbox" style="text-align:center;">
 							<a href="#myself#c.w_content&wid=#attributes.wid#&folder_id=#folder_id#&folder_id_r=#folder_id_r#&fid=#attributes.fid#&jsessionid=#session.SessionID#">
 								<div class="theimg">
-									<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#")>
-										<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\" type="file">
+									<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#folder_id#")>
+										<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\#folder_id#\" type="file">
 										<cfif myDir.RecordCount>
-											<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#myDir.name#" border="0"><br />
+											<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#folder_id#/#myDir.name#" border="0"><br />
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 										</cfif>

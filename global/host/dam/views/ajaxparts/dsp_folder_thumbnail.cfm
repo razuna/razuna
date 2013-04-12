@@ -34,7 +34,6 @@
 <script  type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js"></script>
 <head>
 <body>
-	
 	<cfform name="form_folderthumb#attributes.theid#" action="#self#" method="post" enctype="multipart/form-data" id="form_folderthumb#attributes.theid#">
 	<input type="hidden" name="#theaction#" value="#xfa.submitfolderform#">
 	<input type="hidden" name="thepathup" value="#ExpandPath("../../")#">
@@ -49,10 +48,10 @@
 				<tr>
 					<td>
 						<div id="folderThumb_load"  class="theimg" style="width:110px; float:left;">
-							<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#")>
-								<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\" type="file">
+							<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#attributes.folder_id#")>
+								<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\#attributes.folder_id#" type="file">
 								<cfif myDir.RecordCount>
-									<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#myDir.name#" border="0" height="100px;" width="100px;"><br />
+									<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#attributes.folder_id#/#myDir.name#" border="0" height="100px;" width="100px;"><br />
 								<cfelse>
 									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
 								</cfif>
