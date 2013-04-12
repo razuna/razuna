@@ -82,7 +82,7 @@
 				<!-- TL = Transparent login. In other words this action is called directly -->
 				<if condition="structkeyexists(attributes,'tl')">
 					<true>
-						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
+						<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
 					</true>
 				</if>
 			</true>
@@ -97,7 +97,7 @@
 		   		<set name="attributes.loginerror" value="T" />
 		   		<if condition="structkeyexists(attributes,'tl')">
 					<true>
-						<relocate url="#variables.thehttp##cgi.http_host##myself#c.logout&amp;loginerror=T" />
+						<relocate url="#session.thehttp##cgi.http_host##myself#c.logout&amp;loginerror=T" />
 					</true>
 				</if>
 		   		<!-- <do action="login" /> -->
@@ -138,7 +138,7 @@
 						<!-- set host again with real value -->
 						<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,loginstatus,'adm')" returnvariable="Request.securityobj" />
 						<!-- Relocate -->
-						<relocate url="#variables.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
+						<relocate url="#session.thehttp##cgi.http_host##myself#c.main&amp;_v=#createuuid('')#" />
 					</true>
 					<!-- This is for shared login -->
 					<false>
@@ -152,11 +152,11 @@
 								<!-- CFC: Check if user is allowed for this folder -->
 								<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckpermfolder(session.fid)" />
 								<!-- Relocate -->
-								<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
+								<relocate url="#session.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
 							</true>
 							<false>
 								<set name="session.widget_login" value="T" />
-								<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#attributes.wid#&amp;_v=#createuuid('')#" />
+								<relocate url="#session.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#attributes.wid#&amp;_v=#createuuid('')#" />
 							</false>
 						</if>
 					</false>
@@ -174,7 +174,7 @@
 						</invoke>
 				   		<set name="attributes.loginerror" value="T" />
 				   		<!-- Relocate -->
-				   		<relocate url="#variables.thehttp##cgi.http_host##myself#c.logout&amp;loginerror=T" />
+				   		<relocate url="#session.thehttp##cgi.http_host##myself#c.logout&amp;loginerror=T" />
 				   	</true>
 				   	<!-- This is for shared login -->
 					<false>
@@ -184,13 +184,13 @@
 						<if condition="attributes.wid EQ 0">
 							<true>
 								<!-- Relocate -->
-								<relocate url="#variables.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
+								<relocate url="#session.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
 							</true>
 							<false>
 								<!-- Param -->
 								<set name="session.widget_login" value="F" />
 								<!-- Relocate -->
-								<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T&amp;_v=#createuuid('')#" />
+								<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T&amp;_v=#createuuid('')#" />
 							</false>
 						</if>
 					</false>
@@ -721,7 +721,6 @@
 		<set name="attributes.type" value="doc" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
-		<set name="attributes.thehttp" value="#variables.thehttp#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -754,7 +753,6 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
 		<set name="attributes.noemail" value="true" />
-		<set name="attributes.thehttp" value="#variables.thehttp#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -797,7 +795,6 @@
 		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.noemail" value="true" />
-		<set name="attributes.thehttp" value="#variables.thehttp#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
@@ -822,7 +819,6 @@
 		<set name="attributes.folderpath" value="#thispath#/incoming" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.pathoneup" value="#pathoneup#" />
-		<set name="attributes.thehttp" value="#variables.thehttp#" />
 		<!-- Put session into attributes -->
 		<set name="attributes.artofimage" value="#session.artofimage#" />
 		<set name="attributes.artofvideo" value="#session.artofvideo#" />
@@ -5388,7 +5384,7 @@
 				<!-- CFC: Check if user is allowed for this folder -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="sharecheckpermfolder(session.fid)" />
 				<!-- Relocate -->
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.sharep&amp;fid=#attributes.fid#&amp;_v=#createuuid('')#" />
 			</true>
 			<!-- User not found -->
 			<false>
@@ -5397,7 +5393,7 @@
 				<!-- Show -->
 				<!-- <do action="share" /> -->
 				<!-- Relocate -->
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.share&amp;le=t&amp;fid=#attributes.fid#" />
 		   	</false>
 		</if>
 	</fuseaction>
@@ -5432,7 +5428,7 @@
 		<!-- Param -->
 		<if condition="NOT structkeyexists(session,'fid')">
 			<true>
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.share&amp;fid=#attributes.fid#" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.share&amp;fid=#attributes.fid#" />
 			</true>
 		</if>
 		<if condition="NOT structkeyexists(session,'iscol')">
@@ -6117,24 +6113,24 @@
 	</fuseaction>
 	<!-- External call: Widget PRoxy -->
 	<fuseaction name="w_proxy">
-		<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#session.widget_id#&amp;_v=#createuuid('')#" />
+		<relocate url="#session.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#session.widget_id#&amp;_v=#createuuid('')#" />
 	</fuseaction>
 	<!-- External call: Get content -->
 	<fuseaction name="w_content">
 		<if condition="NOT structkeyexists(session,'widget_login')">
 			<true>
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#" />
 			</true>
 		</if>
 		<!-- If this fuse is called directly then redirect to the w -->
 		<if condition="cgi.query_string CONTAINS 'w_content' AND session.widget_login NEQ 'T'">
 			<true>
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#" />
 			</true>
 		</if>
 		<if condition="NOT structkeyexists(session,'widget_id') OR session.widget_id EQ '' OR session.widget_id EQ 0">
 			<true>
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
 			</true>
 		</if>
 		<!-- set host again with real value -->
@@ -6243,7 +6239,7 @@
 		<!-- Param -->
 		<if condition="NOT structkeyexists(session,'widget_id')">
 			<true>
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
 			</true>
 		</if>
 		<!-- Check the user and let him in ot nor -->
@@ -6261,7 +6257,7 @@
 				<!-- Folder id into session -->
 				<set name="session.fid" value="#attributes.fid#" />
 				<set name="session.widget_login" value="T" />
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#session.widget_id#&amp;_v=#createuuid('')#" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.w_content&amp;wid=#session.widget_id#&amp;_v=#createuuid('')#" />
 			</true>
 			<!-- User not found -->
 			<false>
@@ -6270,7 +6266,7 @@
 				<set name="session.widget_login" value="F" />
 				<!-- Show -->
 				<!-- <do action="w" /> -->
-				<relocate url="#variables.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
+				<relocate url="#session.thehttp##cgi.http_host##myself#c.w&amp;wid=#attributes.wid#&amp;le=T" />
 		   	</false>
 		</if>
 	</fuseaction>

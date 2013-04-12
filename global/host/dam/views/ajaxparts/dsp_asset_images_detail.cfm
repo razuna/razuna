@@ -101,7 +101,7 @@
 							<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 							<!--- </cfif> --->
 							<cfif qry_detail.detail.link_kind NEQ "lan">
-								<a href="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" target="_blank">
+								<a href="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p" target="_blank">
 							</cfif>
 							<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 								<img src="#qry_detail.detail.cloud_url#" border="0">

@@ -815,7 +815,7 @@
 	<!--- Get the record --->
 	<cfinvoke method="details" thestruct="#arguments#" returnvariable="qry_user" />
 	<!--- The message --->
-	<cfsavecontent variable="m"><cfoutput>Hi,<br /><br />Your Razuna account login information are as follows:<br /><br />Login: #variables.thehttp##cgi.http_host##cgi.script_name#<br />Username: #qry_user.user_email#<cfif arguments.userpass NEQ ""><br />Password: #arguments.userpass#</cfif><br /><br />Please feel free to contact us if you have any questions.</cfoutput>
+	<cfsavecontent variable="m"><cfoutput>Hi,<br /><br />Your Razuna account login information are as follows:<br /><br />Login: #session.thehttp##cgi.http_host##cgi.script_name#<br />Username: #qry_user.user_email#<cfif arguments.userpass NEQ ""><br />Password: #arguments.userpass#</cfif><br /><br />Please feel free to contact us if you have any questions.</cfoutput>
 	</cfsavecontent>
 	<!--- Send the email --->
 	<cfinvoke component="email" method="send_email" to="#qry_user.user_email#" subject="Your Razuna account" themessage="#m#">

@@ -43,7 +43,7 @@
 			<div style="float:left;">
 				<iframe src="#myself#ajax.admin_watermark_upload&wm_temp_id=#attributes.wm_temp_id#" frameborder="false" scrolling="false" style="border:0px;width:250px;height:50px;"></iframe>
 			</div>
-			<div id="thewmimg" style="float:left;width:250px;"><cfif qry_detail.wmval.wm_image_path NEQ ""><img src="#variables.thehttp##cgi.http_host#/global/host/watermark/#session.hostid#/#qry_detail.wmval.wm_image_path#" width="200" border="0" /></cfif></div>
+			<div id="thewmimg" style="float:left;width:250px;"><cfif qry_detail.wmval.wm_image_path NEQ ""><img src="#session.thehttp##cgi.http_host#/global/host/watermark/#session.hostid#/#qry_detail.wmval.wm_image_path#" width="200" border="0" /></cfif></div>
 			<div class="clear"></div>
 			<br />
 			<div style="width:90px;float:left;line-height:2em;">#myFusebox.getApplicationData().defaults.trans("opacity")#</div>

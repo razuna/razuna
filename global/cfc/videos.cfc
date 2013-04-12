@@ -291,7 +291,7 @@
 		<cfset thevideoimg = arguments.thestruct.videodetails.vid_name_image>
 	</cfif>
 	<!--- Storage Decision --->
-	<cfset thestorage = "#variables.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/">
+	<cfset thestorage = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/">
 	<cfset thestoragefullpath = "#arguments.thestruct.assetpath#/#session.hostid#/">
 	<!--- Set the correct path --->
 	<cfset theimage = "#thestorage##arguments.thestruct.videodetails.path_to_asset#/#thevideoimg#">

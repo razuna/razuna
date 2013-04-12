@@ -226,38 +226,38 @@
 					<cfif attributes.thetype EQ "img">
 						<!--- Preview --->
 						#myFusebox.getApplicationData().defaults.trans("preview")# #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.theprevsize#")# MB) (#qry_asset.detail.thumbwidth#x#qry_asset.detail.thumbheight# pixel)
-						#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=p
 						<!--- Original --->
 						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.img_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.ilength#")# MB) (#qry_asset.detail.orgwidth#x#qry_asset.detail.orgheight# pixel)
-						#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o</cfif>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#attributes.file_id#&v=o</cfif>
 						<!--- Related --->
 						<cfloop query="qry_related">
 							#ucase(img_extension)# #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB (#orgwidth#x#orgheight# pixel)
-							#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o
 						</cfloop>
 					<!--- Videos --->
 					<cfelseif attributes.thetype EQ "vid">
 						<!--- Original --->
 						<cfif qry_asset.detail.link_kind NEQ "lan">Original #ucase(qry_asset.detail.vid_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.vlength#")# MB) (#qry_asset.detail.vwidth#x#qry_asset.detail.vheight# pixel)
-						#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o</cfif>
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o</cfif>
 						<!--- Related --->
 						<cfloop query="qry_related">
 							#ucase(vid_extension)# #myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB (#vid_width#x#vid_height# pixel)
-							#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o
 						</cfloop>
 					<!--- Audios --->
 					<cfelseif attributes.thetype EQ "aud">
 						<!--- Original --->
 						Original #ucase(qry_asset.detail.aud_extension)# (#myFusebox.getApplicationData().defaults.converttomb("#qry_asset.detail.aud_size#")# MB)
-						#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#
 						<!--- Related --->
 						<cfloop query="qry_related">
 							#ucase(aud_extension)# #myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB
-							#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#
+							#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#
 						</cfloop>
 					<!--- Docs --->
 					<cfelse>
-						#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#
+						#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sf&f=#attributes.file_id#
 					</cfif>
 				<cfelse>
 					#qry_asset.detail.link_path_url#

@@ -87,7 +87,7 @@
 		</cfcase>
 		<!--- Not Flash Player compatible videos use the Quicktime player --->
 		<cfdefaultcase>
-			<a href="#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="#thevideoimage#" border="0" width="420" height="230"></a>
+			<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="#thevideoimage#" border="0" width="420" height="230"></a>
 		</cfdefaultcase>
 	</cfswitch>
 </cfoutput>

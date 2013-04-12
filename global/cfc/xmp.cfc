@@ -1616,12 +1616,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		</cfquery>
-		
-		<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
-			<cfset variables.thehttp = "https://">
-		<cfelse>
-			<cfset variables.thehttp = "http://">
-		</cfif>
 		<!--- Loop over items --->
 		<cfloop query="qry">
 			<!--- Set query --->
@@ -1630,7 +1624,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfset arguments.thestruct.file_id = theid>
 			<cfset arguments.thestruct.filetype = thetype>
 			<cfif application.razuna.storage EQ "local">
-				<cfset arguments.thestruct.file_url = "#variables.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#folder_id_r#/#thetype#/#theid#/#url_file_name#">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#folder_id_r#/#thetype#/#theid#/#url_file_name#">
 			<cfelse>
 				<cfset arguments.thestruct.file_url = cloud_url_org>
 			</cfif>

@@ -32,7 +32,7 @@
 				<cfloop query="qry_related">
 					<cfif attributes.s EQ "F">
 						<strong>#ucase(vid_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#vlength#")# MB, #vid_width#x#vid_height# pixel)<br />
-						<a href="#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank">
+						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#vid_id#&v=o" target="_blank">
 					<cfelse>
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#vid_name_org#" target="_blank">
 					</cfif>
@@ -45,10 +45,10 @@
 						 | <a href="##" onclick="remren('#vid_id#');">Remove</a>
 					</cfif>
 					<div id="divo#vid_id#" style="display:none;">
-						<input type="text" id="inputo#vid_id#" style="width:100%;" value="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" />
+						<input type="text" id="inputo#vid_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" />
 						<br />
 						<cfif application.razuna.storage EQ "local">
-							<input type="text" id="inputo#vid_id#d" style="width:100%;" value="#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#vid_name_org#" />
+							<input type="text" id="inputo#vid_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#vid_name_org#" />
 						<cfelse>
 							<input type="text" id="inputo#vid_id#d" style="width:100%;" value="#cloud_url_org#" />
 						</cfif>
@@ -69,7 +69,7 @@
 					</div>
 					<div id="dive#vid_id#" style="display:none;">
 						<cfset eh = vid_height + 40>
-						<textarea id="inpute#vid_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" scrolling="auto" width="100%" height="#eh#"></iframe></textarea>
+						<textarea id="inpute#vid_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#vid_id#&v=o" scrolling="auto" width="100%" height="#eh#"></iframe></textarea>
 					</div>
 					<br>
 					<!--- Nirvanix --->

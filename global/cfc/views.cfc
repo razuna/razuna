@@ -35,9 +35,9 @@
 	<cfset arguments.thestruct.qry_files = arguments.thestruct.qry_files.qry_files>
 </cfif>
 <!--- Storage Decision --->
-<cfset thestorage = "#variables.thehttp##cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
+<cfset thestorage = "#session.thehttp##cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
 <!--- The local host --->
-<cfset theurl = "#variables.thehttp#" & cgi.HTTP_HOST>
+<cfset theurl = "#session.thehttp#" & cgi.HTTP_HOST>
 <!--- Create the RSS --->
 <cfsavecontent variable="view"><cfoutput><?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <rss version="2.0" xmlns:media="http://search.yahoo.com/mrss/" xmlns:atom="http://www.w3.org/2005/Atom">
@@ -123,9 +123,9 @@
 		<cfset arguments.thestruct.qry_files = arguments.thestruct.qry_files.qry_files>
 	</cfif>
 	<!--- Storage Decision --->
-	<cfset thestorage = "#variables.thehttp##cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
+	<cfset thestorage = "#session.thehttp##cgi.http_host#/#cgi.context_path#/assets/#session.hostid#/">
 	<!--- The local host --->
-	<cfset theurl = "#variables.thehttp#" & cgi.HTTP_HOST>
+	<cfset theurl = "#session.thehttp#" & cgi.HTTP_HOST>
 	<!--- Write temp filename --->
 	<!--- <cfset var view = createuuid() & ".doc"> --->
 	<!--- Write doc --->

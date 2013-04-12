@@ -31,7 +31,7 @@
 	</cfloop>
 	<cfloop query="qry_av.assets">
 		 <strong>#av_link_title#</strong> (<cfif av_type EQ "img" OR av_type EQ "vid">#thewidth#x#theheight# pixel</cfif> #myFusebox.getApplicationData().global.converttomb('#thesize#')# MB)<br />
-			<a href="<cfif application.razuna.storage EQ "local">#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">View</a>
+			<a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">View</a>
 			| <a href="#myself#c.serve_file&file_id=#av_id#&type=#av_type#&v=o&av=true" target="_blank">Download</a>
 			| <a href="##" onclick="toggleslide('divavo#av_id#','inputavo#av_id#');return false;">Direct Link</a>
 			<cfif attributes.folderaccess NEQ "R">
@@ -39,7 +39,7 @@
 			</cfif>
 			<div id="divavo#av_id#" style="display:none;">
 				<cfif application.razuna.storage EQ "local">
-					<input type="text" id="inputavo#av_id#" style="width:100%;" value="#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
+					<input type="text" id="inputavo#av_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#" />
 				<cfelse>
 					<input type="text" id="inputavo#av_id#" style="width:100%;" value="#av_link_url#" />
 				</cfif>		

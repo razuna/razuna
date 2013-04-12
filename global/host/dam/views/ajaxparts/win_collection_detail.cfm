@@ -400,7 +400,7 @@
 					</tr>
 					<tr>
 						<td class="td2" valign="top">#myFusebox.getApplicationData().defaults.trans("collection")# URL</td>
-						<td class="td2"><!--- #variables.thehttp##cgi.http_host##replacenocase(cgi.script_name,"/index.cfm","","ALL")#/sharec/#attributes.col_id#/<input type="text" id="col_name_shared" name="col_name_shared" size="20" value="#qry_detail.col_name_shared#"><br /> ---><a href="#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#&v=#createuuid()#" target="_blank">#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#</a></td>
+						<td class="td2"><a href="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#&v=#createuuid()#" target="_blank">#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.sharec&fid=#attributes.col_id#</a></td>
 					</tr>
 					<!--- Download Thumbnail --->
 					<tr>

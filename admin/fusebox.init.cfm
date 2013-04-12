@@ -52,9 +52,9 @@
 
 <!--- Set HTTP or HTTPS --->
 <cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
-	<cfset variables.thehttp = "https://">
+	<cfset session.thehttp = "https://">
 <cfelse>
-	<cfset variables.thehttp = "http://">
+	<cfset session.thehttp = "http://">
 </cfif>
 
 <!--- Call the default components which we need on every page. To do this the FB way is quite cubersome --->

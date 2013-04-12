@@ -41,7 +41,7 @@
 		#defaultsObj.trans("db_update_done")#
 		<!--- <br />
 		<br />
-		Note: You should check the <a href="#variables.thehttp# #cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Update Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worries, it only means you already have the update for that one table done!  --->
+		Note: You should check the <a href="#session.thehttp# #cgi.HTTP_HOST##dynpath#/bluedragon/administrator" target="_blank">Update Logfile in the OpenBD Administration</a> for any errors before continuing! Errors with "Database already exists" are of no worries, it only means you already have the update for that one table done!  --->
 		<br />
 		<br />
 		<input type="submit" name="ftsubmit" value="#defaultsObj.trans("button_update_continue")#" class="button" onclick="location.href='#self#';">
