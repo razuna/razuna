@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<!--- Folders --->
-	<div style="padding-left:10px;font-weight:bold;float:left;">Folders</div>
+	<!--- <div style="padding-left:10px;font-weight:bold;float:left;">Folders</div> --->
 	<!--- Drop down menu --->
 	<div style="width:60px;float:right;position:absolute;left:190px;">
 		<div style="float:left;"><a href="##" onclick="$('##explorertools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
@@ -53,13 +53,13 @@
 	<div id="treeBox" style="width:200;height:200;float:left;"></div>
 	<div style="clear:both;"></div>
 	<!--- Show folder selection --->
-	<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+	<!--- <cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 		<cfif session.showmyfolder EQ "F">
 			<p style="padding-left:10px;"><strong>You only see your folders now.</strong><br /><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=T');return false;" title="Click here to show the personal folders of your users">Click here to show all folders.</a></p>
 		<cfelse>
 			<p style="padding-left:10px;"><strong>You see ALL folders now.</strong><br /><em>Tip: Roll over the folder to see who owns the folder.</em><br /><a href="##" onclick="loadcontent('explorer','#myself#c.explorer&showmyfolder=F');return false;" title="Click here to hide the personal folders of your users">Click here to show your folders only.</a></p>
 		</cfif>
-	</cfif>
+	</cfif> --->
 	<!--- Show link back to main page --->
 	<cfif !cs.show_top_part OR cs.folder_redirect NEQ "0">
 		<div style="clear:both;"></div>

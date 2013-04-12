@@ -1689,3 +1689,36 @@ function resetdl(divorg,divthumb,folderid,thestatusddiv){
 	$('#' + thestatusddiv + '_thumb').html('Reset all individual download setting successfully');
 	$('#' + thestatusddiv + '_org').html('Reset all individual download setting successfully');
 }
+// Switch section
+function switchmainselection(thetype,thelinktext){
+	// Load section
+	if (thetype == 'folders'){
+		$('#explorer').load('index.cfm?fa=c.explorer');
+	}
+	else if (thetype == 'collections'){
+		$('#explorer').load('index.cfm?fa=c.explorer_col');
+	}
+	else if (thetype == 'labels'){
+		$('#explorer').load('index.cfm?fa=c.labels_list');
+	}
+	else if (thetype == 'smart_folders'){
+		$('#explorer').load('index.cfm?fa=c.smart_folders');
+	}
+	// Toogle
+	$('#mainselection').toggle();
+	// Remove the image in all marks
+	$('#section_folders').html('&nbsp;');
+	$('#section_smart_folders').html('&nbsp;');
+	$('#section_collections').html('&nbsp;');
+	$('#section_labels').html('&nbsp;');
+	// Now set the correct CSS
+	$('#section_folders').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_smart_folders').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_collections').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_labels').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	// Now mark the div
+	$('#section_' + thetype).css({'float':'left','padding-right':'3px'});
+	$('#section_' + thetype).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
+	// Change the link text itself
+	$('#mainsectionchooser').text(thelinktext);
+}

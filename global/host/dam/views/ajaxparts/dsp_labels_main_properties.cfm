@@ -76,7 +76,7 @@
 			if (thelab != "") {
 				$('##label_dummy').load('#myself#c.admin_labels_update', {label_id:'#attributes.label_id#', label_text: thelab, label_parent: theparent});
 				$('##label_feedback').html('#myFusebox.getApplicationData().defaults.trans("success")#');
-				loadcontent('labels','#myself#c.labels_list');
+				loadcontent('explorer','#myself#c.labels_list');
 			}
 			else {
 				return false;
@@ -85,7 +85,7 @@
 		// Remove Label
 		function labrem(){
 			$('##label_dummy').load('#myself#c.labels_remove', {id:'#attributes.label_id#'});
-			loadcontent('labels','#myself#c.labels_list');
+			loadcontent('explorer','#myself#c.labels_list');
 		}
 	</script>	
 </cfoutput>

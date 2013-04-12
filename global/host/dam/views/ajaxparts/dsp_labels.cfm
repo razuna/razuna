@@ -25,7 +25,7 @@
 --->
 <cfoutput>
 	<!--- Folders --->
-	<div style="padding-left:10px;font-weight:bold;float:left;">Labels</div>
+	<!--- <div style="padding-left:10px;font-weight:bold;float:left;">Labels</div> --->
 	<div style="width:60px;float:right;left:190px;position:absolute;">
 		<div style="float:left;"><a href="##" onclick="$('##labeltools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##labeltools').toggle();" class="ddicon"></div>
@@ -42,7 +42,7 @@
 				</select></p>
 				<p><hr></p>
 			</cfif>
-			<p><a href="##" onclick="loadcontent('labels','#myself#c.labels_list');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
+			<p><a href="##" onclick="loadcontent('explorer','#myself#c.labels_list');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 		</div>
 	</div>
 	<div style="clear:both;"></div>
@@ -82,7 +82,7 @@
 		var theparent = $("##sublabelof option:selected").val();
 		// Submit
 		if (thelab != "") {
-			$('##labels').load('#myself#c.labels_add', {label_id:0, label_text: thelab, label_parent: theparent});
+			$('##explorer').load('#myself#c.labels_add', {label_id:0, label_text: thelab, label_parent: theparent});
 		}
 		else {
 			return false;

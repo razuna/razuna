@@ -24,52 +24,49 @@
 *
 --->
 <cfoutput>
-	<div>
-		<select id="" data-placeholder="Choose a Section" class="chzn-select" style="width:260px;" tabindex="-1">
-			<option value=""></option>
-			<option value="United Kingdom">Smart Folders</option> 
-			<option value="Afghanistan">Collections</option> 
-			<option value="Aland Islands">Labels</option> 
-		</select>
+	<!--- Section Chooser --->
+	<div style="text-decoration:none;font-weight:bold;font-size:15px;padding-bottom:20px;">
+		<div style="float:left;"><a href="##" id="mainsectionchooser" onclick="$('##mainselection').toggle();" class="ddicon" style="text-decoration:none;">Folders</a></div>
+		<div style="float:left;padding-top:3px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##mainselection').toggle();" class="ddicon"></div>
+		<div id="mainselection" class="ddselection_header" style="display:none;top:17px;">
+			<p><a href="##" onclick="switchmainselection('folders','Folders');"><div id="section_folders" style="float:left;padding-right:2px;padding-top:3px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>Folders</a></p>
+			<p><a href="##" onclick="switchmainselection('smart_folders','Smart Folders');"><div id="section_smart_folders" style="float:left;padding-right:14px;">&nbsp;</div>Smart Folders</a></p>
+			<cfif cs.tab_collections>
+				<p><a href="##" onclick="switchmainselection('collections','Collections');"><div id="section_collections" style="float:left;padding-right:14px;">&nbsp;</div>Collections</a></p>
+			</cfif>
+			<cfif cs.tab_labels>
+				<p><a href="##" onclick="switchmainselection('labels','Labels');"><div id="section_labels" style="float:left;padding-right:14px;">&nbsp;</div>Labels</a></p>
+			</cfif>
+		</div>
 	</div>
-	<div style="clear:both;"></div>
 	<br />
-<!--- Tabs --->
-<div id="tabs_left">
-	<ul>
-		<li><a href="##explorer">Folders</a></li>
-		<cfif cs.tab_collections><li><a href="##explorer_col" onclick="loadcontent('explorer_col','#myself#c.explorer_col');">Collections</a></li></cfif>
-		<cfif cs.tab_labels><li><a href="##labels" onclick="loadcontent('labels','#myself#c.labels_list');">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li></cfif>
-	</ul>
-	<div id="explorer" style="margin-left:0;padding-left:0;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
-	<cfif cs.tab_collections><div id="explorer_col" style="margin-left:0;padding-left:0;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
-	<cfif cs.tab_labels><div id="labels" style="margin-left:0;padding-left:0;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
-</div>
-<div>Collapse Menu</div>
-<div id="apMiddle" style="z-index:10;"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div>
-<script language="JavaScript" type="text/javascript">
-	// Activate Chosen
-	$(".chzn-select").chosen({ disable_search_threshold: 5 });
-	jqtabs("tabs_left");
-	loadcontent('explorer','#myself#c.explorer');
-	// Show or hide left side
-	function hideshow(state){
-		if (state == "off"){
-			$('##tabs_left').css('display','none');
-			$('##slide_off').css('display','none');
-			$('##slide_on').css('display','');
-			$('##apMiddle').css({'left':'3px'});
-			$('##apDiv3').css({'margin-left':'0px'});
-			$('##apDiv4').css({'left':'10px','width':'97%'});
+	<!--- Explorer --->
+	<div id="explorer" style="margin-left:0;padding-left:0;"></div>
+	<br />
+	<div>Collapse Menu</div>
+
+	<div id="apMiddle" style="z-index:10;"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div>
+	<script language="JavaScript" type="text/javascript">
+		// Load the folders by default
+		$('##explorer').load('#myself#c.explorer');
+		// Show or hide left side
+		function hideshow(state){
+			if (state == "off"){
+				$('##tabs_left').css('display','none');
+				$('##slide_off').css('display','none');
+				$('##slide_on').css('display','');
+				$('##apMiddle').css({'left':'3px'});
+				$('##apDiv3').css({'margin-left':'0px'});
+				$('##apDiv4').css({'left':'10px','width':'97%'});
+			}
+			else {
+				$('##tabs_left').css('display','');
+				$('##slide_off').css('display','');
+				$('##slide_on').css('display','none');
+				$('##apMiddle').css({'left':'261px'});
+				$('##apDiv3').css({'margin-left':'13px'});
+				$('##apDiv4').css({'left':'280px','width':'75%'});
+			}
 		}
-		else {
-			$('##tabs_left').css('display','');
-			$('##slide_off').css('display','');
-			$('##slide_on').css('display','none');
-			$('##apMiddle').css({'left':'261px'});
-			$('##apDiv3').css({'margin-left':'13px'});
-			$('##apDiv4').css({'left':'280px','width':'75%'});
-		}
-	}
-</script>
+	</script>
 </cfoutput>
