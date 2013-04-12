@@ -57,7 +57,7 @@
 		<tr>
 			<td colspan="5">
 				<div style="float:left;padding-left:10px;">
-					<cfif qry_widget.widget_uploading EQ "T"><a href="##" onclick="window.open('#myself#c.asset_add_single&folder_id=#session.fid#&_w=t&jsessionid=#session.SessionID#','up#session.fid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');">#myFusebox.getApplicationData().defaults.trans("add_file")#</a> | </cfif>
+					<cfif qry_widget.widget_uploading EQ "T"><a href="##" onclick="window.open('#myself#c.asset_add_single&folder_id=#session.fid#&_w=t&jsessionid=#session.SessionID#','up#session.fid#','left=20,top=20,width=500,height=500,toolbar=0,resizable=1,location=0,status=0,menubar=0,history=0');"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("add_file")#</button></a></cfif>
 					#qry.qry_filecount.thetotal# #myFusebox.getApplicationData().defaults.trans("share_content_count")#
 					<!--- BreadCrumb --->
 					<cfif structkeyexists(url,"folder_id_r")>
@@ -67,7 +67,7 @@
 					</cfif>
 					<!--- Not when a collection since they do not know limits!!! --->
 					<cfif session.iscol EQ "F">
-						<div style="padding-left:50px;float:right;">
+						<div style="padding-left:50px;float:right;padding-top:3px;">
 							<cfif session.offset GTE 1>
 								<!--- For Back --->
 								<cfset newoffset = session.offset - 1>

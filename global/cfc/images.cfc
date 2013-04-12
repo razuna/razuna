@@ -504,9 +504,8 @@
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Get details --->
 	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#detailimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, 
-	i.img_owner, i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
-	i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org,
+	SELECT /* #variables.cachetoken#detailimg */ i.img_id, i.img_group, i.img_publisher, i.img_filename, i.folder_id_r, i.img_custom_id, i.img_online, i.img_owner, i.img_create_date, i.img_create_time, i.img_change_date, i.img_change_time, 
+	i.img_filename_org, i.img_filename_org filenameorg, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org,
 	i.img_width orgwidth, i.img_height orgheight, i.img_extension orgformat, i.thumb_width thumbwidth, 
 	i.thumb_height thumbheight, i.img_size ilength, i.thumb_size thumblength, i.hashtag,
 	i.img_ranking rank, i.img_single_sale, i. img_is_new, i.img_selection, i.img_in_progress, 

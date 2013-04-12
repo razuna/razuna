@@ -36,10 +36,13 @@
 	<cfset theaddurl = "document.location.href='#myself#c.asset_add_single&folder_id=#session.fid#&_w=t">
 <cfelse>
 	<cfset theaddurl = "#myself#c.asset_add_single&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#">
+	<cfif structkeyexists(attributes,"fromshare")>
+		<cfset theaddurl = "#theaddurl#&fromshare=true">
+	</cfif>
 </cfif>
 <cfoutput>
 <div>
-	<iframe src="#myself#c.asset_add_upload&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&v=#createuuid()#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:400px;padding:0px;margin:0px;"></iframe>
+	<iframe src="#myself#c.asset_add_upload&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&v=#createuuid()#<cfif structkeyexists(attributes,"fromshare")>&fromshare=true</cfif>" frameborder="false" scrolling="false" style="border:0px;width:100%;height:400px;padding:0px;margin:0px;"></iframe>
 	<cfif attributes.nopreview EQ 0>		
 		<cfif structkeyexists(attributes,"_w")>
 			<a href="##" onclick="#theaddurl#';" style="float:right;">

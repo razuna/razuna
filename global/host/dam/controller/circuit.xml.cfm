@@ -1682,6 +1682,15 @@
 				<set name="session.fid" value="#attributes.folder_id#" />
 			</true>
 		</if>
+		<if condition="structkeyexists(attributes,'fromshare')">
+			<true>
+				<set name="session.fromshare" value="true" />
+				<set name="attributes.fromshare" value="true" />
+			</true>
+			<false>
+				<set name="session.fromshare" value="false" />
+			</false>
+		</if>
 		<!-- XFA -->
 		<xfa name="submitassetsingle" value="c.asset_upload_do" />
 		<!-- CFC: Get languages -->
@@ -5610,7 +5619,7 @@
 		<!-- Show -->
 		<do action="basket_full" />
 	</fuseaction>
-	
+
 	<!--  -->
 	<!-- SHARING: END -->
 	<!--  -->
