@@ -215,10 +215,12 @@
 	WHERE a.aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 	AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<!--- Get proper folderaccess --->
-	<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
-	<!--- Add labels query --->
-	<cfset QuerySetCell(details, "perm", theaccess)>
+	<cfif details.recordcount NEQ 0>
+		<!--- Get proper folderaccess --->
+		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
+		<!--- Add labels query --->
+		<cfset QuerySetCell(details, "perm", theaccess)>
+	</cfif>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detaildescaud */ aud_description, aud_keywords, lang_id_r, aud_description as thedesc, aud_keywords as thekeys
