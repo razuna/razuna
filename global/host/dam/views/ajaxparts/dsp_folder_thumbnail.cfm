@@ -34,34 +34,52 @@
 <script  type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js"></script>
 <head>
 <body>
+	
 	<cfform name="form_folderthumb#attributes.theid#" action="#self#" method="post" enctype="multipart/form-data" id="form_folderthumb#attributes.theid#">
 	<input type="hidden" name="#theaction#" value="#xfa.submitfolderform#">
 	<input type="hidden" name="thepathup" value="#ExpandPath("../../")#">
 	<input type="hidden" name="theid" value="#attributes.theid#">
 	<input type="hidden" name="folderId" value="#attributes.folder_id#">
+	<input type="hidden" name="dyn_path" value="#dynpath#">
+	<input type="hidden" name="img_ext" value="#qry_files.thumb_extension#">
 	<input type="hidden" name="uploadnow" value="T">
 	<div id="folder" style="width:695px;padding-bottom:60px;">
 		<div id="folder_thumb#attributes.theid#-#attributes.isdetail#">
 			<table border="0" cellpadding="0" cellspacing="0" class="grid">
-				
 				<tr>
 					<td>
-						<div id="folderThumb_load"  class="theimg">
-							<img src="#dynpath#/global/host/floderthumbnail/#session.hostid#/#attributes.folder_id#.jpg" border="0" height="100px;" width="100px;"><br />
+						<div id="folderThumb_load"  class="theimg" style="width:110px; float:left;">
+							<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#")>
+								<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\" type="file">
+								<cfif myDir.RecordCount>
+									<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#myDir.name#" border="0" height="100px;" width="100px;"><br />
+								<cfelse>
+									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+								</cfif>
+							<cfelse>
+								<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+							</cfif>
+							
+						</div>
+						<div id="ExistingThumb_load" class="theimg">
 						</div>
 					</td>
-					
 				</tr>
 				<tr>
 					<td><cfinput type="file" name="thumb_folder_file" id="thumb_folder_file" size="50"></td>
 				</tr>	
 				<!--- Thumbnail Combo --->
 				<tr>
+					
 					<td width="100%" nowrap="true" colspan="2">
 						<select data-placeholder="Choose a thumnail" class="chzn-select" style="width:400px;" id="thumb_folder" name="thumb_folder">
 							<option value=""></option>
 							<cfloop query="qry_files" >
-							<option value="#img_id#/#img_filename#">#img_filename#</option>
+								<cfif application.razuna.storage EQ 'local'>
+									<option value="#dynpath#/assets/#session.hostid#/#attributes.folder_id#/img/#img_id#/thumb_#img_id#.#thumb_extension#">#img_filename#</option>
+								<cfelse>
+									<option value="#cloud_url#">#img_filename#</option>
+								</cfif>
 							</cfloop>
 						</select>
 					</td>
@@ -82,6 +100,8 @@
 	</div>
 	
 	</cfform>
+	
+	
 </body>
 	<!--- JS --->
 	
@@ -91,8 +111,10 @@
 		
 		
 		$('##thumb_folder').change(function(){
-			image=$('##thumb_folder').val();
-			$('##folderThumb_load').html('<img src="#dynpath#/assets/#session.hostid#/#attributes.folder_id#/img/'+image+'" height="100px;" width="100px;">');
+			var image=$('##thumb_folder').val();
+			if(image != ''){
+					$('##ExistingThumb_load').html('<img src="'+image+'" width="100" height="100">');
+				}
 		});
 		
 		

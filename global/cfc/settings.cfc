@@ -961,49 +961,46 @@
 <cffunction hint="Upload folder Thumbnail" name="Upload_folderThumbnail" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
 	
+	<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
+         <cfset variables.thehttp = "https://">
+    <cfelse>
+         <cfset variables.thehttp = "http://">
+    </cfif>
 	<cfif arguments.thestruct.thumb_folder_file neq ""  or arguments.thestruct.thumb_folder neq "">
-		<!--- Create directory if not there already to hold this floderthumbnail --->
-		<cfif  not directoryexists("#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/")>
-			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/">
+		<!--- Create directory if not there already to hold this folderthumbnail --->
+		<cfif  not directoryexists("#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/">
 		</cfif>
-		
-		<cfif  fileExists("#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.jpg")>
-			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.jpg" >
-		</cfif>	
-	
-		<cfif len(arguments.thestruct.thumb_folder)>
-			<cffile action="copy" destination="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.jpg" 
-					source="#arguments.thestruct.thepathup#/assets/#session.hostid#/#arguments.thestruct.folderId#/img/#arguments.thestruct.thumb_folder#">
-			<cfset this.thefilename = "#arguments.thestruct.folderId#.jpg">
-		</cfif>	
-	
+		<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\" type="file">
+		<cfif myDir.recordcount>
+			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#myDir.name#">
+		</cfif>
+		<cfif arguments.thestruct.thumb_folder_file eq ""> 
+			<cfif application.razuna.storage EQ 'local'> 
+				<cfhttp url="#variables.thehttp##cgi.http_host##arguments.thestruct.thumb_folder#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/" file="#arguments.thestruct.folderId#.#arguments.thestruct.img_ext#" />
+			<cfelse>
+				<cfhttp url="#arguments.thestruct.thumb_folder#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/" file="#arguments.thestruct.folderId#.#arguments.thestruct.img_ext#" />
+			</cfif>
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.#arguments.thestruct.img_ext#">
+		</cfif>
 		<cfif arguments.thestruct.thumb_folder_file neq "">
-			<cffile action="upload" destination="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/" filefield="thumb_folder_file" result="result" >
+			<cffile action="upload" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/" filefield="thumb_folder_file" result="result">
 			
-			<cffile action="rename" destination="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.jpg"
-					 source="#arguments.thestruct.thepathup#global/host/floderthumbnail/#session.hostid#/#result.serverFile#" >
+			<cffile action="rename" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#.#result.serverfileext#"
+					 source="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#result.serverFile#" >
 		
-		
-		<cfset this.thefilename = result.serverFileName>
+		<cfset this.thefilename = "#arguments.thestruct.folderId#.#result.serverfileext#">
 	
 		<!--- Get Size --->
 			<cfinvoke component="global" method="converttomb" thesize="#result.filesize#" returnvariable="thesize">
 			<cfset this.thesize = thesize>
-		</cfif>	
+		</cfif>
 			
 		<!--- Return --->
 		<cfreturn this />	
 	</cfif>
 	
 </cffunction>
-
-
-
-
-
-
-
-
 
 <!--- Get API key --->
 <cffunction name="getapikey" output="false" returntype="string">
