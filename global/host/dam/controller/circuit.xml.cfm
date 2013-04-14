@@ -6041,7 +6041,6 @@
 		<set name="attributes.qry_filecount" value="0"  />
 		<set name="attributes.kind" value="img"  />
 		<xfa name="submitfolderform" value="c.folder_thumbnail_save" overwrite="false" />
-		
 		<!-- CFC: Load record -->
 		<!-- CFC: Get images -->
 		<invoke object="myFusebox.getApplicationData().images" method="getFolderAssetDetails" returnvariable="qry_files">
@@ -6051,7 +6050,6 @@
 			<argument name="rowmaxpage" value="1000" />
 			<argument name="thestruct" value="#attributes#" />
 		</invoke>
-		
 		<!-- Show -->
 		<do action="ajax.folder_thumbnail" />
 	</fuseaction>
@@ -6070,8 +6068,16 @@
 		</if>
 		<!-- Show  -->
 		<do action="c.folder_thumbnail" />
-		
 	</fuseaction>
+
+	<!-- Reset folder thumbnail -->
+	<fuseaction name="folder_thumbnail_reset">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="folderthumbnail_reset(attributes.folder_id)" />
+		<!-- Show  -->
+		<do action="c.folder_thumbnail" />
+	</fuseaction>
+
 	<!--  -->
 	<!-- FLODER THUMBNAIL: STOP -->
 	<!--  -->

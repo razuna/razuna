@@ -42,12 +42,11 @@
 		<cfif attributes.iscol EQ "F">
 			<!--- Sharing --->
 			<div id="sharing">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
+			<!--- Widgets --->
 			<div id="widgets">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div>
-			
+			<!--- Thumbnail --->
 			<div id="thumbnail">
-				<div><strong>#myFusebox.getApplicationData().defaults.trans("header_img_thumbnail")#</strong></div>
-				
-				<iframe src="#myself#c.folder_thumbnail&folder_id=#attributes.folder_id#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:300px;overflow:hidden;"></iframe>
+				<iframe src="#myself#c.folder_thumbnail&folder_id=#attributes.folder_id#" frameborder="false" scrolling="false" style="border:0px;width:100%;height:380px;overflow:hidden;"></iframe>
 			</div>
 		</cfif>
 	</div>
@@ -57,7 +56,6 @@
 		jqtabs("tabfoldersettings");
 		// Load folder properties
 		$('##properties').load('#myself#c.folder_edit&folder_id=#attributes.folder_id#&theid=#attributes.folder_id#');
-		
 		// Save form in the folder edit window
 		<cfif attributes.iscol EQ "F">
 			function savefolderforms(){
