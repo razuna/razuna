@@ -49,14 +49,14 @@
 					<td>
 						<div id="folderThumb_load"  class="theimg" style="width:110px; float:left;">
 							<cfif directoryexists("#ExpandPath("../..")#global/host/folderthumbnail/#session.hostid#/#attributes.folder_id#")>
-								<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\#attributes.folder_id#" type="file">
+								<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#attributes.folder_id#" type="file">
 								<cfif myDir.RecordCount>
-									<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#attributes.folder_id#/#myDir.name#" border="0" height="100px;" width="100px;"><br />
+									<img src="#dynpath#/global/host/folderthumbnail/#session.hostid#/#attributes.folder_id#/#myDir.name#" border="0" height="100px;"><br />
 								<cfelse>
-									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+									<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0" height="100px;"><br />
 								</cfif>
 							<cfelse>
-								<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0"><br />
+								<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0" height="100px;"><br />
 							</cfif>
 							
 						</div>
@@ -75,7 +75,7 @@
 							<option value=""></option>
 							<cfloop query="qry_files" >
 								<cfif application.razuna.storage EQ 'local'>
-									<option value="#dynpath#/assets/#session.hostid#/#attributes.folder_id#/img/#img_id#/thumb_#img_id#.#thumb_extension#">#img_filename#</option>
+									<option value="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#">#img_filename#</option>
 								<cfelse>
 									<option value="#cloud_url#">#img_filename#</option>
 								</cfif>
@@ -107,16 +107,13 @@
 	<script language="JavaScript" type="text/javascript">
 		// Activate Chosen
 		$(".chzn-select").chosen();
-		
-		
+		// Show image
 		$('##thumb_folder').change(function(){
 			var image=$('##thumb_folder').val();
 			if(image != ''){
-					$('##ExistingThumb_load').html('<img src="'+image+'" width="100" height="100">');
+					$('##ExistingThumb_load').html('<img src="'+image+'" height="100" border="0">');
 				}
 		});
-		
-		
 	</script>
 </cfoutput>
 <html>

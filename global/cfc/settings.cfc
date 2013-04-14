@@ -960,18 +960,12 @@
 
 <cffunction hint="Upload folder Thumbnail" name="Upload_folderThumbnail" access="public" output="false">
 	<cfargument name="thestruct" type="Struct">
-	
-	<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
-         <cfset session.thehttp = "https://">
-    <cfelse>
-         <cfset session.thehttp = "http://">
-    </cfif>
 	<cfif arguments.thestruct.thumb_folder_file neq ""  or arguments.thestruct.thumb_folder neq "">
 		<!--- Create directory if not there already to hold this folderthumbnail --->
 		<cfif  not directoryexists("#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#")>
 			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/">
 		</cfif>
-		<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global\host\folderthumbnail\#session.hostid#\#arguments.thestruct.folderId#\" type="file">
+		<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" type="file">
 		<cfif myDir.recordcount>
 			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#myDir.name#">
 		</cfif>
