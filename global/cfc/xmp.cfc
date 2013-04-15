@@ -92,6 +92,7 @@
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.frombatch" default="F">
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
+	<cfset var md5hash = "">
 	<!--- Declare all variables or else you will get errors in the page --->
 	<cfparam default="" name="arguments.thestruct.xmp_document_title">
 	<cfparam default="" name="arguments.thestruct.xmp_author">
@@ -1293,6 +1294,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfparam default="" name="arguments.thestruct.webstatement">
 	<cfparam default="" name="arguments.thestruct.rightsmarked">
 	<cfparam default="#session.hostid#" name="arguments.thestruct.hostid">
+	<cfset var md5hash = "">
 	<!--- Query the record --->
 	<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrydetail">
 	SELECT  f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_name, f.file_name_org filenameorg, f.link_path_url, 
