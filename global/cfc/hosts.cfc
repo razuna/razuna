@@ -166,7 +166,7 @@
 				</cfinvoke>
 			</cfif>
 			<!--- ADD THE SYSTEMADMIN TO THE CROSS TABLE FOR THE HOSTS --->
-			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin">
+			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin" host_id="0">
 			<cfoutput query="theadmins">
 				<cftransaction>
 					<cfquery datasource="#variables.dsn#">
