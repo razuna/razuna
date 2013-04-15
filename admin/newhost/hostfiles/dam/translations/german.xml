@@ -1401,6 +1401,12 @@
 	<transid name="logo_desc">
 		<transtext><![CDATA[Sie können Ihr eigenes Logo anziegen, anstatt des Razuna Logo. Laden Sie die Bild-Datei mit der Funktion hier. Hinweis: Der Dateiname muss "logo.jpg" sein! (Am besten 200x29 pixel)]]></transtext>
 	</transid>
+	<transid name="favicon_header">
+		<transtext>Ihr Favicon</transtext>
+	</transid>
+	<transid name="favicon_desc">
+		<transtext><![CDATA[Sie können Ihr eigenes Favicon anziegen, anstatt des Razuna Favicon. Laden Sie die Bild-Datei mit der Funktion hier. Hinweis: Der Dateiname muss "favicon.ico" sein! (Am besten 16x16 pixel)]]></transtext>
+	</transid>
 	<transid name="tooltip_refresh_tree">
 		<transtext>Aktualisierung der Ordner-Baumes (wird meistens nicht benötigt, aber wenn Sie einen Ordner vermissen hilft dies manchmal)</transtext>
 	</transid>

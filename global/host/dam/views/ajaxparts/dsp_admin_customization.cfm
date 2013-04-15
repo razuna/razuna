@@ -67,7 +67,7 @@
 					<tr>
 						<td colspan="2">#myFusebox.getApplicationData().defaults.trans("login_image_desc")#</td>
 					</tr>
-					<tr>
+					<tr class="list">
 						<td valign="top">
 							<div id="iframeimg">
 								<iframe src="#myself#ajax.isp_settings_upload&loginimg=true" frameborder="false" scrolling="false" style="border:0px;width:550px;height:70px;"></iframe>
@@ -81,8 +81,31 @@
 						</td>
 					</tr>
 				</table>
+				<!--- Upload Favicon Image --->
+				<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+					<tr>
+						<th colspan="2">#myFusebox.getApplicationData().defaults.trans("favicon_header")#</th>
+					</tr>
+					<tr>
+						<td colspan="2">#myFusebox.getApplicationData().defaults.trans("favicon_desc")#</td>
+					</tr>
+					<tr>
+						<td valign="top">
+							<div id="iframe" valign="top">
+								<iframe src="#myself#ajax.isp_settings_upload&favicon=true" frameborder="false" scrolling="false" style="border:0px;width:550px;height:70px;"></iframe>
+					       	</div>
+						</td>
+						<td valign="top">
+							<div id="loadfaviconimage"></div>
+						</td>
+						<td valign="top" nowrap="nowrap">
+							<a href="##" onclick="loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon&remove=t');">Remove</a>
+						</td>
+					</tr>
+				</table>
 			</div>
 			<div stlye="clear:both;"><br /></div>
+			
 			<!--- User options --->
 			<a href="##" onclick="$('##useroptions').slideToggle('slow');return false;"><div class="headers">&gt; User Options</div></a>
 			<div id="useroptions" style="display:none;padding-top:10px;">
@@ -612,6 +635,8 @@
 			loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');
 			// Load Login Image
 			loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg');
+			// Load Favicon Image
+			loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon');
 			// Submit
 			$("##form_admin_custom").submit(function(e){
 				// Get values

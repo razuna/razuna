@@ -50,7 +50,12 @@
 <script type="text/javascript" src="#dynpath#/global/js/notification/sticky.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>
-<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+<!--- Favicon --->
+<cfif fileexists("#ExpandPath("../..")#global/host/favicon/#session.hostid#/favicon.ico")>
+	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />
+<cfelse>
+	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+</cfif>
 <style>
 ##apDiv4 {
 	position: absolute;

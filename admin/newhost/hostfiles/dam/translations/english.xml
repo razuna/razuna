@@ -1398,6 +1398,12 @@
 	<transid name="logo_desc">
 		<transtext><![CDATA[You can show your own logo instead of the default Razuna one. Upload your logo below. Note: you have to name your image file "logo.jpg" or else it will fail! (Best is to have a 200x29 pixel image)]]></transtext>
 	</transid>
+	<transid name="favicon_header">
+		<transtext>Your Favicon</transtext>
+	</transid>
+	<transid name="favicon_desc">
+		<transtext><![CDATA[You can show your own favicon instead of the default Razuna one. Upload your favicon below. Note: you have to name your image file "favicon.ico" or else it will fail! (Best is to have a 16x16 pixel image)]]></transtext>
+	</transid>
 	<transid name="tooltip_refresh_tree">
 		<transtext>Reload the folder tree (usually not needed but if you are missing something this might help)</transtext>
 	</transid>
