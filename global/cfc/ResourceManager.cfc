@@ -17,9 +17,15 @@
 		output="false" 
 	>
 		<cfargument name="resourcePackagePath" hint="Flex style Resource Package folder path" type="string" required="true" /> 
-		<cfargument name="baseLocale" hint="Base locale to fall back on if there are no matches for a particular key and locale" type="string" required="false" default="en_US" /> 
-		<cfargument name="propertiesEncoding" hint="File Encoding of Resource Bundle properties files" type="string" required="false" default="UTF-8" /> 
-
+		<cfargument name="baseLocale" hint="Base locale to fall back on if there are no matches for a particular key and locale" type="string" required="false" default="en_US" />
+		<cfargument name="admin" hint="Find the admin for basePackagePath" type="string" required="false" default="" /> 
+		<cfargument name="propertiesEncoding" hint="File Encoding of Resource Bundle properties files" type="string" required="false" default="UTF-8" />
+		<cfif arguments.admin EQ 'admin'>
+			<cfset variables.basePackagePath = expandPath(arguments.resourcePackagePath)>
+		<cfelse>
+			<cfset variables.basePackagePath = expandPath('../../global/translations')>
+		</cfif> 
+		
 		<cfset variables.resourcePackagePath = expandPath(arguments.resourcePackagePath) />
 		<cfset variables.baseLocale = arguments.baseLocale />
 		<cfset variables.propertiesEncoding = arguments.propertiesEncoding />
@@ -40,7 +46,8 @@
 		<cfargument name="key" hint="Resource Key" type="string" required="true" />
 		<cfargument name="values" hint="Array of values to substitute for $1, $2 etc in the resource string" type="array" required="false" default="#arrayNew(1)#" />
 		<cfargument name="locale" hint="Resource Locale" type="string" required="false" default="#this.getLocaleCode()#" />
-
+		
+		
 		<!--- LOCALS --->
 		<cfset var resource = '' />
 		<cfset var resourceBundle = structNew() />
@@ -51,41 +58,48 @@
 		
 		<cfset currentLocale = arguments.locale />
 		
-		<!--- Loop through locale fall back values --->
-		<cfloop index="count" from="1" to="5">
-		
-			<cfset resourceBundle = variables.getResourceBundle(arguments.resourceBundleName, currentLocale) />
-			<cfset currentLocal = resourceBundle.locale />
-			
-			<cfif structKeyExists( resourceBundle, arguments.key ) >
-			
-				<cfif arrayLen(arguments.values) eq 0 >			
-					<cfreturn resourceBundle[arguments.key] />
-				<cfelse>
-					<cfset result = resourceBundle[arguments.key] />
-					
-					<!--- Do Substitutions --->
-					<cfloop index="valueCount" from="1" to="#arrayLen(arguments.values)#">
-						<cfset result = replaceNoCase(result, '$'&valueCount, arguments.values[valueCount], 'all') />
-					</cfloop>
-					
-					<cfreturn result />
-				</cfif>
-			
-			<cfelse>
-
-				<!--- Fall back --->
-				<cfset currentLocale = variables.getLocaleFallBack(currentLocale) />
-				
-				<cfif currentLocale eq ''>
-					<cfthrow type="com.bealearts.util.Internationalisation.RESOURCE_NOT_FOUND" message="Resource not found" detail="Resource key '#arguments.key#' in Resource Bundle '#arguments.resourceBundleName#' in locale or fall back locale not found for '#currentLocale#'" />
-				</cfif>
-			
+		<cfset propertyFile = createObject('java', 'java.util.Properties') />
+		<cfif fileExists(variables.resourcePackagePath  & '/' & 'Custom' & '/' & currentLocale & '/' & arguments.resourceBundleName & '.properties')>
+			<cfset propertyFile.load( createObject('java', 'java.io.InputStreamReader').init( createObject('java', 'java.io.FileInputStream').init( variables.resourcePackagePath  & '/' & 'Custom' & '/' & currentLocale & '/' & arguments.resourceBundleName & '.properties' ), variables.propertiesEncoding ) ) />
+		 	<cfset result = propertyFile.getProperty(arguments.key)>
+			<cfif arrayLen(arguments.values) neq 0 >
+				<cfloop index="valueCount" from="1" to="#arrayLen(arguments.values)#">
+            		<cfset result = replaceNoCase(result, '$'&valueCount, arguments.values[valueCount], 'all') />
+          		</cfloop>
 			</cfif>
-			
-		</cfloop>	
+		</cfif>	 
+		  
+		<cfif result eq ''>
+			<cfset propertyFile.load( createObject('java', 'java.io.InputStreamReader').init( createObject('java', 'java.io.FileInputStream').init( variables.basePackagePath & '/' & currentLocale & '/' & arguments.resourceBundleName & '.properties' ), variables.propertiesEncoding ) ) />
+			<cfset result = propertyFile.getProperty(arguments.key)>
+			<cfif arrayLen(arguments.values) neq 0 >
+				<cfloop index="valueCount" from="1" to="#arrayLen(arguments.values)#">
+            		<cfset result = replaceNoCase(result, '$'&valueCount, arguments.values[valueCount], 'all') />
+          		</cfloop>
+			</cfif>
+		</cfif>
 		
-
+		<cfif result eq ''>
+			<cfset propertyFile.load( createObject('java', 'java.io.InputStreamReader').init( createObject('java', 'java.io.FileInputStream').init( variables.basePackagePath & '/' & 'English' & '/' & arguments.resourceBundleName & '.properties' ), variables.propertiesEncoding ) ) />
+			<cfset result = propertyFile.getProperty(arguments.key)>
+			<cfif arrayLen(arguments.values) neq 0 >
+				<cfloop index="valueCount" from="1" to="#arrayLen(arguments.values)#">
+            		<cfset result = replaceNoCase(result, '$'&valueCount, arguments.values[valueCount], 'all') />
+          		</cfloop>
+			</cfif>
+		</cfif>
+		
+		<cfif result neq ''>
+			<cfreturn result />
+		<cfelse>
+			<!--- Fall back --->
+			<cfset currentLocale = variables.getLocaleFallBack(currentLocale) />
+	
+			<cfif currentLocale eq ''>
+				<cfthrow type="com.bealearts.util.Internationalisation.RESOURCE_NOT_FOUND" message="Resource not found" detail="Resource key '#arguments.key#' in Resource Bundle '#arguments.resourceBundleName#' in locale or fall back locale not found for '#currentLocale#'" />
+			</cfif>
+		</cfif>
+		
 		<cfthrow type="com.bealearts.util.Internationalisation.RESOURCE_NOT_FOUND" message="Resource not found" detail="Resource key '#arguments.key#' in Resource Bundle '#arguments.resourceBundleName#' in locale or fall back locale not found for '#currentLocale#'" />	
 
 	</cffunction>
