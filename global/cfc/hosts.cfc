@@ -213,7 +213,7 @@
 			</cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
-		<cfset variables.cachetoken = resetcachetoken("users")>
+		<cfset resetcachetoken("users")>
 	</cfif>
 	<cfreturn  />
 </cffunction>
@@ -549,7 +549,7 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken("settings")>
 	<cfreturn />
 </cffunction>
 
