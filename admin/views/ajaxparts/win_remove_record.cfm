@@ -33,8 +33,8 @@
 			<td style="padding-top:10px;">
 				#defaultsObj.trans("delete")#
 				<cfif what EQ "users">
-					<br />
-					<strong>If you remove this user he is removed from ALL hosts! To remove a user from one host only use the detail/host tab!</strong>
+					<br /><br />
+					<strong style="color:red;">If you remove this user he is removed from ALL hosts! To remove a user from one host edit the user and de-select the host under the tenant/host tab!</strong>
 				</cfif>
 			</td>
 		</tr>
