@@ -907,7 +907,7 @@
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.loginimg" default="false" />
 	<cfparam name="arguments.thestruct.favicon" default="false" />
-	<!--- Logo or loginimg --->
+	<!--- Logo or favicon or loginimg --->
 	<cfif !arguments.thestruct.loginimg AND !arguments.thestruct.favicon>
 		<cfset var theimgpath = "logo">
 	<cfelseif arguments.thestruct.loginimg AND !arguments.thestruct.favicon>

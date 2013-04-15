@@ -96,10 +96,10 @@
 					       	</div>
 						</td>
 						<td valign="top">
-							<div id="loadfaviconlogo"></div>
+							<div id="loadfaviconimage"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="loadcontent('loadfaviconlogo','#myself#ajax.prefs_loadfavicon');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadfaviconlogo','#myself#ajax.prefs_loadfavicon&remove=t');">Remove</a>
+							<a href="##" onclick="loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon&remove=t');">Remove</a>
 						</td>
 					</tr>
 				</table>
@@ -636,7 +636,7 @@
 			// Load Login Image
 			loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg');
 			// Load Favicon Image
-			loadcontent('loadfaviconlogo','#myself#ajax.prefs_loadfavicon');
+			loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon');
 			// Submit
 			$("##form_admin_custom").submit(function(e){
 				// Get values

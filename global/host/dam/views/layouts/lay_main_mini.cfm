@@ -42,7 +42,11 @@
 <script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/mini.js?_v=#attributes.cachetag#"></script>
 <!--- Favicon --->
-<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+<cfif fileexists("#ExpandPath("../..")#global/host/favicon/#session.hostid#/favicon.ico")>
+	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />
+<cfelse>
+	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+</cfif>
 </head>
 <body>
 <div id="container">
