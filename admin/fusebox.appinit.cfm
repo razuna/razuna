@@ -13,4 +13,4 @@
 	application and a non-Fusebox application, you can initialize them here
 	and then cfinclude this file into your non-Fusebox application.
 --->
-<cfset application.razuna.trans = createObject('component', 'global.cfc.ResourceManager').init('translations', 'en')>
+<cfset application.razuna.trans = createObject('component', 'global.cfc.ResourceManager').init('translations', 'en', 'admin')>
