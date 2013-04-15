@@ -1,0 +1,2 @@
+If this directory is initially empty then there is a error message in the admin. You can remove this file if you want,
+but only if there any directories in this folder!

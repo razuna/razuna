@@ -8,13 +8,13 @@
 <cfset webroot = rereplacenocase(cgi.PATH_INFO, "[a-z_]+.cfm", "", "ALL")>
 
 <!--- Dynamic path --->
-<cfset dynpath="##cgi.context_path##">
+<cfset dynpath = cgi.context_path>
 
 <!--- PATH OF ONE DIR ABOVE THIS ONE --->
-<cfset pathoneup=ExpandPath("../")>
-<cfset pathoneup=replacenocase(pathoneup,"\","/","ALL")>
+<cfset pathoneup = ExpandPath("../")>
+<cfset pathoneup = replacenocase(pathoneup,"\","/","ALL")>
 
-<cfset thisPath=ExpandPath(".")>
+<cfset thisPath = ExpandPath(".")>
 
 <!--- Set global params --->
 <cfparam name="fa" default="">
@@ -33,6 +33,7 @@
 <!--- Set the session for the language --->
 <cfparam name="session.thelang" default="english">
 <cfparam name="session.thelangid" default="1">
+<cfparam name="session.locale" type="string" default="en">
 
 <!--- Set the session for the login --->
 <cfparam name="session.login" default="F">
@@ -41,17 +42,17 @@
 <!--- Set this app --->
 <cfparam name="session.thisapp" default="dam">
 
-<cfif attributes.fa CONTAINS "share">
-	<cfset session.fromshare = "T">
+<cfif attributes.fa CONTAINS "share" OR structkeyexists(attributes,"fromshare")>
+	<cfset session.fromshare = true>
 <cfelse>
-	<cfset session.fromshare = "F">
+	<cfset session.fromshare = false>
 </cfif>
 
 <!--- Set HTTP or HTTPS --->
 <cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
-	<cfset variables.thehttp = "https://">
+	<cfset session.thehttp = "https://">
 <cfelse>
-	<cfset variables.thehttp = "http://">
+	<cfset session.thehttp = "http://">
 </cfif>
 
 <cfif application.razuna.isp>
@@ -98,14 +99,12 @@ WHERE lower(host_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="##lcase
 <!--- Cart Session --->
 <cfparam name="session.thecart" default="##createuuid("")##">
 
-<!--- <cfif StructKeyExists(session, "theuserid") AND session.theuserid NEQ "" AND StructKeyExists(Session, "hostid") AND isnumeric(session.hostid)> --->
-	<!--- Component : SECURITY : stored in request scope for better performance--->
-	<cfinvoke component="global.cfc.security" method="init" returnvariable="Request.securityobj" dsn="##application.razuna.datasource##" />
-	<cfinvoke component="##Request.securityobj##" method="initUser" host_id="##Session.hostid##" user_id="##session.theuserid##" mod_short="ecp">
-<!--- </cfif> --->
+<!--- Component : SECURITY : stored in request scope for better performance--->
+<cfinvoke component="global.cfc.security" method="init" returnvariable="Request.securityobj" dsn="##application.razuna.datasource##" />
+<cfinvoke component="##Request.securityobj##" method="initUser" host_id="##Session.hostid##" user_id="##session.theuserid##" mod_short="ecp">
 
 <!--- Log User Out when Session.login has expired. Timeout of Sessions is set above --->
-<cfif NOT IsDefined("Attributes.fa") OR (Attributes.fa NEQ "c.login" AND Attributes.fa NEQ "c.dologin" AND Attributes.fa NEQ "c.login_janrain" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa DOES NOT CONTAIN "c.req_" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa NEQ "c.sv" AND attributes.fa NEQ "c.si" AND attributes.fa NEQ "c.sf" AND attributes.fa NEQ "c.asset_upload" AND attributes.fa DOES NOT CONTAIN "c.view_" AND attributes.fa NEQ "c.logout" AND attributes.fa NEQ "c.apiupload" AND attributes.fa DOES NOT CONTAIN "share" AND attributes.fa NEQ "c.scheduler_doit" AND attributes.fa NEQ "c.w" AND attributes.fa DOES NOT CONTAIN "c.w_" AND attributes.fa DOES NOT CONTAIN "c.mini" AND attributes.fa DOES NOT CONTAIN "widget" AND attributes.fa DOES NOT CONTAIN "basket" AND attributes.fa NEQ "c.serve_file" AND attributes.fa NEQ "c.rfs" AND attributes.fa NEQ "c.search_simple_custom")>
+<cfif NOT IsDefined("Attributes.fa") OR (Attributes.fa NEQ "c.login" AND Attributes.fa NEQ "c.dologin" AND Attributes.fa NEQ "c.login_janrain" AND attributes.fa NEQ "c.forgotpass" AND attributes.fa DOES NOT CONTAIN "c.req_" AND attributes.fa NEQ "c.forgotpasssend" AND attributes.fa NEQ "c.switchlang" AND attributes.fa NEQ "c.sv" AND attributes.fa NEQ "c.si" AND attributes.fa NEQ "c.sf" AND attributes.fa NEQ "c.asset_upload" AND attributes.fa DOES NOT CONTAIN "c.view_" AND attributes.fa NEQ "c.logout" AND attributes.fa NEQ "c.apiupload" AND attributes.fa DOES NOT CONTAIN "share" AND attributes.fa NEQ "c.scheduler_doit" AND attributes.fa NEQ "c.w" AND attributes.fa DOES NOT CONTAIN "c.w_" AND attributes.fa DOES NOT CONTAIN "c.mini" AND attributes.fa DOES NOT CONTAIN "widget" AND attributes.fa DOES NOT CONTAIN "basket" AND attributes.fa NEQ "c.serve_file" AND attributes.fa NEQ "c.rfs" AND attributes.fa NEQ "c.search_simple_custom" AND attributes.fa DOES NOT CONTAIN "c.store_" AND attributes.fa DOES NOT CONTAIN "c.meta_" AND attributes.fa NEQ "c.asset_add_single" AND attributes.fa NEQ "c.asset_add_upload")>
 	<cfif NOT isdefined("session.login") OR session.login EQ "F" OR NOT isdefined("session.thelang") OR NOT structkeyexists(request,"securityobj") OR NOT isdefined("session.theuserid")>
 		<script language="javascript" type="text/javascript">
 			top.location.href = "<cfoutput>##myself##</cfoutput>c.logout";

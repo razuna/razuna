@@ -69,7 +69,11 @@
 <script type="text/javascript" src="#dynpath#/global/js/chosen/chosen.jquery.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.formparams.js?_v=#attributes.cachetag#"></script>
 <!--- Favicon --->
-<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+<cfif fileexists("#ExpandPath("../..")#global/host/favicon/#session.hostid#/favicon.ico")>
+	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" />
+<cfelse>
+	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
+</cfif>
 <!--- tooltip styling --->
 <style>
 ##demotip {

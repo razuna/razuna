@@ -40,7 +40,7 @@
 			<tr>
 				<td>
 					<div style="float:left;color:red;font-weight:bold;">No assets found!</div>
-					<div style="float:left;padding-left:10px;"><cfif session.fromshare EQ "T"><a href="#cgi.http_referer#">Go back to the share</cfif></div>
+					<div style="float:left;padding-left:10px;"><cfif session.fromshare><a href="#cgi.http_referer#">Go back to the share</cfif></div>
 				</td>
 			</tr>
 		</table>

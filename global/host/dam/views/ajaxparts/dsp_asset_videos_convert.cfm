@@ -37,7 +37,7 @@
 							<br />#qry_detail.detail.link_path_url#
 						<cfelse>
 							<strong>Original</strong> (#ucase(qry_detail.detail.vid_extension)#, #qry_detail.thesize# MB, #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel)<br />
-							<cfif qry_detail.detail.shared EQ "F"><a href="#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#" target="_blank"></cfif>View</a> | 
+							<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#" target="_blank"></cfif>View</a> | 
 							<a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=vid" target="_blank">Download</a>
 							<!--- Nirvanix --->
 							<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.shared EQ "T">
@@ -47,10 +47,10 @@
 							| <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>
 							<!--- Direct link --->
 							<div id="divo#attributes.file_id#" style="display:none;">
-								<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" />
+								<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" />
 								<br />
 								<cfif application.razuna.storage EQ "local">
-									<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#" />
+									<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_org#" />
 								<cfelse>
 									<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#qry_detail.detail.cloud_url_org#" />
 								</cfif>
@@ -68,7 +68,7 @@
 							<!--- Embed Code --->
 							<div id="dive#attributes.file_id#" style="display:none;">
 								<cfset eh = qry_detail.detail.vheight + 40>
-								<textarea id="inpute#attributes.file_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" scrolling="auto" width="100%" height="#eh#"></iframe></textarea>
+								<textarea id="inpute#attributes.file_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sv&f=#attributes.file_id#&v=o" scrolling="auto" width="100%" height="#eh#"></iframe></textarea>
 							</div>
 						</cfif>
 					</td>

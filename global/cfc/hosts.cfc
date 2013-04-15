@@ -166,7 +166,7 @@
 				</cfinvoke>
 			</cfif>
 			<!--- ADD THE SYSTEMADMIN TO THE CROSS TABLE FOR THE HOSTS --->
-			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin">
+			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin" host_id="0">
 			<cfoutput query="theadmins">
 				<cftransaction>
 					<cfquery datasource="#variables.dsn#">
@@ -213,7 +213,7 @@
 			</cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>
-		<cfset variables.cachetoken = resetcachetoken("users")>
+		<cfset resetcachetoken("users")>
 	</cfif>
 	<cfreturn  />
 </cffunction>
@@ -549,7 +549,7 @@
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
-	<cfset variables.cachetoken = resetcachetoken("settings")>
+	<cfset resetcachetoken("settings")>
 	<cfreturn />
 </cffunction>
 

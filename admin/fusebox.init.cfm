@@ -37,9 +37,7 @@
 
 <!--- Set the session for the language --->
 <cfparam name="session.locale" type="string" default="en">
-<cfset application.razuna.trans.setLocaleCode(session.locale) />
-
-<cfparam name="session.thelang" default="english">
+<cfparam name="session.thelang" default="English">
 
 <!--- Set the session for the login --->
 <cfparam name="session.login" default="F">
@@ -52,9 +50,9 @@
 
 <!--- Set HTTP or HTTPS --->
 <cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
-	<cfset variables.thehttp = "https://">
+	<cfset session.thehttp = "https://">
 <cfelse>
-	<cfset variables.thehttp = "http://">
+	<cfset session.thehttp = "http://">
 </cfif>
 
 <!--- Call the default components which we need on every page. To do this the FB way is quite cubersome --->

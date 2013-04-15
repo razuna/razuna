@@ -34,7 +34,7 @@
 				<cfloop query="qry_related">
 					<cfif attributes.s EQ "F">
 						<strong>#ucase(aud_extension)#</strong> (#myFusebox.getApplicationData().defaults.converttomb("#aud_size#")# MB)<br />
-						<a href="#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank">
+						<a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#aud_id#" target="_blank">
 					<cfelse>
 						<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#aud_name_org#" target="_blank">
 					</cfif>
@@ -48,10 +48,10 @@
 					</cfif>
 					<!--- Direct link --->
 					<div id="divo#aud_id#" style="display:none;">
-						<input type="text" id="inputo#aud_id#" style="width:100%;" value="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" />
+						<input type="text" id="inputo#aud_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" />
 						<br />
 						<cfif application.razuna.storage EQ "local">
-							<input type="text" id="inputo#aud_id#d" style="width:100%;" value="#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#aud_name_org#" />
+							<input type="text" id="inputo#aud_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#aud_name_org#" />
 						<cfelse>
 							<input type="text" id="inputo#aud_id#d" style="width:100%;" value="#cloud_url_org#" />
 						</cfif>
@@ -72,7 +72,7 @@
 					</div>
 					<!--- Embed Code --->
 					<div id="dive#aud_id#" style="display:none;">
-						<textarea id="inpute#aud_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" scrolling="auto" width="100%" height="150"></iframe></textarea>
+						<textarea id="inpute#aud_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#aud_id#&v=o" scrolling="auto" width="100%" height="150"></iframe></textarea>
 					</div>
 					<br />
 					<!--- Nirvanix --->

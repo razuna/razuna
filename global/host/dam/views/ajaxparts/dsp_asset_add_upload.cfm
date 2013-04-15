@@ -87,20 +87,22 @@ $(function() {
 					up.settings.url = '#myself#c.apiupload&isbinary=false&plupload=true&folder_id=#attributes.folder_id#&nopreview=#attributes.nopreview#&av=#attributes.av#&_v=' + S4();
 					up.settings.multipart_params = { zip_extract: $('##zip_extract_plupl:checked').val(), upl_template: $('##upl_template_chooser').val() };
 				});
-				up.bind('UploadComplete', function() {
-					<cfif !pl_return.cfc.pl.loadform.active>
-						parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');
-					<cfelse>
-						// This is for the metaform plugin
-						try {
-							setTimeout(function() {
-						    	delayloadingplugin();
-							}, 1250)
-						}
-						catch(e) {};
-						// parent.$('##tab_addassets').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
-					</cfif>
-				});
+				<cfif !session.fromshare>
+					up.bind('UploadComplete', function() {
+						<cfif !pl_return.cfc.pl.loadform.active>
+							parent.$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folder_id#');
+						<cfelse>
+							// This is for the metaform plugin
+							try {
+								setTimeout(function() {
+							    	delayloadingplugin();
+								}, 1250)
+							}
+							catch(e) {};
+							// parent.$('##tab_addassets').load('#myself#c.plugin_direct&comp=metaform.cfc.settings&func=loadForm');
+						</cfif>
+					});
+				</cfif>
 			}
 		</cfif>
 		

@@ -48,7 +48,7 @@
 					</tr>
 					<tr>
 						<td class="td2" valign="top">#myFusebox.getApplicationData().defaults.trans("folder")# URL</td>
-						<td class="td2"><!--- #variables.thehttp##cgi.http_host##replacenocase(cgi.script_name,"/index.cfm","","ALL")#/share/#attributes.theid#/<input type="text" id="folder_name_shared" name="folder_name_shared" size="20" value="#qry_folder.folder_name_shared#"><br /> ---><a href="#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#&v=#createuuid()#" target="_blank">#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#</a></td>
+						<td class="td2"><a href="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#&v=#createuuid()#" target="_blank">#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.share&fid=#attributes.theid#</a></td>
 					</tr>
 					<!--- Download Thumbnails --->
 					<tr>

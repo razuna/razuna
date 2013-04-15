@@ -29,7 +29,7 @@
 	<cfloop query="qry_related">
 		<strong>#ucase(img_extension)#</strong> (#orgwidth#x#orgheight# pixel<cfif ilength NEQ "">, #myFusebox.getApplicationData().defaults.converttomb("#ilength#")# MB</cfif><cfif img_meta NEQ "">, #img_meta# dpi</cfif>)<br />
 		<cfif attributes.s EQ "F">
-			<a href="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
+			<a href="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" target="_blank">
 		<cfelse>
 			<a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#path_to_asset#/#img_filename_org#" target="_blank">
 		</cfif>
@@ -42,9 +42,9 @@
 			 | <a href="##" onclick="remren('#img_id#');return false;">Remove</a>
 		</cfif>
 		<div id="divo#img_id#" style="display:none;">
-			<input type="text" id="inputo#img_id#" style="width:100%;" value="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" />
+			<input type="text" id="inputo#img_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.si&f=#img_id#&v=o" />
 			<cfif application.razuna.storage EQ "local">
-				<input type="text" id="inputo#img_id#d" style="width:100%;" value="#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#img_filename_org#" />
+				<input type="text" id="inputo#img_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#path_to_asset#/#img_filename_org#" />
 			<cfelse>
 				<input type="text" id="inputo#img_id#d" style="width:100%;" value="#cloud_url_org#" />
 			</cfif>

@@ -103,7 +103,7 @@
 					<!--- Thumbnail --->
 					<td nowrap="true" valign="top" align="center" style="padding-top:20px;">
 						<cfif qry_detail.detail.link_kind NEQ "lan">
-							<div id="thevideodetail"><cfif qry_detail.detail.link_kind EQ "url">#qry_detail.detail.link_path_url#<cfelse><a href="#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a></cfif></div>
+							<div id="thevideodetail"><cfif qry_detail.detail.link_kind EQ "url">#qry_detail.detail.link_path_url#<cfelse><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sv&f=#attributes.file_id#&v=o" target="_blank"><img src="<cfif application.razuna.storage EQ "local">#cgi.context_path#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#?#qry_detail.detail.hashtag#<cfelse>#qry_detail.detail.cloud_url#</cfif>" width="400"></a></cfif></div>
 						<cfelse>
 							<img src="#thestorage##qry_detail.detail.path_to_asset#/#qry_detail.detail.vid_name_image#" border="0" width="400"><br />
 							#qry_detail.detail.link_path_url#<br />

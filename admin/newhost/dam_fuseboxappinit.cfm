@@ -1,0 +1,1 @@
+<cfset application.razuna.trans = createObject('component', 'global.cfc.ResourceManager').init('translations', 'en')>

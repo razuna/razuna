@@ -24,7 +24,7 @@
 *
 --->
 <cfoutput>
-	<cfset thestorage = "#variables.thehttp##cgi.http_host##cgi.script_name#?fa=">
+	<cfset thestorage = "#session.thehttp##cgi.http_host##cgi.script_name#?fa=">
 	<cfset thestore = "#cgi.context_path#/assets/#session.hostid#/">
 	<br />
 	<div id="fileoptions">

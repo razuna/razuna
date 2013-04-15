@@ -417,6 +417,10 @@
 	<fuseaction name="prefs_loadloginimg">
   		<include template="dsp_admin_settings_loadloginimg" />
 	</fuseaction>
+	<!-- ADMIN: Load Favicon Image -->
+	<fuseaction name="prefs_loadfavicon">
+  		<include template="dsp_admin_settings_loadfavicon" />
+	</fuseaction>
 	<!-- Users Randompass -->
 	<fuseaction name="randompass">
   		<include template="dsp_randompass" />
@@ -661,6 +665,16 @@
 	<fuseaction name="widget_download">
   		<include template="win_widget_download" />
 	</fuseaction>
+	
+	<!-- Folder Thumbnail -->
+	<fuseaction name="folder_thumbnail">
+  		<include template="dsp_folder_thumbnail" />
+	</fuseaction>
+	
+	<fuseaction name="folder_thumbnail_save">
+  		<include template="inc_folder_thumbnail_save" />
+	</fuseaction>
+	
 	
 	<!-- Additional versions -->
 	<fuseaction name="adi_versions">

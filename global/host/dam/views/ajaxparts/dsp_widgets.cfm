@@ -55,7 +55,7 @@
 					<tr class="list">
 						<td valign="top" nowrap="nowrap"><a href="##" onclick="showwindow('#myself#c.widget_detail&widget_id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("widget_update")#',600,2);return false;">#widget_name#</a></td>
 						<td>#widget_description#</td>
-						<td valign="top"><a href="#variables.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#widget_id#" target="_blank">Show Widget</a></td>
+						<td valign="top"><a href="#session.thehttp##cgi.http_host##cgi.script_name#?fa=c.w&wid=#widget_id#" target="_blank">Show Widget</a></td>
 						<!--- trash --->
 						<td width="1%" align="center" nowrap="nowrap" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#widget_id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&what=widget&loaddiv=widgets&iswin=two','#myFusebox.getApplicationData().defaults.trans("remove")#',400,2);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 					</tr>

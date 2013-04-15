@@ -291,7 +291,7 @@
 		<cfset thevideoimg = arguments.thestruct.videodetails.vid_name_image>
 	</cfif>
 	<!--- Storage Decision --->
-	<cfset thestorage = "#variables.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/">
+	<cfset thestorage = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/">
 	<cfset thestoragefullpath = "#arguments.thestruct.assetpath#/#session.hostid#/">
 	<!--- Set the correct path --->
 	<cfset theimage = "#thestorage##arguments.thestruct.videodetails.path_to_asset#/#thevideoimg#">
@@ -826,7 +826,7 @@
 	SELECT /* #variables.cachetoken#detailvid */ v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_extension, v.vid_online, v.vid_owner,
 	v.vid_create_date, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.cloud_url, v.cloud_url_org,
 	v.vid_change_time, v.vid_mimetype, v.vid_publisher, v.vid_ranking rank, v.vid_single_sale, v.vid_is_new,
-	v.vid_selection, v.vid_in_progress, v.vid_license, v.vid_name_org, v.shared, v.path_to_asset,
+	v.vid_selection, v.vid_in_progress, v.vid_license, v.vid_name_org, v.vid_name_org filenameorg, v.shared, v.path_to_asset,
 	v.vid_width vwidth, v.vid_height vheight, v.vid_size vlength, v.vid_name_image, v.vid_meta, v.hashtag,
 	s.set2_img_download_org, s.set2_intranet_gen_download, s.set2_url_website, u.user_first_name, u.user_last_name,
 	fo.folder_name, '' as perm

@@ -32,16 +32,16 @@
 				<td width="100%" nowrap="true">
 					<cfif qry_detail.detail.link_kind NEQ "url">
 						<strong>Original</strong> (#ucase(qry_detail.detail.aud_extension)#)<br /> 
-						<cfif qry_detail.detail.shared EQ "F"><a href="#variables.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" target="_blank"></cfif>View</a>
+						<cfif qry_detail.detail.shared EQ "F"><a href="#session.thehttp##cgi.HTTP_HOST##cgi.SCRIPT_NAME#?#theaction#=c.sa&f=#attributes.file_id#" target="_blank"><cfelse><a href="#application.razuna.nvxurlservices#/razuna/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" target="_blank"></cfif>View</a>
 						 | <a href="#myself#c.serve_file&file_id=#attributes.file_id#&type=aud" target="_blank">Download</a>
 						 | <a href="##" onclick="toggleslide('divo#attributes.file_id#','inputo#attributes.file_id#');return false;">Direct Link</a>
 						 | <a href="##" onclick="toggleslide('dive#attributes.file_id#','inpute#attributes.file_id#');return false;">Embed</a>
 						<!--- Direct link --->
 						<div id="divo#attributes.file_id#" style="display:none;">
-							<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#&v=o" />
+							<input type="text" id="inputo#attributes.file_id#" style="width:100%;" value="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#&v=o" />
 							<br />
 							<cfif application.razuna.storage EQ "local">
-								<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#variables.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" />
+								<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid#/#qry_detail.detail.path_to_asset#/#qry_detail.detail.aud_name_org#" />
 							<cfelse>
 								<input type="text" id="inputo#attributes.file_id#d" style="width:100%;" value="#qry_detail.detail.cloud_url_org#" />
 							</cfif>
@@ -60,7 +60,7 @@
 						</div>
 						<!--- Embed Code --->
 						<div id="dive#attributes.file_id#" style="display:none;">
-							<textarea id="inpute#attributes.file_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#variables.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#&v=o" scrolling="auto" width="100%" height="150"></iframe></textarea>
+							<textarea id="inpute#attributes.file_id#" style="width:500px;height:60px;" readonly="readonly"><iframe frameborder="0" src="#session.thehttp##cgi.http_host##cgi.script_name#?#theaction#=c.sa&f=#attributes.file_id#&v=o" scrolling="auto" width="100%" height="150"></iframe></textarea>
 						</div>
 					<cfelse>
 						<a href="#qry_detail.detail.link_path_url#" target="_blank">#myFusebox.getApplicationData().defaults.trans("link_to_original")#</a>

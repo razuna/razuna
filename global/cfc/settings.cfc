@@ -297,14 +297,21 @@
 <cffunction name="lang_get_langs">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Get the xml files in the translation dir --->
-	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/translations" name="thelangs" filter="*.xml" />
+	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/translations" name="thelangs" />
+	<cfquery dbtype="query" name="thelangs">
+	SELECT *
+	FROM thelangs where TYPE = 'Dir' and name != 'Custom'
+	ORDER BY name
+	</cfquery>
+	
 	<!--- Loop over languages --->
 	<cfloop query="thelangs">
 		<!--- Get name and language id --->
-		<cfset thislang = replacenocase("#name#", ".xml", "", "ALL")>
+		<cfset thislang = thelangs.name>
+		
 		<!--- If we come from admin then take another method --->
 		<cfif structkeyexists(arguments.thestruct,"fromadmin")>
-			<cfinvoke component="defaults" method="xmllangid" thetransfile="#arguments.thestruct.thepath#/translations/#name#" returnvariable="langid">
+			<cfinvoke component="defaults" method="propertiesfilelangid" thetransfile="#arguments.thestruct.thepath#/translations/#name#/HomePage.properties" returnvariable="langid">
 		<cfelse>
 			<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#name#" returnvariable="langid">
 		</cfif>
@@ -315,6 +322,7 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND lang_id = <cfqueryparam value="#langid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
+		
 		<!--- RAZ-544: If the lang name is numeric we change this to the name value --->
 		<cfif isnumeric(qry.lang_name) AND qry.recordcount NEQ 0>
 			<cfquery datasource="#application.razuna.datasource#">
@@ -906,11 +914,14 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.loginimg" default="false" />
-	<!--- Logo or loginimg --->
-	<cfif !arguments.thestruct.loginimg>
+	<cfparam name="arguments.thestruct.favicon" default="false" />
+	<!--- Logo or favicon or loginimg --->
+	<cfif !arguments.thestruct.loginimg AND !arguments.thestruct.favicon>
 		<cfset var theimgpath = "logo">
-	<cfelse>
+	<cfelseif arguments.thestruct.loginimg AND !arguments.thestruct.favicon>
 		<cfset var theimgpath = "login">
+	<cfelse>
+		<cfset var theimgpath = "favicon">
 		<!--- just remove any previous directory (like this we prevent having more the one image) --->
 		<cftry>
 			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" recurse="true" />
@@ -955,6 +966,56 @@
 	<cfset s.imgpath = "global/host/watermark/#session.hostid#/#arguments.thestruct.wm_temp_id#/#result.serverFile#">
 	<!--- Return --->
 	<cfreturn s />
+</cffunction>
+
+<!--- Folder Thumbnail --->
+<cffunction hint="Upload folder Thumbnail" name="Upload_folderThumbnail" access="public" output="false">
+	<cfargument name="thestruct" type="Struct">
+	<!--- Check that vars are not empty --->
+	<cfif arguments.thestruct.thumb_folder_file NEQ "" OR arguments.thestruct.thumb_folder NEQ "">
+		<!--- Create directory if not there already to hold this folderthumbnail --->
+		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/">
+		</cfif>
+		<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" type="file">
+		<cfif myDir.recordcount>
+			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#myDir.name#">
+		</cfif>
+		<!--- If we choose a thumbnail from the list --->
+		<cfif arguments.thestruct.thumb_folder_file eq "">
+			<!--- Get extension --->
+			<cfset var img_ext = listLast(arguments.thestruct.thumb_folder,'.')> 
+			<!--- Set vars --->
+			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+				<!--- Set http --->
+				<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.thumb_folder#">
+			<cfelse>
+				<!--- Set http --->
+				<cfset var thehttp = arguments.thestruct.thumb_folder>
+			</cfif>
+			<!--- Get the thumbnail --->
+			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.#img_ext#" />
+			<!--- Set filename --->
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.#img_ext#">
+		</cfif>
+		<!--- If the user uploads an image --->
+		<cfif arguments.thestruct.thumb_folder_file neq "">
+			<!--- Upload --->
+			<cffile action="upload" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" filefield="thumb_folder_file" result="result">
+			<!--- Rename --->
+			<cffile action="rename" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#arguments.thestruct.folderId#.#result.serverfileext#" source="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#result.serverFile#" >
+			<!--- Set filename --->
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.#result.serverfileext#">
+		</cfif>
+		<!--- Return --->
+		<cfreturn this />	
+	</cfif>
+</cffunction>
+
+<!--- Delete folder thumbnail --->
+<cffunction name="folderthumbnail_reset" access="public" output="false" returntype="void">
+	<cfargument name="folder_id" type="string">
+	<cfdirectory action="delete" directory="#expandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.folder_id#" recurse="true" />
 </cffunction>
 
 <!--- Get API key --->
@@ -1202,10 +1263,8 @@
 		UPDATE razuna_config
 		SET conf_serverid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 		</cfquery>
-		<!--- Alter query --->
-		<cfset querySetCell(qry, "conf_serverid", theid)>
 		<!--- Set the ID into application scope --->
-		<!--- <cfset application.razuna.serverid = theid> --->
+		<cfset application.razuna.serverid = theid>
 	</cfif>
 	<!--- Check for config file --->
 	<cfif fileExists("#arguments.pathoneup#/global/config/keys.cfm")>
@@ -1224,13 +1283,6 @@
 		UPDATE razuna_config
 		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#swl#">
 		</cfquery>
-	<cfelse>
-		<!--- Update --->
-		<cfquery datasource="razuna_default">
-		UPDATE razuna_config
-		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="false">
-		</cfquery>
-		<cfset QuerySetCell(qry, "conf_wl", false)>
 	</cfif>
 	<!--- Now put config values into application scope --->
 	<cfset application.razuna.serverid = qry.conf_serverid>

@@ -92,6 +92,7 @@
 	<!--- Param --->
 	<cfparam name="arguments.thestruct.frombatch" default="F">
 	<cfparam name="arguments.thestruct.batch_replace" default="true">
+	<cfset var md5hash = "">
 	<!--- Declare all variables or else you will get errors in the page --->
 	<cfparam default="" name="arguments.thestruct.xmp_document_title">
 	<cfparam default="" name="arguments.thestruct.xmp_author">
@@ -480,6 +481,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				<cfif FileExists(thexmpfile)>
 					<cffile action="delete" file="#thexmpfile#">
 				</cfif>
+				<!--- MD5 hash file again since it has changed now --->
+				<cfif FileExists(arguments.thestruct.thesource)>
+					<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+				</cfif>
 				<!--- Lucene: Delete Records --->
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 				<!--- Lucene: Update Records --->
@@ -520,6 +525,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfthread action="join" name="#remtt#" />
 			<!--- Write XMP to image with Exiftool --->
 			<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" timeout="10" />
+			<!--- MD5 hash file again since it has changed now --->
+			<cfif FileExists(arguments.thestruct.thesource)>
+				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+			</cfif>
 			<!--- Upload file again to its original position --->
 			<cfset var uptt = createUUID("")>
 			<cfthread name="#uptt#" intstruct="#arguments.thestruct#">
@@ -539,10 +548,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif directoryExists("#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#")>
 				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
 			</cfif>
-		</cfif>
-		<!--- MD5 hash file again since it has changed now --->
-		<cfif FileExists(arguments.thestruct.thesource)>
-			<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 		</cfif>
 		<!--- Update images db with the new Lucene_Key --->
 		<cftransaction>
@@ -1293,6 +1298,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 	<cfparam default="" name="arguments.thestruct.webstatement">
 	<cfparam default="" name="arguments.thestruct.rightsmarked">
 	<cfparam default="#session.hostid#" name="arguments.thestruct.hostid">
+	<cfset var md5hash = "">
 	<!--- Query the record --->
 	<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrydetail">
 	SELECT  f.file_id, f.folder_id_r, f.file_extension, f.file_type, f.file_name, f.file_name_org filenameorg, f.link_path_url, 
@@ -1401,6 +1407,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				<!--- Delete scripts --->
 				<cffile action="delete" file="#arguments.thestruct.thesh#">	
 			</cfif>
+			<!--- MD5 hash file again since it has changed now --->
+			<cfif FileExists(arguments.thestruct.thesource)>
+				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+			</cfif>
 			<!--- Lucene: Delete Records --->
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 			<!--- Lucene: Update Records --->
@@ -1460,6 +1470,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				</cfinvoke>
 			</cfthread>
 		</cfif>
+		<!--- MD5 hash file again since it has changed now --->
+		<cfif FileExists(arguments.thestruct.thesource)>
+			<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+		</cfif>
 		<!--- Lucene: Delete Records --->
 		<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 		<!--- Lucene: Update Records --->
@@ -1467,10 +1481,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- Remove the tempfolder but only if image has been uploaded already --->
 		<!--- <cfthread action="join" name="upload#arguments.thestruct.file_id#" /> --->
 		<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
-	</cfif>
-	<!--- MD5 hash file again since it has changed now --->
-	<cfif FileExists(arguments.thestruct.thesource)>
-		<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 	</cfif>
 	<!--- Update images db with the new Lucene_Key --->
 	<cftransaction>
@@ -1616,12 +1626,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		</cfquery>
-		
-		<cfif cgi.HTTPS EQ "on" OR cgi.http_x_https EQ "on">
-			<cfset variables.thehttp = "https://">
-		<cfelse>
-			<cfset variables.thehttp = "http://">
-		</cfif>
 		<!--- Loop over items --->
 		<cfloop query="qry">
 			<!--- Set query --->
@@ -1629,11 +1633,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfset QuerySetCell(arguments.thestruct.qry, "id", theid)>
 			<cfset arguments.thestruct.file_id = theid>
 			<cfset arguments.thestruct.filetype = thetype>
-			<cfif application.razuna.storage EQ "local">
-				<cfset arguments.thestruct.file_url = "#variables.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#folder_id_r#/#thetype#/#theid#/#url_file_name#">
-			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
-			</cfif>
 			<!--- Get the files --->
 			<cfinvoke method="loopfiles" thestruct="#arguments.thestruct#" />
 		</cfloop>
@@ -1674,7 +1673,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- Images --->
 		<cfcase value="img">
 			<!--- Get asset detail --->
-			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename" returnVariable="qry_image" />
+			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org" returnVariable="qry_image" />
 			<cfset arguments.thestruct.filename = qry_image.img_filename>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
@@ -1684,13 +1683,19 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfinvoke component="images" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
 			<!--- Get XMP values --->
 			<cfinvoke method="readxmpdb" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_xmp" />
+			<!--- The file_url --->
+			<cfif application.razuna.storage EQ "local">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_image.path_to_asset#/#qry_image.filenameorg#">
+			<cfelse>
+				<cfset arguments.thestruct.file_url = cloud_url_org>
+			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
 		</cfcase>
 		<!--- Videos --->
 		<cfcase value="vid">
 			<!--- Get asset detail --->
-			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename" returnVariable="qry_video" />
+			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org" returnVariable="qry_video" />
 			<cfset arguments.thestruct.filename = qry_video.vid_filename>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
@@ -1698,6 +1703,11 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
 			<cfinvoke component="videos" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
+			<cfif application.razuna.storage EQ "local">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_video.path_to_asset#/#qry_video.filenameorg#">
+			<cfelse>
+				<cfset arguments.thestruct.file_url = cloud_url_org>
+			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
 		</cfcase>
@@ -1724,13 +1734,18 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
 			<!--- Get keywords and description --->
 			<cfinvoke component="audios" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
+			<cfif application.razuna.storage EQ "local">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_audio.path_to_asset#/#qry_audio.filenameorg#">
+			<cfelse>
+				<cfset arguments.thestruct.file_url = cloud_url_org>
+			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
 		</cfcase>
 		<!--- All other files --->
 		<cfdefaultcase>
 			<!--- Get asset detail --->
-			<cfinvoke component="files" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="file_name" returnVariable="qry_doc" />
+			<cfinvoke component="files" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="file_name, file_name_org AS filenameorg, path_to_asset, cloud_url_org" returnVariable="qry_doc" />
 			<cfset arguments.thestruct.filename = qry_doc.file_name>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
@@ -1740,6 +1755,11 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfinvoke component="files" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
 			<!--- Get PDF XMP --->
 			<cfinvoke component="files" method="getpdfxmp" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_pdfxmp" />
+			<cfif application.razuna.storage EQ "local">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_doc.path_to_asset#/#qry_doc.filenameorg#">
+			<cfelse>
+				<cfset arguments.thestruct.file_url = cloud_url_org>
+			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
 		</cfdefaultcase>

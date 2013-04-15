@@ -40,16 +40,8 @@
 			return false;
 			}
 		else {
-			//var inpath = '<cfoutput>#replace("#getcurrentURL()#", "#variables.thehttp#", "", "ALL")#</cfoutput>/' + thefield + '/dam/incoming';
-			//var inbatchpath = '<cfoutput>#replace("#getcurrentURL()#", "#variables.thehttp#", "", "ALL")#</cfoutput>/' + thefield + '/dam/incoming_batch';
-			//var outpath = '<cfoutput>#replace("#getcurrentURL()#", "#variables.thehttp#", "", "ALL")#</cfoutput>/' + thefield + '/dam/outgoing';
-			//var urlweb = '<cfoutput>#getcurrentURL()#</cfoutput>/' + thefield + '/web';
 			thefield = thefield.substring(0,4);
 			var dbprefix = thefield;
-			//document.thehost.folder_in.value = inpath;
-			//document.thehost.folder_in_batch.value = inbatchpath;
-			//document.thehost.folder_out.value = outpath;
-			//document.thehost.url_website.value = urlweb;
 			document.thehost.host_db_prefix.value = dbprefix;
 			return true;
 		}

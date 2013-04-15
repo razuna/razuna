@@ -3976,8 +3976,8 @@
 <!--- Store selection --->
 <cffunction name="store_selection" output="false" returntype="void">
 	<cfargument name="thestruct" required="yes" type="struct">
-	<!--- Reset session --->
-	<!--- <cfset session.file_id = ""> --->
+	<!--- session --->
+	<cfparam name="session.file_id" default="">
 	<!--- Now simply add the selected fileids to the session --->
 	<cfset session.file_id = session.file_id & "," & arguments.thestruct.file_id>
 	<cfset session.thefileid = session.file_id>
