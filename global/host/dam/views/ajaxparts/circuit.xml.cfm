@@ -666,6 +666,16 @@
   		<include template="win_widget_download" />
 	</fuseaction>
 	
+	<!-- Folder Thumbnail -->
+	<fuseaction name="folder_thumbnail">
+  		<include template="dsp_folder_thumbnail" />
+	</fuseaction>
+	
+	<fuseaction name="folder_thumbnail_save">
+  		<include template="inc_folder_thumbnail_save" />
+	</fuseaction>
+	
+	
 	<!-- Additional versions -->
 	<fuseaction name="adi_versions">
   		<include template="dsp_additional_versions" />

@@ -960,6 +960,56 @@
 	<cfreturn s />
 </cffunction>
 
+<!--- Folder Thumbnail --->
+<cffunction hint="Upload folder Thumbnail" name="Upload_folderThumbnail" access="public" output="false">
+	<cfargument name="thestruct" type="Struct">
+	<!--- Check that vars are not empty --->
+	<cfif arguments.thestruct.thumb_folder_file NEQ "" OR arguments.thestruct.thumb_folder NEQ "">
+		<!--- Create directory if not there already to hold this folderthumbnail --->
+		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/">
+		</cfif>
+		<cfdirectory name="myDir" action="list" directory="#ExpandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" type="file">
+		<cfif myDir.recordcount>
+			<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#myDir.name#">
+		</cfif>
+		<!--- If we choose a thumbnail from the list --->
+		<cfif arguments.thestruct.thumb_folder_file eq "">
+			<!--- Get extension --->
+			<cfset var img_ext = listLast(arguments.thestruct.thumb_folder,'.')> 
+			<!--- Set vars --->
+			<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+				<!--- Set http --->
+				<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.thumb_folder#">
+			<cfelse>
+				<!--- Set http --->
+				<cfset var thehttp = arguments.thestruct.thumb_folder>
+			</cfif>
+			<!--- Get the thumbnail --->
+			<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#" file="#arguments.thestruct.folderId#.#img_ext#" />
+			<!--- Set filename --->
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.#img_ext#">
+		</cfif>
+		<!--- If the user uploads an image --->
+		<cfif arguments.thestruct.thumb_folder_file neq "">
+			<!--- Upload --->
+			<cffile action="upload" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/" filefield="thumb_folder_file" result="result">
+			<!--- Rename --->
+			<cffile action="rename" destination="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#arguments.thestruct.folderId#.#result.serverfileext#" source="#arguments.thestruct.thepathup#global/host/folderthumbnail/#session.hostid#/#arguments.thestruct.folderId#/#result.serverFile#" >
+			<!--- Set filename --->
+			<cfset this.thefilename = "#arguments.thestruct.folderId#.#result.serverfileext#">
+		</cfif>
+		<!--- Return --->
+		<cfreturn this />	
+	</cfif>
+</cffunction>
+
+<!--- Delete folder thumbnail --->
+<cffunction name="folderthumbnail_reset" access="public" output="false" returntype="void">
+	<cfargument name="folder_id" type="string">
+	<cfdirectory action="delete" directory="#expandPath("../../")#global/host/folderthumbnail/#session.hostid#/#arguments.folder_id#" recurse="true" />
+</cffunction>
+
 <!--- Get API key --->
 <cffunction name="getapikey" output="false" returntype="string">
 	<cfargument name="reset" required="false" default="false">
@@ -1205,10 +1255,8 @@
 		UPDATE razuna_config
 		SET conf_serverid = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 		</cfquery>
-		<!--- Alter query --->
-		<cfset querySetCell(qry, "conf_serverid", theid)>
 		<!--- Set the ID into application scope --->
-		<!--- <cfset application.razuna.serverid = theid> --->
+		<cfset application.razuna.serverid = theid>
 	</cfif>
 	<!--- Check for config file --->
 	<cfif fileExists("#arguments.pathoneup#/global/config/keys.cfm")>
@@ -1227,13 +1275,6 @@
 		UPDATE razuna_config
 		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#swl#">
 		</cfquery>
-	<cfelse>
-		<!--- Update --->
-		<cfquery datasource="razuna_default">
-		UPDATE razuna_config
-		SET conf_wl = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="false">
-		</cfquery>
-		<cfset QuerySetCell(qry, "conf_wl", false)>
 	</cfif>
 	<!--- Now put config values into application scope --->
 	<cfset application.razuna.serverid = qry.conf_serverid>
