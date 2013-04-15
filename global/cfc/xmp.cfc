@@ -481,6 +481,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				<cfif FileExists(thexmpfile)>
 					<cffile action="delete" file="#thexmpfile#">
 				</cfif>
+				<!--- MD5 hash file again since it has changed now --->
+				<cfif FileExists(arguments.thestruct.thesource)>
+					<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+				</cfif>
 				<!--- Lucene: Delete Records --->
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="img">
 				<!--- Lucene: Update Records --->
@@ -521,6 +525,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfthread action="join" name="#remtt#" />
 			<!--- Write XMP to image with Exiftool --->
 			<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" timeout="10" />
+			<!--- MD5 hash file again since it has changed now --->
+			<cfif FileExists(arguments.thestruct.thesource)>
+				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+			</cfif>
 			<!--- Upload file again to its original position --->
 			<cfset var uptt = createUUID("")>
 			<cfthread name="#uptt#" intstruct="#arguments.thestruct#">
@@ -540,10 +548,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif directoryExists("#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#")>
 				<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
 			</cfif>
-		</cfif>
-		<!--- MD5 hash file again since it has changed now --->
-		<cfif FileExists(arguments.thestruct.thesource)>
-			<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 		</cfif>
 		<!--- Update images db with the new Lucene_Key --->
 		<cftransaction>
@@ -1403,6 +1407,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				<!--- Delete scripts --->
 				<cffile action="delete" file="#arguments.thestruct.thesh#">	
 			</cfif>
+			<!--- MD5 hash file again since it has changed now --->
+			<cfif FileExists(arguments.thestruct.thesource)>
+				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+			</cfif>
 			<!--- Lucene: Delete Records --->
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 			<!--- Lucene: Update Records --->
@@ -1462,6 +1470,10 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 				</cfinvoke>
 			</cfthread>
 		</cfif>
+		<!--- MD5 hash file again since it has changed now --->
+		<cfif FileExists(arguments.thestruct.thesource)>
+			<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
+		</cfif>
 		<!--- Lucene: Delete Records --->
 		<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 		<!--- Lucene: Update Records --->
@@ -1469,10 +1481,6 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 		<!--- Remove the tempfolder but only if image has been uploaded already --->
 		<!--- <cfthread action="join" name="upload#arguments.thestruct.file_id#" /> --->
 		<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
-	</cfif>
-	<!--- MD5 hash file again since it has changed now --->
-	<cfif FileExists(arguments.thestruct.thesource)>
-		<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
 	</cfif>
 	<!--- Update images db with the new Lucene_Key --->
 	<cftransaction>
