@@ -290,10 +290,10 @@
 		<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
 			AND i.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.istruct.folderid#">
 		</cfif>
-		GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+		GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename)
 			<cfif arguments.istruct.ui>, folder_name, folder_id_r, ext, is_available, date_create,
 		date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
-		ORDER BY filename 
+		ORDER BY i.img_filename 
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
 		<cfset var amount = ArrayNew(1)>
@@ -442,10 +442,10 @@
 		<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
 			AND v.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#">
 		</cfif>
-		GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+		GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename)
 				<cfif arguments.vstruct.ui>, folder_name, folder_id_r, ext, is_available, date_create,
     		date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
-		ORDER BY filename 
+		ORDER BY v.vid_filename 
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
 		<cfset var amount = ArrayNew(1)>
@@ -591,9 +591,9 @@
 		</cfif>
 		GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, 
 		a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time,
-		colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+		a.hashtag, fo.folder_name, lower(a.aud_name)
 		<cfif arguments.astruct.ui>, folder_name, folder_id_r, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
-		ORDER BY filename 
+		ORDER BY a.aud_name 
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
 		<cfset var amount = ArrayNew(1)>
@@ -745,10 +745,10 @@
 		</cfif>
 		GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 		f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
-		colorspace, xdpi, ydpi, unit, md5hash, fo.folder_name, filename_forsort
+		f.hashtag, fo.folder_name, lower(f.file_name)
 		<cfif arguments.fstruct.ui>, folder_name, folder_id_r, ext, is_available, date_create, date_change, link_kind, 
 		link_path_url, vwidth, vheight, hashtag, labels, permfolder, listid</cfif>
-        ORDER BY filename 
+        ORDER BY f.file_name 
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
 		<cfset var amount = ArrayNew(1)>
