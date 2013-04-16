@@ -524,7 +524,7 @@
 		<!--- Get proper folderaccess --->
 		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
 		<!--- Add labels query --->
-		<cfset QuerySetCell(details, "perm", theaccess)>
+		<cfset QuerySetCell(details, "perm", theaccess, 1)>
 	</cfif>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
