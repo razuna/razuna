@@ -72,20 +72,20 @@
 				<!--- Call search function --->
 				<cfset var qaud = search_audios(arguments)>
 				<!--- for the UI --->
-				<cfset session.listaudid = valueList(qvid.id)>
+				<cfset session.listaudid = valueList(qaud.id)>
 			</cfif>
 			<!--- Doc --->
 			<cfif arguments.show EQ "ALL" OR arguments.show EQ "doc">
 				<!--- Call search function --->
 				<cfset var qdoc = search_files(arguments)>
 				<!--- for the UI --->
-				<cfset session.listdocid = valueList(qvid.id)>
+				<cfset session.listdocid = valueList(qdoc.id)>
 			</cfif>
 			<!--- Add our own tags to the query --->
 			<cfset var q = querynew("responsecode,totalassetscount,calledwith")>
 			<cfset queryaddrow(q,1)>
 			<cfset querysetcell(q,"calledwith",arguments.searchfor)>
-			<!--- If we SHOW = ALL then we need to cann the combine function --->
+			<!--- If we SHOW = ALL then we need to combine --->
 			<cfif arguments.show EQ "ALL">
 				<!--- Call combine all function --->
 				<cfinvoke component="global.cfc.search" method="search_combine" qimg="#qimg#" qvid="#qvid#" qaud="#qaud#" qdoc="#qdoc#" returnvariable="qry_combined">
@@ -159,8 +159,18 @@
 		<cfargument name="istruct" required="true">
 		<!--- Call date function --->
 		<cfset var idate = set_date(datecreate=arguments.istruct.datecreate, datechange=arguments.istruct.datechange)>
+		<!--- If we have a folderid --->
+		<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
+			<cfif arguments.istruct.searchfor EQ "*">
+				<cfset var thesearchfor = "folder:#arguments.istruct.folderid#">
+			<cfelse>
+				<cfset var thesearchfor = "+#arguments.istruct.searchfor# +folder:#arguments.istruct.folderid#">
+			</cfif>
+		<cfelse>
+			<cfset var thesearchfor = arguments.istruct.searchfor>
+		</cfif>
 		<!--- Search in Lucene --->
-		<cfinvoke component="global.cfc.lucene" method="search" criteria="#arguments.istruct.searchfor#" category="img" hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#" returnvariable="qryluceneimg">
+		<cfinvoke component="global.cfc.lucene" method="search" criteria="#thesearchfor#" category="img" hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#" returnvariable="qryluceneimg">
 		<!--- If lucene returns no records --->
 		<cfif qryluceneimg.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -308,8 +318,18 @@
 		<cfargument name="vstruct" required="true">
 		<!--- Call date function --->
 		<cfset var vdate = set_date(datecreate=arguments.vstruct.datecreate, datechange=arguments.vstruct.datechange)>
+		<!--- If we have a folderid --->
+		<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
+			<cfif arguments.vstruct.searchfor EQ "*">
+				<cfset var thesearchfor = "folder:#arguments.vstruct.folderid#">
+			<cfelse>
+				<cfset var thesearchfor = "+#arguments.vstruct.searchfor# +folder:#arguments.vstruct.folderid#">
+			</cfif>
+		<cfelse>
+			<cfset var thesearchfor = arguments.vstruct.searchfor>
+		</cfif>
 		<!--- Search in Lucene --->
-		<cfinvoke component="global.cfc.lucene" method="search" criteria="#arguments.vstruct.searchfor#" category="vid" hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#" returnvariable="qrylucenevid">
+		<cfinvoke component="global.cfc.lucene" method="search" criteria="#thesearchfor#" category="vid" hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#" returnvariable="qrylucenevid">
 		<!--- If lucene returns no records --->
 		<cfif qrylucenevid.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -460,8 +480,18 @@
 		<cfargument name="astruct" required="true">
 		<!--- Call date function --->
 		<cfset var adate = set_date(datecreate=arguments.astruct.datecreate, datechange=arguments.astruct.datechange)>
+		<!--- If we have a folderid --->
+		<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
+			<cfif arguments.astruct.searchfor EQ "*">
+				<cfset var thesearchfor = "folder:#arguments.astruct.folderid#">
+			<cfelse>
+				<cfset var thesearchfor = "+#arguments.astruct.searchfor# +folder:#arguments.astruct.folderid#">
+			</cfif>
+		<cfelse>
+			<cfset var thesearchfor = arguments.astruct.searchfor>
+		</cfif>
 		<!--- Search in Lucene --->
-		<cfinvoke component="global.cfc.lucene" method="search" criteria="#arguments.astruct.searchfor#" category="aud" hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#" returnvariable="qryluceneaud">
+		<cfinvoke component="global.cfc.lucene" method="search" criteria="#thesearchfor#" category="aud" hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#" returnvariable="qryluceneaud">
 		<!--- If lucene returns no records --->
 		<cfif qryluceneaud.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -608,8 +638,18 @@
 		<cfargument name="fstruct" required="true">
 		<!--- Call date function --->
 		<cfset var fdate = set_date(datecreate=arguments.fstruct.datecreate, datechange=arguments.fstruct.datechange)>
+		<!--- If we have a folderid --->
+		<cfif arguments.fstruct.folderid NEQ "" AND arguments.fstruct.folderid NEQ 0>
+			<cfif arguments.fstruct.searchfor EQ "*">
+				<cfset var thesearchfor = "folder:#arguments.fstruct.folderid#">
+			<cfelse>
+				<cfset var thesearchfor = "+#arguments.fstruct.searchfor# +folder:#arguments.fstruct.folderid#">
+			</cfif>
+		<cfelse>
+			<cfset var thesearchfor = arguments.fstruct.searchfor>
+		</cfif>
 		<!--- Search in Lucene --->
-		<cfinvoke component="global.cfc.lucene" method="search" criteria="#arguments.fstruct.searchfor#" category="doc" hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#" returnvariable="qrylucenedoc">
+		<cfinvoke component="global.cfc.lucene" method="search" criteria="#thesearchfor#" category="doc" hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#" returnvariable="qrylucenedoc">
 		<!--- If lucene returns no records --->
 		<cfif qrylucenedoc.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->

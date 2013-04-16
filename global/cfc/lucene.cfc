@@ -143,7 +143,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath,folder",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -160,7 +160,8 @@
 						rightsmarked : "rightsmarked",
 						labels : "labels",
 						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath"
+						folderpath : "folderpath",
+						folder : "folder"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
@@ -238,7 +239,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath,folder",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -282,7 +283,8 @@
 						rights : "rights",
 						labels : "labels",
 						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath"
+						folderpath : "folderpath",
+						folder : "folder"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
@@ -407,7 +409,7 @@
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath,folder",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -418,7 +420,8 @@
 					extension : "theext",
 					labels : "labels",
 					customfieldvalue : "customfieldvalue",
-					folderpath : "folderpath"
+					folderpath : "folderpath",
+					folder : "folder"
 					}
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
@@ -624,7 +627,7 @@
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
-		<cfelseif NOT arguments.criteria CONTAINS ":">
+		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
 			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)">
 		</cfif>
 		<cftry>
