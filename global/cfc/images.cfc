@@ -1404,8 +1404,8 @@
 				<cfset attributes.intstruct.folder_id = attributes.intstruct.folder_id>
 				<cfset attributes.intstruct.folder_action = false>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
-				<cfset arguments.thestruct.folder_action = true>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />	
+				<cfset attributes.intstruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#attributes.intstruct#" />
 			</cfthread>
 			<!--- Log --->
