@@ -1122,6 +1122,7 @@
 		<xfa name="fvideos" value="c.folder_videos" />
 		<xfa name="faudios" value="c.folder_audios" />
 		<xfa name="assetadd" value="c.asset_add" />
+		<xfa name="collectionslist" value="c.collections_list" />
 		<!-- Reset session -->
 		<set name="session.file_id" value="" />
 		<set name="session.thefileid" value="" />
