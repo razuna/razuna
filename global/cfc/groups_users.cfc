@@ -208,18 +208,22 @@
 <!--- get users of one or more groups by group-name --->
 <!--- This is called while creating a new host --->
 <cffunction name="searchUsersOfGroups" returntype="query" access="remote" hint="get users of one or more groups by group-name">
-	<cfargument name="func_dsn" type="string" required="false" default="#application.razuna.datasource#">
+	<cfargument name="func_dsn" type="string" required="false">
 	<cfargument name="list_grp_id" type="string" required="false">
 	<cfargument name="list_grp_name" type="string" required="false">
 	<cfargument name="list_delim" type="string" required="false" default=",">
 	<cfargument name="host_id" type="numeric" required="false" default="">
 	<cfargument name="mod_id" type="numeric" required="false" hint="modules.mod_id">
 	<cfargument name="orderBy" type="string" required="false" default="u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_id" hint="""ORDER BY #yourtext#""">
+	<!--- Since this is also called from external we need to set some vars here --->
 	<cfif structkeyexists(session,"hostid") AND arguments.host_id EQ "">
 		<cfset arguments.host_id = session.hostid>
 	</cfif>
 	<cfif arguments.host_id EQ "">
 		<cfset arguments.host_id = 0>
+	</cfif>
+	<cfif arguments.func_dsn NEQ "">
+		<cfset application.razuna.datasource = arguments.func_dsn>
 	</cfif>
 	<!--- function internal vars --->
 	<cfset var localquery = 0>
