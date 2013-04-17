@@ -1687,7 +1687,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_image.path_to_asset#/#qry_image.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_image.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
@@ -1706,7 +1706,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_video.path_to_asset#/#qry_video.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_video.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
@@ -1737,7 +1737,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_audio.path_to_asset#/#qry_audio.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_audio.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
@@ -1758,7 +1758,7 @@ keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.i
 			<cfif application.razuna.storage EQ "local">
 				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_doc.path_to_asset#/#qry_doc.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_doc.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
