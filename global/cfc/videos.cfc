@@ -1657,6 +1657,8 @@
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Update Dates --->
 					<cfinvoke component="global" method="update_dates" type="vid" fileid="#attributes.intstruct.vid_id#" />
+					<!--- Update Lucene --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.vid_id#" category="vid" notfile="T">
 					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 					<cfinvoke method="moverelated" thestruct="#attributes.intstruct#">
 					<!--- Execute workflow --->
@@ -1702,6 +1704,8 @@
 			WHERE vid_id = <cfqueryparam value="#vid_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Update Lucene --->
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#vid_id#" category="vid" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />

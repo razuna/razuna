@@ -963,6 +963,8 @@
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Update Dates --->
 					<cfinvoke component="global" method="update_dates" type="doc" fileid="#attributes.intstruct.doc_id#" />
+					<!--- Update Lucene --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.doc_id#" category="doc" notfile="T">
 					<!--- Execute workflow --->
 					<cfset attributes.intstruct.fileid = attributes.intstruct.doc_id>
 					<cfset attributes.intstruct.file_name = attributes.intstruct.qrydoc.file_name>

@@ -1395,6 +1395,8 @@
 			<cfthread intstruct="#arguments.thestruct#">
 				<!--- Update Dates --->
 				<cfinvoke component="global" method="update_dates" type="img" fileid="#attributes.intstruct.img_id#" />
+				<!--- Update Lucene --->
+				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.img_id#" category="img" notfile="T">
 				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 				<cfinvoke method="moverelated" thestruct="#attributes.intstruct#">
 				<!--- Execute workflow --->
@@ -1411,9 +1413,6 @@
 			<!--- Log --->
 			<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid=arguments.thestruct.img_id)>
 		</cfif>
-		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken("folders")>
-		<cfset variables.cachetoken = resetcachetoken("images")> --->
 	<cfreturn />
 </cffunction>
 
@@ -1437,6 +1436,8 @@
 			WHERE img_id = <cfqueryparam value="#img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Update Lucene --->
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#img_id#" category="img" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />
