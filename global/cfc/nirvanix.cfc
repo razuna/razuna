@@ -41,6 +41,7 @@
 	<!--- FUNCTION: LOGIN --->
 	<cffunction name="login" returntype="string" access="remote" output="false">
 		<cfargument name="thestruct" type="struct" required="false" />
+		<cfargument name="thecounter" type="numeric" required="false" default="0">
 		<!--- Params --->
 		<cfset var nvxsession = 0>
 		<cfif !isstruct(arguments.thestruct)>
@@ -86,7 +87,9 @@
 				<cfset var nvxsession = 0>
 				<cfset session.nvxsession = nvxsession>
 				<cfpause interval="5" />
-				<cfinvoke method="login" thestruct="#arguments.thestruct#" />
+				<cfif arguments.thecounter NEQ 1>
+					<cfinvoke method="login" thestruct="#arguments.thestruct#" thecounter="1" />
+				</cfif>
 			</cfcatch>
 		</cftry>
 		<!--- Return --->
