@@ -81,7 +81,10 @@
   feedback_widget_options.placement = "hidden";
   feedback_widget_options.color = "##222";
   feedback_widget_options.style = "question";
-  var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+  try{
+    var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
+  }
+  catch(e) {};
 </script>
 <!--- Dummy div --->
 <div id="loaddummy" style="display:none;"></div>
