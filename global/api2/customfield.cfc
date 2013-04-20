@@ -177,7 +177,6 @@
 						WHERE cf_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
 						</cfquery>						
 					</cfif>
-
 					<!--- End Nick Ryan Edit --->
 				</cfloop>
 				<!--- update change date (since we don't know the type we simply update all) --->
@@ -214,6 +213,8 @@
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="vid">
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="aud">
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="doc">
+				<!--- Call workflow --->
+				<cfset executeworkflow(action='on_file_edit',fileid=i)>
 			</cfloop>
 			<!--- Reset cache --->
 			<cfset resetcachetoken(arguments.api_key,"images")>

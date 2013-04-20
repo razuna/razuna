@@ -139,4 +139,42 @@
 		<cfreturn />
 	</cffunction>
 
+	<!--- reset the global caching variable of this cfc-object --->
+	<cffunction name="executeworkflow" output="false" returntype="void">
+		<cfargument name="action" type="string">
+		<cfargument name="fileid" type="string">
+		<cfargument name="folder_id" type="string">
+		<!--- Query --->
+		<cfif arguments.theaction NEQ "on_folder_add">
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry_forwf">
+			SELECT folder_id_r, 'img' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
+			WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, 'vid' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+			WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, 'aud' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+			WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, 'doc' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
+			WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			</cfquery>
+			<!--- Set vars --->
+			<cfset arguments.folder_id = qry_forwf.folder_id_r>
+			<cfset arguments.thefiletype = qry_forwf.thefiletype>
+			<!--- Call workflow --->
+			<cfset arguments.folder_action = false>
+			<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
+			<!--- Call workflow --->
+			<cfset arguments.folder_action = true>
+		</cfif>
+		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

@@ -175,11 +175,13 @@
 						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
-					<!--- Update Dates --->
-					<cfinvoke component="global.cfc.global" method="update_dates" type="#arguments.thestruct.asset_type#" fileid="#arguments.thestruct.asset_id#" />
 					<cfcatch type="database"></cfcatch>
 				</cftry>
 			</cfloop>
+			<!--- Update Dates --->
+			<cfinvoke component="global.cfc.global" method="update_dates" type="#arguments.thestruct.asset_type#" fileid="#arguments.thestruct.asset_id#" />
+			<!--- Call workflow --->
+			<cfset executeworkflow(action='on_file_edit',fileid=arguments.thestruct.asset_id)>
 			<!--- Flush cache --->
 			<cfset resetcachetoken(arguments.api_key,"search")>
 			<cfset resetcachetoken(arguments.api_key,"labels")>
@@ -208,9 +210,11 @@
 				<cfquery datasource="#application.razuna.api.dsn#">
 				DELETE FROM ct_labels
 				WHERE label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
-				AND ct_id_r = <cfqueryparam value="#arguments.thestruct.asset_id#" cfsqltype="cf_sql_varchar" />
+				AND ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
 				</cfquery>
 			</cfloop>
+			<!--- Call workflow --->
+			<cfset executeworkflow(action='on_file_edit',fileid=arguments.asset_id)>
 			<!--- Flush cache --->
 			<cfset resetcachetoken(arguments.api_key,"search")>
 			<cfset resetcachetoken(arguments.api_key,"labels")>
