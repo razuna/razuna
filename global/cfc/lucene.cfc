@@ -134,7 +134,7 @@
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 					args = {
 					collection : session.hostid,
@@ -166,7 +166,7 @@
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
-			<!--- </cflock> --->
+			</cflock>
 		<!--- FOR IMAGES --->
 		<cfelseif arguments.category EQ "img">
 			<!--- Query Record --->
@@ -230,7 +230,7 @@
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 					args = {
 					collection : session.hostid,
@@ -289,7 +289,7 @@
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
-			<!--- </cflock> --->
+			</cflock>
 		<!--- FOR VIDEOS --->
 		<cfelseif arguments.category EQ "vid">
 			<!--- Query Record --->
@@ -400,7 +400,7 @@
 		<!--- Only for video and audio files --->
 		<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
 			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 				args = {
 				collection : session.hostid,
@@ -426,7 +426,7 @@
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
-			<!--- </cflock> --->
+			</cflock>
 		</cfif>
 		<!--- Index the file itself, but not video (since video throws an error) --->
 		<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
@@ -442,25 +442,24 @@
 					</cfif>
 					<!--- Index: Update file --->
 					<cfif fileExists(qry_all.lucene_key)>
-						<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 							<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
-						<!--- </cflock> --->
+						</cflock>
 					</cfif>
 				<!--- Local Storage --->
 				<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 					<!--- Index: Update file --->
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					<!--- </cflock> --->
+					</cflock>
 				<!--- Linked file --->
 				<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 					<!--- Index: Update file --->
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					<!--- </cflock> --->
+					</cflock>
 				</cfif>
 				<cfcatch type="any">
-					
 				</cfcatch>
 			</cftry>
 		</cfif>
