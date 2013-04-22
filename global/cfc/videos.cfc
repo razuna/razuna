@@ -627,6 +627,68 @@
 	<cfreturn />
 </cffunction>
 
+<!--- TRASH THE VIDEO --->
+<cffunction name="trashvideo" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Get trash video --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_video">
+		SELECT * FROM #session.hostdbprefix#videos 
+		WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#videos SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Set trash directory for video --->
+		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/#arguments.thestruct.id#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/#arguments.thestruct.id#">
+		</cfif>
+		<!--- Set vars --->
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+			<!--- Set http --->
+			<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/#qry_video.path_to_asset#/#qry_video.vid_filename#">
+		<cfelse>
+			<cfset var thehttp ="#qry_video.cloud_url_org#">
+		</cfif>
+		<!--- Store the video into trash --->
+		<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/#arguments.thestruct.id#" file="#qry_video.vid_filename#"/>
+</cffunction>
+
+<!--- Get videos from trash --->
+<cffunction name="gettrashvideos" output="false">
+	<cfargument name="thestruct" type="struct">
+		<cfquery datasource="#application.razuna.datasource#" name="qry_video">
+			SELECT v.vid_id AS id, v.vid_filename AS filename,v.folder_id_r AS folder_id_r, v.vid_extension AS ext,v.vid_name_image AS filename_org,
+				'vid' AS kind,v.is_available AS is_available,v.vid_create_date AS date_create,v.vid_change_date AS date_change,v.link_kind AS link_kind,
+				v.link_path_url AS link_path_url,v.path_to_asset AS path_to_asset,v.cloud_url AS cloud_url,v.cloud_url_org AS cloud_url_org,v.hashtag AS hashtag 
+			FROM 
+				#session.hostdbprefix#videos v 
+			WHERE 
+				v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		</cfquery>
+		<cfreturn qry_video />
+</cffunction>
+
+<!--- Get trash videos form trash directory --->
+<cffunction name="thetrashvideos" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/" name="getvideostrash">
+	<cfreturn getvideostrash />
+</cffunction>
+
+<!--- RESTORE THE VIDEO --->
+<cffunction name="restorevideos" output="false">
+	<cfargument name="thestruct" type="struct">
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#videos SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+</cffunction>
 <!--- REMOVE MANY VIDEO --->
 <cffunction name="removevideomany" output="true">
 	<cfargument name="thestruct" type="struct">

@@ -473,6 +473,67 @@
 	<cfreturn />
 </cffunction>
 
+<!--- TRASH THE AUDIO --->
+<cffunction name="trashaudio" output="false">
+	<cfargument name="thestruct" type="struct">
+		<!--- Select trash audio --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_audio">
+			SELECT * FROM #session.hostdbprefix#audios 
+			WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#audios SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Set trash directory for audio --->
+		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#">
+		</cfif>
+		<!--- Set vars --->
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+			<!--- Set http --->
+			<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/#qry_audio.path_to_asset#/#qry_audio.aud_NAME_NOEXT#.#qry_audio.aud_EXTENSION#">
+		<cfelse>
+			<cfset var thehttp ="#qry_audio.cloud_url_org#">
+		</cfif>
+		<!--- Store the audio into trash --->
+		<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#" file="#qry_audio.aud_NAME_NOEXT#.#qry_audio.aud_EXTENSION#"/>
+</cffunction>
+<!--- Get audios form trash --->
+<cffunction name="gettrashaudio" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#application.razuna.datasource#" name="qry_audio">
+		SELECT a.aud_id AS id, a.aud_name AS filename,a.folder_id_r AS folder_id_r, a.aud_extension AS ext,a.aud_name_org AS filename_org,
+			'aud' AS kind,a.is_available AS is_available,a.aud_create_date AS date_create,a.aud_change_date AS date_change,a.link_kind AS link_kind,
+			a.link_path_url AS link_path_url,a.path_to_asset AS path_to_asset,a.cloud_url AS cloud_url,a.cloud_url_org AS cloud_url_org,a.hashtag AS hashtag 
+		FROM  
+			#session.hostdbprefix#audios a 
+		WHERE 
+			a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	</cfquery>
+	<cfreturn qry_audio />
+</cffunction>
+<!--- Get trash audios form trash directory --->
+<cffunction name="thetrashaudios" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/" name="getaudiotrash">
+	<cfreturn getaudiotrash />
+</cffunction>
+
+<!--- RESTORE THE AUDIO --->
+<cffunction name="restoreaudio" output="false">
+	<cfargument name="thestruct" type="struct">
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#audios SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+</cffunction>
+
 <!--- REMOVE MANY AUDIOS --->
 <cffunction name="removeaudiomany" output="false" access="public">
 	<cfargument name="thestruct" type="struct">

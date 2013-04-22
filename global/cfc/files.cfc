@@ -377,6 +377,67 @@
 		<cfreturn />
 	</cffunction>
 	
+	<!--- TRASH THE FILE --->
+	<cffunction name="trashfile" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfquery datasource="#application.razuna.datasource#" name="qry_file">
+			SELECT * FROM #session.hostdbprefix#files 
+			WHERE file_id =<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#files SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Set trash directory for files --->
+		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/#arguments.thestruct.id#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/#arguments.thestruct.id#">
+		</cfif>
+		<!--- Set vars --->
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+			<!--- Set http --->
+			<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/#qry_file.path_to_asset#/#qry_file.FILE_NAME_NOEXT#.#qry_file.FILE_EXTENSION#">
+		<cfelse>
+			<cfset var thehttp ="#qry_file.cloud_url_org#">
+		</cfif>
+		<!--- Store the file into trash --->
+		<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/#arguments.thestruct.id#" file="#qry_file.FILE_NAME_NOEXT#.#qry_file.FILE_EXTENSION#"/>
+	</cffunction>
+	
+	<!--- Get files from trash --->
+	<cffunction name="gettrashfile" output="false">
+		<cfargument name="thestruct" type="struct">
+			<cfquery datasource="#application.razuna.datasource#" name="qry_file">
+				SELECT f.file_id AS id, f.file_name AS filename,f.folder_id_r AS folder_id_r, f.file_extension AS ext,f.file_name_org AS filename_org,
+					'doc' AS kind,f.is_available AS is_available,f.file_create_date AS date_create,f.file_change_date AS date_change,f.link_kind AS link_kind,
+					f.link_path_url AS link_path_url,f.path_to_asset AS path_to_asset,f.cloud_url AS cloud_url,f.cloud_url_org AS cloud_url_org,f.hashtag AS hashtag 
+				FROM 
+					#session.hostdbprefix#files f 
+				WHERE 
+					f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+			</cfquery>
+			<cfreturn qry_file />
+	</cffunction>
+	<!--- Get trash files form trash directory --->
+	<cffunction name="thetrashfiles" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="getfilestrash">
+		<cfreturn getfilestrash />
+	</cffunction>
+	
+	<!--- RESTORE THE FILE --->
+	<cffunction name="restorefile" output="false">
+		<cfargument name="thestruct" type="struct">
+			<!--- Update in_trash --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#files SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+	</cffunction>
+	
 	<!--- REMOVE MANY FILES --->
 	<cffunction name="removefilemany" output="true">
 		<cfargument name="thestruct" type="struct">

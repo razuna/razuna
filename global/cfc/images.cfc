@@ -328,6 +328,69 @@
 	<cfreturn />
 </cffunction>
 
+<!--- TRASH THE IMAGE --->
+<cffunction name="trashimage" output="false">
+	<cfargument name="thestruct" type="struct">
+		<!--- Select trash image --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_image">
+			SELECT * FROM #session.hostdbprefix#images
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images 
+			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Set trash directory for images --->
+		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#")>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#">
+		</cfif>
+		<!--- Set vars --->
+		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
+			<!--- Set http --->
+			<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/#qry_image.path_to_asset#/#qry_image.img_filename#">
+		<cfelse>
+			<cfset var thehttp ="#qry_image.cloud_url_org#">
+		</cfif>
+		<!--- Store the images into trash --->
+		<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#" file="#qry_image.img_filename#"/>
+</cffunction>
+
+<!--- Get images from trash --->
+<cffunction name="gettrashimage" output="false">
+	<cfargument name="thestruct" type="struct">
+		<cfquery datasource="#application.razuna.datasource#" name="qry_image">
+			SELECT i.img_id AS id, i.img_filename AS filename,i.folder_id_r AS folder_id_r, i.thumb_extension AS ext,i.img_filename_org AS filename_org,
+				'img' AS kind,i.is_available AS is_available,i.img_create_date AS date_create,i.img_change_date AS date_change,i.link_kind AS link_kind,
+				i.link_path_url AS link_path_url,i.path_to_asset AS path_to_asset,i.cloud_url AS cloud_url,i.cloud_url_org AS cloud_url_org,i.hashtag AS hashtag 
+			FROM 
+				#session.hostdbprefix#images i 
+			WHERE 
+				i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		</cfquery>
+		<cfreturn qry_image />
+</cffunction>
+<!--- Get trash images form trash directory --->
+<cffunction name="thetrashimages" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/" name="getimagestrash">
+	<cfreturn getimagestrash />
+</cffunction>
+
+<!--- RESTORE THE IMAGE --->
+<cffunction name="restoreimage" output="false">
+	<cfargument name="thestruct" type="struct">
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#images SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+</cffunction>
+
 <!--- REMOVE MANY IMAGE --->
 <cffunction name="removeimagemany" output="true">
 	<cfargument name="thestruct" type="struct">

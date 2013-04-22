@@ -44,6 +44,14 @@
 	<fuseaction name="remove_email">
   		<include template="win_remove_email" />
 	</fuseaction>
+	<!-- WINDOW: Trash Record -->
+	<fuseaction name="trash_record">
+  		<include template="win_trash_record" />
+	</fuseaction>
+	<!-- WINDOW: Restore Record -->
+	<fuseaction name="restore_record">
+  		<include template="win_restore_record" />
+	</fuseaction>
 	
 	<!-- Dummy empty page -->
 	<fuseaction name="dummy">
@@ -108,9 +116,17 @@
 	<fuseaction name="remove_folder">
   		<include template="win_remove_folder" />
 	</fuseaction>
+	<!-- Folder: Trash Folder -->
+	<fuseaction name="trash_folder">
+  		<include template="win_trash_folder" />
+	</fuseaction>
 	<!-- Folder: Confirm removal of folder -->
 	<fuseaction name="remove_folder_confirm">
   		<include template="dsp_folder_remove_confirm" />
+	</fuseaction>
+	<!-- Folder: Confirm trash of folder -->
+	<fuseaction name="trash_folder_confirm">
+  		<include template="dsp_folder_trash_confirm" />
 	</fuseaction>
 	<!-- Folder: Content -->
 	<fuseaction name="folder_content">
@@ -136,6 +152,10 @@
 	<fuseaction name="folder_videos">
   		<include template="dsp_folder_videos" />
 	</fuseaction>
+	<!-- Trash: Records -->
+	<fuseaction name="trash_assets">
+  		<include template="dsp_trash_assets" />
+	</fuseaction>
 	<!-- Folder: Load Video -->
 	<fuseaction name="folder_videos_show">
   		<include template="dsp_folder_videos_show" />
@@ -152,6 +172,10 @@
 	<fuseaction name="folder_settings">
   		<include template="dsp_folder_settings" />
 	</fuseaction>
+	<!-- Folder: trash -->
+    <fuseaction name="folder_trash">
+		<include template="dsp_folder_trash" />
+    </fuseaction>
 	<!-- Folder: samefoldernamecheck -->
 	<fuseaction name="folder_namecheck">
   		<include template="dsp_folder_namecheck" />
