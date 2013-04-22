@@ -141,6 +141,7 @@
 
 	<!--- reset the global caching variable of this cfc-object --->
 	<cffunction name="executeworkflow" output="false" returntype="void">
+		<cfargument name="api_key" type="string">
 		<cfargument name="action" type="string">
 		<cfargument name="fileid" type="string">
 		<cfargument name="folder_id" type="string">

@@ -181,7 +181,7 @@
 			<!--- Update Dates --->
 			<cfinvoke component="global.cfc.global" method="update_dates" type="#arguments.thestruct.asset_type#" fileid="#arguments.thestruct.asset_id#" />
 			<!--- Call workflow --->
-			<cfset executeworkflow(action='on_file_edit',fileid=arguments.thestruct.asset_id)>
+			<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=arguments.thestruct.asset_id)>
 			<!--- Flush cache --->
 			<cfset resetcachetoken(arguments.api_key,"search")>
 			<cfset resetcachetoken(arguments.api_key,"labels")>
@@ -214,7 +214,7 @@
 				</cfquery>
 			</cfloop>
 			<!--- Call workflow --->
-			<cfset executeworkflow(action='on_file_edit',fileid=arguments.asset_id)>
+			<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=arguments.asset_id)>
 			<!--- Flush cache --->
 			<cfset resetcachetoken(arguments.api_key,"search")>
 			<cfset resetcachetoken(arguments.api_key,"labels")>

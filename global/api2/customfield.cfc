@@ -214,7 +214,7 @@
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="aud">
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="doc">
 				<!--- Call workflow --->
-				<cfset executeworkflow(action='on_file_edit',fileid=i)>
+				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
 			</cfloop>
 			<!--- Reset cache --->
 			<cfset resetcachetoken(arguments.api_key,"images")>
