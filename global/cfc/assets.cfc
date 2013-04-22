@@ -3130,9 +3130,9 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Detect file extension --->
 				<cfinvoke method="getFileExtension" theFileName="#newFileName#" returnvariable="fileNameExt">
 				<cfset var file = structnew()>
-				<cfset file.fileSize = "#size#">
-				<cfset file.oldFileSize = "#size#">
-				<cfset file.dateLastAccessed = "#dateLastModified#">
+				<cfset file.fileSize = size>
+				<cfset file.oldFileSize = size>
+				<cfset file.dateLastAccessed = dateLastModified>
 				<!--- Get and set file type and MIME content --->
 				<cfquery datasource="#variables.dsn#" name="fileType">
 				SELECT type_type, type_mimecontent, type_mimesubcontent
@@ -3241,6 +3241,8 @@ This is the main function called directly by a single upload else from addassets
 					WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
+					<!--- Create inserts --->
+					<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 					<!--- Now start the file mumbo jumbo --->
 					<cfif fileType.type_type EQ "img">
 						<!--- IMAGE UPLOAD (call method to process a img-file) --->
