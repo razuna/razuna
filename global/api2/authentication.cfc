@@ -145,7 +145,7 @@
 		<cfargument name="fileid" type="string">
 		<cfargument name="folder_id" type="string">
 		<!--- Query --->
-		<cfif arguments.theaction NEQ "on_folder_add">
+		<cfif arguments.action NEQ "on_folder_add">
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry_forwf">
 			SELECT folder_id_r, 'img' AS thefiletype
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
