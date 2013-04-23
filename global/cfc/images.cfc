@@ -321,6 +321,11 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Remove the file from trash folder --->
+			<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#')>
+				<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#/#thedetail.img_filename#" >
+				<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#" recurse="false" >
+			</cfif> 
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("images")>
 		<cfset resetcachetoken("folders")>
@@ -351,7 +356,7 @@
 		<!--- Set vars --->
 		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
 			<!--- Set http --->
-			<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/#qry_image.path_to_asset#/#qry_image.img_filename#">
+			<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/#qry_image.path_to_asset#/#qry_image.IMG_FILENAME_ORG#">
 		<cfelse>
 			<cfset var thehttp ="#qry_image.cloud_url_org#">
 		</cfif>
@@ -376,7 +381,12 @@
 <!--- Get trash images form trash directory --->
 <cffunction name="thetrashimages" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/" name="getimagestrash">
+	<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/" name="getimagestrash">
+	<cfelse>
+		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/">
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/" name="getimagestrash">
+	</cfif>
 	<cfreturn getimagestrash />
 </cffunction>
 

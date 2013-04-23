@@ -551,6 +551,8 @@
 		<set name="attributes.id" value="0" overwrite="false" />
 		<set name="attributes.actionismove" value="F" overwrite="false" />
 		<set name="session.showmyfolder" value="F" overwrite="false" />
+		<!-- Clear cache -->
+		<do action="flushcache"/>
 		<!-- Get folder record -->
 		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="qFolder">
 			<argument name="thestruct" value="#attributes#" />
@@ -578,6 +580,7 @@
 	<fuseaction name="trash_assets">
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!--Path-->
 		<set name="attributes.thepathup" value="#expandPath('../../')#" />
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<set name="attributes.thetrash" value="trash" overwrite="false" />
@@ -2227,6 +2230,12 @@
 		<do action="storage" />
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
+		<!-- param-->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<!-- Path -->
+		<set name="attributes.thepathup" value="#expandPath('../../')#" />
+		<!-- Set trash directory path-->
+		<set name="attributes.thetrash" value="trash" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimage(attributes)" />
 		<!-- Show the trash folder listing -->
@@ -2413,6 +2422,10 @@
 		<do action="storage" />
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
+		<!-- Path -->
+		<set name="attributes.thepathup" value="#expandPath('../../')#" />
+		<!-- Set trash directory path-->
+		<set name="attributes.thetrash" value="trash" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudio(attributes)" />
 		<!-- Show the folder listing -->

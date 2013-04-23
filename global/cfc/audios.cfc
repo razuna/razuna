@@ -519,7 +519,12 @@
 <!--- Get trash audios form trash directory --->
 <cffunction name="thetrashaudios" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/" name="getaudiotrash">
+	<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/" name="getaudiotrash">
+	<cfelse>
+		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/">
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/" name="getaudiotrash">
+	</cfif>
 	<cfreturn getaudiotrash />
 </cffunction>
 

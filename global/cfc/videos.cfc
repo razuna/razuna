@@ -675,7 +675,12 @@
 <!--- Get trash videos form trash directory --->
 <cffunction name="thetrashvideos" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/" name="getvideostrash">
+	<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/" name="getvideostrash">
+	<cfelse>
+		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/">
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/" name="getvideostrash">
+	</cfif>
 	<cfreturn getvideostrash />
 </cffunction>
 

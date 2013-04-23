@@ -27,7 +27,6 @@
 
 <!--- Get the cachetoken for here --->
 <cfset variables.cachetoken = getcachetoken("folders")>
-
 <!--- GETTREE : GET THE FOLDERS AND SUBFOLDERS OF THIS HOST --->
 <cffunction hint="GET THE FOLDERS AND SUBFOLDERS OF THIS HOST" name="getTree" output="false" access="public" returntype="query">
 	<cfargument name="id" required="yes" type="string" hint="folder_id">
@@ -1526,7 +1525,12 @@
 <!--- Get folder from trash directory --->
 <cffunction name="get_trash_folder_dir"  output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/folder/" name="trash_folder_dir">
+		<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/folder/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/folder/" name="trash_folder_dir">
+	<cfelse>
+		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/folder/">
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/folder/" name="trash_folder_dir">
+	</cfif>
 	<cfreturn trash_folder_dir />
 </cffunction>
 
@@ -2398,6 +2402,7 @@
 <!--- Get all assets of this folder --->
 <cffunction name="getallassets" output="true" returnType="query">
 	<cfargument name="thestruct" type="struct" required="true">
+	
 	<!--- Sometimes folderid is empty --->
 	<cfif arguments.thestruct.folder_id EQ "">
 		<cfset arguments.thestruct.folder_id = 0>
@@ -2743,7 +2748,7 @@
 			)	
 		</cfif>
 		UNION ALL
-		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>f.file_id as id, f.file_name as filename, f.folder_id_r, 
+		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>f.file_id as id, f.file_name as filename,f.in_trash, f.folder_id_r, 
 		f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
@@ -2751,6 +2756,7 @@
 		FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND f.file_id NOT IN (
@@ -2794,6 +2800,7 @@
 			<cfset QuerySetCell(query=qry, column="labels", value=valueList(qry_l.ct_label_id), row=currentrow)>
 		</cfloop>
 	</cfif>
+	
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>
@@ -2878,9 +2885,9 @@
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ folder_id, folder_name, folder_id_r, folder_of_user, folder_owner, folder_level, username, perm, subhere, permfolder
+	SELECT /* #variables.cachetoken##session.theUserID#getfoldersfortree */ folder_id, folder_name, folder_id_r, folder_of_user, folder_owner, folder_level, in_trash, username, perm, subhere, permfolder
 	FROM (
-		SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level, 
+		SELECT f.folder_id, f.folder_name, f.folder_id_r, f.folder_of_user, f.folder_owner, f.folder_level,f.in_trash, 
 		<cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2">NVL<cfelseif variables.database EQ "mysql">ifnull<cfelseif variables.database EQ "mssql">isnull</cfif>(u.user_login_name,'Obsolete') as username,
 		<!--- Permission follow but not for sysadmin and admin --->
 		<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
@@ -2924,6 +2931,7 @@
 				FROM #session.hostdbprefix#folders s1 
 				WHERE s1.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
 				AND s1.folder_id_r = f.folder_id
+				ANd s1.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND s1.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				<!--- AND lower(s.folder_of_user) = <cfqueryparam cfsqltype="cf_sql_varchar" value="t">  --->
 				<cfif not Request.securityObj.CheckSystemAdminUser() and not Request.securityObj.CheckAdministratorUser()>
@@ -2945,6 +2953,7 @@
 				FROM #session.hostdbprefix#folders s2, #session.hostdbprefix#folders_groups fg3
 				WHERE s2.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
 				AND s2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND s2.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND fg3.host_id = s2.host_id
 				AND s2.folder_id_r = f.folder_id
 				AND fg3.folder_id_r = s2.folder_id
@@ -2962,6 +2971,7 @@
 				FROM #session.hostdbprefix#folders s3, #session.hostdbprefix#folders_groups fg4
 				WHERE s3.folder_id <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> f.folder_id
 				AND s3.folder_id_r = f.folder_id
+				ANd s3.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND fg4.grp_id_r = '0'
 				AND fg4.folder_id_r = s3.folder_id
 				AND lower(fg4.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
@@ -3068,8 +3078,10 @@
 	<!--- Tree for the Explorer --->
 	<cfif arguments.thestruct.actionismove EQ "F">
 		<cfoutput query="qry">
+		<cfif qry.in_trash EQ 'F'>
 		<li id="<cfif iscol EQ "T">col-</cfif>#folder_id#"<cfif subhere EQ "1"> class="closed"</cfif>><a href="##" onclick="loadcontent('rightside','index.cfm?fa=<cfif iscol EQ "T">c.collections<cfelse>c.folder</cfif>&col=F&folder_id=<cfif iscol EQ "T">col-</cfif>#folder_id#');" rel="prefetch" title="<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">Folder of (#username#)</cfif></cfif></cfif>"><ins>&nbsp;</ins>#left(folder_name,40)#<cfif theid EQ 0><cfif iscol EQ "F"><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ "">*<cfif folder_name EQ "my folder"> (#username#)</cfif></cfif></cfif></cfif>
 		</a></li>
+		</cfif>
 		</cfoutput>
 	<!--- If we come from a move action --->
 	<cfelse>
@@ -3360,6 +3372,7 @@
 	</cfthread>
 	<cfreturn />
 </cffunction>
+
 
 <!--- THREAD: Save the combined view --->
 <cffunction name="combined_save_thread" output="true">
@@ -4166,17 +4179,37 @@
 <!--- Assets Trash Count --->
 <cffunction name="trashcount" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/" name="count_trash_aud" >
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/" name="count_trash_vid" >
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/" name="count_trash_img" >
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="count_trash_file">
-	<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/folder/" name="count_trash_folder">
-	<cfset var img_count = count_trash_img.RecordCount>
-	<cfset var aud_count = count_trash_aud.RecordCount>
-	<cfset var vid_count = count_trash_vid.RecordCount>
-	<cfset var file_count = count_trash_file.RecordCount>
-	<cfset var folder_count = count_trash_folder.RecordCount>
+	<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/" name="count_trash_aud" >
+		<cfset var aud_count = count_trash_aud.RecordCount>
+	<cfelse>
+		<cfset var aud_count = 0>
+	</cfif>
+ 	<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/" name="count_trash_vid" >
+		<cfset var vid_count = count_trash_vid.RecordCount>
+	<cfelse>
+		<cfset var vid_count = 0>
+	 </cfif>
+	 <cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/" name="count_trash_img" >
+		<cfset var img_count = count_trash_img.RecordCount>
+	<cfelse>
+		<cfset var img_count = 0>
+	</cfif>
+	<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="count_trash_file">
+		<cfset var file_count = count_trash_file.RecordCount>
+	<cfelse>
+		<cfset var file_count = 0>
+	</cfif>
+	<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/folder/')>
+		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/folder/" name="count_trash_folder">
+		<cfset var folder_count = count_trash_folder.RecordCount>
+	<cfelse>
+		<cfset var folder_count = 0>
+	</cfif>
 	<cfset var asset_count = img_count + aud_count + vid_count + file_count + folder_count>
 	<cfreturn asset_count />
-</cffunction>
+</cffunction> 
 </cfcomponent>
