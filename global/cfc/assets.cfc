@@ -3024,6 +3024,11 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="extractFromZip" output="true" access="private">
 	<cfargument name="thestruct" type="struct">	
 	<cftry>
+		<!--- Remove the ZIP file from the files DB. This is being created on normal file upload and is not needed --->
+		<cfquery datasource="#variables.dsn#">
+		DELETE FROM #session.hostdbprefix#files
+		WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
+		</cfquery>
 		<!--- Params --->
 		<cfparam default="0" name="arguments.thestruct.upl_template">
 		<cfset var thetemp = Createuuid("")>
