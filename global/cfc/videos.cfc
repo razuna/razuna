@@ -988,6 +988,19 @@
 		<cfset arguments.thestruct.qrydetail.path_to_asset = qryorg.path_to_asset>
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
+			<!--- MD5 video --->
+			<cfset consoleoutput(true)>
+			<cfset console("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+			<cfif FileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+				<cfset var md5hash = hashbinary("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+				<!--- Update DB --->
+				<cfquery datasource="#variables.dsn#">
+				UPDATE #session.hostdbprefix#videos
+				SET hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
+				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
 		<!--- Nirvanix --->
