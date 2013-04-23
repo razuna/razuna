@@ -306,7 +306,7 @@
 		<cftry>
 			<cfsavecontent variable="thexmp">-xmp:all=<!--- Remove all fileds first --->
 <!--- Keywords ---><cfif ltrim(rereplace(arguments.thestruct.img_keywords,"\,","","all")) EQ "">-xmp:subject=
-keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.img_keywords#"><cfif ltrim(key) NEQ "">-xmp:subject=#ltrim(key)#
+-keywords=<cfelse><cfloop delimiters="," index="key" list="#arguments.thestruct.img_keywords#"><cfif ltrim(key) NEQ "">-xmp:subject=#ltrim(key)#
 -keywords=#ltrim(key)#</cfif>
 </cfloop></cfif><!--- Creator --->
 -xmp:creator=#arguments.thestruct.xmp_author#
