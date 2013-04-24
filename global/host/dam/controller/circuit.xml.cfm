@@ -2592,8 +2592,7 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="update(attributes)" />
-		<!-- CFC: Save XMP, but only for JPG/JPEG images -->
-		<!-- (attributes.extension EQ 'jpg' OR attributes.extension EQ 'jpeg') AND  -->
+		<!-- CFC: Save XMP -->
 		<if condition="attributes.link_kind NEQ 'url'">
 			<true>
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="xmpwritethread(attributes)" />
