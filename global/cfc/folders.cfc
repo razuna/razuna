@@ -3971,7 +3971,8 @@
 	<!--- session --->
 	<cfparam name="session.file_id" default="">
 	<!--- Now simply add the selected fileids to the session --->
-	<cfset session.file_id = session.file_id & "," & arguments.thestruct.file_id>
+	<cfset var thelist = session.file_id & "," & arguments.thestruct.file_id>
+	<cfset session.file_id = ListRemoveduplicates(thelist)>
 	<cfset session.thefileid = session.file_id>
 </cffunction>
 
