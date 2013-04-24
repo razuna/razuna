@@ -104,6 +104,7 @@
 				FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 				WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (a.aud_group IS NULL OR a.aud_group = '')
+				AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
 				)
@@ -124,6 +125,7 @@
 			FROM audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (a.aud_group IS NULL OR a.aud_group = '')
+			AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			ORDER BY #sortby#
 		)
@@ -144,6 +146,7 @@
 		FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (a.aud_group IS NULL OR a.aud_group = '')
+		AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
@@ -466,6 +469,11 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
+	<!--- Remove the file from trash folder --->
+   <cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#')>
+       <cffile action="delete" file="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#/#details.filenameorg#" >
+       <cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#" recurse="false" >
+   </cfif>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
 	<cfset resetcachetoken("folders")>

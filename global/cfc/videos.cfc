@@ -116,6 +116,7 @@
 				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
+				AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
 				)
@@ -136,6 +137,7 @@
 			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
+			AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			ORDER BY #sortby#
 		)
@@ -154,6 +156,7 @@
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
+		AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
@@ -624,6 +627,11 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
+	<!--- Remove the file from trash folder --->
+   <cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/#arguments.thestruct.id#')>
+       <cffile action="delete" file="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/#arguments.thestruct.id#/#thedetail.filenameorg#" >
+       <cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/vid/#arguments.thestruct.id#" recurse="false" >
+   </cfif>
 	<cfreturn />
 </cffunction>
 

@@ -1369,6 +1369,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- Get Include -->
+        <do action="flushcache"/>
 		<!-- Show -->
 		<do action="ajax.folder_videos" />
 	</fuseaction>
@@ -1440,6 +1442,8 @@
 		<!-- CFC: Get plugin actions -->
 		<set name="attributes.nameOfVariable" value="plr" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_folderview_select_r',attributes)" returnvariable="plr" />
+		<!-- Get Include -->
+        <do action="flushcache"/>
 		<!-- Show -->
 		<do action="ajax.folder_audios" />
 	</fuseaction>
@@ -2148,14 +2152,18 @@
 		<do action="storage" />
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
+		<!--Path-->
+        <set name="attributes.thepathup" value="#expandPath('../../')#" />
+        <!--Set trash directory path-->
+        <set name="attributes.thetrash" value="trash" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="removefile(attributes)" />
 		<!-- Show the folder listing -->
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<if condition="attributes.loaddiv EQ 'content'">
+				<if condition="attributes.loaddiv EQ 'assets'">
 					<true>
-						<do action="folder_explorer_trash" />
+						<do action="trash_assets" />
 					</true>
 					<false>
 						<do action="folder_files" />
@@ -2230,20 +2238,18 @@
 		<do action="storage" />
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
-		<!-- param-->
-		<set name="attributes.dynpath" value="#dynpath#" />
-		<!-- Path -->
-		<set name="attributes.thepathup" value="#expandPath('../../')#" />
-		<!-- Set trash directory path-->
-		<set name="attributes.thetrash" value="trash" />
+		<!--Path-->
+        <set name="attributes.thepathup" value="#expandPath('../../')#" />
+        <!--Set trash directory path-->
+        <set name="attributes.thetrash" value="trash" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimage(attributes)" />
 		<!-- Show the trash folder listing -->
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<if condition="attributes.loaddiv EQ 'content'">
+				<if condition="attributes.loaddiv EQ 'assets'">
 					<true>
-						<do action="folder_explorer_trash" />
+						<do action="trash_assets" />
 					</true>
 					<false>
 						<do action="folder_images" />
@@ -2329,14 +2335,18 @@
 		<do action="storage" />
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
+		<!--Path-->
+        <set name="attributes.thepathup" value="#expandPath('../../')#" />
+        <!--Set trash directory path-->
+        <set name="attributes.thetrash" value="trash" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="removevideo(attributes)" />
 		<!-- Show the folder listing -->
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<if condition="attributes.loaddiv EQ 'content'">
+				<if condition="attributes.loaddiv EQ 'assets'">
 					<true>
-						<do action="folder_explorer_trash" />
+						<do action="trash_assets" />
 					</true>
 					<false>
 						<do action="folder_videos" />
@@ -2422,18 +2432,18 @@
 		<do action="storage" />
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
-		<!-- Path -->
-		<set name="attributes.thepathup" value="#expandPath('../../')#" />
-		<!-- Set trash directory path-->
-		<set name="attributes.thetrash" value="trash" />
+		<!--Path-->
+        <set name="attributes.thepathup" value="#expandPath('../../')#" />
+        <!--Set trash directory path-->
+        <set name="attributes.thetrash" value="trash" />
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudio(attributes)" />
 		<!-- Show the folder listing -->
 		<if condition="attributes.loaddiv NEQ ''">
 			<true>
-				<if condition="attributes.loaddiv EQ 'content'">
+				<if condition="attributes.loaddiv EQ 'assets'">
 					<true>
-						<do action="folder_explorer_trash" />
+						<do action="trash_assets" />
 					</true>
 					<false>
 						<do action="folder_audios" />

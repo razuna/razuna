@@ -93,7 +93,8 @@
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#aud_id#&favtype=file&favkind=aud');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
 									<cfif attributes.folderaccess EQ "X">
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<a href="##" onclick="showwindow('#myself#ajax.trash_audios&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+										<!---<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>--->
 									</cfif>
 								</div>
 								<br>
@@ -169,7 +170,8 @@
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#aud_id#&favtype=file&favkind=aud');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 								</cfif>
 								<cfif attributes.folderaccess EQ "X">
-									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.trash_audios&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+									<!---<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>--->
 								</cfif>
 							</div>
 						</div>
@@ -263,7 +265,8 @@
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#aud_id#&favtype=file&favkind=aud');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 								</cfif>
 								<cfif attributes.folderaccess EQ "X">
-									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=list','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+								<a href="##" onclick="showwindow('#myself#ajax.trash_audios&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
+									<!---<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#aud_id#&what=audios&loaddiv=aud&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=list','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>--->
 								</cfif>
 							</div>
 						</div>

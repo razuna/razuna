@@ -370,6 +370,11 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
+		<!--- Remove the file from trash folder --->
+       <cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#')>
+           <cffile action="delete" file="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#/#thedetail.img_filename#" >
+           <cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#" recurse="false" >
+       </cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>

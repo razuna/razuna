@@ -122,6 +122,7 @@
 				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
+				AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
 				)
@@ -142,6 +143,7 @@
 			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
+			AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			ORDER BY #sortby#
 		)
@@ -160,6 +162,7 @@
 		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
+		AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
@@ -322,10 +325,10 @@
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
 		<!--- Remove the file from trash folder --->
-			<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#')>
-				<cffile action="delete" file="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#/#thedetail.img_filename#" >
-				<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#" recurse="false" >
-			</cfif> 
+       <cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#')>
+	       <cffile action="delete" file="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#/#thedetail.img_filename#" >
+	       <cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#" recurse="false" >
+       </cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("images")>
 		<cfset resetcachetoken("folders")>
@@ -360,6 +363,7 @@
 		<cfelse>
 			<cfset var thehttp ="#qry_image.cloud_url_org#">
 		</cfif>
+		
 		<!--- Store the images into trash --->
 		<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#" file="#qry_image.img_filename#"/>
 </cffunction>
