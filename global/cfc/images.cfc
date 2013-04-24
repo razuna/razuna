@@ -918,9 +918,9 @@
 		</cfif>
 		<!--- IM commands --->
 		<cfif thedpi EQ "">
-			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -colorspace RGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# +profile '*' -colorspace sRGB #theflatten##theformatconv#">
 		<cfelse>
-			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# -colorspace RGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# +profile '*' -colorspace sRGB #theflatten##theformatconv#">
 		</cfif>
 		<cfset var theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
