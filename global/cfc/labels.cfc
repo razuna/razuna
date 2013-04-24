@@ -412,7 +412,7 @@
 		<cfargument name="label_id" type="string">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#labels_count */
+		SELECT DISTINCT /* #variables.cachetoken#labels_count */
 			(
 				SELECT count(ct_label_id)
 				FROM ct_labels
@@ -438,7 +438,6 @@
 				AND ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 			) AS count_collections
 		FROM ct_labels
-		GROUP BY count_assets, count_comments, count_folders, count_collections
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />

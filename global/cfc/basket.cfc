@@ -343,7 +343,9 @@
 			<!--- Nirvanix --->
 			<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qry.link_kind EQ "">
 				<cfthread name="#ttd#" intstruct="#arguments.thestruct#">
-					<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+					<cfif attributes.intstruct.qry.cloud_url_org NEQ "" AND attributes.intstruct.qry.cloud_url_org CONTAINS "http">
+						<cfhttp url="#attributes.intstruct.qry.cloud_url_org#" file="#attributes.intstruct.thename#" path="#attributes.intstruct.newpath#"></cfhttp>
+					</cfif>
 				</cfthread>
 			<!--- Amazon --->
 			<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qry.link_kind EQ "">

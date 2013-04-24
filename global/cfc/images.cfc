@@ -524,7 +524,7 @@
 		<!--- Get proper folderaccess --->
 		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
 		<!--- Add labels query --->
-		<cfset QuerySetCell(details, "perm", theaccess)>
+		<cfset QuerySetCell(details, "perm", theaccess, 1)>
 	</cfif>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
@@ -918,9 +918,9 @@
 		</cfif>
 		<!--- IM commands --->
 		<cfif thedpi EQ "">
-			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -colorspace RGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# +profile '*' -colorspace sRGB #theflatten##theformatconv#">
 		<cfelse>
-			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# -colorspace RGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# +profile '*' -colorspace sRGB #theflatten##theformatconv#">
 		</cfif>
 		<cfset var theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
@@ -1384,7 +1384,7 @@
 		<!--- Move --->
 		<cfinvoke method="filedetail" theid="#arguments.thestruct.img_id#" thecolumn="img_filename, folder_id_r" returnvariable="arguments.thestruct.qryimg">
 		<!--- Ignore if the folder id is the same --->
-		<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryimg.folder_id_r>
+		<cfif arguments.thestruct.qryimg.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryimg.folder_id_r>
 			<!--- Update DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
@@ -1395,6 +1395,8 @@
 			<cfthread intstruct="#arguments.thestruct#">
 				<!--- Update Dates --->
 				<cfinvoke component="global" method="update_dates" type="img" fileid="#attributes.intstruct.img_id#" />
+				<!--- Update Lucene --->
+				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.img_id#" category="img" notfile="T">
 				<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 				<cfinvoke method="moverelated" thestruct="#attributes.intstruct#">
 				<!--- Execute workflow --->
@@ -1404,16 +1406,13 @@
 				<cfset attributes.intstruct.folder_id = attributes.intstruct.folder_id>
 				<cfset attributes.intstruct.folder_action = false>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
-				<cfset arguments.thestruct.folder_action = true>
-				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />	
+				<cfset attributes.intstruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#attributes.intstruct#" />
 			</cfthread>
 			<!--- Log --->
 			<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryimg.img_filename#',logfiletype='img',assetid=arguments.thestruct.img_id)>
 		</cfif>
-		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken("folders")>
-		<cfset variables.cachetoken = resetcachetoken("images")> --->
 	<cfreturn />
 </cffunction>
 
@@ -1437,6 +1436,8 @@
 			WHERE img_id = <cfqueryparam value="#img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Update Lucene --->
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#img_id#" category="img" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />

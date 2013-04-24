@@ -988,6 +988,19 @@
 		<cfset arguments.thestruct.qrydetail.path_to_asset = qryorg.path_to_asset>
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
+			<!--- MD5 video --->
+			<cfset consoleoutput(true)>
+			<cfset console("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+			<cfif FileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+				<cfset var md5hash = hashbinary("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
+				<!--- Update DB --->
+				<cfquery datasource="#variables.dsn#">
+				UPDATE #session.hostdbprefix#videos
+				SET hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
+				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
 			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
 			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
 		<!--- Nirvanix --->
@@ -1646,7 +1659,7 @@
 			<!--- Move --->
 			<cfinvoke method="getdetails" vid_id="#arguments.thestruct.vid_id#" ColumnList="v.vid_filename, v.folder_id_r, path_to_asset" returnvariable="arguments.thestruct.qryvid">
 			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
+			<cfif arguments.thestruct.qryvid.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryvid.folder_id_r>
 				<!--- Update DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos
@@ -1657,6 +1670,8 @@
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Update Dates --->
 					<cfinvoke component="global" method="update_dates" type="vid" fileid="#attributes.intstruct.vid_id#" />
+					<!--- Update Lucene --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.vid_id#" category="vid" notfile="T">
 					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 					<cfinvoke method="moverelated" thestruct="#attributes.intstruct#">
 					<!--- Execute workflow --->
@@ -1702,6 +1717,8 @@
 			WHERE vid_id = <cfqueryparam value="#vid_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Update Lucene --->
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#vid_id#" category="vid" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />

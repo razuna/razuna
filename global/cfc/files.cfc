@@ -733,7 +733,7 @@
 			<!--- Update main record with dates --->
 			<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.file_id#" />
 			<!--- Query --->
-			<cfquery datasource="#variables.dsn#" name="qry">
+			<cfquery datasource="#variables.dsn#" name="qryfileupdate">
 			SELECT file_name_org, file_name, path_to_asset
 			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
@@ -741,15 +741,15 @@
 			</cfquery>
 			<!--- Select the record to get the original filename or assign if one is there --->
 			<cfif NOT structkeyexists(arguments.thestruct,"filenameorg") OR arguments.thestruct.filenameorg EQ "">
-				<cfset arguments.thestruct.qrydetail.filenameorg = qry.file_name_org>
-				<cfset arguments.thestruct.filenameorg = qry.file_name_org>
-				<cfset arguments.thestruct.file_name = qry.file_name>
+				<cfset arguments.thestruct.qrydetail.filenameorg = qryfileupdate.file_name_org>
+				<cfset arguments.thestruct.filenameorg = qryfileupdate.file_name_org>
+				<cfset arguments.thestruct.file_name = qryfileupdate.file_name>
 			<cfelse>
 				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
 			</cfif>
 			<!--- Lucene --->
 			<cfset arguments.thestruct.qrydetail.folder_id_r = arguments.thestruct.folder_id>
-			<cfset arguments.thestruct.qrydetail.path_to_asset = qry.path_to_asset>
+			<cfset arguments.thestruct.qrydetail.path_to_asset = qryfileupdate.path_to_asset>
 			<cfif application.razuna.storage EQ "local">
 				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
@@ -759,7 +759,7 @@
 				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
 			</cfif>
 			<!--- Log --->
-			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qry.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')>
+			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')>
 		</cfloop>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
@@ -952,7 +952,7 @@
 			<!--- Get file details --->
 			<cfinvoke method="filedetail" theid="#arguments.thestruct.doc_id#" thecolumn="file_name, folder_id_r, file_name_org filenameorg, lucene_key, link_kind, path_to_asset" returnvariable="arguments.thestruct.qrydoc">
 			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
+			<cfif arguments.thestruct.qrydoc.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qrydoc.folder_id_r>
 				<!--- Update DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#files
@@ -963,6 +963,8 @@
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Update Dates --->
 					<cfinvoke component="global" method="update_dates" type="doc" fileid="#attributes.intstruct.doc_id#" />
+					<!--- Update Lucene --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.doc_id#" category="doc" notfile="T">
 					<!--- Execute workflow --->
 					<cfset attributes.intstruct.fileid = attributes.intstruct.doc_id>
 					<cfset attributes.intstruct.file_name = attributes.intstruct.qrydoc.file_name>

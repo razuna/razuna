@@ -556,6 +556,8 @@
 				</cfif>
 				<!--- Initiate the index --->
 				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="#lucenecategory#">
+				<!--- Call workflow --->
+				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
 			</cfloop>
 			<!--- Flush cache --->
 			<cfset resetcachetoken(arguments.api_key,cachetype)>

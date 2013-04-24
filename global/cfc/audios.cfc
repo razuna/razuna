@@ -663,7 +663,7 @@
 			<cfinvoke method="detail" thestruct="#arguments.thestruct#" returnvariable="qrydetails">
 			<cfset arguments.thestruct.qryaud = qrydetails.detail>
 			<!--- Ignore if the folder id is the same --->
-			<cfif arguments.thestruct.folder_id NEQ arguments.thestruct.qryaud.folder_id_r>
+			<cfif arguments.thestruct.qryaud.recordcount NEQ 0 AND arguments.thestruct.folder_id NEQ arguments.thestruct.qryaud.folder_id_r>
 				<!--- Update DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
@@ -674,6 +674,8 @@
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Update Dates --->
 					<cfinvoke component="global" method="update_dates" type="aud" fileid="#attributes.intstruct.aud_id#" />
+					<!--- Update Lucene --->
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.aud_id#" category="aud" notfile="T">
 					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 					<cfinvoke method="moverelated" thestruct="#attributes.intstruct#">
 					<!--- Execute workflow --->
@@ -720,6 +722,8 @@
 			WHERE aud_id = <cfqueryparam value="#aud_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<!--- Update Lucene --->
+			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#aud_id#" category="aud" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />

@@ -182,6 +182,11 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
+		<!-- ResourceManager -->
+		<instantiate class="resourcemanager" object="application.razuna.trans" overwrite="true">
+			<argument name="resourcePackagePath" value="translations" />
+			<argument name="baseLocale" value="en" />
+		</instantiate>
 	</fuseaction>
 	
 </circuit>

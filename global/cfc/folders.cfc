@@ -3956,15 +3956,7 @@
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif arguments.thestruct.thekind NEQ "other">
-			AND (
-			lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#" cfsqltype="cf_sql_varchar">
-			OR lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#x" cfsqltype="cf_sql_varchar">
-			)
-		<cfelse>
-			AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
-		</cfif>
-	</Cfif>
+	</cfif>
 	</cfquery>
 	<!--- Set the valuelist --->
 	<cfset var l = valuelist(qry.id)>
@@ -3979,7 +3971,8 @@
 	<!--- session --->
 	<cfparam name="session.file_id" default="">
 	<!--- Now simply add the selected fileids to the session --->
-	<cfset session.file_id = session.file_id & "," & arguments.thestruct.file_id>
+	<cfset var thelist = session.file_id & "," & arguments.thestruct.file_id>
+	<cfset session.file_id = ListRemoveduplicates(thelist)>
 	<cfset session.thefileid = session.file_id>
 </cffunction>
 

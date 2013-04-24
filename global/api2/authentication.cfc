@@ -139,4 +139,44 @@
 		<cfreturn />
 	</cffunction>
 
+	<!--- reset the global caching variable of this cfc-object --->
+	<cffunction name="executeworkflow" output="false" returntype="void">
+		<cfargument name="api_key" type="string">
+		<cfargument name="action" type="string">
+		<cfargument name="fileid" type="string">
+		<cfargument name="folder_id" type="string">
+		<!--- Query --->
+		<cfif arguments.action NEQ "on_folder_add">
+			<cfquery datasource="#application.razuna.api.dsn#" name="qry_forwf">
+			SELECT folder_id_r, img_filename AS 'thefilename', 'img' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
+			WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, vid_filename AS 'thefilename', 'vid' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
+			WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, aud_name AS 'thefilename', 'aud' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
+			WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			UNION ALL
+			SELECT folder_id_r, file_name AS 'thefilename',  'doc' AS thefiletype
+			FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
+			WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
+			</cfquery>
+			<!--- Set vars --->
+			<cfset arguments.folder_id = qry_forwf.folder_id_r>
+			<cfset arguments.thefiletype = qry_forwf.thefiletype>
+			<cfset arguments.file_name = qry_forwf.thefilename>
+			<!--- Call workflow --->
+			<cfset arguments.folder_action = false>
+			<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
+			<!--- Call workflow --->
+			<cfset arguments.folder_action = true>
+		</cfif>
+		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

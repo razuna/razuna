@@ -17,7 +17,7 @@
 		output="false" 
 	>
 		<cfargument name="resourcePackagePath" hint="Flex style Resource Package folder path" type="string" required="true" /> 
-		<cfargument name="baseLocale" hint="Base locale to fall back on if there are no matches for a particular key and locale" type="string" required="false" default="en_US" />
+		<cfargument name="baseLocale" hint="Base locale to fall back on if there are no matches for a particular key and locale" type="string" required="false" default="English" />
 		<cfargument name="admin" hint="Find the admin for basePackagePath" type="string" required="false" default="" /> 
 		<cfargument name="propertiesEncoding" hint="File Encoding of Resource Bundle properties files" type="string" required="false" default="UTF-8" />
 		<cfif arguments.admin EQ 'admin'>

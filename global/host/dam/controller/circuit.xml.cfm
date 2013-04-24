@@ -1122,6 +1122,7 @@
 		<xfa name="fvideos" value="c.folder_videos" />
 		<xfa name="faudios" value="c.folder_audios" />
 		<xfa name="assetadd" value="c.asset_add" />
+		<xfa name="collectionslist" value="c.collections_list" />
 		<!-- Reset session -->
 		<set name="session.file_id" value="" />
 		<set name="session.thefileid" value="" />
@@ -2591,8 +2592,7 @@
 		</if>
 		<!-- CFC: Save file detail -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="update(attributes)" />
-		<!-- CFC: Save XMP, but only for JPG/JPEG images -->
-		<!-- (attributes.extension EQ 'jpg' OR attributes.extension EQ 'jpeg') AND  -->
+		<!-- CFC: Save XMP -->
 		<if condition="attributes.link_kind NEQ 'url'">
 			<true>
 				<invoke object="myFusebox.getApplicationData().xmp" methodcall="xmpwritethread(attributes)" />
@@ -5178,7 +5178,7 @@
 			<true>
 				<invoke object="myFusebox.getApplicationData().files" method="getFolderAssetDetails" returnvariable="qry_files">
 					<argument name="folder_id" value="#attributes.folder_id#" />
-					<argument name="columnlist" value="file_id id, file_extension ext, file_type, file_create_date, file_change_date, file_owner, file_name filename, file_name_org filename_org, folder_id_r, path_to_asset, is_available, cloud_url, cloud_url_org" />
+					<argument name="columnlist" value="file_id id, file_extension ext, file_type, file_create_date, file_change_date, file_owner, file_name filename, file_name_org filename_org, folder_id_r, path_to_asset, is_available, cloud_url, cloud_url_org, file_id" />
 					<argument name="file_extension" value="#attributes.kind#" />
 					<argument name="offset" value="#session.offset#" />
 					<argument name="rowmaxpage" value="#session.rowmaxpage#" />
@@ -5973,7 +5973,7 @@
 				<!-- CFC: Get files -->
 				<invoke object="myFusebox.getApplicationData().files" method="getFolderAssetDetails" returnvariable="attributes.qry_files">
 					<argument name="folder_id" value="#attributes.folder_id#" />
-					<argument name="columnlist" value="file_id id, file_extension ext, file_type, file_name filename, file_name_org filename_org, folder_id_r, link_kind, path_to_asset, cloud_url, cloud_url_org" />
+					<argument name="columnlist" value="file_id id, file_extension ext, file_type, file_name filename, file_name_org filename_org, folder_id_r, link_kind, path_to_asset, cloud_url, cloud_url_org, file_id" />
 					<argument name="file_extension" value="#attributes.kind#" />
 					<argument name="offset" value="0" />
 					<argument name="rowmaxpage" value="#qry_filecount.thetotal#" />

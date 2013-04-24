@@ -82,7 +82,7 @@
 		<cfif arguments.category EQ "doc">
 			<!--- Query Record --->
 			<cfquery name="qry_all" datasource="#arguments.dsn#">
-		    SELECT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, f.link_kind, f.lucene_key,
+		    SELECT DISTINCT f.file_id id, f.folder_id_r folder, f.file_name filename, f.file_name_org filenameorg, f.link_kind, f.lucene_key,
 		    ct.file_desc description, ct.file_keywords keywords, 
 		    f.file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext,
 		    x.author, x.rights, x.authorsposition, x.captionwriter, x.webstatement, x.rightsmarked
@@ -99,7 +99,7 @@
 			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+			SELECT DISTINCT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
 			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
@@ -112,7 +112,7 @@
 			<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 			<!--- Query labels --->
 			<cfquery name="qry_l" datasource="#arguments.dsn#">
-			SELECT l.label_path
+			SELECT DISTINCT l.label_path
 			FROM ct_labels ct, #session.hostdbprefix#labels l
 			WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND l.label_id = ct.ct_label_id
@@ -134,7 +134,7 @@
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 					args = {
 					collection : session.hostid,
@@ -143,7 +143,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath,folder",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -160,17 +160,18 @@
 						rightsmarked : "rightsmarked",
 						labels : "labels",
 						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath"
+						folderpath : "folderpath",
+						folder : "folder"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
-			<!--- </cflock> --->
+			</cflock>
 		<!--- FOR IMAGES --->
 		<cfelseif arguments.category EQ "img">
 			<!--- Query Record --->
 			<cfquery name="qry_all" datasource="#arguments.dsn#">
-		    SELECT f.img_id id, f.folder_id_r folder, f.img_filename filename, f.img_filename_org filenameorg, f.link_kind, f.lucene_key,
+		    SELECT DISTINCT f.img_id id, f.folder_id_r folder, f.img_filename filename, f.img_filename_org filenameorg, f.link_kind, f.lucene_key,
 		    ct.img_description description, ct.img_keywords keywords, 
 			f.img_extension theext, img_meta as rawmetadata, '#arguments.category#' as thecategory,
 			x.subjectcode, x.creator, x.title, x.authorsposition, x.captionwriter, x.ciadrextadr, x.category,
@@ -191,7 +192,7 @@
 			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+			SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
 			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
@@ -204,7 +205,7 @@
 			<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 			<!--- Query labels --->
 			<cfquery name="qry_l" datasource="#arguments.dsn#">
-			SELECT l.label_path
+			SELECT DISTINCT l.label_path
 			FROM ct_labels ct, #session.hostdbprefix#labels l
 			WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND l.label_id = ct.ct_label_id
@@ -229,7 +230,7 @@
 			FROM qry_all
 			</cfquery>
 			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 					args = {
 					collection : session.hostid,
@@ -238,7 +239,7 @@
 					categoryTree : "id",
 					key : "id",
 					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath,folder",
 					custommap :{
 						id : "id",
 						filename : "filename",
@@ -282,17 +283,18 @@
 						rights : "rights",
 						labels : "labels",
 						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath"
+						folderpath : "folderpath",
+						folder : "folder"
 						}
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
-			<!--- </cflock> --->
+			</cflock>
 		<!--- FOR VIDEOS --->
 		<cfelseif arguments.category EQ "vid">
 			<!--- Query Record --->
 			<cfquery name="qry_all" datasource="#arguments.dsn#">
-		    SELECT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, f.link_kind, f.lucene_key,
+		    SELECT DISTINCT f.vid_id id, f.folder_id_r folder, f.vid_filename filename, f.vid_name_org filenameorg, f.link_kind, f.lucene_key,
 		    ct.vid_description description, ct.vid_keywords keywords, 
 			vid_meta as rawmetadata, '#arguments.category#' as thecategory,
 			f.vid_extension theext
@@ -308,7 +310,7 @@
 			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+			SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
 			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
@@ -321,7 +323,7 @@
 			<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 			<!--- Query labels --->
 			<cfquery name="qry_l" datasource="#arguments.dsn#">
-			SELECT l.label_path
+			SELECT DISTINCT l.label_path
 			FROM ct_labels ct, #session.hostdbprefix#labels l
 			WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND l.label_id = ct.ct_label_id
@@ -345,7 +347,7 @@
 		<cfelseif arguments.category EQ "aud">
 			<!--- Query Record --->
 			<cfquery name="qry_all" datasource="#arguments.dsn#">
-		    SELECT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, a.link_kind, a.lucene_key,
+		    SELECT DISTINCT a.aud_id id, a.folder_id_r folder, a.aud_name filename, a.aud_name_org filenameorg, a.link_kind, a.lucene_key,
 		    aut.aud_description description, aut.aud_keywords keywords, 
 			a.aud_meta as rawmetadata, '#arguments.category#' as thecategory,
 			a.aud_extension theext
@@ -361,7 +363,7 @@
 			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+			SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
 			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
@@ -374,7 +376,7 @@
 			<cfset var c = valuelist(qry_cf.customfieldvalue, " ")>
 			<!--- Query labels --->
 			<cfquery name="qry_l" datasource="#arguments.dsn#">
-			SELECT l.label_path
+			SELECT DISTINCT l.label_path
 			FROM ct_labels ct, #session.hostdbprefix#labels l
 			WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND l.label_id = ct.ct_label_id
@@ -398,7 +400,7 @@
 		<!--- Only for video and audio files --->
 		<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
 			<!--- Indexing --->
-			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+			<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 				<cfscript>
 				args = {
 				collection : session.hostid,
@@ -407,7 +409,7 @@
 				categoryTree : "id",
 				key : "id",
 				title : "id",
-				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath,folder",
 				custommap :{
 					id : "id",
 					filename : "filename",
@@ -418,12 +420,13 @@
 					extension : "theext",
 					labels : "labels",
 					customfieldvalue : "customfieldvalue",
-					folderpath : "folderpath"
+					folderpath : "folderpath",
+					folder : "folder"
 					}
 				};
 				results = CollectionIndexCustom( argumentCollection=args );
 				</cfscript>
-			<!--- </cflock> --->
+			</cflock>
 		</cfif>
 		<!--- Index the file itself, but not video (since video throws an error) --->
 		<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
@@ -439,25 +442,24 @@
 					</cfif>
 					<!--- Index: Update file --->
 					<cfif fileExists(qry_all.lucene_key)>
-						<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+						<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 							<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
-						<!--- </cflock> --->
+						</cflock>
 					</cfif>
 				<!--- Local Storage --->
 				<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 					<!--- Index: Update file --->
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					<!--- </cflock> --->
+					</cflock>
 				<!--- Linked file --->
 				<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 					<!--- Index: Update file --->
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
+					<cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300">
 						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					<!--- </cflock> --->
+					</cflock>
 				</cfif>
 				<cfcatch type="any">
-					
 				</cfcatch>
 			</cftry>
 		</cfif>
@@ -517,6 +519,7 @@
 			<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="300"> --->
 				<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
 			<!--- </cflock> --->
+			<!--- <cfset CollectionIndexcustom(collection=session.hostid,key="dummykey",body="dummy",title="dummy")> --->
 			<cfcatch type="any">
 				<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="lucene delete index">
 					<cfdump var="#cfcatch#" />
@@ -624,7 +627,7 @@
 		<cfif arguments.criteria EQ "">
 			<cfset arguments.criteria = "">
 		<!--- Put search together. If the criteria contains a ":" then we assume the user wants to search with his own fields --->
-		<cfelseif NOT arguments.criteria CONTAINS ":">
+		<cfelseif NOT arguments.criteria CONTAINS ":" AND NOT arguments.criteria EQ "*">
 			<cfset arguments.criteria = "(#arguments.criteria#) filename:(#arguments.criteria#) filenameorg:(#arguments.criteria#) keywords:(#arguments.criteria#) description:(#arguments.criteria#) rawmetadata:(#arguments.criteria#) id:(#arguments.criteria#) labels:(#arguments.criteria#)">
 		</cfif>
 		<cftry>

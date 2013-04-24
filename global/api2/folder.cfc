@@ -582,6 +582,8 @@
 			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 			)
 			</cfquery>
+			<!--- Call workflow --->
+			<cfset executeworkflow(api_key=arguments.api_key,action='on_folder_add',fileid='0',folder_id=newfolderid)>
 			<!--- Flush cache --->
 			<cfset resetcachetoken(arguments.api_key,"folders")>
 			<!--- Feedback --->
