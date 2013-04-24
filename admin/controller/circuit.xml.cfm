@@ -27,7 +27,8 @@
 				<set name="attributes.host_lang" value="1" />
 				<set name="session.hostid" value="1" />
 				<xfa name="submitform" value="c.firsttimerun" />
-				<set name="attributes.thepath" value="#thispath#/newhost/hostfiles/dam/" />
+				<set name="attributes.thepath" value="#thispath#" />
+				
 				<!-- CFC: Check -->
 				<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangsadmin(attributes.thepath)" returnvariable="xml_langs" />
 				<do action="v.firsttime" />
@@ -1172,7 +1173,7 @@
 	</fuseaction>
 	<!-- Get Languages for new Host -->
 	<fuseaction name="hosts_languages">
-		<set name="attributes.thepath" value="#thispath#/newhost/hostfiles/dam/" />
+		<set name="attributes.thepath" value="#pathoneup#/global/" />
 		<!-- CFC: Check -->
 		<invoke object="myFusebox.getApplicationData().defaults" methodcall="getlangsadmin(attributes.thepath)" returnvariable="xml_langs" />
 		<!-- Show -->
