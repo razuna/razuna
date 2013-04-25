@@ -25,7 +25,11 @@
 --->
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
-
+	<!--- Save search --->
+	<div id="save_search" style="text-align:center;padding-bottom:10px;">
+		<a href=""><strong>Save this search as a Smart Folder!</strong></a>
+	</div>
+	<div style="clear:both;"></div>
 	<!--- Search Results --->
 	<div id="loading_searchagain"></div>
 	<div>

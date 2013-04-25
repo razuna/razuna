@@ -7090,4 +7090,37 @@
 		</if>
 	</fuseaction>
 
+	<!-- START: Smart Folders -->
+
+	<!-- Get all -->
+	<fuseaction name="smart_folders">
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get folders -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getall(attributes)" returnvariable="qry_sf" />
+		<!-- Show -->
+		<do action="ajax.smart_folders" />
+	</fuseaction>
+	<!-- Get settings -->
+	<fuseaction name="smart_folders_settings">
+		<!-- CFC: Get one -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
+		<!-- Show -->
+		<do action="ajax.smart_folders_settings" />
+	</fuseaction>
+	<!-- Save settings -->
+	<fuseaction name="smart_folders_update">
+		<!-- CFC: Update -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="update(attributes)" />
+	</fuseaction>
+	<!-- Get settings -->
+	<fuseaction name="smart_folders_content">
+		<!-- CFC: Get one -->
+		<!-- <invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" /> -->
+		<!-- Show -->
+		<do action="ajax.smart_folders_content" />
+	</fuseaction>
+
+	<!-- END: Smart Folders -->
+
 </circuit>

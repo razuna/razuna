@@ -749,6 +749,17 @@
   		<include template="win_collection_copy" />
 	</fuseaction>
 
-
+	<!-- Smart Folders: List -->
+	<fuseaction name="smart_folders">
+  		<include template="dsp_smart_folders" />
+	</fuseaction>
+	<!-- Smart Folders: Settings -->
+	<fuseaction name="smart_folders_settings">
+  		<include template="dsp_smart_folders_settings" />
+	</fuseaction>
+	<!-- Smart Folders: Content -->
+	<fuseaction name="smart_folders_content">
+  		<include template="dsp_smart_folders_content" />
+	</fuseaction>
 
 </circuit>
