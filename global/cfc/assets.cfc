@@ -3190,7 +3190,7 @@ This is the main function called directly by a single upload else from addassets
 					END AS ISHERE
 					FROM #session.hostdbprefix#folders f
 					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(thedirname)#">
-					AND folder_id_r = <cfqueryparam value="#rootfolderId#" cfsqltype="cf_sql_varchar">
+					AND folder_main_id_r = <cfqueryparam value="#rootfolderId#" cfsqltype="cf_sql_varchar">
 					<!---
 					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
 					--->
