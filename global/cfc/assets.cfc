@@ -3124,7 +3124,8 @@ This is the main function called directly by a single upload else from addassets
 		<cfpause interval="5" />
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
-			<cfif fileexists("#directory#/#name#")>
+			<cfif fileexists("#directory#/#name#") >
+				<cfset var temp="">
 				<cfset var md5hash = "">
 				<!--- Set Original FileName --->
 				<cfset arguments.thestruct.theoriginalfilename = listlast(name,FileSeparator())>
@@ -3202,10 +3203,22 @@ This is the main function called directly by a single upload else from addassets
 					FROM qryfolderidmain
 					WHERE ishere = 1
 					</cfquery>
+					
+					<cfset temp="#rootfolderId#">
+					<cfloop index="i" from=1 to="#thedirlen#">
+						<cfset folder_name = listGetAt(thedirfiles.name, i, FileSeparator())>
+						<cfquery name="qryGetFolderDetails" datasource="#variables.dsn#">
+							SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
+							WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+							AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
+							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						</cfquery>
+						<cfset temp="#qryGetFolderDetails.folder_id#">
+					</cfloop>
+					
 					<!--- Put folder id into the general struct --->
-					<cfif qryfolderid.recordcount NEQ 0>
-						<cfset arguments.thestruct.theid = qryfolderid.folder_id>
-						<!--- <cfset arguments.thestruct.fidr = qryfolderid.folder_id_r> --->
+					<cfif isDefined('temp') AND temp NEQ ''>
+						<cfset arguments.thestruct.theid = qryGetFolderDetails.folder_id>
 					<cfelse>
 						<cfset arguments.thestruct.theid = rootfolderId>
 						<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
