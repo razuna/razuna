@@ -26,18 +26,15 @@
 <cfoutput>
 	<div id="tabsfolder_tab">
 		<ul>
-			<!--- If we are a collection show the list of collections else the content of folder --->
-				<li><a href="##assets" onclick="loadcontent('assets','#myself##xfa.ftrashassets#');" rel="prefetch prerender">Trash Folder <!---#myFusebox.getApplicationData().defaults.trans("folder_content")#---> (#Counttrash#)</a></li>
-				<!---<li><a href="##content" <!---onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all&iscol=#attributes.iscol#');"---> rel="prefetch prerender">Trash Folders <!---#myFusebox.getApplicationData().defaults.trans("folder_content")#---> (0)</a></li>--->
-				<li><a href="##collection" <!---onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all&iscol=#attributes.iscol#');"---> rel="prefetch prerender">Trash Collections <!---#myFusebox.getApplicationData().defaults.trans("folder_content")#---> (0)</a></li>
+			<!--- Show the trash folder and collection content --->
+			<li><a href="##assets" onclick="loadcontent('assets','#myself##xfa.ftrashassets#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folder")#(#arraySum(Count_trash['cnt'])#)</a></li>
+			<li><a href="##collection" <!---onclick="loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&kind=all&iscol=#attributes.iscol#');"---> rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_collection")#(0)</a></li>
 		</ul>
 		<div id="assets">
 		</div>
 		<div id="collection">
 			collection
 		</div>
-		<!---<div id="content">
-		</div>--->
 <script type="text/javascript">
 	jqtabs("tabsfolder_tab");
 		loadcontent('assets','#myself#c.trash_assets');

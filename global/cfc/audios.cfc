@@ -469,11 +469,6 @@
 	<cfthread intstruct="#arguments.thestruct#">
 		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 	</cfthread>
-	<!--- Remove the file from trash folder --->
-   <cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#')>
-       <cffile action="delete" file="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#/#details.filenameorg#" >
-       <cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#" recurse="false" >
-   </cfif>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("audios")>
 	<cfset resetcachetoken("folders")>
@@ -496,21 +491,9 @@
 			WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Set trash directory for audio --->
-		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#")>
-			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#">
-		</cfif>
-		<!--- Set vars --->
-		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<!--- Set http --->
-			<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/#qry_audio.path_to_asset#/#qry_audio.aud_NAME_NOEXT#.#qry_audio.aud_EXTENSION#">
-		<cfelse>
-			<cfset var thehttp ="#qry_audio.cloud_url_org#">
-		</cfif>
-		<!--- Store the audio into trash --->
-		<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/#arguments.thestruct.id#" file="#qry_audio.aud_NAME_NOEXT#.#qry_audio.aud_EXTENSION#"/>
 </cffunction>
-<!--- Get audios form trash --->
+
+<!--- Get trash audio --->
 <cffunction name="gettrashaudio" output="false">
 	<cfargument name="thestruct" type="struct">
 	<cfquery datasource="#application.razuna.datasource#" name="qry_audio">
@@ -524,27 +507,51 @@
 	</cfquery>
 	<cfreturn qry_audio />
 </cffunction>
-<!--- Get trash audios form trash directory --->
-<cffunction name="thetrashaudios" output="false">
-	<cfargument name="thestruct" type="struct">
-	<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/')>
-		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/" name="getaudiotrash">
-	<cfelse>
-		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/">
-		<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/aud/" name="getaudiotrash">
-	</cfif>
-	<cfreturn getaudiotrash />
-</cffunction>
 
 <!--- RESTORE THE AUDIO --->
 <cffunction name="restoreaudio" output="false">
 	<cfargument name="thestruct" type="struct">
-		<!--- Update in_trash --->
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE #session.hostdbprefix#audios SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
-		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		<!--- check parent folder is exist --->
+	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfset local = structNew()>
+	<cfif thedetail.RecordCount EQ 0>
+		<cfset local.istrash = "trash">
+	<cfelse>
+		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
+		<cfloop query="dir_parent_id">
+			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
+				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif get_qry.in_trash EQ 'T'>
+				<cfset local.istrash = "trash">
+			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
+				<cfset local.root = "yes">
+				<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#audios SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+					WHERE aud_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>
+	<!--- Set is trash --->
+	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
+		<cfset var is_trash = "intrash">
+	<cfelse>
+		<cfset var is_trash = "notrash">
+	</cfif>
+	<cfreturn is_trash />
 </cffunction>
 
 <!--- REMOVE MANY AUDIOS --->
@@ -741,7 +748,8 @@
 				<!--- Update DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
-				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">
 				WHERE aud_id = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>

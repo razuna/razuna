@@ -25,133 +25,161 @@
 --->
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+	<!--- Ask to select the directory if parent directory is not available --->
+	<!--- show the available folder list for restoring --->
+	<cfif isDefined('attributes.is_trash') AND attributes.is_trash EQ "intrash">
+		<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
+		<cfif attributes.type EQ 'movefile'>
+			<!--- directory for move files --->
+			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
+		<cfelseif attributes.type EQ 'movefolder'>
+			<!--- directory for move folder--->
+			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);">#myFusebox.getApplicationData().defaults.trans("select_directory")#</a>
+		</cfif>
+	</cfif>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
 			<td style="border:0px;" id="selectme">
-				<!--- Show the images from trash --->
-				<cfif imggetrash.recordcount GT 0 AND trash_images.recordcount GT 0>
-					<cfloop query="imggetrash">
-						<cfloop query="trash_images">
-							<cfif imggetrash.id EQ trash_images.name>
-								<div class="assetbox">
-									<div class="theimg">
-										<img src="#session.thehttp##cgi.http_host##dynpath#/global/host/#attributes.thetrash#/#session.hostid#/img/#imggetrash.id#/#imggetrash.filename#">
-									</div>
-									<div>
-										#imggetrash.filename#
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#imggetrash.id#&what=images&loaddiv=assets&folder_id=#imggetrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#imggetrash.id#&what=images&loaddiv=assets&folder_id=#imggetrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
-									</div>
-								</div>
-							</cfif> 
-						</cfloop>
+				<!--- Show trash images --->
+					<cfloop query="imagetrash">
+						<div class="assetbox">
+							<div class="theimg">
+								<cfif application.razuna.storage EQ 'local'> 
+									<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#id#.#ext#">
+								<cfelse>
+									<img src="#cloud_url#">
+								</cfif>	
+							</div>
+							<div>
+								#filename#
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=images&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+							</div>
+						</div>
 					</cfloop>
-				</cfif>
 					<!--- Show the audios from trash --->
-				<cfif audgetrash.recordcount GT 0 AND trash_audios.recordcount GT 0>	    	
-					<cfloop query="audgetrash">
-						<cfloop query="trash_audios">
-							<cfif audgetrash.id EQ trash_audios.name>
-								<div class="assetbox">
-									<div class="theimg">
-										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif audgetrash.ext EQ "mp3" OR audgetrash.ext EQ "wav">#audgetrash.ext#<cfelse>aud</cfif>.png" border="0">	
-									</div>
-									<div>
-										#audgetrash.filename#
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#audgetrash.id#&what=audios&loaddiv=assets&folder_id=#audgetrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#audgetrash.id#&what=audios&loaddiv=assets&folder_id=#audgetrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
-									</div>
-								</div>
-							</cfif> 
-						</cfloop>
+					<cfloop query="audiotrash">
+						<div class="assetbox">
+							<div class="theimg">
+								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR audgetrash.ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">	
+							</div>
+							<div>
+								#filename#
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+							</div>
+						</div>
 					</cfloop>
-				</cfif>
 					<!--- Show the files from trash  --->
-				<cfif filegetrash.recordcount GT 0 AND trash_files.recordcount GT 0>
-					<cfloop query="filegetrash">
-						<cfloop query="trash_files">
-							<cfif filegetrash.id EQ trash_files.name>
-								<div class="assetbox">
-									<div class="theimg">
-										<cfif application.razuna.storage EQ "local" AND filegetrash.ext EQ "PDF">
-											<img src="#dynpath#/global/host/dam/images/icons/icon_#filegetrash.ext#.png" border="0">
-										<cfelse>
-											<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#filegetrash.ext#.png") IS "no">
-												<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0">
-											<cfelse>
-												<img src="#dynpath#/global/host/dam/images/icons/icon_#filegetrash.ext#.png" width="120" height="120" border="0">
-											</cfif>
-										</cfif>
-									</div> 
-									<div>
-										#filegetrash.filename#
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#filegetrash.id#&what=files&loaddiv=assets&folder_id=#filegetrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#filegetrash.id#&what=files&loaddiv=assets&folder_id=#filegetrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
-									</div>
-								</div>
-							</cfif>
-						</cfloop>
+					<cfloop query="filetrash">
+						<div class="assetbox">
+							<div class="theimg">
+								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
+		                           <cfif cloud_url NEQ "">
+		                                   <img src="#cloud_url#" border="0">
+		                           <cfelse>
+		                                   <img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+		                           </cfif>
+		                       	<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
+		                           <cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+		                           <cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+		                                   <img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
+		                           <cfelse>
+		                                   <img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="120" border="0">
+		                           </cfif>
+		                       	<cfelse>
+		                            <cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
+		                       </cfif>
+		                     </div>
+							 <div>
+								#filename#
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+							</div>
+						</div>
+						<!---<div class="assetbox">
+							<div class="theimg">
+								<cfif application.razuna.storage EQ "local" AND filegetrash.ext EQ "PDF">
+									<img src="#dynpath#/global/host/dam/images/icons/icon_#filegetrash.ext#.png" border="0">
+								<cfelse>
+									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no">
+										<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0">
+									<cfelse>
+										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0">
+									</cfif>
+								</cfif>
+							</div> 
+							<div>
+								#filename#
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+							</div>
+						</div>--->
 					</cfloop>
-				</cfif>	
-					<!--- Show the videos from trash --->
-				<cfif videosgetrash.recordcount GT 0 AND trash_videos.recordcount GT 0>		
-					<cfloop query="videosgetrash">
-						<cfloop query="trash_videos">
-							<cfif videosgetrash.id EQ trash_videos.name>
-								<div class="assetbox">
-									<div class="theimg">
-										<img src="#dynpath#/global/host/dam/images/icons/icon_video.png">
-									</div>
-									<div>
-										#videosgetrash.filename#
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#videosgetrash.id#&what=videos&loaddiv=assets&folder_id=#videosgetrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#videosgetrash.id#&what=videos&loaddiv=assets&folder_id=#videosgetrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
-									</div>
-								</div>
-							</cfif>
-						</cfloop>
-					</cfloop>
-				</cfif> 	
-					<!--- Show the folder from trash --->
-				<cfif foldergettrash.recordcount GT 0 AND trash_folder.recordcount GT 0>	
-					<cfloop query="foldergettrash">
-						<cfloop query="trash_folder">
-							<cfif foldergettrash.folder_id EQ trash_folder.name>
-								<div class="assetbox">
-									<div class="theimg">
-										<img src=" #dynpath#/global/host/dam/images/folder-yellow.png">	
-									</div>
-									<div>
-										#foldergettrash.folder_name#
-									</div>
-									<div>
-										<a href="##" onclick="">Restore</a><br/><br/>
-									</div>
-									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#foldergettrash.folder_id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
-									</div>
-								</div>
-							</cfif>
-						</cfloop>
-					</cfloop>
-				</cfif>	
-				</td>
-			</tr>
+				<!--- Show the videos from trash --->
+				<cfloop query="videotrash">
+					<div class="assetbox">
+						<div class="theimg">
+							 <cfif link_kind NEQ "url">
+                           		<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+                                   <cfif cloud_url NEQ "">
+                                           <img src="#cloud_url#" border="0">
+                                   <cfelse>
+                                           <img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+                                   </cfif>
+                          		 <cfelse>
+                                  	 <img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+                           		 </cfif>
+                   			<cfelse>
+                           			<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
+                  			 </cfif>
+						</div>
+						<div>
+							#filename#
+						</div>
+						<div>
+							<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+						</div>
+						<div>
+							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+						</div>
+					</div>
+					
+				</cfloop>
+				<!--- Show the folder from trash --->
+				<cfloop query="foldertrash">
+					<div class="assetbox">
+						<div class="theimg">
+							<img src=" #dynpath#/global/host/dam/images/folder-yellow.png">	
+						</div>
+						<div>
+							#folder_name#
+						</div>
+						<div>
+							<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=assets&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+						</div>
+						<div>
+							<a href="##" onclick="showwindow('#myself#ajax.remove_record&folder_id=#folder_id#&what=folder&loaddiv=assets&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">Delete Permanently</a>
+						</div>
+					</div>
+				</cfloop>
+			</td>
+		</tr>
 	</table>
 </cfoutput>
