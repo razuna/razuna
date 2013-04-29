@@ -117,23 +117,33 @@
 		<cfif structkeyexists(arguments.thestruct,"labels") AND arguments.thestruct.labels NEQ "null">
 			<!--- Loop over fields --->		
 			<cfloop list="#arguments.thestruct.labels#" delimiters="," index="i">
-				<!--- Insert into cross table --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO ct_labels
-				(
-					ct_label_id,
-					ct_id_r,
-					ct_type,
-					rec_uuid
-				)
-				VALUES
-				(
-					<cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />,
-					<cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />,
-					<cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />,
-					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
+				<!--- Check if same record already exists --->
+				<cfquery datasource="#application.razuna.datasource#" name="lhere">
+				SELECT ct_label_id
+				FROM ct_labels
+				WHERE ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
+				AND ct_id_r = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />
 				</cfquery>
+				<!--- If record is here do not insert --->
+				<cfif lhere.recordcount EQ 0>
+					<!--- Insert into cross table --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO ct_labels
+					(
+						ct_label_id,
+						ct_id_r,
+						ct_type,
+						rec_uuid
+					)
+					VALUES
+					(
+						<cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />,
+						<cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="cf_sql_varchar" />,
+						<cfqueryparam value="#arguments.thestruct.thetype#" cfsqltype="cf_sql_varchar" />,
+						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				</cfif>
 			</cfloop>
 			<!--- Lucene: Delete Records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
