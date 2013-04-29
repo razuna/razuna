@@ -3081,6 +3081,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfquery>
 		<!--- Create Directories --->
 		<cfloop query="thedir">
+			<cfset temp="">
 			<!--- Check how long the folder list is --->
 			<cfset var namelistlen = listlen(name,FileSeparator())>
 			<!--- If longer then 1 we need to get the folder_id_r of the previous folder --->
@@ -3095,8 +3096,24 @@ This is the main function called directly by a single upload else from addassets
 				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fnameforqry)#" cfsqltype="cf_sql_varchar">
 				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 				</cfquery>
+				
+				<cfset var thedirlen = listLen(thedir.name, FileSeparator())-1>
+				<cfset temp="#rootfolderId#">
+				<cfloop index="i" from=1 to="#thedirlen#">
+					<cfset folder_name = listGetAt(thedir.name, i, FileSeparator())>
+					<cfquery name="qryGetFolderDetails" datasource="#variables.dsn#">
+						SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
+						WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+						AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
+						AND folder_main_id_r = <cfqueryparam value="#rootfolderId#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<cfset temp="#qryGetFolderDetails.folder_id#">
+				</cfloop>
+				
 				<!--- Set the folder_id_r in var --->
-				<cfset var fidr = qryfidr.folder_id>
+				<!---<cfset var fidr = qryfidr.folder_id>--->
+				<cfset var fidr = temp>
 				<cfset var fname = listlast(name, FileSeparator())>
 			<cfelse>
 				<cfset var fname = name>
@@ -3211,6 +3228,7 @@ This is the main function called directly by a single upload else from addassets
 							SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
 							WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
 							AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
+							AND folder_main_id_r = <cfqueryparam value="#rootfolderId#" cfsqltype="cf_sql_varchar">
 							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<cfset temp="#qryGetFolderDetails.folder_id#">
@@ -3218,7 +3236,7 @@ This is the main function called directly by a single upload else from addassets
 					
 					<!--- Put folder id into the general struct --->
 					<cfif isDefined('temp') AND temp NEQ ''>
-						<cfset arguments.thestruct.theid = qryGetFolderDetails.folder_id>
+						<cfset arguments.thestruct.theid = temp>
 					<cfelse>
 						<cfset arguments.thestruct.theid = rootfolderId>
 						<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
