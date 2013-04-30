@@ -152,7 +152,7 @@
 			else {
 				var con1 = '\+';
 				var con2 = labels.split(' ').join(' +');
-				var labels = con1.concat(con2);
+				var labels = 'labels:(' + con1.concat(con2) + ')';
 			}
 		}
 		// Custom fields (Put together and prefix with custom field id)
