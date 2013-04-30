@@ -56,7 +56,7 @@
 			<tr class="list">
 				<td valign="top">#av_link_title#</td>
 				<td><a href="#av_link_url#" target="_blank">#av_link_url#</a></td>
-				<td><a href="##" onclick="showwindow('#myself#c.av_edit&av_id=#av_id#&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#','#myFusebox.getApplicationData().defaults.trans("edit")#',550,2);return false"><img src="#dynpath#/global/host/dam/images/edit.png" width="16" height="16" border="0"></a></td>
+				<td><a href="##" onclick="showwindow('#myself#c.av_edit&av_id=#av_id#&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#','#myFusebox.getApplicationData().defaults.trans("edit")#',550,2);return false" style="text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("edit")#</a></td>
 				<td valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=av_link&id=#av_id#&loaddiv=moreversions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#&iswin=two','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,2);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
 			</tr>
 		</cfloop>
@@ -90,6 +90,22 @@
 				</table>
 			</td>
 		</tr>
+		<!--- Show exsiting --->
+		<cfif qry_av.assets.recordcount NEQ 0>
+			<tr>
+				<th>#myFusebox.getApplicationData().defaults.trans("title")#</th>
+				<th colspan="3">URL</th>
+			</tr>
+		</cfif>
+		<cfloop query="qry_av.assets">
+			<tr class="list">
+				<td valign="top" nowrap="nowrap" style="width:400px"><a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">#av_link_title#</a> <em>(#myFusebox.getApplicationData().global.converttomb('#thesize#')#MB<cfif av_type EQ "img" OR av_type EQ "vid">, #thewidth#x#theheight# pixel</cfif>)</em></td>
+				<td nowrap="nowrap" style="width:400px;text-decoration:underline;"><a href="<cfif application.razuna.storage EQ "local">#session.thehttp##cgi.http_host##dynpath#/assets/#session.hostid##av_link_url#<cfelse>#av_link_url#</cfif>" target="_blank">Click here to view the asset</a></td>
+				<td><a href="##" onclick="showwindow('#myself#c.av_edit&av_id=#av_id#&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#','#myFusebox.getApplicationData().defaults.trans("edit")#',550,2);return false" style="text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("edit")#</a></td>
+				<td valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&what=av_link&id=#av_id#&loaddiv=moreversions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.type#&iswin=two','#myFusebox.getApplicationData().defaults.trans("remove_selected")#',400,2);return false"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0"></a></td>
+			</tr>
+		</cfloop>
+
 	</table>
 	
 	<div id="previewimage_prev"></div>
