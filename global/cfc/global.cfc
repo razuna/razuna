@@ -660,7 +660,7 @@ Comment:<br>
 		</cfquery>
 		<!--- Query links --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.assets" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, av_link_title, av_link_url, thesize, thewidth, theheight, av_type
+		SELECT /* #variables.cachetoken#get_versions_link2 */ av_id, av_link_title, av_link_url, thesize, thewidth, theheight, av_type, hashtag
 		FROM #session.hostdbprefix#additional_versions
 		WHERE asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

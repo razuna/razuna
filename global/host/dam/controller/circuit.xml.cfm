@@ -6930,6 +6930,8 @@
 				<invoke object="myFusebox.getApplicationData().files" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" />
 			</true>
 		</if>
+		<!-- CFC: Get Additional versions -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="get_versions_link(attributes)" returnvariable="qry_av" />
 		<!-- CFC: Get individual share options -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="get_share_options(attributes)" returnvariable="qry_share_options" />
 		<!-- Show -->

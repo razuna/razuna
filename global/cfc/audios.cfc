@@ -198,6 +198,8 @@
 	<!--- Params --->
 	<cfset var qry = structnew()>
 	<cfparam default="0" name="session.thegroupofuser">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Get details --->
 	<cfquery datasource="#application.razuna.datasource#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailaud */ 

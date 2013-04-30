@@ -515,6 +515,8 @@
 	<cffunction name="filedetail" output="false">
 		<cfargument name="theid" type="string">
 		<cfargument name="thecolumn" type="string">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#filedetailfiles */ #arguments.thecolumn#
 		FROM #session.hostdbprefix#files
