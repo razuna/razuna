@@ -34,7 +34,7 @@
 			<form name="sf_form" id="sf_form" action="#self#" onsubmit="sf_submit_form();return false;">
 			<input type="hidden" name="sf_id" value="#attributes.sf_id#">
 			<input type="hidden" name="#theaction#" value="c.smart_folders_update">
-			<input type="hidden" name="searchtext" value="#attributes.searchtext#">
+			<!--- <input type="hidden" name="searchtext" value="#attributes.searchtext#"> --->
 			<!--- Name, etc. --->
 			<strong>#myFusebox.getApplicationData().defaults.trans("name")#</strong>
 			<br />
@@ -44,11 +44,16 @@
 			<br />
 			<textarea name="sf_description" id="sf_description" style="width:400px;height;50px;">#qry_sf.sf.sf_description#</textarea>
 			<br />
-			<strong>#myFusebox.getApplicationData().defaults.trans("type")#</strong>
 			<!--- If new but search text is not empty then we assume we come from the search --->
 			<cfif attributes.searchtext NEQ "">
 				<input type="hidden" name="sf_type" value="saved_search">
+				<strong>#myFusebox.getApplicationData().defaults.trans("sf_search_string")#</strong>
+				<br />
+				<input type="text" name="searchtext" id="searchtext" value="#attributes.searchtext#" style="width:400px;" />
+				<br />
+				<em>(#myFusebox.getApplicationData().defaults.trans("sf_search_string_desc")#)</em>
 			<cfelse>
+				<strong>#myFusebox.getApplicationData().defaults.trans("type")#</strong>
 				<br />
 				<select name="sf_type" id="sf_type">
 					<option value="" selected="selected"></option>
@@ -61,7 +66,7 @@
 				<em>(#myFusebox.getApplicationData().defaults.trans("sf_settings_desc_search")#)</em>
 			</cfif>
 			<br /><br />
-			<input type="submit" name="sfsubmit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
+			<input type="submit" name="sfsubmit" value="<cfif attributes.sf_id EQ 0>#myFusebox.getApplicationData().defaults.trans("button_save")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_update")#</cfif>" class="button">
 
 			</form>
 			<!--- Only show delete folder on detail page --->

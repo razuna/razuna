@@ -7108,10 +7108,10 @@
 	</fuseaction>
 	<!-- Get settings -->
 	<fuseaction name="smart_folders_settings">
-		<!-- Params -->
-		<set name="attributes.searchtext" value="" overwrite="false" />
 		<!-- CFC: Get one -->
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
+		<!-- Params -->
+		<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" overwrite="false" />
 		<!-- Show -->
 		<do action="ajax.smart_folders_settings" />
 	</fuseaction>
