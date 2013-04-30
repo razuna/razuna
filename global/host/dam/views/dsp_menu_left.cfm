@@ -43,9 +43,9 @@
 	<!--- Explorer --->
 	<div id="explorer" style="margin-left:0;padding-left:0;"></div>
 	<br />
-	<div>Collapse Menu</div>
+	<div><div id="slide_off"><a href="##" onclick="hideshow('off');">Collapse Menu</div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div>
 
-	<div id="apMiddle" style="z-index:10;"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div>
+	<!--- <div id="apMiddle" style="z-index:10;"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div> --->
 	<script language="JavaScript" type="text/javascript">
 		// Load the folders by default
 		$('##explorer').load('#myself#c.explorer');

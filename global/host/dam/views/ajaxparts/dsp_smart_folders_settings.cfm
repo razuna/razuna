@@ -34,33 +34,49 @@
 			<form name="sf_form" id="sf_form" action="#self#" onsubmit="sf_submit_form();return false;">
 			<input type="hidden" name="sf_id" value="#attributes.sf_id#">
 			<input type="hidden" name="#theaction#" value="c.smart_folders_update">
+			<input type="hidden" name="searchtext" value="#attributes.searchtext#">
 			<!--- Name, etc. --->
 			<strong>#myFusebox.getApplicationData().defaults.trans("name")#</strong>
 			<br />
-			<input type="text" name="sf_name" id="sf_name" value="#qry_sf.sf_name#" style="width:400px;" />
+			<input type="text" name="sf_name" id="sf_name" value="#qry_sf.sf.sf_name#" style="width:400px;" />
 			<br />
 			<strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong>
 			<br />
-			<textarea name="sf_description" id="sf_description" style="width:400px;height;50px;">#qry_sf.sf_description#</textarea>
+			<textarea name="sf_description" id="sf_description" style="width:400px;height;50px;">#qry_sf.sf.sf_description#</textarea>
 			<br />
 			<strong>#myFusebox.getApplicationData().defaults.trans("type")#</strong>
-			<br />
-			<select name="sf_type" id="sf_type">
-				<option value="" selected="selected"></option>
-				<option value="saved_search">#myFusebox.getApplicationData().defaults.trans("sf_type_saved_search")#</option>
-				<option value="FTP">#myFusebox.getApplicationData().defaults.trans("sf_type_ftp")#</option>
-				<option value="s3">#myFusebox.getApplicationData().defaults.trans("sf_type_s3")#</option>
-				<option value="dropbox">#myFusebox.getApplicationData().defaults.trans("sf_type_dropbox")#</option>
-				<option value="box">#myFusebox.getApplicationData().defaults.trans("sf_type_box")#</option>
-			</select>
+			<!--- If new but search text is not empty then we assume we come from the search --->
+			<cfif attributes.searchtext NEQ "">
+				<input type="hidden" name="sf_type" value="saved_search">
+			<cfelse>
+				<br />
+				<select name="sf_type" id="sf_type">
+					<option value="" selected="selected"></option>
+					<option value="FTP"<cfif qry_sf.sf.sf_type EQ "ftp"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("sf_type_ftp")#</option>
+					<option value="s3"<cfif qry_sf.sf.sf_type EQ "s3"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("sf_type_s3")#</option>
+					<option value="dropbox"<cfif qry_sf.sf.sf_type EQ "dropbox"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("sf_type_dropbox")#</option>
+					<option value="box"<cfif qry_sf.sf.sf_type EQ "box"> selected="selected"</cfif>>#myFusebox.getApplicationData().defaults.trans("sf_type_box")#</option>
+				</select>
+				<br />
+				<em>(#myFusebox.getApplicationData().defaults.trans("sf_settings_desc_search")#)</em>
+			</cfif>
 			<br /><br />
 			<input type="submit" name="sfsubmit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
 
 			</form>
+			<!--- Only show delete folder on detail page --->
+			<cfif attributes.sf_id NEQ 0>
+				<br /><br />
+				<a href="##" onclick="sf_remove('#attributes.sf_id#')">#myFusebox.getApplicationData().defaults.trans("remove_folder")#</a>	
+			</cfif>
 			<!--- Status --->
 			<br />
 			<div id="sf_status"></div>
 		</div>
+	</div>
+	
+	<div id="dialog-confirm" title="#myFusebox.getApplicationData().defaults.trans("sf_delete_header")#" style="display:none;">
+		<p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 60px 0;"></span>#myFusebox.getApplicationData().defaults.trans("sf_delete_desc")#</p>
 	</div>
 
 	<script type="text/javascript">
@@ -95,6 +111,30 @@
 				});
 			}
 	        return false; 
+		};
+		// Remove Folder
+		function sf_remove(folderid){
+			$( "##dialog-confirm" ).dialog( "destroy" );
+			$( "##dialog-confirm" ).dialog({
+				resizable: false,
+				height: 200,
+				modal: true,
+				buttons: {
+					"#myFusebox.getApplicationData().defaults.trans("remove_folder")#": function() {
+						// Call action to delete this workflow
+						$('##div_forall').load('#myself#c.smart_folders_remove&sf_id=' + folderid);
+						// Refresh right side
+						$('##rightside').load('#myself#c.smart_folders_content&sf_id=0');
+						// Refresh folder list
+						$('##explorer').load('#myself#c.smart_folders');
+						// Close this window
+						$( this ).dialog( "close" );
+					},
+					Cancel: function() {
+						$( this ).dialog( "close" );
+					}
+				}
+			});
 		}
 	</script>
 </cfoutput>

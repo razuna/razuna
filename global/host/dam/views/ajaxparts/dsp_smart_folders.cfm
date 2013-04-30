@@ -25,23 +25,29 @@
 --->
 <cfoutput>
 	<!--- Drop down menu --->
-	<div style="width:60px;float:right;position:absolute;left:190px;">
-		<div style="float:left;"><a href="##" onclick="$('##sfmanage').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
-		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##sfmanage').toggle();" class="ddicon"></div>
-		<div id="sfmanage" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
-			<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
-				<p><a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("smart_folder_new_tooltip")#">#myFusebox.getApplicationData().defaults.trans("smart_folder_new")#</a></p>
-				<p><hr></p>
-			</cfif>
-			<p><a href="##" onclick="loadcontent('explorer','#myself#c.smart_folders');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
+	<cfif qry_sf.recordcount NEQ 0>
+		<div style="width:60px;float:right;position:absolute;left:190px;">
+			<div style="float:left;"><a href="##" onclick="$('##sfmanage').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
+			<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##sfmanage').toggle();" class="ddicon"></div>
+			<div id="sfmanage" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
+				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
+					<p><a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("smart_folder_new_tooltip")#">#myFusebox.getApplicationData().defaults.trans("smart_folder_new")#</a></p>
+					<p><hr></p>
+				</cfif>
+				<p><a href="##" onclick="loadcontent('explorer','#myself#c.smart_folders');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
+			</div>
 		</div>
-	</div>
+	</cfif>
 	<div style="clear:both;"></div>
 	<!--- Load smart folders --->
 	<div id="smartfolders" style="width:200;height:200;float:left;">
-		<cfloop query="qry_sf">
-			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">#sf_name#</a> <br />
-		</cfloop>
+		<cfif qry_sf.recordcount EQ 0>
+			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;"><button class="awesome big green">Add a new Smart Folder</button></a>
+		<cfelse>
+			<cfloop query="qry_sf">
+				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">#sf_name#</a> <br />
+			</cfloop>
+		</cfif>
 	</div>
 	<div style="clear:both;"></div>
 	<!--- Show link back to main page --->

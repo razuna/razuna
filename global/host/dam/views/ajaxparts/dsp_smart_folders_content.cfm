@@ -24,11 +24,20 @@
 *
 --->
 <cfoutput>
-	<div id="something">
-		Here comes the content of the smart folder - <a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">Settings</a>
-	</div>
-
-	<script type="text/javascript">
+	<cfif attributes.sf_id EQ 0>
+		<h2>#myFusebox.getApplicationData().defaults.trans("sf_content_right_when_empty")#</h2>
+	<cfelse>
+		<div id="something">
+			Here comes the content of the smart folder - <a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("settings")#</a>
+		</div>
+		<!--- This loads the search --->
+		<div id="sf_search"><div style="padding-top:10px;font-weight:bold;">Search is loading! Please wait...</div></div>
 		
-	</script>
+
+		<script type="text/javascript">
+			<cfif qry_sf.sfprop.sf_prop_id EQ "searchtext">
+				$('##sf_search').load('#myself#c.search_simple', { folder_id:"0", searchtext: "#qry_sf.sfprop.sf_prop_value#", from_sf: true, sf_id: "#qry_sf.sf.sf_id#" });
+			</cfif>
+		</script>
+	</cfif>
 </cfoutput>

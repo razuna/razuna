@@ -27,7 +27,13 @@
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- Save search --->
 	<div id="save_search" style="text-align:center;padding-bottom:10px;">
-		<a href=""><strong>Save this search as a Smart Folder!</strong></a>
+		<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');"><strong>
+			<cfif attributes.sf_id EQ 0>
+				#myFusebox.getApplicationData().defaults.trans("sf_save_search_as_smart_folder")#
+			<cfelse>
+				#myFusebox.getApplicationData().defaults.trans("sf_update_search_as_smart_folder")#
+			</cfif>
+		</strong></a>
 	</div>
 	<div style="clear:both;"></div>
 	<!--- Search Results --->
@@ -44,6 +50,8 @@
 			<input type="hidden" name="listvidid" id="s_listvidid" value="#attributes.listvidid#">
 			<input type="hidden" name="listaudid" id="s_listaudid" value="#attributes.listaudid#">
 			<input type="hidden" name="cv" id="cv" value="#attributes.cv#">
+			<input type="hidden" name="from_sf" id="from_sf" value="#attributes.from_sf#">
+			<input type="hidden" name="sf_id" id="sf_id" value="#attributes.sf_id#">
 			<table border="0" width="100%" cellspacing="0" cellpadding="0" class="tablepanel">
 				<tr>
 					<th colspan="5">#myFusebox.getApplicationData().defaults.trans("refine_search")#</th>
@@ -266,8 +274,10 @@
 				var fext = $('#s_extension').val();
 				var fmeta = $('#s_metadata').val();
 				var cv = $('#cv').val();
+				var from_sf = $('#from_sf').val();
+				var sf_id = $('#sf_id').val();
 				// Post the search
-				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv}, function(){
+				$('#rightside').load('<cfoutput>#myself#</cfoutput>c.search_simple', {searchtext: searchtext, newsearch: newsearch, folder_id: <cfoutput>#attributes.folder_id#</cfoutput>, thetype: thetype, listaudid: listaudid, listvidid: listvidid, listimgid: listimgid, listdocid: listdocid, andor: andor, on_day: on_day, on_month: on_month, on_year: on_year, change_day: change_day, change_month: change_month, change_year: change_year, searchfor: searchfor, filename: fname, keywords: fkeys, description: fdesc, extension: fext, metadata: fmeta, flabel: flab, cv: cv, from_sf: from_sf, sf_id: sf_id}, function(){
 						$("#bodyoverlay").remove();
 					});
 			}

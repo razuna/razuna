@@ -3162,6 +3162,9 @@
 		<set name="session.view" value="" />
 		<set name="attributes.share" value="F" overwrite="false" />
 		<set name="attributes.cv" value="false" overwrite="false" />
+		<!-- For smart folders -->
+		<set name="attributes.from_sf" value="false" overwrite="false" />
+		<set name="attributes.sf_id" value="0" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />
@@ -7103,6 +7106,8 @@
 	</fuseaction>
 	<!-- Get settings -->
 	<fuseaction name="smart_folders_settings">
+		<!-- Params -->
+		<set name="attributes.searchtext" value="" overwrite="false" />
 		<!-- CFC: Get one -->
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
 		<!-- Show -->
@@ -7113,12 +7118,17 @@
 		<!-- CFC: Update -->
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="update(attributes)" />
 	</fuseaction>
-	<!-- Get settings -->
+	<!-- Get content -->
 	<fuseaction name="smart_folders_content">
 		<!-- CFC: Get one -->
-		<!-- <invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" /> -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
 		<!-- Show -->
 		<do action="ajax.smart_folders_content" />
+	</fuseaction>
+	<!-- Remove folder -->
+	<fuseaction name="smart_folders_remove">
+		<!-- CFC: Remove sf -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="remove(attributes.sf_id)" />
 	</fuseaction>
 
 	<!-- END: Smart Folders -->
