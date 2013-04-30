@@ -2258,7 +2258,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 	  	wm_temp_id 			varchar2(100 char),
 	  	wm_name				varchar2(200 char),
 		wm_active			varchar2(6 char) DEFAULT 'false',
-		host_id 			int,
+		host_id 			number,
 		PRIMARY KEY (wm_temp_id)
 		)
 		</cfquery>
@@ -2277,9 +2277,34 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		wm_text_font 		varchar2(100 char),
 		wm_text_font_size 	varchar2(5 char),
 		wm_image_path 		varchar2(300 char),
-		host_id 			int,
+		host_id 			number,
 		rec_uuid 			varchar2(100 char),
 		PRIMARY KEY (rec_uuid)
+		)
+		</cfquery>
+
+		<!--- Smart Folders --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders 
+		(
+			sf_id 			varchar2(100 char),
+			sf_name 		varchar2(500 char),
+			sf_date_create 	timestamp,
+			sf_date_update 	timestamp,
+			sf_type 		varchar2(100 char),
+			sf_description 	varchar2(2000 char),
+			PRIMARY KEY (sf_id)
+		)
+		</cfquery>
+
+		<!--- Smart Folders Properties --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders_prop
+		(
+			sf_id_r 		varchar2(100 char),
+			sf_prop_id 		varchar2(500 char),
+			sf_prop_value 	varchar2(2000 char),
+			PRIMARY KEY (sf_id_r)
 		)
 		</cfquery>
 		

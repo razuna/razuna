@@ -651,6 +651,40 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			CREATE TABLE raz1_smart_folders 
+			(
+				sf_id #thevarchar#(100),
+				sf_name #thevarchar#(500),
+				sf_date_create #thetimestamp# NULL DEFAULT NULL,
+				sf_date_update #thetimestamp# NULL DEFAULT NULL,
+				sf_type #thevarchar#(100),
+				sf_description #thevarchar#(2000),
+				PRIMARY KEY (sf_id)
+			)
+			#tableoptions#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			CREATE TABLE raz1_smart_folders_prop
+			(
+				sf_id_r #thevarchar#(100),
+				sf_prop_id #thevarchar#(500),
+				sf_prop_value #thevarchar#(2000),
+				PRIMARY KEY (sf_id_r)
+			)
+			#tableoptions#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+
 
 		<!--- Add to internal table --->
 		<cftry>
