@@ -33,7 +33,7 @@
 			</div>
 		</cfif>
 		<!--- This loads the search --->
-		<div id="sf_search"><div style="padding-top:10px;font-weight:bold;">Search is loading! Please wait...</div></div>
+		<div id="sf_search"><div style="padding-top:10px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("search_loading")#</div></div>
 		
 
 		<script type="text/javascript">

@@ -42,7 +42,7 @@
 	<!--- Load smart folders --->
 	<div id="smartfolders" style="width:200;height:200;float:left;">
 		<cfif qry_sf.recordcount EQ 0>
-			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;"><button class="awesome big green">Add a new Smart Folder</button></a>
+			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("smart_folder_new_tooltip")#</button></a>
 		<cfelse>
 			<cfloop query="qry_sf">
 				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">#sf_name#</a> <br />
