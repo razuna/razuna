@@ -51,7 +51,6 @@
 		</table>
 		<div id="status_integration" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" onclick="save_integr();" /></div>
 		<div style="clear:both;"></div>
-		<div id="dummy_integration" style="display:none;"></div>
 	</cfif>
 	<script type="text/javascript">
 		function save_integr(){
@@ -60,10 +59,10 @@
 			var k = $("##janrain_apikey").val();
 			var a = $("##janrain_appurl").val();
 			// Save
-			$('##dummy_integration').load('#myself#c.admin_integration_save', {janrain_enable: e, janrain_apikey: k, janrain_appurl: a});
+			$('##div_forall').load('#myself#c.admin_integration_save', {janrain_enable: e, janrain_apikey: k, janrain_appurl: a});
 			// Feedback
 			$('##status_integration').fadeTo("fast", 100);
-			$('##status_integration').html('<span style="font-weight:bold;color:green;">We saved the change successfully!</span>');
+			$('##status_integration').html('<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("saved_change")#!</span>');
 			$('##status_integration').fadeTo(5000, 0);
 		}
 	</script>
