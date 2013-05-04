@@ -99,7 +99,7 @@
 			</cfloop>
 			<!--- Get custom fields --->
 			<cfquery name="qry_cf" datasource="#arguments.dsn#">
-			SELECT DISTINCT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+			SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 			FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
 			WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 			AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
