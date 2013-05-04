@@ -50,14 +50,14 @@
 <!--- Trash Folders--->
 <div id="tabs_left_trash_folder">
 	<div id="trash">
-		<a href="##" onclick="$('##rightside').load('#myself#c.folder_explorer_trash')" id="trash_link">Trash Folders Files</a>
+		<a href="##" onclick="$('##rightside').load('#myself#c.folder_explorer_trash')" id="trash_link">#myFusebox.getApplicationData().defaults.trans("trash_folders_files")#</a>
 	</div>
 </div>
 <div style="clear:both;">&nbsp;</div>
 <!--- Trash Collection --->
 <div id="tabs_left_trash_collection">
 	<div id="trash">
-		<a href="##" onclick="$('##rightside').load('#myself#c.collection_explorer_trash')" id="trash_link">Trash Collections Files</a>
+		<a href="##" onclick="$('##rightside').load('#myself#c.collection_explorer_trash')" id="trash_link">#myFusebox.getApplicationData().defaults.trans("trash_collections_files")#</a>
 	</div>
 </div>
 

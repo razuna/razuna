@@ -27,7 +27,7 @@
 	<div id="tabsfolder_tab">
 		<ul>
 			<!--- Show the trash collection and collection asset content --->
-			<li><a href="##collection" onclick="loadcontent('collection','#myself##xfa.ftrashcol#');" rel="prefetch prerender">Trash Collections <!---#myFusebox.getApplicationData().defaults.trans("folder_content")#--->(#arraySum(col_count_trash['cnt'])#)</a></li>
+			<li><a href="##collection" onclick="loadcontent('collection','#myself##xfa.ftrashcol#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_collection")#<!---#myFusebox.getApplicationData().defaults.trans("folder_content")#--->(#arraySum(col_count_trash['cnt'])#)</a></li>
 		</ul>
 		<div id="collection">
 		</div>
