@@ -193,7 +193,15 @@
 	<fuseaction name="collection_chooser">
   		<include template="dsp_collection_chooser" />
 	</fuseaction>
+	<!-- collection: trash -->
+    <fuseaction name="collection_trash">
+		<include template="dsp_collection_trash" />
+    </fuseaction>
 	
+	<!-- collection: trash items -->
+    <fuseaction name="collection_item_trash">
+		<include template="dsp_trash_col" />
+    </fuseaction>
 	
 	<!-- Assets: Add -->
 	<fuseaction name="asset_add">

@@ -66,9 +66,9 @@ function batchaction(theform, what, kind, folder_id, theaction){
 		case "batch":
 			showwindow('index.cfm?fa=c.batch_form&file_id=0&what=' + what + '&folder_id=' + folder_id, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("batch_selected_header")#</cfoutput>', 650, 1);
 		  	break;
-		case "delete":
-			//alert('delete');
-			showwindow('index.cfm?fa=ajax.remove_record&many=T&what=' + what + '&loaddiv=' + kind + '&folder_id=' + folder_id, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("remove")#</cfoutput>', 400, 1);
+		case "trash":
+			//alert('trash');
+			showwindow('index.cfm?fa=ajax.trash_record&many=T&what=' + what + '&loaddiv=' + kind + '&folder_id=' + folder_id, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("trash")#</cfoutput>', 400, 1);
 			break;
 		case "chcoll":
 			showwindow('index.cfm?fa=c.choose_collection&artofimage=list&artofvideo=&artofaudio=&artoffile=&thetype=' + what, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("add_to_collection")#</cfoutput>', 550, 1);

@@ -508,6 +508,27 @@
 	<cfreturn qry_audio />
 </cffunction>
 
+<!--- TRASH MANY AUDIO --->
+<cffunction name="trashaudiomany" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Loop --->
+	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+		<cfset i = listfirst(i,"-")>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#audios 
+			SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE aud_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("audios")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<cfreturn />
+</cffunction>
+
 <!--- RESTORE THE AUDIO --->
 <cffunction name="restoreaudio" output="false">
 	<cfargument name="thestruct" type="struct">

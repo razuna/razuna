@@ -411,6 +411,27 @@
 		<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/#arguments.thestruct.id#" file="#qry_file.FILE_NAME_NOEXT#.#qry_file.FILE_EXTENSION#"/>
 	</cffunction>
 	
+	<!--- TRASH MANY FILE --->
+	<cffunction name="trashfilemany" output="true">
+		<cfargument name="thestruct" type="struct">
+		<!--- Loop --->
+		<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+			<cfset i = listfirst(i,"-")>
+			<!--- Update in_trash --->
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files 
+				SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+				WHERE file_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
+		<cfreturn />
+	</cffunction>
+	
 	<!--- Get files from trash --->
 	<cffunction name="gettrashfile" output="false">
 		<cfargument name="thestruct" type="struct">

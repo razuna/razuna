@@ -647,6 +647,27 @@
 		</cfquery>
 </cffunction>
 
+<!--- TRASH MANY VIDEO --->
+<cffunction name="trashvideomany" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Loop --->
+	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+		<cfset i = listfirst(i,"-")>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#videos 
+			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<cfreturn />
+</cffunction>
+
 <!--- Get videos from trash --->
 <cffunction name="gettrashvideos" output="false">
 	<cfargument name="thestruct" type="struct">

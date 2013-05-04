@@ -105,7 +105,6 @@
 									</cfif>
 									<cfif attributes.folderaccess EQ "X">
 										<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#vid_id#&what=videos&loaddiv=vid&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-										<!---<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=vid&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>--->
 									</cfif>
 								</div>
 								<br>
@@ -185,7 +184,6 @@
 								</cfif>
 								<cfif attributes.folderaccess EQ "X">
 									<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#vid_id#&what=videos&loaddiv=vid&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-									<!---<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=vid&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>--->
 								</cfif>
 							</div>
 						</div>
@@ -288,7 +286,6 @@
 								</cfif>
 								<cfif attributes.folderaccess EQ "X">
 									<a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#vid_id#&what=videos&loaddiv=div&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
-									<!---<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#vid_id#&what=videos&loaddiv=vid&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=list','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>--->
 								</cfif>
 							</div>
 						</div>

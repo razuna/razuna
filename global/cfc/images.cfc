@@ -349,6 +349,27 @@
 		</cfquery>
 </cffunction>
 
+<!--- TRASH MANY IMAGE --->
+<cffunction name="trashimagemany" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Loop --->
+	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+		<cfset i = listfirst(i,"-")>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images 
+			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("images")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<cfreturn />
+</cffunction>
+
 <!--- Get images from trash --->
 <cffunction name="gettrashimage" output="false">
 	<cfargument name="thestruct" type="struct">

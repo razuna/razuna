@@ -47,10 +47,17 @@
 	<cfif cs.tab_labels><div id="labels" style="margin-left:0;padding-left:0;">#myFusebox.getApplicationData().defaults.loadinggif("#dynpath#")#</div></cfif>
 </div>
 <div style="clear:both;">&nbsp;</div>
-<!--- Trash --->
-<div id="tabs_left_down">
+<!--- Trash Folders--->
+<div id="tabs_left_trash_folder">
 	<div id="trash">
-		<a href="##" onclick="$('##rightside').load('#myself#c.folder_explorer_trash')" id="trash_link">Trash Files</a>
+		<a href="##" onclick="$('##rightside').load('#myself#c.folder_explorer_trash')" id="trash_link">Trash Folders Files</a>
+	</div>
+</div>
+<div style="clear:both;">&nbsp;</div>
+<!--- Trash Collection --->
+<div id="tabs_left_trash_collection">
+	<div id="trash">
+		<a href="##" onclick="$('##rightside').load('#myself#c.collection_explorer_trash')" id="trash_link">Trash Collections Files</a>
 	</div>
 </div>
 
@@ -91,11 +98,11 @@
 		}
 	}
 	
-	jqtabs("tabs_left_down");
+	jqtabs("tabs_left_trash_folder");
 	// Show or hide left side
 	function hideshow(state){
 		if (state == "off"){
-			$('##tabs_left').css('display','none');
+			$('##tabs_left_trash_folder').css('display','none');
 			$('##slide_off').css('display','none');
 			$('##slide_on').css('display','');
 			$('##apMiddle').css({'left':'3px'});
@@ -103,7 +110,28 @@
 			$('##apDiv4').css({'left':'10px','width':'97%'});
 		}
 		else {
-			$('##tabs_left').css('display','');
+			$('##tabs_left_trash_folder').css('display','');
+			$('##slide_off').css('display','');
+			$('##slide_on').css('display','none');
+			$('##apMiddle').css({'left':'261px'});
+			$('##apDiv3').css({'margin-left':'13px'});
+			$('##apDiv4').css({'left':'280px','width':'75%'});
+		}
+	}
+	
+	jqtabs("tabs_left_trash_collection");
+	// Show or hide left side
+	function hideshow(state){
+		if (state == "off"){
+			$('##tabs_left_trash_collection').css('display','none');
+			$('##slide_off').css('display','none');
+			$('##slide_on').css('display','');
+			$('##apMiddle').css({'left':'3px'});
+			$('##apDiv3').css({'margin-left':'0px'});
+			$('##apDiv4').css({'left':'10px','width':'97%'});
+		}
+		else {
+			$('##tabs_left_trash_collection').css('display','');
 			$('##slide_off').css('display','');
 			$('##slide_on').css('display','none');
 			$('##apMiddle').css({'left':'261px'});
