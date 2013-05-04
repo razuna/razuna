@@ -30,7 +30,7 @@
 	<cffunction name="getassets" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" type="string" required="true">
 		<cfargument name="folderid" type="string" required="true">
-		<cfargument name="showsubfolders" type="numeric" required="false" default="false">
+		<cfargument name="showsubfolders" type="any" required="false" default="false">
 		<cfargument name="show" type="string" required="false" default="all">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
