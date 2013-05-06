@@ -1144,6 +1144,8 @@
 	<fuseaction name="col_get_trash">
 		<!-- Param -->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
 		<!-- CFC:Get collection trash image-->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_col_image()" returnvariable="col_image" />
 		<!-- CFC:Get collection trash audio-->
