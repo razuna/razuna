@@ -370,11 +370,6 @@
 		<cfthread intstruct="#arguments.thestruct#">
 			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
 		</cfthread>
-		<!--- Remove the file from trash folder --->
-       <cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#')>
-           <cffile action="delete" file="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#/#thedetail.img_filename#" >
-           <cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/img/#arguments.thestruct.id#" recurse="false" >
-       </cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfset resetcachetoken("folders")>
@@ -396,19 +391,6 @@
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<!--- Set trash directory for files --->
-		<cfif !directoryexists("#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/#arguments.thestruct.id#")>
-			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/#arguments.thestruct.id#">
-		</cfif>
-		<!--- Set vars --->
-		<cfif application.razuna.storage EQ "local" OR application.razuna.storage EQ "akamai">
-			<!--- Set http --->
-			<cfset var thehttp = "#session.thehttp##cgi.http_host##arguments.thestruct.dynpath#/assets/#session.hostid#/#qry_file.path_to_asset#/#qry_file.FILE_NAME_NOEXT#.#qry_file.FILE_EXTENSION#">
-		<cfelse>
-			<cfset var thehttp ="#qry_file.cloud_url_org#">
-		</cfif>
-		<!--- Store the file into trash --->
-		<cfhttp url="#thehttp#" method="get" path="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/#arguments.thestruct.id#" file="#qry_file.FILE_NAME_NOEXT#.#qry_file.FILE_EXTENSION#"/>
 	</cffunction>
 	
 	<!--- TRASH MANY FILE --->
