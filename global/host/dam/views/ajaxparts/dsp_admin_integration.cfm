@@ -28,8 +28,27 @@
 		This section allows you to integrate Razuna with other apps.<br><br>
 		<cfinclude template="dsp_host_upgrade.cfm">
 	<cfelse>
-		<!--- Integration --->
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
+			<!--- DropBox --->
+			<tr>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_dropbox")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_dropbox_desc")#<br /><br />#myFusebox.getApplicationData().defaults.trans("retrieve_app_codes")#</td>
+			</tr>
+			<tr>
+				<td colspan="2"><button class="button" onclick="getkey('dropbox');">1. #myFusebox.getApplicationData().defaults.trans("retrieve_app_codes_link")#</button><div id="status_get_app_key"></div></td>
+			</tr>
+			<tr class="list">
+				<td colspan="2" style="padding-bottom:20px;"><button class="button" onclick="oauth_authenticate('dropbox');">2. #myFusebox.getApplicationData().defaults.trans("authenticate_account")#</button><br /><br />
+					<cfif dropbox_uid EQ "">
+						Status: #myFusebox.getApplicationData().defaults.trans("authenticated_false")#
+					<cfelse>
+						Status: <span style="color:green;">#myFusebox.getApplicationData().defaults.trans("authenticated_true")#</span>
+					</cfif>
+				</td>
+			</tr>	
+			<!--- JanRain --->
 			<tr>
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_integration_social_login")#</th>
 			</tr>
@@ -64,6 +83,14 @@
 			$('##status_integration').fadeTo("fast", 100);
 			$('##status_integration').html('<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("saved_change")#!</span>');
 			$('##status_integration').fadeTo(5000, 0);
+		}
+		// Get App Key
+		function getkey(account){
+			$('##status_get_app_key').load('#myself#c.getappkey&account=' + account);
+		}
+
+		function oauth_authenticate(account){
+			window.open('#myself#c.oauth_authenticate&account=' + account,'','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=1100,height=800');
 		}
 	</script>
 </cfoutput>

@@ -192,6 +192,9 @@
 			<argument name="dsn" value="#application.razuna.datasource#" />
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
+		<!-- Oauth -->
+		<instantiate class="oauth" object="myFusebox.getApplicationData().oauth" overwrite="true">
+		</instantiate>
 	</fuseaction>
 	
 </circuit>

@@ -4786,10 +4786,12 @@
 	
 	<!-- For loading integration -->
 	<fuseaction name="admin_integration">
-		<!-- CFC -->
+		<!-- Janrain -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_apikey')" returnvariable="jr_apikey" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_appurl" />
+		<!-- Dropbox -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('dropbox_uid')" returnvariable="dropbox_uid" />
 		<!-- We expect a boolean value for jr_enable but since it will return an empty string if not found -->
 		<if condition="jr_enable EQ ''">
 			<true>
@@ -7134,5 +7136,24 @@
 	</fuseaction>
 
 	<!-- END: Smart Folders -->
+
+	<!-- START: OAUTH -->
+
+	<!-- Get application Keys -->
+	<fuseaction name="getappkey">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="getappkey(attributes.account)" />
+	</fuseaction>
+	<!-- Authenticate -->
+	<fuseaction name="oauth_authenticate">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="authenticate(attributes.account)" />
+	</fuseaction>
+	<!-- Return from authentication -->
+	<!-- Authenticate -->
+	<fuseaction name="oauth_authenticate_return">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="return(attributes)" />
+	</fuseaction>
 
 </circuit>

@@ -65,15 +65,15 @@
 	<!--- Check for a new version --->
 	<cffunction name="check_update">
 		<cfargument name="thestruct" type="struct">	
-		<cfset v = structnew()>
+		<cfset var v = structnew()>
 		<!--- Set the version file on the server --->
 		<cfset var versionfile = "http://cloud.razuna.com/installers/versionupdate.xml">
 		<!--- Get the current version --->
 		<cfinvoke component="settings" method="getconfig" thenode="version" returnvariable="currentversion">
 		<!--- Parse the version file on the server --->
 		<cftry>
-			<cfhttp url="#versionfile#" method="get" throwonerror="no" timeout="5">
-			<cfset var xmlVar=xmlParse(versionfile)/>
+			<cfhttp url="#versionfile#" method="get" throwonerror="yes" timeout="5">
+			<cfset var xmlVar=xmlParse(trim(cfhttp.filecontent))/>
 			<cfset var theversion=xmlSearch(xmlVar, "update/version[@name='version']")>
 			<cfset v.newversionnr = trim(#theversion[1].thetext.xmlText#)>
 			<!--- Count how many dots are in the version --->
@@ -84,9 +84,9 @@
 			<cfelse>
 				<cfset v.versionavailable = "F">
 			</cfif>
-		<cfcatch type="any">
-			<cfset v.versionavailable = "F">
-		</cfcatch>
+			<cfcatch type="any">
+				<cfset v.versionavailable = "F">
+			</cfcatch>
 		</cftry>
 		<!--- Return --->
 		<cfreturn v>
