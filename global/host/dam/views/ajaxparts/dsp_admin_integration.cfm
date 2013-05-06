@@ -34,18 +34,21 @@
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_dropbox")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_dropbox_desc")#<br /><br />#myFusebox.getApplicationData().defaults.trans("retrieve_app_codes")#</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_dropbox_desc")#<!--- <br /><br />#myFusebox.getApplicationData().defaults.trans("retrieve_app_codes")# ---></td>
 			</tr>
-			<tr>
+			<!--- <tr>
 				<td colspan="2"><button class="button" onclick="getkey('dropbox');">1. #myFusebox.getApplicationData().defaults.trans("retrieve_app_codes_link")#</button><div id="status_get_app_key"></div></td>
-			</tr>
+			</tr> --->
 			<tr class="list">
-				<td colspan="2" style="padding-bottom:20px;"><button class="button" onclick="oauth_authenticate('dropbox');">2. #myFusebox.getApplicationData().defaults.trans("authenticate_account")#</button><br /><br />
+				<td colspan="2" style="padding-bottom:20px;">
 					<cfif dropbox_uid EQ "">
-						Status: #myFusebox.getApplicationData().defaults.trans("authenticated_false")#
+						<button class="button" onclick="oauth_authenticate('dropbox');">#myFusebox.getApplicationData().defaults.trans("authenticate_account")#</button>
+						<!--- Status: #myFusebox.getApplicationData().defaults.trans("authenticated_false")# --->
 					<cfelse>
-						Status: <span style="color:green;">#myFusebox.getApplicationData().defaults.trans("authenticated_true")#</span>
+						<button class="button" onclick="oauth_disconnect('dropbox');">#myFusebox.getApplicationData().defaults.trans("disconnect_account")#</button>
+						<!--- Status: <span style="color:green;">#myFusebox.getApplicationData().defaults.trans("authenticated_true")#</span> --->
 					</cfif>
+					<br /><br />
 				</td>
 			</tr>	
 			<!--- JanRain --->
@@ -85,12 +88,15 @@
 			$('##status_integration').fadeTo(5000, 0);
 		}
 		// Get App Key
-		function getkey(account){
-			$('##status_get_app_key').load('#myself#c.getappkey&account=' + account);
-		}
+		// function getkey(account){
+		// 	$('##status_get_app_key').load('#myself#c.getappkey&account=' + account);
+		// }
 
 		function oauth_authenticate(account){
 			window.open('#myself#c.oauth_authenticate&account=' + account,'','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=1100,height=800');
+		}
+		function oauth_disconnect(account){
+			$('##admin_integration').load('#myself#c.oauth_remove&account=' + account);
 		}
 	</script>
 </cfoutput>

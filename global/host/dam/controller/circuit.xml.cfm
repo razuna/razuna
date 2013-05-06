@@ -7141,19 +7141,56 @@
 
 	<!-- Get application Keys -->
 	<fuseaction name="getappkey">
-		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="getappkey(attributes.account)" />
+		<if condition="!structKeyExists(session['#attributes.account#'], 'appkey')">
+			<true>
+				<!-- Set DB connection for keys -->
+				<do action="setdbrazclients" />
+				<!-- CFC -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getappkey(attributes.account)" />
+			</true>
+		</if>
 	</fuseaction>
 	<!-- Authenticate -->
 	<fuseaction name="oauth_authenticate">
+		<!-- Get the app keys -->
+		<do action="getappkey" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().oauth" methodcall="authenticate(attributes.account)" />
 	</fuseaction>
 	<!-- Return from authentication -->
-	<!-- Authenticate -->
 	<fuseaction name="oauth_authenticate_return">
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().oauth" methodcall="return(attributes)" />
+	</fuseaction>
+	<!-- Disconnect account -->
+	<fuseaction name="oauth_remove">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="remove(attributes.account)" />
+		<!-- Load integration again -->
+		<do action="admin_integration" />
+	</fuseaction>
+
+	<!-- Set database connection for razuna_clients -->
+	<fuseaction name="setdbrazclients">
+		<!-- Set values from form into the sessions -->
+		<set name="session.firsttime.database" value="razuna_client" />
+		<!-- CFC: Check if there is a DB Connection -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="verifydatasource()" returnvariable="theconnection" />
+		<!-- Only execute if we don't have a connection -->
+		<if condition="theconnection NEQ 'true'">
+			<true>
+				<!-- Set db values -->
+				<set name="session.firsttime.database_type" value="mysql" />
+				<set name="session.firsttime.db_name" value="razuna_clients" />
+				<set name="session.firsttime.db_server" value="db.razuna.com" />
+				<set name="session.firsttime.db_port" value="3306" />
+				<set name="session.firsttime.db_user" value="razuna_client" />
+				<set name="session.firsttime.db_pass" value="D63E61251" />
+				<set name="session.firsttime.db_action" value="create" />
+				<!-- CFC: Add the datasource -->
+				<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+			</true>
+		</if>
 	</fuseaction>
 
 </circuit>

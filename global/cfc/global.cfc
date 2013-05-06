@@ -282,7 +282,12 @@
 	
 	<!--- Check for connecting to datasource in bd_config --->
 	<cffunction name="verifydatasource" access="public" output="false">
-		<cfinvoke component="bd_config" method="verifyDatasource" dsn="#session.firsttime.database#" returnVariable="theconnection" />
+		<cfset var theconnection = false>
+		<cftry>
+			<cfinvoke component="bd_config" method="verifyDatasource" dsn="#session.firsttime.database#" returnVariable="theconnection" />
+			<cfdump var="#theconnection#">
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<cfreturn theconnection />
 	</cffunction>
 	
@@ -292,18 +297,19 @@
 		<cfparam name="theconnectstring" default="">
 		<cfparam name="hoststring" default="">
 		<cfparam name="verificationQuery" default="">
+		<cfparam name="session.firsttime.database_type" default="">
 		<!--- Set the correct drivername --->
-		<cfif session.firsttime.database EQ "h2">
+		<cfif session.firsttime.database_type EQ "h2">
 			<cfset thedrivername = "org.h2.Driver">
 			<cfset theconnectstring = "AUTO_RECONNECT=TRUE;CACHE_TYPE=SOFT_LRU;AUTO_SERVER=TRUE">
-		<cfelseif session.firsttime.database EQ "mysql">
+		<cfelseif session.firsttime.database_type EQ "mysql">
 			<cfset thedrivername = "com.mysql.jdbc.Driver">
 			<cfset theconnectstring = "zeroDateTimeBehavior=convertToNull">
-		<cfelseif session.firsttime.database EQ "mssql">
+		<cfelseif session.firsttime.database_type EQ "mssql">
 			<cfset thedrivername = "net.sourceforge.jtds.jdbc.Driver">
-		<cfelseif session.firsttime.database EQ "oracle">
+		<cfelseif session.firsttime.database_type EQ "oracle">
 			<cfset thedrivername = "oracle.jdbc.OracleDriver">
-		<cfelseif session.firsttime.database EQ "db2">
+		<cfelseif session.firsttime.database_type EQ "db2">
 			<cfset thedrivername = "com.ibm.db2.jcc.DB2Driver">
 			<cfset hoststring = "jdbc:db2://#session.firsttime.db_server#:currentSchema=RAZUNA;">
 			<cfset verificationQuery = "select 5 from sysibm.sysdummy1">

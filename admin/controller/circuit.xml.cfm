@@ -250,6 +250,7 @@
 	<fuseaction name="first_time_paths">
 		<!-- Set sessions -->
 		<set name="session.firsttime.database" value="#attributes.db#" overwrite="false" />
+		<set name="session.firsttime.database_type" value="#attributes.db#" overwrite="false" />
 		<set name="session.firsttime.type" value="#attributes.type#" overwrite="false" />
 		<set name="session.firsttime.path_assets" value="#pathoneup#assets" />
 		<set name="session.firsttime.ecp_path" value="#pathoneup#" />
@@ -263,6 +264,7 @@
 				<set name="session.firsttime.db_schema" value="razuna" />
 				<set name="session.firsttime.db_user" value="razuna" />
 				<set name="session.firsttime.db_pass" value="razunabd" />
+				<set name="session.firsttime.database_type" value="h2" />
 				<!-- CFC: Check if there is a DB Connection -->
 				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource()" returnvariable="thedsnarray" />
 				<!-- If there is no H2 datasource then create it -->
@@ -319,6 +321,7 @@
 						<set name="session.firsttime.db_schema" value="razuna" />
 						<set name="session.firsttime.db_user" value="razuna" />
 						<set name="session.firsttime.db_pass" value="razunabd" />
+						<set name="session.firsttime.database_type" value="h2" />
 						<!-- CFC: Add the datasource -->
 						<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 					</true>
@@ -480,6 +483,17 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="firsttime_false('false')" />
 		<!-- CFC: Set update db -->
 		<invoke object="myFusebox.getApplicationData().update" methodcall="setoptionupdate()" />
+		<!-- Add Razuna Client db connection -->
+		<set name="session.firsttime.database" value="razuna_client" />
+		<set name="session.firsttime.database_type" value="mysql" />
+		<set name="session.firsttime.db_name" value="razuna_clients" />
+		<set name="session.firsttime.db_server" value="db.razuna.com" />
+		<set name="session.firsttime.db_port" value="3306" />
+		<set name="session.firsttime.db_user" value="razuna_client" />
+		<set name="session.firsttime.db_pass" value="D63E61251" />
+		<set name="session.firsttime.db_action" value="create" />
+		<!-- CFC: Add the datasource -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 	</fuseaction>
 	
 	<!-- Call firsttime run -->

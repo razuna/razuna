@@ -50,9 +50,9 @@
 				<cfhttp method="post" url="#application.razuna["#arguments.thestruct.account#"].url_api#/oauth/access_token">
 					<cfhttpparam type="formfield" name="oauth_version" value="1.0"/>
 					<cfhttpparam type="formfield" name="oauth_signature_method" value="PLAINTEXT"/>
-					<cfhttpparam type="formfield" name="oauth_consumer_key" value="#application.razuna["#arguments.thestruct.account#"].appkey#"/>
+					<cfhttpparam type="formfield" name="oauth_consumer_key" value="#session["#arguments.thestruct.account#"].appkey#"/>
 					<cfhttpparam type="formfield" name="oauth_token" value="#session.oauth_token#"/>
-					<cfhttpparam type="formfield" name="oauth_signature" value="#application.razuna["#arguments.thestruct.account#"].appsecret#&#session.oauth_token_secret#"/>
+					<cfhttpparam type="formfield" name="oauth_signature" value="#session["#arguments.thestruct.account#"].appsecret#&#session.oauth_token_secret#"/>
 				</cfhttp>
 				<!--- We get back the access tokens like oauth_token_secret=56o72oyoehzw8iq&oauth_token=jeost6cz9chka8s&uid=20724584 --->
 				<!--- Put return into var --->
@@ -81,7 +81,9 @@
 					)
 					</cfquery>
 				</cfloop>
-				<cfoutput><span style="font-weight:bold;color:green;">We successfully connected to your account!</span><br /><br /><a href="##" onclick="window.close();">You can close this window now.</a></cfoutput>
+				<cfoutput>
+					<span style="font-weight:bold;color:green;">We successfully connected to your account!</span><br /><br /><a href="##" onclick="window.close();">You can close this window now.</a>
+				</cfoutput>
 				<!--- Catch --->
 				<cfcatch type="any">
 					<span style="font-weight:bold;color:red;">Oops an error occured: #cfcatch.message# - #cfcatch.detail#</span>
@@ -97,8 +99,8 @@
 		<cfhttp method="post" url="#application.razuna["#arguments.account#"].url_api#/oauth/request_token">
 			<cfhttpparam type="formfield" name="oauth_version" value="1.0"/>
 			<cfhttpparam type="formfield" name="oauth_signature_method" value="PLAINTEXT"/>
-			<cfhttpparam type="formfield" name="oauth_consumer_key" value="#application.razuna["#arguments.account#"].appkey#"/>
-			<cfhttpparam type="formfield" name="oauth_signature" value="#application.razuna["#arguments.account#"].appsecret#&"/>
+			<cfhttpparam type="formfield" name="oauth_consumer_key" value="#session["#arguments.account#"].appkey#"/>
+			<cfhttpparam type="formfield" name="oauth_signature" value="#session["#arguments.account#"].appsecret#&"/>
 		</cfhttp>
 		<!--- Put return into var --->
 		<cfset var tokens = trim(cfhttp.filecontent.toString())>
@@ -110,6 +112,17 @@
 			<cfset "session.#n#" = v>
 		</cfloop>
 		<cfreturn />	
+	</cffunction>
+
+	<!--- Remove --->
+	<cffunction name="remove" output="false" access="Public" returntype="void">
+		<cfargument name="account" type="string" required="true">
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.account)#_%">
+		AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		</cfquery>
+		<cfreturn />
 	</cffunction>
 
 </cfcomponent>
