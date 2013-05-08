@@ -24,15 +24,21 @@
 *
 --->
 <cfoutput>
-	<cfif isDefined('attributes.is_trash') AND attributes.is_trash EQ "intrash">
-		<b>The parent directory is not available.Please click "select directory" to restore</b><br />
-		<cfif attributes.type EQ 'restorefile'>
-			<a href="##" onclick="showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>Select Directory</b></a>
-		<cfelseif attributes.type EQ 'restorefolder'>
-			<a href="##" onclick="showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);">move</a>
+	<cfif structKeyExists(attributes,'is_trash') AND attributes.is_trash EQ "intrash">
+		<cfif structKeyExists(attributes,'file_id') AND attributes.file_id NEQ 0>
+			<!--- collection for restore files--->
+			<b>#myFusebox.getApplicationData().defaults.trans("parent_collection_not_available")#</b><br />
+			<a href="##" onclick="showwindow('#myself#c.restore_choose_collection&file_id=#attributes.file_id#&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,2);"><b>#myFusebox.getApplicationData().defaults.trans("select_collection")#</b></a>
+		<cfelseif structKeyExists(attributes,'kind') AND attributes.kind EQ "collection">
+			<!--- directory for restore collection --->
+			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
+			<a href="##" onclick="showwindow('#myself#c.restore_trash_collection&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,2);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
+		<cfelseif structKeyExists(attributes,'kind') AND attributes.kind EQ "folder">
+			<!--- directory for restore folder--->
+			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
+			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&iscol=T','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);">#myFusebox.getApplicationData().defaults.trans("select_directory")#</a>
 		</cfif>
 	</cfif>
-	<!---<input type="button" name="movefolder" value="#myFusebox.getApplicationData().defaults.trans("move_folder")#" class="button" onclick=showwindow('#myself#c.move_file&file_id=24195414D6434F379F6A2D1446A90877&folder_id=D6188097C9E2409993313FC9C1B22F30&thetype=img',600,1);>--->
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- show the available folder list for restoring --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
@@ -48,10 +54,10 @@
 							#filename#
 						</div>
 						<div>
-							<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=images&loaddiv=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+							<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 						</div>
 						<div>
-							<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+							<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 						</div>
 					</div>
 				</cfloop>
@@ -65,10 +71,10 @@
 								#filename#
 							</div>
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 							</div>
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 							</div>
 						</div>
 				 	</cfloop>
@@ -95,10 +101,10 @@
 								#filename#
 							</div>
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=files&loaddiv=collection&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 							</div>
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 							</div>
 						</div>
 					</cfloop>
@@ -111,11 +117,11 @@
 							<div>
 								#filename#
 							</div>
-							<!---<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=videos&loaddiv=collection&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
-							</div>--->
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">Delete Permanently</a>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 							</div>
 						</div>
 					</cfloop>
@@ -128,11 +134,11 @@
 							<div>
 								#folder_name#
 							</div>
-							<!---<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
-							</div>--->
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&what=col_folder&loaddiv=collection&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">Delete Permanently</a>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder&iscol=T','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_folder")#</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_folder&loaddiv=collection&folder_id=#folder_id#&iscol=T&what=folder','#Jsstringformat(myFusebox.getApplicationData().defaults.trans('remove_folder'))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans('remove')#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 							</div>
 						</div>
 					</cfloop>
@@ -144,11 +150,11 @@
 							<div>
 								#col_name#
 							</div>
-							<!---<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#foldergettrash.folder_id#&what=collection&loaddiv=assets&id=#foldergettrash.folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">Restore</a><br/><br/>
-							</div>--->
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#col_id#&what=col_folder&folder_id=#col_folder_id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">Delete Permanently</a>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_collection")#</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 							</div>
 						</div>
 					</cfloop>

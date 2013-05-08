@@ -1488,12 +1488,15 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- check the parent folder is exist --->
 	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
-		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
+		SELECT folder_main_id_r,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
 		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfset local = structNew()>
+	<cfif thedetail.in_trash EQ 'T'>
+		<cfset local.istrash = "trash">
+	<cfelse>
 		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
 			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
 			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
@@ -1518,6 +1521,7 @@
 				</cfquery>
 			</cfif>
 		</cfloop>
+	</cfif>
 		<!--- Set is trash --->
 	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
 		<cfset var is_trash = "intrash">
@@ -3139,6 +3143,12 @@
 					<!--- choose a collection --->
 					<cfelseif session.type EQ "choosecollection">
 						<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
+					<!--- choose a collection for restore file --->
+					<cfelseif session.type EQ "restore_collection_file">
+						<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
+					<!--- choose a folder for restore collection --->
+					<cfelseif session.type EQ "restore_collection">
+						<a href="##" onclick="loadcontent('win_choosefolder','index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(2);return false;">
 					<!--- Plugin --->
 					<cfelseif session.type EQ "plugin">
 						<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">

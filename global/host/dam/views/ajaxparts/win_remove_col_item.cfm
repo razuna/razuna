@@ -24,7 +24,6 @@
 *
 --->
 <!--- Define variables --->
-
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>

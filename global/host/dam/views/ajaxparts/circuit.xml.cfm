@@ -124,6 +124,10 @@
 	<fuseaction name="remove_folder_confirm">
   		<include template="dsp_folder_remove_confirm" />
 	</fuseaction>
+	<!-- Folder: Confirm removal of folder -->
+	<fuseaction name="remove_collection_confirm">
+  		<include template="dsp_folder_remove_confirm" />
+	</fuseaction>
 	<!-- Folder: Confirm trash of folder -->
 	<fuseaction name="trash_folder_confirm">
   		<include template="dsp_folder_trash_confirm" />
@@ -197,7 +201,14 @@
     <fuseaction name="collection_trash">
 		<include template="dsp_collection_trash" />
     </fuseaction>
-	
+	<!-- WINDOW: Restore Collection -->
+	<fuseaction name="restore_collection">
+  		<include template="win_restore_collection" />
+	</fuseaction>
+	<!-- Collections: List -->
+	<fuseaction name="collections_trash_item">
+  		<include template="win_trash_col_item" />
+	</fuseaction>
 	<!-- collection: trash items -->
     <fuseaction name="collection_item_trash">
 		<include template="dsp_trash_col" />

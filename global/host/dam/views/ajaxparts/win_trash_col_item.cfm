@@ -23,16 +23,18 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+<!--- Define variables --->
+<cfparam name="attributes.id" default="">
+<cfparam name="attributes.col_id" default="">
+<cfparam name="attributes.folder_id" default="">
+<cfparam name="attributes.order" default="0">
 <cfoutput>
-	<div id="tabsfolder_tab">
-		<ul>
-			<!--- Show the trash collection and collection asset content --->
-			<li><a href="##collection" onclick="loadcontent('collection','#myself##xfa.ftrashcol#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_collection")#(#arraySum(col_count_trash['cnt'])#)</a></li>
-		</ul>
-		<div id="collection">
-		</div>
-<script type="text/javascript">
-	jqtabs("tabsfolder_tab");
-		loadcontent('collection','#myself#c.col_get_trash');
-</script>
+	<table border="0" cellpadding="5" cellspacing="5" width="100%">
+		<tr>
+			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("collection_trash_desc")#</td>
+		</tr>
+		<tr>
+			<td align="right" style="padding-top:10px;"><input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("collection_trash_button")#" onclick="loadcontent('rightside','#myself#c.#attributes.what#_trash&id=#attributes.id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#attributes.order#');destroywindow(1);" class="button"></td>
+		</tr>
+	</table>
 </cfoutput>

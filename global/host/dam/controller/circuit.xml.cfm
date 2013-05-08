@@ -985,6 +985,7 @@
 		<set name="attributes.released" value="false" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="collectiondetail" value="c.collection_detail" />
+		<xfa name="trash" value="ajax.collections_trash_item" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
 		<!-- CFC: Get access to this folder -->
@@ -1002,6 +1003,7 @@
 		<xfa name="save" value="c.collection_update" />
 		<xfa name="move" value="c.collection_move" />
 		<xfa name="remove" value="ajax.collections_del_item" />
+		<xfa name="trash" value="ajax.collections_trash_item" />
 		<xfa name="detaildoc" value="c.files_detail" />
 		<xfa name="detailimg" value="c.images_detail" />
 		<xfa name="detailvid" value="c.videos_detail" />
@@ -1078,14 +1080,14 @@
 		<!-- CFC: Move collection item -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="removeitem(attributes)" />
 		<!-- Show collection list -->
-		<do action="collection_detail" />
+		<do action="collection_explorer_trash" />
 	</fuseaction>
 	<!-- Remove Collection -->
 	<fuseaction name="col_remove">
 		<!-- CFC: Move collection item -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="remove(attributes)" />
-		<!-- Show collection list -->
-		<do action="collections" />
+		<!-- Show trash collection -->
+		<do action="col_get_trash" />
 	</fuseaction>
 	<!-- Update Collection -->
 	<fuseaction name="collection_update">
@@ -1130,6 +1132,14 @@
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="docopy(attributes)" />
 	</fuseaction>
 	
+	<!--collection assets move to trash-->
+	<fuseaction name="col_asset_move_trash">
+		<!-- CFC:move collection asset to trash-->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="col_asset_move_trash(attributes)" />
+		<!-- Show -->
+		<do action="collection_detail" />
+	</fuseaction>
+	
 	<!-- Load Trash Collection-->
     <fuseaction name="collection_explorer_trash">
     	<!-- XFA -->
@@ -1138,6 +1148,16 @@
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_col_count()" returnvariable="col_count_trash" />
 		<!-- Show -->
 		<do action="ajax.collection_trash" />
+	</fuseaction>
+	
+	<!--collection move to trash-->
+	<fuseaction name="col_move_trash">
+		<!-- CFC:move collection to trash-->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="col_move_trash(attributes)" />
+		<!-- Get Include -->
+		<do action="flushcache"/>
+		<!-- Show -->
+		<do action="collections" />
 	</fuseaction>
 	
 	<!-- Load collection trash items-->
@@ -1162,6 +1182,98 @@
 		<do action="flushcache"/>
 		<!-- Show -->
 		<do action="ajax.collection_item_trash" />
+	</fuseaction>
+	
+	
+	<!-- Restore Collections-->
+	<fuseaction name="collection_file_restore">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- HTTP referer for workflow -->
+		<set name="attributes.thispath" value="#thispath#" />
+		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
+		<!-- CFC: Upload -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="restore_col_asset(attributes)" returnvariable="attributes.is_trash" />
+		<set name="attributes.artofimage" value="" />
+		<set name="attributes.artofaudio" value="" />
+		<set name="attributes.artoffile" value="" />
+		<set name="attributes.artofvideo" value="" />
+		<set name="session.file_id" value="#attributes.file_id#" />
+		<if condition="attributes.loaddiv NEQ ''">
+			<true>
+				<if condition="attributes.loaddiv EQ 'collection'">
+					<true>
+						<do action="col_get_trash" />
+					</true>
+					<false>
+						<do action="folder_images" />
+					</false>
+				</if>
+			</true>
+		</if>
+	</fuseaction>
+	
+	<!-- Restore choose collection -->
+	<fuseaction name="restore_choose_collection">
+		<!-- Param -->
+		<set name="session.type" value="restore_collection_file" />
+		<set name="attributes.iscol" value="T" />
+		<if condition="structkeyexists(attributes,'file_id')">
+			<true>
+				<set name="session.file_id" value="#attributes.file_id#" />
+			</true>
+		</if>
+		<!-- Put art into sessions -->
+		<set name="session.artofimage" value="#attributes.artofimage#" />
+		<set name="session.artofvideo" value="#attributes.artofvideo#" />
+		<set name="session.artofaudio" value="#attributes.artofaudio#" />
+		<set name="session.artoffile" value="#attributes.artoffile#" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
+	</fuseaction>
+	
+	<!-- Restore collection ct files-->	
+	<fuseaction name="restore_col_file_do">
+		<!-- Param -->
+		<set name="attributes.file_id" value="#session.file_id#" />
+		<!-- CFC:Update collection ct files -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="restoreasset(attributes)"/>
+	</fuseaction>
+	<!-- Restore collection -->
+	<fuseaction name="collection_restore">
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="restore_collection(attributes)" returnvariable="attributes.is_trash" />
+		<set name="attributes.artofimage" value="" />
+		<set name="attributes.artofaudio" value="" />
+		<set name="attributes.artoffile" value="" />
+		<set name="attributes.artofvideo" value="" />
+		<!-- Show collection trash -->
+		<do action="col_get_trash" />
+	</fuseaction>
+	
+	<!-- Check the folder to restore collection -->
+	<fuseaction name="restore_trash_collection">
+		<!-- Param -->
+		<set name="session.type" value="restore_collection" />
+		<set name="attributes.iscol" value="T" />
+		<if condition="structkeyexists(attributes,'col_id')">
+			<true>
+				<set name="session.col_id" value="#attributes.col_id#" />
+			</true>
+		</if>
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
+	</fuseaction>
+	<fuseaction name="restore_collection_do">
+		<!-- Param -->
+		<set name="attributes.col_id" value="#session.col_id#" />
+		<!-- CFC:Update collection -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="restorecollection(attributes)"/>
+		<!-- Get Include -->
+		<do action="flushcache"/>
+		<!-- Show trash collection -->
+		<do action="col_get_trash" />
 	</fuseaction>
 
 	<!--
@@ -1686,9 +1798,11 @@
 			<true>
 				<do action="trash_assets" />
 			</true>
-			<false>
-				<do action="explorer_col" />
-			</false>
+		</if>
+		<if condition="attributes.loaddiv EQ 'collection'">
+			<true>
+				<do action="col_get_trash" />
+			</true>
 		</if>
 	</fuseaction>
 	<!-- Trash Folder -->
@@ -1727,13 +1841,19 @@
 		<!-- Show the folder listing -->
 		<set name="attributes.thetype" value="folder" />
 		<set name="attributes.type" value="movefolder" />
-		<set name="attributes.iscol" value="F" />
+		<set name="attributes.iscol" value="#attributes.iscol#" />
 		<set name="attributes.folder_level" value="1" />
 		<set name="session.thetype" value="#attributes.thetype#" />
 		<set name="session.thefolderorg" value="#attributes.folder_id#" />
 		<set name="seesion.type" value="#attributes.type#" />
-		<!-- Action: Get trash-->
-		<do action="trash_assets" />
+		<if condition="#attributes.loaddiv# EQ 'assets'">
+			<true>
+				<do action="trash_assets" />
+			</true>
+			<false>
+				<do action="col_get_trash" />
+			</false>
+		</if>
 	</fuseaction>
 	<!-- Update Folder -->
 	<fuseaction name="folder_update">
@@ -3959,6 +4079,18 @@
 						<set name="session.savehere" value="c.choosecollection_do" />
 					</false>
 				</if>
+			</true>
+		</if>
+		<!-- If we restore the asset record in this collection do...-->
+		<if condition="session.type EQ 'restore_collection_file'">
+			<true>
+				<set name="session.savehere" value="c.restore_col_file_do" />
+			</true>
+		</if>
+		<!-- If we restore the collection in this directory do...-->
+		<if condition="session.type EQ 'restore_collection'">
+			<true>
+				<set name="session.savehere" value="c.restore_collection_do" />
 			</true>
 		</if>
 		<!-- If we move a file in this folder do... -->
