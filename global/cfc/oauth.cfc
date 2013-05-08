@@ -38,7 +38,7 @@
 	</cffunction>
 
 	<!--- Return from Authenticate --->
-	<cffunction name="return" output="true" access="public">
+	<cffunction name="authenticate_return" output="true" access="public">
 		<cfargument name="thestruct" type="struct" required="true">
 		<!--- Fail if uid is not in struct --->
 		<cfif !structKeyExists(arguments.thestruct, "uid")>
@@ -83,6 +83,24 @@
 				</cfloop>
 				<cfoutput>
 					<span style="font-weight:bold;color:green;">We successfully connected to your account!</span><br /><br /><a href="##" onclick="window.close();">You can close this window now.</a>
+					<script type="text/javascript">
+						// Update divs
+						var req = new XMLHttpRequest();
+						var requp = new XMLHttpRequest();
+						var reqexp = new XMLHttpRequest();
+						req.open("GET", "index.cfm?fa=c.admin_integration", false);
+						requp.open("GET", "index.cfm?fa=c.smart_folders_update&sf_id=0&sf_type=#arguments.thestruct.account#&sf_name=#ucase(arguments.thestruct.account)#", false);
+						reqexp.open("GET", "index.cfm?fa=c.smart_folders", false);
+						req.send(null);
+						requp.send(null);
+						reqexp.send(null);
+						var page = req.responseText;
+						var pageup = requp.responseText;
+						var pageexp = reqexp.responseText;
+						window.opener.document.getElementById('admin_integration').innerHTML = page;
+						window.opener.document.getElementById('div_forall').innerHTML = pageup;
+						window.opener.document.getElementById('explorer').innerHTML = pageexp;
+					</script>
 				</cfoutput>
 				<!--- Catch --->
 				<cfcatch type="any">
@@ -122,6 +140,48 @@
 		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.account)#_%">
 		AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
 		</cfquery>
+		<cfreturn />
+	</cffunction>
+
+	<!--- Remove --->
+	<cffunction name="check" output="false" access="Public" returntype="query">
+		<cfargument name="account" type="string" required="true">
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT set_id, set_pref
+		FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.account)#_%">
+		AND host_id = <cfqueryparam value="#session.hostid#" CFSQLType="CF_SQL_NUMERIC">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
+	<!--- Remove --->
+	<cffunction name="getstoredtokens" output="false" access="Public" returntype="void">
+		<cfargument name="account" type="string" required="true">
+		<!--- Param --->
+		<cfset var setid = "">
+		<cfparam name="session['#arguments.account#']" default="#structnew()#" />
+		<!--- Get app keys --->
+		<cfif !structKeyExists(session["#arguments.account#"],"appkey")>
+			<cfinvoke component="settings" method="getappkey" account="#arguments.account#" />
+		</cfif>
+		<!--- Set token keys --->
+		<cfif !structKeyExists(session["#arguments.account#"],"oauth_token")>
+			<!--- Query --->
+			<cfset var tokens = check(arguments.account)>
+			<!--- Loop over and store in session scope --->
+			<cfloop query="tokens">
+				<!--- Replace account in setid --->
+				<cfset setid = replacenocase(set_id,"#arguments.account#_","","one")>
+				<!--- Set session in account scope --->
+				<cfset session["#arguments.account#"]["#setid#"] = set_pref>
+			</cfloop>
+		</cfif>
+		<!--- Return --->
 		<cfreturn />
 	</cffunction>
 

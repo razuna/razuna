@@ -7112,6 +7112,12 @@
 	<fuseaction name="smart_folders_settings">
 		<!-- CFC: Get one -->
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
+		<!-- CFC: Check if account is authenticated -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('dropbox')" returnvariable="chk_dropbox" />
+		<!-- CFC: Check if account is authenticated -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('s3')" returnvariable="chk_s3" />
+		<!-- CFC: Check if account is authenticated -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('box')" returnvariable="chk_box" />
 		<!-- Params -->
 		<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" overwrite="false" />
 		<!-- Show -->
@@ -7135,13 +7141,25 @@
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="remove(attributes.sf_id)" />
 	</fuseaction>
 
+	<!-- Load account API and so on -->
+	<fuseaction name="sf_load_account">
+		<!-- Param -->
+		<set name="session.sf_account" value="#attributes.sf_type#" />
+		<set name="attributes.path" value="/" overwrite="false" />
+		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="metadata_and_thumbnails(attributes.path)" returnvariable="qry_sf_list" />
+		<!-- Show -->
+		<do action="ajax.sf_load_account" />
+	</fuseaction>
+
 	<!-- END: Smart Folders -->
 
 	<!-- START: OAUTH -->
 
 	<!-- Get application Keys -->
 	<fuseaction name="getappkey">
-		<if condition="!structKeyExists(session['#attributes.account#'], 'appkey')">
+		<if condition="!structKeyExists(session, '#attributes.account#')">
 			<true>
 				<!-- Set DB connection for keys -->
 				<do action="setdbrazclients" />
@@ -7160,7 +7178,7 @@
 	<!-- Return from authentication -->
 	<fuseaction name="oauth_authenticate_return">
 		<!-- CFC -->
-		<invoke object="myFusebox.getApplicationData().oauth" methodcall="return(attributes)" />
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="authenticate_return(attributes)" />
 	</fuseaction>
 	<!-- Disconnect account -->
 	<fuseaction name="oauth_remove">

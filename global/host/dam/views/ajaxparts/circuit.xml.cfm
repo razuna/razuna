@@ -761,5 +761,9 @@
 	<fuseaction name="smart_folders_content">
   		<include template="dsp_smart_folders_content" />
 	</fuseaction>
+	<!-- Smart Folders: Account Content -->
+	<fuseaction name="sf_load_account">
+  		<include template="dsp_sf_load_account" />
+	</fuseaction>
 
 </circuit>

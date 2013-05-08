@@ -2295,7 +2295,7 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn />
 </cffunction>
 
-	<!--- Check for a new version --->
+	<!--- Check for app key --->
 	<cffunction name="getappkey">
 		<cfargument name="account" type="string">
 		<!--- Param --->
@@ -2317,9 +2317,10 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 				</cfif>
 			</cfloop>
 			<!--- Output --->
-			<cfoutput><span style="font-weight:bold;color:green;">Got the codes please authenticate now!</span></cfoutput>
+			<!--- <cfoutput><span style="font-weight:bold;color:green;">Got the codes please authenticate now!</span></cfoutput> --->
 			<cfcatch type="any">
 				<cfoutput><span style="font-weight:bold;color:red;">Error occured: #cfcatch.message# - #cfcatch.detail#</span></cfoutput>
+				<cfabort>
 			</cfcatch>
 		</cftry>
 		<!--- Return --->

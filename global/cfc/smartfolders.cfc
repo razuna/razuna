@@ -66,6 +66,8 @@
 	<!--- Update --->
 	<cffunction name="update" access="Public" output="false" returntype="void">
 		<cfargument name="thestruct" required="true" type="struct">
+		<!--- Param --->
+		<cfparam name="arguments.thestruct.sf_description" default="">
 		<!--- If the ID is 0 = new folder --->
 		<cfif arguments.thestruct.sf_id EQ 0>
 			<!--- Create ID --->

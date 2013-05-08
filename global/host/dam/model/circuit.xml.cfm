@@ -195,6 +195,9 @@
 		<!-- Oauth -->
 		<instantiate class="oauth" object="myFusebox.getApplicationData().oauth" overwrite="true">
 		</instantiate>
+		<!-- Oauth -->
+		<instantiate class="dropbox" object="myFusebox.getApplicationData().dropbox" overwrite="true">
+		</instantiate>
 	</fuseaction>
 	
 </circuit>

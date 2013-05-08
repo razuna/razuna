@@ -40,12 +40,20 @@
 	</cfif>
 	<div style="clear:both;"></div>
 	<!--- Load smart folders --->
-	<div id="smartfolders" style="width:200;height:200;float:left;">
+	<div id="smartfolders" style="width:200;height:200;float:left;padding-left:10px;">
 		<cfif qry_sf.recordcount EQ 0>
 			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("smart_folder_new_tooltip")#</button></a>
 		<cfelse>
 			<cfloop query="qry_sf">
-				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">#sf_name#</a> <br />
+				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">
+					<div style="float:left;padding-right:5px;">
+						<img src="#dynpath#/global/host/dam/images/folder-blue-old.png" border="0" width="16px" />
+					</div>
+					<div style="float:left;text-decoration:none;">
+						#sf_name#
+					</div>
+				</a>
+				<div style="clear:both;"></div>
 			</cfloop>
 		</cfif>
 	</div>

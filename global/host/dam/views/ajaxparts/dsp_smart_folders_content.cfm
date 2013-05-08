@@ -28,18 +28,24 @@
 		<h2>#myFusebox.getApplicationData().defaults.trans("sf_content_right_when_empty")#</h2>
 	<cfelse>
 		<cfif qry_sf.sfprop.sf_prop_id NEQ "searchtext">
-			<div id="something">
-				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("settings")#</a>
+			<!--- Settings --->
+			<div style="padding-bottom:20px;">
+				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
 			</div>
+			<!--- Load external accounts here --->
+			<div id="sf_account"></div>
+			<script type="text/javascript">
+				$('##sf_account').load('#myself#c.sf_load_account', { sf_id: "#qry_sf.sf.sf_id#", sf_type: "#qry_sf.sf.sf_type#" })
+			</script>
+		<!--- If this is a saved search --->
+		<cfelseif qry_sf.sfprop.sf_prop_id EQ "searchtext">
+			<!--- This loads the search --->
+			<div id="sf_search"><div style="padding-top:10px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("search_loading")#</div></div>
+			<script type="text/javascript">
+				<cfif qry_sf.sfprop.sf_prop_id EQ "searchtext">
+					$('##sf_search').load('#myself#c.search_simple', { folder_id:"0", searchtext: "#qry_sf.sfprop.sf_prop_value#", from_sf: true, sf_id: "#qry_sf.sf.sf_id#" });
+				</cfif>
+			</script>
 		</cfif>
-		<!--- This loads the search --->
-		<div id="sf_search"><div style="padding-top:10px;font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("search_loading")#</div></div>
-		
-
-		<script type="text/javascript">
-			<cfif qry_sf.sfprop.sf_prop_id EQ "searchtext">
-				$('##sf_search').load('#myself#c.search_simple', { folder_id:"0", searchtext: "#qry_sf.sfprop.sf_prop_value#", from_sf: true, sf_id: "#qry_sf.sf.sf_id#" });
-			</cfif>
-		</script>
 	</cfif>
 </cfoutput>
