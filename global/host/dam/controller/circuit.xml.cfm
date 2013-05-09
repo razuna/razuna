@@ -55,6 +55,7 @@
 	<fuseaction name="dologin">
 		<!-- Params -->
 		<set name="attributes.rem_login" value="F" overwrite="false" />
+		<set name="attributes.redirectto" value="" overwrite="false" />
 		<set name="session.indebt" value="false" />
 		<!-- Check the user and let him in ot nor -->
 		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes.name,attributes.pass,'dam',attributes.rem_login)" returnvariable="logindone" />
@@ -79,6 +80,12 @@
 				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
 				<!-- set host again with real value -->
 				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
+				<!-- Redirect request -->
+				<if condition="attributes.redirectto NEQ ''">
+					<true>
+						<relocate url="#session.thehttp##cgi.http_host##myself##attributes.redirectto#&amp;_v=#createuuid('')#" />
+					</true>
+				</if>
 				<!-- TL = Transparent login. In other words this action is called directly -->
 				<if condition="structkeyexists(attributes,'tl')">
 					<true>
