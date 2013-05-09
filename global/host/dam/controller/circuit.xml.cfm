@@ -2397,6 +2397,7 @@
 	<fuseaction name="serve_file">
 		<!-- Param -->
 		<set name="attributes.thispath" value="#thispath#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Get asset path -->

@@ -791,6 +791,12 @@
 			</cfquery>
 			<!--- Set filename --->
 			<cfset qry.thefilename = qFile.thefilename>
+			<!--- Correct download URL --->
+			<cfif qFile.path_to_asset NEQ "http">
+				<cfset qry.theurl = "#session.thehttp##cgi.http_host#/#arguments.thestruct.dynpath#/assets/#session.hostid##qFile.path_to_asset#">
+			<cfelse>
+				<cfset qry.theurl = qFile.cloud_url_org>
+			</cfif>
 			<!--- Set av value --->
 			<cfset qry.av = true>
 		<cfelse>
