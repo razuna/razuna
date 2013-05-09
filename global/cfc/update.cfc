@@ -651,7 +651,70 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
-
+		<!--- Add in_trash Column in raz1_audios --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_audios <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IN_TRASH #thevarchar#(2) default 'F'<cfelse>change IN_TRASH IN_TRASH #thevarchar#(2) default 'F'</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_collections --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_collections <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IN_TRASH #thevarchar#(2) default 'F'<cfelse>change IN_TRASH IN_TRASH #thevarchar#(2) default 'F'</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_collections_ct_files --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_collections_ct_files <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IN_TRASH #thevarchar#(2) default 'F'<cfelse>change IN_TRASH IN_TRASH #thevarchar#(2) default 'F'</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_files --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_files <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IN_TRASH #thevarchar#(2) default 'F'<cfelse>change IN_TRASH IN_TRASH #thevarchar#(2) default 'F'</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_folders --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_folders <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IN_TRASH #thevarchar#(2) default 'F'<cfelse>change IN_TRASH IN_TRASH #thevarchar#(2) default 'F'</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_images --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_images <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IN_TRASH #thevarchar#(2) default 'F'<cfelse>change IN_TRASH IN_TRASH #thevarchar#(2) default 'F'</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Add in_trash Column in raz1_videos --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_videos <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column IN_TRASH #thevarchar#(2) default 'F'<cfelse>change IN_TRASH IN_TRASH #thevarchar#(2) default 'F'</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		
 		<!--- Add to internal table --->
 		<cftry>
 			<cfquery dataSource="razuna_default">

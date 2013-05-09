@@ -1336,6 +1336,7 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  PRIMARY KEY (FOLDER_ID),
 		  FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1405,6 +1406,7 @@
 		  HASHTAG			   VARCHAR(100),
 		  IS_AVAILABLE		   VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (FILE_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1484,6 +1486,7 @@
 		  HASHTAG			  VARCHAR(100),
 		  IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (IMG_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1719,6 +1722,7 @@
 		  col_released		VARCHAR(5) DEFAULT 'false',
 		  col_copied_from	VARCHAR(100),
 		  HOST_ID			INT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (COL_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -1753,6 +1757,7 @@
 		  COL_FILE_FORMAT  	VARCHAR(100),
 		  HOST_ID			INT,
 		  rec_uuid			VARCHAR(100),
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  PRIMARY KEY (rec_uuid),
 		  FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
 		)
@@ -1844,6 +1849,7 @@
 		HASHTAG			   		VARCHAR(100),
 		IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		CLOUD_URL_EXP		   INT,
+		IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		PRIMARY KEY (VID_ID),
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)
@@ -2090,6 +2096,7 @@
 		  	HASHTAG			   VARCHAR(100),
 		  	IS_AVAILABLE		 VARCHAR(1) DEFAULT 0,
 		  	CLOUD_URL_EXP		   INT,
+		  	IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 			PRIMARY KEY (aud_ID),
 			FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE
 		)

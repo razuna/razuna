@@ -998,6 +998,7 @@
 		  share_order			varchar(1) DEFAULT 'f',
 		  share_order_user		VARCHAR(100),
 		  HOST_ID				BIGINT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  PRIMARY KEY (FOLDER_ID),
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_HOSTID_FK1 FOREIGN KEY (HOST_ID)
 		  REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1067,6 +1068,7 @@
 		  HASHTAG			   VARCHAR(100),
 		  IS_AVAILABLE		   VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   BIGINT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_PK PRIMARY KEY (FILE_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_FK_HOST FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1146,6 +1148,7 @@
 		  HASHTAG			   VARCHAR(100),
 		  IS_AVAILABLE		 VARCHAR(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   BIGINT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_PK PRIMARY KEY (IMG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_FK_HOSTID FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1376,6 +1379,7 @@
 		  col_released		VARCHAR(5) DEFAULT 'false',
 		  col_copied_from	VARCHAR(100),
 		  HOST_ID			BIGINT,
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_PK PRIMARY KEY (COL_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_#arguments.thestruct.host_db_prefix#COL_FK1_HOSTS FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1410,6 +1414,7 @@
 		  COL_FILE_FORMAT  	VARCHAR(100),
 		  HOST_ID			BIGINT,
 		  rec_uuid			VARCHAR(100),
+		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		  PRIMARY KEY (rec_uuid),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_CT_FILES_FK1 FOREIGN KEY (COL_ID_R)
 			REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
@@ -1501,6 +1506,7 @@
 		HASHTAG			   		VARCHAR(100),
 		IS_AVAILABLE		  VARCHAR(1) DEFAULT 0,
 		CLOUD_URL_EXP		   BIGINT,
+		IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_PK PRIMARY KEY (VID_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_FK1 FOREIGN KEY (HOST_ID)
 		REFERENCES hosts (HOST_ID) ON DELETE CASCADE
@@ -1714,6 +1720,7 @@
 		    HASHTAG			    VARCHAR(100),
 		    IS_AVAILABLE		VARCHAR(1) DEFAULT 0,
 		    CLOUD_URL_EXP		BIGINT,
+		    IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_PK PRIMARY KEY (aud_ID),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE
 		)

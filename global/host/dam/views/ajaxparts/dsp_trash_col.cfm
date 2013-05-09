@@ -146,6 +146,7 @@
 					<cfloop query="col_trash">
 						<div class="assetbox">
 							<div class="theimg">
+								<img src=" #dynpath#/global/host/dam/images/folder-blue.png">
 							</div>
 							<div>
 								#col_name#
