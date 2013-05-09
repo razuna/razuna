@@ -7039,6 +7039,9 @@
 		<!-- Param -->
 		<set name="attributes.access" value="r" overwrite="false" />
 		<set name="attributes.fileid" value="" overwrite="false" />
+		<!-- Reset the rowmax and offset values -->
+		<set name="session.rowmaxpage" value="25" />
+		<set name="session.offset" value="0" />
 		<!-- Put the custom access into a session -->
 		<set name="session.customaccess" value="#attributes.access#" />
 		<!-- Put the custom fileid into session -->

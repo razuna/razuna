@@ -1956,6 +1956,7 @@
 	<cfargument name="thestruct" required="yes" type="struct">
 	<!--- Param --->
 	<cfparam name="session.showsubfolders" default="F">
+	<cfparam name="session.customfileid" default="">
 	<!--- Show assets from subfolders or not --->
 	<cfif arguments.thestruct.folder_id NEQ "">
 		<cfif session.showsubfolders EQ "T">
@@ -1975,6 +1976,9 @@
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
+		<cfif session.customfileid NEQ "">
+			AND img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		</cfquery>
 	<!--- Videos --->
 	<cfelseif arguments.thestruct.kind EQ "vid">
@@ -1985,6 +1989,9 @@
 		AND (vid_group IS NULL OR vid_group = '')
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
+		<cfif session.customfileid NEQ "">
+			AND vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
 		</cfquery>
 	<!--- Audios --->
@@ -1997,6 +2004,9 @@
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
+		<cfif session.customfileid NEQ "">
+			AND aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
+		</cfif>
 		</cfquery>
 	<!--- All Docs in this folder --->
 	<cfelseif arguments.thestruct.kind EQ "doc">
@@ -2006,6 +2016,9 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
+		</cfif>
+		<cfif session.customfileid NEQ "">
+			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
 		</cfquery>
 	<!--- Files --->
@@ -2025,6 +2038,9 @@
 			)
 		<cfelse>
 			lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+		</cfif>
+		<cfif session.customfileid NEQ "">
+			AND file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.customfileid#" list="true">)
 		</cfif>
 		</cfquery>
 	</cfif>
