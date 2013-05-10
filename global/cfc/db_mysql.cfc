@@ -2338,6 +2338,7 @@
 		  thesize 				varchar(100) DEFAULT '0',
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
+  		  hashtag			   	VARCHAR(100),
 		  PRIMARY KEY (av_id),
 		  KEY #arguments.thestruct.host_db_prefix#av_id_r (asset_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#av_fid_r (folder_id_r),

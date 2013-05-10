@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2013.03.23.1" />
+		<set name="attributes.cachetag" value="2013.05.06.1" />
 	</fuseaction>
 	
 	<!--
@@ -55,6 +55,7 @@
 	<fuseaction name="dologin">
 		<!-- Params -->
 		<set name="attributes.rem_login" value="F" overwrite="false" />
+		<set name="attributes.redirectto" value="" overwrite="false" />
 		<set name="session.indebt" value="false" />
 		<!-- Check the user and let him in ot nor -->
 		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes.name,attributes.pass,'dam',attributes.rem_login)" returnvariable="logindone" />
@@ -79,6 +80,12 @@
 				<invoke object="myFusebox.getApplicationData().lucene" methodcall="exists()" />
 				<!-- set host again with real value -->
 				<invoke object="myFusebox.getApplicationData().security" methodcall="initUser(Session.hostid,logindone.qryuser.user_id,'adm')" returnvariable="Request.securityobj" />
+				<!-- Redirect request -->
+				<if condition="attributes.redirectto NEQ ''">
+					<true>
+						<relocate url="#session.thehttp##cgi.http_host##myself##attributes.redirectto#&amp;_v=#createuuid('')#" />
+					</true>
+				</if>
 				<!-- TL = Transparent login. In other words this action is called directly -->
 				<if condition="structkeyexists(attributes,'tl')">
 					<true>
@@ -275,6 +282,8 @@
 	 			<!-- Param -->
 	 			<set name="session.hosttype" value="" overwrite="false" />
 	 			<set name="attributes.redirectmain" value="false" overwrite="false" />
+	 			<!-- Set that we are in custom view -->
+				<set name="session.customview" value="false" />
 	 			<!-- For Nirvanix get usage count -->
 				<if condition="application.razuna.storage EQ 'nirvanix'">
 					<true>
@@ -1126,7 +1135,7 @@
 		<!-- Reset session -->
 		<set name="session.file_id" value="" />
 		<set name="session.thefileid" value="" />
-		<if condition="!structkeyexists(attributes,'cv')">
+		<if condition="!session.customview">
 			<true>
 				<set name="session.customaccess" value="" />
 				<set name="session.customfileid" value="" />
@@ -2397,6 +2406,7 @@
 	<fuseaction name="serve_file">
 		<!-- Param -->
 		<set name="attributes.thispath" value="#thispath#" />
+		<set name="attributes.dynpath" value="#dynpath#" />
 		<!-- CFC: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: Get asset path -->
@@ -7043,10 +7053,15 @@
 		<!-- Param -->
 		<set name="attributes.access" value="r" overwrite="false" />
 		<set name="attributes.fileid" value="" overwrite="false" />
+		<!-- Reset the rowmax and offset values -->
+		<set name="session.rowmaxpage" value="25" />
+		<set name="session.offset" value="0" />
 		<!-- Put the custom access into a session -->
 		<set name="session.customaccess" value="#attributes.access#" />
 		<!-- Put the custom fileid into session -->
 		<set name="session.customfileid" value="#attributes.fileid#" />
+		<!-- Set that we are in custom view -->
+		<set name="session.customview" value="true" />
 		<!-- Check that API key is valid -->
 		<invoke object="myFusebox.getApplicationData().users" methodcall="checkapikey(attributes.api_key)" returnvariable="qry_api_key" />
 		<!-- CFC: Custom fields -->

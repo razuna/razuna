@@ -43,6 +43,7 @@
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/mini.js?_v=#attributes.cachetag#"></script>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
+<link rel="apple-touch-icon" href="#dynpath#/global/host/dam/images/razuna_icon_114.png" />
 </head>
 <body>
 <div id="container">

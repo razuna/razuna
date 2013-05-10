@@ -26,14 +26,15 @@
 <cfoutput>
 	<div style="float:left;padding-left:2px;padding-top:5px;font-weight:normal;">
 		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
-			<p><a href="#myself#c.share&fid=#session.fid#">Back to share</a></p>
+			<p><a href="#myself#c.share&fid=#session.fid#">#myFusebox.getApplicationData().defaults.trans("Back to share")#</a></p>
 		<cfelse>
 			<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
 			<br />
 		</cfif>
 		<cfif attributes.issearch>
-			Your search returned #qry_filecount.thetotal# record(s) in this folder!<br />
+			<cfset transvalues[1] = qry_filecount.thetotal>#myFusebox.getApplicationData().defaults.trans(transid="search_returned",values=transvalues)#
+			<br />
 		</cfif>
-		<cfif session.theuserid NEQ qry_user.folder_owner AND (!structkeyexists(attributes,"share") OR attributes.share EQ "F")>The user "#qry_user.user#" shared this folder with you.</cfif>
+		<cfif session.theuserid NEQ qry_user.folder_owner AND (!structkeyexists(attributes,"share") OR attributes.share EQ "F")><cfset transvalues[1] = qry_user.user>#myFusebox.getApplicationData().defaults.trans(transid="shared_folder_with_you",values=transvalues)#</cfif>
 	</div>
 </cfoutput>

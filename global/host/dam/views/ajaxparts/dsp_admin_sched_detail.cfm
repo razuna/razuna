@@ -173,7 +173,7 @@
 									<cfset frequency = 2>
 								</cfcase>
 								<cfdefaultcase>
-									<cfif NOT structkeyexists(attributes,"add")>
+									<cfif !structkeyexists(attributes,"add") AND qry_detail.recordcount NEQ 0>
 										<cfset frequency = 3>
 										<cfset hours   = Int(qry_detail.sched_interval / 3600)>
 										<cfset minutes = Int((qry_detail.sched_interval - hours * 3600) / 60)>

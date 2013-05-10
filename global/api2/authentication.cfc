@@ -30,6 +30,7 @@
 	<cfset application.razuna.datasource = application.razuna.api.dsn>
 	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
 	<cfset application.razuna.setid = application.razuna.api.setid>
+	<cfset application.razuna.api.thehttp = "http://">
 
 	<!--- Check for db entry --->
 	<cffunction name="checkdb" access="public" output="no">

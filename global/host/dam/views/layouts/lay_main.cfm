@@ -74,6 +74,7 @@
 <cfelse>
 	<link rel="SHORTCUT ICON" href="#dynpath#/global/host/dam/images/favicon.ico" />
 </cfif>
+<link rel="apple-touch-icon" href="#dynpath#/global/host/dam/images/razuna_icon_114.png" />
 <!--- tooltip styling --->
 <style>
 ##demotip {

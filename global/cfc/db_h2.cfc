@@ -1830,6 +1830,7 @@
 		  thesize 				varchar(100) DEFAULT '0',
   		  thewidth 				varchar(50) DEFAULT '0',
   		  theheight				varchar(50) DEFAULT '0',
+  		  hashtag			   	VARCHAR(100),
 		  PRIMARY KEY (av_id)
 		)
 		</cfquery>

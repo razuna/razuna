@@ -484,6 +484,12 @@
 			<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
 			<cfset theheight = trim(listlast(theheight," "))>
 			<cfset thewidth = trim(listlast(thewidth," "))>
+			<cfif !isNumeric(theheight)>
+				<cfset theheight = 0>
+			</cfif>
+			<cfif !isNumeric(thewidth)>
+				<cfset thewidth = 0>
+			</cfif>
 			<!--- Remove the temp file sh --->
 			<cffile action="delete" file="#arguments.thestruct.theshw#">
 			<cffile action="delete" file="#arguments.thestruct.theshh#">
