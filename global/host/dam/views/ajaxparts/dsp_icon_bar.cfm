@@ -61,22 +61,22 @@
 					<cfif attributes.folderaccess NEQ "R"> 
 						<cfif !(qry_user.folder_owner EQ session.theuserid AND trim(qry_foldername) EQ "my folder") OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
 							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
-								<div style="float:left;padding-right:15px;"><button class="awesome medium green">Add your files</button></div>
+								<div style="float:left;padding-right:15px;"><button class="awesome medium green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button></div>
 							</a>
 						<cfelseif cs.myfolder_upload>
 							<a href="##" onclick="showwindow('#myself##xfa.assetadd#&folder_id=#folder_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("add_file")#">
-								<div style="float:left;padding-right:15px;"><button class="awesome medium green">Add your files</button></div>
+								<div style="float:left;padding-right:15px;"><button class="awesome medium green">#myFusebox.getApplicationData().defaults.trans("add_your_files")#</button></div>
 							</a>
 						</cfif>
 					</cfif>
-					<cfif !attributes.bot>
+					<cfif !attributes.bot AND !session.customview>
 						<!--- Select --->
 						<cfif cs.icon_select>
 							<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>','#kind#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 								<div style="float:left;padding-top:5px;">
 									<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
 								</div>
-								<div style="float:left;padding-right:15px;padding-top:5px;">Select all</div>
+								<div style="float:left;padding-right:15px;padding-top:5px;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 							</a>
 						</cfif>
 						<!--- Search --->
