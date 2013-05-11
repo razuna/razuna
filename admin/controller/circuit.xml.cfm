@@ -1260,6 +1260,17 @@
 		<!-- Param -->
 		<set name="attributes.firsttime" value="T" overwrite="false" />
 		<set name="session.updatedb" value="false" />
+		<!-- Add Razuna Client db connection -->
+		<set name="session.firsttime.database" value="razuna_client" />
+		<set name="session.firsttime.database_type" value="mysql" />
+		<set name="session.firsttime.db_name" value="razuna_clients" />
+		<set name="session.firsttime.db_server" value="db.razuna.com" />
+		<set name="session.firsttime.db_port" value="3306" />
+		<set name="session.firsttime.db_user" value="razuna_client" />
+		<set name="session.firsttime.db_pass" value="D63E61251" />
+		<set name="session.firsttime.db_action" value="create" />
+		<!-- CFC: Add the datasource -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
 		<!-- CFC: Get all Hosts -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="allhosts()" returnvariable="attributes.qryhosts" />
 		<!-- CFC: Do the DB update -->
