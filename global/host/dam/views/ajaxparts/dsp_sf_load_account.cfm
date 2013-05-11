@@ -25,11 +25,16 @@
 --->
 <cfoutput>
 	<cfset pc = "">
+	<input type="hidden" id="thepath" name="thepath" value="" />
 	<!--- Breadcrumb --->
 	<strong><a href="##" onclick="$('##sf_account').load('#myself#c.sf_load_account', { sf_type: '#session.sf_account#' });return false;">Home</a> / <cfloop list="#qry_sf_list.path#" index="p" delimiters="/">
 			<cfset pc = pc & "/" & p>
 			<a rel="prefetch" href="##" onclick="$('##sf_account').load('#myself#c.sf_load_account', { path: '/#pc#', sf_type: '#session.sf_account#' });return false;">#p#</a> / 
 		</cfloop></strong>
+	<p></p>
+	<div id="sf_select_div">
+		<div style="padding:10px;"><a href="##" onclick="downloadselected();">Download selected files into Razuna</a></div>
+	</div>
 	<p></p>
 	<div style="text-decoration:none;width:600px;" id="selectme">
 		<!--- Loop over array --->
@@ -90,8 +95,11 @@
 			event: "scrollstop"
 		});
 		$(window).bind("load", function() { 
-		    var timeout = setTimeout(function() {$("img.lazy").trigger("scrollstop")}, 5000);
+		    var timeout = setTimeout(function() {
+		    	$("img.lazy").trigger("scrollstop")
+		    }, 5000);
 		});
+		$(window).resize();
 		// Make files selectable
 		$("##selectme").selectable({
 			cancel: 'a,##folder',
@@ -103,10 +111,35 @@
 			stop: function(event, ui) {
 				var l = '';
 				$( ".ui-selected", this ).each(function() {
-					l = l + this.id + ',';
+					if (this.id != "" && this.id != "folder"){
+						l += ',' + this.id;
+					}
 				});
-				alert(l);
+				// Store value in hidden field
+				$('##thepath').val(l);
+				// Call function to show/hide menu
+				showhidemenu();
 			}
 		});
+		// Show/hide dropdown
+		function showhidemenu(){
+			var n = $(".ui-selected").length;
+		    // Open or close selection
+		    if (n > 0) {
+				$("##sf_select_div").slideDown('slow');
+			}
+			if (n == 0) {
+				$("##sf_select_div").slideUp('slow');
+			}
+		}
+		// Trigger downloadselected
+		function downloadselected(){
+			// Grab the selected values from the hidden field
+			var thepath = $('##thepath').val();
+			// Store value in session scope
+			$('##div_forall').load('#myself#c.sf_load_download_folder_include', { path: thepath } );
+			// Open window for use to select folder
+			showwindow('#myself#c.sf_load_download_folder','#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#',600,1);
+		}
 	</script>
 </cfoutput>

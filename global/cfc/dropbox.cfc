@@ -127,8 +127,10 @@
 	</cffunction>
 
 	<!--- Download --->
-	<cffunction name="download" access="public" returntype="void">
+	<cffunction name="download" access="public" returntype="string">
 		<cfargument name="path" required="true" type="string">
+		<!--- Param --->
+		<cfset var thefile = "">
 		<!--- Check if dropbox dir is there --->
 		<cfif !directoryExists("#getTempDirectory()#dropbox")>
 			<cfdirectory action="create" directory="#getTempDirectory()#dropbox" mode="775" />
@@ -138,10 +140,15 @@
 			<!--- Call API --->
 			<cfinvoke method="media" path="#f#" download="true" returnvariable="media_result" />
 			<!--- Now download file --->
-			<cfhttp url="#media_result.url#" method="get" getasbinary="yes" path="#getTempDirectory()#dropbox" file="#listlast(f,"/")#" /> 
+			<cftry>
+				<cfhttp url="#media_result.url#" method="get" getasbinary="yes" path="#getTempDirectory()#dropbox" file="#listlast(f,"/")#" /> 
+				<!--- Set the filename. We need this is the asset function for the server add --->
+				<cfset thefile = thefile & "," & listlast(f,"/")>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
 		</cfloop>
 		<!--- Return --->
-		<cfreturn />
+		<cfreturn thefile />
 	</cffunction>
 
 	<!--- Call API --->

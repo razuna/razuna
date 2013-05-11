@@ -7187,25 +7187,34 @@
 	<fuseaction name="sf_load_download">
 		<!-- Params -->
 		<!-- We need to remove the leading / from the path -->
-		<set name="attributes.thefile" value="#replace(session.sf_path,'/','','all')#" />
+		<!-- <set name="attributes.thefile" value="#listlast(session.sf_path,'/','','all')#" /> -->
 		<!-- All files are being download into the dropbox folder -->
 		<set name="attributes.folderpath" value="#gettempdirectory()##session.sf_account#" />
 		<set name="attributes.thepath" value="#thispath#" />
 		<!-- Set that function should move file instead of copy -->
 		<set name="attributes.actionforfile" value="move" />
 		<!-- CFC: get class according to type -->
-		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="download(session.sf_path)" />		
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="download(session.sf_path)" returnvariable="attributes.thefile" />		
 		<!-- Call CFC -->
 		<do action="asset_upload_server" />
 	</fuseaction>
 	<!-- If we call the choose folder within the plugin -->
 	<fuseaction name="sf_load_download_folder">
+		<!-- Call the include but only if we path have defined (needed so we don't overwrite it when coming from multi select) -->
+		<if condition="structkeyexists(attributes,'path')">
+			<true>
+				<do action="sf_load_download_folder_include" />
+			</true>
+		</if>
 		<!-- Param -->
 		<set name="session.type" value="sf_download" />
-		<!-- Set path in session -->
-		<set name="session.sf_path" value="#attributes.path#" />
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
+	</fuseaction>
+	<!-- This is just an include and can be called to store the paths -->
+	<fuseaction name="sf_load_download_folder_include">
+		<!-- Set path in session -->
+		<set name="session.sf_path" value="#attributes.path#" />
 	</fuseaction>
 
 	<!-- END: Smart Folders -->

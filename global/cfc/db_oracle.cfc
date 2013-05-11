@@ -1577,7 +1577,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#settings
 		(
-		  SET_ID    VARCHAR2(100 CHAR) NOT NULL,
+		  SET_ID    VARCHAR2(500 CHAR) NOT NULL,
 		  SET_PREF  CLOB,
 		  HOST_ID	NUMBER,
 		  rec_uuid			VARCHAR(100),

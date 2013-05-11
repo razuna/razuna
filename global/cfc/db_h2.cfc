@@ -1248,7 +1248,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#settings
 		(
-		  SET_ID			VARCHAR(100) NOT NULL,
+		  SET_ID			VARCHAR(500) NOT NULL,
 		  SET_PREF			VARCHAR(2000),
 		  HOST_ID			BIGINT,
 		  rec_uuid			VARCHAR(100),

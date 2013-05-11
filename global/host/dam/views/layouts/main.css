@@ -917,4 +917,14 @@ padding: 10px;
 color: #CC0000;
 font-weight: bold;
 }
-
+#sf_select_div {
+	display: none;
+	height: 35px;
+	width: 610px;
+	font-weight:bold;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border: 1px solid #D3D3D3;
+	background: #E6E6E6;
+}

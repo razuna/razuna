@@ -684,6 +684,14 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column set_id #thevarchar#(500)<cfelse>change set_id set_id #thevarchar#(500)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 
 
 		<!--- Add to internal table --->
