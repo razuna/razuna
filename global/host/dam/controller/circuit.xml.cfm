@@ -3575,6 +3575,12 @@
 				<set name="onlyCollections" value="0" />
 			</false>
 		</if>
+		<!-- If we download from smart folders -->
+		<if condition="session.type EQ 'sf_download'">
+			<true>
+				<set name="session.savehere" value="c.sf_load_download" />
+			</true>
+		</if>
 		<!-- Show -->
 		<do action="ajax.choose_folder" />
 	</fuseaction>
@@ -7159,13 +7165,47 @@
 	<!-- Load account API and so on -->
 	<fuseaction name="sf_load_account">
 		<!-- Param -->
+		<set name="attributes.noview" value="false" overwrite="false" />
 		<set name="session.sf_account" value="#attributes.sf_type#" />
 		<set name="attributes.path" value="/" overwrite="false" />
 		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
 		<!-- CFC: get class according to type -->
 		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="metadata_and_thumbnails(attributes.path)" returnvariable="qry_sf_list" />
 		<!-- Show -->
-		<do action="ajax.sf_load_account" />
+		<if condition="!attributes.noview">
+			<true>
+				<do action="ajax.sf_load_account" />
+			</true>
+		</if>
+	</fuseaction>
+	<!-- Show file -->
+	<fuseaction name="sf_load_file">
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="media(attributes.path)" />
+	</fuseaction>
+	<!-- Download file -->
+	<fuseaction name="sf_load_download">
+		<!-- Params -->
+		<!-- We need to remove the leading / from the path -->
+		<set name="attributes.thefile" value="#replace(session.sf_path,'/','','all')#" />
+		<!-- All files are being download into the dropbox folder -->
+		<set name="attributes.folderpath" value="#gettempdirectory()##session.sf_account#" />
+		<set name="attributes.thepath" value="#thispath#" />
+		<!-- Set that function should move file instead of copy -->
+		<set name="attributes.actionforfile" value="move" />
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="download(session.sf_path)" />		
+		<!-- Call CFC -->
+		<do action="asset_upload_server" />
+	</fuseaction>
+	<!-- If we call the choose folder within the plugin -->
+	<fuseaction name="sf_load_download_folder">
+		<!-- Param -->
+		<set name="session.type" value="sf_download" />
+		<!-- Set path in session -->
+		<set name="session.sf_path" value="#attributes.path#" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
 	</fuseaction>
 
 	<!-- END: Smart Folders -->

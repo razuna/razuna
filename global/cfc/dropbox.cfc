@@ -107,6 +107,43 @@
 		<cfreturn apiresult />
 	</cffunction>
 	
+	<!--- Streams file to browser --->
+	<cffunction name="media">
+		<cfargument name="path" required="false" default="/">
+		<cfargument name="download" required="false" default="false" />
+		<!--- Set API vars --->
+		<cfset var a = structNew()>
+		<cfset structInsert(a, "apiurl", "media/dropbox")>
+		<cfset structInsert(a, "path", arguments.path)>
+		<!--- Call API --->
+		<cfset var apicall = apicall(a)>
+		<!--- Grab result and convert --->
+		<cfset var apiresult = deserializeJSON(apicall.filecontent)>
+		<cfif !arguments.download>
+			<cflocation url="#apiresult.url#" />
+		</cfif>
+		<!--- Return --->
+		<cfreturn apiresult />
+	</cffunction>
+
+	<!--- Download --->
+	<cffunction name="download" access="public" returntype="void">
+		<cfargument name="path" required="true" type="string">
+		<!--- Check if dropbox dir is there --->
+		<cfif !directoryExists("#getTempDirectory()#dropbox")>
+			<cfdirectory action="create" directory="#getTempDirectory()#dropbox" mode="775" />
+		</cfif>
+		<!--- Loop over path list --->
+		<cfloop list="#arguments.path#" index="f" delimiters=",">
+			<!--- Call API --->
+			<cfinvoke method="media" path="#f#" download="true" returnvariable="media_result" />
+			<!--- Now download file --->
+			<cfhttp url="#media_result.url#" method="get" getasbinary="yes" path="#getTempDirectory()#dropbox" file="#listlast(f,"/")#" /> 
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 	<!--- Call API --->
 	<cffunction name="apicall" access="private">
 		<cfargument name="apistruct" type="struct" required="true">

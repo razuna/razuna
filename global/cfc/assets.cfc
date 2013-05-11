@@ -124,6 +124,7 @@
 	<!--- Params --->
 	<cfparam name="session.currentupload" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
+	<cfparam name="arguments.thestruct.actionforfile" default="copy">
 	<!--- Add each file to the temp db, create temp dir and so on --->
 	<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
 		<cfset var md5hash = "">
@@ -144,7 +145,7 @@
 		<!--- Create a temp directory to hold the file --->
 		<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
 		<!--- Copy the file into the temp dir --->
-		<cffile action="copy" source="#arguments.thestruct.folderpath#/#i#" destination="#arguments.thestruct.theincomingtemppath#/#i#" mode="775">
+		<cffile action="#arguments.thestruct.actionforfile#" source="#arguments.thestruct.folderpath#/#i#" destination="#arguments.thestruct.theincomingtemppath#/#i#" mode="775">
 		<!--- Get file extension --->
 		<cfset var theextension = listlast("#i#",".")>
 		<!--- If the extension is longer then 9 chars --->
