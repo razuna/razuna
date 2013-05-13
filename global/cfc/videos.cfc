@@ -116,6 +116,7 @@
 				FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
+				AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
 				)
@@ -136,6 +137,7 @@
 			FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (v.vid_group IS NULL OR v.vid_group = '')
+			AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			ORDER BY #sortby#
 		)
@@ -154,6 +156,7 @@
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
+		AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
@@ -627,6 +630,121 @@
 	<cfreturn />
 </cffunction>
 
+<!--- TRASH THE VIDEO --->
+<cffunction name="trashvideo" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Get trash video --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_video">
+		SELECT * FROM #session.hostdbprefix#videos 
+		WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#videos SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+</cffunction>
+
+<!--- TRASH MANY VIDEO --->
+<cffunction name="trashvideomany" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Loop --->
+	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+		<cfset i = listfirst(i,"-")>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#videos 
+			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<cfreturn />
+</cffunction>
+
+<!--- Get videos from trash --->
+<cffunction name="gettrashvideos" output="false">
+	<cfargument name="thestruct" type="struct">
+		<cfquery datasource="#application.razuna.datasource#" name="qry_video">
+			SELECT v.vid_id AS id, v.vid_filename AS filename,v.folder_id_r AS folder_id_r, v.vid_extension AS ext,v.vid_name_image AS filename_org,
+				'vid' AS kind,v.is_available AS is_available,v.vid_create_date AS date_create,v.vid_change_date AS date_change,v.link_kind AS link_kind,
+				v.link_path_url AS link_path_url,v.path_to_asset AS path_to_asset,v.cloud_url AS cloud_url,v.cloud_url_org AS cloud_url_org,v.hashtag AS hashtag 
+			FROM 
+				#session.hostdbprefix#videos v 
+			WHERE 
+				v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		</cfquery>
+		<cfif qry_video.RecordCount>
+			<cfset myArray = arrayNew( 1 )>
+			<cfset temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
+			<cfset QueryAddColumn(qry_video, "in_collection", "VarChar", myArray)>
+			<cfloop query="qry_video">
+				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
+					SELECT file_id_r
+					FROM #session.hostdbprefix#collections_ct_files
+					WHERE file_id_r = <cfqueryparam value="#qry_video.id#" cfsqltype="CF_SQL_VARCHAR"> 
+				</cfquery>
+				<cfif alert_col.RecordCount>
+					<cfset temp = QuerySetCell(qry_video, "in_collection", "True", qry_video.currentRow  )>
+				</cfif>
+			</cfloop>
+		</cfif>
+		<cfreturn qry_video />
+</cffunction>
+
+<!--- RESTORE THE VIDEO --->
+<cffunction name="restorevideos" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- check the parent folder is exist --->
+	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfset local = structNew()>
+	<cfif thedetail.RecordCount EQ 0>
+		<cfset local.istrash = "trash">
+	<cfelse>
+		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfloop query="dir_parent_id">
+			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
+				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif get_qry.in_trash EQ 'T'>
+				<cfset local.istrash = "trash">
+			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
+				<cfset local.root = "yes">
+					<!--- Update in_trash --->
+					<cfquery datasource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#videos 
+						SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+						WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>
+	<!--- set is trash --->
+	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
+		<cfset var is_trash = "intrash">
+	<cfelse>
+		<cfset var is_trash = "notrash">
+	</cfif>
+	<cfreturn is_trash />
+</cffunction>
 <!--- REMOVE MANY VIDEO --->
 <cffunction name="removevideomany" output="true">
 	<cfargument name="thestruct" type="struct">

@@ -122,6 +122,7 @@
 				FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
+				AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
 				)
@@ -142,6 +143,7 @@
 			FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 			WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			AND (i.img_group IS NULL OR i.img_group = '')
+			AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			ORDER BY #sortby#
 		)
@@ -160,6 +162,7 @@
 		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
+		AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
@@ -326,6 +329,122 @@
 		<cfset resetcachetoken("folders")>
 		<cfset resetcachetoken("search")>
 	<cfreturn />
+</cffunction>
+
+<!--- TRASH THE IMAGE --->
+<cffunction name="trashimage" output="false">
+	<cfargument name="thestruct" type="struct">
+		<!--- Select trash image --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_image">
+			SELECT * FROM #session.hostdbprefix#images
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images 
+			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+</cffunction>
+
+<!--- TRASH MANY IMAGE --->
+<cffunction name="trashimagemany" output="true">
+	<cfargument name="thestruct" type="struct">
+	<!--- Loop --->
+	<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+		<cfset i = listfirst(i,"-")>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images 
+			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cfloop>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("images")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<cfreturn />
+</cffunction>
+
+<!--- Get images from trash --->
+<cffunction name="gettrashimage" output="false">
+	<cfargument name="thestruct" type="struct">
+		<cfquery datasource="#application.razuna.datasource#" name="qry_image">
+			SELECT i.img_id AS id, i.img_filename AS filename,i.folder_id_r AS folder_id_r, i.thumb_extension AS ext,i.img_filename_org AS filename_org,
+				'img' AS kind,i.is_available AS is_available,i.img_create_date AS date_create,i.img_change_date AS date_change,i.link_kind AS link_kind,
+				i.link_path_url AS link_path_url,i.path_to_asset AS path_to_asset,i.cloud_url AS cloud_url,i.cloud_url_org AS cloud_url_org,i.hashtag AS hashtag 
+			FROM 
+				#session.hostdbprefix#images i 
+			WHERE 
+				i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		</cfquery>
+		<cfif qry_image.RecordCount>
+			<cfset myArray = arrayNew( 1 )>
+			<cfset temp= ArraySet(myArray, 1, qry_image.RecordCount, "False")>
+			<cfset QueryAddColumn(qry_image, "in_collection", "VarChar", myArray)>
+			<cfloop query="qry_image">
+				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
+					SELECT file_id_r
+					FROM #session.hostdbprefix#collections_ct_files
+					WHERE file_id_r = <cfqueryparam value="#qry_image.id#" cfsqltype="CF_SQL_VARCHAR"> 
+				</cfquery>
+				<cfif alert_col.RecordCount>
+					<cfset temp = QuerySetCell(qry_image, "in_collection", "True", qry_image.currentRow  )>
+				</cfif>
+			</cfloop> 
+		</cfif>
+		<cfreturn qry_image />
+</cffunction>
+
+<!--- RESTORE THE IMAGE --->
+<cffunction name="restoreimage" output="false" returntype="any" >
+	<cfargument name="thestruct" type="struct">
+	<!--- check the parent folder is exist --->
+	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfset local = structNew()>
+	<cfif thedetail.RecordCount EQ 0>
+		<cfset local.istrash = "trash">
+	<cfelse>
+		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfloop query="dir_parent_id">
+			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
+				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif get_qry.in_trash EQ 'T'>
+				<cfset local.istrash = "trash">
+			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
+				<cfset local.root = "yes">
+				<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#images 
+					SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+					WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>
+	<!--- Set is_trash --->
+	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
+		<cfset var is_trash = "intrash">
+	<cfelse>
+		<cfset var is_trash = "notrash">
+	</cfif>
+	<cfreturn is_trash />
 </cffunction>
 
 <!--- REMOVE MANY IMAGE --->
@@ -918,9 +1037,9 @@
 		</cfif>
 		<!--- IM commands --->
 		<cfif thedpi EQ "">
-			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# +profile '*' -colorspace sRGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# -colorspace RGB #theflatten##theformatconv#">
 		<cfelse>
-			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# +profile '*' -colorspace sRGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# -colorspace RGB #theflatten##theformatconv#">
 		</cfif>
 		<cfset var theimargumentsthumb = "#theformatconv# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
 		<!--- Create script files --->
@@ -1388,7 +1507,8 @@
 			<!--- Update DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
