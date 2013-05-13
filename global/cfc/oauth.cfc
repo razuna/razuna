@@ -100,6 +100,7 @@
 						window.opener.document.getElementById('admin_integration').innerHTML = page;
 						window.opener.document.getElementById('div_forall').innerHTML = pageup;
 						window.opener.document.getElementById('explorer').innerHTML = pageexp;
+						window.opener.document.getElementById('mainsectionchooser').text = 'Smart Folders';
 					</script>
 				</cfoutput>
 				<!--- Catch --->

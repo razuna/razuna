@@ -33,7 +33,7 @@
 				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
 			</div>
 			<!--- Load external accounts here --->
-			<div id="sf_account"></div>
+			<div id="sf_account"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>
 			<script type="text/javascript">
 				$('##sf_account').load('#myself#c.sf_load_account', { sf_id: "#qry_sf.sf.sf_id#", sf_type: "#qry_sf.sf.sf_type#" })
 			</script>

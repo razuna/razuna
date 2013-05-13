@@ -46,10 +46,14 @@
 		<cfelse>
 			<cfloop query="qry_sf">
 				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">
-					<div style="float:left;padding-right:5px;">
-						<img src="#dynpath#/global/host/dam/images/folder-blue-old.png" border="0" width="16px" />
+					<div style="float:left;padding-right:5px;padding-bottom:5px;">
+						<cfif sf_type EQ "dropbox">
+							<img src="#dynpath#/global/host/dam/images/dropbox_25.png" border="0" width="18px" />
+						<cfelse>
+							<img src="#dynpath#/global/host/dam/images/search_16.png" border="0" width="16px" />
+						</cfif>
 					</div>
-					<div style="float:left;text-decoration:none;">
+					<div style="float:left;text-decoration:none;padding-top:2px;">
 						#sf_name#
 					</div>
 				</a>
