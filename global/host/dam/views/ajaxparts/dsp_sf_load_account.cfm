@@ -33,7 +33,7 @@
 		</cfloop></strong>
 	<p></p>
 	<div id="sf_select_div">
-		<div style="padding:10px;"><a href="##" onclick="downloadselected();">Download selected files into Razuna</a></div>
+		<div style="padding:10px;"><a href="##" onclick="downloadselected();">#myFusebox.getApplicationData().defaults.trans("sf_import_to_razuna_all")#</a></div>
 	</div>
 	<p></p>
 	<div style="text-decoration:none;width:600px;" id="selectme">

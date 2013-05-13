@@ -117,7 +117,7 @@
 	</cffunction>
 
 	<!--- Remove --->
-	<cffunction name="remove" access="Public" output="false">
+	<cffunction name="remove" access="Public" output="false" returntype="void">
 		<cfargument name="sf_id" required="false" default="0">
 		<!--- Remove in master record --->
 		<cfquery datasource="#application.razuna.datasource#">
@@ -132,7 +132,7 @@
 		<!--- Reset cache --->
 		<cfset variables.cachetoken = resetcachetoken("folders")>
 		<!--- Return --->
-		<cfreturn qry />
+		<cfreturn />
 	</cffunction>
 	
 </cfcomponent>
