@@ -147,7 +147,7 @@
 				<table width="100%" cellpadding="0" cellspacing="0" border="0" class="gridno">
 				<cfloop query="qry_groups_admin">					
 					<tr>
-						<td width="1%" nowrap="nowrap"><input type="checkbox" name="admin_group_#grp_id#" value="#grp_id#"<cfif listfind(grpnrlist, #grp_id#, ",") AND qry_detail.recordcount NEQ 0> checked</cfif>></td>
+						<td width="1%" nowrap="nowrap"><input type="checkbox" id="admin_group_#grp_id#" name="admin_group_#grp_id#" value="#grp_id#"<cfif listfind(grpnrlist, #grp_id#, ",") AND qry_detail.recordcount NEQ 0> checked</cfif><cfif grp_id EQ 1> onclick="chksysadmin();"</cfif>></td>
 						<td nowrap="nowrap">#grp_name#</td>
 						<td width="100%"><cfif Len(qry_groups_admin.grp_translation_key)>#defaultsObj.trans(qry_groups_admin.grp_translation_key)#</cfif>
 						</td>
@@ -169,7 +169,7 @@
 			</tr>
 			<cfloop query="qry_allhosts">
 				<tr>
-					<td width="1%" nowrap="nowrap"><input type="checkbox" value="#host_id#" name="hostid"<cfif listfind(hostlist, #host_id#, ",") OR qry_allhosts.recordcount EQ 1> checked<cfelseif session.hostid EQ host_id> checked</cfif>> #host_name#</td>
+					<td width="1%" nowrap="nowrap"><input type="checkbox" value="#host_id#" class="hostid" name="hostid"<cfif listfind(hostlist, #host_id#, ",") OR qry_allhosts.recordcount EQ 1> checked<cfelseif session.hostid EQ host_id> checked</cfif>> #host_name#</td>
 				</tr>
 			</cfloop>
 		</table>
@@ -237,6 +237,35 @@
 	function checkusername(){
 		$('##checkusernamediv').load('#myself#c.checkusername&user_id=#attributes.user_id#&user_login_name=' + $("##user_login_name").val() );
 	}
-	
+	// SystemAdmin checkbox clicked
+	function chksysadmin(){
+		// Check if sysadmin is checked
+		var sysadminischecked = $('##admin_group_1').is(':checked');		
+		// Check all hosts
+		if (sysadminischecked == true){
+			// Uncheck admin
+			$('##admin_group_2').attr('checked',false);
+			// Disable admin
+			$('##admin_group_2').attr('disabled',true);
+			$('.hostid').each( function(){
+				$(this).attr('checked',true);
+			});
+		}
+		// Uncheck all hosts
+		else{
+			// Uncheck admin
+			$('##admin_group_2').attr('checked',false);
+			// Disable admin
+			$('##admin_group_2').attr('disabled',false);
+			// Uncheck hosts
+			$('.hostid').each( function(){
+				// Get tenant id
+				var thisval = $(this).val();
+				if (thisval != 1){
+					$(this).attr('checked',false);
+				}
+			});
+		}
+	}
 </script>
 </cfoutput>
