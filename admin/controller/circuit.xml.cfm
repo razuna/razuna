@@ -1315,8 +1315,12 @@
 	
 	<!-- Load -->
 	<fuseaction name="pref_global_wl">
+		<!-- Params -->
+		<set name="attributes.pathoneup" value="#pathoneup#" />
 		<!-- Get options -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_options()" returnvariable="qry_options" />
+		<!-- Check if CSS directory exists -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_css(attributes.pathoneup)" />
 		<!-- Show -->
 		<do action="ajax.pref_global_wl" />
 	</fuseaction>

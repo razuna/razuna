@@ -72,6 +72,10 @@
 .ui-widget { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 12px; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 1em; }
 </style>
+<!--- Custom CSS --->
+<cfif fileexists("#ExpandPath("../..")#global/host/dam/views/layouts/custom/custom.css")>
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/custom/custom.css" />
+</cfif>
 </head>
 <body>
 <div id="container">

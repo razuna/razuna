@@ -122,6 +122,10 @@
 }
 </cfif>
 </style>
+<!--- Custom CSS --->
+<cfif fileexists("#ExpandPath("../..")#global/host/dam/views/layouts/custom/custom.css")>
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/custom/custom.css" />
+</cfif>
 </head>
 <body>
 <cfif cgi.http_host CONTAINS "razuna.com" AND res_account.account_type EQ 0>

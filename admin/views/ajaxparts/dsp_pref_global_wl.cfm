@@ -112,7 +112,9 @@
 			</div>
 			<!--- CSS --->
 			<div id="wl_css">
-				<textarea name="thecss" style="width:700px;height:500px;"><cfinclude template="../../../global/host/dam/views/layouts/main.css"></textarea>
+				#myFusebox.getApplicationData().defaults.trans("wl_css_desc")# <a href="#dynpath#/global/host/dam/views/layouts/main.css" target="_blank">Razuna CSS</a>.
+				<br /><br />
+				<textarea name="thecss" style="width:700px;height:500px;"><cfinclude template="../../../global/host/dam/views/layouts/custom/custom.css"></textarea>
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
 				<br /><br />

@@ -2209,12 +2209,24 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfreturn q.opt_value />
 </cffunction>
 
-<!--- Get options --->
+<!--- Set CSS --->
 <cffunction name="set_css" output="false" returntype="void">
 	<cfargument name="thecss" type="string" required="true">
 	<cfargument name="pathoneup" type="string" required="true">
 	<!--- Write file --->
-	<cffile action="write" file="#arguments.pathoneup#/global/host/dam/views/layouts/main.css" output="#arguments.thecss#" charset="utf-8" mode="775" />
+	<cffile action="write" file="#arguments.pathoneup#/global/host/dam/views/layouts/custom/custom.css" output="#arguments.thecss#" charset="utf-8" mode="775" />
+	<!--- Return --->
+	<cfreturn />
+</cffunction>
+
+<!--- Get CSS --->
+<cffunction name="get_css" output="false" returntype="void">
+	<cfargument name="pathoneup" type="string" required="true">
+	<!--- Check if custom folder exists --->
+	<cfif !directoryExists("#arguments.pathoneup#/global/host/dam/views/layouts/custom")>
+		<cfdirectory action="create" directory="#arguments.pathoneup#/global/host/dam/views/layouts/custom" mode="775" />
+		<cffile action="write" file="#arguments.pathoneup#/global/host/dam/views/layouts/custom/custom.css" output="" mode="775" charset="utf-8" />
+	</cfif>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
