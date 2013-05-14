@@ -50,7 +50,19 @@
 					</cfif>
 					<br /><br />
 				</td>
-			</tr>	
+			</tr>
+			<!--- Amazon S3 --->
+			<tr>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("sf_type_s3")#</th>
+			</tr>
+			<tr>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("sf_type_s3_desc")#</td>
+			</tr>
+			<tr class="list">
+				<td colspan="2">
+					<div id="sf_s3"></div>
+				</td>
+			</tr>
 			<!--- JanRain --->
 			<tr>
 				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("header_integration_social_login")#</th>
