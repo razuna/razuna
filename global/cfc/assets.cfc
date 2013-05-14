@@ -398,60 +398,9 @@
 					<!--- Create inserts --->
 					<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 					<!--- Call the addasset function --->
-					<!---<cfthread intstruct="#arguments.thestruct#">--->
-						<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-					<!---</cfthread>--->
-					<!--- Create inserts --->
-					<!---<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
-					<!--- The tool paths --->
-					<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
-					<cfset arguments.thestruct.importpath = arguments.thestruct.directory>
-					<!--- Now start the file mumbo jumbo --->
-					<cfif fileType.type_type EQ "img">
-						<!--- IMAGE UPLOAD (call method to process a img-file) --->
-						<cfinvoke method="processImgFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
-						<cfset arguments.thestruct.thefiletype = "img">
-						<!--- Act on Upload Templates --->
-						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
-							<cfset arguments.thestruct.upltemptype = "img">
-							<cfset arguments.thestruct.file_id = returnid>
-							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
-						</cfif>
-					<cfelseif fileType.type_type EQ "vid">
-						<!--- VIDEO UPLOAD (call method to process a vid-file) --->
-						<cfinvoke method="processVidFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
-						<cfset arguments.thestruct.thefiletype = "vid">
-						<!--- Act on Upload Templates --->
-						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
-							<cfset arguments.thestruct.upltemptype = "vid">
-							<cfset arguments.thestruct.file_id = returnid>
-							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
-						</cfif>
-					<cfelseif fileType.type_type EQ "aud">
-						<!--- AUDIO UPLOAD (call method to process a vid-file) --->
-						<cfinvoke method="processAudFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
-						<cfset arguments.thestruct.thefiletype = "aud">
-						<!--- Act on Upload Templates --->
-						<cfif arguments.thestruct.upl_template NEQ 0 AND arguments.thestruct.upl_template NEQ "" AND arguments.thestruct.upl_template NEQ "undefined" AND returnid NEQ "">
-							<cfset arguments.thestruct.upltemptype = "aud">
-							<cfset arguments.thestruct.file_id = returnid>
-							<cfinvoke method="process_upl_template" thestruct="#arguments.thestruct#">
-						</cfif>
-					<cfelse>
-						<!--- DOCUMENT UPLOAD (call method to process a doc-file) --->
-						<cfinvoke method="processDocFile" thestruct="#arguments.thestruct#" returnVariable="returnid">
-						<cfset arguments.thestruct.thefiletype = "doc">
-					</cfif>
-					<!--- Put file_id in struct as fileid for plugin api --->
-					<cfset arguments.thestruct.fileid = returnid>
-					<cfset arguments.thestruct.file_name = arguments.thestruct.thefilename>
-					<cfset arguments.thestruct.folder_id = arguments.thestruct.qryfile.folder_id>
-					<cfset arguments.thestruct.folder_action = false>
-					<!--- Check on any plugin that call the on_file_add action --->
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
-					<cfset arguments.thestruct.folder_action = true>
-					<!--- Check on any plugin that call the on_file_add action --->
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />--->
+					<cfthread intstruct="#arguments.thestruct#">
+						<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
+					</cfthread>
 				<cfelse>
 					<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 				</cfif>
@@ -460,96 +409,6 @@
 		
 	</cfif>
 	
-	<!--- Add each file to the temp db, create temp dir and so on --->
-	<!---<cfloop list="#arguments.thestruct.thefile#" index="i" delimiters=",">
-		<cfset var md5hash = "">
-		<!--- If we are coming from a scheduled task then... --->
-		<cfif structkeyexists(arguments.thestruct,"sched")>
-			<cfset var x = i>
-			<!--- Get the filename --->
-			<cfset var i = listlast(i, "/")>
-			<!--- Get the folderpath --->
-			<cfset arguments.thestruct.folderpath = replacenocase(x, "/#i#", "", "ALL")>
-		</cfif>
-		<!--- Create a unique name for the temp directory to hold the file --->
-		<cfset arguments.thestruct.tempid = createuuid("")>
-		<!--- Put current id into session --->
-		<cfset session.currentupload = session.currentupload & "," & arguments.thestruct.tempid>
-		<cfset arguments.thestruct.thetempfolder = "asset#arguments.thestruct.tempid#">
-		<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.thepath#/incoming/#arguments.thestruct.thetempfolder#">
-		<!--- Create a temp directory to hold the file --->
-		<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775">
-		<!--- Copy the file into the temp dir --->
-		<cffile action="copy" source="#arguments.thestruct.folderpath#/#i#" destination="#arguments.thestruct.theincomingtemppath#/#i#" mode="775">
-		<!--- Get file extension --->
-		<cfset var theextension = listlast("#i#",".")>
-		<!--- If the extension is longer then 9 chars --->
-		<cfif len(theextension) GT 9>
-			<cfset var theextension = "txt">
-		</cfif>
-		<cfset var namenoext = replacenocase("#i#",".#theextension#","","All")>
-		<!--- Store the original filename --->
-		<cfset arguments.thestruct.thefilenameoriginal = i>
-		<!--- Rename the file so that we can remove any spaces --->
-		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilename" thename="#i#">
-		<cfinvoke component="global" method="convertname" returnvariable="arguments.thestruct.thefilenamenoext" thename="#namenoext#">
-		<!--- Do the rename action on the file --->
-		<cffile action="rename" source="#arguments.thestruct.theincomingtemppath#/#i#" destination="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#">
-		<!--- Get the filesize --->
-		<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#" returnvariable="orgsize">
-		<!--- MD5 Hash --->
-		<cfif FileExists("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
-			<cfset var md5hash = hashbinary("#arguments.thestruct.theincomingtemppath#/#arguments.thestruct.thefilename#")>
-		</cfif>
-		<!--- Check if we have to check for md5 records --->
-		<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
-		<!--- Check for the same MD5 hash in the existing records --->
-		<cfif checkformd5>
-			<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
-		<cfelse>
-			<cfset var md5here = 0>
-		</cfif>
-		<!--- If file does not exsist continue else send user an eMail --->
-		<cfif md5here EQ 0>
-			<!--- Add to temp db --->
-			<cfquery datasource="#variables.dsn#">
-			INSERT INTO #session.hostdbprefix#assets_temp
-			(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<cfif structkeyexists(arguments.thestruct,"sched")>, sched_id, sched_action</cfif>, file_id, host_id, thesize, md5hash)
-			VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#namenoext#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">
-			<cfif structkeyexists(arguments.thestruct,"sched")>
-				,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.sched_id#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.sched_action#">
-			</cfif>
-			,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#orgsize#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-			)
-			</cfquery>
-			<!--- We don't need to send an email --->
-			<cfset arguments.thestruct.sendemail = false>
-			<!--- Call the on_pre_process workflow --->
-			<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
-			<!--- Create inserts --->
-			<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
-			<!--- Call the addasset function --->
-			<cfthread intstruct="#arguments.thestruct#">
-				<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
-			</cfthread>
-		<cfelse>
-			<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
-		</cfif>
-	</cfloop>--->
 </cffunction>
 
 <!--- INSERT FROM EMAIL --->
