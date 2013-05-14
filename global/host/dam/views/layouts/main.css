@@ -928,3 +928,8 @@ font-weight: bold;
 	border: 1px solid #D3D3D3;
 	background: #E6E6E6;
 }
+#smartfolders h1 {
+	font-size: 14px;
+	font-weight: bold;
+	border-bottom: 1px solid grey;
+}

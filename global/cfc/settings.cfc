@@ -2327,4 +2327,38 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfreturn />
 	</cffunction>
 
+	<!--- Get_s3 --->
+	<cffunction name="get_s3" returntype="Query">
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT set_id, set_pref
+		FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		ORDER BY lower(set_id)
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
+	<!--- Get_s3 --->
+	<cffunction name="set_s3" returntype="void">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- Remove all aws fields ind DB first --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		</cfquery>
+		<!--- Loop over fields and call savesettings --->
+		<cfloop collection="#arguments.thestruct#" item="i">
+			<cfif i CONTAINS "aws_">
+				<cfinvoke method="savesetting" thefield="#i#" thevalue="#arguments.thestruct["#i#"]#" />
+			</cfif>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+		
+
 </cfcomponent>

@@ -26,10 +26,10 @@
 <cfoutput>
 	<!--- Section Chooser --->
 	<div style="text-decoration:none;font-weight:bold;font-size:15px;padding-bottom:20px;">
-		<div style="float:left;"><a href="##" id="mainsectionchooser" onclick="$('##mainselection').toggle();" class="ddicon" style="text-decoration:none;">Folders</a></div>
+		<div style="float:left;"><a href="##" id="mainsectionchooser" onclick="$('##mainselection').toggle();" class="ddicon" style="text-decoration:none;">#myFusebox.getApplicationData().defaults.trans("log_header_folders")#</a></div>
 		<div style="float:left;padding-top:3px;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##mainselection').toggle();" class="ddicon"></div>
 		<div id="mainselection" class="ddselection_header" style="display:none;top:17px;">
-			<p><a href="##" onclick="switchmainselection('folders','Folders');"><div id="section_folders" style="float:left;padding-right:2px;padding-top:3px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>Folders</a></p>
+			<p><a href="##" onclick="switchmainselection('folders','Folders');"><div id="section_folders" style="float:left;padding-right:2px;padding-top:3px;"><img src="#dynpath#/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0"></div>#myFusebox.getApplicationData().defaults.trans("log_header_folders")#</a></p>
 			<p><a href="##" onclick="switchmainselection('smart_folders','Smart Folders');"><div id="section_smart_folders" style="float:left;padding-right:14px;">&nbsp;</div>Smart Folders</a></p>
 			<cfif cs.tab_collections>
 				<p><a href="##" onclick="switchmainselection('collections','Collections');"><div id="section_collections" style="float:left;padding-right:14px;">&nbsp;</div>Collections</a></p>
@@ -42,8 +42,17 @@
 	<br />
 	<!--- Explorer --->
 	<div id="explorer" style="margin-left:0;padding-left:0;"></div>
-	<br />
-	<div><div id="slide_off"><a href="##" onclick="hideshow('off');">Collapse Menu</div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div>
+	
+	<div style="padding-top:30px;">
+		<div id="slide_off">
+			<a href="##" onclick="hideshow('off');">#myFusebox.getApplicationData().defaults.trans("collapse_menu")#</a>
+		</div>
+		<div id="slide_on" style="display:none;">
+			<a href="##" onclick="hideshow('on');">
+				<img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15">
+			</a>
+		</div>
+	</div>
 
 	<!--- <div id="apMiddle" style="z-index:10;"><div id="slide_off"><a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a></div><div id="slide_on" style="display:none;"><a href="##" onclick="hideshow('on');"><img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15"></a></div></div> --->
 	<script language="JavaScript" type="text/javascript">

@@ -36,7 +36,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#sfgetall */ sf_id, sf_name, sf_type
 		FROM #session.hostdbprefix#smart_folders
-		ORDER BY lower(sf_name)
+		ORDER BY lower(sf_type) DESC, lower(sf_name)
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />

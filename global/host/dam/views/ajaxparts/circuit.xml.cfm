@@ -429,6 +429,10 @@
 	<fuseaction name="admin_integration">
   		<include template="dsp_admin_integration" />
 	</fuseaction>
+	<!-- ADMIN: Integration -->
+	<fuseaction name="admin_integration_s3">
+  		<include template="dsp_admin_integration_s3" />
+	</fuseaction>
 	<!-- ADMIN: Customization -->
 	<fuseaction name="admin_customization">
   		<include template="dsp_admin_customization" />

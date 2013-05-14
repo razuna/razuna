@@ -83,10 +83,14 @@
 				<td width="100%"><input type="text" name="janrain_appurl" id="janrain_appurl" style="width:300px;" value="#jr_appurl#" /></td>
 			</tr>
 		</table>
-		<div id="status_integration" style="float:left;padding-top:5px;"></div><div style="float:right;"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" class="button" onclick="save_integr();" /></div>
+		<div style="float:left;"><input type="button" value="#myFusebox.getApplicationData().defaults.trans("button_save_janrain")#" class="button" onclick="save_integr();" /></div>
+		<div id="status_integration" style="float:left;padding-top:5px;"></div>
 		<div style="clear:both;"></div>
 	</cfif>
 	<script type="text/javascript">
+		// Load S3 div
+		$('##sf_s3').load('#myself#c.admin_integration_s3');
+		// Save
 		function save_integr(){
 			// Values
 			var e = $("##janrain_enable:checked").val();
@@ -99,11 +103,7 @@
 			$('##status_integration').html('<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("saved_change")#!</span>');
 			$('##status_integration').fadeTo(5000, 0);
 		}
-		// Get App Key
-		// function getkey(account){
-		// 	$('##status_get_app_key').load('#myself#c.getappkey&account=' + account);
-		// }
-
+		// OAuth
 		function oauth_authenticate(account){
 			window.open('#myself#c.oauth_authenticate&account=' + account,'','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=1100,height=800');
 		}

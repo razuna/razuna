@@ -26,7 +26,7 @@
 <cfoutput>
 	<!--- Drop down menu --->
 	<cfif qry_sf.recordcount NEQ 0>
-		<div style="width:60px;float:right;position:absolute;left:190px;">
+		<div style="width:60px;float:right;position:absolute;left:190px;top:3px;">
 			<div style="float:left;"><a href="##" onclick="$('##sfmanage').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
 			<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##sfmanage').toggle();" class="ddicon"></div>
 			<div id="sfmanage" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
@@ -44,19 +44,41 @@
 		<cfif qry_sf.recordcount EQ 0>
 			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=0');$('##sfmanage').toggle();return false;"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("smart_folder_new_tooltip")#</button></a>
 		<cfelse>
+			<cfset sf_search_found = false>
+			<cfset sf_cloud_found = false>
 			<cfloop query="qry_sf">
-				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">
-					<div style="float:left;padding-right:5px;padding-bottom:5px;">
-						<cfif sf_type EQ "dropbox">
-							<img src="#dynpath#/global/host/dam/images/dropbox_25.png" border="0" width="18px" />
-						<cfelse>
+				<cfif sf_type EQ "saved_search">
+					<cfif !sf_search_found>
+						<h1>#myFusebox.getApplicationData().defaults.trans("saved_searches")#</h1>
+					</cfif>
+					<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">
+						<div style="float:left;padding-right:5px;padding-bottom:5px;">
 							<img src="#dynpath#/global/host/dam/images/search_16.png" border="0" width="16px" />
-						</cfif>
-					</div>
-					<div style="float:left;text-decoration:none;padding-top:2px;">
-						#sf_name#
-					</div>
-				</a>
+						</div>
+						<div style="float:left;text-decoration:none;padding-top:2px;">
+							#sf_name#
+						</div>
+					</a>
+					<cfset sf_search_found = true>
+				<cfelse>
+					<cfif !sf_cloud_found>
+						<h1>#myFusebox.getApplicationData().defaults.trans("cloud_accounts")#</h1>
+					</cfif>
+					<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">
+						<div style="float:left;padding-right:5px;padding-bottom:5px;">
+							<cfif sf_type EQ "dropbox">
+								<img src="#dynpath#/global/host/dam/images/dropbox_25.png" border="0" width="18px" />
+							<cfelse>
+								
+							</cfif>
+						</div>
+						<div style="float:left;text-decoration:none;padding-top:2px;">
+							#sf_name#
+						</div>
+					</a>
+					<cfset sf_cloud_found = true>
+				</cfif>
+				
 				<div style="clear:both;"></div>
 			</cfloop>
 		</cfif>

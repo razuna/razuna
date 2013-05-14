@@ -4822,6 +4822,18 @@
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_janrain(attributes.janrain_enable,attributes.janrain_apikey,attributes.janrain_appurl)" />
 	</fuseaction>
+	<!-- Load S3 -->
+	<fuseaction name="admin_integration_s3">
+		<!-- CFC: Get all S3 account -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_s3()" returnvariable="qry_s3" />
+		<!-- Show -->
+		<do action="ajax.admin_integration_s3" />
+	</fuseaction>
+	<!-- Save S3 -->
+	<fuseaction name="admin_integration_s3_save">
+		<!-- CFC: Set -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_s3(attributes)" />
+	</fuseaction>
 	
 	<!--  -->
 	<!-- ADMIN: INTEGRATION STOP -->

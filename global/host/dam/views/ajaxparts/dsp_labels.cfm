@@ -26,7 +26,7 @@
 <cfoutput>
 	<!--- Folders --->
 	<!--- <div style="padding-left:10px;font-weight:bold;float:left;">Labels</div> --->
-	<div style="width:60px;float:right;left:190px;position:absolute;">
+	<div style="width:60px;float:right;left:190px;position:absolute;top:3px;">
 		<div style="float:left;"><a href="##" onclick="$('##labeltools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##labeltools').toggle();" class="ddicon"></div>
 		<div id="labeltools" class="ddselection_header" style="top:18px;width:250px;z-index:6;">
