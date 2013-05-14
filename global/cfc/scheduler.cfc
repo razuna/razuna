@@ -476,10 +476,11 @@
 </cffunction>
 
 <!--- RUN SCHEDULE -------------------------------------------------------->
-<cffunction name="doit" output="true" access="public">
+<cffunction name="doit" output="true" access="public" >
 	<cfargument name="sched_id" type="string" required="yes" default="">
 	<cfset var doit = structnew()>
 	<cfset doit.dirlist = "">
+	<cfset doit.directoryList = "">
 	<!--- <cfset var tempid = "sched-" & createuuid()> --->
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
@@ -487,42 +488,6 @@
 	<cfif doit.qry_detail.recordcount EQ 0>
 		<cfabort>
 	</cfif>
-	<!--- List all files from the server directory --->
-	<cfif doit.qry_detail.sched_method EQ "server">
-		<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" name="doit.serverdir" recurse="#doit.qry_detail.sched_server_recurse#" type="file">
-		<!--- Sort the above list in a query because cfdirectory sorting sucks --->
-		<cfquery dbtype="query" name="doit.serverdir">
-		SELECT *
-		FROM doit.serverdir
-		WHERE size != 0
-		AND attributes != 'H'
-		AND name != 'thumbs.db'
-		AND name NOT LIKE '.DS_STORE%'
-		AND name NOT LIKE '__MACOSX%'
-		AND name NOT LIKE '%scheduleduploads_%'
-		ORDER BY name
-		</cfquery>
-		<!--- Loop over the query and append to assets_temp for sorting correctly --->
-		<cfloop query="doit.serverdir">
-			<cfset doit.dirlist = directory & "/" & name & "," & doit.dirlist>
-			<!--- Get file extension --->
-			<!--- 
-			<cfset theextension = listlast("#name#",".")>
-			<!--- Insert into temp db --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#assets_temp
-			(tempid, filename, extension, path)
-			VALUES(
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#tempid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#name#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#theextension#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#directory#">
-			)
-			</cfquery> 
-			--->
-		</cfloop>
-	</cfif>
-	<!--- Return --->
 	<cfreturn doit>
 </cffunction>
 
