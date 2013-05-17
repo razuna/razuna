@@ -942,7 +942,7 @@
 			<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
 				<!--- Write files --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -w -b 1.8 -c #theoriginalasset# > #theformatconv#" mode="777">
-				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #theformatconv# #theformatconv#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #theimarguments#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="#theexe# #theimargumentsthumb#" mode="777">
 			</cfcase>
 			<cfdefaultcase>
