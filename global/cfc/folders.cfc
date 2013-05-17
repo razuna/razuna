@@ -3994,12 +3994,24 @@
 <!--- Store selection --->
 <cffunction name="store_selection" output="false" returntype="void">
 	<cfargument name="thestruct" required="yes" type="struct">
+	<!---<cfdump var="#arguments.thestruct.del_file_id#"><cfabort>--->
 	<!--- session --->
 	<cfparam name="session.file_id" default="">
 	<!--- Now simply add the selected fileids to the session --->
-	<cfset session.file_id = "">
-	<cfset session.file_id = session.file_id & "," & arguments.thestruct.file_id>
+	<cfset var thelist = session.file_id & "," & arguments.thestruct.file_id >
+	<cfset session.file_id = ListRemoveduplicates(thelist)>
 	<cfset session.thefileid = session.file_id>
+	<cfif session.file_id NEQ "">
+		<cfset list_file_ids = "">
+		<cfloop index="idx" from="1" to="#listlen(session.file_id)#">
+			<cfif !listFindNoCase(#arguments.thestruct.del_file_id#,#listGetAt(session.file_id,idx)#)>
+				<cfset list_file_ids = listAppend(list_file_ids,#listGetAt(session.file_id,idx)#,',')>		
+			</cfif>
+		</cfloop>
+		<cfset session.thefileid = list_file_ids>
+		<cfset session.file_id = list_file_ids>
+	</cfif>
+	
 </cffunction>
 
 <!--- Get foldername --->

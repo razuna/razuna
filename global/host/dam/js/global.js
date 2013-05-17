@@ -456,10 +456,10 @@ function storeids(theform){
            		fileids += document.forms[theform].elements[i].value + ',';
            		// filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
            	}
-           	// else {
-           	// 	del_fileids += document.forms[theform].elements[i].value + ',';
+           	else {
+           	 	del_fileids += document.forms[theform].elements[i].value + ',';
            	// 	// del_filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
-           	// }
+           	 }
       	}
    	}
    	// Only continue if there is something selected
