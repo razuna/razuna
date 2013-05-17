@@ -188,10 +188,6 @@
 						<tr>
 							<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
 							<td width="1%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.aud_name#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=aud');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
-								<!--- copy metadata link --->
-								<a href="##" onclick="showwindow('#myself#c.copy_metaData&what=#attributes.what#&file_id=#attributes.file_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;">
-									<div style="float:right;padding-right:30px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("Copy_meta_data")#</div>
-								</a>
 							</td>
 						</tr>
 						<cfloop query="qry_langs">
@@ -228,6 +224,10 @@
 				<!--- Submit Button --->
 				<cfif attributes.folderaccess NEQ "R">
 					<div stlye="clear:both;"></div>
+					<!--- copy metadata link --->
+					<div style="float:left;padding:10px;">
+						<button onclick="showwindow('#myself#c.copy_metaData&what=#attributes.what#&file_id=#attributes.file_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" class="button">#myFusebox.getApplicationData().defaults.trans("copy_meta_data")#</button>
+					</div>
 					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 				</cfif>
 			</div>

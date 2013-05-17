@@ -1157,12 +1157,12 @@
 	<cffunction name="copymetadataupdate" output="false">
 		<cfargument name="thestruct" type="struct">
 		<!--- select file name --->
-		<cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		<!--- <cfquery datasource="#application.razuna.datasource#" name="thedetail">
 			SELECT file_name 
 			FROM #session.hostdbprefix#files
 			WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+		</cfquery> --->
 		<!--- select file detail --->
 		<cfquery datasource="#application.razuna.datasource#" name="thefiletext">
 			SELECT file_desc,file_keywords 
@@ -1173,12 +1173,12 @@
 		<cfif arguments.thestruct.insert_type EQ 'replace'>
 			<cfloop list="#arguments.thestruct.idlist#" index="i">
 				<!--- update file name --->
-				<cfquery datasource="#application.razuna.datasource#" name="update">
+				<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
 					UPDATE #session.hostdbprefix#files
 					SET file_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.file_name#">
 					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
+				</cfquery> --->
 				<cfquery datasource="#application.razuna.datasource#" name="checkid">
 					SELECT file_id_r
 					FROM #session.hostdbprefix#files_desc
@@ -1211,24 +1211,24 @@
 			</cfloop>
 		<cfelse>
 			<cfloop list="#arguments.thestruct.idlist#" index="i">
-				<cfquery datasource="#application.razuna.datasource#" name="thefiledetail">
+				<!--- <cfquery datasource="#application.razuna.datasource#" name="thefiledetail">
 					SELECT file_name 
 					FROM #session.hostdbprefix#files
 					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
+				</cfquery> --->
 				<cfquery datasource="#application.razuna.datasource#" name="thefiletextdetail">
 					SELECT file_desc,file_keywords 
 					FROM #session.hostdbprefix#files_desc
 					WHERE file_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#" name="update">
+				<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
 					UPDATE #session.hostdbprefix#files
 					SET file_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thefiledetail.file_name# #thedetail.file_name#">
 					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
+				</cfquery> --->
 				<cfif thefiletextdetail.RecordCount>
 					<cfquery datasource="#application.razuna.datasource#" name="updatefiletext">
 						UPDATE #session.hostdbprefix#files_desc

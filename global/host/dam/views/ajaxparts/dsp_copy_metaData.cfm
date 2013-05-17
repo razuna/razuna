@@ -29,11 +29,11 @@
 <cfoutput>
 	<div id="container">
 		<div align="left">
-			<p style="margin-top:0px;"><a href="##" onclick="showwindow('#myself#c.metadata_choose_folder&what=#attributes.what#&file_id=#attributes.file_id#','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,2);"><b>#myFusebox.getApplicationData().defaults.trans("select_folder")#</b></a></p>
+			<a href="##" onclick="showwindow('#myself#c.metadata_choose_folder&what=#attributes.what#&file_id=#attributes.file_id#','#myFusebox.getApplicationData().defaults.trans("choose_location")#',600,2);"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("select_folder")#</button></a>
 		</div>
 		<div style="clear:both;"></div>
 		<div style="width:auto;float:right;height:60px;margin-top:-30px;">
-			<div style="float:left;background-color:##ddd;padding:4px;">
+			<div style="float:left;padding:4px;">
 				<div style="float:left;">
 					<input name="searchtext" id="searchtext" type="text" class="textbold" style="width:250px;" value="">
 				</div>

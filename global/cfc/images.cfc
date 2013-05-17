@@ -1509,11 +1509,11 @@
 <!--- Update all Metadata --->
 <cffunction name="copymetadataupdate" output="false" >
 	<cfargument name="thestruct" type="struct">
-	<cfquery name="select_images" datasource="#application.razuna.datasource#">
+	<!--- <cfquery name="select_images" datasource="#application.razuna.datasource#">
 		SELECT img_filename,shared FROM #session.hostdbprefix#images
 		WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="cf_sql_varchar" >
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
+	</cfquery> --->
 	<cfquery name="select_images_text" datasource="#application.razuna.datasource#">
 		SELECT img_description,img_keywords FROM #session.hostdbprefix#images_text
 		WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="cf_sql_varchar" >
@@ -1528,13 +1528,13 @@
 	</cfquery>
 	<!--- Update the tables --->
 	<cfif arguments.thestruct.insert_type EQ 'replace'>
-		<cfquery name="updateimages" datasource="#application.razuna.datasource#">
+		<!--- <cfquery name="updateimages" datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images SET 
 			img_filename = <cfqueryparam value="#select_images.img_filename#" cfsqltype="cf_sql_varchar">,
 			shared = <cfqueryparam value="#select_images.shared#" cfsqltype="cf_sql_varchar">
 			WHERE img_id IN (<cfqueryparam value="#arguments.thestruct.idList#" cfsqltype="cf_sql_varchar" list="true">)
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+		</cfquery> --->
 		<cfquery name="updateimges_text" datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images_text SET 
 			img_description = <cfqueryparam value="#select_images_text.img_description#" cfsqltype="cf_sql_varchar">,

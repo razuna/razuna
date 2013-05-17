@@ -1344,12 +1344,12 @@
 <cffunction name="copymetadataupdate" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- select audio name --->
-	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
+	<!--- <cfquery datasource="#application.razuna.datasource#" name="thedetail">
 		SELECT aud_name
 		FROM #session.hostdbprefix#audios
 		WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
+	</cfquery> --->
 	<!--- select audio details --->
 	<cfquery datasource="#application.razuna.datasource#" name="theaudtext">
 		SELECT aud_description,aud_keywords 
@@ -1361,12 +1361,12 @@
 		<!--- replace the metadata --->
 		<!--- update audio name --->
 		<cfloop list="#arguments.thestruct.idlist#" index="i">
-			<cfquery datasource="#application.razuna.datasource#" name="update">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
 				UPDATE #session.hostdbprefix#audios
 				SET aud_NAME = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.aud_name#">
 				WHERE aud_ID  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
+			</cfquery> --->
 			<cfquery datasource="#application.razuna.datasource#" name="checkid">
 				SELECT aud_id_r 
 				FROM #session.hostdbprefix#audios_text
@@ -1413,12 +1413,12 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- update audio name --->
-			<cfquery datasource="#application.razuna.datasource#" name="update">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
 				UPDATE #session.hostdbprefix#audios
 				SET aud_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theauddetail.aud_name# #thedetail.aud_name#">
 				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
+			</cfquery> --->
 			<!--- update audio desc and keywords --->
 			<cfif theaudtextdetail.RecordCount>
 				<cfquery datasource="#application.razuna.datasource#" name="updateaudtext">
