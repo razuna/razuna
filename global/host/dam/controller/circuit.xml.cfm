@@ -4328,8 +4328,11 @@
 		<set name="attributes.langcount" value="#qry_langs.recordcount#" />
 		<set name="attributes.folder_id" value="#thetask.qry_detail.sched_folder_id_r#" />
 		<set name="session.theuserid" value="#thetask.qry_detail.sched_user#" />
+		<set name="attributes.sched_method" value="#thetask.qry_detail.sched_method#" />
 		<set name="attributes.sched_action" value="#thetask.qry_detail.sched_server_files#" />
 		<set name="attributes.upl_template" value="#thetask.qry_detail.sched_upl_template#" />
+		<set name="attributes.directory" value="#thetask.qry_detail.sched_server_folder#" />
+		<set name="attributes.recurse" value="#thetask.qry_detail.sched_server_recurse#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Log start -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
@@ -4342,6 +4345,7 @@
 			<true>
 				<!-- Set params for adding assets -->
 				<set name="attributes.thefile" value="#thetask.dirlist#" />
+				<set name="attributes.thedir" value="#thetask.directoryList#" />
 				<!-- CFC: Add to system -->
 				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetserver(attributes)" />		
 			</true>
