@@ -116,6 +116,14 @@
 	<fuseaction name="folder_content">
   		<include template="dsp_folder_content" />
 	</fuseaction>
+	<!-- Copy Metadata -->
+	<fuseaction name="copy_metaData">
+  		<include template="dsp_copy_metaData" />
+	</fuseaction>
+	<!-- Copy Metadata Do -->
+	<fuseaction name="copy_metaData_do">
+  		<include template="dsp_copy_metaData_do" />
+	</fuseaction>
 	<!-- Folder: Content LIST -->
 	<fuseaction name="folder_content_list">
   		<include template="dsp_folder_content_list" />

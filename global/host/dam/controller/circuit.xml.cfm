@@ -568,6 +568,19 @@
 		</invoke>
 	</fuseaction>
 	
+	<fuseaction name="searchforcopymetadata">
+		<!-- Param -->
+		<set name="attributes.col" value="F" overwrite="false" />
+		<set name="attributes.id" value="0" overwrite="false" />
+		<set name="attributes.actionismove" value="F" overwrite="false" />
+		<set name="session.showmyfolder" value="F" overwrite="false" />
+		<!-- Get folder record -->
+		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="qFolder">
+			<argument name="thestruct" value="#attributes#" />
+			<argument name="id" value="#attributes.id#" />
+			<argument name="col" value="#attributes.col#" />
+		</invoke>
+	</fuseaction>
 	
 	
 	<!--
@@ -3561,6 +3574,12 @@
 				<set name="session.savehere" value="c.move_folder_do" />
 			</true>
 		</if>
+		<!-- Choose the folder for get asset-->
+		<if condition="session.type EQ 'copymetadata'">
+			<true>
+				<set name="session.savehere" value="c.get_meta_folder" />
+			</true>
+		</if>
 		<!-- Decide on the collection param -->
 		<if condition="attributes.iscol EQ 'T'">
 			<true>
@@ -3619,6 +3638,119 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
+	
+	<!-- Copy Metadata -->
+	<fuseaction name="copy_metadata">
+		<if condition="attributes.what EQ 'images'">
+			<true>
+				<!-- XFA -->
+				<xfa name="save" value="c.copy_metadata_image_do" />
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'audios'">
+			<true>
+				<!-- XFA -->
+				<xfa name="save" value="c.copy_metadata_audio_do" />
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'videos'">
+			<true>
+				<!-- XFA -->
+				<xfa name="save" value="c.copy_metadata_video_do" />
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'files'">
+			<true>
+				<!-- XFA -->
+				<xfa name="save" value="c.copy_metadata_files_do" />
+			</true>
+		</if>
+		<do action="ajax.copy_metaData" />
+	</fuseaction>
+	<!-- Copy Metadata to assign asset -->
+	<fuseaction name="copy_metadata_do">
+		<!-- CFC:search images-->
+		<if condition="attributes.thetype EQ 'images'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_images(attributes)" returnvariable="qry_results" />
+			</true>
+		</if>
+		<!-- CFC:search audios-->
+		<if condition="attributes.thetype EQ 'audios'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_audios(attributes)" returnvariable="qry_results" />
+			</true>
+		</if>
+		<!-- CFC:search videos-->
+		<if condition="attributes.thetype EQ 'videos'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_videos(attributes)" returnvariable="qry_results" />
+			</true>
+		</if>
+		<!-- CFC:search files-->
+		<if condition="attributes.thetype EQ 'files'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_files(attributes)" returnvariable="qry_results" />
+			</true>
+		</if>
+		<do action="ajax.copy_metaData_do" />
+	</fuseaction>
+	
+	<!-- Update the metadata to selected image assets-->
+	<fuseaction name="copy_metadata_image_do">
+		<invoke object="myFusebox.getApplicationData().images" methodcall="copymetadataupdate(attributes)" />
+	</fuseaction>
+	
+	<!-- Update the metadata to selected audio assets-->
+	<fuseaction name="copy_metadata_audio_do">
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="copymetadataupdate(attributes)" />
+	</fuseaction>
+	
+	<!-- Update the metadata to selected video assets-->
+	<fuseaction name="copy_metadata_video_do">
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="copymetadataupdate(attributes)" />
+	</fuseaction>
+	
+	<!-- Update the metadata to selected file assets-->
+	<fuseaction name="copy_metadata_files_do">
+		<invoke object="myFusebox.getApplicationData().files" methodcall="copymetadataupdate(attributes)" />
+	</fuseaction>
+	
+	<!-- Folders folders for metadata-->
+	<fuseaction name="metadata_choose_folder">
+		<!-- Param -->
+		<set name="session.type" value="copymetadata" />
+		<set name="session.thetype" value="#attributes.what#" />
+		<set name="session.file_id" value="#attributes.file_id#" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
+	</fuseaction>
+	
+	<!-- Get Metadata from Folders -->
+	<fuseaction name="get_meta_folder">
+		<if condition="attributes.what EQ 'images'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().images" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'audios'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().audios" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'videos'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().videos" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'files'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().files" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
+			</true>
+		</if>
+		<do action="ajax.copy_metaData_do" />
+	</fuseaction>
+	
 	<!-- Move the file into the desired folder -->
 	<fuseaction name="move_file_do">
 		<!-- Param -->

@@ -219,7 +219,9 @@
 						<!--- Filename --->
 						<tr>
 							<td width="1%" nowrap="true" style="font-weight:bold;">#myFusebox.getApplicationData().defaults.trans("file_name")#</td>
-							<td width="100%" nowrap="true"><input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+							<td width="100%" nowrap="true">
+								<input type="text" style="width:400px;" name="file_name" value="#qry_detail.detail.img_filename#" onchange="document.form#attributes.file_id#.fname.value = document.form#attributes.file_id#.file_name.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=img');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif>
+							</td>
 						</tr>
 						<!--- Desc --->
 						<cfloop query="qry_langs">
@@ -237,7 +239,6 @@
 							<td class="td2"></td>
 							<td class="td2">#myFusebox.getApplicationData().defaults.trans("comma_seperated")#</td>
 						</tr>
-
 					</table>
 				</div>
 				<div stlye="clear:both;"></div>
@@ -315,6 +316,10 @@
 				<!--- Submit Button --->
 				<cfif attributes.folderaccess NEQ "R">
 					<div stlye="clear:both;"></div>
+					<!--- copy metadata link --->
+					<div style="float:left;padding:10px;">
+						<button onclick="showwindow('#myself#c.copy_metaData&what=#attributes.what#&file_id=#attributes.file_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" class="button">#myFusebox.getApplicationData().defaults.trans("copy_meta_data")#</button>
+					</div>
 					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
 				</cfif>
 			</div>

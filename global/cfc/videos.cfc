@@ -1784,4 +1784,120 @@
 	<cfreturn qry />
 </cffunction>
 
+<!--- Update all copy Metadata --->
+<cffunction name="copymetadataupdate" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- select video name --->
+	<!--- <cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT vid_filename 
+		FROM #session.hostdbprefix#videos
+		WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery> --->
+	<!--- select video details --->
+	<cfquery datasource="#application.razuna.datasource#" name="thevidtext">
+		SELECT vid_keywords,vid_description
+		FROM #session.hostdbprefix#videos_text
+		WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfif arguments.thestruct.insert_type EQ 'replace'>
+		<!--- update video name --->
+		<cfloop list="#arguments.thestruct.idlist#" index="i">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+				UPDATE #session.hostdbprefix#videos 
+				SET vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.vid_filename#">
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<cfquery datasource="#application.razuna.datasource#" name="checkid">
+				SELECT vid_id_r
+				FROM #session.hostdbprefix#videos_text
+				WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- update video details --->
+			<cfif checkid.RecordCount>
+				<cfquery datasource="#application.razuna.datasource#" name="updatevidtext">
+					UPDATE #session.hostdbprefix#videos_text
+					SET vid_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtext.vid_keywords#">,
+					vid_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtext.vid_description#">
+					WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#videos_text
+						(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
+					VALUES(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
+						<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
+						<cfqueryparam value="#thevidtext.vid_description#" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#thevidtext.vid_keywords#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	<cfelse>
+		<cfloop list="#arguments.thestruct.idlist#" index="i">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="theviddetail">
+				SELECT vid_filename 
+				FROM #session.hostdbprefix#videos
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<cfquery datasource="#application.razuna.datasource#" name="thevidtextdetail">
+				SELECT vid_keywords,vid_description
+				FROM #session.hostdbprefix#videos_text
+				WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- update video name --->
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+				UPDATE #session.hostdbprefix#videos 
+				SET vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theviddetail.vid_filename# #thedetail.vid_filename#">
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<!--- update video details --->
+			<cfif thevidtextdetail.RecordCount>
+				<cfquery datasource="#application.razuna.datasource#" name="updatevidtext">
+					UPDATE #session.hostdbprefix#videos_text
+					SET vid_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtextdetail.vid_keywords# #thevidtext.vid_keywords#">,
+					vid_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtextdetail.vid_description# #thevidtext.vid_description#">
+					WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#videos_text
+							(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
+						VALUES(
+							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+							<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
+							<cfqueryparam value="#thevidtext.vid_description#" cfsqltype="cf_sql_varchar">, 
+							<cfqueryparam value="#thevidtext.vid_keywords#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>	
+</cffunction>
+
+<!--- Get all asset from folder --->
+<cffunction name="getAllFolderAsset" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#variables.dsn#" name="qry_data">
+		SELECT vid_id AS id,vid_filename AS filename
+		FROM #session.hostdbprefix#videos
+		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn qry_data>
+</cffunction>
+
 </cfcomponent>

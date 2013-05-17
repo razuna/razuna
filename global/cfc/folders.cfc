@@ -2986,6 +2986,9 @@
 				<!--- upload --->
 				<cfelseif session.type EQ "uploadinto">
 					<a href="##" onclick="showwindow('index.cfm?fa=c.asset_add&folder_id=#folder_id#','Add your files',650,1);return false;">
+				<!--- copy metadata --->
+				<cfelseif session.type EQ "copymetadata">
+					<a href="##" onclick="loadcontent('result','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&what=#session.thetype#&fid=#session.file_id#');destroywindow(2);return false;">
 				<!--- customization --->
 				<cfelseif session.type EQ "customization">
 					<a href="##" onclick="javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);">
