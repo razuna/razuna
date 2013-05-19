@@ -3846,6 +3846,8 @@
 		<xfa name="batchdo" value="c.batch_do" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Permissions of this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- If we are images -->
@@ -3873,6 +3875,12 @@
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
+		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="savebatchvalues(attributes)" />
+			</true>
+		</if>
 		<!-- If we are files -->
 		<if condition="attributes.what EQ 'doc'">
 			<true>

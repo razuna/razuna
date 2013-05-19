@@ -3975,7 +3975,17 @@
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfif>
+		<cfif arguments.thestruct.thekind EQ "ALL">
+			AND lower(file_extension) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">) 
+		<cfelseif arguments.thestruct.thekind NEQ "other">
+			AND (
+			lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#" cfsqltype="cf_sql_varchar">
+			OR lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#x" cfsqltype="cf_sql_varchar">
+			)
+		<cfelse>
+			AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+		</cfif>
+	</Cfif>
 	</cfquery>
 	<!--- Set the valuelist --->
 	<cfset var l = valuelist(qry.id)>
@@ -3987,12 +3997,24 @@
 <!--- Store selection --->
 <cffunction name="store_selection" output="false" returntype="void">
 	<cfargument name="thestruct" required="yes" type="struct">
+	<!---<cfdump var="#arguments.thestruct.del_file_id#"><cfabort>--->
 	<!--- session --->
 	<cfparam name="session.file_id" default="">
 	<!--- Now simply add the selected fileids to the session --->
-	<cfset var thelist = session.file_id & "," & arguments.thestruct.file_id>
+	<cfset var thelist = session.file_id & "," & arguments.thestruct.file_id >
 	<cfset session.file_id = ListRemoveduplicates(thelist)>
 	<cfset session.thefileid = session.file_id>
+	<cfif session.file_id NEQ "">
+		<cfset list_file_ids = "">
+		<cfloop index="idx" from="1" to="#listlen(session.file_id)#">
+			<cfif !listFindNoCase(#arguments.thestruct.del_file_id#,#listGetAt(session.file_id,idx)#)>
+				<cfset list_file_ids = listAppend(list_file_ids,#listGetAt(session.file_id,idx)#,',')>		
+			</cfif>
+		</cfloop>
+		<cfset session.thefileid = list_file_ids>
+		<cfset session.file_id = list_file_ids>
+	</cfif>
+	
 </cffunction>
 
 <!--- Get foldername --->
