@@ -765,7 +765,7 @@
 			<cfquery dataSource="#application.razuna.datasource#" name="qry_mime">
 			SELECT type_type
 			FROM file_types
-			WHERE lower(type_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#qry_file.extension#">
+			WHERE lower(type_id) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(qry_file.extension)#">
 			</cfquery>
 			<!--- IMAGES --->
 			<cfif qry_mime.type_type EQ "img">
@@ -4329,7 +4329,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfquery datasource="#variables.dsn#" name="fileType">
 	SELECT type_type, type_mimecontent, type_mimesubcontent
 	FROM file_types
-	WHERE lower(type_id) = <cfqueryparam value="#thefile.serverFileExt#" cfsqltype="cf_sql_varchar">
+	WHERE lower(type_id) = <cfqueryparam value="#lcase(thefile.serverFileExt)#" cfsqltype="cf_sql_varchar">
 	</cfquery>
 	<!--- set attributes of file structure --->
 	<cfif fileType.recordCount GT 0>

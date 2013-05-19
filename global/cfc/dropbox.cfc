@@ -141,9 +141,9 @@
 			<cfinvoke method="media" path="#f#" download="true" returnvariable="media_result" />
 			<!--- Now download file --->
 			<cftry>
-				<cfhttp url="#media_result.url#" method="get" getasbinary="yes" path="#getTempDirectory()#dropbox" file="#listlast(f,"/")#" /> 
+				<cfhttp url="#media_result.url#" method="get" getasbinary="yes" path="#getTempDirectory()#dropbox" file="#listlast(f,"/")#" />
 				<!--- Set the filename. We need this is the asset function for the server add --->
-				<cfset thefile = thefile & "," & listlast(f,"/")>
+				<cfset var thefile = listlast(f,"/") & "," & thefile>
 				<cfcatch type="any"></cfcatch>
 			</cftry>
 		</cfloop>

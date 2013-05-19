@@ -112,7 +112,7 @@
 				var l = '';
 				$( ".ui-selected", this ).each(function() {
 					if (this.id != "" && this.id != "folder"){
-						l += ',' + this.id;
+						l += this.id + ',';
 					}
 				});
 				// Store value in hidden field
