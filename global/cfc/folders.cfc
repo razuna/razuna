@@ -4000,6 +4000,7 @@
 	<!---<cfdump var="#arguments.thestruct.del_file_id#"><cfabort>--->
 	<!--- session --->
 	<cfparam name="session.file_id" default="">
+	<cfparam name="arguments.thestruct.del_file_id" default="">
 	<!--- Now simply add the selected fileids to the session --->
 	<cfset var thelist = session.file_id & "," & arguments.thestruct.file_id >
 	<cfset session.file_id = ListRemoveduplicates(thelist)>
