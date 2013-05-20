@@ -1209,8 +1209,15 @@ Comment:<br>
 	</cffunction>
 
 	<!--- Get watermark templates ---------------------------------------------------------------------->
-	<cffunction name="getWMtemplatedetail" output="false">
+	<cffunction name="getWMtemplatedetail" output="false" access="remote" returnformat="JSON">
 		<cfargument name="wm_temp_id" type="string" required="true">
+		<cfargument name="thedns" type="string" required="false" default="">
+		<cfargument name="thehostid" type="string" required="false" default="">
+		<!--- Since we can call this from external sources --->
+		<cfif arguments.thedns NEQ "">
+			<cfset application.razuna.datasource = arguments.thedns>
+			<cfset session.hostid = arguments.thehostid>
+		</cfif>
 		<!--- New struct --->
 		<cfset var qry = structnew()>
 		<!--- Query --->

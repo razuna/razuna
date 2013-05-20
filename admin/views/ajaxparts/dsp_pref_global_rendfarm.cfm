@@ -50,7 +50,7 @@
 			<td colspan="3">#defaultsObj.trans("header_root_server_desc")#</td>
 		</tr>
 		<tr>
-			<td colspan="3">http(s)://<input type="text" name="rendering_farm_server" id="rendering_farm_server" style="width:300px;" value="#settingsObj.thissetting('rendering_farm_server')#" /></td>
+			<td colspan="3"><input type="text" name="rendering_farm_server" id="rendering_farm_server" style="width:300px;" value="#settingsObj.thissetting('rendering_farm_server')#" /></td>
 		</tr>
 		<!--- Server Location --->
 		<tr>
