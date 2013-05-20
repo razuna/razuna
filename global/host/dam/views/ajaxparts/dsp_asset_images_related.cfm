@@ -38,6 +38,7 @@
 		 | <a href="#myself#c.serve_file&file_id=#img_id#&type=img&v=o">Download</a> 
 		 | <a href="##" onclick="toggleslide('divo#img_id#','inputo#img_id#');return false;">Direct Link</a>
 		 | <a href="##" onclick="showwindow('#myself#c.rend_meta&file_id=#img_id#&thetype=img&cf_show=img','Metadata',550,2);return false;">Metadata</a>
+		 | <a href="##" onclick="showwindow('#myself#c.exist_rendition_images&file_id=#img_id#&img_group_id=#img_group#&thetype=img&cf_show=img&folder_id=#folder_id#&what=#what#','Renditions',875,2);return false;">Renditions</a>
 		<cfif attributes.folderaccess NEQ "R">
 			 | <a href="##" onclick="remren('#img_id#');return false;">Remove</a>
 		</cfif>

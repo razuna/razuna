@@ -2467,6 +2467,51 @@
 		<!-- Show the folder listing -->
 		<do action="ajax.videos_detail" />
 	</fuseaction>
+	<!-- Videos Rendition -->
+	<fuseaction name="exist_rendition_videos">
+		<!-- XFA -->
+		<xfa name="save" value="c.videos_detail_save" />
+		<xfa name="tobasket" value="c.basket_put" />
+		<xfa name="tofavorites" value="c.favorites_put" />
+		<xfa name="sendemail" value="c.email_send" />
+		<xfa name="sendftp" value="c.ftp_send" />
+		<xfa name="fvideosloader" value="c.folder_videos_show" />
+		<xfa name="assetdetail" value="c.videos_detail" />
+		<!-- Params -->
+		<set name="attributes.kind" value="videos" />
+		<set name="attributes.cf_show" value="vid" />
+		<!-- CFC: Get file detail -->
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="detail(attributes)" returnvariable="qry_detail" />
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<!-- CFC: Get how many comments there are -->
+		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
+		<!-- CFC: Get languages -->
+		<do action="languages" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Get labels -->
+		<do action="labels" />
+		<!-- Get labels for this record -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'vid')" returnvariable="qry_labels" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="plwx" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="plr" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_r',attributes)" returnvariable="plr" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="pllink" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
+		<!-- Show the folder listing -->
+		<do action="ajax.exist_rendition_videos" />
+	</fuseaction>
 	<!-- Load related videos -->
 	<fuseaction name="videos_detail_related">
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
@@ -2505,6 +2550,18 @@
 	</fuseaction>
 	<!-- Convert Video -->
 	<fuseaction name="videos_convert">
+		<!-- Param -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC: Storage -->
+		<do action="storage" />
+		<!-- CFC: Convert video -->
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="convertvideothread(attributes)" />		
+	</fuseaction>
+	<!-- Videos Rendition Convert -->
+	<fuseaction name="rendition_videos_convert">
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
@@ -2583,6 +2640,55 @@
 		<!-- Show the folder listing -->
 		<do action="ajax.images_detail_related" />
 	</fuseaction>
+	<!-- Images Renditions -->
+	<fuseaction name="exist_rendition_images">
+		<!-- XFA -->
+		<xfa name="save" value="c.images_detail_save" />
+		<xfa name="tobasket" value="c.basket_put" />
+		<xfa name="tofavorites" value="c.favorites_put" />
+		<xfa name="sendemail" value="c.email_send" />
+		<xfa name="sendftp" value="c.ftp_send" />
+		<xfa name="assetdetail" value="c.images_detail" />
+		<!-- Params -->
+		<set name="attributes.kind" value="images" />
+		<set name="attributes.cf_show" value="img" />
+		<!-- CFC: Get languages -->
+		<do action="languages" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Get labels -->
+		<do action="labels" />
+		<!-- Get watermark templates -->
+		<do action="watermark" />
+		<!-- Get labels for this record -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'img')" returnvariable="qry_labels" />
+		<!-- CFC: Get XMP value -->
+		<invoke object="myFusebox.getApplicationData().xmp" methodcall="readxmpdb(attributes)" returnvariable="qry_xmp" />
+		<!-- CFC: Get file detail -->
+		<invoke object="myFusebox.getApplicationData().images" methodcall="detail(attributes)" returnvariable="qry_detail" />
+		<set name="attributes.qry_detail" value="#qry_detail#" />
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<!-- CFC: Get how many comments there are -->
+		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="plwx" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="plr" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_r',attributes)" returnvariable="plr" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="pllink" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
+		<!-- Show the image detail window -->
+		<do action="ajax.exist_rendition_images" />
+	</fuseaction>
 	<!-- Save Detail -->
 	<fuseaction name="images_detail_save">
 		<!-- Params -->
@@ -2636,7 +2742,22 @@
 		<!-- CFC: Convert images -->	
 		<invoke object="myFusebox.getApplicationData().images" methodcall="convertimage(attributes)" />
 	</fuseaction>
-	
+	<!-- Images Renditions Convert -->
+	<fuseaction name="rendition_images_convert">
+		<!-- Param -->
+		<set name="attributes.fromconverting" value="T" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
+		<!-- CFC: Get image settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_image()" returnvariable="attributes.qry_settings_image" />
+		<!-- CFC: Convert images -->	
+		<invoke object="myFusebox.getApplicationData().images" methodcall="convertimage(attributes)" />
+	</fuseaction>
 	<!--
 		END: DETAIL IMAGE SECTION
 	-->
@@ -2716,8 +2837,67 @@
 		<set name="attributes.folder_action" value="false" />
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_file_edit',attributes)" />
 	</fuseaction>
+	<!-- Audios Renditions -->
+	<fuseaction name="exist_rendition_audios">
+		<!-- XFA -->
+		<xfa name="save" value="c.audios_detail_save" />
+		<xfa name="tobasket" value="c.basket_put" />
+		<xfa name="tofavorites" value="c.favorites_put" />
+		<xfa name="sendemail" value="c.email_send" />
+		<xfa name="sendftp" value="c.ftp_send" />
+		<!-- Param -->
+		<set name="attributes.kind" value="audios" />
+		<set name="attributes.cf_show" value="aud" />
+		<!-- CFC: Get languages -->
+		<do action="languages" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Get labels -->
+		<do action="labels" />
+		<!-- Get labels for this record -->
+		<invoke object="myFusebox.getApplicationData().labels" methodcall="getlabels(attributes.file_id,'aud')" returnvariable="qry_labels" />
+		<!-- CFC: Get file detail -->
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="qry_detail" />
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
+		<!-- CFC: Get how many comments there are -->
+		<invoke object="myFusebox.getApplicationData().comments" methodcall="howmany(attributes)" returnvariable="qry_comments_total" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get config -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="plwx" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_wx',attributes)" returnvariable="plwx" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="plr" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('add_tab_detail_r',attributes)" returnvariable="plr" />
+		<!-- CFC: Get plugin actions -->
+		<set name="attributes.nameOfVariable" value="pllink" />
+		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('show_in_detail_link_wx',attributes)" returnvariable="pllink" />
+		<!-- Show the folder listing -->
+		<do action="ajax.exist_rendition_audios" />
+	</fuseaction>
 	<!-- Convert Audio -->
 	<fuseaction name="audios_convert">
+		<!-- Param -->
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- CFC: Storage -->
+		<do action="storage" />
+		<!-- CFC: Get video settings -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="prefs_video()" returnvariable="attributes.qry_settings_video" />
+		<!-- CFC: Get detail of original audio
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" /> -->
+		<!-- CFC: Convert video -->
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudiothread(attributes)" />		
+	</fuseaction>
+	<!-- Audio Rendtions Convert-->
+	<fuseaction name="rendition_audios_convert">
 		<!-- Param -->
 		<set name="attributes.dynpath" value="#dynpath#" />
 		<set name="attributes.httphost" value="#cgi.http_host#" />
@@ -4328,11 +4508,8 @@
 		<set name="attributes.langcount" value="#qry_langs.recordcount#" />
 		<set name="attributes.folder_id" value="#thetask.qry_detail.sched_folder_id_r#" />
 		<set name="session.theuserid" value="#thetask.qry_detail.sched_user#" />
-		<set name="attributes.sched_method" value="#thetask.qry_detail.sched_method#" />
 		<set name="attributes.sched_action" value="#thetask.qry_detail.sched_server_files#" />
 		<set name="attributes.upl_template" value="#thetask.qry_detail.sched_upl_template#" />
-		<set name="attributes.directory" value="#thetask.qry_detail.sched_server_folder#" />
-		<set name="attributes.recurse" value="#thetask.qry_detail.sched_server_recurse#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Log start -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
@@ -4345,7 +4522,6 @@
 			<true>
 				<!-- Set params for adding assets -->
 				<set name="attributes.thefile" value="#thetask.dirlist#" />
-				<set name="attributes.thedir" value="#thetask.directoryList#" />
 				<!-- CFC: Add to system -->
 				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetserver(attributes)" />		
 			</true>

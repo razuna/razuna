@@ -942,7 +942,7 @@
 			<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
 				<!--- Write files --->
 				<cffile action="write" file="#arguments.thestruct.thesh#" output="#thedcraw# -w -b 1.8 -c #theoriginalasset# > #theformatconv#" mode="777">
-				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #theimarguments#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesht#" output="#theexe# #theformatconv# #theformatconv#" mode="777">
 				<cffile action="write" file="#arguments.thestruct.theshtt#" output="#theexe# #theimargumentsthumb#" mode="777">
 			</cfcase>
 			<cfdefaultcase>
@@ -1110,9 +1110,17 @@
 			)
 			</cfquery>
 			<!--- Add to DB --->
+			<!---<cfquery datasource="#application.razuna.datasource#" name="qry_img_id">
+				SELECT i.img_id FROM raz1_images i WHERE i.img_group IS NULL
+			</cfquery>	--->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
 			SET
+			<cfif isDefined('arguments.thestruct.img_group_id') AND arguments.thestruct.img_group_id NEQ ''>
+				img_group = <cfqueryparam value="#arguments.thestruct.img_group_id#" cfsqltype="cf_sql_varchar">,
+			<cfelse>
+				img_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
+			</cfif>
 			img_filename = <cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">, 
 			img_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
 			folder_id_r = <cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">, 
@@ -1125,7 +1133,6 @@
 			img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">, 
 			img_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">, 
 			thumb_extension = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_format#" cfsqltype="cf_sql_varchar">, 
-			img_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
 			thumb_width = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">,
 			thumb_height = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
 			<cfif isNumeric(#thewidth#)>
@@ -1210,7 +1217,7 @@
 	i.img_alignment, i.img_license, i.img_dominant_color, i.img_color_mode, img_image_type, i.img_category_one, 
 	i.img_remarks, i.img_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org
 	FROM #session.hostdbprefix#images i
-	WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+	WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#"> 
 	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	ORDER BY img_create_time DESC
 	</cfquery>

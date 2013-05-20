@@ -245,6 +245,10 @@
 	<fuseaction name="videos_detail_related">
   		<include template="dsp_asset_videos_related" />
 	</fuseaction>
+	<!-- Videos: Renditions -->
+	<fuseaction name="exist_rendition_videos">
+  		<include template="dsp_exist_rendition_videos" />
+	</fuseaction>	
 	<!-- Images: Detail -->
 	<fuseaction name="images_detail">
   		<include template="dsp_asset_images_detail" />
@@ -252,6 +256,10 @@
 	<!-- Images: Related -->
 	<fuseaction name="images_detail_related">
   		<include template="dsp_asset_images_related" />
+	</fuseaction>
+	<!-- Images: Renditions -->
+	<fuseaction name="exist_rendition_images">
+  		<include template="dsp_exist_rendition_images" />
 	</fuseaction>
 	<!-- Images: Serve -->
 	<fuseaction name="serve_image">
@@ -269,7 +277,10 @@
 	<fuseaction name="audios_detail_related">
   		<include template="dsp_asset_audios_related" />
 	</fuseaction>
-	
+	<!-- Audios: Renditions -->
+	<fuseaction name="exist_rendition_audios">
+  		<include template="dsp_exist_rendition_audios" />
+	</fuseaction>
 	<!-- eMail: eMail Send -->
 	<fuseaction name="email_send">
   		<include template="dsp_email_send" />

@@ -467,7 +467,7 @@
 	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, 
 	v.vid_height, v.vid_width, v.vid_size vlength, v.vid_name_org, v.path_to_asset, v.cloud_url_org, v.vid_group
 	FROM #session.hostdbprefix#videos v
-	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="BEBCACD9BC0D4AEF82AF9DC3CD4A85D3">
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	ORDER BY vid_extension
 	</cfquery>
@@ -1440,7 +1440,11 @@
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#videos
 					SET 
-					vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
+					<cfif isDefined('arguments.thestruct.vid_group_id') AND arguments.thestruct.vid_group_id NEQ ''>
+						vid_group = <cfqueryparam value="#arguments.thestruct.vid_group_id#" cfsqltype="cf_sql_varchar">,
+					<cfelse>
+						vid_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
+					</cfif>
 					vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#previewvideo#">,
 					vid_custom_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.newid#">,
 					vid_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,

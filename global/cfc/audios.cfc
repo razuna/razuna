@@ -765,7 +765,7 @@
 </cffunction>
 
 <!--- CONVERT AUDIO IN A THREAD --->
-<cffunction name="convertaudiothread" output="true">
+<cffunction name="convertaudio" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- RFS --->
 	<cfif application.razuna.rfs>
@@ -777,13 +777,13 @@
 	<cfelse>
 		<!--- Start the thread for converting --->
 		<cfthread intstruct="#arguments.thestruct#">
-			<cfinvoke method="convertaudio" thestruct="#attributes.intstruct#" />
+			<cfinvoke method="convertaudiothread" thestruct="#attributes.intstruct#" />
 		</cfthread>
 	</cfif>
 </cffunction>
 
 <!--- CONVERT AUDIO --->
-<cffunction name="convertaudio" output="false" returntype="void">
+<cffunction name="convertaudiothread" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct" required="true">
 	<cftry>
 		<!--- Param --->
@@ -1094,7 +1094,11 @@
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
 				SET 
-				aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">,
+				<cfif isDefined('arguments.thestruct.aud_group_id') AND arguments.thestruct.aud_group_id NEQ ''>
+					aud_group = <cfqueryparam value="#arguments.thestruct.aud_group_id#" cfsqltype="cf_sql_varchar">,
+				<cfelse>
+					aud_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
+				</cfif>
 				aud_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#finalaudioname#">,
 				aud_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
 				aud_create_date = <cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
