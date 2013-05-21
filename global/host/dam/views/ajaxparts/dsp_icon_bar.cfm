@@ -294,17 +294,17 @@
 		<!--- Sort by --->
 		<cfif attributes.bot eq "true">
 			<td align="right" width="1%" nowrap="true">
-			Sort by: 
-			 <select name="selectsortby#kind#" id="selectsortby#kind#" onChange="changesortby('selectsortby#kind#');" style="width:100px;">
-			 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
-			 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
-			 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
-			 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
-			 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
-			 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
-			 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
-			 </select>
-		</td>
+				Sort by: 
+				<select name="selectsortby#kind#" id="selectsortby#kind#" onChange="changesortby('selectsortby#kind#');" style="width:100px;">
+					<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
+					<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
+					<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
+				 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
+				 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
+				 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
+				 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
+				</select>
+			</td>
 		<cfelse>
 			<td align="right" width="1%" nowrap="true">
 				Sort by: 
