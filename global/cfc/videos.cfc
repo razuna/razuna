@@ -1507,6 +1507,10 @@
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- Put the video id into a variable --->
 	<cfset thevideoid = #arguments.thestruct.file_id#>
+	<!--- set session.artofimage value if it is empty  --->
+	<cfif session.artofimage EQ "">
+		<cfset session.artofimage = arguments.thestruct.artofimage>
+	</cfif>
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#session.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
