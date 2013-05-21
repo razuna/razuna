@@ -1166,6 +1166,10 @@
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<!--- set session.artofimage value if it is empty  --->
+	<cfif session.artofimage EQ "">
+		<cfset session.artofimage = arguments.thestruct.artofimage>
+	</cfif>
 	<!--- Start the loop to get the different kinds of audios --->
 	<cfloop delimiters="," list="#session.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
