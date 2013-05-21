@@ -105,7 +105,7 @@
 			</tr>
 			<!--- Languages --->
 			<tr>
-				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("choose_language")# - <a href="##" onclick="loadcontent('admin_settings','#myself#c.isp_settings_updatelang');">#myFusebox.getApplicationData().defaults.trans("language_update")#</a></th>
+				<th colspan="2">#myFusebox.getApplicationData().defaults.trans("choose_language")# - <a href="##" onclick="loadcontent('admin_settings','#myself#c.isp_settings_updatelang');return false;">#myFusebox.getApplicationData().defaults.trans("language_update")#</a></th>
 			</tr>
 			<tr>
 				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("language_update_desc")#</td>

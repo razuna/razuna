@@ -297,21 +297,19 @@
 <cffunction name="lang_get_langs">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Get the xml files in the translation dir --->
-	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/translations" name="thelangs" />
+	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/global/translations" name="thelangs" />
 	<cfquery dbtype="query" name="thelangs">
 	SELECT *
 	FROM thelangs where TYPE = 'Dir' and name != 'Custom'
 	ORDER BY name
 	</cfquery>
-	
 	<!--- Loop over languages --->
 	<cfloop query="thelangs">
 		<!--- Get name and language id --->
 		<cfset thislang = thelangs.name>
-		
 		<!--- If we come from admin then take another method --->
 		<cfif structkeyexists(arguments.thestruct,"fromadmin")>
-			<cfinvoke component="defaults" method="propertiesfilelangid" thetransfile="#arguments.thestruct.thepath#/translations/#name#/HomePage.properties" returnvariable="langid">
+			<cfinvoke component="defaults" method="propertiesfilelangid" thetransfile="#arguments.thestruct.thepath#/global/translations/#name#/HomePage.properties" returnvariable="langid">
 		<cfelse>
 			<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#name#" returnvariable="langid">
 		</cfif>
@@ -322,7 +320,6 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND lang_id = <cfqueryparam value="#langid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
-		
 		<!--- RAZ-544: If the lang name is numeric we change this to the name value --->
 		<cfif isnumeric(qry.lang_name) AND qry.recordcount NEQ 0>
 			<cfquery datasource="#application.razuna.datasource#">

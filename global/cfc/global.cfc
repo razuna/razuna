@@ -47,13 +47,12 @@
 <!--- FUNCTION: SWITCH LANGUAGE --->
 	<cffunction name="switchlang" returntype="string" access="public" output="false">
 		<cfargument name="thelang" default="" required="yes" type="string">
-		
 		<!--- Set the session lang --->
-		<cfset session.thelang = #arguments.thelang#>
+		<cfset session.thelang = arguments.thelang>
 		<!--- Get the lang id --->
-		<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#lcase(arguments.thelang)#.xml" returnvariable="theid">
+		<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#lcase(arguments.thelang)#" returnvariable="theid">
 		<!--- Set the session lang id --->
-		<cfset session.thelangid = #theid#>
+		<cfset session.thelangid = theid>
 		<cfreturn />
 	</cffunction>
 

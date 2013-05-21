@@ -4872,7 +4872,7 @@
 	<!-- Update languages -->
 	<fuseaction name="isp_settings_updatelang">
 		<!-- Params -->
-		<set name="attributes.thepath" value="#thispath#" />		
+		<set name="attributes.thepath" value="#ExpandPath('../..')#" />		
 		<!-- CFC: Get languages -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="lang_get_langs(attributes)" />
 		<!-- Show -->
