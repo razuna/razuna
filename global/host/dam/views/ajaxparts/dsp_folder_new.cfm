@@ -56,7 +56,7 @@
 				<cfloop query="qry_langs">
 					<cfset thisid = lang_id>
 					<tr>
-						<td valign="top" width="1%" nowrap="true" class="td2">#myFusebox.getApplicationData().defaults.trans("description")# #lang_name#</td>
+						<td valign="top" width="1%" nowrap="true" class="td2"><cfif qry_langs.recordcount NEQ 1>#lang_name#: </cfif>#myFusebox.getApplicationData().defaults.trans("description")#</td>
 						<td width="100%" class="td2"><textarea name="folder_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_folder_desc"><cfif thisid EQ #lang_id_r#><cfif folder_desc NEQ "">#folder_desc#</cfif></cfif></cfloop></textarea></td>
 					</tr>
 				</cfloop>
