@@ -193,11 +193,11 @@
 						<cfloop query="qry_langs">
 							<cfset thisid = lang_id>
 							<tr>
-								<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
+								<td valign="top" width="1%" nowrap="true"><strong><cfif qry_langs.recordcount NEQ 1>#lang_name#: </cfif>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
 								<td width="100%"><textarea name="<cfif lang_id NEQ 1>aud_</cfif>desc_#thisid#" class="text" style="width:400px;height:30px;" <cfif lang_id EQ 1>onchange="document.form#attributes.file_id#.aud_desc_#thisid#.value = document.form#attributes.file_id#.desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_description#</cfif></cfloop></textarea></td>
 							</tr>
 							<tr>
-								<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
+								<td valign="top" width="1%" nowrap="true"><strong><cfif qry_langs.recordcount NEQ 1>#lang_name#: </cfif>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
 								<td width="100%"><textarea name="<cfif lang_id NEQ 1>aud_</cfif>keywords_#thisid#" class="text" style="width:400px;height:30px;" <cfif lang_id EQ 1>onchange="document.form#attributes.file_id#.aud_keywords_#thisid#.value = document.form#attributes.file_id#.keywords_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#aud_keywords#</cfif></cfloop></textarea></td>
 							</tr>
 						</cfloop>
