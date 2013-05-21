@@ -223,12 +223,13 @@
 				</cfif>
 				<!--- Submit Button --->
 				<cfif attributes.folderaccess NEQ "R">
-					<div stlye="clear:both;"></div>
 					<!--- copy metadata link --->
-					<div style="float:left;padding:10px;">
+					<div style="float:left;padding-top:25px;">
 						<button onclick="showwindow('#myself#c.copy_metaData&what=#attributes.what#&file_id=#attributes.file_id#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("add_file"))#',650,1);return false;" class="button">#myFusebox.getApplicationData().defaults.trans("copy_meta_data")#</button>
 					</div>
-					<div style="float:right;padding:10px;"><input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button"></div>
+					<div style="float:right;padding-top:25px;">
+						<input type="submit" name="submit" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button">
+					</div>
 				</cfif>
 			</div>
 		</cfif>
