@@ -7191,6 +7191,20 @@
 
 	<!-- Show custom Razuna -->
 	<fuseaction name="view_custom">
+		<!-- Check that API key is valid -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="checkapikey(attributes.api_key)" />
+		<!-- If there is a userid then set sessions to userid -->
+		<if condition="structkeyexists(url,'userid')">
+			<true>
+				<!-- Set session to the userid -->
+				<set name="session.theuserid" value="#url.userid#" />
+				<!-- Get the groups of this user -->
+				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser">
+					<argument name="user_id" value="#url.userid#" />
+					<argument name="host_id" value="#session.hostid#" />
+				</invoke>				
+ 			</true>
+		</if>
 		<!-- Param -->
 		<set name="attributes.access" value="r" overwrite="false" />
 		<set name="attributes.fileid" value="" overwrite="false" />
@@ -7203,8 +7217,6 @@
 		<set name="session.customfileid" value="#attributes.fileid#" />
 		<!-- Set that we are in custom view -->
 		<set name="session.customview" value="true" />
-		<!-- Check that API key is valid -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="checkapikey(attributes.api_key)" returnvariable="qry_api_key" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show main page -->
