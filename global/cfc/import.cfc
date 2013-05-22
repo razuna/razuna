@@ -366,15 +366,17 @@
 						<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 					</cfif>
 					<!--- Images: main table --->
-					<cfquery dataSource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#images
-					SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
-					WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
-					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
-					<cfif arguments.thestruct.expwhat NEQ "all">
-						AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+					<cfif c_thefilename NEQ "">
+						<cfquery dataSource="#application.razuna.datasource#">
+						UPDATE #session.hostdbprefix#images
+						SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+						WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
+						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
+						<cfif arguments.thestruct.expwhat NEQ "all">
+							AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
+						</cfif>
+						</cfquery>
 					</cfif>
-					</cfquery>
 					<!--- Keywords & Descriptions --->
 					<!--- Check if record is here --->
 					<cfquery dataSource="#application.razuna.datasource#" name="khere">
@@ -1112,11 +1114,18 @@
 				<!--- Show if error --->
 				<cfcatch type="any">
 					<!--- Feedback --->
-					<cfoutput>Following error occurred:<br /><span style="font-weight:bold;color:red;">#cfcatch.message#<br />#cfcatch.detail#</span><br><br></cfoutput>
+					<cfoutput>Following error occurred:<br /><cfdump var="#cfcatch#"><span style="font-weight:bold;color:red;">#cfcatch.message#<br />#cfcatch.detail#</span><br><br></cfoutput>
 					<cfflush>
 				</cfcatch>
 			</cftry>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
@@ -1280,6 +1289,13 @@
 				</cfthread>
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1443,6 +1459,13 @@
 				</cfthread>
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -1749,6 +1772,13 @@
 				</cfthread>
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("images")>
+		<cfset resetcachetoken("videos")>
+		<cfset resetcachetoken("audios")>
+		<cfset resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")> 
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
@@ -1827,14 +1857,28 @@
 		<cfargument name="thestruct" type="struct">
 		<cfargument name="assetid" type="string">
 		<cfargument name="thecurrentRow" type="string">
+		<!--- Param --->
+		<cfset doloop = false>
 		<!--- Get the columlist --->
 		<cfloop list="#arguments.thestruct.theimport.columnList#" delimiters="," index="i">
-			<!--- Custom fields contain a : --->
-			<cfif i contains ":">
-				<!--- The value --->
-				<cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]>
+			<!--- If template --->
+			<cfif arguments.thestruct.impp_template NEQ "">
+				<cfloop query="arguments.thestruct.template.impval">
+					<cfif imp_field EQ i AND !imp_key>
+						<cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]>
+						<cfset var theid = imp_map>
+						<cfset doloop = true>
+					</cfif>
+				</cfloop>
+			<cfelseif i contains ":">
 				<!--- The ID --->
 				<cfset var theid = ucase(listLast(i,":"))>
+				<cfset doloop = true>
+			</cfif>
+			<!--- Custom fields magic --->
+			<cfif doloop>
+				<!--- The value --->
+				<cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]>
 				<!--- Insert or update --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT cf_id_r
@@ -1865,6 +1909,8 @@
 					</cfquery>
 				</cfif>
 			</cfif>
+			<!--- Param --->
+			<cfset doloop = false>
 		</cfloop>
 		<!--- Return --->
 		<cfreturn  />
