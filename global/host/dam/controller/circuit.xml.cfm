@@ -7205,6 +7205,12 @@
 				</invoke>				
  			</true>
 		</if>
+		<!-- If there is a userid then set sessions to userid -->
+		<if condition="structkeyexists(url,'sortby')">
+			<true>
+				<set name="session.sortby" value="#url.sortby#" />
+			</true>
+		</if>
 		<!-- Param -->
 		<set name="attributes.access" value="r" overwrite="false" />
 		<set name="attributes.fileid" value="" overwrite="false" />
