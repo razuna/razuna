@@ -52,7 +52,7 @@
 						<option value="update">Update</option>
 						<option value="delete">Delete</option>
 						<option value="move">Move</option>
-						<option value="convert">Convert</option>
+						<option value="convert">Renditions</option>
 					</select>
 					<a href="##" onclick="loadcontent('log_show','#myself#c.log_assets');">#myFusebox.getApplicationData().defaults.trans("reset")#</a>
 				</div>
