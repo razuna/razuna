@@ -3253,7 +3253,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset var rootfolderId = arguments.thestruct.qryfile.folder_id>
 		<cfset var folderIdr = arguments.thestruct.qryfile.folder_id>
 		<cfset var folderId = arguments.thestruct.qryfile.folder_id>
-		<cfset var folderlevel = folders.folder_level>
+		<!---<cfset var folderlevel = folders.folder_level>--->
 		<cfset var loopname = "">
 		<!--- Loop over the zip directories and rename them if needed --->
 		<cfset var ttf = "rec" & thetemp>
@@ -3286,6 +3286,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- Create Directories --->
 		<cfloop query="thedir">
 			<cfset temp="">
+			<cfset var folderlevel = "">
 			<!--- Check how long the folder list is --->
 			<cfset var namelistlen = listlen(name,FileSeparator())>
 			<!--- If longer then 1 we need to get the folder_id_r of the previous folder --->
@@ -3293,20 +3294,13 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Get the list entry at one higher then the current len --->
 				<cfset var lenminusone = namelistlen - 1>
 				<cfset var fnameforqry = ListGetAt(name, lenminusone, FileSeparator())>
-				<!--- Query to get the folder_id_r --->
-				<cfquery datasource="#variables.dsn#" name="qryfidr">
-				SELECT folder_id
-				FROM #session.hostdbprefix#folders
-				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fnameforqry)#" cfsqltype="cf_sql_varchar">
-				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
-				</cfquery>
-				
+
 				<cfset var thedirlen = listLen(thedir.name, FileSeparator())-1>
 				<cfset temp="#rootfolderId#">
 				<cfloop index="i" from=1 to="#thedirlen#">
 					<cfset folder_name = listGetAt(thedir.name, i, FileSeparator())>
 					<cfquery name="qryGetFolderDetails" datasource="#variables.dsn#">
-						SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
+						SELECT folder_id,folder_name,folder_level FROM  #session.hostdbprefix#folders 
 						WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
 						AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
 						AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
@@ -3314,32 +3308,46 @@ This is the main function called directly by a single upload else from addassets
 					</cfquery>
 					<cfset temp="#qryGetFolderDetails.folder_id#">
 				</cfloop>
-				
+				<cfset folderlevel =  val(qryGetFolderDetails.folder_level) + 1>
 				<!--- Set the folder_id_r in var --->
 				<!---<cfset var fidr = qryfidr.folder_id>--->
 				<cfset var fidr = temp>
 				<cfset var fname = listlast(name, FileSeparator())>
 			<cfelse>
+				<cfset folderlevel = val(folders.folder_level)+1>
 				<cfset var fname = name>
 				<cfset var fidr = folderIdr>
 			</cfif>
-			<!--- Add the Folder to DB --->
-			<cfquery datasource="#variables.dsn#">
-			INSERT INTO #session.hostdbprefix#folders
-			(folder_id, folder_name, folder_id_r, folder_main_id_r, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
-			values (
-			<cfqueryparam value="#createuuid("")#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#fname#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#fidr#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-			<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-			<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			)
+			
+			<!--- Query to get the folder_id_r --->
+			<cfquery datasource="#variables.dsn#" name="qryfidr">
+				SELECT folder_id
+				FROM #session.hostdbprefix#folders
+				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fname)#" cfsqltype="cf_sql_varchar">
+				AND folder_id_r = <cfqueryparam value="#fidr#" cfsqltype="cf_sql_varchar">
+				AND folder_main_id_r = <cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="cf_sql_varchar">
 			</cfquery>
+			
+			<!--- Add the Folder to DB --->
+			<cfif qryfidr.recordcount eq 0>
+				<cfquery datasource="#variables.dsn#">
+					INSERT INTO #session.hostdbprefix#folders
+					(folder_id, folder_name, folder_level, folder_id_r, folder_main_id_r, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
+					values (
+					<cfqueryparam value="#createuuid("")#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#fname#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#folderlevel#" cfsqltype="CF_SQL_NUMERIC">,
+					<cfqueryparam value="#fidr#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#folders.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+				</cfquery>
+			</cfif>
 		</cfloop>
 		<cfset resetcachetoken("folders")>
 		<cfpause interval="5" />
