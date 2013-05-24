@@ -92,11 +92,10 @@
 								<!--- show image according to extension --->
 								<td align="center" style="padding-top:20px;width:400px;" valign="top">
 									<!--- If it is a PDF we show the thumbnail --->
-									<cfif application.razuna.storage EQ "nirvanix" AND qry_detail.detail.file_extension EQ "PDF">
-										<!--- <cfset thethumb = replacenocase(qry_detail.detail.file_name_org, ".pdf", ".jpg", "all")> --->
+									<cfif application.razuna.storage EQ "nirvanix" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
 										<img src="#qry_detail.detail.cloud_url#" border="0">
-									<cfelseif application.razuna.storage EQ "local" AND qry_detail.detail.file_extension EQ "PDF">
-										<cfset thethumb = replacenocase(qry_detail.detail.file_name_org, ".pdf", ".jpg", "all")>
+									<cfelseif application.razuna.storage EQ "local" AND (qry_detail.detail.file_extension EQ "PDF" OR qry_detail.detail.file_extension EQ "indd")>
+										<cfset thethumb = replacenocase(qry_detail.detail.file_name_org, ".#qry_detail.detail.file_extension#", ".jpg", "all")>
 										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#qry_detail.detail.path_to_asset#/#thethumb#") IS "no">
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#qry_detail.detail.file_extension#.png" border="0">
 										<cfelse>

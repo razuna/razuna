@@ -1559,22 +1559,44 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Set Params --->
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
 	<cfset arguments.thestruct.iswindows = iswindows()>
-	<!--- Params --->
+	<cfset arguments.thestruct.file_meta = "">
+	<cfset arguments.thestruct.pathorg = arguments.thestruct.qryfile.path>
+	<cfset var ttpdf = Createuuid("")>
 	<cfset var cloud_url = structnew()>
 	<cfset var cloud_url_org = structnew()>
 	<cfset var cloud_url_2 = structnew()>
+	<cfset var file_meta = "">
+	<cfset var thesubject = "">
+	<cfset var thekeywords = "">
+	<cfset var theapplekeywords = "">
 	<cfset cloud_url_org.theurl = "">
 	<cfset cloud_url.theurl = "">
 	<cfset cloud_url_2.theurl = "">
 	<cfset cloud_url_org.newepoch = 0>
-	<cfset var file_meta = "">
-	<cfset arguments.thestruct.file_meta = "">
-	<cfset var thesubject = "">
-	<cfset var thekeywords = "">
-	<cfset var theapplekeywords = "">
-	<cfset arguments.thestruct.pathorg = arguments.thestruct.qryfile.path>
-	<!--- Random ID for script --->
-	<cfset var ttpdf = Createuuid("")>
+	<!--- Set executables and scripts --->
+	<cfif arguments.thestruct.iswindows>
+		<cfset arguments.thestruct.theimconvert = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
+		<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
+		<!--- Set scripts --->
+		<cfset arguments.thestruct.thesh = "#arguments.thestruct.gettemp#/#ttpdf#.bat">
+		<cfset arguments.thestruct.thesht = "#arguments.thestruct.gettemp#/#ttpdf#t.bat">
+		<cfset arguments.thestruct.theshexs = "#arguments.thestruct.gettemp#/#ttpdf#exs.bat">
+		<cfset arguments.thestruct.theshexk = "#arguments.thestruct.gettemp#/#ttpdf#exk.bat">
+		<cfset arguments.thestruct.theshexak = "#arguments.thestruct.gettemp#/#ttpdf#exak.bat">
+		<cfset arguments.thestruct.theshexmeta = "#arguments.thestruct.gettemp#/#ttpdf#exmeta.bat">
+		<cfset arguments.thestruct.theshexmetaxmp = "#arguments.thestruct.gettemp#/#ttpdf#exmetaxmp.bat">
+	<cfelse>
+		<cfset arguments.thestruct.theimconvert = "#arguments.thestruct.thetools.imagemagick#/convert">
+		<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
+		<!--- Set scripts --->
+		<cfset arguments.thestruct.thesh = "#arguments.thestruct.gettemp#/#ttpdf#.sh">
+		<cfset arguments.thestruct.thesht = "#arguments.thestruct.gettemp#/#ttpdf#t.sh">
+		<cfset arguments.thestruct.theshexs = "#arguments.thestruct.gettemp#/#ttpdf#exs.sh">
+		<cfset arguments.thestruct.theshexk = "#arguments.thestruct.gettemp#/#ttpdf#exk.sh">
+		<cfset arguments.thestruct.theshexak = "#arguments.thestruct.gettemp#/#ttpdf#exak.sh">
+		<cfset arguments.thestruct.theshexmeta = "#arguments.thestruct.gettemp#/#ttpdf#exmeta.sh">
+		<cfset arguments.thestruct.theshexmetaxmp = "#arguments.thestruct.gettemp#/#ttpdf#exmetaxmp.sh">
+	</cfif>
 	<!--- Set some more vars but only for PDF --->
 	<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 		<!--- If this is a linked asset --->
@@ -1608,22 +1630,10 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Check the platform and then decide on the ImageMagick tag --->
 		<cfif arguments.thestruct.iswindows>
-			<cfset arguments.thestruct.theimconvert = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
-			<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 			<cfset arguments.thestruct.theorgfileflat = arguments.thestruct.theorgfileflat>
 			<cfset arguments.thestruct.theorgfile = arguments.thestruct.theorgfile>
 			<cfset arguments.thestruct.thepdfimage = arguments.thestruct.thepdfimage>
-			<!--- Set scripts --->
-			<cfset arguments.thestruct.thesh = "#arguments.thestruct.gettemp#/#ttpdf#.bat">
-			<cfset arguments.thestruct.thesht = "#arguments.thestruct.gettemp#/#ttpdf#t.bat">
-			<cfset arguments.thestruct.theshexs = "#arguments.thestruct.gettemp#/#ttpdf#exs.bat">
-			<cfset arguments.thestruct.theshexk = "#arguments.thestruct.gettemp#/#ttpdf#exk.bat">
-			<cfset arguments.thestruct.theshexak = "#arguments.thestruct.gettemp#/#ttpdf#exak.bat">
-			<cfset arguments.thestruct.theshexmeta = "#arguments.thestruct.gettemp#/#ttpdf#exmeta.bat">
-			<cfset arguments.thestruct.theshexmetaxmp = "#arguments.thestruct.gettemp#/#ttpdf#exmetaxmp.bat">
 		<cfelse>
-			<cfset arguments.thestruct.theimconvert = "#arguments.thestruct.thetools.imagemagick#/convert">
-			<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 			<cfset arguments.thestruct.theorgfileflat = replace(arguments.thestruct.theorgfileflat," ","\ ","all")>
 			<cfset arguments.thestruct.theorgfileflat = replace(arguments.thestruct.theorgfileflat,"&","\&","all")>
 			<cfset arguments.thestruct.theorgfileflat = replace(arguments.thestruct.theorgfileflat,"'","\'","all")>
@@ -1633,14 +1643,6 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thepdfimage = replace(arguments.thestruct.thepdfimage," ","\ ","all")>
 			<cfset arguments.thestruct.thepdfimage = replace(arguments.thestruct.thepdfimage,"&","\&","all")>
 			<cfset arguments.thestruct.thepdfimage = replace(arguments.thestruct.thepdfimage,"'","\'","all")>
-			<!--- Set scripts --->
-			<cfset arguments.thestruct.thesh = "#arguments.thestruct.gettemp#/#ttpdf#.sh">
-			<cfset arguments.thestruct.thesht = "#arguments.thestruct.gettemp#/#ttpdf#t.sh">
-			<cfset arguments.thestruct.theshexs = "#arguments.thestruct.gettemp#/#ttpdf#exs.sh">
-			<cfset arguments.thestruct.theshexk = "#arguments.thestruct.gettemp#/#ttpdf#exk.sh">
-			<cfset arguments.thestruct.theshexak = "#arguments.thestruct.gettemp#/#ttpdf#exak.sh">
-			<cfset arguments.thestruct.theshexmeta = "#arguments.thestruct.gettemp#/#ttpdf#exmeta.sh">
-			<cfset arguments.thestruct.theshexmetaxmp = "#arguments.thestruct.gettemp#/#ttpdf#exmetaxmp.sh">
 		</cfif>
 	</cfif>
 	<!--- If we are PDF we create thumbnail and images from the PDF --->
@@ -1672,11 +1674,27 @@ This is the main function called directly by a single upload else from addassets
 				<cffile action="copy" source="#arguments.thestruct.rootpath#global/host/dam/images/icons/icon_pdf.png" destination="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="775">
 			</cfif>
 			<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+		<!--- InDesign --->
+		<cfelseif arguments.thestruct.qryfile.extension EQ "indd">
+			<!--- Set vars --->
+			<cfset arguments.thestruct.theorgfile = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<cfset arguments.thestruct.theorgfileraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
+			<cfset arguments.thestruct.thepdfimagename = "#arguments.thestruct.qryfile.filenamenoext#.jpg">
+			<cfset arguments.thestruct.thepdfimage = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.thepdfimagename#">
+			<!--- Write script --->
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# #arguments.thestruct.theorgfile# -PageImage -b -listitem 0 > #arguments.thestruct.thepdfimage#" mode="777">
+			<!--- Execute --->
+			<cfthread name="#ttpdf#" intstruct="#arguments.thestruct#">
+				<cfexecute name="#attributes.intstruct.thesh#" timeout="900" />
+			</cfthread>
+			<!--- Wait for thread to finish --->
+			<cfthread action="join" name="#ttpdf#" />					
+			<!--- Delete scripts --->
+			<cffile action="delete" file="#arguments.thestruct.thesh#">
 		<!--- We are normal files --->
 		<cfelse>
 			<!--- Check the platform and then decide on the ImageMagick tag --->
 			<cfif arguments.thestruct.iswindows>
-				<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 				<cfexecute name="#arguments.thestruct.theexif#" arguments="-a -g #arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" timeout="60" variable="file_meta" />
 				<!--- On LAN Put the path into this variable for the md5 hash --->
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
@@ -1686,7 +1704,6 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 				<cfset arguments.thestruct.qryfile.path = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 			<cfelse>
-				<cfset arguments.thestruct.theexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 				<!--- Set scripts --->
 				<cfset arguments.thestruct.thesh = "#arguments.thestruct.gettemp#/#ttpdf#.sh">
 				<!--- On LAN --->
@@ -1852,7 +1869,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 			<!--- Move the file from the temp path to this folder, but not for local link assets --->
 			<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-				<cffile action="copy" source="#arguments.thestruct.theorgfileraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
+				<cffile action="move" source="#arguments.thestruct.theorgfileraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
 			</cfif>
 			<!--- If we are PDF we need to move the thumbnail and image as well --->
 			<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
@@ -1865,6 +1882,10 @@ This is the main function called directly by a single upload else from addassets
 				<cfloop query="pdfjpgs">
 					<cffile action="move" source="#arguments.thestruct.thepdfdirectory#/#name#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/razuna_pdf_images/#name#" mode="775">
 				</cfloop>
+			<!--- InDesign --->
+			<cfelseif arguments.thestruct.qryfile.extension EQ "indd" AND !application.razuna.rfs>
+				<!--- Move thumbnail --->
+				<cffile action="move" source="#arguments.thestruct.thepdfimage#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.thepdfimagename#" mode="775">
 			</cfif>
 			<!--- Add to Lucene --->
 			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
@@ -1904,6 +1925,29 @@ This is the main function called directly by a single upload else from addassets
 				</cfloop>
 				<!--- Get signed URLS for the thumbnail --->
 				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.thepdfimage#" nvxsession="#arguments.thestruct.nvxsession#">
+				<!--- Update DB  --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files
+				SET 
+				cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">
+				WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<!--- InDesign --->
+			<cfelseif arguments.thestruct.qryfile.extension EQ "indd">
+				<!--- Upload thumbnail --->
+				<cfset var ttut = createuuid("")>
+				<cfthread name="#ttut#" upstruct="#arguments.thestruct#">
+					<cfinvoke component="nirvanix" method="Upload">
+						<cfinvokeargument name="destFolderPath" value="/#attributes.upstruct.qryfile.folder_id#/doc/#attributes.upstruct.newid#">
+						<cfinvokeargument name="uploadfile" value="#attributes.upstruct.thepdfimage#">
+						<cfinvokeargument name="nvxsession" value="#attributes.upstruct.nvxsession#">
+					</cfinvoke>
+				</cfthread>
+				<!--- Wait for thread to finish --->
+				<cfthread action="join" name="#ttut#" />
+				<!--- Get signed URLS for the thumbnail --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.thepdfimagename#" nvxsession="#arguments.thestruct.nvxsession#">
 				<!--- Update DB  --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#files
@@ -1970,6 +2014,28 @@ This is the main function called directly by a single upload else from addassets
 				WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
+			<!--- InDesign --->
+			<cfelseif arguments.thestruct.qryfile.extension EQ "indd">
+				<!--- Upload thumbnail --->		
+				<cfset var updt = Createuuid("")>
+				<cfthread name="#updt#" intuptstruct="#arguments.thestruct#">
+					<cfinvoke component="amazon" method="Upload">
+						<cfinvokeargument name="key" value="/#attributes.intuptstruct.qryfile.folder_id#/doc/#attributes.intuptstruct.newid#/#attributes.intuptstruct.thepdfimagename#">
+						<cfinvokeargument name="theasset" value="#attributes.intuptstruct.thepdfimage#">
+						<cfinvokeargument name="awsbucket" value="#attributes.intuptstruct.awsbucket#">
+					</cfinvoke>
+				</cfthread>
+				<cfthread action="join" name="#updt#" />
+				<!--- Get signed URLS for the thumbnail --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.thepdfimagename#" awsbucket="#arguments.thestruct.awsbucket#">
+				<!--- Update DB  --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files
+				SET 
+				cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">
+				WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
 			</cfif>
 			<!--- Get signed URLS for the file --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
@@ -1997,41 +2063,6 @@ This is the main function called directly by a single upload else from addassets
 				</cfinvoke>
 			</cfthread>
 			<cfthread action="join" name="#upd#" />
-			<!--- If we are PDF we need to upload the thumbnail and image as well --->
-<!--- 
-			<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
-				<!--- Upload thumbnail --->		
-				<cfset var updt = Createuuid("")>
-				<cfthread name="#updt#" intuptstruct="#arguments.thestruct#">
-					<cfinvoke component="amazon" method="Upload">
-						<cfinvokeargument name="key" value="/#attributes.intuptstruct.qryfile.folder_id#/doc/#attributes.intuptstruct.newid#/#attributes.intuptstruct.thepdfimage#">
-						<cfinvokeargument name="theasset" value="#attributes.intuptstruct.thetempdirectory#/#attributes.intuptstruct.thepdfimage#">
-						<cfinvokeargument name="awsbucket" value="#attributes.intuptstruct.awsbucket#">
-					</cfinvoke>
-				</cfthread>
-				<cfthread action="join" name="#updt#" />
-				<!--- Get signed URLS for the thumbnail --->
-				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.thepdfimage#" awsbucket="#arguments.thestruct.awsbucket#">
-				<!--- List all images and then upload them --->
-				<cfdirectory action="list" directory="#arguments.thestruct.thepdfdirectory#" name="pdfjpgs">
-				<!--- Upload images --->
-				<cfloop query="pdfjpgs">
-					<cfinvoke component="amazon" method="Upload">
-						<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/razuna_pdf_images/#name#">
-						<cfinvokeargument name="theasset" value="#arguments.thestruct.thepdfdirectory#/#name#">
-						<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
-					</cfinvoke>
-				</cfloop>
-				<!--- Update DB  --->
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#files
-				SET 
-				cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">
-				WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-			</cfif>
-			 --->
 			<!--- Add to Lucene --->
 			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- Link_kind is URL --->
@@ -2726,10 +2757,12 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.theimconvert = """#arguments.thestruct.thetools.imagemagick#/convert.exe""">
 			<cfset arguments.thestruct.themogrify = """#arguments.thestruct.thetools.imagemagick#/mogrify.exe""">
 			<cfset arguments.thestruct.thedcraw = """#arguments.thestruct.thetools.dcraw#/dcraw.exe""">
+			<cfset arguments.thestruct.thexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 		<cfelse>
 			<cfset arguments.thestruct.theimconvert = "#arguments.thestruct.thetools.imagemagick#/convert">
 			<cfset arguments.thestruct.themogrify = "#arguments.thestruct.thetools.imagemagick#/mogrify">
 			<cfset arguments.thestruct.thedcraw = "#arguments.thestruct.thetools.dcraw#/dcraw">
+			<cfset arguments.thestruct.thexif = "#arguments.thestruct.thetools.exiftool#/exiftool">
 		</cfif>
 		<!--- ImageMagick: Create Thumbnail.
 		Some images can not be converted thus we just copy the original so we have a thumbnail --->

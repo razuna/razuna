@@ -224,14 +224,14 @@
 						<cfelse>
 							<cfif is_available>
 								<div class="theimg">
-									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
+									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (ext EQ "PDF" OR ext EQ "indd")>
 										<cfif cloud_url NEQ "">
 											<img src="#cloud_url#" border="0">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
-									<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
-										<cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+									<cfelseif application.razuna.storage EQ "local" AND (ext EQ "PDF" OR ext EQ "indd")>
+										<cfset thethumb = replacenocase(filename_org, ".#ext#", ".jpg", "all")>
 										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
 										<cfelse>
