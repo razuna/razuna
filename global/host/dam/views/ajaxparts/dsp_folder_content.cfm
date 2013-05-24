@@ -1116,9 +1116,11 @@
 				stop: function(event, ui) {
 					var fileids = '';
 					$( ".ui-selected input[name='file_id']", this ).each(function() {
-						fileids += $(this).val() + ','
+						fileids += $(this).val() + ',';
 					});
 					getselected#kind#(fileids);
+					// Now uncheck all
+					$('###kind#form :checkbox').attr('checked', false);
 				}
 			});
 		});

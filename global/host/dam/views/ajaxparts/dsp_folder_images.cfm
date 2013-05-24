@@ -357,6 +357,8 @@
 						fileids += $(this).val() + ','
 					});
 					getselected#kind#(fileids);
+					// Now uncheck all
+					$('###kind#form :checkbox').attr('checked', false);
 				}
 			});
 		});
