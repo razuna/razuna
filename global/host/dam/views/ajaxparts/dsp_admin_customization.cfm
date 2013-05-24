@@ -55,7 +55,7 @@
 							<div id="loadlogo"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadlogo').load('#myself#ajax.prefs_loadlogo');return false;">Refresh</a> | <a href="##" onclick="$('##loadlogo').load('#myself#ajax.prefs_loadlogo&remove=t');">Remove</a>
 						</td>
 					</tr>
 				</table>
@@ -77,7 +77,7 @@
 							<div id="loadloginimage"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg');return false;">Refresh</a> | <a href="##" onclick="$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg&remove=t');">Remove</a>
 						</td>
 					</tr>
 				</table>
@@ -99,7 +99,7 @@
 							<div id="loadfaviconimage"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon');return false;">Refresh</a> | <a href="##" onclick="$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon&remove=t');">Remove</a>
 						</td>
 					</tr>
 				</table>
@@ -632,11 +632,11 @@
 		<!--- JS --->
 		<script type="text/javascript">
 			// Load Logo
-			loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');
+			$('##loadlogo').load('#myself#ajax.prefs_loadlogo');
 			// Load Login Image
-			loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg');
+			$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg');
 			// Load Favicon Image
-			loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon');
+			$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon');
 			// Submit
 			$("##form_admin_custom").submit(function(e){
 				// Get values
