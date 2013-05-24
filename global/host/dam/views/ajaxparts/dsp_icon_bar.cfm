@@ -73,19 +73,19 @@
 						<!--- Select --->
 						<cfif cs.icon_select>
 							<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>','#kind#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
-								<div style="float:left;padding-top:5px;">
+								<!--- <div style="float:left;padding-top:5px;">
 									<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
-								</div>
-								<div style="float:left;padding-right:15px;padding-top:5px;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
+								</div> --->
+								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 							</a>
 						</cfif>
 						<!--- Search --->
 						<cfif cs.icon_search>
 							<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
-								<div style="float:left;padding-top:5px;">
+								<!--- <div style="float:left;padding-top:5px;">
 									<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" />
-								</div>
-								<div style="float:left;padding-right:15px;padding-top:5px;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
+								</div> --->
+								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
 							</a>
 						</cfif>
 						<!--- More actions --->
@@ -128,7 +128,7 @@
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/link.png" width="16" height="16" border="0" />
 									</div>
-									<div style="padding-top:2px;">Show Assets from Sub-Folders</div>
+									<div style="padding-top:2px;">Show assets from Sub-Folders</div>
 								</a>
 							</p>
 							<p><hr></p>

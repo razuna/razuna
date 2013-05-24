@@ -33,18 +33,18 @@
 				<cfif !attributes.cv>
 					<!--- Select --->
 					<a href="##" onClick="CheckAll('searchform#attributes.thetype#','x','storesearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
-						<div style="float:left;">
+						<!--- <div style="float:left;">
 							<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
-						</div>
-						<div style="float:left;padding-right:15px;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
+						</div> --->
+						<div style="float:left;padding-right:15px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 					</a>
 					<!--- Search --->
 					<cfif attributes.folder_id NEQ 0 AND structkeyexists(attributes,"share") AND attributes.share NEQ "T">
 						<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
-							<div style="float:left;">
+							<!--- <div style="float:left;">
 								<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" style="padding-left:2px;" />
-							</div>
-							<div style="float:left;padding-right:15px;">Search again</div>
+							</div> --->
+							<div style="float:left;padding-right:15px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("search_again")#</div>
 						</a>
 					</cfif>
 				</cfif>
