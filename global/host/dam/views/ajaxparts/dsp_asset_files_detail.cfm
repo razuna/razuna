@@ -159,7 +159,7 @@
 										<!--- Filename --->
 										<tr>
 											<td width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("file_name")#</strong></td>
-											<td width="100%"><input type="text" style="width:400px;" name="fname" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
+											<td width="100%"><input type="text" style="width:400px;" name="fname" id="fname" value="#qry_detail.detail.file_name#" onchange="document.form#attributes.file_id#.file_name.value = document.form#attributes.file_id#.fname.value;"> <cfif cs.show_bottom_part><a href="##" onclick="loadcontent('thedropfav','#myself##xfa.tofavorites#&favid=#attributes.file_id#&favtype=file&favkind=doc');flash_footer();return false;"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a></cfif></td>
 										</tr>
 										<!--- Description & Keywords --->
 										<cfloop query="qry_langs">
@@ -167,11 +167,11 @@
 												<cfset thisid = lang_id>
 												<tr>
 													<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("description")#</strong></td>
-													<td width="100%"><textarea name="file_desc_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.file_desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
+													<td width="100%"><textarea name="file_desc_#thisid#" id="file_desc_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.desc_#thisid#.value = document.form#attributes.file_id#.file_desc_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_desc#</cfif></cfloop></textarea></td>
 												</tr>
 												<tr>
 													<td valign="top" width="1%" nowrap="true"><strong>#myFusebox.getApplicationData().defaults.trans("keywords")#</strong></td>
-													<td width="100%"><textarea name="file_keywords_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.file_keywords_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
+													<td width="100%"><textarea name="file_keywords_#thisid#" id="file_keywords_#thisid#" class="text" style="width:400px;height:30px;" <cfif cs.tab_metadata>onchange="document.form#attributes.file_id#.keywords_#thisid#.value = document.form#attributes.file_id#.file_keywords_#thisid#.value;"</cfif>><cfloop query="qry_detail.desc"><cfif lang_id_r EQ thisid>#file_keywords#</cfif></cfloop></textarea></td>
 												</tr>
 											</cfif>
 										</cfloop>
@@ -363,6 +363,25 @@
 		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
 		// Submit form
 		function filesubmit(){
+			<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
+				var reqfield = false;
+				<cfif cs.req_filename>
+					var val_filename = $('##fname').val();
+					if (val_filename == '') reqfield = true;
+				</cfif>
+				<cfif cs.req_description>
+					var val_desc = $('##file_desc_1').val();
+					if (val_desc == '') reqfield = true;
+				</cfif>
+				<cfif cs.req_keywords>
+					var val_keys = $('##file_keywords_1').val();
+					if (val_keys == '') reqfield = true;
+				</cfif>
+				if (reqfield == true){
+					alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
+					return false;
+				}
+			</cfif>
 			$("##updatefile").css("display","");
 			loadinggif('updatefile');
 			$("##updatefile").fadeTo("fast", 100);

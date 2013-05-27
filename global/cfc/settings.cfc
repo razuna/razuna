@@ -1855,6 +1855,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.share_comments = false>
 	<cfset v.share_uploading = false>
 	<cfset v.request_access = true>
+	<cfset v.req_filename = true>
+	<cfset v.req_description = false>
+	<cfset v.req_keywords = false>
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2052,6 +2055,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			</cfif>
 			<cfif custom_id EQ "request_access" AND !custom_value>
 				<cfset v.request_access = false>
+			</cfif>
+			<cfif custom_id EQ "req_filename" AND !custom_value>
+				<cfset v.req_filename = false>
+			</cfif>
+			<cfif custom_id EQ "req_description" AND custom_value>
+				<cfset v.req_description = true>
+			</cfif>
+			<cfif custom_id EQ "req_keywords" AND custom_value>
+				<cfset v.req_keywords = true>
 			</cfif>
 		</cfloop>
 	</cfif>

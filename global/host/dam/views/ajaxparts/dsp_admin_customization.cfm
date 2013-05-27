@@ -618,6 +618,22 @@
 							<div><input type="radio" name="button_delete" value="true"<cfif qry_customization.button_delete> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_delete" value="false"<cfif !qry_customization.button_delete> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
 		--->
+							<br />
+							<strong>#myFusebox.getApplicationData().defaults.trans("req_fields_desc")#</strong>
+							<br />
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("req_filename")#
+							<br />
+							<div><input type="radio" name="req_filename" value="true"<cfif qry_customization.req_filename> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="req_filename" value="false"<cfif !qry_customization.req_filename> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("req_description")#
+							<br />
+							<div><input type="radio" name="req_description" value="true"<cfif qry_customization.req_description> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="req_description" value="false"<cfif !qry_customization.req_description> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("req_keywords")#
+							<br />
+							<div><input type="radio" name="req_keywords" value="true"<cfif qry_customization.req_keywords> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="req_keywords" value="false"<cfif !qry_customization.req_keywords> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
 						</td>
 					</tr>
 				</table>
