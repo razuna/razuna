@@ -1767,7 +1767,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset resetcachetoken("search")> 
 		<cfset resetcachetoken("general")>
 		<!--- Get Metadata for PDF --->
-		<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND arguments.thestruct.qryfile.link_kind NEQ "url">
+		<cfif (arguments.thestruct.qryfile.extension EQ "PDF" OR arguments.thestruct.qryfile.extension EQ "indd") AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- On Windows reparse the metadata again (doesnt work properly with the bat file) --->
 			<cfif arguments.thestruct.isWindows>
 				<cfexecute name="#arguments.thestruct.theexif#" arguments="-b -subject #arguments.thestruct.theorgfile#" timeout="60" variable="thesubject" />
