@@ -68,8 +68,8 @@
 						<div style="float:left;padding-right:5px;padding-bottom:5px;">
 							<cfif sf_type EQ "dropbox">
 								<img src="#dynpath#/global/host/dam/images/dropbox_25.png" border="0" width="18px" />
-							<cfelse>
-								
+							<cfelseif sf_type EQ "s3">
+								<img src="#dynpath#/global/host/dam/images/amazon-s3.gif" border="0" width="18px" />
 							</cfif>
 						</div>
 						<div style="float:left;text-decoration:none;padding-top:2px;">

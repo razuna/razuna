@@ -57,11 +57,21 @@
 				<br />
 				<input type="radio" name="sf_type" id="sf_type" value="dropbox"<cfif qry_sf.sf.sf_type EQ "dropbox" OR qry_sf.sf.sf_type EQ ""> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_dropbox")# <cfif chk_dropbox.recordcount EQ 0><span style="color:red;"><em>(<cfset transvalues[1] = "Dropbox">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span></cfif>
 				<br />
-				<input type="radio" name="sf_type" id="sf_type" value="s3"<cfif qry_sf.sf.sf_type EQ "s3"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_s3")# <cfif chk_s3.recordcount EQ 0><span style="color:red;"><em>(<cfset transvalues[1] = "Amazon S3">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span></cfif>
-				<br />
+				<input type="radio" name="sf_type" id="sf_type" value="s3"<cfif qry_sf.sf.sf_type EQ "s3"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_s3")# 
+				<cfif chk_s3.recordcount EQ 0>
+					<span style="color:red;"><em>(<cfset transvalues[1] = "Amazon S3">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span>
+				<cfelse>
+					Bucket: 
+					<select name="sf_s3_bucket">
+						<cfloop query="qry_s3_buckets">
+							<option value="#set_id#">#set_pref#</option>
+						</cfloop>
+					</select>
+				</cfif>
+				<!--- <br />
 				<input type="radio" name="sf_type" id="sf_type" value="box"<cfif qry_sf.sf.sf_type EQ "box"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_box")# <cfif chk_box.recordcount EQ 0><span style="color:red;"><em>(<cfset transvalues[1] = "Box">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span></cfif>
 				<br />
-				<input type="radio" name="sf_type" id="sf_type" value="ftp"<cfif qry_sf.sf.sf_type EQ "ftp"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_ftp")# 
+				<input type="radio" name="sf_type" id="sf_type" value="ftp"<cfif qry_sf.sf.sf_type EQ "ftp"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_ftp")#  --->
 				<br /><br />
 				<em>(#myFusebox.getApplicationData().defaults.trans("sf_settings_desc_search")#)</em>
 			</cfif>

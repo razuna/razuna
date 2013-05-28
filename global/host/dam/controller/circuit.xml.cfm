@@ -7148,9 +7148,11 @@
 		<!-- CFC: Check if account is authenticated -->
 		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('dropbox')" returnvariable="chk_dropbox" />
 		<!-- CFC: Check if account is authenticated -->
-		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('s3')" returnvariable="chk_s3" />
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('aws_access_key_id')" returnvariable="chk_s3" />
+		<!-- CFC: Get buckets -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('aws_bucket_name')" returnvariable="qry_s3_buckets" />
 		<!-- CFC: Check if account is authenticated -->
-		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('box')" returnvariable="chk_box" />
+		<!-- <invoke object="myFusebox.getApplicationData().oauth" methodcall="check('box')" returnvariable="chk_box" /> -->
 		<!-- Params -->
 		<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" overwrite="false" />
 		<!-- Show -->

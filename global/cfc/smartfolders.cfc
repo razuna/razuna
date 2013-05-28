@@ -100,7 +100,7 @@
 		sf_date_update = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">
 		WHERE sf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">
 		</cfquery>
-		<!--- Save to properties --->
+		<!--- Save to properties for search --->
 		<cfif arguments.thestruct.sf_type EQ "saved_search" AND arguments.thestruct.searchtext NEQ "">
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#smart_folders_prop
@@ -109,6 +109,35 @@
 			sf_prop_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.searchtext#">
 			WHERE sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">
 			</cfquery>
+		</cfif>
+		<!--- Save to properties for S3 --->
+		<cfif arguments.thestruct.sf_type EQ "s3">
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#smart_folders_prop
+			SET
+			sf_prop_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="bucket">,
+			sf_prop_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_s3_bucket#">
+			WHERE sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">
+			</cfquery>
+			<!--- Get ID from bucket variable --->
+			<cfset var awsid = listLast(arguments.thestruct.sf_s3_bucket,"_")>
+			<!--- Get the AWS information with the selected bucket --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_aws_settings">
+			SELECT set_id, set_pref
+			FROM #session.hostdbprefix#settings
+			WHERE lower(set_id) LIKE 'aws_%_#awsid#'
+			</cfquery>
+			<!--- Set the Amazon datasource --->
+			<cfif qry_aws_settings.recordcount NEQ 0>
+				<cfloop query="qry_aws_settings">
+					<cfset aws[set_id] = set_pref>
+				</cfloop>
+				<!--- Set source --->
+				<cfset "session.aws_#arguments.thestruct.sf_id#" = AmazonRegisterDataSource(arguments.thestruct.sf_id,evaluate("aws.aws_access_key_id_#awsid#"),evaluate("aws.aws_secret_access_key_#awsid#"),evaluate("aws.aws_bucket_location_#awsid#"))>
+				<cfset consoleoutput(true)>
+				<cfset console(session)>
+			</cfif>
+			
 		</cfif>
 		<!--- Reset cache --->
 		<cfset variables.cachetoken = resetcachetoken("folders")>
