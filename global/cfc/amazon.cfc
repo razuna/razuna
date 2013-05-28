@@ -237,5 +237,84 @@
 		<!--- Return --->
 		<cfreturn x />
 	</cffunction>
+
+	<!--- Retrieves file and folder metadata --->
+	<cffunction name="metadata_and_thumbnails">
+		<cfargument name="path" required="false" default="">
+		<cfargument name="sf_id" required="true">
+		<!--- Param --->
+		<cfset var result = structNew()>
+		<!--- Check that we have a Amazon Datasource --->
+		<cfset var ar = awssourcecheck(arguments.sf_id)>
+		<!--- Only continue if we are true --->
+		<cfif ar>
+			<!--- If path is only a / --->
+			<cfif arguments.path EQ "/">
+				<cfset arguments.path = "">
+			</cfif>
+			<!--- Get keys --->
+			<cfset result.contents = AmazonS3list(
+				datasource=session.aws[arguments.sf_id].datasource, 
+				bucket=session.aws[arguments.sf_id].bucket, 
+				prefix=arguments.path
+			)>
+			<!--- set path --->
+			<cfset result.path = arguments.path>
+		</cfif>
+		<!--- Return --->
+		<cfreturn result />
+	</cffunction>
 	
+	<!--- Check RegisterDatasource --->
+	<cffunction name="awssourcecheck" access="private" returntype="String">
+		<cfargument name="sf_id" required="true">
+		<!--- Param --->
+		<cfset var exists = false>
+		<cfset var qry = "">
+		<cfset var qry_aws_settings = "">
+		<!--- Check if a session with this smartfolder id exists --->
+		<cfif !structKeyExists(session,"aws") OR !structKeyExists(session.aws,arguments.sf_id)>
+			<cftry>
+				<!--- Query --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
+				SELECT sf_prop_value
+				FROM #session.hostdbprefix#smart_folders_prop
+				WHERE sf_prop_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="bucket">
+				AND sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
+				</cfquery>
+				<!--- Get ID from bucket variable --->
+				<cfset var awsid = listLast(qry.sf_prop_value,"_")>
+				<!--- Get the AWS information with the selected bucket --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry_aws_settings">
+				SELECT set_id, set_pref
+				FROM #session.hostdbprefix#settings
+				WHERE lower(set_id) LIKE 'aws_%_#awsid#'
+				</cfquery>
+				<!--- Set the Amazon datasource --->
+				<cfif qry_aws_settings.recordcount NEQ 0>
+					<cfloop query="qry_aws_settings">
+						<cfset aws[set_id] = set_pref>
+					</cfloop>
+					<!--- Set source --->
+					<cfset session.aws[arguments.sf_id].datasource = AmazonRegisterDataSource(arguments.sf_id,evaluate("aws.aws_access_key_id_#awsid#"),evaluate("aws.aws_secret_access_key_#awsid#"),evaluate("aws.aws_bucket_location_#awsid#"))>
+					<!--- Set Bucket --->
+					<cfset session.aws[arguments.sf_id].bucket = evaluate("aws.aws_bucket_name_#awsid#")>
+				</cfif>
+				<!--- Set var to true --->
+				<cfset var exists = true>
+				<!--- Error --->
+				<cfcatch type="any">
+					<cfoutput>An error has occured connecting to your Amazon S3 account<br />Message: #cfcatch.message# <br />Detail: #cfcatch.detail#</cfoutput>
+					<cfabort>
+				</cfcatch>
+			</cftry>
+		<!--- All exists --->
+		<cfelse>
+			<!--- Set var to true --->
+			<cfset var exists = true>
+		</cfif>
+		<!--- Return --->
+		<cfreturn exists />
+	</cffunction>
+
 </cfcomponent>

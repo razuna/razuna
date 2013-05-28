@@ -7183,8 +7183,17 @@
 		<set name="session.sf_account" value="#attributes.sf_type#" />
 		<set name="attributes.path" value="/" overwrite="false" />
 		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
+		<!-- Only set the session if we come from the folder list (the first time) -->
+		<if condition="structkeyexists(attributes,'root')">
+			<true>
+				<set name="session.sf_id" value="#attributes.sf_id#" />
+			</true>
+		</if>
 		<!-- CFC: get class according to type -->
-		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="metadata_and_thumbnails(attributes.path)" returnvariable="qry_sf_list" />
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" method="metadata_and_thumbnails" returnvariable="qry_sf_list">
+			<argument name="path" value="#attributes.path#" />
+			<argument name="sf_id" value="#session.sf_id#" />
+		</invoke>
 		<!-- Show -->
 		<if condition="!attributes.noview">
 			<true>

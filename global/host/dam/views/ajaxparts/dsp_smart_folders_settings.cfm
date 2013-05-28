@@ -57,7 +57,7 @@
 				<br />
 				<input type="radio" name="sf_type" id="sf_type" value="dropbox"<cfif qry_sf.sf.sf_type EQ "dropbox" OR qry_sf.sf.sf_type EQ ""> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_dropbox")# <cfif chk_dropbox.recordcount EQ 0><span style="color:red;"><em>(<cfset transvalues[1] = "Dropbox">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span></cfif>
 				<br />
-				<input type="radio" name="sf_type" id="sf_type" value="s3"<cfif qry_sf.sf.sf_type EQ "s3"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_s3")# 
+				<input type="radio" name="sf_type" id="sf_type" value="amazon"<cfif qry_sf.sf.sf_type EQ "amazon"> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("sf_type_s3")# 
 				<cfif chk_s3.recordcount EQ 0>
 					<span style="color:red;"><em>(<cfset transvalues[1] = "Amazon S3">#myFusebox.getApplicationData().defaults.trans(transid="account_not_connected",values=transvalues)#)</em></span>
 				<cfelse>

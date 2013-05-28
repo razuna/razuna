@@ -144,7 +144,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<!--- Remove --->
+	<!--- check --->
 	<cffunction name="check" output="false" access="Public" returntype="query">
 		<cfargument name="account" type="string" required="true">
 		<!--- Param --->
@@ -160,7 +160,7 @@
 		<cfreturn qry />
 	</cffunction>
 
-	<!--- Remove --->
+	<!--- getstoredtokens --->
 	<cffunction name="getstoredtokens" output="false" access="Public" returntype="void">
 		<cfargument name="account" type="string" required="true">
 		<!--- Param --->

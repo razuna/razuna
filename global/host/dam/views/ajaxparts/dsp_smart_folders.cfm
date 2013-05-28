@@ -51,7 +51,7 @@
 					<cfif !sf_search_found>
 						<h1>#myFusebox.getApplicationData().defaults.trans("saved_searches")#</h1>
 					</cfif>
-					<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#');">
+					<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_content&sf_id=#sf_id#&root=true');">
 						<div style="float:left;padding-right:5px;padding-bottom:5px;">
 							<img src="#dynpath#/global/host/dam/images/search_16.png" border="0" width="16px" />
 						</div>
@@ -68,7 +68,7 @@
 						<div style="float:left;padding-right:5px;padding-bottom:5px;">
 							<cfif sf_type EQ "dropbox">
 								<img src="#dynpath#/global/host/dam/images/dropbox_25.png" border="0" width="18px" />
-							<cfelseif sf_type EQ "s3">
+							<cfelseif sf_type EQ "amazon">
 								<img src="#dynpath#/global/host/dam/images/amazon-s3.gif" border="0" width="18px" />
 							</cfif>
 						</div>

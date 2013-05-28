@@ -24,9 +24,11 @@
 *
 --->
 <cfoutput>
+	<!--- If empty ID --->
 	<cfif attributes.sf_id EQ 0>
 		<h2>#myFusebox.getApplicationData().defaults.trans("sf_content_right_when_empty")#</h2>
 	<cfelse>
+		<!--- If NOT for search --->
 		<cfif qry_sf.sfprop.sf_prop_id NEQ "searchtext">
 			<!--- Settings --->
 			<div style="padding-bottom:20px;">
