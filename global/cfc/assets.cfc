@@ -1869,7 +1869,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 			<!--- Move the file from the temp path to this folder, but not for local link assets --->
 			<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-				<cffile action="move" source="#arguments.thestruct.theorgfileraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
+				<cffile action="copy" source="#arguments.thestruct.theorgfileraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
 			</cfif>
 			<!--- If we are PDF we need to move the thumbnail and image as well --->
 			<cfif arguments.thestruct.qryfile.extension EQ "PDF" AND !application.razuna.rfs>
