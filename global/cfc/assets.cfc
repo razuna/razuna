@@ -1444,7 +1444,9 @@ This is the main function called directly by a single upload else from addassets
 		<cfif arguments.thestruct.sched_id EQ arguments.thestruct.qryfile.sched_id>
 			<!--- Remove --->
 			<cfif arguments.thestruct.qryfile.sched_action EQ 0>
-				<cffile action="delete" file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#">
+				<cfif fileExists("#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#")>
+					<cffile action="delete" file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#">
+				</cfif>
 			<!--- Move --->
 			<cfelseif arguments.thestruct.qryfile.sched_action EQ 1>
 				<!--- Create the moved directory, if it is already there do nothing --->
