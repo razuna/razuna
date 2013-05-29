@@ -41,43 +41,56 @@
 		</div>
 	<!--- For files --->
 	<cfelse>
+		<cfset show = true>
 		<!--- For Amazon --->
 		<cfif session.sf_account EQ "amazon">
 			<cfset a.thumb_exists = false>
-			<cfset a.mime_type = aws>
+			<cfset a.mime_type = "aws">
 			<cfset ext = listlast(key,".")>
+			<cfif key EQ qry_sf_list.path>
+				<cfset show = false>
+			</cfif>
+		<cfelse>
+			<cfset ext = listlast(a.path,".")>
 		</cfif>
-		<div style="padding:5px;border-bottom:1px solid grey;width:100%;" id="#a.path#">
-			<div style="float:left;padding-top:10px;">
-				<div style="float:left;padding-right:15px;">
-					<a href="#myself#c.sf_load_file&path=#urlencodedformat(a.path)#" target="_blank">
-						<cfif a.thumb_exists>
-							<cfset lp = listlast(a.path,"/")>
-							<img class="lazy" src="#dynpath#/global/host/dam/images/grey.gif" data-original="#attributes.thumbpath#/#lp#" border="0" width="32" height="32">
-						<cfelse>
-							<cfif a.mime_type EQ "aws">
-								<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_#ext#.png">
-							<cfelseif a.mime_type CONTAINS "pdf">
-								<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_pdf.png">
-							<cfelseif a.mime_type CONTAINS "photoshop">
-								<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_psd.png">
-							<cfelseif a.mime_type CONTAINS "zip">
-								<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_zip.png">
-							<cfelse>
-								<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_txt.png">
-							</cfif>
-							<img src="#thethumb#" border="0" width="32" height="32">
-						</cfif>
-					</a>
-				</div>
+		<cfif show>
+			<div style="padding:5px;border-bottom:1px solid grey;width:100%;" id="#a.path#">
 				<div style="float:left;padding-top:10px;">
-					<a href="#myself#c.sf_load_file&path=#urlencodedformat(a.path)#" target="_blank" style="text-decoration:none;">#listlast(a.path,"/")#</a>
+					<div style="float:left;padding-right:15px;">
+						<a href="#myself#c.sf_load_file&path=#urlencodedformat(a.path)#" target="_blank">
+							<cfif a.thumb_exists>
+								<cfset lp = listlast(a.path,"/")>
+								<img class="lazy" src="#dynpath#/global/host/dam/images/grey.gif" data-original="#attributes.thumbpath#/#lp#" border="0" width="32" height="32">
+							<cfelse>
+								<cfif a.mime_type EQ "aws">
+									<cfif fileExists("#expandpath("../../")#global/host/dam/images/icons/icon_#ext#.png")>
+										<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_#ext#.png">
+									<cfelse>
+										<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_txt.png">
+									</cfif>
+								<cfelse>
+									<cfif a.mime_type CONTAINS "photoshop">
+										<cfset ext = "psd">
+									</cfif>
+									<cfif fileExists("#expandpath("../../")#global/host/dam/images/icons/icon_#ext#.png")>
+										<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_#ext#.png">
+									<cfelse>
+										<cfset thethumb = "#dynpath#/global/host/dam/images/icons/icon_txt.png">
+									</cfif>
+								</cfif>
+								<img src="#thethumb#" border="0" width="32" height="32">
+							</cfif>
+						</a>
+					</div>
+					<div style="float:left;padding-top:10px;">
+						<a href="#myself#c.sf_load_file&path=#urlencodedformat(a.path)#" target="_blank" style="text-decoration:none;">#listlast(a.path,"/")#</a>
+					</div>
 				</div>
+				<div style="float:right;padding-top:20px;">
+					<a href="##" onclick="showwindow('#myself#c.sf_load_download_folder&path=#urlencodedformat(a.path)#','#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#',600,1);" title="#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#">#myFusebox.getApplicationData().defaults.trans("sf_import_to_razuna")#</a>
+				</div>
+				<div style="clear:both;"></div>
 			</div>
-			<div style="float:right;padding-top:20px;">
-				<a href="##" onclick="showwindow('#myself#c.sf_load_download_folder&path=#urlencodedformat(a.path)#','#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#',600,1);" title="#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#">#myFusebox.getApplicationData().defaults.trans("sf_import_to_razuna")#</a>
-			</div>
-			<div style="clear:both;"></div>
-		</div>
+		</cfif>
 	</cfif>
 </cfoutput>

@@ -317,4 +317,72 @@
 		<cfreturn exists />
 	</cffunction>
 
+	<!--- Download --->
+	<cffunction name="downloadfiles" access="public">
+		<cfargument name="path" required="true" type="string">
+		<cfargument name="thestruct" required="true" type="struct">
+		<!--- Call function --->
+		<cfthread intstruct="#arguments#">
+			<cfinvoke method="downloadfilesthread" path="#attributes.intstruct.path#" thestruct="#attributes.intstruct.thestruct#" />
+		</cfthread>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Download --->
+	<cffunction name="downloadfilesthread" access="private" returntype="void">
+		<cfargument name="path" required="true" type="string">
+		<cfargument name="thestruct" required="true" type="struct">
+		<!--- Param --->
+		<cfset var thefile = "">
+		<cfset var td = getTempDirectory()>
+		<!--- Check if amazon dir is there --->
+		<cfif !directoryExists("#td#amazon")>
+			<cfdirectory action="create" directory="#td#amazon" mode="775" />
+		</cfif>
+		<!--- Loop over path list --->
+		<cfloop list="#arguments.path#" index="f" delimiters=",">
+			<!--- Now download file --->
+			<cftry>
+				<cfset AmazonS3read(
+				   datasource=session.aws[session.sf_id].datasource, 
+				   bucket=session.aws[session.sf_id].bucket, 
+				   key=f,
+				   file="#td#amazon/#listlast(f,"/")#"
+				)>
+				<!--- Set the filename. We need this is the asset function for the server add --->
+				<cfset arguments.thestruct.thefile = listlast(f,"/")>
+				<!--- Call internal function to add the file --->
+				<cfinvoke component="assets" method="addassetserver" thestruct="#arguments.thestruct#" />
+				<cfcatch type="any">
+					<cfset consoleoutput(true)>
+					<cfset console(cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Streams file to browser --->
+	<cffunction name="media" access="public" returntype="void">
+		<cfargument name="path" required="false" default="/">
+		<cfargument name="download" required="false" default="false" />
+		<!--- Add 10 years to expiration --->
+		<cfset var epoch = dateadd("n", 10, now())>
+		<!--- Epoch seconds (convert local time to UTC) --->
+		<cfset var newepoch = dateDiff("s", "January 1 1970 00:00", dateConvert("Local2utc", epoch))>
+		<!--- Create the signed URL --->
+		<cfset var theurl = AmazonS3geturl(
+		   datasource=session.aws[session.sf_id].datasource, 
+		   bucket=session.aws[session.sf_id].bucket, 
+		   key=arguments.path, 
+		   expiration=epoch
+		)>
+		<!--- Redirect --->
+		<cflocation url="#theurl#" />
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

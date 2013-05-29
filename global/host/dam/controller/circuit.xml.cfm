@@ -7143,6 +7143,8 @@
 	</fuseaction>
 	<!-- Get settings -->
 	<fuseaction name="smart_folders_settings">
+		<!-- Param -->
+		<set name="attributes.searchtext" value="" overwrite="false" />
 		<!-- CFC: Get one -->
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
 		<!-- CFC: Check if account is authenticated -->
@@ -7154,7 +7156,11 @@
 		<!-- CFC: Check if account is authenticated -->
 		<!-- <invoke object="myFusebox.getApplicationData().oauth" methodcall="check('box')" returnvariable="chk_box" /> -->
 		<!-- Params -->
-		<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" overwrite="false" />
+		<if condition="qry_sf.sf.sf_type EQ 'saved_search'">
+			<true>
+				<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" overwrite="false" />
+			</true>
+		</if>
 		<!-- Show -->
 		<do action="ajax.smart_folders_settings" />
 	</fuseaction>
@@ -7165,6 +7171,12 @@
 	</fuseaction>
 	<!-- Get content -->
 	<fuseaction name="smart_folders_content">
+		<!-- Only set the session if we come from the folder list (the first time) -->
+		<if condition="structkeyexists(attributes,'root')">
+			<true>
+				<set name="session.sf_id" value="#attributes.sf_id#" />
+			</true>
+		</if>
 		<!-- CFC: Get one -->
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
 		<!-- Show -->
@@ -7183,12 +7195,6 @@
 		<set name="session.sf_account" value="#attributes.sf_type#" />
 		<set name="attributes.path" value="/" overwrite="false" />
 		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
-		<!-- Only set the session if we come from the folder list (the first time) -->
-		<if condition="structkeyexists(attributes,'root')">
-			<true>
-				<set name="session.sf_id" value="#attributes.sf_id#" />
-			</true>
-		</if>
 		<!-- CFC: get class according to type -->
 		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" method="metadata_and_thumbnails" returnvariable="qry_sf_list">
 			<argument name="path" value="#attributes.path#" />
@@ -7208,18 +7214,24 @@
 	</fuseaction>
 	<!-- Download file -->
 	<fuseaction name="sf_load_download">
-		<!-- Params -->
-		<!-- We need to remove the leading / from the path -->
-		<!-- <set name="attributes.thefile" value="#listlast(session.sf_path,'/','','all')#" /> -->
-		<!-- All files are being download into the dropbox folder -->
+		<!-- Param -->
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<!-- All files are being download into the account folder -->
 		<set name="attributes.folderpath" value="#gettempdirectory()##session.sf_account#" />
 		<set name="attributes.thepath" value="#thispath#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
 		<!-- Set that function should move file instead of copy -->
 		<set name="attributes.actionforfile" value="move" />
 		<!-- CFC: get class according to type -->
-		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="download(session.sf_path)" returnvariable="attributes.thefile" />		
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="downloadfiles(session.sf_path,attributes)" returnvariable="attributes.thefile" />		
 		<!-- Call CFC -->
-		<do action="asset_upload_server" />
+		<!-- <do action="asset_upload_server" /> -->
 	</fuseaction>
 	<!-- If we call the choose folder within the plugin -->
 	<fuseaction name="sf_load_download_folder">

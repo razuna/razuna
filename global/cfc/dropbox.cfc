@@ -127,13 +127,27 @@
 	</cffunction>
 
 	<!--- Download --->
-	<cffunction name="download" access="public" returntype="string">
+	<cffunction name="downloadfiles" access="public">
 		<cfargument name="path" required="true" type="string">
+		<cfargument name="thestruct" required="true" type="struct">
+		<!--- Call function --->
+		<cfthread intstruct="#arguments#">
+			<cfinvoke method="downloadfilesthread" path="#attributes.intstruct.path#" thestruct="#attributes.intstruct.thestruct#" />
+		</cfthread>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Download --->
+	<cffunction name="downloadfilesthread" access="private" returntype="void">
+		<cfargument name="path" required="true" type="string">
+		<cfargument name="thestruct" required="true" type="struct">
 		<!--- Param --->
 		<cfset var thefile = "">
+		<cfset var td = getTempDirectory()>
 		<!--- Check if dropbox dir is there --->
-		<cfif !directoryExists("#getTempDirectory()#dropbox")>
-			<cfdirectory action="create" directory="#getTempDirectory()#dropbox" mode="775" />
+		<cfif !directoryExists("#td#dropbox")>
+			<cfdirectory action="create" directory="#td#dropbox" mode="775" />
 		</cfif>
 		<!--- Loop over path list --->
 		<cfloop list="#arguments.path#" index="f" delimiters=",">
@@ -141,14 +155,16 @@
 			<cfinvoke method="media" path="#f#" download="true" returnvariable="media_result" />
 			<!--- Now download file --->
 			<cftry>
-				<cfhttp url="#media_result.url#" method="get" getasbinary="yes" path="#getTempDirectory()#dropbox" file="#listlast(f,"/")#" />
+				<cfhttp url="#media_result.url#" method="get" getasbinary="yes" path="#td#dropbox" file="#listlast(f,"/")#" />
 				<!--- Set the filename. We need this is the asset function for the server add --->
-				<cfset var thefile = listlast(f,"/") & "," & thefile>
+				<cfset arguments.thestruct.thefile = listlast(f,"/")>
+				<!--- Call internal function to add the file --->
+				<cfinvoke component="assets" method="addassetserver" thestruct="#arguments.thestruct#" />
 				<cfcatch type="any"></cfcatch>
 			</cftry>
 		</cfloop>
 		<!--- Return --->
-		<cfreturn thefile />
+		<cfreturn />
 	</cffunction>
 
 	<!--- Call API --->
