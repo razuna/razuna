@@ -437,6 +437,10 @@
 	<fuseaction name="admin_integration">
   		<include template="dsp_admin_integration" />
 	</fuseaction>
+	<!-- ADMIN: Integration -->
+	<fuseaction name="admin_integration_s3">
+  		<include template="dsp_admin_integration_s3" />
+	</fuseaction>
 	<!-- ADMIN: Customization -->
 	<fuseaction name="admin_customization">
   		<include template="dsp_admin_customization" />
@@ -757,6 +761,21 @@
   		<include template="win_collection_copy" />
 	</fuseaction>
 
-
+	<!-- Smart Folders: List -->
+	<fuseaction name="smart_folders">
+  		<include template="dsp_smart_folders" />
+	</fuseaction>
+	<!-- Smart Folders: Settings -->
+	<fuseaction name="smart_folders_settings">
+  		<include template="dsp_smart_folders_settings" />
+	</fuseaction>
+	<!-- Smart Folders: Content -->
+	<fuseaction name="smart_folders_content">
+  		<include template="dsp_smart_folders_content" />
+	</fuseaction>
+	<!-- Smart Folders: Account Content -->
+	<fuseaction name="sf_load_account">
+  		<include template="dsp_sf_load_account" />
+	</fuseaction>
 
 </circuit>

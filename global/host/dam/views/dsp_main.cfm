@@ -29,6 +29,7 @@
 		<cfif cs.folder_redirect EQ "0" OR attributes.redirectmain> 
 			<!--- Show if Firebug is enabled --->
 			<div id="firebugalert" style="display:none;" class="box-dotted"></div>
+			
 			<!--- Storage Check --->
 			<cfif application.razuna.storage EQ "nirvanix" AND attributes.nvxsession EQ 0>
 				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box-dotted">

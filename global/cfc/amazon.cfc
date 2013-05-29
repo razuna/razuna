@@ -237,5 +237,152 @@
 		<!--- Return --->
 		<cfreturn x />
 	</cffunction>
+
+	<!--- Retrieves file and folder metadata --->
+	<cffunction name="metadata_and_thumbnails">
+		<cfargument name="path" required="false" default="">
+		<cfargument name="sf_id" required="true">
+		<!--- Param --->
+		<cfset var result = structNew()>
+		<!--- Check that we have a Amazon Datasource --->
+		<cfset var ar = awssourcecheck(arguments.sf_id)>
+		<!--- Only continue if we are true --->
+		<cfif ar>
+			<!--- If path is only a / --->
+			<cfif arguments.path EQ "/">
+				<cfset arguments.path = "">
+			</cfif>
+			<!--- Get keys --->
+			<cfset result.contents = AmazonS3list(
+				datasource=session.aws[arguments.sf_id].datasource, 
+				bucket=session.aws[arguments.sf_id].bucket, 
+				prefix=arguments.path
+			)>
+			<!--- set path --->
+			<cfset result.path = arguments.path>
+		</cfif>
+		<!--- Return --->
+		<cfreturn result />
+	</cffunction>
 	
+	<!--- Check RegisterDatasource --->
+	<cffunction name="awssourcecheck" access="private" returntype="String">
+		<cfargument name="sf_id" required="true">
+		<!--- Param --->
+		<cfset var exists = false>
+		<cfset var qry = "">
+		<cfset var qry_aws_settings = "">
+		<!--- Check if a session with this smartfolder id exists --->
+		<cfif !structKeyExists(session,"aws") OR !structKeyExists(session.aws,arguments.sf_id)>
+			<cftry>
+				<!--- Query --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry">
+				SELECT sf_prop_value
+				FROM #session.hostdbprefix#smart_folders_prop
+				WHERE sf_prop_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="bucket">
+				AND sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
+				</cfquery>
+				<!--- Get ID from bucket variable --->
+				<cfset var awsid = listLast(qry.sf_prop_value,"_")>
+				<!--- Get the AWS information with the selected bucket --->
+				<cfquery datasource="#application.razuna.datasource#" name="qry_aws_settings">
+				SELECT set_id, set_pref
+				FROM #session.hostdbprefix#settings
+				WHERE lower(set_id) LIKE 'aws_%_#awsid#'
+				</cfquery>
+				<!--- Set the Amazon datasource --->
+				<cfif qry_aws_settings.recordcount NEQ 0>
+					<cfloop query="qry_aws_settings">
+						<cfset aws[set_id] = set_pref>
+					</cfloop>
+					<!--- Set source --->
+					<cfset session.aws[arguments.sf_id].datasource = AmazonRegisterDataSource(arguments.sf_id,evaluate("aws.aws_access_key_id_#awsid#"),evaluate("aws.aws_secret_access_key_#awsid#"),evaluate("aws.aws_bucket_location_#awsid#"))>
+					<!--- Set Bucket --->
+					<cfset session.aws[arguments.sf_id].bucket = evaluate("aws.aws_bucket_name_#awsid#")>
+				</cfif>
+				<!--- Set var to true --->
+				<cfset var exists = true>
+				<!--- Error --->
+				<cfcatch type="any">
+					<cfoutput>An error has occured connecting to your Amazon S3 account<br />Message: #cfcatch.message# <br />Detail: #cfcatch.detail#</cfoutput>
+					<cfabort>
+				</cfcatch>
+			</cftry>
+		<!--- All exists --->
+		<cfelse>
+			<!--- Set var to true --->
+			<cfset var exists = true>
+		</cfif>
+		<!--- Return --->
+		<cfreturn exists />
+	</cffunction>
+
+	<!--- Download --->
+	<cffunction name="downloadfiles" access="public">
+		<cfargument name="path" required="true" type="string">
+		<cfargument name="thestruct" required="true" type="struct">
+		<!--- Call function --->
+		<cfthread intstruct="#arguments#">
+			<cfinvoke method="downloadfilesthread" path="#attributes.intstruct.path#" thestruct="#attributes.intstruct.thestruct#" />
+		</cfthread>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Download --->
+	<cffunction name="downloadfilesthread" access="private" returntype="void">
+		<cfargument name="path" required="true" type="string">
+		<cfargument name="thestruct" required="true" type="struct">
+		<!--- Param --->
+		<cfset var thefile = "">
+		<cfset var td = getTempDirectory()>
+		<!--- Check if amazon dir is there --->
+		<cfif !directoryExists("#td#amazon")>
+			<cfdirectory action="create" directory="#td#amazon" mode="775" />
+		</cfif>
+		<!--- Loop over path list --->
+		<cfloop list="#arguments.path#" index="f" delimiters=",">
+			<!--- Now download file --->
+			<cftry>
+				<cfset AmazonS3read(
+				   datasource=session.aws[session.sf_id].datasource, 
+				   bucket=session.aws[session.sf_id].bucket, 
+				   key=f,
+				   file="#td#amazon/#listlast(f,"/")#"
+				)>
+				<!--- Set the filename. We need this is the asset function for the server add --->
+				<cfset arguments.thestruct.thefile = listlast(f,"/")>
+				<!--- Call internal function to add the file --->
+				<cfinvoke component="assets" method="addassetserver" thestruct="#arguments.thestruct#" />
+				<cfcatch type="any">
+					<cfset consoleoutput(true)>
+					<cfset console(cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Streams file to browser --->
+	<cffunction name="media" access="public" returntype="void">
+		<cfargument name="path" required="false" default="/">
+		<cfargument name="download" required="false" default="false" />
+		<!--- Add 10 years to expiration --->
+		<cfset var epoch = dateadd("n", 10, now())>
+		<!--- Epoch seconds (convert local time to UTC) --->
+		<cfset var newepoch = dateDiff("s", "January 1 1970 00:00", dateConvert("Local2utc", epoch))>
+		<!--- Create the signed URL --->
+		<cfset var theurl = AmazonS3geturl(
+		   datasource=session.aws[session.sf_id].datasource, 
+		   bucket=session.aws[session.sf_id].bucket, 
+		   key=arguments.path, 
+		   expiration=epoch
+		)>
+		<!--- Redirect --->
+		<cflocation url="#theurl#" />
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
 </cfcomponent>

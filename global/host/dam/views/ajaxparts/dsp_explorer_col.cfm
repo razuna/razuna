@@ -25,8 +25,8 @@
 --->
 <cfoutput>
 	<!--- Collections --->
-	<div style="padding-left:10px;font-weight:bold;float:left;">Collections</div>
-	<div style="width:60px;float:right;left:190px;position:absolute;">
+	<!--- <div style="padding-left:10px;font-weight:bold;float:left;">Collections</div> --->
+	<div style="width:60px;float:right;left:190px;position:absolute;top:3px;">
 		<div style="float:left;"><a href="##" onclick="$('##collectiontools').toggle();" style="text-decoration:none;" class="ddicon">Manage</a></div>
 		<div style="float:right;"><img src="#dynpath#/global/host/dam/images/arrow_dropdown.gif" width="16" height="16" border="0" onclick="$('##collectiontools').toggle();" class="ddicon"></div>
 		<div id="collectiontools" class="ddselection_header" style="top:18px;width:200px;z-index:6;">
@@ -34,7 +34,7 @@
 				<p><a href="##" onclick="$('##rightside').load('#myself##xfa.foldernew#&theid=0&level=0&rid=0&iscol=T');$('##collectiontools').toggle();return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#">Add Collection Folder</a></p>
 				<p><hr></p>
 			</cfif>
-			<p><a href="##" onclick="loadcontent('explorer_col','#myself#c.explorer_col');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
+			<p><a href="##" onclick="loadcontent('explorer','#myself#c.explorer_col');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_refresh_tree")#">#myFusebox.getApplicationData().defaults.trans("reload")#</a></p>
 		</div>
 	</div>
 	<div style="clear:both;"></div>

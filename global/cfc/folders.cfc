@@ -3001,6 +3001,9 @@
 				<!--- Plugin --->
 				<cfelseif session.type EQ "plugin">
 					<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">
+				<!--- From Smart Folder --->
+				<cfelseif session.type EQ "sf_download">
+					<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');$('##div_choosefolder_status').html('All file(s) are going to be downloaded now and stored in the chosen folder!');return false;">
 				</cfif>
 				<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif>
 				<cfif session.thefolderorg NEQ folder_id></a></cfif>

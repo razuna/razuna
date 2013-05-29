@@ -3189,6 +3189,9 @@
 		<set name="session.view" value="" />
 		<set name="attributes.share" value="F" overwrite="false" />
 		<set name="attributes.cv" value="false" overwrite="false" />
+		<!-- For smart folders -->
+		<set name="attributes.from_sf" value="false" overwrite="false" />
+		<set name="attributes.sf_id" value="0" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />
@@ -3594,6 +3597,12 @@
 				<set name="ignoreCollections" value="1" />
 				<set name="onlyCollections" value="0" />
 			</false>
+		</if>
+		<!-- If we download from smart folders -->
+		<if condition="session.type EQ 'sf_download'">
+			<true>
+				<set name="session.savehere" value="c.sf_load_download" />
+			</true>
 		</if>
 		<!-- Show -->
 		<do action="ajax.choose_folder" />
@@ -4944,10 +4953,12 @@
 	
 	<!-- For loading integration -->
 	<fuseaction name="admin_integration">
-		<!-- CFC -->
+		<!-- Janrain -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_apikey')" returnvariable="jr_apikey" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_appurl" />
+		<!-- Dropbox -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('dropbox_uid')" returnvariable="dropbox_uid" />
 		<!-- We expect a boolean value for jr_enable but since it will return an empty string if not found -->
 		<if condition="jr_enable EQ ''">
 			<true>
@@ -4961,6 +4972,18 @@
 	<fuseaction name="admin_integration_save">
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_janrain(attributes.janrain_enable,attributes.janrain_apikey,attributes.janrain_appurl)" />
+	</fuseaction>
+	<!-- Load S3 -->
+	<fuseaction name="admin_integration_s3">
+		<!-- CFC: Get all S3 account -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_s3()" returnvariable="qry_s3" />
+		<!-- Show -->
+		<do action="ajax.admin_integration_s3" />
+	</fuseaction>
+	<!-- Save S3 -->
+	<fuseaction name="admin_integration_s3_save">
+		<!-- CFC: Set -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_s3(attributes)" />
 	</fuseaction>
 	
 	<!--  -->
@@ -7273,6 +7296,186 @@
 				<!-- Do -->
 				<do action="folder_content_results" />
 			</false>
+		</if>
+	</fuseaction>
+
+	<!-- START: Smart Folders -->
+
+	<!-- Get all -->
+	<fuseaction name="smart_folders">
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get folders -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getall(attributes)" returnvariable="qry_sf" />
+		<!-- Show -->
+		<do action="ajax.smart_folders" />
+	</fuseaction>
+	<!-- Get settings -->
+	<fuseaction name="smart_folders_settings">
+		<!-- Param -->
+		<set name="attributes.searchtext" value="" overwrite="false" />
+		<!-- CFC: Get one -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
+		<!-- CFC: Check if account is authenticated -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('dropbox')" returnvariable="chk_dropbox" />
+		<!-- CFC: Check if account is authenticated -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('aws_access_key_id')" returnvariable="chk_s3" />
+		<!-- CFC: Get buckets -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('aws_bucket_name')" returnvariable="qry_s3_buckets" />
+		<!-- CFC: Check if account is authenticated -->
+		<!-- <invoke object="myFusebox.getApplicationData().oauth" methodcall="check('box')" returnvariable="chk_box" /> -->
+		<!-- Params -->
+		<if condition="qry_sf.sf.sf_type EQ 'saved_search'">
+			<true>
+				<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" overwrite="false" />
+			</true>
+		</if>
+		<!-- Show -->
+		<do action="ajax.smart_folders_settings" />
+	</fuseaction>
+	<!-- Save settings -->
+	<fuseaction name="smart_folders_update">
+		<!-- CFC: Update -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="update(attributes)" />
+	</fuseaction>
+	<!-- Get content -->
+	<fuseaction name="smart_folders_content">
+		<!-- Only set the session if we come from the folder list (the first time) -->
+		<if condition="structkeyexists(attributes,'root')">
+			<true>
+				<set name="session.sf_id" value="#attributes.sf_id#" />
+			</true>
+		</if>
+		<!-- CFC: Get one -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
+		<!-- Show -->
+		<do action="ajax.smart_folders_content" />
+	</fuseaction>
+	<!-- Remove folder -->
+	<fuseaction name="smart_folders_remove">
+		<!-- CFC: Remove sf -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="remove(attributes.sf_id)" />
+	</fuseaction>
+
+	<!-- Load account API and so on -->
+	<fuseaction name="sf_load_account">
+		<!-- Param -->
+		<set name="attributes.noview" value="false" overwrite="false" />
+		<set name="session.sf_account" value="#attributes.sf_type#" />
+		<set name="attributes.path" value="/" overwrite="false" />
+		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" method="metadata_and_thumbnails" returnvariable="qry_sf_list">
+			<argument name="path" value="#attributes.path#" />
+			<argument name="sf_id" value="#session.sf_id#" />
+		</invoke>
+		<!-- Show -->
+		<if condition="!attributes.noview">
+			<true>
+				<do action="ajax.sf_load_account" />
+			</true>
+		</if>
+	</fuseaction>
+	<!-- Show file -->
+	<fuseaction name="sf_load_file">
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="media(attributes.path)" />
+	</fuseaction>
+	<!-- Download file -->
+	<fuseaction name="sf_load_download">
+		<!-- Param -->
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<!-- All files are being download into the account folder -->
+		<set name="attributes.folderpath" value="#gettempdirectory()##session.sf_account#" />
+		<set name="attributes.thepath" value="#thispath#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
+		<!-- Set that function should move file instead of copy -->
+		<set name="attributes.actionforfile" value="move" />
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="downloadfiles(session.sf_path,attributes)" returnvariable="attributes.thefile" />		
+		<!-- Call CFC -->
+		<!-- <do action="asset_upload_server" /> -->
+	</fuseaction>
+	<!-- If we call the choose folder within the plugin -->
+	<fuseaction name="sf_load_download_folder">
+		<!-- Call the include but only if we path have defined (needed so we don't overwrite it when coming from multi select) -->
+		<if condition="structkeyexists(attributes,'path')">
+			<true>
+				<do action="sf_load_download_folder_include" />
+			</true>
+		</if>
+		<!-- Param -->
+		<set name="session.type" value="sf_download" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
+	</fuseaction>
+	<!-- This is just an include and can be called to store the paths -->
+	<fuseaction name="sf_load_download_folder_include">
+		<!-- Set path in session -->
+		<set name="session.sf_path" value="#attributes.path#" />
+	</fuseaction>
+
+	<!-- END: Smart Folders -->
+
+	<!-- START: OAUTH -->
+
+	<!-- Get application Keys -->
+	<fuseaction name="getappkey">
+		<if condition="!structKeyExists(session, '#attributes.account#')">
+			<true>
+				<!-- Set DB connection for keys -->
+				<do action="setdbrazclients" />
+				<!-- CFC -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getappkey(attributes.account)" />
+			</true>
+		</if>
+	</fuseaction>
+	<!-- Authenticate -->
+	<fuseaction name="oauth_authenticate">
+		<!-- Get the app keys -->
+		<do action="getappkey" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="authenticate(attributes.account)" />
+	</fuseaction>
+	<!-- Return from authentication -->
+	<fuseaction name="oauth_authenticate_return">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="authenticate_return(attributes)" />
+	</fuseaction>
+	<!-- Disconnect account -->
+	<fuseaction name="oauth_remove">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="remove(attributes.account)" />
+		<!-- Load integration again -->
+		<do action="admin_integration" />
+	</fuseaction>
+
+	<!-- Set database connection for razuna_clients -->
+	<fuseaction name="setdbrazclients">
+		<!-- Set values from form into the sessions -->
+		<set name="session.firsttime.database" value="razuna_client" />
+		<!-- CFC: Check if there is a DB Connection -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="verifydatasource()" returnvariable="theconnection" />
+		<!-- Only execute if we don't have a connection -->
+		<if condition="theconnection NEQ 'true'">
+			<true>
+				<!-- Set db values -->
+				<set name="session.firsttime.database_type" value="mysql" />
+				<set name="session.firsttime.db_name" value="razuna_clients" />
+				<set name="session.firsttime.db_server" value="db.razuna.com" />
+				<set name="session.firsttime.db_port" value="3306" />
+				<set name="session.firsttime.db_user" value="razuna_client" />
+				<set name="session.firsttime.db_pass" value="D63E61251" />
+				<set name="session.firsttime.db_action" value="create" />
+				<!-- CFC: Add the datasource -->
+				<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+			</true>
 		</if>
 	</fuseaction>
 

@@ -1352,6 +1352,8 @@
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.dynpath = cgi.context_path>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
+	<cfset application.razuna.dropbox.url_oauth = "https://www.dropbox.com/1">
+	<cfset application.razuna.dropbox.url_api = "https://api.dropbox.com/1">
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
@@ -2313,5 +2315,71 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
+
+	<!--- Check for app key --->
+	<cffunction name="getappkey">
+		<cfargument name="account" type="string">
+		<!--- Param --->
+		<cfset var qry_keys = "">
+		<!--- Connect to DB and retrieve keys --->
+		<cftry>
+			<!--- Query --->
+			<cfquery datasource="razuna_client" name="qry_keys">
+			SELECT app_key_name, app_key_value
+			FROM appkeys
+			WHERE app_key_name LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.account#_%">
+			</cfquery>
+			<!--- Put keys into session scope --->
+			<cfloop query="qry_keys">
+				<cfif app_key_name EQ "#arguments.account#_appkey">
+					<cfset "session.#arguments.account#.appkey" = app_key_value>
+				<cfelseif app_key_name EQ "#arguments.account#_appsecret">
+					<cfset "session.#arguments.account#.appsecret" = app_key_value>
+				</cfif>
+			</cfloop>
+			<!--- Output --->
+			<!--- <cfoutput><span style="font-weight:bold;color:green;">Got the codes please authenticate now!</span></cfoutput> --->
+			<cfcatch type="any">
+				<cfoutput><span style="font-weight:bold;color:red;">Error occured: #cfcatch.message# - #cfcatch.detail#</span></cfoutput>
+				<cfabort>
+			</cfcatch>
+		</cftry>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Get_s3 --->
+	<cffunction name="get_s3" returntype="Query">
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT set_id, set_pref
+		FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		ORDER BY lower(set_id)
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
+	<!--- Get_s3 --->
+	<cffunction name="set_s3" returntype="void">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- Remove all aws fields ind DB first --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		</cfquery>
+		<!--- Loop over fields and call savesettings --->
+		<cfloop collection="#arguments.thestruct#" item="i">
+			<cfif i CONTAINS "aws_">
+				<cfinvoke method="savesetting" thefield="#i#" thevalue="#arguments.thestruct["#i#"]#" />
+			</cfif>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+		
 
 </cfcomponent>
