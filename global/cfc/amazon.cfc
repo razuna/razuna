@@ -299,9 +299,11 @@
 					<cfset session.aws[arguments.sf_id].datasource = AmazonRegisterDataSource(arguments.sf_id,evaluate("aws.aws_access_key_id_#awsid#"),evaluate("aws.aws_secret_access_key_#awsid#"),evaluate("aws.aws_bucket_location_#awsid#"))>
 					<!--- Set Bucket --->
 					<cfset session.aws[arguments.sf_id].bucket = evaluate("aws.aws_bucket_name_#awsid#")>
+					<!--- Set var to true --->
+					<cfset var exists = true>
+				<cfelse>
+					<cfthrow type="any" message="No credentials associated with this account" detail="Please enter a valid Amazon access key and token in the Razuna administration!" />
 				</cfif>
-				<!--- Set var to true --->
-				<cfset var exists = true>
 				<!--- Error --->
 				<cfcatch type="any">
 					<cfoutput>An error has occured connecting to your Amazon S3 account<br />Message: #cfcatch.message# <br />Detail: #cfcatch.detail#</cfoutput>

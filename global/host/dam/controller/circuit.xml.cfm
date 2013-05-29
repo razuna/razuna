@@ -7327,7 +7327,7 @@
 		<!-- Params -->
 		<if condition="qry_sf.sf.sf_type EQ 'saved_search'">
 			<true>
-				<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" overwrite="false" />
+				<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" />
 			</true>
 		</if>
 		<!-- Show -->
@@ -7355,6 +7355,11 @@
 	<fuseaction name="smart_folders_remove">
 		<!-- CFC: Remove sf -->
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="remove(attributes.sf_id)" />
+	</fuseaction>
+	<!-- Remove folder with name -->
+	<fuseaction name="smart_folders_remove_name">
+		<!-- CFC: Remove sf -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="removeWithName(attributes.account)" />
 	</fuseaction>
 
 	<!-- Load account API and so on -->

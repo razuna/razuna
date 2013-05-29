@@ -28,16 +28,7 @@
 	<input type="hidden" name="#theaction#" value="c.admin_integration_s3_save">
 		<!--- How many recordcounts --->
 		<cfset countuntil = qry_s3.recordcount / 4>
-		<!--- <cfloop from="1" to="#countuntil#" index="counter">
-			<cfset counter = counter>
-			<cfloop query="qry_s3">
-				<cfif set_id CONTAINS "aws_access_key_id_#counter#" OR set_id CONTAINS "aws_secret_access_key_#counter#" OR set_id CONTAINS "aws_bucket_name_#counter#" OR set_id CONTAINS "aws_bucket_location_#counter#">
-					#set_id# - #set_pref#<br>
-				</cfif>
-			</cfloop>
-		</cfloop>
-		
-		<cfabort> --->
+		<!--- Show --->
 		<cfloop from="1" to="#countuntil#" index="counter">
 			<cfset counter = counter>
 			<div id="input#counter#" style="margin-bottom:4px;" class="clonedInputsf">
@@ -85,7 +76,7 @@
 	<!--- JS --->
 	<script type="text/javascript">
 		$(document).ready(function() {
-			<cfif qry_s3.recordcount EQ 0>
+			<cfif countuntil LT 2>
 				$('##btnDel').css('display','none');
 			</cfif>
 			// Add button click

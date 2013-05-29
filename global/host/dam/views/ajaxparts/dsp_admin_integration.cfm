@@ -108,7 +108,12 @@
 			window.open('#myself#c.oauth_authenticate&account=' + account,'','toolbars=0,location=1,status=1,scrollbars=1,directories=0,width=1100,height=800');
 		}
 		function oauth_disconnect(account){
+			// Remove account in oauth
 			$('##admin_integration').load('#myself#c.oauth_remove&account=' + account);
+			// Remove Smart folders also
+			$('##div_forall').load('#myself#c.smart_folders_remove_name&account=' + account, function(){
+				$('##explorer').load('#myself#c.smart_folders');
+			});
 		}
 	</script>
 </cfoutput>

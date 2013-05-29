@@ -144,5 +144,32 @@
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
+
+	<!--- Remove --->
+	<cffunction name="removeWithName" access="Public" output="false" returntype="void">
+		<cfargument name="sf_account" required="false" default="0">
+		<!--- Select record in order for us to delete --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_sf">
+		SELECT sf_id 
+		FROM #session.hostdbprefix#smart_folders
+		WHERE lower(sf_type) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.sf_account)#">
+		</cfquery>
+		<cfloop query="qry_sf">
+			<!--- Remove in master record --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#smart_folders
+			WHERE sf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#sf_id#">
+			</cfquery>
+			<!--- Remove in properties --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#smart_folders_prop
+			WHERE sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#sf_id#">
+			</cfquery>
+		</cfloop>
+		<!--- Reset cache --->
+		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
 	
 </cfcomponent>

@@ -2366,14 +2366,19 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Get_s3 --->
 	<cffunction name="set_s3" returntype="void">
 		<cfargument name="thestruct" type="struct" required="true" />
-		<!--- Remove all aws fields ind DB first --->
+		<!--- Remove all aws fields in DB first --->
 		<cfquery datasource="#application.razuna.datasource#">
 		DELETE FROM #session.hostdbprefix#settings
 		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
 		</cfquery>
+		<!--- Remove all sessions with AWS --->
+		<cfset structClear(session.aws)>
 		<!--- Loop over fields and call savesettings --->
 		<cfloop collection="#arguments.thestruct#" item="i">
 			<cfif i CONTAINS "aws_">
+				<cfif arguments.thestruct["#i#"] EQ "">
+					<cfbreak>
+				</cfif>
 				<cfinvoke method="savesetting" thefield="#i#" thevalue="#arguments.thestruct["#i#"]#" />
 			</cfif>
 		</cfloop>
