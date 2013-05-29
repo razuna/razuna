@@ -164,6 +164,16 @@
 		<cfif cs.show_top_part>
 			<div id="apDiv1">#trim( headercontent )#</div>
 		</cfif>
+		<div style="padding-top:50px;">
+			<div id="slide_off">
+				<a href="##" onclick="hideshow('off');"><img src="#dynpath#/global/host/dam/images/arrow_slide_left.gif" border="0" width="15" height="15"></a>
+			</div>
+			<div id="slide_on" style="display:none;">
+				<a href="##" onclick="hideshow('on');">
+					<img src="#dynpath#/global/host/dam/images/arrow_slide_right.gif" border="0" width="15" height="15">
+				</a>
+			</div>
+		</div>
 		<div id="apDiv3">#trim( leftcontent )#</div>
 		<div id="apDiv4">#trim( maincontent )#</div>
 		<!--- <div id="apDiv5">#trim( showcontent )#</div> --->
