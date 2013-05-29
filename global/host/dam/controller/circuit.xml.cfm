@@ -4477,6 +4477,7 @@
 		<set name="attributes.upl_template" value="#thetask.qry_detail.sched_upl_template#" />
 		<set name="attributes.directory" value="#thetask.qry_detail.sched_server_folder#" />
 		<set name="attributes.recurse" value="#thetask.qry_detail.sched_server_recurse#" />
+		<set name="attributes.zip_extract" value="#thetask.qry_detail.sched_zip_extract#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Log start -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
