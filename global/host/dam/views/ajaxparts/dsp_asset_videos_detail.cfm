@@ -141,14 +141,18 @@
 								<tr>
 									<td><strong>#myFusebox.getApplicationData().defaults.trans("labels")#</strong></td>
 									<td width="100%" nowrap="true" colspan="5">
-										<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_vid" onchange="razaddlabels('tags_vid','#attributes.file_id#','vid');" multiple="multiple">
-											<option value=""></option>
-											<cfloop query="attributes.thelabelsqry">
-												<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
-											</cfloop>
-										</select>
-										<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
-											<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
+										<cfif attributes.folderaccess EQ "R">
+											<cfloop query="attributes.thelabelsqry"><cfif ListFind(qry_labels,'#label_id#') NEQ 0><button class="awesome greylight small" onclick="return false;" disabled="disabled">#label_path#</button> </cfif></cfloop>
+										<cfelse>
+											<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" id="tags_vid" onchange="razaddlabels('tags_vid','#attributes.file_id#','vid');" multiple="multiple">
+												<option value=""></option>
+												<cfloop query="attributes.thelabelsqry">
+													<option value="#label_id#"<cfif ListFind(qry_labels,'#label_id#') NEQ 0> selected="selected"</cfif>>#label_path#</option>
+												</cfloop>
+											</select>
+											<cfif qry_label_set.set2_labels_users EQ "t" OR (Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser())>
+												<a href="##" onclick="showwindow('#myself#c.admin_labels_add&label_id=0&closewin=2','Create new label',450,2);return false"><img src="#dynpath#/global/host/dam/images/list-add-3.png" width="24" height="24" border="0" style="margin-left:-2px;" /></a>
+											</cfif>
 										</cfif>
 									</td>
 								</tr>
