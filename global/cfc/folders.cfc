@@ -2134,6 +2134,8 @@
 <!--- SET ACCESS PERMISSION --->
 <cffunction hint="SET ACCESS PERMISSION" name="setaccess" output="true" returntype="string">
 	<cfargument name="folder_id" default="" required="yes" type="string">
+	<!--- Param --->
+	<cfset var fprop = "">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Set the access rights for this folder --->

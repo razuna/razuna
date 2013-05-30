@@ -1016,9 +1016,7 @@
 		<!-- CFC: Get detail of Collections -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="details(attributes)" returnvariable="qry_detail" />
 		<!-- CFC: Get assets of Collections -->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="qry_assets" />
-		<!-- CFC: Permissions of this folder -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />		
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="qry_assets" />		
 		<if condition="qry_assets.recordcount NEQ 0">
 			<true>
 				<set name="attributes.qrybasket" value="#qry_assets#" />
@@ -1055,6 +1053,8 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Permissions of this Collection (we do this here at the end since other function also call the permissions) -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
 		<do action="ajax.collection_detail" />
 	</fuseaction>
@@ -6850,7 +6850,6 @@
 		<set name="session.rowmaxpage" value="#attributes.rowmaxpage#" />
 		<set name="attributes.offset" value="#session.offset#" overwrite="false" />
 		<set name="session.offset" value="#attributes.offset#" />
-		
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: get label text -->
