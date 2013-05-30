@@ -568,6 +568,19 @@
 		</invoke>
 	</fuseaction>
 	
+	<fuseaction name="searchforcopymetadata">
+		<!-- Param -->
+		<set name="attributes.col" value="F" overwrite="false" />
+		<set name="attributes.id" value="0" overwrite="false" />
+		<set name="attributes.actionismove" value="F" overwrite="false" />
+		<set name="session.showmyfolder" value="F" overwrite="false" />
+		<!-- Get folder record -->
+		<invoke object="myFusebox.getApplicationData().folders" method="getfoldersfortree" returnvariable="qFolder">
+			<argument name="thestruct" value="#attributes#" />
+			<argument name="id" value="#attributes.id#" />
+			<argument name="col" value="#attributes.col#" />
+		</invoke>
+	</fuseaction>
 	
 	
 	<!--
@@ -1003,9 +1016,7 @@
 		<!-- CFC: Get detail of Collections -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="details(attributes)" returnvariable="qry_detail" />
 		<!-- CFC: Get assets of Collections -->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="qry_assets" />
-		<!-- CFC: Permissions of this folder -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />		
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_assets(attributes)" returnvariable="qry_assets" />		
 		<if condition="qry_assets.recordcount NEQ 0">
 			<true>
 				<set name="attributes.qrybasket" value="#qry_assets#" />
@@ -1042,6 +1053,8 @@
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_label_set()" returnvariable="qry_label_set" />
+		<!-- CFC: Permissions of this Collection (we do this here at the end since other function also call the permissions) -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
 		<do action="ajax.collection_detail" />
 	</fuseaction>
@@ -1579,6 +1592,8 @@
 		</if>
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_folder_settings',attributes)" returnvariable="pl" />
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
 		<do action="ajax.folder_new" />
 	</fuseaction>
@@ -2003,6 +2018,8 @@
 		<set name="attributes.logswhat" value="log_assets" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().log" methodcall="get_log_assets(attributes)" returnvariable="qry_log" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.log_history" />
 	</fuseaction>
@@ -2010,6 +2027,8 @@
 	<fuseaction name="log_history_search">
 		<!-- CFC: Search log -->
 		<invoke object="myFusebox.getApplicationData().log" methodcall="log_search(attributes)" returnvariable="qry_log" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Show -->
 		<do action="ajax.log_history" />
 	</fuseaction>
@@ -2894,7 +2913,7 @@
 		<!-- CFC: Get detail of original audio
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" /> -->
 		<!-- CFC: Convert video -->
-		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudiothread(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudio(attributes)" />		
 	</fuseaction>
 	<!-- Audio Rendtions Convert-->
 	<fuseaction name="rendition_audios_convert">
@@ -2910,7 +2929,7 @@
 		<!-- CFC: Get detail of original audio
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="detail(attributes)" returnvariable="attributes.qry_detail" /> -->
 		<!-- CFC: Convert video -->
-		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudiothread(attributes)" />		
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="convertaudio(attributes)" />		
 	</fuseaction>
 	<!-- Load related audios -->
 	<fuseaction name="audios_detail_related">
@@ -3352,6 +3371,9 @@
 		<set name="session.view" value="" />
 		<set name="attributes.share" value="F" overwrite="false" />
 		<set name="attributes.cv" value="false" overwrite="false" />
+		<!-- For smart folders -->
+		<set name="attributes.from_sf" value="false" overwrite="false" />
+		<set name="attributes.sf_id" value="0" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />
@@ -3741,6 +3763,12 @@
 				<set name="session.savehere" value="c.move_folder_do" />
 			</true>
 		</if>
+		<!-- Choose the folder for get asset-->
+		<if condition="session.type EQ 'copymetadata'">
+			<true>
+				<set name="session.savehere" value="c.get_meta_folder" />
+			</true>
+		</if>
 		<!-- Decide on the collection param -->
 		<if condition="attributes.iscol EQ 'T'">
 			<true>
@@ -3751,6 +3779,12 @@
 				<set name="ignoreCollections" value="1" />
 				<set name="onlyCollections" value="0" />
 			</false>
+		</if>
+		<!-- If we download from smart folders -->
+		<if condition="session.type EQ 'sf_download'">
+			<true>
+				<set name="session.savehere" value="c.sf_load_download" />
+			</true>
 		</if>
 		<!-- Show -->
 		<do action="ajax.choose_folder" />
@@ -3799,6 +3833,119 @@
 		<!-- Show the choose folder -->
 		<do action="choose_folder" />
 	</fuseaction>
+	
+	<!-- Copy Metadata -->
+	<fuseaction name="copy_metadata">
+		<if condition="attributes.what EQ 'images'">
+			<true>
+				<!-- XFA -->
+				<xfa name="save" value="c.copy_metadata_image_do" />
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'audios'">
+			<true>
+				<!-- XFA -->
+				<xfa name="save" value="c.copy_metadata_audio_do" />
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'videos'">
+			<true>
+				<!-- XFA -->
+				<xfa name="save" value="c.copy_metadata_video_do" />
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'files'">
+			<true>
+				<!-- XFA -->
+				<xfa name="save" value="c.copy_metadata_files_do" />
+			</true>
+		</if>
+		<do action="ajax.copy_metaData" />
+	</fuseaction>
+	<!-- Copy Metadata to assign asset -->
+	<fuseaction name="copy_metadata_do">
+		<!-- CFC:search images-->
+		<if condition="attributes.thetype EQ 'images'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_images(attributes)" returnvariable="qry_results" />
+			</true>
+		</if>
+		<!-- CFC:search audios-->
+		<if condition="attributes.thetype EQ 'audios'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_audios(attributes)" returnvariable="qry_results" />
+			</true>
+		</if>
+		<!-- CFC:search videos-->
+		<if condition="attributes.thetype EQ 'videos'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_videos(attributes)" returnvariable="qry_results" />
+			</true>
+		</if>
+		<!-- CFC:search files-->
+		<if condition="attributes.thetype EQ 'files'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_files(attributes)" returnvariable="qry_results" />
+			</true>
+		</if>
+		<do action="ajax.copy_metaData_do" />
+	</fuseaction>
+	
+	<!-- Update the metadata to selected image assets-->
+	<fuseaction name="copy_metadata_image_do">
+		<invoke object="myFusebox.getApplicationData().images" methodcall="copymetadataupdate(attributes)" />
+	</fuseaction>
+	
+	<!-- Update the metadata to selected audio assets-->
+	<fuseaction name="copy_metadata_audio_do">
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="copymetadataupdate(attributes)" />
+	</fuseaction>
+	
+	<!-- Update the metadata to selected video assets-->
+	<fuseaction name="copy_metadata_video_do">
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="copymetadataupdate(attributes)" />
+	</fuseaction>
+	
+	<!-- Update the metadata to selected file assets-->
+	<fuseaction name="copy_metadata_files_do">
+		<invoke object="myFusebox.getApplicationData().files" methodcall="copymetadataupdate(attributes)" />
+	</fuseaction>
+	
+	<!-- Folders folders for metadata-->
+	<fuseaction name="metadata_choose_folder">
+		<!-- Param -->
+		<set name="session.type" value="copymetadata" />
+		<set name="session.thetype" value="#attributes.what#" />
+		<set name="session.file_id" value="#attributes.file_id#" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
+	</fuseaction>
+	
+	<!-- Get Metadata from Folders -->
+	<fuseaction name="get_meta_folder">
+		<if condition="attributes.what EQ 'images'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().images" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'audios'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().audios" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'videos'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().videos" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
+			</true>
+		</if>
+		<if condition="attributes.what EQ 'files'">
+			<true>
+				<invoke object="myFusebox.getApplicationData().files" methodcall="getAllFolderAsset(attributes)" returnvariable="qry_results"/>
+			</true>
+		</if>
+		<do action="ajax.copy_metaData_do" />
+	</fuseaction>
+	
 	<!-- Move the file into the desired folder -->
 	<fuseaction name="move_file_do">
 		<!-- Param -->
@@ -3894,6 +4041,8 @@
 		<xfa name="batchdo" value="c.batch_do" />
 		<!-- CFC: Get languages -->
 		<do action="languages" />
+		<!-- CFC: Check for custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfields(attributes)" returnvariable="qry_cf" />
 		<!-- CFC: Permissions of this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- If we are images -->
@@ -3921,6 +4070,12 @@
 		<do action="assetpath" />
 		<!-- CFC: Storage -->
 		<do action="storage" />
+		<!-- Check if there are custom fields to be saved (we do this before because of indexing) -->
+		<if condition="attributes.customfields NEQ 0">
+			<true>
+				<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="savebatchvalues(attributes)" />
+			</true>
+		</if>
 		<!-- If we are files -->
 		<if condition="attributes.what EQ 'doc'">
 			<true>
@@ -4510,6 +4665,9 @@
 		<set name="session.theuserid" value="#thetask.qry_detail.sched_user#" />
 		<set name="attributes.sched_action" value="#thetask.qry_detail.sched_server_files#" />
 		<set name="attributes.upl_template" value="#thetask.qry_detail.sched_upl_template#" />
+		<set name="attributes.directory" value="#thetask.qry_detail.sched_server_folder#" />
+		<set name="attributes.recurse" value="#thetask.qry_detail.sched_server_recurse#" />
+		<set name="attributes.zip_extract" value="#thetask.qry_detail.sched_zip_extract#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Log start -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
@@ -4628,6 +4786,8 @@
 		<set name="attributes.meta_default" value="labels,keywords,description,type" />
 		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice" />
 		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
+		<!-- Get Custom fields -->
+		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="get(true)" returnvariable="attributes.meta_cf" />
 		<!-- Create new ID -->
 		<if condition="attributes.imp_temp_id EQ 0">
 			<true>
@@ -4908,7 +5068,7 @@
 	<!-- Update languages -->
 	<fuseaction name="isp_settings_updatelang">
 		<!-- Params -->
-		<set name="attributes.thepath" value="#thispath#" />		
+		<set name="attributes.thepath" value="#ExpandPath('../..')#" />		
 		<!-- CFC: Get languages -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="lang_get_langs(attributes)" />
 		<!-- Show -->
@@ -4973,10 +5133,12 @@
 	
 	<!-- For loading integration -->
 	<fuseaction name="admin_integration">
-		<!-- CFC -->
+		<!-- Janrain -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_enable')" returnvariable="jr_enable" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_apikey')" returnvariable="jr_apikey" />
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('janrain_appurl')" returnvariable="jr_appurl" />
+		<!-- Dropbox -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('dropbox_uid')" returnvariable="dropbox_uid" />
 		<!-- We expect a boolean value for jr_enable but since it will return an empty string if not found -->
 		<if condition="jr_enable EQ ''">
 			<true>
@@ -4990,6 +5152,18 @@
 	<fuseaction name="admin_integration_save">
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_janrain(attributes.janrain_enable,attributes.janrain_apikey,attributes.janrain_appurl)" />
+	</fuseaction>
+	<!-- Load S3 -->
+	<fuseaction name="admin_integration_s3">
+		<!-- CFC: Get all S3 account -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_s3()" returnvariable="qry_s3" />
+		<!-- Show -->
+		<do action="ajax.admin_integration_s3" />
+	</fuseaction>
+	<!-- Save S3 -->
+	<fuseaction name="admin_integration_s3_save">
+		<!-- CFC: Set -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_s3(attributes)" />
 	</fuseaction>
 	
 	<!--  -->
@@ -6856,7 +7030,6 @@
 		<set name="session.rowmaxpage" value="#attributes.rowmaxpage#" />
 		<set name="attributes.offset" value="#session.offset#" overwrite="false" />
 		<set name="session.offset" value="#attributes.offset#" />
-		
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- CFC: get label text -->
@@ -7225,6 +7398,26 @@
 
 	<!-- Show custom Razuna -->
 	<fuseaction name="view_custom">
+		<!-- Check that API key is valid -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="checkapikey(attributes.api_key)" />
+		<!-- If there is a userid then set sessions to userid -->
+		<if condition="structkeyexists(url,'userid')">
+			<true>
+				<!-- Set session to the userid -->
+				<set name="session.theuserid" value="#url.userid#" />
+				<!-- Get the groups of this user -->
+				<invoke object="myFusebox.getApplicationData().groups_users" method="getGroupsOfUser">
+					<argument name="user_id" value="#url.userid#" />
+					<argument name="host_id" value="#session.hostid#" />
+				</invoke>				
+ 			</true>
+		</if>
+		<!-- If there is a userid then set sessions to userid -->
+		<if condition="structkeyexists(url,'sortby')">
+			<true>
+				<set name="session.sortby" value="#url.sortby#" />
+			</true>
+		</if>
 		<!-- Param -->
 		<set name="attributes.access" value="r" overwrite="false" />
 		<set name="attributes.fileid" value="" overwrite="false" />
@@ -7237,8 +7430,6 @@
 		<set name="session.customfileid" value="#attributes.fileid#" />
 		<!-- Set that we are in custom view -->
 		<set name="session.customview" value="true" />
-		<!-- Check that API key is valid -->
-		<invoke object="myFusebox.getApplicationData().users" methodcall="checkapikey(attributes.api_key)" returnvariable="qry_api_key" />
 		<!-- CFC: Custom fields -->
 		<invoke object="myFusebox.getApplicationData().custom_fields" methodcall="getfieldssearch(attributes)" returnvariable="qry_cf_fields" />
 		<!-- Show main page -->
@@ -7284,6 +7475,191 @@
 				<!-- Do -->
 				<do action="folder_content_results" />
 			</false>
+		</if>
+	</fuseaction>
+
+	<!-- START: Smart Folders -->
+
+	<!-- Get all -->
+	<fuseaction name="smart_folders">
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<!-- CFC: Get folders -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getall(attributes)" returnvariable="qry_sf" />
+		<!-- Show -->
+		<do action="ajax.smart_folders" />
+	</fuseaction>
+	<!-- Get settings -->
+	<fuseaction name="smart_folders_settings">
+		<!-- Param -->
+		<set name="attributes.searchtext" value="" overwrite="false" />
+		<!-- CFC: Get one -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
+		<!-- CFC: Check if account is authenticated -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('dropbox')" returnvariable="chk_dropbox" />
+		<!-- CFC: Check if account is authenticated -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('aws_access_key_id')" returnvariable="chk_s3" />
+		<!-- CFC: Get buckets -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('aws_bucket_name')" returnvariable="qry_s3_buckets" />
+		<!-- CFC: Check if account is authenticated -->
+		<!-- <invoke object="myFusebox.getApplicationData().oauth" methodcall="check('box')" returnvariable="chk_box" /> -->
+		<!-- Params -->
+		<if condition="qry_sf.sf.sf_type EQ 'saved_search'">
+			<true>
+				<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" />
+			</true>
+		</if>
+		<!-- Show -->
+		<do action="ajax.smart_folders_settings" />
+	</fuseaction>
+	<!-- Save settings -->
+	<fuseaction name="smart_folders_update">
+		<!-- CFC: Update -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="update(attributes)" />
+	</fuseaction>
+	<!-- Get content -->
+	<fuseaction name="smart_folders_content">
+		<!-- Only set the session if we come from the folder list (the first time) -->
+		<if condition="structkeyexists(attributes,'root')">
+			<true>
+				<set name="session.sf_id" value="#attributes.sf_id#" />
+			</true>
+		</if>
+		<!-- CFC: Get one -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
+		<!-- Show -->
+		<do action="ajax.smart_folders_content" />
+	</fuseaction>
+	<!-- Remove folder -->
+	<fuseaction name="smart_folders_remove">
+		<!-- CFC: Remove sf -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="remove(attributes.sf_id)" />
+	</fuseaction>
+	<!-- Remove folder with name -->
+	<fuseaction name="smart_folders_remove_name">
+		<!-- CFC: Remove sf -->
+		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="removeWithName(attributes.account)" />
+	</fuseaction>
+
+	<!-- Load account API and so on -->
+	<fuseaction name="sf_load_account">
+		<!-- Param -->
+		<set name="attributes.noview" value="false" overwrite="false" />
+		<set name="session.sf_account" value="#attributes.sf_type#" />
+		<set name="attributes.path" value="/" overwrite="false" />
+		<set name="attributes.thumbpath" value="#dynpath#/global/host/dropbox/#session.hostid#" overwrite="false" />
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" method="metadata_and_thumbnails" returnvariable="qry_sf_list">
+			<argument name="path" value="#attributes.path#" />
+			<argument name="sf_id" value="#session.sf_id#" />
+		</invoke>
+		<!-- Show -->
+		<if condition="!attributes.noview">
+			<true>
+				<do action="ajax.sf_load_account" />
+			</true>
+		</if>
+	</fuseaction>
+	<!-- Show file -->
+	<fuseaction name="sf_load_file">
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="media(attributes.path)" />
+	</fuseaction>
+	<!-- Download file -->
+	<fuseaction name="sf_load_download">
+		<!-- Param -->
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<set name="attributes.langcount" value="1" />
+		<set name="attributes.dynpath" value="#dynpath#" />
+		<set name="attributes.httphost" value="#cgi.http_host#" />
+		<!-- All files are being download into the account folder -->
+		<set name="attributes.folderpath" value="#gettempdirectory()##session.sf_account#" />
+		<set name="attributes.thepath" value="#thispath#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
+		<!-- Set that function should move file instead of copy -->
+		<set name="attributes.actionforfile" value="move" />
+		<!-- CFC: get class according to type -->
+		<invoke object="myFusebox.getApplicationData()['#session.sf_account#']" methodcall="downloadfiles(session.sf_path,attributes)" returnvariable="attributes.thefile" />		
+		<!-- Call CFC -->
+		<!-- <do action="asset_upload_server" /> -->
+	</fuseaction>
+	<!-- If we call the choose folder within the plugin -->
+	<fuseaction name="sf_load_download_folder">
+		<!-- Call the include but only if we path have defined (needed so we don't overwrite it when coming from multi select) -->
+		<if condition="structkeyexists(attributes,'path')">
+			<true>
+				<do action="sf_load_download_folder_include" />
+			</true>
+		</if>
+		<!-- Param -->
+		<set name="session.type" value="sf_download" />
+		<!-- Show the choose folder -->
+		<do action="choose_folder" />
+	</fuseaction>
+	<!-- This is just an include and can be called to store the paths -->
+	<fuseaction name="sf_load_download_folder_include">
+		<!-- Set path in session -->
+		<set name="session.sf_path" value="#attributes.path#" />
+	</fuseaction>
+
+	<!-- END: Smart Folders -->
+
+	<!-- START: OAUTH -->
+
+	<!-- Get application Keys -->
+	<fuseaction name="getappkey">
+		<if condition="!structKeyExists(session, '#attributes.account#')">
+			<true>
+				<!-- Set DB connection for keys -->
+				<do action="setdbrazclients" />
+				<!-- CFC -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="getappkey(attributes.account)" />
+			</true>
+		</if>
+	</fuseaction>
+	<!-- Authenticate -->
+	<fuseaction name="oauth_authenticate">
+		<!-- Get the app keys -->
+		<do action="getappkey" />
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="authenticate(attributes.account)" />
+	</fuseaction>
+	<!-- Return from authentication -->
+	<fuseaction name="oauth_authenticate_return">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="authenticate_return(attributes)" />
+	</fuseaction>
+	<!-- Disconnect account -->
+	<fuseaction name="oauth_remove">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().oauth" methodcall="remove(attributes.account)" />
+		<!-- Load integration again -->
+		<do action="admin_integration" />
+	</fuseaction>
+
+	<!-- Set database connection for razuna_clients -->
+	<fuseaction name="setdbrazclients">
+		<!-- Set values from form into the sessions -->
+		<set name="session.firsttime.database" value="razuna_client" />
+		<!-- CFC: Check if there is a DB Connection -->
+		<invoke object="myFusebox.getApplicationData().global" methodcall="verifydatasource()" returnvariable="theconnection" />
+		<!-- Only execute if we don't have a connection -->
+		<if condition="theconnection NEQ 'true'">
+			<true>
+				<!-- Set db values -->
+				<set name="session.firsttime.database_type" value="mysql" />
+				<set name="session.firsttime.db_name" value="razuna_clients" />
+				<set name="session.firsttime.db_server" value="db.razuna.com" />
+				<set name="session.firsttime.db_port" value="3306" />
+				<set name="session.firsttime.db_user" value="razuna_client" />
+				<set name="session.firsttime.db_pass" value="D63E61251" />
+				<set name="session.firsttime.db_action" value="create" />
+				<!-- CFC: Add the datasource -->
+				<invoke object="myFusebox.getApplicationData().global" methodcall="setdatasource()" />
+			</true>
 		</if>
 	</fuseaction>
 

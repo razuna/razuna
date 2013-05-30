@@ -106,7 +106,7 @@
 <cffunction name="trans" output="false" returntype="string" hint="Get the correct translation">
 	<cfargument name="transid" default="" required="yes" type="string">
 	<cfargument name="values" hint="Array of values to substitute for $1, $2 etc in the resource string" type="array" required="false" default="#arrayNew(1)#" />
-	<!--- <cfargument name="thetransfile" default="English" required="yes" type="string"> --->
+	<cfargument name="thetransfile" default="#session.thelang#" required="false" type="string">
 	<!--- init function internal vars --->
 	<!---<cfset var xmlFile=expandpath("translations/#arguments.thetransfile#")/>
 	<cfset var xmlVar = "">
@@ -114,7 +114,7 @@
 	<cfset xmlVar=xmlParse(xmlVar)/>
 	<cfset xmlVar=xmlSearch(xmlVar, "translations/transid[@name='#arguments.transid#']")>
 	<cfreturn trim(#xmlVar[1].transtext.xmlText#)>--->
-	<cfreturn application.razuna.trans.getString(resourceBundleName = 'HomePage', key = arguments.transid, locale = session.thelang, values = arguments.values)>
+	<cfreturn application.razuna.trans.getString(resourceBundleName = 'HomePage', key = arguments.transid, locale = arguments.thetransfile, values = arguments.values)>
 </cffunction>
 
 <!--- PARSE THE LANGUAGE ID FOR ADMIN --->

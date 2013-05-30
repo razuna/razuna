@@ -297,21 +297,19 @@
 <cffunction name="lang_get_langs">
 	<cfargument name="thestruct" type="Struct">
 	<!--- Get the xml files in the translation dir --->
-	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/translations" name="thelangs" />
+	<cfdirectory action="list" directory="#arguments.thestruct.thepath#/global/translations" name="thelangs" />
 	<cfquery dbtype="query" name="thelangs">
 	SELECT *
 	FROM thelangs where TYPE = 'Dir' and name != 'Custom'
 	ORDER BY name
 	</cfquery>
-	
 	<!--- Loop over languages --->
 	<cfloop query="thelangs">
 		<!--- Get name and language id --->
 		<cfset thislang = thelangs.name>
-		
 		<!--- If we come from admin then take another method --->
 		<cfif structkeyexists(arguments.thestruct,"fromadmin")>
-			<cfinvoke component="defaults" method="propertiesfilelangid" thetransfile="#arguments.thestruct.thepath#/translations/#name#/HomePage.properties" returnvariable="langid">
+			<cfinvoke component="defaults" method="propertiesfilelangid" thetransfile="#arguments.thestruct.thepath#/global/translations/#name#/HomePage.properties" returnvariable="langid">
 		<cfelse>
 			<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#name#" returnvariable="langid">
 		</cfif>
@@ -322,7 +320,6 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND lang_id = <cfqueryparam value="#langid#" cfsqltype="cf_sql_numeric">
 		</cfquery>
-		
 		<!--- RAZ-544: If the lang name is numeric we change this to the name value --->
 		<cfif isnumeric(qry.lang_name) AND qry.recordcount NEQ 0>
 			<cfquery datasource="#application.razuna.datasource#">
@@ -1355,6 +1352,8 @@
 	<cfset application.razuna.whitelabel = qry.conf_wl>
 	<cfset application.razuna.dynpath = cgi.context_path>
 	<cfset application.razuna.akatoken = qry.conf_aka_token>
+	<cfset application.razuna.dropbox.url_oauth = "https://www.dropbox.com/1">
+	<cfset application.razuna.dropbox.url_api = "https://api.dropbox.com/1">
 </cffunction>
 
 <!--- SEARCH TRANSLATION --->
@@ -1858,6 +1857,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.share_comments = false>
 	<cfset v.share_uploading = false>
 	<cfset v.request_access = true>
+	<cfset v.req_filename = true>
+	<cfset v.req_description = false>
+	<cfset v.req_keywords = false>
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2055,6 +2057,15 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			</cfif>
 			<cfif custom_id EQ "request_access" AND !custom_value>
 				<cfset v.request_access = false>
+			</cfif>
+			<cfif custom_id EQ "req_filename" AND !custom_value>
+				<cfset v.req_filename = false>
+			</cfif>
+			<cfif custom_id EQ "req_description" AND custom_value>
+				<cfset v.req_description = true>
+			</cfif>
+			<cfif custom_id EQ "req_keywords" AND custom_value>
+				<cfset v.req_keywords = true>
 			</cfif>
 		</cfloop>
 	</cfif>
@@ -2304,5 +2315,76 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
+
+	<!--- Check for app key --->
+	<cffunction name="getappkey">
+		<cfargument name="account" type="string">
+		<!--- Param --->
+		<cfset var qry_keys = "">
+		<!--- Connect to DB and retrieve keys --->
+		<cftry>
+			<!--- Query --->
+			<cfquery datasource="razuna_client" name="qry_keys">
+			SELECT app_key_name, app_key_value
+			FROM appkeys
+			WHERE app_key_name LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.account#_%">
+			</cfquery>
+			<!--- Put keys into session scope --->
+			<cfloop query="qry_keys">
+				<cfif app_key_name EQ "#arguments.account#_appkey">
+					<cfset "session.#arguments.account#.appkey" = app_key_value>
+				<cfelseif app_key_name EQ "#arguments.account#_appsecret">
+					<cfset "session.#arguments.account#.appsecret" = app_key_value>
+				</cfif>
+			</cfloop>
+			<!--- Output --->
+			<!--- <cfoutput><span style="font-weight:bold;color:green;">Got the codes please authenticate now!</span></cfoutput> --->
+			<cfcatch type="any">
+				<cfoutput><span style="font-weight:bold;color:red;">Error occured: #cfcatch.message# - #cfcatch.detail#</span></cfoutput>
+				<cfabort>
+			</cfcatch>
+		</cftry>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Get_s3 --->
+	<cffunction name="get_s3" returntype="Query">
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT set_id, set_pref
+		FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		ORDER BY lower(set_id)
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
+	<!--- Get_s3 --->
+	<cffunction name="set_s3" returntype="void">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<!--- Remove all aws fields in DB first --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#settings
+		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
+		</cfquery>
+		<!--- Remove all sessions with AWS --->
+		<cfset structClear(session.aws)>
+		<!--- Loop over fields and call savesettings --->
+		<cfloop collection="#arguments.thestruct#" item="i">
+			<cfif i CONTAINS "aws_">
+				<cfif arguments.thestruct["#i#"] EQ "">
+					<cfbreak>
+				</cfif>
+				<cfinvoke method="savesetting" thefield="#i#" thevalue="#arguments.thestruct["#i#"]#" />
+			</cfif>
+		</cfloop>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+		
 
 </cfcomponent>

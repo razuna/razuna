@@ -102,6 +102,12 @@
 				<td><strong>#myFusebox.getApplicationData().defaults.trans("user_mobile")#</strong></td>
 				<td><input name="user_mobile" type="text" style="width:300px;" value="#qry_detail.user_mobile#"></td>
 			</tr>
+			<cfif attributes.add EQ "f">
+				<tr>
+					<td><strong>ID</strong></td>
+					<td>#qry_detail.user_id#</td>
+				</tr>
+			</cfif>
 		</table>
 		<!--- Custom fields --->
 		<cfif qry_cf.recordcount NEQ 0>

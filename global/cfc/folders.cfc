@@ -2134,6 +2134,8 @@
 <!--- SET ACCESS PERMISSION --->
 <cffunction hint="SET ACCESS PERMISSION" name="setaccess" output="true" returntype="string">
 	<cfargument name="folder_id" default="" required="yes" type="string">
+	<!--- Param --->
+	<cfset var fprop = "">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Set the access rights for this folder --->
@@ -2163,7 +2165,7 @@
 		</cfif>
 	</cfloop>
 	<!--- If the user is a sys or admin or the owner of the folder give full access --->
-	<cfif (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
+	<cfif structKeyExists(request,"securityObj") AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()) OR fprop.folder_owner EQ session.theuserid>
 		<cfset var folderaccess = "x">
 	</cfif>
 	<!--- If session.customaccess is here and is not empty --->
@@ -2986,6 +2988,9 @@
 				<!--- upload --->
 				<cfelseif session.type EQ "uploadinto">
 					<a href="##" onclick="showwindow('index.cfm?fa=c.asset_add&folder_id=#folder_id#','Add your files',650,1);return false;">
+				<!--- copy metadata --->
+				<cfelseif session.type EQ "copymetadata">
+					<a href="##" onclick="loadcontent('result','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&what=#session.thetype#&fid=#session.file_id#');destroywindow(2);return false;">
 				<!--- customization --->
 				<cfelseif session.type EQ "customization">
 					<a href="##" onclick="javascript:document.form_admin_custom.folder_redirect.value = '#folder_id#'; document.form_admin_custom.folder_name.value = '#folder_name#';destroywindow(1);">
@@ -2998,6 +3003,9 @@
 				<!--- Plugin --->
 				<cfelseif session.type EQ "plugin">
 					<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">
+				<!--- From Smart Folder --->
+				<cfelseif session.type EQ "sf_download">
+					<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');$('##div_choosefolder_status').html('All file(s) are going to be downloaded now and stored in the chosen folder!');return false;">
 				</cfif>
 				<ins>&nbsp;</ins>#folder_name#<cfif iscol EQ "F" AND folder_name EQ "my folder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())><cfif session.theuserid NEQ folder_owner AND folder_owner NEQ ""> (#username#)</cfif></cfif>
 				<cfif session.thefolderorg NEQ folder_id></a></cfif>
@@ -3972,7 +3980,17 @@
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfif>
+		<cfif arguments.thestruct.thekind EQ "ALL">
+			AND lower(file_extension) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">) 
+		<cfelseif arguments.thestruct.thekind NEQ "other">
+			AND (
+			lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#" cfsqltype="cf_sql_varchar">
+			OR lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#x" cfsqltype="cf_sql_varchar">
+			)
+		<cfelse>
+			AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+		</cfif>
+	</Cfif>
 	</cfquery>
 	<!--- Set the valuelist --->
 	<cfset var l = valuelist(qry.id)>
@@ -3984,12 +4002,25 @@
 <!--- Store selection --->
 <cffunction name="store_selection" output="false" returntype="void">
 	<cfargument name="thestruct" required="yes" type="struct">
+	<!---<cfdump var="#arguments.thestruct.del_file_id#"><cfabort>--->
 	<!--- session --->
 	<cfparam name="session.file_id" default="">
+	<cfparam name="arguments.thestruct.del_file_id" default="">
 	<!--- Now simply add the selected fileids to the session --->
-	<cfset var thelist = session.file_id & "," & arguments.thestruct.file_id>
+	<cfset var thelist = session.file_id & "," & arguments.thestruct.file_id >
 	<cfset session.file_id = ListRemoveduplicates(thelist)>
 	<cfset session.thefileid = session.file_id>
+	<cfif session.file_id NEQ "">
+		<cfset list_file_ids = "">
+		<cfloop index="idx" from="1" to="#listlen(session.file_id)#">
+			<cfif !listFindNoCase(#arguments.thestruct.del_file_id#,#listGetAt(session.file_id,idx)#)>
+				<cfset list_file_ids = listAppend(list_file_ids,#listGetAt(session.file_id,idx)#,',')>		
+			</cfif>
+		</cfloop>
+		<cfset session.thefileid = list_file_ids>
+		<cfset session.file_id = list_file_ids>
+	</cfif>
+	
 </cffunction>
 
 <!--- Get foldername --->

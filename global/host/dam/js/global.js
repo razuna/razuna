@@ -205,6 +205,8 @@ function aspectwidth(inp,out,theform){
 }
 // Enable folderselection in list
 function enablesub(myform,nostore) {
+	// Remove ui-selected class
+	$('.assetbox').removeClass('ui-selected');
 	// Set nostore to false
 	if (nostore == ''){
 		var nostore = false;
@@ -213,17 +215,17 @@ function enablesub(myform,nostore) {
 	var anyselect = $('div').hasClass('ui-selected'); 
 	if (!anyselect) {
 		// Check state of selection box
-	    var isclosed = $("#folderselection" + myform).is(':hidden');
+	    // var isclosed = $("#folderselection" + myform).is(':hidden');
 	    // get how many are selected
 	    var n = $('#' + myform + ' input:checked').length;
 	    // Open or close selection
-	    if (n > 0 && isclosed) {
-			$("#folderselection" + myform).slideToggle('slow');
-			$("#folderselectionb" + myform).slideToggle('slow');
+	    if (n > 0) {
+			$("#folderselection" + myform).slideDown('slow');
+			$("#folderselectionb" + myform).slideDown('slow');
 		}
-		if (n == 0 && !isclosed) {
-			$("#folderselection" + myform).slideToggle('slow');
-			$("#folderselectionb" + myform).slideToggle('slow');
+		if (n == 0) {
+			$("#folderselection" + myform).slideUp('slow');
+			$("#folderselectionb" + myform).slideUp('slow');
 			// Store IDs
 			if (!nostore){
 				storeids(myform);
@@ -231,9 +233,9 @@ function enablesub(myform,nostore) {
 		}
 		// if selection is here
 		if (n != 0) {
-			// Show select all desc
-			$("#selectstore" + myform).css("display","");
-			$("#selectstoreb" + myform).css("display","");
+			// Hide the selectall desc
+			$("#selectstore" + myform).css("display","none");
+			$("#selectstoreb" + myform).css("display","none");
 			// Store IDs
 			if (!nostore){
 				storeids(myform);
@@ -456,10 +458,10 @@ function storeids(theform){
            		fileids += document.forms[theform].elements[i].value + ',';
            		// filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
            	}
-           	// else {
-           	// 	del_fileids += document.forms[theform].elements[i].value + ',';
+           	else {
+           	 	del_fileids += document.forms[theform].elements[i].value + ',';
            	// 	// del_filetypes += document.forms[theform].elements[i].value + '-' + document.forms[theform].thetype.value + ',';
-           	// }
+           	 }
       	}
    	}
    	// Only continue if there is something selected
@@ -474,16 +476,12 @@ function CheckAll(myform,folderid,thediv,thekind) {
 	$("#selectstore" + myform).css("display","");
 	$("#selectstoreb" + myform).css("display","");
 	// Loop over checkboxes and check all
-	$('#' + myform + ' :checkbox').each( function() {
-		$(this).attr('checked', true);
-	})
-	// Depending on the var set or unset
-	if($("#folderselection" + myform).is(':hidden')){
-		$("#folderselection" + myform).slideToggle('slow');
-		$("#folderselectionb" + myform).slideToggle('slow');
-		// $('#select' + thediv).slideToggle('slow');
-		// $('#non' + thediv).slideToggle('slow');
-	}
+	$('#' + myform + ' :checkbox').attr('checked', true);
+	// Show drop down
+	$("#folderselection" + myform).slideDown('slow');
+	$("#folderselectionb" + myform).slideDown('slow');
+	// Remove ui-selected class
+	$('.assetbox').removeClass('ui-selected');
 	// Decide if this is from the search
 	if(folderid != 'x'){
 		$('#div_forall').load('index.cfm?fa=c.store_file_all&folder_id=' + folderid + '&thekind=' + thekind );
@@ -497,12 +495,10 @@ function CheckAll(myform,folderid,thediv,thekind) {
 
 function CheckAllNot(myform){
 	// Loop over checkboxes and check/uncheck and set var
-	$('#' + myform + ' :checkbox').each( function() {
-		$(this).attr('checked', false);
-	})
+	$('#' + myform + ' :checkbox').attr('checked', false);
 	// Hide bar
-	$("#folderselection" + myform).slideToggle('slow');
-	$("#folderselectionb" + myform).slideToggle('slow');
+	$("#folderselection" + myform).slideUp('slow');
+	$("#folderselectionb" + myform).slideUp('slow');
 	// Hide the selectall desc
 	$("#selectstore" + myform).css("display","none");
 	$("#selectstoreb" + myform).css("display","none");
@@ -1688,4 +1684,37 @@ function resetdl(divorg,divthumb,folderid,thestatusddiv){
 	$('#div_forall').load('index.cfm?fa=c.share_reset_dl&folder_id=' + folderid + '&setto=' + thevalue + '&settothumb=' + thevaluethumb);
 	$('#' + thestatusddiv + '_thumb').html('Reset all individual download setting successfully');
 	$('#' + thestatusddiv + '_org').html('Reset all individual download setting successfully');
+}
+// Switch section
+function switchmainselection(thetype,thelinktext){
+	// Load section
+	if (thetype == 'folders'){
+		$('#explorer').load('index.cfm?fa=c.explorer');
+	}
+	else if (thetype == 'collections'){
+		$('#explorer').load('index.cfm?fa=c.explorer_col');
+	}
+	else if (thetype == 'labels'){
+		$('#explorer').load('index.cfm?fa=c.labels_list');
+	}
+	else if (thetype == 'smart_folders'){
+		$('#explorer').load('index.cfm?fa=c.smart_folders');
+	}
+	// Toogle
+	$('#mainselection').toggle();
+	// Remove the image in all marks
+	$('#section_folders').html('&nbsp;');
+	$('#section_smart_folders').html('&nbsp;');
+	$('#section_collections').html('&nbsp;');
+	$('#section_labels').html('&nbsp;');
+	// Now set the correct CSS
+	$('#section_folders').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_smart_folders').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_collections').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	$('#section_labels').css({'float':'left','padding-right':'14px','padding-top':'3px'});
+	// Now mark the div
+	$('#section_' + thetype).css({'float':'left','padding-right':'3px'});
+	$('#section_' + thetype).html('<img src="' + dynpath + '/global/host/dam/images/arrow_selected.jpg" width="14" height="14" border="0">');
+	// Change the link text itself
+	$('#mainsectionchooser').text(thelinktext);
 }

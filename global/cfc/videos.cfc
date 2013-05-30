@@ -467,7 +467,7 @@
 	SELECT /* #variables.cachetoken#relatedvideosvid */ v.vid_id, v.folder_id_r, v.vid_filename, v.vid_extension, 
 	v.vid_height, v.vid_width, v.vid_size vlength, v.vid_name_org, v.path_to_asset, v.cloud_url_org, v.vid_group
 	FROM #session.hostdbprefix#videos v
-	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="BEBCACD9BC0D4AEF82AF9DC3CD4A85D3">
+	WHERE v.vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 	AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	ORDER BY vid_extension
 	</cfquery>
@@ -989,8 +989,6 @@
 		<!--- Local --->
 		<cfif application.razuna.storage EQ "local">
 			<!--- MD5 video --->
-			<cfset consoleoutput(true)>
-			<cfset console("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
 			<cfif FileExists("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
 				<cfset var md5hash = hashbinary("#arguments.thestruct.assetpath#/#session.hostid#/#qryorg.path_to_asset#/#qryorg.vid_name_org#")>
 				<!--- Update DB --->
@@ -1511,6 +1509,10 @@
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
 	<!--- Put the video id into a variable --->
 	<cfset thevideoid = #arguments.thestruct.file_id#>
+	<!--- set session.artofimage value if it is empty  --->
+	<cfif session.artofimage EQ "">
+		<cfset session.artofimage = arguments.thestruct.artofimage>
+	</cfif>
 	<!--- Start the loop to get the different kinds of videos --->
 	<cfloop delimiters="," list="#session.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
@@ -1786,6 +1788,122 @@
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry />
+</cffunction>
+
+<!--- Update all copy Metadata --->
+<cffunction name="copymetadataupdate" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- select video name --->
+	<!--- <cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT vid_filename 
+		FROM #session.hostdbprefix#videos
+		WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery> --->
+	<!--- select video details --->
+	<cfquery datasource="#application.razuna.datasource#" name="thevidtext">
+		SELECT vid_keywords,vid_description
+		FROM #session.hostdbprefix#videos_text
+		WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfif arguments.thestruct.insert_type EQ 'replace'>
+		<!--- update video name --->
+		<cfloop list="#arguments.thestruct.idlist#" index="i">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+				UPDATE #session.hostdbprefix#videos 
+				SET vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.vid_filename#">
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<cfquery datasource="#application.razuna.datasource#" name="checkid">
+				SELECT vid_id_r
+				FROM #session.hostdbprefix#videos_text
+				WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- update video details --->
+			<cfif checkid.RecordCount>
+				<cfquery datasource="#application.razuna.datasource#" name="updatevidtext">
+					UPDATE #session.hostdbprefix#videos_text
+					SET vid_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtext.vid_keywords#">,
+					vid_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtext.vid_description#">
+					WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#videos_text
+						(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
+					VALUES(
+						<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+						<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
+						<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
+						<cfqueryparam value="#thevidtext.vid_description#" cfsqltype="cf_sql_varchar">, 
+						<cfqueryparam value="#thevidtext.vid_keywords#" cfsqltype="cf_sql_varchar">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	<cfelse>
+		<cfloop list="#arguments.thestruct.idlist#" index="i">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="theviddetail">
+				SELECT vid_filename 
+				FROM #session.hostdbprefix#videos
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<cfquery datasource="#application.razuna.datasource#" name="thevidtextdetail">
+				SELECT vid_keywords,vid_description
+				FROM #session.hostdbprefix#videos_text
+				WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- update video name --->
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+				UPDATE #session.hostdbprefix#videos 
+				SET vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theviddetail.vid_filename# #thedetail.vid_filename#">
+				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<!--- update video details --->
+			<cfif thevidtextdetail.RecordCount>
+				<cfquery datasource="#application.razuna.datasource#" name="updatevidtext">
+					UPDATE #session.hostdbprefix#videos_text
+					SET vid_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtextdetail.vid_keywords# #thevidtext.vid_keywords#">,
+					vid_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thevidtextdetail.vid_description# #thevidtext.vid_description#">
+					WHERE vid_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#application.razuna.datasource#">
+						INSERT INTO #session.hostdbprefix#videos_text
+							(id_inc, vid_id_r, lang_id_r, vid_description, vid_keywords, host_id)
+						VALUES(
+							<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+							<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
+							<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
+							<cfqueryparam value="#thevidtext.vid_description#" cfsqltype="cf_sql_varchar">, 
+							<cfqueryparam value="#thevidtext.vid_keywords#" cfsqltype="cf_sql_varchar">,
+							<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>	
+</cffunction>
+
+<!--- Get all asset from folder --->
+<cffunction name="getAllFolderAsset" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#variables.dsn#" name="qry_data">
+		SELECT vid_id AS id,vid_filename AS filename
+		FROM #session.hostdbprefix#videos
+		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn qry_data>
 </cffunction>
 
 </cfcomponent>

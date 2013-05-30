@@ -38,24 +38,29 @@
 		<cfinvoke component="global" method="isWindows" returnvariable="isWindows" />
 		<cfif isWindows>
 			<cfset var theext = ".bat">
+			<cfset var theperl = "perl.exe">
 		<cfelse>
 			<cfset var theext = ".sh">
+			<cfset var theperl = "perl.exe">
 		</cfif>
 		<!--- Temp ID --->
 		<cfset var tid = createUUID("") & theext>
 		<!--- Path to executable --->
 		<cfset var exe = "#expandPath("../")#akamai/perl/">
 		<!--- Write Execute --->
-		<cfset var thef = "cd #exe# && perl #exe#akam-edge-auth-url.pl #arguments.thestruct.thetype#/#arguments.thestruct.thefilename# uploadkey 10000 #application.razuna.akatoken#">
+		<cfset var thef = "cd #exe# && #theperl# #exe#akam-edge-auth-url.pl #arguments.thestruct.thetype#/#arguments.thestruct.thefilename# uploadkey 10000 #application.razuna.akatoken#">
 		<!--- Write script --->
 		<cffile action="write" file="#getTempDirectory()##tid#" output="#thef#" mode="777" />
 		<!--- Execute --->
 		<cfexecute name="#getTempDirectory()##tid#" variable="thetoken" timeout="60" />
-		<!--- Delete script --->
-		<cffile action="delete" file="#tid#" />
 		<!--- Trim output --->
 		<cfset var thetoken = reReplaceNoCase(thetoken, "[\r\n]", "", "all")>
 		<cfset var thetoken = trim(thetoken)>
+		<cfset var thetoken = listlast(thetoken," ")>
+		<!--- Delete script --->
+		<cffile action="delete" file="#tid#" />
+		<!--- Log  --->
+		<cflog application="no" file="akamai" type="Information" text="Token: #thetoken#">
 		<!--- Return --->
 		<cfreturn thetoken />
 	</cffunction>
@@ -72,20 +77,24 @@
 		<cfinvoke component="global" method="isWindows" returnvariable="isWindows" />
 		<cfif isWindows>
 			<cfset var theext = ".bat">
+			<cfset var thecurl = "curl.exe">
 		<cfelse>
 			<cfset var theext = ".sh">
+			<cfset var thecurl = "curl">
 		</cfif>
 		<!--- Temp ID --->
 		<cfset var p = createUUID("") & theext>
 		<cfset var t = "#getTempDirectory()##p#">
 		<!--- Write Execute --->
-		<cfset var e = "curl --data-binary @'#arguments.theasset#' #arguments.theurl##thetoken#">
+		<cfset var e = "#thecurl# --data-binary @#arguments.theasset# #arguments.theurl##thetoken#">
 		<!--- Write script --->
 		<cffile action="write" file="#t#" output="#e#" mode="777" />
 		<!--- Execute --->
 		<cfexecute name="#t#" variable="cf" timeout="900" />
 		<!--- Delete script --->
 		<cffile action="delete" file="#t#" />
+		<!--- Log  --->
+		<cflog application="no" file="akamai" type="Information" text="Upload: #cf#">
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>
@@ -102,20 +111,24 @@
 		<cfinvoke component="global" method="isWindows" returnvariable="isWindows" />
 		<cfif isWindows>
 			<cfset var theext = ".bat">
+			<cfset var thecurl = "curl.exe">
 		<cfelse>
 			<cfset var theext = ".sh">
+			<cfset var thecurl = "curl">
 		</cfif>
 		<!--- Temp ID --->
 		<cfset var p = createUUID("") & theext>
 		<cfset var t = "#getTempDirectory()##p#">
 		<!--- Write Execute --->
-		<cfset var e = "curl -XDELETE #arguments.theurl##thetoken#">
+		<cfset var e = "#thecurl# -XDELETE #arguments.theurl##thetoken#">
 		<!--- Write script --->
 		<cffile action="write" file="#t#" output="#e#" mode="777" />
 		<!--- Execute --->
 		<cfexecute name="#t#" variable="cf" timeout="900" errorVariable="y" />
 		<!--- Delete script --->
 		<cffile action="delete" file="#t#" />
+		<!--- Log  --->
+		<cflog application="no" file="akamai" type="Information" text="Delete: #cf#">
 		<!--- Return --->
 		<cfreturn />
 	</cffunction>

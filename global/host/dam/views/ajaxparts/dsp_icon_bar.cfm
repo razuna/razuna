@@ -73,19 +73,19 @@
 						<!--- Select --->
 						<cfif cs.icon_select>
 							<a href="##" onClick="CheckAll('#kind#form','#attributes.folder_id#','store#kind#<cfif structkeyexists(attributes,"bot")>b</cfif>','#kind#');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
-								<div style="float:left;padding-top:5px;">
+								<!--- <div style="float:left;padding-top:5px;">
 									<img src="#dynpath#/global/host/dam/images/checkbox.png" width="16" height="16" name="edit_1" border="0" />
-								</div>
-								<div style="float:left;padding-right:15px;padding-top:5px;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
+								</div> --->
+								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 							</a>
 						</cfif>
 						<!--- Search --->
 						<cfif cs.icon_search>
 							<a href="##" onclick="showwindow('#myself#c.search_advanced&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("folder_search")#',500,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("folder_search")#">
-								<div style="float:left;padding-top:5px;">
+								<!--- <div style="float:left;padding-top:5px;">
 									<img src="#dynpath#/global/host/dam/images/system-search-3.png" width="16" height="16" border="0" />
-								</div>
-								<div style="float:left;padding-right:15px;padding-top:5px;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
+								</div> --->
+								<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("folder_search")#</div>
 							</a>
 						</cfif>
 						<!--- More actions --->
@@ -128,7 +128,7 @@
 									<div style="float:left;padding-right:5px;">
 										<img src="#dynpath#/global/host/dam/images/link.png" width="16" height="16" border="0" />
 									</div>
-									<div style="padding-top:2px;">Show Assets from Sub-Folders</div>
+									<div style="padding-top:2px;">Show assets from Sub-Folders</div>
 								</a>
 							</p>
 							<p><hr></p>
@@ -294,17 +294,17 @@
 		<!--- Sort by --->
 		<cfif attributes.bot eq "true">
 			<td align="right" width="1%" nowrap="true">
-			Sort by: 
-			 <select name="selectsortby#kind#" id="selectsortby#kind#" onChange="changesortby('selectsortby#kind#');" style="width:100px;">
-			 	<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
-			 	<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
-			 	<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
-			 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
-			 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
-			 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
-			 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
-			 </select>
-		</td>
+				Sort by: 
+				<select name="selectsortby#kind#" id="selectsortby#kind#" onChange="changesortby('selectsortby#kind#');" style="width:100px;">
+					<option value="name"<cfif session.sortby EQ "name"> selected="selected"</cfif>>Name</option>
+					<cfif kind EQ "all"><option value="kind"<cfif session.sortby EQ "kind"> selected="selected"</cfif>>Type of Asset</option></cfif>
+					<option value="sizedesc"<cfif session.sortby EQ "sizedesc"> selected="selected"</cfif>>Size (Descending)</option>
+				 	<option value="sizeasc"<cfif session.sortby EQ "sizeasc"> selected="selected"</cfif>>Size (Ascending)</option>
+				 	<option value="dateadd"<cfif session.sortby EQ "dateadd"> selected="selected"</cfif>>Date Added</option>
+				 	<option value="datechanged"<cfif session.sortby EQ "datechanged"> selected="selected"</cfif>>Last Changed</option>
+				 	<option value="hashtag"<cfif session.sortby EQ "hashtag"> selected="selected"</cfif>>Same file</option>
+				</select>
+			</td>
 		<cfelse>
 			<td align="right" width="1%" nowrap="true">
 				Sort by: 

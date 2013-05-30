@@ -29,6 +29,7 @@
 		<cfif cs.folder_redirect EQ "0" OR attributes.redirectmain> 
 			<!--- Show if Firebug is enabled --->
 			<div id="firebugalert" style="display:none;" class="box-dotted"></div>
+			
 			<!--- Storage Check --->
 			<cfif application.razuna.storage EQ "nirvanix" AND attributes.nvxsession EQ 0>
 				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box-dotted">
@@ -119,16 +120,16 @@
 							</cfif>
 						<cfelse>
 							<div class="panelsnew">
-								<h1>How to get the most out of Razuna</h1>
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to add files to Razuna');return false;">&gt; How to add files to Razuna</a>
+								<h1>#myFusebox.getApplicationData().defaults.trans("razuna_main_video_header")#</h1>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252986?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_1")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'How to share files with Razuna');return false;">&gt; How to share files with Razuna</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253330?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_2")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Make good use of widgets');return false;">&gt; Make good use of widgets</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43252988?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_3")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Manage users and groups');return false;">&gt; Manage users and groups</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253332?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_4")#</a>
 								<br /><br />
-								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', 'Real world custom case');return false;">&gt; Real world customer case</a>
+								<a href="##" onclick="SetVideo('http://player.vimeo.com/video/43253331?title=0&amp;byline=0&amp;portrait=0&amp;color=c9ff23&amp;autoplay=1', '#myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#');return false;">&gt; #myFusebox.getApplicationData().defaults.trans("razuna_main_video_5")#</a>
 							</div>
 							<br />
 						</cfif>
@@ -154,7 +155,9 @@
 						<!--- If WL we show the news section here --->
 						<cfif application.razuna.whitelabel>
 							<div class="panelsnew">
-								<h1>Announcements</h1>
+								<cfif attributes.qry_news.recordcount NEQ 0>
+									<h1>#myFusebox.getApplicationData().defaults.trans("announcements")#</h1>
+								</cfif>
 								<!--- News --->
 								<cfif attributes.wl_news_rss EQ "">
 									<cfloop query="attributes.qry_news">

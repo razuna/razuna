@@ -49,14 +49,14 @@
 							<input type="hidden" name="folder_name" id="folder_name" value="#qry_folder.folder_name#">
 							#qry_folder.folder_name#
 						<cfelse>
-							<div style="float:left;"><input type="text" id="folder_name" name="folder_name" style="width:400px;" value="#qry_folder.folder_name#" onkeyup="samefoldernamecheck('#attributes.theid#');"></div> <div id="samefoldername"></div>
+							<div style="float:left;"><input type="text" id="folder_name" name="folder_name" style="width:400px;" value="#qry_folder.folder_name#" onkeyup="samefoldernamecheck('#attributes.theid#');"  autocomplete="off"></div> <div id="samefoldername"></div>
 						</cfif>
 					</td>
 				</tr>
 				<cfloop query="qry_langs">
 					<cfset thisid = lang_id>
 					<tr>
-						<td valign="top" width="1%" nowrap="true" class="td2">#myFusebox.getApplicationData().defaults.trans("description")# #lang_name#</td>
+						<td valign="top" width="1%" nowrap="true" class="td2"><cfif qry_langs.recordcount NEQ 1>#lang_name#: </cfif>#myFusebox.getApplicationData().defaults.trans("description")#</td>
 						<td width="100%" class="td2"><textarea name="folder_desc_#thisid#" class="text" style="width:400px;height:50px;"><cfloop query="qry_folder_desc"><cfif thisid EQ #lang_id_r#><cfif folder_desc NEQ "">#folder_desc#</cfif></cfif></cfloop></textarea></td>
 					</tr>
 				</cfloop>
@@ -131,7 +131,7 @@
 				</cfif>
 			</table>
 			<!--- This is the plugin section --->
-			<cfif attributes.iscol EQ "F">
+			<cfif attributes.iscol EQ "F" AND attributes.folderaccess EQ "X">>
 				<cfif structKeyExists(pl,"pview")>
 					<cfloop list="#pl.pview#" delimiters="," index="i">
 						#evaluate(i)#

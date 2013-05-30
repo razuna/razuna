@@ -55,7 +55,7 @@
 							<div id="loadlogo"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadlogo','#myself#ajax.prefs_loadlogo&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadlogo').load('#myself#ajax.prefs_loadlogo');return false;">Refresh</a> | <a href="##" onclick="$('##loadlogo').load('#myself#ajax.prefs_loadlogo&remove=t');">Remove</a>
 						</td>
 					</tr>
 				</table>
@@ -77,7 +77,7 @@
 							<div id="loadloginimage"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg');return false;">Refresh</a> | <a href="##" onclick="$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg&remove=t');">Remove</a>
 						</td>
 					</tr>
 				</table>
@@ -99,7 +99,7 @@
 							<div id="loadfaviconimage"></div>
 						</td>
 						<td valign="top" nowrap="nowrap">
-							<a href="##" onclick="loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon');return false;">Refresh</a> | <a href="##" onclick="loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon&remove=t');">Remove</a>
+							<a href="##" onclick="$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon');return false;">Refresh</a> | <a href="##" onclick="$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon&remove=t');">Remove</a>
 						</td>
 					</tr>
 				</table>
@@ -618,6 +618,22 @@
 							<div><input type="radio" name="button_delete" value="true"<cfif qry_customization.button_delete> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="button_delete" value="false"<cfif !qry_customization.button_delete> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
 							<br />
 		--->
+							<br />
+							<strong>#myFusebox.getApplicationData().defaults.trans("req_fields_desc")#</strong>
+							<br />
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("req_filename")#
+							<br />
+							<div><input type="radio" name="req_filename" value="true"<cfif qry_customization.req_filename> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="req_filename" value="false"<cfif !qry_customization.req_filename> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("req_description")#
+							<br />
+							<div><input type="radio" name="req_description" value="true"<cfif qry_customization.req_description> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="req_description" value="false"<cfif !qry_customization.req_description> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
+							#myFusebox.getApplicationData().defaults.trans("req_keywords")#
+							<br />
+							<div><input type="radio" name="req_keywords" value="true"<cfif qry_customization.req_keywords> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="req_keywords" value="false"<cfif !qry_customization.req_keywords> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("no")#</div>
+							<br />
 						</td>
 					</tr>
 				</table>
@@ -632,11 +648,11 @@
 		<!--- JS --->
 		<script type="text/javascript">
 			// Load Logo
-			loadcontent('loadlogo','#myself#ajax.prefs_loadlogo');
+			$('##loadlogo').load('#myself#ajax.prefs_loadlogo');
 			// Load Login Image
-			loadcontent('loadloginimage','#myself#ajax.prefs_loadloginimg');
+			$('##loadloginimage').load('#myself#ajax.prefs_loadloginimg');
 			// Load Favicon Image
-			loadcontent('loadfaviconimage','#myself#ajax.prefs_loadfavicon');
+			$('##loadfaviconimage').load('#myself#ajax.prefs_loadfavicon');
 			// Submit
 			$("##form_admin_custom").submit(function(e){
 				// Get values

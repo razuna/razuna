@@ -83,7 +83,7 @@
 					// Remove loader
 					// $("#bodyoverlay").remove();
 					// Reload Explorer
-					$('#explorer_col').load('index.cfm?fa=c.explorer_col');
+					$('#explorer').load('index.cfm?fa=c.explorer_col');
 			   	}
 			});
 		}

@@ -2,7 +2,7 @@
 <div class="collapsable">
 	<div class="headers">
 		<cfif cs.show_bottom_part AND cs.button_basket>
-			<a href="##" onclick="loadcontent('thedropbasket','#myself##xfa.tobasket#&file_id=#attributes.file_id#-#attributes.cf_show#&thetype=#attributes.file_id#-#attributes.cf_show#');flash_footer('basket');">
+			<a href="##" onclick="$('##thedropbasket').load('#myself##xfa.tobasket#&file_id=#attributes.file_id#-#attributes.cf_show#&thetype=#attributes.file_id#-#attributes.cf_show#');flash_footer('basket');">
 				<div style="float:left;">
 					<img src="#dynpath#/global/host/dam/images/basket-put.png" width="16" height="16" border="0" style="padding-right:3px;" />
 				</div>
@@ -50,6 +50,9 @@
 				</div>
 				<div style="float:left;padding-right:20px;">#myFusebox.getApplicationData().defaults.trans("move_file")#</div>
 			</a>
+		</cfif>
+		<!--- Plugin shown but only to users who are not R --->
+		<cfif attributes.folderaccess NEQ "R">
 			<!--- Delete --->
 			<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#attributes.file_id#&what=#what#&loaddiv=#loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&showsubfolders=#session.showsubfolders#','#myFusebox.getApplicationData().defaults.trans("remove")#',400,2);return false;">
 				<div style="float:left;">
@@ -57,9 +60,6 @@
 				</div>
 				<div style="float:left;padding-right:10px;">#myFusebox.getApplicationData().defaults.trans("delete_asset")#</div>
 			</a>
-		</cfif>
-		<!--- Plugin shown but only to users who are not R --->
-		<cfif attributes.folderaccess NEQ "R">
 			<!--- Plugin being shows with show_in_detail_link_wx  --->
 			<cfif structKeyExists(pllink,"pview")>
 				<cfloop list="#pllink.pview#" delimiters="," index="i">

@@ -77,14 +77,14 @@
 								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;">
 								<div id="draggable#file_id#" type="#file_id#-doc" class="theimg">
 								<!--- If it is a PDF we show the thumbnail --->
-								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
 									<cfif cloud_url NEQ "">
 										<img src="#cloud_url#" border="0">
 									<cfelse>
 										<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 									</cfif>
-								<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
-									<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
+								<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
+									<cfset thethumb = replacenocase(file_name_org, ".#file_extension#", ".jpg", "all")>
 									<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 										<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0">
 									<cfelse>
@@ -107,11 +107,11 @@
 									<cfif cs.show_bottom_part>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#file_id#&favtype=file&favkind=doc');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
-									<cfif attributes.folderaccess EQ "X">
+									<cfif attributes.folderaccess NEQ "R">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
-								<br>
+								<div style="clear:left;"></div>
 								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;"><strong>#left(file_name,50)#</strong></a>
 							<cfelse>
 								The upload of "#file_name#" is still in progress!
@@ -159,18 +159,18 @@
 							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;">
 								<div id="draggable#file_id#" type="#file_id#-doc">
 									<!--- If it is a PDF we show the thumbnail --->
-									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
 										<cfif cloud_url NEQ "">
 											<img src="#cloud_url#" border="0">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
-									<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
-										<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
+									<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
+										<cfset thethumb = replacenocase(file_name_org, ".#file_extension#", ".jpg", "all")>
 										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
 										<cfelse>
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="128" border="0">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0">
 										</cfif>
 									<cfelse>
 										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
@@ -198,7 +198,7 @@
 								<cfif cs.show_bottom_part>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#file_id#&favtype=file&favkind=doc');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 								</cfif>
-								<cfif attributes.folderaccess EQ "X">
+								<cfif attributes.folderaccess NEQ "R">
 									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#kind#&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 								</cfif>
 							</div>
@@ -268,18 +268,18 @@
 							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#file_id#&what=files&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(file_name)#',1000,1);return false;">
 								<div id="draggable#file_id#" type="#file_id#-doc">
 									<!--- If it is a PDF we show the thumbnail --->
-									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
+									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
 										<cfif cloud_url NEQ "">
 											<img src="#cloud_url#" border="0">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
-									<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
-										<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
+									<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
+										<cfset thethumb = replacenocase(file_name_org, ".#file_extension#", ".jpg", "all")>
 										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
 										<cfelse>
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="128" border="0">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0">
 										</cfif>
 									<cfelse>
 										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
@@ -308,7 +308,7 @@
 								<cfif cs.show_bottom_part>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#file_id#&favtype=file&favkind=#kind#');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 								</cfif>
-								<cfif attributes.folderaccess EQ "X">
+								<cfif attributes.folderaccess NEQ "R">
 									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#file_id#&what=files&loaddiv=#kind#&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=list','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 								</cfif>
 							</div>
@@ -371,6 +371,8 @@
 						fileids += $(this).val() + ','
 					});
 					getselected#kind#(fileids);
+					// Now uncheck all
+					$('###kind#form :checkbox').attr('checked', false);
 				}
 			});
 		});

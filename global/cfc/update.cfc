@@ -65,15 +65,15 @@
 	<!--- Check for a new version --->
 	<cffunction name="check_update">
 		<cfargument name="thestruct" type="struct">	
-		<cfset v = structnew()>
+		<cfset var v = structnew()>
 		<!--- Set the version file on the server --->
 		<cfset var versionfile = "http://cloud.razuna.com/installers/versionupdate.xml">
 		<!--- Get the current version --->
 		<cfinvoke component="settings" method="getconfig" thenode="version" returnvariable="currentversion">
 		<!--- Parse the version file on the server --->
 		<cftry>
-			<cfhttp url="#versionfile#" method="get" throwonerror="no" timeout="5">
-			<cfset var xmlVar=xmlParse(versionfile)/>
+			<cfhttp url="#versionfile#" method="get" throwonerror="yes" timeout="5">
+			<cfset var xmlVar=xmlParse(trim(cfhttp.filecontent))/>
 			<cfset var theversion=xmlSearch(xmlVar, "update/version[@name='version']")>
 			<cfset v.newversionnr = trim(#theversion[1].thetext.xmlText#)>
 			<!--- Count how many dots are in the version --->
@@ -84,9 +84,9 @@
 			<cfelse>
 				<cfset v.versionavailable = "F">
 			</cfif>
-		<cfcatch type="any">
-			<cfset v.versionavailable = "F">
-		</cfcatch>
+			<cfcatch type="any">
+				<cfset v.versionavailable = "F">
+			</cfcatch>
 		</cftry>
 		<!--- Return --->
 		<cfreturn v>
@@ -651,6 +651,48 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			CREATE TABLE raz1_smart_folders 
+			(
+				sf_id #thevarchar#(100),
+				sf_name #thevarchar#(500),
+				sf_date_create #thetimestamp# NULL DEFAULT NULL,
+				sf_date_update #thetimestamp# NULL DEFAULT NULL,
+				sf_type #thevarchar#(100),
+				sf_description #thevarchar#(2000),
+				PRIMARY KEY (sf_id)
+			)
+			#tableoptions#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			CREATE TABLE raz1_smart_folders_prop
+			(
+				sf_id_r #thevarchar#(100),
+				sf_prop_id #thevarchar#(500),
+				sf_prop_value #thevarchar#(2000),
+				PRIMARY KEY (sf_id_r)
+			)
+			#tableoptions#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column set_id #thevarchar#(500)<cfelse>change set_id set_id #thevarchar#(500)</cfif>
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+
 
 		<!--- Add to internal table --->
 		<cftry>

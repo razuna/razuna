@@ -1678,7 +1678,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#settings
 		(
-		  SET_ID    VARCHAR(100) NOT NULL,
+		  SET_ID    VARCHAR(500) NOT NULL,
 		  SET_PREF  text,
 		  HOST_ID	INT,
 		  rec_uuid			VARCHAR(100),
@@ -2465,6 +2465,33 @@
 		host_id 			int,
 		rec_uuid 			varchar(100),
 		PRIMARY KEY (rec_uuid)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<!--- Smart Folders --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders 
+		(
+			sf_id 			varchar(100),
+			sf_name 		varchar(500),
+			sf_date_create 	timestamp DEFAULT '0000-00-00 00:00:00',
+			sf_date_update 	timestamp DEFAULT '0000-00-00 00:00:00',
+			sf_type 		varchar(100),
+			sf_description 	varchar(2000),
+			PRIMARY KEY (sf_id)
+		)
+		#this.tableoptions#
+		</cfquery>
+
+		<!--- Smart Folders Properties --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#smart_folders_prop
+		(
+			sf_id_r 		varchar(100),
+			sf_prop_id 		varchar(500),
+			sf_prop_value 	varchar(2000),
+			PRIMARY KEY (sf_id_r)
 		)
 		#this.tableoptions#
 		</cfquery>

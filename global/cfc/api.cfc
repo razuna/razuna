@@ -357,9 +357,34 @@
 		<cfreturn r />
 	</cffunction>
 
+	<!--- Get temp files --->
+	<cffunction name="getFilesTemp" access="public" returntype="query">
+		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+		SELECT 
+		t.tempid AS id,
+		t.filename,
+		t.folder_id,
+		CASE
+			WHEN (f.type_type IS NULL) THEN 'doc'
+			ELSE f.type_type
+		END AS type
+		FROM #getHostPrefix()#assets_temp t LEFT JOIN file_types f ON lower(f.type_id) = lower(t.extension)
+		WHERE t.tempid IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
+		AND t.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
+	</cffunction>
+
 	<!--- Get Description, keywords and raw metadata --->
 	<cffunction name="getFile" access="public" returntype="query">
 		<cfargument name="fileid" type="string" required="true" hint="ID of asset can be a list" />
+		<!--- Param --->
+		<cfset var qry = "">
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry">
 		SELECT

@@ -96,6 +96,7 @@ height:auto;
 /* z-index:5; */
 padding-bottom: 50px;
 margin-left: 13px;
+border-right: 1px dotted grey;
 }
 /* ----- MIDDLE SLIDE ----- */
 #apMiddle {
@@ -713,6 +714,17 @@ background-color: #579E31 !important;
 .awesome.grey {
 background-color: grey !important;
 }
+.awesome.greylight {
+background-color: #BEBEBE !important;
+cursor: pointer;
+/*color: black;*/
+}
+.awesome.greylight:hover {
+/*color: black;*/
+}
+.awesome.greylight:active {
+cursor: pointer;
+}
 button.css3button {
 font-family: Arial, Helvetica, sans-serif;
 font-size: 16px;
@@ -916,4 +928,19 @@ padding: 10px;
 color: #CC0000;
 font-weight: bold;
 }
-
+#sf_select_div {
+	display: none;
+	height: 35px;
+	width: 610px;
+	font-weight:bold;
+	-webkit-border-radius: 10px;
+	-moz-border-radius: 10px;
+	border-radius: 10px;
+	border: 1px solid #D3D3D3;
+	background: #E6E6E6;
+}
+#smartfolders h1 {
+	font-size: 14px;
+	font-weight: bold;
+	border-bottom: 1px solid grey;
+}

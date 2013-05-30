@@ -103,11 +103,11 @@
 									<cfif cs.show_bottom_part>
 										<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=img');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 									</cfif>
-									<cfif attributes.folderaccess EQ "X">
+									<cfif attributes.folderaccess NEQ "R">
 										<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=img&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 									</cfif>
 								</div>
-								<br>
+								<div style="clear:left;"></div>
 								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#left(img_filename,50)#</strong></a>
 							<cfelse>
 								The upload of "#img_filename#" is still in progress!
@@ -191,7 +191,7 @@
 								<cfif cs.show_bottom_part>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=aud');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 								</cfif>
-								<cfif attributes.folderaccess EQ "X">
+								<cfif attributes.folderaccess NEQ "R">
 									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=audios&loaddiv=img&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 								</cfif>
 							</div>
@@ -294,7 +294,7 @@
 								<cfif cs.show_bottom_part>
 									<a href="##" onclick="loadcontent('thedropfav','#myself#c.favorites_put&favid=#img_id#&favtype=file&favkind=img');flash_footer();return false;" title="Add to favorites"><img src="#dynpath#/global/host/dam/images/favs_16.png" width="16" height="16" border="0" /></a>
 								</cfif>
-								<cfif attributes.folderaccess EQ "X">
+								<cfif attributes.folderaccess NEQ "R">
 									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#img_id#&what=images&loaddiv=img&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#&view=list','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a>
 								</cfif>
 							</div>
@@ -357,6 +357,8 @@
 						fileids += $(this).val() + ','
 					});
 					getselected#kind#(fileids);
+					// Now uncheck all
+					$('###kind#form :checkbox').attr('checked', false);
 				}
 			});
 		});

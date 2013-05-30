@@ -47,13 +47,12 @@
 <!--- FUNCTION: SWITCH LANGUAGE --->
 	<cffunction name="switchlang" returntype="string" access="public" output="false">
 		<cfargument name="thelang" default="" required="yes" type="string">
-		
 		<!--- Set the session lang --->
-		<cfset session.thelang = #arguments.thelang#>
+		<cfset session.thelang = arguments.thelang>
 		<!--- Get the lang id --->
-		<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#lcase(arguments.thelang)#.xml" returnvariable="theid">
+		<cfinvoke component="defaults" method="trans" transid="thisid" thetransfile="#lcase(arguments.thelang)#" returnvariable="theid">
 		<!--- Set the session lang id --->
-		<cfset session.thelangid = #theid#>
+		<cfset session.thelangid = theid>
 		<cfreturn />
 	</cffunction>
 
@@ -282,7 +281,12 @@
 	
 	<!--- Check for connecting to datasource in bd_config --->
 	<cffunction name="verifydatasource" access="public" output="false">
-		<cfinvoke component="bd_config" method="verifyDatasource" dsn="#session.firsttime.database#" returnVariable="theconnection" />
+		<cfset var theconnection = false>
+		<cftry>
+			<cfinvoke component="bd_config" method="verifyDatasource" dsn="#session.firsttime.database#" returnVariable="theconnection" />
+			<cfdump var="#theconnection#">
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<cfreturn theconnection />
 	</cffunction>
 	
@@ -292,38 +296,42 @@
 		<cfparam name="theconnectstring" default="">
 		<cfparam name="hoststring" default="">
 		<cfparam name="verificationQuery" default="">
+		<cfparam name="session.firsttime.database_type" default="">
 		<!--- Set the correct drivername --->
-		<cfif session.firsttime.database EQ "h2">
+		<cfif session.firsttime.database_type EQ "h2">
 			<cfset thedrivername = "org.h2.Driver">
 			<cfset theconnectstring = "AUTO_RECONNECT=TRUE;CACHE_TYPE=SOFT_LRU;AUTO_SERVER=TRUE">
-		<cfelseif session.firsttime.database EQ "mysql">
+		<cfelseif session.firsttime.database_type EQ "mysql">
 			<cfset thedrivername = "com.mysql.jdbc.Driver">
 			<cfset theconnectstring = "zeroDateTimeBehavior=convertToNull">
-		<cfelseif session.firsttime.database EQ "mssql">
+		<cfelseif session.firsttime.database_type EQ "mssql">
 			<cfset thedrivername = "net.sourceforge.jtds.jdbc.Driver">
-		<cfelseif session.firsttime.database EQ "oracle">
+		<cfelseif session.firsttime.database_type EQ "oracle">
 			<cfset thedrivername = "oracle.jdbc.OracleDriver">
-		<cfelseif session.firsttime.database EQ "db2">
+		<cfelseif session.firsttime.database_type EQ "db2">
 			<cfset thedrivername = "com.ibm.db2.jcc.DB2Driver">
 			<cfset hoststring = "jdbc:db2://#session.firsttime.db_server#:currentSchema=RAZUNA;">
 			<cfset verificationQuery = "select 5 from sysibm.sysdummy1">
 		</cfif>
 		<!--- Set the datasource --->
-		<cfinvoke component="bd_config" method="setDatasource">
-			<cfinvokeargument name="name" value="#session.firsttime.database#">
-			<cfinvokeargument name="databasename" value="#session.firsttime.db_name#">
-			<cfinvokeargument name="server" value="#session.firsttime.db_server#">
-			<cfinvokeargument name="port" value="#session.firsttime.db_port#">
-			<cfinvokeargument name="username" value="#session.firsttime.db_user#">
-			<cfinvokeargument name="password" value="#session.firsttime.db_pass#">
-			<cfinvokeargument name="action" value="#session.firsttime.db_action#">
-			<cfinvokeargument name="existingDatasourceName" value="#session.firsttime.database#">
-			<cfinvokeargument name="drivername" value="#thedrivername#">
-			<cfinvokeargument name="h2Mode" value="Oracle">
-			<cfinvokeargument name="connectstring" value="#theconnectstring#">
-			<cfinvokeargument name="hoststring" value="#hoststring#">
-			<cfinvokeargument name="verificationQuery" value="#verificationQuery#">
-		</cfinvoke>
+		<cftry>
+			<cfinvoke component="bd_config" method="setDatasource">
+				<cfinvokeargument name="name" value="#session.firsttime.database#">
+				<cfinvokeargument name="databasename" value="#session.firsttime.db_name#">
+				<cfinvokeargument name="server" value="#session.firsttime.db_server#">
+				<cfinvokeargument name="port" value="#session.firsttime.db_port#">
+				<cfinvokeargument name="username" value="#session.firsttime.db_user#">
+				<cfinvokeargument name="password" value="#session.firsttime.db_pass#">
+				<cfinvokeargument name="action" value="#session.firsttime.db_action#">
+				<cfinvokeargument name="existingDatasourceName" value="#session.firsttime.database#">
+				<cfinvokeargument name="drivername" value="#thedrivername#">
+				<cfinvokeargument name="h2Mode" value="Oracle">
+				<cfinvokeargument name="connectstring" value="#theconnectstring#">
+				<cfinvokeargument name="hoststring" value="#hoststring#">
+				<cfinvokeargument name="verificationQuery" value="#verificationQuery#">
+			</cfinvoke>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<cfreturn />
 	</cffunction>
 
@@ -1209,8 +1217,15 @@ Comment:<br>
 	</cffunction>
 
 	<!--- Get watermark templates ---------------------------------------------------------------------->
-	<cffunction name="getWMtemplatedetail" output="false">
+	<cffunction name="getWMtemplatedetail" output="false" access="remote" returnformat="JSON">
 		<cfargument name="wm_temp_id" type="string" required="true">
+		<cfargument name="thedns" type="string" required="false" default="">
+		<cfargument name="thehostid" type="string" required="false" default="">
+		<!--- Since we can call this from external sources --->
+		<cfif arguments.thedns NEQ "">
+			<cfset application.razuna.datasource = arguments.thedns>
+			<cfset session.hostid = arguments.thehostid>
+		</cfif>
 		<!--- New struct --->
 		<cfset var qry = structnew()>
 		<!--- Query --->

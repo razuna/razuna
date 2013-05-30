@@ -221,7 +221,7 @@
 		<!--- Get proper folderaccess --->
 		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
 		<!--- Add labels query --->
-		<cfset QuerySetCell(details, "perm", theaccess)>
+		<cfset QuerySetCell(details, "perm", theaccess, 1)>
 	</cfif>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#application.razuna.datasource#" name="desc" cachedwithin="1" region="razcache">
@@ -1170,6 +1170,10 @@
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Go grab the platform --->
 	<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
+	<!--- set session.artofimage value if it is empty  --->
+	<cfif session.artofimage EQ "">
+		<cfset session.artofimage = arguments.thestruct.artofimage>
+	</cfif>
 	<!--- Start the loop to get the different kinds of audios --->
 	<cfloop delimiters="," list="#session.artofimage#" index="art">
 		<!--- Since the video format could be from the related table we need to check this here so if the value is a number it is the id for the video --->
@@ -1344,4 +1348,120 @@
 	<cfreturn qry />
 </cffunction>
 
+<!--- Update all copy Metadata --->
+<cffunction name="copymetadataupdate" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- select audio name --->
+	<!--- <cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT aud_name
+		FROM #session.hostdbprefix#audios
+		WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery> --->
+	<!--- select audio details --->
+	<cfquery datasource="#application.razuna.datasource#" name="theaudtext">
+		SELECT aud_description,aud_keywords 
+		FROM #session.hostdbprefix#audios_text
+		WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.file_id#"> 
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfif arguments.thestruct.insert_type EQ 'replace'>
+		<!--- replace the metadata --->
+		<!--- update audio name --->
+		<cfloop list="#arguments.thestruct.idlist#" index="i">
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+				UPDATE #session.hostdbprefix#audios
+				SET aud_NAME = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.aud_name#">
+				WHERE aud_ID  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<cfquery datasource="#application.razuna.datasource#" name="checkid">
+				SELECT aud_id_r 
+				FROM #session.hostdbprefix#audios_text
+				WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#"> 
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif checkid.RecordCount>
+				<!--- update audio desc and keywords --->
+				<cfquery datasource="#application.razuna.datasource#" name="updateaudtext">
+					UPDATE #session.hostdbprefix#audios_text
+					SET aud_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theaudtext.aud_description#">,
+					aud_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theaudtext.aud_keywords#">
+					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#variables.dsn#">
+					INSERT INTO #session.hostdbprefix#audios_text
+					(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
+					VALUES(
+					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
+					<cfqueryparam value="#theaudtext.aud_description#" cfsqltype="cf_sql_varchar">, 
+					<cfqueryparam value="#theaudtext.aud_keywords#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	<cfelse>
+			<!--- append the metadata --->
+		<cfloop list="#arguments.thestruct.idlist#" index="i">
+			<cfquery datasource="#application.razuna.datasource#" name="theauddetail">
+				SELECT aud_name
+				FROM #session.hostdbprefix#audios
+				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#" name="theaudtextdetail">
+				SELECT aud_description,aud_keywords 
+				FROM #session.hostdbprefix#audios_text
+				WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#"> 
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<!--- update audio name --->
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="update">
+				UPDATE #session.hostdbprefix#audios
+				SET aud_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theauddetail.aud_name# #thedetail.aud_name#">
+				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery> --->
+			<!--- update audio desc and keywords --->
+			<cfif theaudtextdetail.RecordCount>
+				<cfquery datasource="#application.razuna.datasource#" name="updateaudtext">
+					UPDATE #session.hostdbprefix#audios_text
+					SET aud_description = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theaudtextdetail.aud_description# #theaudtext.aud_description#">,
+					aud_keywords = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theaudtextdetail.aud_keywords# #theaudtext.aud_keywords#">
+					WHERE aud_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<cfquery datasource="#variables.dsn#">
+					INSERT INTO #session.hostdbprefix#audios_text
+					(id_inc, aud_id_r, lang_id_r, aud_description, aud_keywords, host_id)
+					VALUES(
+					<cfqueryparam value="#createuuid()#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">, 
+					<cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">, 
+					<cfqueryparam value="#theaudtext.aud_description#" cfsqltype="cf_sql_varchar">, 
+					<cfqueryparam value="#theaudtext.aud_keywords#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>
+</cffunction>
+<!--- Get all asset from folder --->
+<cffunction name="getAllFolderAsset" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfquery datasource="#variables.dsn#" name="qry_data">
+		SELECT aud_id AS id,aud_name AS filename
+		FROM #session.hostdbprefix#audios
+		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfreturn qry_data>
+</cffunction>
 </cfcomponent>

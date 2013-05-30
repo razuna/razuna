@@ -143,7 +143,7 @@
 			<!--- Get labels --->
 			<cfset s.qry_labels = getLabels()>
 			<!--- Get files --->
-			<cfset s.qry_files = getFile(fileid=session.currentupload)>
+			<cfset s.qry_files = getFilesTemp(fileid=session.currentupload)>
 		</cfif>
 		<cfreturn s />
 	</cffunction>
