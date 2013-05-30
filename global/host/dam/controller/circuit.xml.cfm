@@ -1592,6 +1592,8 @@
 		</if>
 		<!-- CFC: Get plugin actions -->
 		<invoke object="myFusebox.getApplicationData().plugins" methodcall="getactions('on_folder_settings',attributes)" returnvariable="pl" />
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
 		<do action="ajax.folder_new" />
 	</fuseaction>
