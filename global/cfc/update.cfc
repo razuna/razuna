@@ -654,7 +654,7 @@
 		<!--- Add in_trash Column in raz1_audios --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> IN_TRASH #thevarchar#(2) default 'F'
+			alter table raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -663,7 +663,7 @@
 		<!--- Add in_trash Column in raz1_collections --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_collections <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> IN_TRASH #thevarchar#(2) default 'F'
+			alter table raz1_collections add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -672,7 +672,7 @@
 		<!--- Add in_trash Column in raz1_collections_ct_files --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_collections_ct_files <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> IN_TRASH #thevarchar#(2) default 'F'
+			alter table raz1_collections_ct_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -681,7 +681,7 @@
 		<!--- Add in_trash Column in raz1_files --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_files <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> IN_TRASH #thevarchar#(2) default 'F'
+			alter table raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -690,7 +690,7 @@
 		<!--- Add in_trash Column in raz1_folders --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_folders <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> IN_TRASH #thevarchar#(2) default 'F'
+			alter table raz1_folders add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -699,7 +699,7 @@
 		<!--- Add in_trash Column in raz1_images --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_images <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> IN_TRASH #thevarchar#(2) default 'F'
+			alter table raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
@@ -708,7 +708,7 @@
 		<!--- Add in_trash Column in raz1_videos --->
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_videos <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> IN_TRASH #thevarchar#(2) default 'F'
+			alter table raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> in_trash #thevarchar#(2) default 'F'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
