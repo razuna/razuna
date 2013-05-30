@@ -39,7 +39,16 @@
 	</div>
 	<div style="clear:both;"></div>
 	<div id="colBox" style="width:200;height:200;float:left;"></div>
-	<div style="clear:both;"></div>	
+	<div style="clear:both;"></div>
+	<!--- Trash --->
+	<div style="padding:15px 0px 10px 8px;">
+		<div style="float:left;padding-right:5px;">
+			<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" />
+		</div>
+		<div style="float:left;">
+			<a href="##" onclick="$('##rightside').load('#myself#c.collection_explorer_trash')">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")#</a>
+		</div>
+	</div>
 	<script language="javascript" type="text/javascript">
 		// Load Collections
 		$(function () { 

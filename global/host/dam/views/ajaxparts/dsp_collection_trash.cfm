@@ -27,12 +27,12 @@
 	<div id="tabsfolder_tab">
 		<ul>
 			<!--- Show the trash collection and collection asset content --->
-			<li><a href="##collection" onclick="loadcontent('collection','#myself##xfa.ftrashcol#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_collection")#(#arraySum(col_count_trash['cnt'])#)</a></li>
+			<li><a href="##collection" onclick="loadcontent('collection','#myself##xfa.ftrashcol#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")# (#arraySum(col_count_trash['cnt'])#)</a></li>
 		</ul>
-		<div id="collection">
-		</div>
-<script type="text/javascript">
-	jqtabs("tabsfolder_tab");
+		<div id="collection"></div>
+	</div>
+	<script type="text/javascript">
+		jqtabs("tabsfolder_tab");
 		loadcontent('collection','#myself#c.col_get_trash');
-</script>
+	</script>
 </cfoutput>

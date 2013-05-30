@@ -52,6 +52,16 @@
 	<!--- Load folders --->
 	<div id="treeBox" style="width:200;height:200;float:left;"></div>
 	<div style="clear:both;"></div>
+	<!--- Trash --->
+	<div style="padding:15px 0px 10px 8px;">
+		<div style="float:left;padding-right:5px;">
+			<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" />
+		</div>
+		<div style="float:left;">
+			<a href="##" onclick="$('##rightside').load('#myself#c.folder_explorer_trash')">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")#</a>
+		</div>
+	</div>
+	<div style="clear:both;"></div>
 	<!--- Show folder selection --->
 	<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
 		<cfif session.showmyfolder EQ "F">

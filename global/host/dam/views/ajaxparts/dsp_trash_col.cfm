@@ -51,7 +51,7 @@
 							<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#id#.#ext#">	
 						</div>
 						<div>
-							#filename#
+							<strong>#filename#</strong>
 						</div>
 						<div>
 							<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
@@ -68,7 +68,7 @@
 								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">	
 							</div>
 							<div>
-								#filename#
+								<strong>#filename#</strong>
 							</div>
 							<div>
 								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
@@ -98,7 +98,7 @@
 								</cfif>
 							</div>
 							<div>
-								#filename#
+								<strong>#filename#</strong>
 							</div>
 							<div>
 								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
@@ -115,7 +115,7 @@
 								<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">	
 							</div>
 							<div>
-								#filename#
+								<strong>#filename#</strong>
 							</div>
 							<div>
 								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
@@ -132,7 +132,7 @@
 								<img src=" #dynpath#/global/host/dam/images/folder-yellow.png">	
 							</div>
 							<div>
-								#folder_name#
+								<strong>#folder_name#</strong>
 							</div>
 							<div>
 								<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder&iscol=T','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_folder")#</a><br/><br/>
