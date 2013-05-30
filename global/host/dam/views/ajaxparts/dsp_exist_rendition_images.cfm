@@ -63,7 +63,7 @@
 							</select>
 						</td>
 					</cfif>
-					<td rowspan="6" width="100%" nowrap="true" valign="top" style="padding-left:20px;">
+					<!--- <td rowspan="6" width="100%" nowrap="true" valign="top" style="padding-left:20px;">
 						<strong>#myFusebox.getApplicationData().defaults.trans("images_original")#</strong>
 						<br />
 						#myFusebox.getApplicationData().defaults.trans("file_name")#: #qry_detail.detail.img_filename#
@@ -83,7 +83,7 @@
 							<br />
 							Resolution Unit: #qry_xmp.resunit#
 						</cfif>
-					</td>
+					</td> --->
 				</tr>
 				<tr class="list">
 					<td><input type="checkbox" name="convert_to" value="gif"></td>

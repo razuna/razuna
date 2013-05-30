@@ -62,7 +62,7 @@
 					<cfinclude template="inc_video_presets.cfm" />
 				</td>
 				<td nowrap="nowrap"><input type="text" style="width:35px" name="convert_width_ogv" value="<cfif qry_detail.detail.vwidth EQ 0>1280<cfelse>#qry_detail.detail.vwidth#</cfif>" onchange="aspectheight(this,'convert_height_ogv','form#attributes.file_id#',#theaspectratio#);"> x <input type="text" style="width:35px" name="convert_height_ogv" value="<cfif qry_detail.detail.vheight EQ 0>720<cfelse>#qry_detail.detail.vheight#</cfif>" onchange="aspectwidth(this,'convert_width_ogv','form#attributes.file_id#',#theaspectratio#);"></td>
-				<td rowspan="11" width="100%" nowrap="true" valign="top" style="padding-left:20px;">
+				<!--- <td rowspan="11" width="100%" nowrap="true" valign="top" style="padding-left:20px;">
 					<strong>#myFusebox.getApplicationData().defaults.trans("video_original")#</strong>
 					<br />
 					#myFusebox.getApplicationData().defaults.trans("file_name")#: #qry_detail.detail.vid_filename#
@@ -72,7 +72,7 @@
 					#myFusebox.getApplicationData().defaults.trans("size")#: #qry_detail.detail.vwidth#x#qry_detail.detail.vheight# pixel
 					<br />
 					#myFusebox.getApplicationData().defaults.trans("data_size")#: #qry_detail.thesize# MB
-				</td>
+				</td> --->
 			</tr>
 			<!--- WebM --->
 			<tr class="list">
