@@ -160,7 +160,10 @@
 				<cfset arguments.thestruct.thefile = listlast(f,"/")>
 				<!--- Call internal function to add the file --->
 				<cfinvoke component="assets" method="addassetserver" thestruct="#arguments.thestruct#" />
-				<cfcatch type="any"></cfcatch>
+				<cfcatch type="any">
+					<cfset consoleoutput(true)>
+					<cfset console(cfcatch)>
+				</cfcatch>
 			</cftry>
 		</cfloop>
 		<!--- Return --->

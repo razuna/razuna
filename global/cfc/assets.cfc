@@ -177,7 +177,7 @@
 		<!--- If file does not exsist continue else send user an eMail --->
 		<cfif md5here EQ 0>
 			<!--- Add to temp db --->
-			<cfquery datasource="#variables.dsn#">
+			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#assets_temp
 			(tempid, filename, extension, date_add, folder_id, who, filenamenoext, path<cfif structkeyexists(arguments.thestruct,"sched")>, sched_id, sched_action</cfif>, file_id, host_id, thesize, md5hash)
 			VALUES(
@@ -246,14 +246,14 @@
 		AND name NOT LIKE '%scheduleduploads_%'
 		ORDER BY name
 		</cfquery>
-		<cfquery name="qGetRootFolderID" datasource="#variables.dsn#" >
+		<cfquery name="qGetRootFolderID" datasource="#application.razuna.datasource#" >
 			SELECT folder_main_id_r,folder_level 
 			FROM #session.hostdbprefix#folders
 			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
 		
 			<cfset baseDir = listlast(arguments.thestruct.directory,'/')>
-			<cfquery datasource="#variables.dsn#" name="qryfidr">
+			<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
 				SELECT folder_id,folder_level
 				FROM #session.hostdbprefix#folders
 				WHERE lower(folder_name) = <cfqueryparam value="#lcase(baseDir)#" cfsqltype="cf_sql_varchar">
@@ -262,7 +262,7 @@
 			<cfif qryfidr.recordcount EQ 0>
 				<cfset rootfolder = createuuid("")>
 				<cfset folder_level = qGetRootFolderID.folder_level +1>
-				<cfquery datasource="#variables.dsn#">
+				<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#folders
 					(folder_id, folder_name, folder_level,folder_id_r, folder_main_id_r,folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
 					values (
@@ -300,7 +300,7 @@
 					<cfset temp=folderIdr>
 					<cfloop index="i" from=1 to="#theServerDirlen#">
 						<cfset folder_name = listGetAt(theServerDir.name, i, FileSeparator())>
-						<cfquery name="qryGetFolderDetails" datasource="#variables.dsn#">
+						<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
 							SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
 							WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
 							AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
@@ -320,7 +320,7 @@
 				</cfif>
 				
 				<!--- Query to get the folder_id_r --->
-				<cfquery datasource="#variables.dsn#" name="qryfidr">
+				<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
 					SELECT folder_id
 					FROM #session.hostdbprefix#folders
 					WHERE lower(folder_name) = <cfqueryparam value="#lcase(fname)#" cfsqltype="cf_sql_varchar">
@@ -330,7 +330,7 @@
 				<!--- Add the Folder to DB --->
 				<cfif qryfidr.recordcount EQ 0>
 					<cfset folder_level=folder_level + 1>
-					<cfquery datasource="#variables.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 						INSERT INTO #session.hostdbprefix#folders
 						(folder_id, folder_name,folder_level, folder_id_r, folder_main_id_r, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
 						values (
@@ -369,7 +369,7 @@
 				<cfset file.oldFileSize = size>
 				<cfset file.dateLastAccessed = dateLastModified>
 				<!--- Get and set file type and MIME content --->
-				<cfquery datasource="#variables.dsn#" name="fileType">
+				<cfquery datasource="#application.razuna.datasource#" name="fileType">
 				SELECT type_type, type_mimecontent, type_mimesubcontent
 				FROM file_types
 				WHERE lower(type_id) = <cfqueryparam value="#lcase(fileNameExt.theext)#" cfsqltype="cf_sql_varchar">
@@ -407,7 +407,7 @@
 					<!--- Get the directory name at the exact position in the list --->
 					<cfset var theServerDirname = listGetAt(name, theServerDirlen, FileSeparator())>
 					<!--- Get folder id with the name of the folder --->
-					<cfquery datasource="#variables.dsn#" name="qryfolderidmain">
+					<cfquery datasource="#application.razuna.datasource#" name="qryfolderidmain">
 					SELECT f.folder_id, f.folder_name,
 					CASE
 						WHEN EXISTS(
@@ -436,7 +436,7 @@
 					<cfset temp=folderIdr>
 					<cfloop index="i" from=1 to="#theServerDirlen#">
 						<cfset folder_name = listGetAt(theServerDirfiles.name, i, FileSeparator())>
-						<cfquery name="qryGetFolderDetails" datasource="#variables.dsn#">
+						<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
 							SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
 							WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
 							AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
@@ -456,7 +456,7 @@
 					</cfif>
 					
 					<!--- Add to temp db --->
-					<cfquery datasource="#variables.dsn#">
+					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#assets_temp
 					(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<cfif structkeyexists(arguments.thestruct,"sched")>, sched_id, sched_action</cfif>,thesize,file_id,host_id,md5hash)
 					VALUES(
@@ -485,7 +485,7 @@
 					<!--- Return IDs in a variable --->
 					<!--- <cfset thetempids = arguments.thestruct.tempid & "," & thetempids> --->
 					<!--- For each file we need query for the file --->
-					<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qryfile">
+					<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qryfile">
 					SELECT 
 					tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype,
 					thesize, groupid, sched_id, sched_action, file_id, link_kind, md5hash
@@ -2488,7 +2488,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<cfif !structKeyExists(arguments.thestruct,'qrysettings')>
 			<!--- Query to get the settings --->
-			<cfquery datasource="#variables.dsn#" name="arguments.thestruct.qrysettings">
+			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 				SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
 				set2_img_comp_heigth, set2_vid_preview_author, set2_vid_preview_copyright, set2_path_to_assets
 				FROM #session.hostdbprefix#settings_2
@@ -3461,7 +3461,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 			
 			<!--- Query to get the folder_id_r --->
-			<cfquery datasource="#variables.dsn#" name="qryfidr">
+			<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
 				SELECT folder_id
 				FROM #session.hostdbprefix#folders
 				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fname)#" cfsqltype="cf_sql_varchar">
@@ -3724,7 +3724,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="createfolderfromzip" output="true" access="private">
 	<cfargument name="thestruct" type="struct">
 	<!--- Check that the same folder does not already exist --->
-	<!--- <cfquery datasource="#variables.dsn#" name="ishere">
+	<!--- <cfquery datasource="#application.razuna.datasource#" name="ishere">
 	SELECT folder_id
 	FROM #session.hostdbprefix#folders
 	WHERE lower(folder_name) = <cfqueryparam value="#lcase(arguments.thestruct.foldername)#" cfsqltype="cf_sql_varchar">
