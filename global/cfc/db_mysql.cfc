@@ -1858,8 +1858,7 @@
 		  KEY #arguments.thestruct.host_db_prefix#col_idr (col_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#col_fileid (file_id_r),
 		  KEY #arguments.thestruct.host_db_prefix#col_filetype (COL_FILE_TYPE),
-		  KEY #arguments.thestruct.host_db_prefix#col_hostid (HOST_ID),
-		  FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
+		  KEY #arguments.thestruct.host_db_prefix#col_hostid (HOST_ID)
 		)
 		#this.tableoptions#
 		</cfquery>

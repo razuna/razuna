@@ -1415,9 +1415,7 @@
 		  HOST_ID			BIGINT,
 		  rec_uuid			VARCHAR(100),
 		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
-		  PRIMARY KEY (rec_uuid),
-		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_CT_FILES_FK1 FOREIGN KEY (COL_ID_R)
-			REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
+		  PRIMARY KEY (rec_uuid)
 		)
 		</cfquery>
 		

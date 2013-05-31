@@ -1758,10 +1758,8 @@
 		  HOST_ID			INT,
 		  rec_uuid			VARCHAR(100),
 		  IN_TRASH		   	VARCHAR(2) DEFAULT 'F',
-		  PRIMARY KEY (rec_uuid),
-		  FOREIGN KEY (COL_ID_R) REFERENCES #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE
+		  PRIMARY KEY (rec_uuid)
 		)
-		
 		</cfquery>
 		
 		<!--- COLLECTIONS GROUPS --->

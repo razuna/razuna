@@ -1746,9 +1746,7 @@
 		  HOST_ID		 	NUMBER,
 		  rec_uuid			VARCHAR2(100 CHAR),
 		  IN_TRASH			VARCHAR2(2 CHAR) DEFAULT 'F',
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#CCTF_PK PRIMARY KEY (rec_uuid) ENABLE,
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_CT_FILES_FK1 FOREIGN KEY (COL_ID_R)
-	      REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE ENABLE
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#CCTF_PK PRIMARY KEY (rec_uuid) ENABLE
 		)
 		
 		</cfquery>
