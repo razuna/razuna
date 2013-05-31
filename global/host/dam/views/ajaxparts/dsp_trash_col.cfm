@@ -33,7 +33,10 @@
 			<!--- directory for restore collection --->
 			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
 			<a href="##" onclick="showwindow('#myself#c.restore_trash_collection&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,2);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
-		<cfelseif structKeyExists(attributes,'kind') AND attributes.kind EQ "folder">
+		</cfif>
+	</cfif>
+	<cfif isDefined('attributes.trash.is_trash') AND attributes.trash.is_trash EQ "intrash">
+		<cfif structKeyExists(attributes,'kind') AND attributes.kind EQ "folder">
 			<!--- directory for restore folder--->
 			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
 			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&iscol=T','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);">#myFusebox.getApplicationData().defaults.trans("select_directory")#</a>

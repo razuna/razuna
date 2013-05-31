@@ -380,7 +380,7 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Query --->
 	<cfquery datasource="#variables.dsn#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#get_assetscol */ ct.col_id_r, ct.file_id_r as cart_product_id, ct.col_file_type, ct.col_item_order, ct.col_file_format,ct.in_trash,
+	SELECT /* #variables.cachetoken#get_assetscol */ ct.col_id_r, ct.file_id_r as cart_product_id, ct.col_file_type, ct.col_item_order, ct.col_file_format,
 		CASE 
 			WHEN ct.col_file_type = 'doc' 
 				THEN (
@@ -813,22 +813,21 @@
 	</cfif>
 	<!--- delete collection files db --->
 	<cfquery datasource="#variables.dsn#">
-	DELETE FROM #session.hostdbprefix#collections_ct_files
-	WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		DELETE FROM #session.hostdbprefix#collections_ct_files
+		WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 	</cfquery>
-	
 	<!--- delete collection_text db --->
 	<cfquery datasource="#variables.dsn#">
-	DELETE FROM #session.hostdbprefix#collections_text
-	WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		DELETE FROM #session.hostdbprefix#collections_text
+		WHERE col_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
-	
 	<!--- delete collection db --->
 	<cfquery datasource="#variables.dsn#">
-	DELETE FROM #session.hostdbprefix#collections
-	WHERE col_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		DELETE FROM #session.hostdbprefix#collections
+		WHERE col_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	</cfquery>
 	
 	<!--- Delete labels --->

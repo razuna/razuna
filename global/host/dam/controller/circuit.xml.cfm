@@ -1837,12 +1837,12 @@
 		<set name="attributes.thispath" value="#thispath#" />
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<!-- CFC: Upload -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="restorefolder(attributes)" returnvariable="attributes.is_trash" />
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="restorefolder(attributes)" returnvariable="attributes.trash" />
 		<!-- Show the folder listing -->
 		<set name="attributes.thetype" value="folder" />
 		<set name="attributes.type" value="movefolder" />
 		<set name="attributes.iscol" value="#attributes.iscol#" />
-		<set name="attributes.folder_level" value="1" />
+		<set name="attributes.folder_level" value="#attributes.trash.folder_level#" />
 		<set name="session.thetype" value="#attributes.thetype#" />
 		<set name="session.thefolderorg" value="#attributes.folder_id#" />
 		<set name="seesion.type" value="#attributes.type#" />

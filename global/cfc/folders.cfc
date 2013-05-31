@@ -1488,13 +1488,15 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- check the parent folder is exist --->
 	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
-		SELECT folder_main_id_r,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+		SELECT folder_id_r,folder_main_id_r,in_trash,folder_level FROM #session.hostdbprefix#folders 
 		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfset local = structNew()>
-	<cfif thedetail.in_trash EQ 'T'>
+	<cfset local.folder_level = thedetail.folder_level>
+	<!--- check the root restore --->
+	<cfif thedetail.in_trash EQ 'T' AND thedetail.folder_level EQ 1>
 		<cfset local.istrash = "trash">
 	<cfelse>
 		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
@@ -1524,11 +1526,11 @@
 	</cfif>
 		<!--- Set is trash --->
 	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
-		<cfset var is_trash = "intrash">
+		<cfset local.is_trash = "intrash">
 	<cfelse>
-		<cfset var is_trash = "notrash">
+		<cfset local.is_trash = "notrash">
 	</cfif>
-	<cfreturn is_trash />
+	<cfreturn local />
 </cffunction>
 
 

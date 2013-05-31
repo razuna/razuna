@@ -27,7 +27,13 @@
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- Ask to select the directory if parent directory is not available --->
 	<!--- show the available folder list for restoring --->
-	<cfif isDefined('attributes.is_trash') AND attributes.is_trash EQ "intrash">
+	<cfif isDefined('attributes.trash.is_trash') AND attributes.trash.is_trash EQ "intrash">
+		<cfif attributes.type EQ 'movefolder'>
+			<!--- directory for restore folder--->
+			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
+			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);">#myFusebox.getApplicationData().defaults.trans("select_directory")#</a>
+		</cfif>
+	<cfelseif structKeyExists(attributes,'is_trash') AND attributes.is_trash EQ "intrash">
 		<!--- set session file id --->
 		<cfif attributes.thetype EQ 'img'>
 			<cfset session.thefileid = ",#attributes.id#-img,">
@@ -38,13 +44,10 @@
 		<cfelseif attributes.thetype EQ 'doc'>
 			<cfset session.thefileid = ",#attributes.id#-file,">	
 		</cfif>
-		<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
 		<cfif attributes.type EQ 'restorefile'>
 			<!--- directory for restore files --->
+			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
 			<a href="##" onclick="showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
-		<cfelseif attributes.type EQ 'movefolder'>
-			<!--- directory for restore folder--->
-			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);">#myFusebox.getApplicationData().defaults.trans("select_directory")#</a>
 		</cfif>
 	</cfif>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
