@@ -463,7 +463,7 @@
 			AND v.folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.vstruct.folderid#">
 		</cfif>
 		GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename)
-				<cfif arguments.vstruct.ui>, folder_name, ext, is_available, date_create,
+				<cfif arguments.vstruct.ui>, ext, is_available, date_create,
     		date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
 		ORDER BY v.vid_filename 
 		</cfquery>
@@ -622,7 +622,7 @@
 		GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, 
 		a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time,
 		a.hashtag, fo.folder_name, lower(a.aud_name)
-		<cfif arguments.astruct.ui>, folder_name, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
+		<cfif arguments.astruct.ui>, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
 		ORDER BY a.aud_name 
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
@@ -786,7 +786,7 @@
 		GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 		f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
 		f.hashtag, fo.folder_name, lower(f.file_name)
-		<cfif arguments.fstruct.ui>, folder_name, ext, is_available, date_create, date_change, link_kind, 
+		<cfif arguments.fstruct.ui>, ext, is_available, date_create, date_change, link_kind, 
 		link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
         ORDER BY f.file_name 
 		</cfquery>
