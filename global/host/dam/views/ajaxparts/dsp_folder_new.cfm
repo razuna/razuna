@@ -131,7 +131,7 @@
 				</cfif>
 			</table>
 			<!--- This is the plugin section --->
-			<cfif attributes.iscol EQ "F" AND attributes.folderaccess EQ "X">>
+			<cfif attributes.iscol EQ "F" AND attributes.folderaccess EQ "X">
 				<cfif structKeyExists(pl,"pview")>
 					<cfloop list="#pl.pview#" delimiters="," index="i">
 						#evaluate(i)#
