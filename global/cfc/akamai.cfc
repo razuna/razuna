@@ -41,7 +41,7 @@
 			<cfset var theperl = "perl.exe">
 		<cfelse>
 			<cfset var theext = ".sh">
-			<cfset var theperl = "perl.exe">
+			<cfset var theperl = "perl">
 		</cfif>
 		<!--- Temp ID --->
 		<cfset var tid = createUUID("") & theext>
