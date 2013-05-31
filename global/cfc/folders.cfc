@@ -4098,7 +4098,7 @@
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfif>
 	</cfquery>
-	<!--- Set the valuelist --->
+	<!--- Set the valuelist   --->
 	<cfset var l = valuelist(qry.id)>
 	<!--- Set the sessions --->
 	<cfset session.file_id = l>

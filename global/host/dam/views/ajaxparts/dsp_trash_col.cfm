@@ -26,7 +26,7 @@
 <cfoutput>
 	<cfif structKeyExists(attributes,'is_trash') AND attributes.is_trash EQ "intrash">
 		<cfif structKeyExists(attributes,'file_id') AND attributes.file_id NEQ 0>
-			<!--- collection for restore files--->
+			<!--- collection for restore files --->
 			<b>#myFusebox.getApplicationData().defaults.trans("parent_collection_not_available")#</b><br />
 			<a href="##" onclick="showwindow('#myself#c.restore_choose_collection&file_id=#attributes.file_id#&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,2);"><b>#myFusebox.getApplicationData().defaults.trans("select_collection")#</b></a>
 		<cfelseif structKeyExists(attributes,'kind') AND attributes.kind EQ "collection">
@@ -37,7 +37,7 @@
 	</cfif>
 	<cfif isDefined('attributes.trash.is_trash') AND attributes.trash.is_trash EQ "intrash">
 		<cfif structKeyExists(attributes,'kind') AND attributes.kind EQ "folder">
-			<!--- directory for restore folder--->
+			<!--- directory for restore folder --->
 			<b>#myFusebox.getApplicationData().defaults.trans("restore_directory")#</b><br />
 			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&iscol=T','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
 		</cfif>
