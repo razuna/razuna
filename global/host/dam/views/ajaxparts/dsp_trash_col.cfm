@@ -38,8 +38,8 @@
 	<cfif isDefined('attributes.trash.is_trash') AND attributes.trash.is_trash EQ "intrash">
 		<cfif structKeyExists(attributes,'kind') AND attributes.kind EQ "folder">
 			<!--- directory for restore folder--->
-			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
-			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&iscol=T','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);">#myFusebox.getApplicationData().defaults.trans("select_directory")#</a>
+			<b>#myFusebox.getApplicationData().defaults.trans("restore_directory")#</b><br />
+			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&iscol=T','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
 		</cfif>
 	</cfif>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">

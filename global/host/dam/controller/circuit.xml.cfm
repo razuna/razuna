@@ -1846,6 +1846,8 @@
 		<set name="session.thetype" value="#attributes.thetype#" />
 		<set name="session.thefolderorg" value="#attributes.folder_id#" />
 		<set name="seesion.type" value="#attributes.type#" />
+		<!-- Clear cache -->
+		<do action="flushcache"/>
 		<if condition="#attributes.loaddiv# EQ 'assets'">
 			<true>
 				<do action="trash_assets" />

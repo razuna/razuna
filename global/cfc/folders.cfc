@@ -1495,41 +1495,7 @@
 	</cfquery>
 	<cfset local = structNew()>
 	<cfset local.folder_level = thedetail.folder_level>
-	<!--- check the root restore --->
-	<cfif thedetail.in_trash EQ 'T' AND thedetail.folder_level EQ 1>
-		<cfset local.istrash = "trash">
-	<cfelse>
-		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
-			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
-			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<cfloop query="dir_parent_id">
-			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
-				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
-				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<cfif get_qry.in_trash EQ 'T'  AND get_qry.folder_id NEQ arguments.thestruct.folder_id>
-				<cfset local.istrash = "trash">
-				<cfbreak />
-			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
-				<cfset local.root = "yes">
-				<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#folders 
-					SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-					WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-			</cfif>
-		</cfloop>
-	</cfif>
-		<!--- Set is trash --->
-	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
-		<cfset local.is_trash = "intrash">
-	<cfelse>
-		<cfset local.is_trash = "notrash">
-	</cfif>
+	<cfset local.is_trash = "intrash">
 	<cfreturn local />
 </cffunction>
 
