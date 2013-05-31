@@ -7504,7 +7504,7 @@
 		<!-- CFC: Check if account is authenticated -->
 		<!-- <invoke object="myFusebox.getApplicationData().oauth" methodcall="check('box')" returnvariable="chk_box" /> -->
 		<!-- Params -->
-		<if condition="qry_sf.sf.sf_type EQ 'saved_search'">
+		<if condition="qry_sf.sf.sf_type EQ 'saved_search' AND attributes.searchtext EQ ''">
 			<true>
 				<set name="attributes.searchtext" value="#qry_sf.sfprop.sf_prop_value#" />
 			</true>
