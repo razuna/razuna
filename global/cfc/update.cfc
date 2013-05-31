@@ -715,6 +715,60 @@
 			</cfcatch>
 		</cftry>
 		
+		<!--- MSSQL: Drop constraints --->
+		<cfif application.razuna.thedatabase EQ "mssql">
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="con">
+				SELECT table_name, constraint_name
+				FROM information_schema.constraint_column_usage
+				WHERE lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_collections_ct_files">
+				</cfquery>
+				<cfloop query="con">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE #lcase(table_name)# DROP CONSTRAINT #constraint_name#
+					</cfquery>
+				</cfloop>
+				<cfcatch type="database">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		<!--- MySQL: Drop all constraints --->
+		<cfelseif application.razuna.thedatabase EQ "mysql">
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="con">
+				SELECT constraint_name
+				FROM information_schema.TABLE_CONSTRAINTS 
+				WHERE lower(TABLE_NAME) = <cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_collections_ct_files">
+				AND lower(CONSTRAINT_TYPE) = <cfqueryparam cfsqltype="cf_sql_varchar" value="foreign key">
+				</cfquery>
+				<cfloop query="con">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE raz1_collections_ct_files DROP FOREIGN KEY #constraint_name#
+					</cfquery>
+				</cfloop>
+				<cfcatch type="database">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		<!--- Oracle: Drop all constraints --->
+		<cfelseif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2">
+			<cftry>
+				<cfquery datasource="#application.razuna.datasource#" name="con">
+				SELECT constraint_name, table_name
+				FROM user_constraints
+				WHERE lower(table_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="raz1_collections_ct_files">
+				</cfquery>
+				<cfloop query="con">
+					<cfquery datasource="#application.razuna.datasource#">
+					ALTER TABLE #lcase(table_name)# DROP CONSTRAINT #constraint_name# CASCADE
+					</cfquery>
+				</cfloop>
+				<cfcatch type="database">
+					<cfset thelog(logname=logname,thecatch=cfcatch)>
+				</cfcatch>
+			</cftry>
+		</cfif>
+
 		<!--- Add to internal table --->
 		<cftry>
 			<cfquery dataSource="razuna_default">
