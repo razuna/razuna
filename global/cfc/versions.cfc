@@ -176,7 +176,7 @@
 				</cfinvoke>
 			</cfthread>
 			<cfthread action="join" name="movec#arguments.thestruct.file_id#" />
-			<cfpause interval="10" />
+			<cfset sleep(5000)>
 			<cfthread name="mover#arguments.thestruct.file_id#" intstruct="#arguments.thestruct#">
 				<!--- Rename --->
 				<cfinvoke component="nirvanix" method="RenameFolders">
@@ -219,7 +219,7 @@
 					<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 				</cfinvoke>
 			</cfthread>
-			<cfpause interval="5" />
+			<cfset sleep(5000)>
 			<!--- Wait for the move thread to finish --->
 			<cfthread action="join" name="move#arguments.thestruct.file_id#" />
 			<!--- Copy the new version to the old directory --->
@@ -233,7 +233,7 @@
 			</cfthread>
 			<!--- Wait for the move thread to finish --->
 			<cfthread action="join" name="movev#arguments.thestruct.file_id#" />
-			<cfpause interval="5" />
+			<cfset sleep(5000)>
 			<!--- Get SignedURL thumbnail --->
 			<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qry.path_to_asset#/#qrycurrentversion.ver_thumbnail#" awsbucket="#arguments.thestruct.awsbucket#">
 			<!--- Get SignedURL original --->

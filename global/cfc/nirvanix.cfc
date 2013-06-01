@@ -86,7 +86,7 @@
 			<cfcatch type="any">
 				<cfset var nvxsession = 0>
 				<cfset session.nvxsession = nvxsession>
-				<cfpause interval="5" />
+				<cfset sleep(5000)>
 				<cfif arguments.thecounter NEQ 1>
 					<cfinvoke method="login" thestruct="#arguments.thestruct#" thecounter="1" />
 				</cfif>
@@ -785,7 +785,7 @@
 		<cfargument name="theasset" type="string" required="true" />
 		<cfargument name="minutesValid" type="string" required="false" default="5259600">
 		<cfargument name="nvxsession" type="string" required="false">
-		<cfpause interval="5" />
+		<cfset sleep(5000)>
 		<!--- Create Epoc time --->
 		<cfset arguments.newepoch = DateDiff("s", DateConvert("utc2Local", "January 1 1970 00:00"), now()) + (arguments.minutesValid * 60)>
 		<!--- Create thread --->
