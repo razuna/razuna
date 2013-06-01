@@ -97,7 +97,7 @@
 		 <cfqueryparam value="#schedData.interval#" cfsqltype="cf_sql_varchar">,
 		 <cfqueryparam value="#schedData.serverFolder#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.serverFolderRecurse#" cfsqltype="cf_sql_numeric">, 
-		 <cfqueryparam value="#schedData.serverFiles#" cfsqltype="cf_sql_numeric">, 
+		 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
 		 <cfqueryparam value="#schedData.mailPop#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.mailUser#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.mailPass#" cfsqltype="cf_sql_varchar">, 
@@ -477,16 +477,57 @@
 
 <!--- RUN SCHEDULE -------------------------------------------------------->
 <cffunction name="doit" output="true" access="public" >
-	<cfargument name="sched_id" type="string" required="yes" default="">
+	<cfargument name="sched_id" type="string" required="yes">
+	<cfargument name="incomingpath" type="string" required="yes">
+	<!--- Param --->
 	<cfset var doit = structnew()>
 	<cfset doit.dirlist = "">
 	<cfset doit.directoryList = "">
-	<!--- <cfset var tempid = "sched-" & createuuid()> --->
+	<cfset var dorecursive = false>
+	<cfset var dirhere = "">
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
 	<!--- If no record found simply abort --->
 	<cfif doit.qry_detail.recordcount EQ 0>
 		<cfabort>
+	<!--- Record found --->
+	<cfelse>
+		<!--- Look into the directory and if anything is here then continue else abort --->
+		<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" recurse="false" name="dirhere" />
+		<!--- Filter content --->
+		<cfquery dbtype="query" name="dirhere">
+		SELECT *
+		FROM dirhere
+		WHERE size != 0
+		AND attributes != 'H'
+		AND name != 'thumbs.db'
+		AND name NOT LIKE '.DS_STORE%'
+		AND name NOT LIKE '__MACOSX%'
+		AND name != '.svn'
+		AND name != '.git'
+		</cfquery>
+		<cfif dirhere.recordcount EQ 0>
+			<cfabort>
+		</cfif>
+		<!--- Create a temp directory in the one folder and move all files in this one --->
+		<cfset var tempid = createuuid("")>
+		<cfset var tempdir = arguments.incomingpath & "/task_" & tempid>
+		<!--- Check if we need to do recursive or not --->
+		<cfif doit.qry_detail.sched_server_recurse>
+			<cfset var dorecursive = true>
+		</cfif>
+		<!--- Grab the files to move --->
+		<cfinvoke component="global" method="directoryCopy">
+			<cfinvokeargument name="source" value="#doit.qry_detail.sched_server_folder#">
+			<cfinvokeargument name="destination" value="#tempdir#">
+			<cfinvokeargument name="fileaction" value="move">
+			<cfinvokeargument name="directoryaction" value="move">
+			<cfinvokeargument name="directoryrecursive" value="#dorecursive#">
+		</cfinvoke>
+		<!--- Sleep for 5 seconds. This should give enough time for all files to be moved --->
+		<cfset sleep(5000)>
+		<!--- Set the qry to the new directory --->
+		<cfset QuerySetcell( doit.qry_detail, "sched_server_folder", "#tempdir#" )>
 	</cfif>
 	<cfreturn doit>
 </cffunction>

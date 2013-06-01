@@ -4649,18 +4649,21 @@
 	</fuseaction>
 	<!-- Schedule Run from the tasks -->
 	<fuseaction name="scheduler_doit">
-		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="doit(attributes.sched_id)" returnvariable="thetask" />
 		<!-- Action: Languages -->
 		<do action="languages" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- Params -->
+		<!-- Param -->
 		<set name="attributes.sched" value="T" />
 		<set name="attributes.thepath" value="#thispath#" />
+		<set name="attributes.incomingpath" value="#thispath#/incoming" />
 		<set name="attributes.langcount" value="#qry_langs.recordcount#" />
+		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
+		<!-- CFC: Get the Schedule -->
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="doit(attributes.sched_id,attributes.incomingpath)" returnvariable="thetask" />
+		<!-- Set return into scope -->
 		<set name="attributes.folder_id" value="#thetask.qry_detail.sched_folder_id_r#" />
 		<set name="session.theuserid" value="#thetask.qry_detail.sched_user#" />
 		<set name="attributes.sched_action" value="#thetask.qry_detail.sched_server_files#" />
@@ -4668,12 +4671,11 @@
 		<set name="attributes.directory" value="#thetask.qry_detail.sched_server_folder#" />
 		<set name="attributes.recurse" value="#thetask.qry_detail.sched_server_recurse#" />
 		<set name="attributes.zip_extract" value="#thetask.qry_detail.sched_zip_extract#" />
-		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Log start -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
 			<argument name="theschedid" value="#attributes.sched_id#" />
 			<argument name="theaction" value="Upload" />
-			<argument name="thedesc" value=">>> Start Processing Scheduled Upload" />
+			<argument name="thedesc" value="Start Processing Scheduled Upload" />
 		</invoke>
 		<!-- ACTION: FOR SERVER -->
 		<if condition="thetask.qry_detail.sched_method EQ 'server'">
@@ -4681,7 +4683,7 @@
 				<!-- Set params for adding assets -->
 				<set name="attributes.thefile" value="#thetask.dirlist#" />
 				<!-- CFC: Add to system -->
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetserver(attributes)" />		
+				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetscheduledserverthread(attributes)" />
 			</true>
 		</if>	
 		<!-- ACTION: FOR FTP -->
@@ -4719,11 +4721,11 @@
 			</true>
 		</if>	
 		<!-- CFC: Log end -->
-		<invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
+		<!-- <invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
 			<argument name="theschedid" value="#attributes.sched_id#" />
 			<argument name="theaction" value="Upload" />
-			<argument name="thedesc" value=">>> End Processing Scheduled Upload" />
-		</invoke>
+			<argument name="thedesc" value="End Processing Scheduled Upload" />
+		</invoke> -->
 	</fuseaction>
 		
 	<!--  -->

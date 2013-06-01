@@ -107,7 +107,22 @@
 <cffunction name="addassetserver" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Thread --->
-	<cfinvoke method="addassetserverthread" thestruct="#arguments.thestruct#" />
+	<cftry>
+		<!--- For scheduled tasks --->
+		<cfif structkeyexists(arguments.thestruct,"sched")>
+			<cfthread name="#createUUID('')#" intstruct="#arguments.thestruct#">
+				<cfinvoke method="addassetscheduledserverthread" thestruct="#attributes.intstruct#" />
+			</cfthread>
+		<!--- Normal processing --->
+		<cfelse>
+			<cfinvoke method="addassetserverthread" thestruct="#arguments.thestruct#" />
+		</cfif>
+		<cfcatch type="any">
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
+		</cfcatch>
+	</cftry>
+	
 	<!--- <cfset var tt = createUUID()>
 	<cfthread name="#tt#" intstruct="#arguments.thestruct#">
 		<cfinvoke method="addassetserverthread" thestruct="#attributes.intstruct#" />
@@ -247,43 +262,42 @@
 		ORDER BY name
 		</cfquery>
 		<cfquery name="qGetRootFolderID" datasource="#application.razuna.datasource#" >
-			SELECT folder_main_id_r,folder_level 
-			FROM #session.hostdbprefix#folders
-			WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
+		SELECT folder_main_id_r,folder_level 
+		FROM #session.hostdbprefix#folders
+		WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
 		</cfquery>
-		
-			<cfset baseDir = listlast(arguments.thestruct.directory,'/')>
-			<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
-				SELECT folder_id,folder_level
-				FROM #session.hostdbprefix#folders
-				WHERE lower(folder_name) = <cfqueryparam value="#lcase(baseDir)#" cfsqltype="cf_sql_varchar">
-				AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
-			</cfquery>
-			<cfif qryfidr.recordcount EQ 0>
+
+			<!--- <cfquery datasource="#application.razuna.datasource#" name="qryfidr">
+			SELECT folder_id,folder_level
+			FROM #session.hostdbprefix#folders
+			WHERE lower(folder_name) = <cfqueryparam value="#lcase(baseDir)#" cfsqltype="cf_sql_varchar">
+			AND folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
+			</cfquery> --->
+			<!--- <cfif qryfidr.recordcount EQ 0>
 				<cfset rootfolder = createuuid("")>
 				<cfset folder_level = qGetRootFolderID.folder_level +1>
 				<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#folders
-					(folder_id, folder_name, folder_level,folder_id_r, folder_main_id_r,folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
-					values (
-					<cfqueryparam value="#rootfolder#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#baseDir#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam value="#folder_level#" cfsqltype="cf_sql_integer" >,
-					<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					)
+				INSERT INTO #session.hostdbprefix#folders
+				(folder_id, folder_name, folder_level,folder_id_r, folder_main_id_r,folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
+				values (
+				<cfqueryparam value="#rootfolder#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#baseDir#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam value="#folder_level#" cfsqltype="cf_sql_integer" >,
+				<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				)
 				</cfquery>
 				<cfset var folderIdr = rootfolder>
-			<cfelse>
-				<cfset var folderIdr = qryfidr.folder_id>
-				<cfset folder_level = qryfidr.folder_level>
-			</cfif>
+			<cfelse> --->
+				<cfset var folderIdr = qGetRootFolderID.folder_main_id_r>
+				<cfset folder_level = qGetRootFolderID.folder_level>
+			<!--- </cfif> --->
 			<!--- Create Directories --->
 		<cfif theServerDir.RecordCount GT 0>
 			<cfloop query="theServerDir">
@@ -301,11 +315,11 @@
 					<cfloop index="i" from=1 to="#theServerDirlen#">
 						<cfset folder_name = listGetAt(theServerDir.name, i, FileSeparator())>
 						<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
-							SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
-							WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
-							AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
-							AND folder_main_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
+						WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+						AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
+						AND folder_main_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<cfset temp="#qryGetFolderDetails.folder_id#">
 					</cfloop>
@@ -321,31 +335,31 @@
 				
 				<!--- Query to get the folder_id_r --->
 				<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
-					SELECT folder_id
-					FROM #session.hostdbprefix#folders
-					WHERE lower(folder_name) = <cfqueryparam value="#lcase(fname)#" cfsqltype="cf_sql_varchar">
-					AND folder_id_r = <cfqueryparam value="#fidr#" cfsqltype="cf_sql_varchar">
-					AND folder_main_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
+				SELECT folder_id
+				FROM #session.hostdbprefix#folders
+				WHERE lower(folder_name) = <cfqueryparam value="#lcase(fname)#" cfsqltype="cf_sql_varchar">
+				AND folder_id_r = <cfqueryparam value="#fidr#" cfsqltype="cf_sql_varchar">
+				AND folder_main_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
 				</cfquery>
 				<!--- Add the Folder to DB --->
 				<cfif qryfidr.recordcount EQ 0>
 					<cfset folder_level=folder_level + 1>
 					<cfquery datasource="#application.razuna.datasource#">
-						INSERT INTO #session.hostdbprefix#folders
-						(folder_id, folder_name,folder_level, folder_id_r, folder_main_id_r, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
-						values (
-						<cfqueryparam value="#createuuid("")#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#fname#" cfsqltype="cf_sql_varchar">,
-						<cfqueryparam value="#folder_level#" cfsqltype="cf_sql_integer" >,
-						<cfqueryparam value="#fidr#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-						<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-						)
+					INSERT INTO #session.hostdbprefix#folders
+					(folder_id, folder_name,folder_level, folder_id_r, folder_main_id_r, folder_owner, folder_create_date, folder_change_date, folder_create_time, folder_change_time, host_id)
+					values (
+					<cfqueryparam value="#createuuid("")#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#fname#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam value="#folder_level#" cfsqltype="cf_sql_integer" >,
+					<cfqueryparam value="#fidr#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+					<cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					)
 					</cfquery>
 				</cfif>
 			</cfloop>
@@ -437,11 +451,11 @@
 					<cfloop index="i" from=1 to="#theServerDirlen#">
 						<cfset folder_name = listGetAt(theServerDirfiles.name, i, FileSeparator())>
 						<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
-							SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
-							WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
-							AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
-							AND folder_main_id_r = <cfqueryparam value="#qGetRootFolderID.folder_main_id_r#" cfsqltype="cf_sql_varchar">
-							AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
+						WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+						AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
+						AND folder_main_id_r = <cfqueryparam value="#qGetRootFolderID.folder_main_id_r#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 						<cfset temp="#qryGetFolderDetails.folder_id#">
 					</cfloop>
@@ -500,9 +514,9 @@
 					<!--- Create inserts --->
 					<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 					<!--- Call the addasset function --->
-					<cfthread intstruct="#arguments.thestruct#">
-						<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
-					</cfthread>
+					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+						<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+					<!--- </cfthread> --->
 				<cfelse>
 					<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 				</cfif>
@@ -1535,33 +1549,32 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 	</cfif>
 	<!--- If we are coming from a scheduled task then... --->
-	<cfif structkeyexists(arguments.thestruct,"sched")>
+	<!--- <cfif structkeyexists(arguments.thestruct,"sched")>
 		<!--- Log Insert --->
 		<cfinvoke component="scheduler" method="tolog" theschedid="#arguments.thestruct.sched_id#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Added file #arguments.thestruct.qryfile.filename#">
 		<!--- Check if we have to remove or move the asset --->
 		<!--- First only do this for assets with the same sched id --->
 		<cfif arguments.thestruct.sched_id EQ arguments.thestruct.qryfile.sched_id>
+			<!--- We now have a dedicated directory for the scheduled task so only remove directory or rename it --->
 			<!--- Remove --->
 			<cfif arguments.thestruct.qryfile.sched_action EQ 0>
-				<cfif fileExists("#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#")>
-					<cffile action="delete" file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#">
+				<cfif directoryexists(arguments.thestruct.directory)>
+					<cfdirectory action="delete" directory="#arguments.thestruct.directory#" recurse="true" />
 				</cfif>
 			<!--- Move --->
 			<cfelseif arguments.thestruct.qryfile.sched_action EQ 1>
-				<!--- Create the moved directory, if it is already there do nothing --->
+				<!--- Name of new directory --->
 				<cfset var schedfolder = "scheduleduploads_done_" & #dateformat(now(),"yyyy_mm_dd")#>
 				<cftry>
-					<cfdirectory action="create" directory="#arguments.thestruct.folderpath#/#schedfolder#" mode="775">
-					<cfcatch type="any"></cfcatch>
-				</cftry>
-				<!--- Now move the asset to the done folder --->
-				<cftry>
-					<cffile action="move" source="#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#" destination="#arguments.thestruct.folderpath#/#schedfolder#/#arguments.thestruct.thefilenameoriginal#" mode="775">
-					<cfcatch type="any"></cfcatch>
+					<cfdirectory action="rename" directory="#arguments.thestruct.directory#" newdirectory="#schedfolder#" mode="775" />
+					<cfcatch type="any">
+						<cfset consoleoutput(true)>
+						<cfset console(cfcatch)>
+					</cfcatch>
 				</cftry>
 			</cfif>
 		</cfif>
-	</cfif>
+	</cfif> --->
 	<!--- Remove record in DB and file system --->
 	<cfinvoke method="removeasset" thestruct="#arguments.thestruct#">
 	<cfif returnid NEQ 0>
@@ -3125,7 +3138,7 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Exiftool on windows return the whole path with the sizes thus trim and get last --->
 				<cfset var orgwidth = trim(listlast(orgwidth," "))>
 				<cfset var orgheight = trim(listlast(orgheight," "))>
-				<cfpause interval=2 />
+				<cfset sleep(2000)>
 			</cfif>
 			<!--- Get video metadata --->
 			<cfexecute name="#arguments.thestruct.theshex#" timeout="60" variable="vid_meta" />
@@ -3488,7 +3501,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 		</cfloop>
 		<cfset resetcachetoken("folders")>
-		<cfpause interval="5" />
+		<cfset sleep(5000)>
 		<!--- Loop over ZIP-filelist to process with the extracted files with check for the file since we got errors --->
 		<cfloop query="thedirfiles">
 			<cfif fileexists("#directory#/#name#") >
@@ -5583,8 +5596,6 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">
 	<cftry>
 		<cfset var md5hash = "">
-		<!--- Throttle engine a bit --->
-		<!--- <cfpause interval="2" /> --->
 		<!--- Create a unique name for the temp directory to hold the file --->
 		<cfset arguments.thestruct.tempid = createuuid("")>
 		<!--- Get file extension --->

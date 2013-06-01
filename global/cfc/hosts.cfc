@@ -160,9 +160,10 @@
 			</cfif>
 			<!--- COPY NEWHOST DIR --->
 			<cfif !application.razuna.isp>
-				<cfinvoke method="directoryCopy">
+				<cfinvoke component="global" method="directoryCopy">
 					<cfinvokeargument name="source" value="#arguments.thestruct.pathhere#/newhost/hostfiles">
 					<cfinvokeargument name="destination" value="#arguments.thestruct.pathoneup#/#arguments.thestruct.host_path#">
+					<cfinvokeargument name="directoryrecursive" value="true">
 				</cfinvoke>
 			</cfif>
 			<!--- ADD THE SYSTEMADMIN TO THE CROSS TABLE FOR THE HOSTS --->
@@ -498,42 +499,6 @@
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->
-<!--- copy newhost dir --->
-<cffunction name="directoryCopy" output="false" hint="copy newhost dir">
-	<cfargument name="source" required="true" type="string">
-	<cfargument name="destination" required="true" type="string">
-	<cfargument name="move" required="false" type="string">
-	<!--- Check if the move param exists if not we copy --->
-	<cfif isdefined("move")>
-		<cfset theaction = "move">
-	<cfelse>
-		<cfset theaction = "copy">
-	</cfif>
-	
-	<cfset var contents = "" />
-	<cfset var dirDelim = "/">
-
-	<cfif server.OS.Name contains "Windows">
-		<cfset dirDelim = "\" />
-	</cfif>
-
-	<cfif not(directoryExists(arguments.destination))>
-		<cfdirectory action="create" directory="#arguments.destination#" mode="775">
-	</cfif>
-
-	<cfdirectory action="list" directory="#arguments.source#" name="contents">
-	
-	<cfloop query="contents">
-		<cfif type eq "file" AND NOT name CONTAINS "thumbs.db" AND NOT name CONTAINS "dwsync.xml">
-			<cffile action="#theaction#" source="#arguments.source#/#name#" destination="#arguments.destination#/#name#" mode="775">
-		<cfelseif type EQ "dir" AND NOT name CONTAINS "CVS" AND NOT name CONTAINS ".svn" AND NOT name CONTAINS ".git">
-			<cfset directoryCopy(arguments.source & dirDelim & name, arguments.destination & dirDelim & name, arguments.move) />
-		</cfif>
-	</cfloop>
-	<cfreturn />
-</cffunction>
-
-<!--- ------------------------------------------------------------------------------------- --->
 <!--- Update Host --->
 <cffunction name="update" output="false" access="public" returntype="void">
 	<cfargument name="thestruct" type="Struct">
@@ -796,9 +761,10 @@
 		<cfcatch type="any"></cfcatch>
 	</cftry>
 	<!--- COPY NEWHOST DAM DIR --->
-	<cfinvoke method="directoryCopy">
+	<cfinvoke component="global" method="directoryCopy">
 		<cfinvokeargument name="source" value="#arguments.thestruct.pathhere#/newhost/hostfiles/dam">
 		<cfinvokeargument name="destination" value="#arguments.thestruct.pathoneup#/#host_path_replace#/dam">
+		<cfinvokeargument name="directoryrecursive" value="true">
 	</cfinvoke>
 	<!--- Re-Write the fusebox files --->
 		<cfinvoke method="newHostCreateApp">

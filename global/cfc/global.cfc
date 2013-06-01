@@ -262,12 +262,9 @@
 		</cfthread>
 		<!--- Wait for thread --->
 		<cfthread action="join" name="#ttresizeimage#" timeout="9000" />
-		
-		
-		<!--- <cfpause interval="10" /> --->
-		
+				
 		<cfloop condition="NOT fileexists('#arguments.destination#')">
-			<cfpause interval="5" />
+			<cfset sleep(5000)>
 		</cfloop>
 		
 		<cfreturn "done">
@@ -1353,6 +1350,54 @@ Comment:<br>
 			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/watermark/#session.hostid#/#arguments.thestruct.id#" recurse="true" />
 			<cfcatch type="any"></cfcatch>
 		</cftry>
+	</cffunction>
+
+	<!--- directorycopy --->
+	<cffunction name="directorycopy" output="false" hint="copy newhost dir">
+		<cfargument name="source" required="true" type="string">
+		<cfargument name="destination" required="true" type="string">
+		<cfargument name="fileaction" required="false" type="string" default="copy">
+		<cfargument name="directoryaction" required="false" type="string" default="copy">
+		<cfargument name="directoryrecursive" required="false" type="string" default="false">
+		<!--- Param --->
+		<cfset var contents = "" />
+		<!--- List content --->
+		<cfdirectory action="list" directory="#arguments.source#" name="contents">
+		<!--- Filter content --->
+		<cfquery dbtype="query" name="contents">
+		SELECT *
+		FROM contents
+		WHERE size != 0
+		AND attributes != 'H'
+		AND name != 'thumbs.db'
+		AND name NOT LIKE '.DS_STORE%'
+		AND name NOT LIKE '__MACOSX%'
+		AND name NOT LIKE '%scheduleduploads_%'
+		AND name != '.svn'
+		AND name != '.git'
+		ORDER BY name
+		</cfquery>
+		<!--- Create the new directory if it does not exists --->
+		<cfif !directoryExists(arguments.destination) AND contents.recordcount NEQ 0>
+			<cfdirectory action="create" directory="#arguments.destination#" mode="775">
+		</cfif>
+		<!--- Loop --->
+		<cfloop query="contents">
+			<!--- Files --->
+			<cfif type EQ "file">
+				<cffile action="#arguments.fileaction#" source="#arguments.source#/#name#" destination="#arguments.destination#/#name#" mode="775">
+			<!--- Dirs but only if we recursive option is true --->
+			<cfelseif type EQ "dir" AND directoryrecursive>
+				<!--- For copy --->
+				<cfif arguments.directoryaction EQ "copy">
+					<cfset directoryCopy(arguments.source & "/" & name, arguments.destination & "/" & name, arguments.fileaction) />
+				<!--- For Move --->
+				<cfelse>
+					<cfdirectory action="rename" directory="#arguments.source#/#name#" newdirectory="#arguments.destination#/#name#" mode="775" />
+				</cfif>
+			</cfif>
+		</cfloop>
+		<cfreturn />
 	</cffunction>
 
 </cfcomponent>

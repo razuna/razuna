@@ -80,7 +80,7 @@
 									<td>#myFusebox.getApplicationData().defaults.trans("sched_server_recursive")#</td>
 									<td><input type="checkbox" name="serverFolderRecurse" value="1" <cfif qry_detail.sched_server_recurse EQ "" OR qry_detail.sched_server_recurse> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("scheduled_uploads_server_recurse")#</td>
 								</tr>
-								<tr>
+								<!--- <tr>
 									<td colspan="2">#myFusebox.getApplicationData().defaults.trans("sched_server_deletemove")#</td>
 								</tr>
 								<tr>
@@ -88,7 +88,7 @@
 									<td><input type="radio" name="serverFiles" value="0" <cfif qry_detail.sched_server_files EQ 0 OR qry_detail.sched_server_files EQ ""> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("sched_server_delete")# &nbsp;  
 										<input type="radio" name="serverFiles" value="1" <cfif qry_detail.sched_server_files EQ 1> checked</cfif>> #myFusebox.getApplicationData().defaults.trans("sched_server_move")#
 									</td>
-								</tr>
+								</tr> --->
 							</table>
 							<!--- Display fields for eMail upload --->
 							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsMail_new" style="display: <cfif qry_detail.sched_method EQ "mail">block<cfelse>none</cfif>">
