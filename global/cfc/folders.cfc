@@ -3980,15 +3980,13 @@
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif arguments.thestruct.thekind EQ "ALL">
-			AND lower(file_extension) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">) 
-		<cfelseif arguments.thestruct.thekind NEQ "other">
+		<cfif arguments.thestruct.thekind EQ "other">
+			AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
+		<cfelseif arguments.thestruct.thekind NEQ "all">
 			AND (
 			lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#" cfsqltype="cf_sql_varchar">
 			OR lower(file_extension) = <cfqueryparam value="#arguments.thestruct.thekind#x" cfsqltype="cf_sql_varchar">
 			)
-		<cfelse>
-			AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 		</cfif>
 	</Cfif>
 	</cfquery>
