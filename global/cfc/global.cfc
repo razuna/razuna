@@ -1361,6 +1361,10 @@ Comment:<br>
 		<cfargument name="directoryrecursive" required="false" type="string" default="false">
 		<!--- Param --->
 		<cfset var contents = "" />
+		<!--- Create the new directory if it does not exists --->
+		<cfif !directoryExists(arguments.destination)>
+			<cfdirectory action="create" directory="#arguments.destination#" mode="775">
+		</cfif>
 		<!--- List content --->
 		<cfdirectory action="list" directory="#arguments.source#" name="contents">
 		<!--- Filter content --->
@@ -1377,20 +1381,16 @@ Comment:<br>
 		AND name != '.git'
 		ORDER BY name
 		</cfquery>
-		<!--- Create the new directory if it does not exists --->
-		<cfif !directoryExists(arguments.destination) AND contents.recordcount NEQ 0>
-			<cfdirectory action="create" directory="#arguments.destination#" mode="775">
-		</cfif>
 		<!--- Loop --->
 		<cfloop query="contents">
 			<!--- Files --->
 			<cfif type EQ "file">
 				<cffile action="#arguments.fileaction#" source="#arguments.source#/#name#" destination="#arguments.destination#/#name#" mode="775">
 			<!--- Dirs but only if we recursive option is true --->
-			<cfelseif type EQ "dir" AND directoryrecursive>
+			<cfelseif type EQ "dir" AND arguments.directoryrecursive>
 				<!--- For copy --->
 				<cfif arguments.directoryaction EQ "copy">
-					<cfset directoryCopy(arguments.source & "/" & name, arguments.destination & "/" & name, arguments.fileaction) />
+					<cfset directoryCopy(source=arguments.source & "/" & name, destination=arguments.destination & "/" & name, fileaction=arguments.fileaction, directoryaction=arguments.directoryaction, directoryrecursive=arguments.directoryrecursive) />
 				<!--- For Move --->
 				<cfelse>
 					<cfdirectory action="rename" directory="#arguments.source#/#name#" newdirectory="#arguments.destination#/#name#" mode="775" />
