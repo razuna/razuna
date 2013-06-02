@@ -37,7 +37,7 @@
 	<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
 <cfelse>
 	<cfset application.fusebox.mode = "development-full-load">
-	<cflock scope="Application" timeout="30">
+	<cflock name="#attributes.cfapplicationname#" timeout="120" type="exclusive">
 		<cfinclude template="/fusebox5/corefiles/fusebox5.cfm" />
 	</cflock>
 </cfif>
