@@ -158,7 +158,7 @@
 									</div>
 								</a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
-									<input type="checkbox" name="file_id" value="#id#-img" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
+									<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-img") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=img&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
@@ -228,7 +228,7 @@
 								</a>
 							<!--- <br><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=#kind#&folder_id=#attributes.folder_id#','#filename#',800,600);return false;">#myFusebox.getApplicationData().defaults.trans("file_detail")#</a> --->
 								<div style="float:left;padding:3px 0px 3px 0px;">
-									<input type="checkbox" name="file_id" value="#id#-vid" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-vid") NEQ 0> checked="checked"</cfif>>
+									<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-vid") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=vid&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
@@ -281,7 +281,7 @@
 								</script>
 								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><div id="draggable#id#-#kind#" type="#id#-#kind#" class="theimg"><img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0"></div></a>
 								<div style="float:left;padding:3px 0px 3px 0px;">
-									<input type="checkbox" name="file_id" value="#id#-aud" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-aud") NEQ 0> checked="checked"</cfif>>
+									<input type="checkbox" name="file_id" value="#id#-#kind#" onclick="enablesub('allform');"<cfif listfindnocase(session.file_id,"#id#-aud") NEQ 0> checked="checked"</cfif>>
 								</div>
 								<div style="float:right;padding:6px 0px 0px 0px;">
 									<a href="##" onclick="showwindow('#myself#c.file_download&file_id=#id#&kind=aud&folderaccess=#attributes.folderaccess#','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("download"))#',650,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("download_to_desktop")#"><img src="#dynpath#/global/host/dam/images/go-down.png" width="16" height="16" border="0" /></a>
