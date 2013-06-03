@@ -1818,7 +1818,7 @@
 		<!-- CFC: Remove folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="remove(attributes)" returnvariable="attributes.folder_id" />
 		<!-- Show -->
-		<if condition="attributes.loaddiv EQ 'assets'">
+		<!-- <if condition="attributes.loaddiv EQ 'assets'">
 			<true>
 				<do action="trash_assets" />
 			</true>
@@ -1827,7 +1827,7 @@
 			<true>
 				<do action="col_get_trash" />
 			</true>
-		</if>
+		</if> -->
 	</fuseaction>
 	<!-- Trash Folder -->
 	<fuseaction name="folder_trash">
