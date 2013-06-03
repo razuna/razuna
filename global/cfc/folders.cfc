@@ -1476,10 +1476,10 @@
 	<cfargument name="thestruct" type="struct">
 	<cfset folderIDs = ''>
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT folder_id,folder_name,folder_level,folder_id_r,folder_main_id_r,folder_owner,in_trash
-		FROM #session.hostdbprefix#folders 
-		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND folder_is_collection IS NULL
+	SELECT folder_id, folder_name, folder_level, folder_id_r, folder_main_id_r, folder_owner, in_trash
+	FROM #session.hostdbprefix#folders 
+	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND folder_is_collection IS NULL
 	</cfquery>
 	<!--- Add "in_collection" Column --->
 	<cfif qry.RecordCount>
@@ -1490,13 +1490,17 @@
 			<!--- Get All Sub Folder IDs Of Current Folder  --->
 		<cfquery name="getColfolderIDs" datasource="#application.razuna.datasource#" >
 			SELECT folder_id from #session.hostdbprefix#folders
-			WHERE folder_level >= (SELECT folder_level FROM #session.hostdbprefix#folders WHERE folder_id="#folder_id#")
-			AND folder_main_id_r="#folder_main_id_r#"
-			AND host_id= <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			WHERE folder_level >= (
+				SELECT 
+				folder_level 
+				FROM #session.hostdbprefix#folders 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id#">)
+			AND folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<cfset folderIDs = #ValueList(getColfolderIDs.folder_id)#>
+		<cfset folderIDs = ValueList(getColfolderIDs.folder_id)>
 		<cfif folderIDs NEQ ''>
-			<cfinvoke method="getAssetsDetails" folder_id="#ValueList(getColfolderIDs.folder_id)#" returnvariable="flag">
+			<cfinvoke method="getAssetsDetails" folder_id="#folderIDs#" returnvariable="flag">
 		</cfif>
 		<!--- Update The "in_collection" Field With The Flag Returned From getAssetsDetails --->
 		<cfset temp = QuerySetCell(qry, "in_collection", flag, qry.currentRow  )>
