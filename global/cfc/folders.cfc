@@ -1512,28 +1512,33 @@
 <!--- Restore the folder --->
 <cffunction name="restorefolder" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset local = structNew()>
+	<cfset local.folder_level = 2>
 	<!--- check the parent folder is exist --->
 	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
-		SELECT folder_main_id_r,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
-		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
-		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	SELECT folder_main_id_r, folder_id_r, in_trash 
+	FROM #session.hostdbprefix#folders 
+	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<cfset local = structNew()>
 	<!--- Check the restored foler is root folder OR not --->
 	<cfif thedetail.in_trash EQ 'T'>
 		<cfset local.istrash = "trash">
 	<cfelse>
 		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
-			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
-			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		SELECT folder_id,folder_id_r,in_trash 
+		FROM #session.hostdbprefix#folders 
+		WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfloop query="dir_parent_id">
 			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
-				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
-				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			SELECT folder_id,in_trash 
+			FROM #session.hostdbprefix#folders 
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfif get_qry.in_trash EQ 'T'  AND get_qry.folder_id NEQ arguments.thestruct.folder_id>
 				<cfset local.istrash = "trash">
@@ -1541,21 +1546,21 @@
 			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
 				<cfset local.root = "yes">
 				<cfquery datasource="#application.razuna.datasource#">
-					UPDATE #session.hostdbprefix#folders 
-					SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-					WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				UPDATE #session.hostdbprefix#folders 
+				SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			</cfif>
 		</cfloop>
 	</cfif>
-		<!--- Set is trash --->
-	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
-		<cfset var is_trash = "intrash">
+	<!--- Set is trash --->
+	<cfif isDefined('local.istrash') AND local.istrash EQ "trash">
+		<cfset local.is_trash = "intrash">
 	<cfelse>
-		<cfset var is_trash = "notrash">
+		<cfset local.is_trash = "notrash">
 	</cfif>
-	<cfreturn is_trash />
+	<cfreturn local />
 </cffunction>
 
 
@@ -2180,6 +2185,8 @@
 <!--- GET ASSETS DETAILS --->
 <cffunction name="getAssetsDetails" output="false" hint="GET ASSETS DETAILS" returntype="Any" >
 	<cfargument name="folder_id" default="0" required="yes" type="string">
+	<!--- Param --->
+	<cfset return_flag = false>
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Get All Assets From List Of Folders --->
@@ -2209,7 +2216,6 @@
 			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfif qTab.RecordCount>
-		<cfset return_flag = false>
 		<cfloop query="qTab">
 			<!--- Get File IDs From Collections --->
 			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
