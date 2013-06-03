@@ -26,6 +26,7 @@
 <!--- Define variables --->
 <cfparam name="attributes.id" default="0">
 <cfparam name="attributes.folder_id" default="0">
+<cfparam name="attributes.file_id_r" default="0">
 <cfparam name="attributes.iswin" default="">
 <cfparam name="attributes.order" default="">
 <cfparam name="attributes.many" default="F">
@@ -41,14 +42,23 @@
 	<div id="div_win_remove_record">
 		<table border="0" cellpadding="5" cellspacing="5" width="100%">
 			<tr>
+			<cfif attributes.in_collection>
+				<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#myFusebox.getApplicationData().defaults.trans("alert_record_desc")#<cfelse>#myFusebox.getApplicationData().defaults.trans("delete_record_desc_many")#</cfif></td>
+			<cfelse>
 				<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#myFusebox.getApplicationData().defaults.trans("delete_record_desc")#<cfelse>#myFusebox.getApplicationData().defaults.trans("delete_record_desc_many")#</cfif></td>
+			</cfif>
 			</tr>
 			<tr>
 				<td align="right" style="padding-top:10px;">
 					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search">
 						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');replacewin();" class="button">
 					<cfelse>
-						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
+						<cfif attributes.in_collection>
+							<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("yes")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
+							<input type="button" name="cancel" value="#myFusebox.getApplicationData().defaults.trans("no")#" onclick="destroywindow(2);destroywindow(1);" class="button">
+						<cfelse>
+							<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
+						</cfif>
 					</cfif>
 				</td>
 			</tr>

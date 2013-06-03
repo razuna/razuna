@@ -384,11 +384,23 @@
 			WHERE 
 				i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		</cfquery>
+		<cfif qry_image.RecordCount>
+			<cfset myArray = arrayNew( 1 )>
+			<cfset temp= ArraySet(myArray, 1, qry_image.RecordCount, "False")>
+			<cfset QueryAddColumn(qry_image, "in_collection", "VarChar", myArray)>
+			<cfloop query="qry_image">
+				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
+					SELECT file_id_r
+					FROM #session.hostdbprefix#collections_ct_files
+					WHERE file_id_r = <cfqueryparam value="#qry_image.id#" cfsqltype="CF_SQL_VARCHAR"> 
+				</cfquery>
+				<cfif alert_col.RecordCount>
+					<cfset temp = QuerySetCell(qry_image, "in_collection", "True", qry_image.currentRow  )>
+				</cfif>
+			</cfloop> 
+		</cfif>
 		<cfreturn qry_image />
 </cffunction>
-
-<!--- check the parent folders --->
-	
 
 <!--- RESTORE THE IMAGE --->
 <cffunction name="restoreimage" output="false" returntype="any" >

@@ -680,6 +680,21 @@
 			WHERE 
 				v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		</cfquery>
+		<cfif qry_video.RecordCount>
+			<cfset myArray = arrayNew( 1 )>
+			<cfset temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
+			<cfset QueryAddColumn(qry_video, "in_collection", "VarChar", myArray)>
+			<cfloop query="qry_video">
+				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
+					SELECT file_id_r
+					FROM #session.hostdbprefix#collections_ct_files
+					WHERE file_id_r = <cfqueryparam value="#qry_video.id#" cfsqltype="CF_SQL_VARCHAR"> 
+				</cfquery>
+				<cfif alert_col.RecordCount>
+					<cfset temp = QuerySetCell(qry_video, "in_collection", "True", qry_video.currentRow  )>
+				</cfif>
+			</cfloop>
+		</cfif>
 		<cfreturn qry_video />
 </cffunction>
 
