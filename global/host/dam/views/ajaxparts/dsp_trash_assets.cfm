@@ -29,9 +29,12 @@
 	<!--- show the available folder list for restoring --->
 	<cfif isDefined('attributes.trash.is_trash') AND attributes.trash.is_trash EQ "intrash">
 		<cfif attributes.type EQ 'movefolder'>
-			<!--- directory for restore folder --->
-			<b>#myFusebox.getApplicationData().defaults.trans("restore_directory")#</b><br />
-			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
+			<!--- Open choose folder window automatically --->
+			<script type="text/javascript">
+				showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&fromtrash=true','#myFusebox.getApplicationData().defaults.trans("restore_folder")#', 550, 1);
+			</script>
+			<!--- <b>#myFusebox.getApplicationData().defaults.trans("restore_directory")#</b><br />
+			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a> --->
 		</cfif>
 	<cfelseif structKeyExists(attributes,'is_trash') AND attributes.is_trash EQ "intrash">
 		<!--- set session file id --->
@@ -45,9 +48,13 @@
 			<cfset session.thefileid = ",#attributes.id#-file,">	
 		</cfif>
 		<cfif attributes.type EQ 'restorefile'>
+			<!--- Open choose folder window automatically --->
+			<script type="text/javascript">
+				showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("restore_file")#', 550, 1);
+			</script>
 			<!--- directory for restore files --->
-			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
-			<a href="##" onclick="showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
+			<!--- <b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
+			<a href="##" onclick="showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a> --->
 		</cfif>
 	</cfif>
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">

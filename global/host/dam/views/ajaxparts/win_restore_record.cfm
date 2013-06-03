@@ -45,18 +45,9 @@
 			</tr>
 			<tr>
 				<td align="right" style="padding-top:10px;">
-					<cfif attributes.loaddiv CONTAINS "content_search_" OR attributes.loaddiv EQ "search">
-						<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="$('##div_forall').load('#myself#c.#attributes.what#_restore<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=all&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&loaddiv=&iscol=#attributes.iscol#');replacewin();" class="button">
-					<cfelse>
-						<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_restore<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelseif attributes.kind EQ "folder">folder<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
-					</cfif>
+					<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="destroywindow(1);loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_restore<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelseif attributes.kind EQ "folder">folder<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&iscol=#attributes.iscol#');" class="button">
 				</td>
 			</tr>
 		</table>
 	</div>
-	<script type="text/javascript">
-		function replacewin(){
-			$('##div_win_restore_record').html('<div style="padding:10px;">The asset(s) have been successfully restored! The updated search results will appear the next time you search.<br /><br /><input type="button" name="close" value="Close window" onclick="destroywindow(1);" class="button"></div>');
-		}
-	</script>
 </cfoutput>

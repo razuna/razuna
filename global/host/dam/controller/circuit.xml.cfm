@@ -1818,14 +1818,14 @@
 		<!-- CFC: Trash folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trash(attributes)" returnvariable="attributes.folder_id" />
 		<!-- Show -->
-		<if condition="#attributes.iscol# EQ 'f'">
+		<!-- <if condition="#attributes.iscol# EQ 'f'">
 			<true>
 				<do action="folder_content" />
 			</true>
 			<false>
 				<do action="explorer_col" />
 			</false>
-		</if>
+		</if> -->
 	</fuseaction>
 	<!-- Restore Folder-->
 	<fuseaction name="folder_restore">
@@ -4027,6 +4027,7 @@
 		<set name="attributes.rid" value="0" overwrite="false" />
 		<set name="attributes.iscol" value="f" overwrite="false" />
 		<set name="attributes.kind" value="" overwrite="false" />
+		<set name="attributes.fromtrash" value="false" overwrite="false" />
 		<if condition="session.type NEQ 'movefile' AND session.type NEQ 'movefolder'">
 			<true>
 				<set name="session.thefolderorg" value="0" />

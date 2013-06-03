@@ -1486,16 +1486,20 @@
 <!--- Restore the folder --->
 <cffunction name="restorefolder" output="false">
 	<cfargument name="thestruct" type="struct">
+	<!--- Param --->
+	<cfset local = structNew()>
+	<cfset var thedetail = "">
 	<!--- check the parent folder is exist --->
 	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
-		SELECT folder_id_r,folder_main_id_r,in_trash,folder_level FROM #session.hostdbprefix#folders 
-		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
-		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	SELECT folder_id_r,folder_main_id_r,in_trash,folder_level FROM #session.hostdbprefix#folders 
+	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+	AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<cfset local = structNew()>
+	<!--- Set vars --->
 	<cfset local.folder_level = thedetail.folder_level>
 	<cfset local.is_trash = "intrash">
+	<!--- Return --->
 	<cfreturn local />
 </cffunction>
 
@@ -3088,7 +3092,7 @@
 					<!--- movefolder --->
 					<cfelseif session.type EQ "movefolder">
 						<cfif session.thefolderorg NEQ folder_id>
-							<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');});destroywindow(1);return false;">
+							<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');<cfif arguments.thestruct.fromtrash>$('##rightside').load('index.cfm?fa=c.folder_explorer_trash');</cfif>});destroywindow(1);return false;">
 						</cfif>
 					<!--- restorefile --->
 					<cfelseif session.type EQ "restorefile">

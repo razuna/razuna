@@ -43,25 +43,26 @@
 		<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("trash_folder_desc")#</td>
 	</tr>
 	<tr>
-		<td align="right" style="padding-top:10px;"><input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('content','#myself#c.folder_trash&folder_id=#folder_id#&iscol=<cfif attributes.iscol EQ "T">T<cfelse>F</cfif>');" class="button"></td>
+		<td align="right" style="padding-top:10px;"><input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" onclick="trafolder('#folder_id#');" class="button"></td>
 	</tr>
 </table>
 
-<!---<script type="text/javascript">
+<script type="text/javascript">
 	function trafolder(){
 		// Show loading bar
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
-		$('##explorer<cfif attributes.iscol EQ "T">_col</cfif>').load('#myself#c.folder_trash&folder_id=#folder_id#&iscol=<cfif attributes.iscol EQ "T">T<cfelse>F</cfif>', function() {
+		// Close Windows
+		destroywindow(2);
+		destroywindow(1);
+		// Load
+		$('##div_forall').load('#myself#c.folder_trash&folder_id=#folder_id#&iscol=<cfif attributes.iscol EQ "T">T<cfelse>F</cfif>', function() {
 			setTimeout("trafolderdelay()", 1000);
 		});
 	}
 	function trafolderdelay(){
-		$('##rightside').load('#myself#ajax.trash_folder_confirm');
-		destroywindow(1);
+		$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
+		$('##rightside').load('#myself#ajax.remove_folder_confirm');
 		$("##bodyoverlay").remove();
 	}
-</script>--->
+</script>
 </cfoutput>
-<!---
-onclick="destroywindow(1);loadcontent('explorer<cfif attributes.iscol EQ "T">_col</cfif>','#myself#c.folder_remove&folder_id=#folder_id#&iscol=<cfif attributes.iscol EQ "T">T<cfelse>F</cfif>');loadcontent('rightside','#myself#ajax.remove_folder_confirm');"
---->
