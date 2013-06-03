@@ -67,7 +67,7 @@
 				data : { 
 					async : true,
 					opts : {
-						url : "#myself#c.getfolderfortree&col=#attributes.iscol#&actionismove=T&kind=#attributes.kind#"
+						url : "#myself#c.getfolderfortree&col=#attributes.iscol#&actionismove=T&kind=#attributes.kind#&fromtrash=#attributes.fromtrash#"
 					}
 				}
 			});
@@ -85,6 +85,9 @@
 		}
 		function delayfolderload(){
 			$('##explorer<cfif attributes.iscol EQ "T">_col</cfif>').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
+			<cfif structKeyExists(attributes,"fromtrash") AND attributes.fromtrash>
+				$('##rightside').load('#myself#c.folder_explorer_trash');
+			</cfif>
 		}
 	</script>
 </cfoutput>

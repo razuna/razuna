@@ -1,4 +1,4 @@
-<!---
+﻿<!---
 *
 * Copyright (C) 2005-2008 Razuna
 *
@@ -27,7 +27,7 @@
 <cfparam name="attributes.id" default="0">
 <cfparam name="attributes.folder_id" default="0">
 <cfparam name="attributes.iswin" default="">
-<cfparam name="attributes.order" default=	"">
+<cfparam name="attributes.order" default="">
 <cfparam name="attributes.many" default="F">
 <cfparam name="attributes.file_id" default="0">
 <cfparam name="attributes.col_id" default="0">
@@ -38,14 +38,16 @@
 <cfparam name="attributes.released" default="false">
 <cfparam name="attributes.view" default="">
 <cfoutput>
+	<div id="div_win_restore_record">
 		<table border="0" cellpadding="5" cellspacing="5" width="100%">
 			<tr>
-				<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("remove_folder_desc")#</td>
+				<td style="padding-top:10px;"><cfif attributes.many NEQ "T">#myFusebox.getApplicationData().defaults.trans("restore_record_desc")#<cfelse>#myFusebox.getApplicationData().defaults.trans("restore_record_desc_many")#</cfif></td>
 			</tr>
 			<tr>
 				<td align="right" style="padding-top:10px;">
-					<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
+					<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="destroywindow(1);loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_restore<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelseif attributes.kind EQ "folder">folder<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&iscol=#attributes.iscol#');" class="button">
 				</td>
 			</tr>
 		</table>
+	</div>
 </cfoutput>

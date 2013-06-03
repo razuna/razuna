@@ -1319,6 +1319,7 @@
 		  share_order			varchar2(1 char) DEFAULT 'f',
 		  share_order_user		VARCHAR2(100 CHAR),
 		  HOST_ID				NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		  CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDER_PK PRIMARY KEY (FOLDER_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FOLDERS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1388,6 +1389,7 @@
 		  HASHTAG			   VARCHAR2(100 CHAR),
 		  IS_AVAILABLE			VARCHAR2(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILE_PK PRIMARY KEY (FILE_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#FILES_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1469,6 +1471,7 @@
 		  HASHTAG			   VARCHAR2(100 CHAR),
 		  IS_AVAILABLE			VARCHAR2(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_PK PRIMARY KEY (IMG_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#IMAGE_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1706,6 +1709,7 @@
 		  col_released		VARCHAR2(5 CHAR) DEFAULT 'false',
 		  col_copied_from	VARCHAR2(100 CHAR),
 		  HOST_ID			NUMBER,
+		  IN_TRASH			VARCHAR2(2 CHAR) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_PK PRIMARY KEY (COL_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES hosts (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -1741,9 +1745,8 @@
 		  COL_FILE_FORMAT  	VARCHAR2(100 CHAR),
 		  HOST_ID		 	NUMBER,
 		  rec_uuid			VARCHAR2(100 CHAR),
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#CCTF_PK PRIMARY KEY (rec_uuid) ENABLE,
-		  CONSTRAINT #arguments.thestruct.host_db_prefix#COLLECTIONS_CT_FILES_FK1 FOREIGN KEY (COL_ID_R)
-	      REFERENCES #arguments.thestruct.host_db_prefix#collections (COL_ID) ON DELETE CASCADE ENABLE
+		  IN_TRASH			VARCHAR2(2 CHAR) DEFAULT 'F',
+		  CONSTRAINT #arguments.thestruct.host_db_prefix#CCTF_PK PRIMARY KEY (rec_uuid) ENABLE
 		)
 		
 		</cfquery>
@@ -1830,11 +1833,12 @@
 		VID_META				CLOB,
 		HOST_ID					NUMBER,
 		PATH_TO_ASSET		    VARCHAR2(500 CHAR),
-		CLOUD_URL			VARCHAR2(500 CHAR),
+		CLOUD_URL				VARCHAR2(500 CHAR),
 		  CLOUD_URL_ORG		   VARCHAR2(500 CHAR),
 		  HASHTAG			   VARCHAR2(100 CHAR),
 		  IS_AVAILABLE			VARCHAR2(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_PK PRIMARY KEY (VID_ID),
 		CONSTRAINT #arguments.thestruct.host_db_prefix#VIDEO_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)
@@ -2054,6 +2058,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 		  HASHTAG			   VARCHAR2(100 CHAR),
 		  IS_AVAILABLE			VARCHAR2(1) DEFAULT 0,
 		  CLOUD_URL_EXP		   NUMBER,
+		  IN_TRASH			   	VARCHAR2(2 CHAR) DEFAULT 'F',
 			CONSTRAINT #arguments.thestruct.host_db_prefix#audios_PK PRIMARY KEY (aud_ID),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#AUDIOS_HOSTS_FK1 FOREIGN KEY (HOST_ID) REFERENCES HOSTS (HOST_ID) ON DELETE CASCADE ENABLE
 		)

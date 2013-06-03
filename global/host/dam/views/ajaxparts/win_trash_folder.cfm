@@ -1,4 +1,4 @@
-<!---
+﻿<!---
 *
 * Copyright (C) 2005-2008 Razuna
 *
@@ -27,7 +27,7 @@
 <cfparam name="attributes.id" default="0">
 <cfparam name="attributes.folder_id" default="0">
 <cfparam name="attributes.iswin" default="">
-<cfparam name="attributes.order" default=	"">
+<cfparam name="attributes.order" default="">
 <cfparam name="attributes.many" default="F">
 <cfparam name="attributes.file_id" default="0">
 <cfparam name="attributes.col_id" default="0">
@@ -38,14 +38,31 @@
 <cfparam name="attributes.released" default="false">
 <cfparam name="attributes.view" default="">
 <cfoutput>
-		<table border="0" cellpadding="5" cellspacing="5" width="100%">
-			<tr>
-				<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("remove_folder_desc")#</td>
-			</tr>
-			<tr>
-				<td align="right" style="padding-top:10px;">
-					<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');" class="button">
-				</td>
-			</tr>
-		</table>
+<table border="0" cellpadding="5" cellspacing="5" width="100%">
+	<tr>
+		<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("trash_folder_desc")#</td>
+	</tr>
+	<tr>
+		<td align="right" style="padding-top:10px;"><input type="button" name="trash" value="#myFusebox.getApplicationData().defaults.trans("trash_folder")#" onclick="trafolder('#folder_id#');" class="button"></td>
+	</tr>
+</table>
+
+<script type="text/javascript">
+	function trafolder(){
+		// Show loading bar
+		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
+		// Close Windows
+		destroywindow(2);
+		destroywindow(1);
+		// Load
+		$('##div_forall').load('#myself#c.folder_trash&folder_id=#folder_id#&iscol=<cfif attributes.iscol EQ "T">T<cfelse>F</cfif>', function() {
+			setTimeout("trafolderdelay()", 1000);
+		});
+	}
+	function trafolderdelay(){
+		$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
+		$('##rightside').load('#myself#ajax.remove_folder_confirm');
+		$("##bodyoverlay").remove();
+	}
+</script>
 </cfoutput>

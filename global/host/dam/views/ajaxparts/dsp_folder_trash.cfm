@@ -1,4 +1,4 @@
-<!---
+﻿<!---
 *
 * Copyright (C) 2005-2008 Razuna
 *
@@ -24,5 +24,15 @@
 *
 --->
 <cfoutput>
-	<span style="color:green;font-weight:bold;padding-left:10px;">#myFusebox.getApplicationData().defaults.trans("remove_folder_confirm_desc")#</span>
+	<div id="tabsfolder_tab">
+		<ul>
+			<!--- Show the trash asset and folder content--->
+			<li><a href="##assets" onclick="loadcontent('assets','#myself##xfa.ftrashassets#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")# (#arraySum(Count_trash['cnt'])#)</a></li>
+		</ul>
+		<div id="assets"></div>
+	</div>
+	<script type="text/javascript">
+		jqtabs("tabsfolder_tab");
+		loadcontent('assets','#myself#c.trash_assets');
+	</script>
 </cfoutput>

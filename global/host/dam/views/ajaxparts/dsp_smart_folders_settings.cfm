@@ -45,7 +45,6 @@
 			<textarea name="sf_description" id="sf_description" style="width:400px;height;50px;">#qry_sf.sf.sf_description#</textarea>
 			<br /><br />
 			<!--- If new but search text is not empty then we assume we come from the search --->
-			<cfdump var="#attributes.searchtext#">
 			<cfif attributes.searchtext NEQ "">
 				<input type="hidden" name="sf_type" value="saved_search">
 				<strong>#myFusebox.getApplicationData().defaults.trans("sf_search_string")#</strong>

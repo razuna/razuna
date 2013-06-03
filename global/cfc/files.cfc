@@ -377,6 +377,123 @@
 		<cfreturn />
 	</cffunction>
 	
+	<!--- TRASH THE FILE --->
+	<cffunction name="trashfile" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfquery datasource="#application.razuna.datasource#" name="qry_file">
+			SELECT * FROM #session.hostdbprefix#files 
+			WHERE file_id =<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Update in_trash --->
+		<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#files SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+			WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+	</cffunction>
+	
+	<!--- TRASH MANY FILE --->
+	<cffunction name="trashfilemany" output="true">
+		<cfargument name="thestruct" type="struct">
+		<!--- Loop --->
+		<cfloop list="#arguments.thestruct.id#" index="i" delimiters=",">
+			<cfset i = listfirst(i,"-")>
+			<!--- Update in_trash --->
+			<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files 
+				SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+				WHERE file_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
+		<cfreturn />
+	</cffunction>
+	
+	<!--- Get files from trash --->
+	<cffunction name="gettrashfile" output="false">
+		<cfargument name="thestruct" type="struct">
+			<cfquery datasource="#application.razuna.datasource#" name="qry_file">
+				SELECT f.file_id AS id, f.file_name AS filename,f.folder_id_r AS folder_id_r, f.file_extension AS ext,f.file_name_org AS filename_org,
+					'doc' AS kind,f.is_available AS is_available,f.file_create_date AS date_create,f.file_change_date AS date_change,f.link_kind AS link_kind,
+					f.link_path_url AS link_path_url,f.path_to_asset AS path_to_asset,f.cloud_url AS cloud_url,f.cloud_url_org AS cloud_url_org,f.hashtag AS hashtag 
+				FROM 
+					#session.hostdbprefix#files f 
+				WHERE 
+					f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+			</cfquery>
+			<cfreturn qry_file />
+	</cffunction>
+	<!--- Get trash files form trash directory --->
+	<cffunction name="thetrashfiles" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfif directoryExists('#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/')>
+			<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="getfilestrash">
+		<cfelse>
+			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/">
+			<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="getfilestrash">	
+		</cfif>
+		
+		<cfreturn getfilestrash />
+	</cffunction>
+	
+	<!--- RESTORE THE FILE --->
+	<cffunction name="restorefile" output="false">
+		<cfargument name="thestruct" type="struct">
+	<!--- check the parent folder is exist --->
+	<cfquery datasource="#application.razuna.datasource#" name="thedetail">
+		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
+		WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	</cfquery>
+	<cfset local = structNew()>
+	<cfif thedetail.RecordCount EQ 0>
+		<cfset local.istrash = "trash">
+	<cfelse>
+		<!---<cfquery datasource="#application.razuna.datasource#" name="theparentdetail">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>--->
+		<cfquery datasource="#application.razuna.datasource#" name="dir_parent_id">
+			SELECT folder_id,folder_id_r,in_trash FROM #session.hostdbprefix#folders 
+			WHERE folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thedetail.folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<cfloop query="dir_parent_id">
+			<cfquery datasource="#application.razuna.datasource#" name="get_qry">
+				SELECT folder_id,in_trash FROM #session.hostdbprefix#folders 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#dir_parent_id.folder_id_r#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfif get_qry.in_trash EQ 'T'>
+				<cfset local.istrash = "trash">
+			<cfelseif get_qry.folder_id EQ dir_parent_id.folder_id_r AND get_qry.in_trash EQ 'F'>
+				<cfset local.root = "yes">
+				<!--- Update in_trash --->
+				<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#files 
+					SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+					WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			</cfif>
+		</cfloop>
+	</cfif>
+	
+	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
+		<cfset var is_trash = "intrash">
+	<cfelse>
+		<cfset var is_trash = "notrash">
+	</cfif>
+	<cfreturn is_trash />
+	</cffunction>
+	
 	<!--- REMOVE MANY FILES --->
 	<cffunction name="removefilemany" output="true">
 		<cfargument name="thestruct" type="struct">

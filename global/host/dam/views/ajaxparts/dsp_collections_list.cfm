@@ -59,7 +59,7 @@
 				</td>
 				<td valign="top" align="center">#dateformat(change_date, "#myFusebox.getApplicationData().defaults.getdateformat()#")#</td>
 				<cfif attributes.folderaccess NEQ "R">
-					<td align="center" width="1%" valign="top"><a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&loaddiv=#kind#<cfif attributes.released>rel</cfif>&folder_id=#folder_id#&released=#attributes.released#','#myFusebox.getApplicationData().defaults.trans("remove")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
+					<td align="center" width="1%" valign="top"><a href="##" onclick="showwindow('#myself#ajax.trash_record&id=#col_id#&what=col_move&loaddiv=content&folder_id=#folder_id#&released=#attributes.released#','#myFusebox.getApplicationData().defaults.trans("trash")#',400,1);return false;"><img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" /></a></td>
 				</cfif>
 			</tr>
 		</cfloop>

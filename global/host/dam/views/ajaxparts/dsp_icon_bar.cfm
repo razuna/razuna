@@ -399,11 +399,11 @@
 			</a>
 		</cfif>
 		<cfif attributes.folderaccess EQ "X">
-			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','delete');return false;">
+			<a href="##" onclick="batchaction('#kind#form','<cfif kind EQ "img">images<cfelseif kind EQ "vid">videos<cfelseif kind EQ "aud">audios<cfelseif kind EQ "all">all<cfelse>files</cfif>','#kind#','#attributes.folder_id#','trash');return false;">
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
 				</div>
-				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("delete")#</div>
+				<div style="float:left;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("trash")#</div>
 			</a>
 		</cfif>
 		<!--- Plugin being shows with add_folderview_select_wx  --->
