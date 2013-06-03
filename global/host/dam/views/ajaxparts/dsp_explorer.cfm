@@ -58,7 +58,7 @@
 			<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" />
 		</div>
 		<div style="float:left;">
-			<a href="##" onclick="$('##rightside').load('#myself#c.folder_explorer_trash')">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")#</a>
+			<a href="##" onclick="$('##rightside').load('#myself#c.folder_explorer_trash');">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")#</a>
 		</div>
 	</div>
 	<div style="clear:both;"></div>

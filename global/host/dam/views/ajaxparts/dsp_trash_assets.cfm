@@ -50,7 +50,7 @@
 		<cfif attributes.type EQ 'restorefile'>
 			<!--- Open choose folder window automatically --->
 			<script type="text/javascript">
-				showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#','#myFusebox.getApplicationData().defaults.trans("restore_file")#', 550, 1);
+				showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&fromtrash=true','#myFusebox.getApplicationData().defaults.trans("restore_file")#', 550, 1);
 			</script>
 			<!--- directory for restore files --->
 			<!--- <b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />

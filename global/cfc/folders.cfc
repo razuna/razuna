@@ -3110,7 +3110,7 @@
 					<!--- movefolder --->
 					<cfelseif session.type EQ "movefolder">
 						<cfif session.thefolderorg NEQ folder_id>
-							<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer<cfif iscol EQ "T">_col</cfif>').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');<cfif arguments.thestruct.fromtrash>$('##rightside').load('index.cfm?fa=c.folder_explorer_trash');</cfif>});destroywindow(1);return false;">
+							<a href="##" onclick="$('##div_forall').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#', function(){$('##explorer').load('index.cfm?fa=c.explorer<cfif iscol EQ "T">_col</cfif>');<cfif arguments.thestruct.fromtrash>$('##rightside').load('index.cfm?fa=c.<cfif iscol EQ "T">collection<cfelse>folder</cfif>_explorer_trash');</cfif>});destroywindow(1);return false;">
 						</cfif>
 					<!--- restorefile --->
 					<cfelseif session.type EQ "restorefile">

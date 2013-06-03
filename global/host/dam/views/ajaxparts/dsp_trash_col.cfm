@@ -26,20 +26,23 @@
 <cfoutput>
 	<cfif structKeyExists(attributes,'is_trash') AND attributes.is_trash EQ "intrash">
 		<cfif structKeyExists(attributes,'file_id') AND attributes.file_id NEQ 0>
-			<!--- collection for restore files --->
-			<b>#myFusebox.getApplicationData().defaults.trans("parent_collection_not_available")#</b><br />
-			<a href="##" onclick="showwindow('#myself#c.restore_choose_collection&file_id=#attributes.file_id#&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,2);"><b>#myFusebox.getApplicationData().defaults.trans("select_collection")#</b></a>
+			<!--- Open choose folder window automatically --->
+			<script type="text/javascript">
+				showwindow('#myself#c.restore_choose_collection&file_id=#attributes.file_id#&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#&fromtrash=true','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,1);
+			</script>
 		<cfelseif structKeyExists(attributes,'kind') AND attributes.kind EQ "collection">
-			<!--- directory for restore collection --->
-			<b>#myFusebox.getApplicationData().defaults.trans("parent_directory_not_available")#</b><br />
-			<a href="##" onclick="showwindow('#myself#c.restore_trash_collection&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,2);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
+			<!--- Open choose folder window automatically --->
+			<script type="text/javascript">
+				showwindow('#myself#c.restore_trash_collection&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#&fromtrash=true','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,1);
+			</script>
 		</cfif>
 	</cfif>
 	<cfif isDefined('attributes.trash.is_trash') AND attributes.trash.is_trash EQ "intrash">
 		<cfif structKeyExists(attributes,'kind') AND attributes.kind EQ "folder">
-			<!--- directory for restore folder --->
-			<b>#myFusebox.getApplicationData().defaults.trans("restore_directory")#</b><br />
-			<a href="##" onclick="showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&iscol=T','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);"><b>#myFusebox.getApplicationData().defaults.trans("select_directory")#</b></a>
+			<!--- Open choose folder window automatically --->
+			<script type="text/javascript">
+				showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&iscol=T&fromtrash=true','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);
+			</script>
 		</cfif>
 	</cfif>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">

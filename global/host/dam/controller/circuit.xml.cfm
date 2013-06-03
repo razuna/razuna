@@ -2331,7 +2331,7 @@
 		<set name="session.thetype" value="#attributes.thetype#" />
 		<set name="seesion.type" value="#attributes.type#" />
 		<!-- Action: Get trash -->
-		<do action="trash_assets" />
+		<!-- <do action="trash_assets" /> -->
 	</fuseaction>
 	<!-- Remove files -->
 	<fuseaction name="files_remove">

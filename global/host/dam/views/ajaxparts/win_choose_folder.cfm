@@ -84,9 +84,9 @@
 			catch(e) {};
 		}
 		function delayfolderload(){
-			$('##explorer<cfif attributes.iscol EQ "T">_col</cfif>').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
+			$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
 			<cfif structKeyExists(attributes,"fromtrash") AND attributes.fromtrash>
-				$('##rightside').load('#myself#c.folder_explorer_trash');
+				$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection<cfelse>folder</cfif>_explorer_trash');
 			</cfif>
 		}
 	</script>
