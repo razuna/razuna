@@ -421,6 +421,47 @@
 				SELECT f.file_id AS id, f.file_name AS filename,f.folder_id_r AS folder_id_r, f.file_extension AS ext,f.file_name_org AS filename_org,
 					'doc' AS kind,f.is_available AS is_available,f.file_create_date AS date_create,f.file_change_date AS date_change,f.link_kind AS link_kind,
 					f.link_path_url AS link_path_url,f.path_to_asset AS path_to_asset,f.cloud_url AS cloud_url,f.cloud_url_org AS cloud_url_org,f.hashtag AS hashtag 
+					<!--- Permfolder --->
+					<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+						, 'X' as permfolder
+					<cfelse>
+						,
+						CASE
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = f.folder_id_r
+							AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = f.folder_id_r
+							AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+							WHEN (SELECT DISTINCT fg5.grp_permission
+							FROM #session.hostdbprefix#folders_groups fg5
+							WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+							AND fg5.folder_id_r = f.folder_id_r
+							AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+							<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+								WHEN (SELECT DISTINCT fg5.grp_permission
+								FROM #session.hostdbprefix#folders_groups fg5
+								WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND fg5.folder_id_r = f.folder_id_r
+								AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+								WHEN (SELECT DISTINCT fg5.grp_permission
+								FROM #session.hostdbprefix#folders_groups fg5
+								WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND fg5.folder_id_r = f.folder_id_r
+								AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+								WHEN (SELECT DISTINCT fg5.grp_permission
+								FROM #session.hostdbprefix#folders_groups fg5
+								WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+								AND fg5.folder_id_r = f.folder_id_r
+								AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+							</cfloop>
+							ELSE 'R'
+						END as permfolder
+					</cfif>
 				FROM 
 					#session.hostdbprefix#files f 
 				WHERE 

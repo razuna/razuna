@@ -73,12 +73,15 @@
 							<div>
 								<strong>#filename#</strong>
 							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=images&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-							</div>
+							<!--- Only if we have at least write permission --->
+							<cfif permfolder NEQ "R">
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=images&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+								</div>
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=images&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								</div>
+							</cfif>
 						</div>
 					</cfloop>
 					<!--- Show the audios from trash --->
@@ -90,12 +93,15 @@
 							<div>
 								<strong>#filename#</strong>
 							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-							</div>
+							<!--- Only if we have at least write permission --->
+							<cfif permfolder NEQ "R">
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+								</div>
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								</div>
+							</cfif>
 						</div>
 					</cfloop>
 					<!--- Show the files from trash  --->
@@ -122,12 +128,15 @@
 							 <div>
 								<strong>#filename#</strong>
 							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-							</div>
+							<!--- Only if we have at least write permission --->
+							<cfif permfolder NEQ "R">
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+								</div>
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&view=combined','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								</div>
+							</cfif>
 						</div>
 					</cfloop>
 				<!--- Show the videos from trash --->
@@ -151,12 +160,15 @@
 						<div>
 							<strong>#filename#</strong>
 						</div>
-						<div>
-							<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-						</div>
-						<div>
-							<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-						</div>
+						<!--- Only if we have at least write permission --->
+						<cfif permfolder NEQ "R">
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+							</div>
+						</cfif>
 					</div>
 				</cfloop>
 				<!--- Show the folder from trash --->
@@ -168,12 +180,15 @@
 						<div>
 							<strong>#folder_name#</strong>
 						</div>
-						<div>
-							<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=assets&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_folder")#</a><br/><br/>
-						</div>
-						<div>
-							<a href="##" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#folder_id#&what=folder&loaddiv=assets','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_folder"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove_folder")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-						</div>
+						<!--- Only if we have at least write permission --->
+						<cfif permfolder NEQ "R">
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=assets&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_folder")#</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#folder_id#&what=folder&loaddiv=assets','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_folder"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove_folder")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+							</div>
+						</cfif>
 					</div>
 				</cfloop>
 			</td>

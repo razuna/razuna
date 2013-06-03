@@ -338,16 +338,16 @@
 	<cfargument name="thestruct" type="struct">
 		<!--- Select trash image --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry_image">
-			SELECT * FROM #session.hostdbprefix#images
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		SELECT * FROM #session.hostdbprefix#images
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images 
-			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		UPDATE #session.hostdbprefix#images 
+		SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 </cffunction>
 
@@ -359,10 +359,10 @@
 		<cfset i = listfirst(i,"-")>
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images 
-			SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
-			WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		UPDATE #session.hostdbprefix#images 
+		SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 		</cfquery>
 	</cfloop>
 	<!--- Flush Cache --->
@@ -376,13 +376,53 @@
 <cffunction name="gettrashimage" output="false">
 	<cfargument name="thestruct" type="struct">
 		<cfquery datasource="#application.razuna.datasource#" name="qry_image">
-			SELECT i.img_id AS id, i.img_filename AS filename,i.folder_id_r AS folder_id_r, i.thumb_extension AS ext,i.img_filename_org AS filename_org,
-				'img' AS kind,i.is_available AS is_available,i.img_create_date AS date_create,i.img_change_date AS date_change,i.link_kind AS link_kind,
-				i.link_path_url AS link_path_url,i.path_to_asset AS path_to_asset,i.cloud_url AS cloud_url,i.cloud_url_org AS cloud_url_org,i.hashtag AS hashtag 
-			FROM 
-				#session.hostdbprefix#images i 
-			WHERE 
-				i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+		SELECT i.img_id AS id, i.img_filename AS filename,i.folder_id_r AS folder_id_r, i.thumb_extension AS ext,
+		i.img_filename_org AS filename_org,'img' AS kind,i.is_available AS is_available,i.img_create_date AS date_create,
+		i.img_change_date AS date_change,i.link_kind AS link_kind, i.link_path_url AS link_path_url,
+		i.path_to_asset AS path_to_asset,i.cloud_url AS cloud_url,i.cloud_url_org AS cloud_url_org,i.hashtag AS hashtag 
+		<!--- Permfolder --->
+		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+			, 'X' as permfolder
+		<cfelse>
+			,
+			CASE
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = i.folder_id_r
+				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = i.folder_id_r
+				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = i.folder_id_r
+				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = i.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = i.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+					WHEN (SELECT DISTINCT fg5.grp_permission
+					FROM #session.hostdbprefix#folders_groups fg5
+					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg5.folder_id_r = i.folder_id_r
+					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+				</cfloop>
+				ELSE 'R'
+			END as permfolder
+		</cfif>
+		FROM #session.hostdbprefix#images i 
+		WHERE i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		</cfquery>
 		<cfif qry_image.RecordCount>
 			<cfset myArray = arrayNew( 1 )>
@@ -390,9 +430,9 @@
 			<cfset QueryAddColumn(qry_image, "in_collection", "VarChar", myArray)>
 			<cfloop query="qry_image">
 				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
-					SELECT file_id_r
-					FROM #session.hostdbprefix#collections_ct_files
-					WHERE file_id_r = <cfqueryparam value="#qry_image.id#" cfsqltype="CF_SQL_VARCHAR"> 
+				SELECT file_id_r
+				FROM #session.hostdbprefix#collections_ct_files
+				WHERE file_id_r = <cfqueryparam value="#qry_image.id#" cfsqltype="CF_SQL_VARCHAR"> 
 				</cfquery>
 				<cfif alert_col.RecordCount>
 					<cfset temp = QuerySetCell(qry_image, "in_collection", "True", qry_image.currentRow  )>

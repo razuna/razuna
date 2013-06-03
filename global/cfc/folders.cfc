@@ -1476,10 +1476,52 @@
 	<cfargument name="thestruct" type="struct">
 	<cfset folderIDs = ''>
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
-	SELECT folder_id, folder_name, folder_level, folder_id_r, folder_main_id_r, folder_owner, in_trash
-	FROM #session.hostdbprefix#folders 
-	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-	AND folder_is_collection IS NULL
+	SELECT f.folder_id, f.folder_name, f.folder_level, f.folder_id_r, f.folder_main_id_r, f.folder_owner, f.in_trash
+	<!--- Permfolder --->
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		, 'X' as permfolder
+	<cfelse>
+		,
+		CASE
+			WHEN (SELECT DISTINCT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+			WHEN (SELECT DISTINCT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+			WHEN (SELECT DISTINCT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = f.folder_id_r
+			AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+			<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
+				WHEN (SELECT DISTINCT fg5.grp_permission
+				FROM #session.hostdbprefix#folders_groups fg5
+				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND fg5.folder_id_r = f.folder_id_r
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+			</cfloop>
+			WHEN (f.folder_owner = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Session.theUserID#">) THEN 'X'
+			ELSE 'R'
+		END as permfolder
+	</cfif>
+	FROM #session.hostdbprefix#folders f
+	WHERE f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND f.folder_is_collection IS NULL
 	</cfquery>
 	<!--- Add "in_collection" Column --->
 	<cfif qry.RecordCount>

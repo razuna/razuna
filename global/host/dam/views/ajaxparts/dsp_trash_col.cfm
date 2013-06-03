@@ -59,12 +59,15 @@
 						<div>
 							<strong>#filename#</strong>
 						</div>
-						<div>
-							<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-						</div>
-						<div>
-							<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-						</div>
+						<!--- Only if we have at least write permission --->
+						<cfif permfolder NEQ "R">
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+							</div>
+							<div>
+								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+							</div>
+						</cfif>
 					</div>
 				</cfloop>
 				<!--- Show the audios from collection trash --->
@@ -76,12 +79,15 @@
 							<div>
 								<strong>#filename#</strong>
 							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-							</div>
+							<!--- Only if we have at least write permission --->
+							<cfif permfolder NEQ "R">
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+								</div>
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								</div>
+							</cfif>
 						</div>
 				 	</cfloop>
 					<!--- Show the files from collection trash  --->
@@ -106,12 +112,15 @@
 							<div>
 								<strong>#filename#</strong>
 							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-							</div>
+							<!--- Only if we have at least write permission --->
+							<cfif permfolder NEQ "R">
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+								</div>
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								</div>
+							</cfif>
 						</div>
 					</cfloop>
 					<!--- Show the videos from collection trash --->
@@ -123,12 +132,15 @@
 							<div>
 								<strong>#filename#</strong>
 							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-							</div>
+							<!--- Only if we have at least write permission --->
+							<cfif permfolder NEQ "R">
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+								</div>
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								</div>
+							</cfif>
 						</div>
 					</cfloop>
 					<!--- Show the folder from collection trash --->
@@ -140,12 +152,15 @@
 							<div>
 								<strong>#folder_name#</strong>
 							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder&iscol=T','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_folder")#</a><br/><br/>
-							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_folder&loaddiv=collection&folder_id=#folder_id#&iscol=T&what=folder','#Jsstringformat(myFusebox.getApplicationData().defaults.trans('remove_folder'))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans('remove')#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-							</div>
+							<!--- Only if we have at least write permission --->
+							<cfif permfolder NEQ "R">
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder&iscol=T','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_folder")#</a><br/><br/>
+								</div>
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_folder&loaddiv=collection&folder_id=#folder_id#&iscol=T&what=folder','#Jsstringformat(myFusebox.getApplicationData().defaults.trans('remove_folder'))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans('remove')#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								</div>
+							</cfif>
 						</div>
 					</cfloop>
 					<!--- Show the collection trash --->
@@ -155,14 +170,17 @@
 								<img src=" #dynpath#/global/host/dam/images/folder-blue.png">
 							</div>
 							<div>
-								#col_name#
+								<strong>#col_name#</strong>
 							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_collection")#</a><br/><br/>
-							</div>
-							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-							</div>
+							<!--- Only if we have at least write permission --->
+							<cfif permfolder NEQ "R">
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_collection")#</a><br/><br/>
+								</div>
+								<div>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								</div>
+							</cfif>
 						</div>
 					</cfloop>
 				</td>
