@@ -93,7 +93,7 @@
 							<div>
 								<strong>#filename#</strong>
 							</div>
-							<!--- Only if we have at least write permission --->
+							<!--- Only if we have at least write permission--->
 							<cfif permfolder NEQ "R">
 								<div>
 									<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
