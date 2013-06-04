@@ -26,13 +26,12 @@
 <cfoutput>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- Save search --->
-	<div id="save_search" style="text-align:center;padding-bottom:10px;">
-		<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');"><strong>
-			<cfif attributes.sf_id EQ 0>
-				#myFusebox.getApplicationData().defaults.trans("sf_save_search_as_smart_folder")#</strong></a>
-			<cfelse>
-				#myFusebox.getApplicationData().defaults.trans("sf_update_search_as_smart_folder")#</strong></a> | <a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
-			</cfif>
+	<div id="save_search" style="padding-bottom:10px;">
+		<cfif attributes.sf_id EQ 0>
+			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_save_search_as_smart_folder")#</a>
+		<cfelseif attributes.folderaccess NEQ "R">
+			<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#&searchtext=#urlencodedformat(attributes.searchtext)#');">#myFusebox.getApplicationData().defaults.trans("sf_update_search_as_smart_folder")#</a> | <a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
+		</cfif>
 	</div>
 	<div style="clear:both;"></div>
 	<!--- Search Results --->

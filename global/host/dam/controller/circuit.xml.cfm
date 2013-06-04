@@ -3960,6 +3960,13 @@
 	<fuseaction name="search_simple">
 		<!-- Include the aearch include -->
 		<do action="search_include" />
+		<!-- If we come from saved search we query folderaccess -->
+		<if condition="attributes.from_sf">
+			<true>
+				<!-- CFC: Get access -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(session.sf_id,true)" returnvariable="attributes.folderaccess" />
+			</true>
+		</if>
 		<!-- ACTION: Search all -->
 		<if condition="attributes.thetype EQ 'all'">
 			<true>

@@ -826,6 +826,15 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<!--- Add sf_who to smart folders --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_smart_folders add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> sf_who #thevarchar#(100)
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 
 		<!--- Add to internal table --->
 		<cftry>

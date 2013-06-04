@@ -46,7 +46,7 @@
 		<cfelse>
 			<cfset sf_search_found = false>
 			<cfset sf_cloud_found = false>
-			<cfloop query="qry_sf">
+			<cfoutput query="qry_sf" group="sf_id">
 				<cfif sf_type EQ "saved_search">
 					<cfif !sf_search_found>
 						<h1>#myFusebox.getApplicationData().defaults.trans("saved_searches")#</h1>
@@ -56,7 +56,7 @@
 							<img src="#dynpath#/global/host/dam/images/search_16.png" border="0" width="16px" />
 						</div>
 						<div style="float:left;text-decoration:none;padding-top:2px;">
-							#sf_name#
+							#sf_name#<cfif shared EQ "true">*</cfif>
 						</div>
 					</a>
 					<cfset sf_search_found = true>
@@ -80,7 +80,10 @@
 				</cfif>
 				
 				<div style="clear:both;"></div>
-			</cfloop>
+			</cfoutput>
+			<div style="padding-top:20px;font-size:11px;">
+				<em>(#myFusebox.getApplicationData().defaults.trans("saved_searches_shared")#)</em>
+			</div>
 		</cfif>
 	</div>
 	<div style="clear:both;"></div>

@@ -29,9 +29,7 @@
 		<ul>
 			<li><a href="##sf_settings"><cfif attributes.sf_id EQ "0">#myFusebox.getApplicationData().defaults.trans("smart_folder_new")#<cfelse>#myFusebox.getApplicationData().defaults.trans("settings")#</cfif></a></li>
 			<!--- Permissions but not for searches --->
-			<cfif qry_sf.sf.sf_type NEQ "saved_search">
-				<li><a href="##sf_permissions">#myFusebox.getApplicationData().defaults.trans("permissions")#</a></li>
-			</cfif>
+			<li><a href="##sf_permissions"><cfif attributes.searchtext NEQ "">#myFusebox.getApplicationData().defaults.trans("share_header")#<cfelse>#myFusebox.getApplicationData().defaults.trans("permissions")#</cfif></a></li>
 		</ul>
 		<form name="sf_form" id="sf_form" action="#self#" onsubmit="sf_submit_form();return false;">
 		<input type="hidden" name="sf_id" value="#attributes.sf_id#">
@@ -87,39 +85,47 @@
 				</cfif>
 			</div>
 			<!--- Permissions --->
-			<cfif qry_sf.sf.sf_type NEQ "saved_search">
-				<div id="sf_permissions">
-
-					<table width="420" cellpadding="0" cellspacing="0" border="0" class="grid">
+			<div id="sf_permissions">
+				<cfif attributes.searchtext NEQ "">
+					#myFusebox.getApplicationData().defaults.trans("share_search")#
+					<cfset inputtype = "hidden">
+				<cfelse>
+					<cfset inputtype = "radio">
+				</cfif>
+				<table width="420" cellpadding="0" cellspacing="0" border="0" class="grid">
+					<cfif attributes.searchtext EQ "">
 						<tr>
 							<th width="100%" colspan="2">#myFusebox.getApplicationData().defaults.trans("access_for")#</th>
 							<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_read")#</th>
 							<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_read_write")#</th>
 							<th width="1%" nowrap align="center">#myFusebox.getApplicationData().defaults.trans("per_all")#</th>
 						</tr>
+					</cfif>
+					<tr class="list">
+						<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_0" value="0" <cfif qry_folder_groups_zero.grp_id_r EQ 0> checked</cfif> onclick="checkradio(0);"></td>
+						<td width="100%" nowrap class="textbold" style="padding:4px;">#myFusebox.getApplicationData().defaults.trans("everybody")#</td>
+						<td width="1%" nowrap align="center" style="padding:4px;"><input type="#inputtype#" value="R" name="per_0" id="per_0"<cfif (qry_folder_groups_zero.grp_permission EQ "R") OR (qry_folder_groups_zero.grp_permission EQ "")> checked</cfif>></td>
+						<cfif attributes.searchtext EQ "">
+							<td width="1%" nowrap align="center" style="padding:4px;"><input type="#inputtype#" value="W" name="per_0"<cfif qry_folder_groups_zero.grp_permission EQ "W"> checked</cfif>></td>
+							<td width="1%" nowrap align="center" style="padding:4px;"><input type="#inputtype#" value="X" name="per_0"<cfif qry_folder_groups_zero.grp_permission EQ "X"> checked</cfif>></td>
+						</cfif>
+					</tr>
+					<cfloop query="qry_groups">
+						<cfset grpidnodash = replace(grp_id,"-","","all")>
 						<tr class="list">
-							<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_0" value="0" <cfif qry_folder_groups_zero.grp_id_r EQ 0> checked</cfif> onclick="checkradio(0);"></td>
-							<td width="100%" nowrap class="textbold" style="padding:4px;">#myFusebox.getApplicationData().defaults.trans("everybody")#</td>
-							<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="R" name="per_0" id="per_0"<cfif (qry_folder_groups_zero.grp_permission EQ "R") OR (qry_folder_groups_zero.grp_permission EQ "")> checked</cfif>></td>
-							<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="W" name="per_0"<cfif qry_folder_groups_zero.grp_permission EQ "W"> checked</cfif>></td>
-							<td width="1%" nowrap align="center" style="padding:4px;"><input type="radio" value="X" name="per_0"<cfif qry_folder_groups_zero.grp_permission EQ "X"> checked</cfif>></td>
+							<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_#grp_id#" value="#grp_id#"<cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id#> checked</cfif></cfloop> onclick="checkradio('#grpidnodash#');"></td>
+							<td width="1%" nowrap style="padding:4px;">#grp_name#</td>
+							<td align="center" style="padding:4px;"><input type="#inputtype#" value="R" name="per_#grpidnodash#" id="per_#grpidnodash#"<cfif attributes.sf_id NEQ 0><cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "R"> checked<cfelseif grp_id_r NEQ #qry_groups.grp_id#> checked</cfif></cfloop><cfelse> checked</cfif>></td>
+							<cfif attributes.searchtext EQ "">
+								<td align="center" style="padding:4px;"><input type="#inputtype#" value="W" name="per_#grpidnodash#"<cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "W"> checked</cfif></cfloop>></td>
+								<td align="center" style="padding:4px;"><input type="#inputtype#" value="X" name="per_#grpidnodash#"<cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "X"> checked</cfif></cfloop>></td>
+							</cfif>
 						</tr>
-						<cfloop query="qry_groups">
-							<cfset grpidnodash = replace(grp_id,"-","","all")>
-							<tr class="list">
-								<td width="1%" align="center" style="padding:4px;"><input type="checkbox" name="grp_#grp_id#" value="#grp_id#"<cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id#> checked</cfif></cfloop> onclick="checkradio('#grpidnodash#');"></td>
-								<td width="1%" nowrap style="padding:4px;">#grp_name#</td>
-								<td align="center" style="padding:4px;"><input type="radio" value="R" name="per_#grpidnodash#" id="per_#grpidnodash#"<cfif attributes.sf_id NEQ 0><cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "R"> checked<cfelseif grp_id_r NEQ #qry_groups.grp_id#> checked</cfif></cfloop><cfelse> checked</cfif>></td>
-								<td align="center" style="padding:4px;"><input type="radio" value="W" name="per_#grpidnodash#"<cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "W"> checked</cfif></cfloop>></td>
-								<td align="center" style="padding:4px;"><input type="radio" value="X" name="per_#grpidnodash#"<cfloop query="qry_folder_groups"><cfif grp_id_r EQ #qry_groups.grp_id# AND grp_permission EQ "X"> checked</cfif></cfloop>></td>
-							</tr>
-						</cfloop>
-					</table>
-						
-					<br /><br />
-					<input type="submit" name="sfsubmit" value="<cfif attributes.sf_id EQ 0>#myFusebox.getApplicationData().defaults.trans("button_save")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_update")#</cfif>" class="button">
-				</div>
-			</cfif>
+					</cfloop>
+				</table>
+				<br /><br />
+				<input type="submit" name="sfsubmit" value="<cfif attributes.sf_id EQ 0>#myFusebox.getApplicationData().defaults.trans("button_save")#<cfelse>#myFusebox.getApplicationData().defaults.trans("button_update")#</cfif>" class="button">
+			</div>
 		</form>
 	</div>
 	<!--- Status --->

@@ -2320,6 +2320,7 @@
 			sf_date_update 	datetime,
 			sf_type 		varchar(100),
 			sf_description 	varchar(2000),
+			sf_who	 		varchar(100),
 			host_id 		int,
 			PRIMARY KEY (sf_id)
 		)
