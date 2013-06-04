@@ -2299,6 +2299,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			sf_date_update 	timestamp,
 			sf_type 		varchar2(100 char),
 			sf_description 	varchar2(2000 char),
+			host_id 		number,
 			PRIMARY KEY (sf_id)
 		)
 		</cfquery>
@@ -2310,6 +2311,7 @@ CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_LOG_FK1 FOREIGN KEY (SC
 			sf_id_r 		varchar2(100 char),
 			sf_prop_id 		varchar2(500 char),
 			sf_prop_value 	varchar2(2000 char),
+			host_id 		number,
 			PRIMARY KEY (sf_id_r)
 		)
 		</cfquery>

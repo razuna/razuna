@@ -1959,6 +1959,7 @@
 			sf_date_update 	timestamp,
 			sf_type 		varchar(100),
 			sf_description 	varchar(2000),
+			host_id 		bigint,
 			PRIMARY KEY (sf_id)
 		)
 		</cfquery>
@@ -1970,6 +1971,7 @@
 			sf_id_r 		varchar(100),
 			sf_prop_id 		varchar(500),
 			sf_prop_value 	varchar(2000),
+			host_id 		bigint,
 			PRIMARY KEY (sf_id_r)
 		)
 		</cfquery>

@@ -43,7 +43,7 @@
 		<div style="padding:10px;"><a href="##" onclick="downloadselected();">#myFusebox.getApplicationData().defaults.trans("sf_import_to_razuna_all")#</a></div>
 	</div>
 	<p></p>
-	<div style="text-decoration:none;width:600px;" id="selectme">
+	<div style="text-decoration:none;width:600px;"<cfif attributes.folderaccess NEQ "R"> id="selectme"</cfif>>
 		<!--- Dropbox --->
 		<cfif session.sf_account EQ "dropbox">
 			<!--- Loop over array --->

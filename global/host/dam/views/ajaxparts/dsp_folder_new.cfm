@@ -88,7 +88,7 @@
 					<td colspan="2" class="list"></td>
 				</tr>
 				<tr>
-					<td class="td2" valign="top"><strong>Permissions</strong></td>
+					<td class="td2" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("permissions")#</strong></td>
 					<td valign="top" class="td2" style="padding:0;margin:0;">
 						<table width="420" cellpadding="0" cellspacing="0" border="0" class="grid">
 							<tr>

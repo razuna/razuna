@@ -86,9 +86,11 @@
 						<a href="#myself#c.sf_load_file&path=#urlencodedformat(a.path)#" target="_blank" style="text-decoration:none;">#listlast(a.path,"/")#</a>
 					</div>
 				</div>
-				<div style="float:right;padding-top:20px;">
-					<a href="##" onclick="showwindow('#myself#c.sf_load_download_folder&path=#urlencodedformat(a.path)#','#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#',600,1);" title="#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#">#myFusebox.getApplicationData().defaults.trans("sf_import_to_razuna")#</a>
-				</div>
+				<cfif attributes.folderaccess NEQ "R">
+					<div style="float:right;padding-top:20px;">
+						<a href="##" onclick="showwindow('#myself#c.sf_load_download_folder&path=#urlencodedformat(a.path)#','#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#',600,1);" title="#myFusebox.getApplicationData().defaults.trans("sf_choose_folder")#">#myFusebox.getApplicationData().defaults.trans("sf_import_to_razuna")#</a>
+					</div>
+				</cfif>
 				<div style="clear:both;"></div>
 			</div>
 		</cfif>

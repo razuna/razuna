@@ -75,17 +75,19 @@
 			<!--- Insert --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#smart_folders
-			(sf_id)
+			(sf_id, host_id)
 			VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			)
 			</cfquery>
 			<!--- Insert Properties --->
 			<cfquery datasource="#application.razuna.datasource#">
 			INSERT INTO #session.hostdbprefix#smart_folders_prop
-			(sf_id_r)
+			(sf_id_r, host_id)
 			VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">
+				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			)
 			</cfquery>
 		</cfif>
@@ -120,6 +122,33 @@
 			WHERE sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sf_id#">
 			</cfquery>	
 		</cfif>
+		<!--- First delete all the groups --->
+		<cfquery datasource="#variables.dsn#">
+		DELETE FROM #session.hostdbprefix#folders_groups
+		WHERE folder_id_r = <cfqueryparam value="#arguments.thestruct.sf_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Insert the Group and Permission --->
+		<cfloop collection="#arguments.thestruct#" item="myform">
+			<cfif myform CONTAINS "grp_">
+				<cfset var grpid = ReplaceNoCase(myform, "grp_", "")>
+				<cfset var grpidno = Replace(grpid, "-", "", "all")>
+				<cfset var theper = "per_" & "#grpidno#">
+				<cftransaction>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#folders_groups
+					(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
+					VALUES(
+					<cfqueryparam value="#arguments.thestruct.sf_id#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#grpid#" cfsqltype="CF_SQL_VARCHAR">,
+					<cfqueryparam value="#evaluate(theper)#" cfsqltype="cf_sql_varchar">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+					)
+					</cfquery>
+				</cftransaction>
+			</cfif>
+		</cfloop>
 		<!--- Reset cache --->
 		<cfset variables.cachetoken = resetcachetoken("folders")>
 		<!--- Return --->

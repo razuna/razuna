@@ -809,7 +809,23 @@
 				</cfcatch>
 			</cftry>
 		</cfif>
-
+		<!--- Add host_id to smart folders --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_smart_folders add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> host_id #theint#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_smart_folders_prop add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> host_id #theint#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 
 		<!--- Add to internal table --->
 		<cftry>

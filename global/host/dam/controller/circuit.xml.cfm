@@ -8124,6 +8124,16 @@
 		<invoke object="myFusebox.getApplicationData().oauth" methodcall="check('aws_bucket_name')" returnvariable="qry_s3_buckets" />
 		<!-- CFC: Check if account is authenticated -->
 		<!-- <invoke object="myFusebox.getApplicationData().oauth" methodcall="check('box')" returnvariable="chk_box" /> -->
+		<!-- CFC: Load groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="thestruct" value="#attributes#" />
+			<argument name="mod_id" value="1" />
+			<argument name="host_id" value="#session.hostid#" />
+		</invoke>
+		<!-- CFC: Load Groups of this folder -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroups(attributes.sf_id,qry_groups)" returnvariable="qry_folder_groups" />
+		<!-- CFC: Load Groups of this folder for group 0 -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroupszero(attributes.sf_id)" returnvariable="qry_folder_groups_zero" />
 		<!-- Params -->
 		<if condition="qry_sf.sf.sf_type EQ 'saved_search' AND attributes.searchtext EQ ''">
 			<true>
@@ -8148,6 +8158,8 @@
 		</if>
 		<!-- CFC: Get one -->
 		<invoke object="myFusebox.getApplicationData().smartfolders" methodcall="getone(attributes.sf_id)" returnvariable="qry_sf" />
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(session.sf_id,true)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
 		<do action="ajax.smart_folders_content" />
 	</fuseaction>
@@ -8174,6 +8186,8 @@
 			<argument name="path" value="#attributes.path#" />
 			<argument name="sf_id" value="#session.sf_id#" />
 		</invoke>
+		<!-- CFC: Get access -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(session.sf_id,true)" returnvariable="attributes.folderaccess" />
 		<!-- Show -->
 		<if condition="!attributes.noview">
 			<true>

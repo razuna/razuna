@@ -30,15 +30,22 @@
 	<cfelse>
 		<!--- If NOT for search --->
 		<cfif qry_sf.sfprop.sf_prop_id NEQ "searchtext">
-			<!--- Settings --->
-			<div style="padding-bottom:20px;">
-				<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
-			</div>
-			<!--- Load external accounts here --->
-			<div id="sf_account"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>
-			<script type="text/javascript">
-				$('##sf_account').load('#myself#c.sf_load_account', { sf_id: "#qry_sf.sf.sf_id#", sf_type: "#qry_sf.sf.sf_type#" })
-			</script>
+			<!--- Check access --->
+			<cfif attributes.folderaccess EQ "n">
+				<h3>You don't have access to this folder!</h3>
+			<cfelse>
+				<!--- Settings --->
+				<cfif attributes.folderaccess EQ "x">
+					<div style="padding-bottom:20px;">
+						<a href="##" onclick="$('##rightside').load('#myself#c.smart_folders_settings&sf_id=#attributes.sf_id#');">#myFusebox.getApplicationData().defaults.trans("sf_smart_folders_settings")#</a>
+					</div>
+				</cfif>
+				<!--- Load external accounts here --->
+				<div id="sf_account"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>
+				<script type="text/javascript">
+					$('##sf_account').load('#myself#c.sf_load_account', { sf_id: "#qry_sf.sf.sf_id#", sf_type: "#qry_sf.sf.sf_type#" })
+				</script>
+			</cfif>
 		<!--- If this is a saved search --->
 		<cfelseif qry_sf.sfprop.sf_prop_id EQ "searchtext">
 			<!--- This loads the search --->

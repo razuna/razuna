@@ -2328,7 +2328,8 @@
 <!--- ------------------------------------------------------------------------------------- --->
 <!--- SET ACCESS PERMISSION --->
 <cffunction hint="SET ACCESS PERMISSION" name="setaccess" output="true" returntype="string">
-	<cfargument name="folder_id" default="" required="yes" type="string">
+	<cfargument name="folder_id" required="true" type="string">
+	<cfargument name="sf"required="false" type="string" default="false">
 	<!--- Param --->
 	<cfset var fprop = "">
 	<!--- Get the cachetoken for here --->
@@ -2339,9 +2340,14 @@
 	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="fprop" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#setaccess */ f.folder_owner, fg.grp_id_r, fg.grp_permission
-	FROM #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND f.host_id = fg.host_id
-	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	SELECT /* #variables.cachetoken#setaccess */ <cfif arguments.sf>'0' as folder_owner<cfelse>f.folder_owner</cfif>, fg.grp_id_r, fg.grp_permission
+	<cfif arguments.sf>
+		FROM #session.hostdbprefix#smart_folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.sf_id = fg.folder_id_r AND f.host_id = fg.host_id
+		WHERE f.sf_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	<cfelse>
+		FROM #session.hostdbprefix#folders f LEFT JOIN #session.hostdbprefix#folders_groups fg ON f.folder_id = fg.folder_id_r AND f.host_id = fg.host_id
+		WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+	</cfif>
 	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND (
 		fg.grp_id_r IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#session.thegroupofuser#" list="true">)
