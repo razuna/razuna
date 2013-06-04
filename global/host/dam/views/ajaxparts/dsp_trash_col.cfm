@@ -37,14 +37,14 @@
 			</script>
 		</cfif>
 	</cfif>
-	<cfif isDefined('attributes.trash.is_trash') AND attributes.trash.is_trash EQ "intrash">
+	<!---<cfif isDefined('attributes.trash.is_trash') AND attributes.trash.is_trash EQ "intrash">--->
 		<cfif structKeyExists(attributes,'kind') AND attributes.kind EQ "folder">
 			<!--- Open choose folder window automatically --->
 			<script type="text/javascript">
 				showwindow('#myself#c.move_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&folder_level=#attributes.folder_level#&iscol=T&fromtrash=true','#myFusebox.getApplicationData().defaults.trans("move_file")#', 550, 1);
 			</script>
 		</cfif>
-	</cfif>
+	<!---</cfif>--->
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- show the available folder list for restoring --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
