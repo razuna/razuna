@@ -68,7 +68,7 @@ body{
 </style>
 <!--- Custom CSS --->
 <cfif fileexists("#ExpandPath("../..")#global/host/dam/views/layouts/custom/custom.css")>
-  <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/custom/custom.css" />
+  <link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/custom/custom.css?_v=#attributes.cachetag#" />
 </cfif>
 </head>
 <body>
