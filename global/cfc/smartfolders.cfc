@@ -47,7 +47,7 @@
 		FROM #session.hostdbprefix#smart_folders sf JOIN #session.hostdbprefix#folders_groups fg ON sf.sf_id = fg.folder_id_r
 		AND sf.sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
 		AND lower(fg.grp_permission) = <cfqueryparam cfsqltype="cf_sql_varchar" value="r">
-		ORDER BY lower(sf_type) DESC, lower(sf_name)
+		ORDER BY sf_type DESC, sf_name
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
