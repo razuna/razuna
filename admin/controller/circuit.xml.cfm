@@ -299,8 +299,9 @@
 	<fuseaction name="first_time_database_config">
 		<!-- Set sessions -->
 		<set name="session.firsttime.database" value="#attributes.db#" />
+		<set name="session.firsttime.database_type" value="#attributes.db#" />
 		<!-- If this is for H2 -->
-		<if condition="#attributes.db# EQ 'H2'">
+		<if condition="attributes.db EQ 'H2'">
 			<true>
 				<!-- Set attributes -->
 				<set name="attributes.db_name" value="razuna" />
@@ -312,7 +313,7 @@
 				<!-- CFC: Check if there is a DB Connection -->
 				<invoke object="myFusebox.getApplicationData().global" methodcall="checkdatasource()" returnvariable="thedsnarray" />
 				<!-- If there is no H2 datasource then create it -->
-				<if condition="#arrayisempty(thedsnarray)#">
+				<if condition="arrayisempty(thedsnarray)">
 					<true>
 						<set name="session.firsttime.db_action" value="create" />
 						<set name="session.firsttime.db_name" value="razuna" />
