@@ -38,6 +38,7 @@
 <cfparam name="attributes.iscol" default="F">
 <cfparam name="attributes.released" default="false">
 <cfparam name="attributes.view" default="">
+<cfparam name="attributes.in_collection" default="false">
 <cfoutput>
 	<div id="div_win_remove_record">
 		<table border="0" cellpadding="5" cellspacing="5" width="100%">
