@@ -509,7 +509,7 @@
 		<cfif dirhere.recordcount EQ 0>
 			<cfabort>
 		</cfif>
-		<!--- Create a temp directory in the one folder and move all files in this one --->
+		<!--- Create a temp directory in the incoming folder and move all files in this one --->
 		<cfset var tempid = createuuid("")>
 		<cfset var tempdir = arguments.incomingpath & "/task_" & tempid>
 		<!--- Check if we need to do recursive or not --->
