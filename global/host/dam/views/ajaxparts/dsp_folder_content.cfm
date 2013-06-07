@@ -51,6 +51,9 @@
 			</cfif>
 			<cfif attributes.folderaccess NEQ "R">
 				<a href="##" onclick="$('##rightside').load('#myself#c.folder_new&from=list&theid=#url.folder_id#&iscol=F');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_folder_desc")#"><button class="awesome big green">#myFusebox.getApplicationData().defaults.trans("create_subfolder")#</button></a>
+				<!--- <p style="padding-top:20px;">
+					<button class="awesome big grey" onclick="showwindow('#myself#ajax.trash_folder&folder_id=#attributes.folder_id#&iscol=#qry_folder.folder_is_collection#','#myFusebox.getApplicationData().defaults.trans("trash_folder")#',400,1);">#myFusebox.getApplicationData().defaults.trans("create_subfolder")#</button>
+				</p> --->
 			</cfif>
 		</div>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">

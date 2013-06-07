@@ -775,6 +775,10 @@
 					</cfquery>
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("videos")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
 	</cfif>
 	<!--- set is trash --->
 	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
@@ -864,7 +868,8 @@
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
 	<cfreturn />
 </cffunction>
 
@@ -1826,7 +1831,9 @@
 				<!--- Update DB --->
 				<cfquery datasource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos
-				SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+				SET 
+				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>

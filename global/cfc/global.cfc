@@ -1388,7 +1388,9 @@ Comment:<br>
 		<cfloop query="contents">
 			<!--- Files --->
 			<cfif type EQ "file">
-				<cffile action="#arguments.fileaction#" source="#arguments.source#/#name#" destination="#arguments.destination#/#name#" mode="775">
+				<cfif fileexists("#arguments.source#/#name#")>
+					<cffile action="#arguments.fileaction#" source="#arguments.source#/#name#" destination="#arguments.destination#/#name#" mode="775">
+				</cfif>
 			<!--- Dirs but only if we recursive option is true --->
 			<cfelseif type EQ "dir" AND arguments.directoryrecursive>
 				<!--- For copy --->

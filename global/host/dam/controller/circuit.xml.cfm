@@ -599,13 +599,13 @@
 		<!--Path-->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<!--CFC:Get trash images-->
-		<invoke object="myFusebox.getApplicationData().images" methodcall="gettrashimage()" returnvariable="imagetrash" />
+		<invoke object="myFusebox.getApplicationData().images" methodcall="gettrashimage(attributes)" returnvariable="imagetrash" />
 		<!-- CFC:Get trash audios -->
-		<invoke object="myFusebox.getApplicationData().audios" methodcall="gettrashaudio()" returnvariable="audiotrash" />
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="gettrashaudio(attributes)" returnvariable="audiotrash" />
 		<!-- CFC:Get trash files-->
-		<invoke object="myFusebox.getApplicationData().files" methodcall="gettrashfile()" returnvariable="filetrash" />
+		<invoke object="myFusebox.getApplicationData().files" methodcall="gettrashfile(attributes)" returnvariable="filetrash" />
 		<!-- CFC:Get trash videos-->
-		<invoke object="myFusebox.getApplicationData().videos" methodcall="gettrashvideos()" returnvariable="videotrash" />
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="gettrashvideos(attributes)" returnvariable="videotrash" />
 		<!--CFC:Get trash folder-->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="gettrashfolder(attributes)" returnvariable="foldertrash" />
 		<!-- Show -->
@@ -2319,6 +2319,10 @@
 	</fuseaction>
 	<!-- Restore files-->
 	<fuseaction name="files_restore">
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<set name="attributes.trash" value="F" />
@@ -2331,16 +2335,20 @@
 		<set name="session.thetype" value="#attributes.thetype#" />
 		<set name="seesion.type" value="#attributes.type#" />
 		<!-- Action: Get trash -->
-		<!-- <do action="trash_assets" /> -->
+		<do action="trash_assets" />
 	</fuseaction>
 	<!-- Remove files -->
 	<fuseaction name="files_remove">
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().files" methodcall="removefile(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv NEQ ''">
+		<!-- <if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'assets'">
 					<true>
@@ -2351,7 +2359,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 	</fuseaction>
 	<!-- Move images to trash-->
 	<fuseaction name="images_trash">
@@ -2382,6 +2390,10 @@
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
 		<set name="attributes.trash" value="F" overwrite="false" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
 		<!-- CFC: Restore -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="restoreimage(attributes)" returnvariable="attributes.is_trash" />
 		<!-- Show the folder listing -->
@@ -2397,10 +2409,14 @@
 	<fuseaction name="images_remove">
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimage(attributes)" />
 		<!-- Show the trash folder listing -->
-		<if condition="attributes.loaddiv NEQ ''">
+		<!-- <if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'assets'">
 					<true>
@@ -2411,7 +2427,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 	</fuseaction>
 	<!-- Remove videos -->
 	<fuseaction name="images_remove_related">
@@ -2467,10 +2483,14 @@
 	<fuseaction name="videos_remove">
 		<!-- HTTP referer for workflow -->
 		<set name="attributes.comingfrom" value="#cgi.http_referer#" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().videos" methodcall="removevideo(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv NEQ ''">
+		<!-- <if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'assets'">
 					<true>
@@ -2481,7 +2501,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 	</fuseaction>
 	<!-- Remove related videos -->
 	<fuseaction name="videos_remove_related">
@@ -2553,7 +2573,7 @@
 		<!-- CFC: Upload -->
 		<invoke object="myFusebox.getApplicationData().audios" methodcall="removeaudio(attributes)" />
 		<!-- Show the folder listing -->
-		<if condition="attributes.loaddiv NEQ ''">
+		<!-- <if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'assets'">
 					<true>
@@ -2564,7 +2584,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 	</fuseaction>
 	<!-- Remove related audios -->
 	<fuseaction name="audios_remove_related">

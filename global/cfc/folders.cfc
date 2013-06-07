@@ -1529,23 +1529,23 @@
 	<cfset temp= ArraySet(myArray, 1, qry.RecordCount, "False")>
 	<cfset QueryAddColumn(qry, "in_collection", "VarChar", myArray)>
 	<cfloop query="qry">
-			<!--- Get All Sub Folder IDs Of Current Folder  --->
+		<!--- Get All Sub Folder IDs Of Current Folder  --->
 		<cfquery name="getColfolderIDs" datasource="#application.razuna.datasource#" >
-			SELECT folder_id from #session.hostdbprefix#folders
-			WHERE folder_level >= (
-				SELECT 
-				folder_level 
-				FROM #session.hostdbprefix#folders 
-				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id#">)
-			AND folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_main_id_r#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		SELECT folder_id from #session.hostdbprefix#folders
+		WHERE folder_level >= (
+			SELECT 
+			folder_level 
+			FROM #session.hostdbprefix#folders 
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id#">)
+		AND folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_main_id_r#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfset folderIDs = ValueList(getColfolderIDs.folder_id)>
 		<cfif folderIDs NEQ ''>
 			<cfinvoke method="getAssetsDetails" folder_id="#folderIDs#" returnvariable="flag">
+			<!--- Update The "in_collection" Field With The Flag Returned From getAssetsDetails --->
+			<cfset temp = QuerySetCell(qry, "in_collection", flag, qry.currentRow  )>
 		</cfif>
-		<!--- Update The "in_collection" Field With The Flag Returned From getAssetsDetails --->
-		<cfset temp = QuerySetCell(qry, "in_collection", flag, qry.currentRow  )>
 	</cfloop>
 	</cfif>
 	<cfreturn qry>
@@ -2194,37 +2194,37 @@
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Get All Assets From List Of Folders --->
 	<cfquery datasource="#variables.dsn#" name="qTab" cachedwithin="1" region="razcache">
-		SELECT i.img_id as id
-		FROM #session.hostdbprefix#images i 
-		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#" list="true">)
-		AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		UNION ALL
-			SELECT v.vid_id as id
-			FROM #session.hostdbprefix#videos v 
-			WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#" list="true">)
-			AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		UNION ALL
-			SELECT f.file_id as id
-			FROM #session.hostdbprefix#files f 
-			WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#" list="true">)
-			AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		UNION ALL
-			SELECT a.aud_id as id
-			FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
-			WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#" list="true">)
-			AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	SELECT i.img_id as id
+	FROM #session.hostdbprefix#images i 
+	WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#" list="true">)
+	AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UNION ALL
+		SELECT v.vid_id as id
+		FROM #session.hostdbprefix#videos v 
+		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#" list="true">)
+		AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UNION ALL
+		SELECT f.file_id as id
+		FROM #session.hostdbprefix#files f 
+		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#" list="true">)
+		AND f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UNION ALL
+		SELECT a.aud_id as id
+		FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.folder_id#" list="true">)
+		AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfif qTab.RecordCount>
 		<cfloop query="qTab">
 			<!--- Get File IDs From Collections --->
 			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
-				SELECT file_id_r
-				FROM #session.hostdbprefix#collections_ct_files
-				WHERE file_id_r = <cfqueryparam value="#qTab.id#" cfsqltype="CF_SQL_VARCHAR"> 
+			SELECT file_id_r
+			FROM #session.hostdbprefix#collections_ct_files
+			WHERE file_id_r = <cfqueryparam value="#qTab.id#" cfsqltype="CF_SQL_VARCHAR"> 
 			</cfquery>
 			<!--- Change Flag To True And Break The Loop If Records Found In Collections --->
 			<cfif alert_col.RecordCount>
@@ -2233,7 +2233,7 @@
 			</cfif>
 		</cfloop>
 	</cfif>
-<cfreturn return_flag>
+	<cfreturn return_flag>
 </cffunction>
 
 <!--- ------------------------------------------------------------------------------------- --->

@@ -37,7 +37,7 @@
 			</tr>
 			<tr>
 				<td align="right" style="padding-top:10px;">
-					<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_restore&col_id=#attributes.col_id#&id=#attributes.id#&file_id=#attributes.id#&kind=#attributes.kind#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#');$('##rightside').load('#myself#c.folder_explorer_trash');" class="button">
+					<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="<cfif attributes.iswin EQ "two">destroywindow(2);<cfelseif attributes.iswin EQ "">destroywindow(2);destroywindow(1);</cfif>loadcontent('<cfif attributes.loaddiv EQ "all">rightside<cfelse>#attributes.loaddiv#</cfif>','#myself#c.#attributes.what#_restore&col_id=#attributes.col_id#&id=#attributes.id#&file_id=#attributes.id#&kind=#attributes.kind#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&fromtrash=true');$('##rightside').load('#myself#c.folder_explorer_trash');" class="button">
 				</td>
 			</tr>
 		</table>

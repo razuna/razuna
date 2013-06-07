@@ -479,6 +479,10 @@
 				</cfquery>
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("images")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
 	</cfif>
 	<!--- Set is_trash --->
 	<cfif isDefined('local.istrash') AND  local.istrash EQ "trash">
@@ -1560,8 +1564,9 @@
 			<!--- Update DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+			SET 
+			folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.img_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
