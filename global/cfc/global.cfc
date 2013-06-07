@@ -1385,7 +1385,7 @@ Comment:<br>
 		ORDER BY name
 		</cfquery>
 		<!--- Loop --->
-		<cfloop query="contents">
+		<cfoutput query="contents" startrow="1" maxrows="200">
 			<!--- Files --->
 			<cfif type EQ "file">
 				<cfif fileexists("#arguments.source#/#name#")>
@@ -1401,7 +1401,7 @@ Comment:<br>
 					<cfdirectory action="rename" directory="#arguments.source#/#name#" newdirectory="#arguments.destination#/#name#" mode="775" />
 				</cfif>
 			</cfif>
-		</cfloop>
+		</cfoutput>
 		<cfreturn />
 	</cffunction>
 
