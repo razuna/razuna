@@ -178,7 +178,7 @@
 									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_collection")#</a><br/><br/>
 								</div>
 								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 								</div>
 							</cfif>
 						</div>

@@ -79,7 +79,7 @@
 									<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=images&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 								</div>
 								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&in_collection=#in_collection#&what=images&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&in_collection=#in_collection#&what=images&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 								</div>
 							</cfif>
 						</div>
@@ -99,7 +99,7 @@
 									<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 								</div>
 								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&in_collection=#in_collection#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&in_collection=#in_collection#&what=audios&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 								</div>
 							</cfif>
 						</div>
@@ -134,7 +134,7 @@
 									<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=files&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 								</div>
 								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&in_collection=#in_collection#&what=files&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&in_collection=#in_collection#&what=files&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 								</div>
 							</cfif>
 						</div>
@@ -166,7 +166,7 @@
 								<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 							</div>
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&in_collection=#in_collection#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#id#&in_collection=#in_collection#&what=videos&loaddiv=assets&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 							</div>
 						</cfif>
 					</div>
@@ -186,7 +186,7 @@
 								<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=assets&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_folder")#</a><br/><br/>
 							</div>
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#folder_id#&what=folder&loaddiv=assets','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_folder"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove_folder")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								<a href="##" onclick="showwindow('#myself#ajax.remove_folder&folder_id=#folder_id#&what=folder&loaddiv=assets&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove_folder"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove_folder")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 							</div>
 						</cfif>
 					</div>
