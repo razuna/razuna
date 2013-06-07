@@ -301,6 +301,8 @@
 			<!--- Create Directories --->
 		<cfif theServerDir.RecordCount GT 0>
 			<cfloop query="theServerDir">
+				<!--- Call to GC to clean memory --->
+				<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 				<cfset temp="">
 				<!--- Check how long the folder list is --->
 				<cfset var namelistlen = listlen(name,FileSeparator())>
@@ -367,6 +369,8 @@
 		
 		<cfloop query="theServerDirfiles">
 			<cfif fileexists("#directory#/#name#") >
+				<!--- Call to GC to clean memory --->
+				<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 				<cfset var temp="">
 				<cfset var md5hash = "">
 				<cfset arguments.thestruct.thefilenameoriginal = name>
@@ -1455,6 +1459,8 @@ This is the main function called directly by a single upload else from addassets
 	<cfparam default="" name="arguments.thestruct.assetmetadata">
 	<cfparam default="" name="arguments.thestruct.assetmetadatacf">
 	<cfset arguments.thestruct.theimagepath = "#arguments.thestruct.thepath#/images">
+	<!--- Call to GC to clean memory --->
+	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 	<!--- If zip_extract is undefined --->
 	<cfif arguments.thestruct.zip_extract EQ "" OR arguments.thestruct.zip_extract EQ "undefined">
 		<cfset arguments.thestruct.zip_extract = 0>
@@ -1596,6 +1602,9 @@ This is the main function called directly by a single upload else from addassets
 <!--- DELETE IN DB AND FILE SYSTEM -------------------------------------------------------------------->
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Call to GC to clean memory --->
+	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	<!--- Thread --->
 	<cfthread intvars="#arguments.thestruct#">
 		<!--- Set time for remove --->
 		<cfset removetime = DateAdd("h", -6, "#now()#")>
