@@ -46,144 +46,127 @@
 		</cfif>
 	<!---</cfif>--->
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
+	<!--- Show button and next back --->
+	<cfif qry_trash.recordcount NEQ 0>
+		<div style="float:left;">
+			<button class="button" onclick="$('##rightside').load('#myself#c.trash_remove_all&col=true');">#myFusebox.getApplicationData().defaults.trans("empty_trash")#</button>
+		</div>
+		<div style="float:right;">
+			<cfif session.offset GTE 1>
+				<!--- For Back --->
+				<cfset newoffset = session.offset - 1>
+				<a href="##" onclick="backnexttrash(#newoffset#);">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</a> |
+			</cfif>
+			<cfset showoffset = session.offset * session.rowmaxpage>
+			<cfset shownextrecord = (session.offset + 1) * session.rowmaxpage>
+			<cfif qry_trash.recordcount GT session.rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+			<cfif qry_trash.recordcount GT session.rowmaxpage AND NOT shownextrecord GTE qry_trash.recordcount> | 
+				<!--- For Next --->
+				<cfset newoffset = session.offset + 1>
+				<a href="##" onclick="backnexttrash(#newoffset#);">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
+			</cfif>
+		</div>
+	</cfif>
 	<!--- show the available folder list for restoring --->
 	<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 		<tr>
 			<td style="border:0px;" id="selectme">
-				<!--- Show the images from collection trash --->
-				<cfloop query="col_image">
+				<!--- For paging --->
+				<cfset mysqloffset = session.offset * session.rowmaxpage>
+				<!--- Show trash images --->
+				<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.rowmaxpage#">
 					<div class="assetbox">
 						<div class="theimg">
-							<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#id#.#ext#">	
+							<!--- Images --->
+							<cfif kind EQ "img">
+								<cfif application.razuna.storage EQ 'local' OR application.razuna.storage EQ 'akamai'> 
+									<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/thumb_#id#.#ext#">
+								<cfelse>
+									<img src="#cloud_url#">
+								</cfif>
+							<!--- Audios --->
+							<cfelseif kind EQ "aud">
+								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR audgetrash.ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">
+							<!--- Files --->
+							<cfelseif kind EQ "doc">
+								<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
+		                           <cfif cloud_url NEQ "">
+		                                   <img src="#cloud_url#" border="0">
+		                           <cfelse>
+		                                   <img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+		                           </cfif>
+		                       	<cfelseif application.razuna.storage EQ "local" AND ext EQ "PDF">
+		                           <cfset thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
+		                           <cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
+		                                   <img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
+		                           <cfelse>
+		                                   <img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="120" border="0">
+		                           </cfif>
+		                       	<cfelse>
+		                            <cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0"></cfif>
+		                       </cfif>
+		                    <!--- Videos --->
+							<cfelseif kind EQ "vid">
+								<cfif link_kind NEQ "url">
+									<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
+								   <cfif cloud_url NEQ "">
+								           <img src="#cloud_url#" border="0">
+								   <cfelse>
+								           <img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
+								   </cfif>
+									 <cfelse>
+								  	 <img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
+									 </cfif>
+								<cfelse>
+									<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
+								 </cfif>
+							<!--- Folder --->
+							<cfelseif kind EQ "folder">
+								<img src="#dynpath#/global/host/dam/images/folder-yellow.png" border="0">
+							<!--- Collection --->
+							<cfelseif kind EQ "collection">
+								<img src="#dynpath#/global/host/dam/images/folder-blue.png" border="0">
+							</cfif>	
 						</div>
 						<div>
 							<strong>#filename#</strong>
 						</div>
 						<!--- Only if we have at least write permission --->
 						<cfif permfolder NEQ "R">
+							<!--- Set vars for kind --->
+							<!--- Folder --->
+							<cfif kind EQ "folder">
+								<cfset url_restore = "ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder&iscol=T">
+								<cfset url_remove = "ajax.remove_folder&loaddiv=collection&folder_id=#folder_id#&iscol=T&what=folder">
+							<!--- Collection --->
+							<cfelseif kind EQ "collection">
+								<cfset url_restore = "ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection">
+								<cfset url_remove = "ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection&fromtrash=true">
+							<!--- Files --->
+							<cfelse>
+								<cfset url_restore = "ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#">
+								<cfset url_remove = "ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_item_order#&showsubfolders=#attributes.showsubfolders#">
+							</cfif>
+							<!--- Restore --->
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+								<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
 							</div>
+							<!--- Remove --->
 							<div>
-								<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+								<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
 							</div>
 						</cfif>
 					</div>
-				</cfloop>
-				<!--- Show the audios from collection trash --->
-					<cfloop query="col_audio">
-						<div class="assetbox">
-							<div class="theimg">
-								<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">	
-							</div>
-							<div>
-								<strong>#filename#</strong>
-							</div>
-							<!--- Only if we have at least write permission --->
-							<cfif permfolder NEQ "R">
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-								</div>
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-								</div>
-							</cfif>
-						</div>
-				 	</cfloop>
-					<!--- Show the files from collection trash  --->
-					<cfloop query="col_file">
-						<div class="assetbox">
-							<div class="theimg">
-								<cfif application.razuna.storage EQ "local" AND ext EQ "PDF">
-									<cfset var thethumb = replacenocase(filename_org, ".pdf", ".jpg", "all")>
-									<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" border="0">
-									<cfelse>
-										<img src="#dynpath#/assets/#session.hostid#/#path_to_asset#/#thethumb#" width="120" border="0">
-									</cfif>
-								<cfelse>
-									<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#ext#.png") IS "no">
-										<img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0">
-									<cfelse>
-										<img src="#dynpath#/global/host/dam/images/icons/icon_#ext#.png" width="120" height="120" border="0">
-									</cfif>
-								</cfif>
-							</div>
-							<div>
-								<strong>#filename#</strong>
-							</div>
-							<!--- Only if we have at least write permission --->
-							<cfif permfolder NEQ "R">
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-								</div>
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-								</div>
-							</cfif>
-						</div>
-					</cfloop>
-					<!--- Show the videos from collection trash --->
-					<cfloop query="col_video">
-						<div class="assetbox">
-							<div class="theimg">
-								<img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">	
-							</div>
-							<div>
-								<strong>#filename#</strong>
-							</div>
-							<!--- Only if we have at least write permission --->
-							<cfif permfolder NEQ "R">
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
-								</div>
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_order#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-								</div>
-							</cfif>
-						</div>
-					</cfloop>
-					<!--- Show the folder from collection trash --->
-					<cfloop query="col_folder">
-						<div class="assetbox">
-							<div class="theimg">
-								<img src=" #dynpath#/global/host/dam/images/folder-yellow.png">	
-							</div>
-							<div>
-								<strong>#folder_name#</strong>
-							</div>
-							<!--- Only if we have at least write permission --->
-							<cfif permfolder NEQ "R">
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.restore_record&folder_id=#folder_id#&what=folder&loaddiv=collection&id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#&kind=folder&iscol=T','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_folder")#</a><br/><br/>
-								</div>
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.remove_folder&loaddiv=collection&folder_id=#folder_id#&iscol=T&what=folder','#Jsstringformat(myFusebox.getApplicationData().defaults.trans('remove_folder'))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans('remove')#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-								</div>
-							</cfif>
-						</div>
-					</cfloop>
-					<!--- Show the collection trash --->
-					<cfloop query="col_trash">
-						<div class="assetbox">
-							<div class="theimg">
-								<img src=" #dynpath#/global/host/dam/images/folder-blue.png">
-							</div>
-							<div>
-								<strong>#col_name#</strong>
-							</div>
-							<!--- Only if we have at least write permission --->
-							<cfif permfolder NEQ "R">
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore_collection")#</a><br/><br/>
-								</div>
-								<div>
-									<a href="##" onclick="showwindow('#myself#ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("trash"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("trash")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
-								</div>
-							</cfif>
-						</div>
-					</cfloop>
-				</td>
-			</tr>
+				</cfoutput>
+			</td>
+		</tr>
 	</table>
+	<!--- JS --->
+	<script type="text/javascript">
+		// Change the pagelist
+		function backnexttrash(theoffset){
+			// Load
+			$('##rightside').load('#myself#c.collection_explorer_trash&offset=' + theoffset);
+		}
+	</script>
 </cfoutput>

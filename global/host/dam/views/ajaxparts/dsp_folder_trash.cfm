@@ -24,15 +24,21 @@
 *
 --->
 <cfoutput>
-	<div id="tabsfolder_tab">
-		<ul>
-			<!--- Show the trash asset and folder content--->
-			<li><a href="##assets" onclick="loadcontent('assets','#myself##xfa.ftrashassets#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")# (#arraySum(Count_trash['cnt'])#)</a></li>
-		</ul>
-		<div id="assets"></div>
-	</div>
-	<script type="text/javascript">
-		jqtabs("tabsfolder_tab");
-		loadcontent('assets','#myself#c.trash_assets');
-	</script>
+	<!--- Show this when user clicks on empty trash --->
+	<cfif attributes.trashall>
+		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("empty_trash_all_feedback")#</span>
+	<!--- Show trash --->
+	<cfelse>
+		<div id="tabsfolder_tab">
+			<ul>
+				<!--- Show the trash asset and folder content--->
+				<li><a href="##assets" onclick="loadcontent('assets','#myself##xfa.ftrashassets#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")# (#arraySum(Count_trash['cnt'])#)</a></li>
+			</ul>
+			<div id="assets"></div>
+		</div>
+		<script type="text/javascript">
+			jqtabs("tabsfolder_tab");
+			loadcontent('assets','#myself#c.trash_assets');
+		</script>
+	</cfif>
 </cfoutput>

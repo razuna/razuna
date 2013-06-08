@@ -1473,10 +1473,28 @@
 
 <!--- Get All Folder Trash --->
 <cffunction name="gettrashfolder" output="false" output="false" returntype="Query">
-	<cfargument name="thestruct" type="struct">
-	<cfset folderIDs = ''>
-	<cfquery datasource="#application.razuna.datasource#" name="qry">
-	SELECT f.folder_id, f.folder_name, f.folder_level, f.folder_id_r, f.folder_main_id_r, f.folder_owner, f.in_trash
+	<!--- Param --->
+	<cfset var folderIDs = "">
+	<cfset var qry = "">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#gettrashfolder */ 
+	f.folder_id AS id, 
+	f.folder_name AS filename, 
+	f.folder_id_r,
+	'' AS ext, 
+	'' AS filename_org,
+	'folder' AS kind,
+	'' AS link_kind,
+	'' AS path_to_asset,
+	'' AS cloud_url, 
+	'' AS cloud_url_org, 
+	'' AS hashtag,
+	'false' AS in_collection, 
+	'folder' as what,     
+	f.folder_main_id_r 
 	<!--- Permfolder --->
 	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 		, 'X' as permfolder
@@ -1527,7 +1545,6 @@
 	<cfif qry.RecordCount>
 	<cfset myArray = arrayNew( 1 )>
 	<cfset temp= ArraySet(myArray, 1, qry.RecordCount, "False")>
-	<cfset QueryAddColumn(qry, "in_collection", "VarChar", myArray)>
 	<cfloop query="qry">
 		<!--- Get All Sub Folder IDs Of Current Folder  --->
 		<cfquery name="getColfolderIDs" datasource="#application.razuna.datasource#" >
@@ -1536,7 +1553,7 @@
 			SELECT 
 			folder_level 
 			FROM #session.hostdbprefix#folders 
-			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_id#">)
+			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">)
 		AND folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_main_id_r#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
@@ -1544,11 +1561,80 @@
 		<cfif folderIDs NEQ ''>
 			<cfinvoke method="getAssetsDetails" folder_id="#folderIDs#" returnvariable="flag">
 			<!--- Update The "in_collection" Field With The Flag Returned From getAssetsDetails --->
-			<cfset temp = QuerySetCell(qry, "in_collection", flag, qry.currentRow  )>
+			<cfset temp = QuerySetCell(qry, "in_collection", flag, currentRow  )>
 		</cfif>
 	</cfloop>
 	</cfif>
 	<cfreturn qry>
+</cffunction>
+
+<!--- Combine Trash queries --->
+<cffunction name="gettrashcombined" output="false" returntype="query">
+	<cfargument name="qry_images" type="Query">
+	<cfargument name="qry_videos" type="Query">
+	<cfargument name="qry_files" type="Query">
+	<cfargument name="qry_audios" type="Query">
+	<cfargument name="qry_folders" type="Query">
+	<!--- Param --->
+	<cfset var qry = "">
+	<!--- Query together --->
+	<cfquery dbtype="query" name="qry">
+	SELECT *
+	FROM arguments.qry_images
+	UNION ALL
+	SELECT *
+	FROM arguments.qry_videos
+	UNION ALL
+	SELECT *
+	FROM arguments.qry_audios
+	UNION ALL
+	SELECT *
+	FROM arguments.qry_files
+	UNION ALL
+	SELECT *
+	FROM arguments.qry_folders
+	</cfquery>
+	<!--- Return --->
+	<cfreturn qry>
+</cffunction>
+
+<!--- Remove all files and folders when we empty trash --->
+<cffunction name="trash_remove_all" output="false" returntype="void">
+	<cfargument name="qry_all" type="Query">
+	<cfargument name="thestruct" type="struct">
+	<!--- Thread --->
+	<cfthread instruct="#arguments#">
+		<!--- Loop over the query --->
+		<cfloop query="attributes.instruct.qry_all">
+			<!--- Check that users has NOT only read access --->
+			<cfif permfolder NEQ "R">
+				<!--- IMAGES --->
+				<cfif kind EQ "img">
+					<cfset attributes.instruct.thestruct.id = id>
+					<cfinvoke component="images" method="removeimage" thestruct="#attributes.instruct.thestruct#" />
+				<!--- VIDEOS --->
+				<cfelseif kind EQ "vid">
+					<cfset attributes.instruct.thestruct.id = id>
+					<cfinvoke component="videos" method="removevideo" thestruct="#attributes.instruct.thestruct#" />
+				<!--- FILES --->
+				<cfelseif kind EQ "doc">
+					<cfset attributes.instruct.thestruct.id = id>
+					<cfinvoke component="files" method="removefile" thestruct="#attributes.instruct.thestruct#" />
+				<!--- AUDIOS --->
+				<cfelseif kind EQ "aud">
+					<cfset attributes.instruct.thestruct.id = id>
+					<cfinvoke component="audios" method="removeaudio" thestruct="#attributes.instruct.thestruct#" />
+				<!--- FOLDERS --->
+				<cfelseif kind EQ "folder">
+					<cfset attributes.instruct.thestruct.folder_id = id>
+					<cfinvoke method="remove" thestruct="#attributes.instruct.thestruct#" />
+				</cfif>
+			</cfif>
+		</cfloop>
+	</cfthread>
+
+	<!--- Return --->
+	<cfreturn />
 </cffunction>
 
 <!--- Restore the folder --->

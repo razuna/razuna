@@ -415,12 +415,26 @@
 	</cffunction>
 	
 	<!--- Get files from trash --->
-	<cffunction name="gettrashfile" output="false">
-		<cfargument name="thestruct" type="struct">
-			<cfquery datasource="#application.razuna.datasource#" name="qry_file">
-				SELECT f.file_id AS id, f.file_name AS filename,f.folder_id_r AS folder_id_r, f.file_extension AS ext,f.file_name_org AS filename_org,
-					'doc' AS kind,f.is_available AS is_available,f.file_create_date AS date_create,f.file_change_date AS date_change,f.link_kind AS link_kind,
-					f.link_path_url AS link_path_url,f.path_to_asset AS path_to_asset,f.cloud_url AS cloud_url,f.cloud_url_org AS cloud_url_org,f.hashtag AS hashtag 
+	<cffunction name="gettrashfile" output="false" returntype="Query">
+		<!--- Param --->
+		<cfset var qry_file = "">
+		<!--- Query --->
+			<cfquery datasource="#application.razuna.datasource#" name="qry_file" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetoken#gettrashfile */ 
+				f.file_id AS id, 
+				f.file_name AS filename, 
+				f.folder_id_r, 
+				f.file_extension AS ext,
+				f.file_name_org AS filename_org, 
+				'doc' AS kind, 
+				f.link_kind, 
+				f.path_to_asset, 
+				f.cloud_url, 
+				f.cloud_url_org,
+				f.hashtag, 
+				'false' AS in_collection, 
+				'files' as what, 
+				'' AS folder_main_id_r
 					<!--- Permfolder --->
 					<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 						, 'X' as permfolder
@@ -470,20 +484,20 @@
 			<cfif qry_file.RecordCount>
 				<cfset myArray = arrayNew( 1 )>
 				<cfset temp= ArraySet(myArray, 1, qry_file.RecordCount, "False")>
-				<cfset QueryAddColumn(qry_file, "in_collection", "VarChar", myArray)>
 				<cfloop query="qry_file">
 					<cfquery name="alert_col" datasource="#application.razuna.datasource#">
-						SELECT file_id_r
-						FROM #session.hostdbprefix#collections_ct_files
-						WHERE file_id_r = <cfqueryparam value="#qry_file.id#" cfsqltype="CF_SQL_VARCHAR"> 
+					SELECT file_id_r
+					FROM #session.hostdbprefix#collections_ct_files
+					WHERE file_id_r = <cfqueryparam value="#qry_file.id#" cfsqltype="CF_SQL_VARCHAR"> 
 					</cfquery>
 					<cfif alert_col.RecordCount>
-						<cfset temp = QuerySetCell(qry_file, "in_collection", "True", qry_file.currentRow  )>
+						<cfset temp = QuerySetCell(qry_file, "in_collection", "True", currentRow  )>
 					</cfif>
 				</cfloop>
 			</cfif>
 			<cfreturn qry_file />
 	</cffunction>
+
 	<!--- Get trash files form trash directory --->
 	<cffunction name="thetrashfiles" output="false">
 		<cfargument name="thestruct" type="struct">
@@ -491,9 +505,8 @@
 			<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="getfilestrash">
 		<cfelse>
 			<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/">
-			<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="getfilestrash">	
+			<cfdirectory action="list" directory="#arguments.thestruct.thepathup#global/host/#arguments.thestruct.thetrash#/#session.hostid#/file/" name="getfilestrash">
 		</cfif>
-		
 		<cfreturn getfilestrash />
 	</cffunction>
 	

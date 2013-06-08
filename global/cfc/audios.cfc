@@ -496,12 +496,26 @@
 </cffunction>
 
 <!--- Get trash audio --->
-<cffunction name="gettrashaudio" output="false">
-	<cfargument name="thestruct" type="struct">
-	<cfquery datasource="#application.razuna.datasource#" name="qry_audio">
-		SELECT a.aud_id AS id, a.aud_name AS filename,a.folder_id_r AS folder_id_r, a.aud_extension AS ext,a.aud_name_org AS filename_org,
-			'aud' AS kind,a.is_available AS is_available,a.aud_create_date AS date_create,a.aud_change_date AS date_change,a.link_kind AS link_kind,
-			a.link_path_url AS link_path_url,a.path_to_asset AS path_to_asset,a.cloud_url AS cloud_url,a.cloud_url_org AS cloud_url_org,a.hashtag AS hashtag 
+<cffunction name="gettrashaudio" output="false" returntype="Query">
+	<!--- Param --->
+	<cfset var qry_audio = "">
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_audio" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#gettrashaudio */ 
+		a.aud_id AS id, 
+		a.aud_name AS filename, 
+		a.folder_id_r, 
+		a.aud_extension AS ext,
+		a.aud_name_org AS filename_org, 
+		'aud' AS kind, 
+		a.link_kind, 
+		a.path_to_asset, 
+		a.cloud_url, 
+		a.cloud_url_org,
+		a.hashtag, 
+		'false' AS in_collection, 
+		'audios' as what, 
+		'' AS folder_main_id_r
 			<!--- Permfolder --->
 			<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 				, 'X' as permfolder
@@ -551,15 +565,14 @@
 	<cfif qry_audio.RecordCount>
 		<cfset myArray = arrayNew( 1 )>
 		<cfset temp= ArraySet(myArray, 1, qry_audio.RecordCount, "False")>
-		<cfset QueryAddColumn(qry_audio, "in_collection", "VarChar", myArray)>
 		<cfloop query="qry_audio">
 			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
-				SELECT file_id_r
-				FROM #session.hostdbprefix#collections_ct_files
-				WHERE file_id_r = <cfqueryparam value="#qry_audio.id#" cfsqltype="CF_SQL_VARCHAR"> 
+			SELECT file_id_r
+			FROM #session.hostdbprefix#collections_ct_files
+			WHERE file_id_r = <cfqueryparam value="#qry_audio.id#" cfsqltype="CF_SQL_VARCHAR"> 
 			</cfquery>
 			<cfif alert_col.RecordCount>
-				<cfset temp = QuerySetCell(qry_audio, "in_collection", "True", qry_audio.currentRow  )>
+				<cfset temp = QuerySetCell(qry_audio, "in_collection", "True", currentRow  )>
 			</cfif>
 		</cfloop>
 	</cfif>

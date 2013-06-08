@@ -373,13 +373,14 @@
 </cffunction>
 
 <!--- Get images from trash --->
-<cffunction name="gettrashimage" output="false">
-	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry_image">
-		SELECT i.img_id AS id, i.img_filename AS filename,i.folder_id_r AS folder_id_r, i.thumb_extension AS ext,
-		i.img_filename_org AS filename_org,'img' AS kind,i.is_available AS is_available,i.img_create_date AS date_create,
-		i.img_change_date AS date_change,i.link_kind AS link_kind, i.link_path_url AS link_path_url,
-		i.path_to_asset AS path_to_asset,i.cloud_url AS cloud_url,i.cloud_url_org AS cloud_url_org,i.hashtag AS hashtag 
+<cffunction name="gettrashimage" output="false" returntype="Query">
+		<!--- Param --->
+		<cfset var qry_image = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_image" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#gettrashimage */ i.img_id AS id, i.img_filename AS filename, i.folder_id_r, i.thumb_extension AS ext,
+		i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind, i.path_to_asset, i.cloud_url, i.cloud_url_org, 
+		i.hashtag, 'false' AS in_collection, 'images' as what, '' AS folder_main_id_r
 		<!--- Permfolder --->
 		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 			, 'X' as permfolder
@@ -427,15 +428,14 @@
 		<cfif qry_image.RecordCount>
 			<cfset myArray = arrayNew( 1 )>
 			<cfset temp= ArraySet(myArray, 1, qry_image.RecordCount, "False")>
-			<cfset QueryAddColumn(qry_image, "in_collection", "VarChar", myArray)>
 			<cfloop query="qry_image">
 				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
 				SELECT file_id_r
 				FROM #session.hostdbprefix#collections_ct_files
-				WHERE file_id_r = <cfqueryparam value="#qry_image.id#" cfsqltype="CF_SQL_VARCHAR"> 
+				WHERE file_id_r = <cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"> 
 				</cfquery>
 				<cfif alert_col.RecordCount>
-					<cfset temp = QuerySetCell(qry_image, "in_collection", "True", qry_image.currentRow  )>
+					<cfset temp = QuerySetCell(qry_image, "in_collection", "True", currentRow  )>
 				</cfif>
 			</cfloop> 
 		</cfif>

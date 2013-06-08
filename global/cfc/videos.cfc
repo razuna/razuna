@@ -669,12 +669,26 @@
 </cffunction>
 
 <!--- Get videos from trash --->
-<cffunction name="gettrashvideos" output="false">
-	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry_video">
-			SELECT v.vid_id AS id, v.vid_filename AS filename,v.folder_id_r AS folder_id_r, v.vid_extension AS ext,v.vid_name_image AS filename_org,
-				'vid' AS kind,v.is_available AS is_available,v.vid_create_date AS date_create,v.vid_change_date AS date_change,v.link_kind AS link_kind,
-				v.link_path_url AS link_path_url,v.path_to_asset AS path_to_asset,v.cloud_url AS cloud_url,v.cloud_url_org AS cloud_url_org,v.hashtag AS hashtag 
+<cffunction name="gettrashvideos" output="false" returntype="Query">
+		<!--- Param --->
+		<cfset var qry_video = "">
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_video" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#gettrashvideos */ 
+			v.vid_id AS id, 
+			v.vid_filename AS filename, 
+			v.folder_id_r AS folder_id_r, 
+			v.vid_extension AS ext, 
+			v.vid_name_image AS filename_org, 
+			'vid' AS kind, 
+			v.link_kind, 
+			v.path_to_asset, 
+			v.cloud_url, 
+			v.cloud_url_org, 
+			v.hashtag, 
+			'false' AS in_collection, 
+			'videos' as what, 
+			'' AS folder_main_id_r
 				<!--- Permfolder --->
 				<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
 					, 'X' as permfolder
@@ -722,15 +736,14 @@
 		<cfif qry_video.RecordCount>
 			<cfset myArray = arrayNew( 1 )>
 			<cfset temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
-			<cfset QueryAddColumn(qry_video, "in_collection", "VarChar", myArray)>
 			<cfloop query="qry_video">
 				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
-					SELECT file_id_r
-					FROM #session.hostdbprefix#collections_ct_files
-					WHERE file_id_r = <cfqueryparam value="#qry_video.id#" cfsqltype="CF_SQL_VARCHAR"> 
+				SELECT file_id_r
+				FROM #session.hostdbprefix#collections_ct_files
+				WHERE file_id_r = <cfqueryparam value="#qry_video.id#" cfsqltype="CF_SQL_VARCHAR"> 
 				</cfquery>
 				<cfif alert_col.RecordCount>
-					<cfset temp = QuerySetCell(qry_video, "in_collection", "True", qry_video.currentRow  )>
+					<cfset temp = QuerySetCell(qry_video, "in_collection", "True", currentRow  )>
 				</cfif>
 			</cfloop>
 		</cfif>

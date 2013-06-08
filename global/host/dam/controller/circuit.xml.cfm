@@ -585,33 +585,85 @@
 	</fuseaction>
  	<!-- Load Trash Folder-->
     <fuseaction name="folder_explorer_trash">
-    	
+    	<!-- Param -->
+		<set name="attributes.trashall" value="false" overwrite="false" />
+    	<!-- Set the offset -->
+		<if condition="structkeyexists(attributes,'offset')">
+			<true>
+				<set name="session.offset" value="#attributes.offset#" />
+			</true>
+			<false>
+				<set name="session.offset" value="0" />
+			</false>
+		</if>
     	<!-- XFA -->
     	<xfa name="ftrashassets" value="c.trash_assets" />
+    	<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trashcount(attributes)" returnvariable="Count_trash" />
 		<!-- Show -->
 		<do action="ajax.folder_trash" />
 	</fuseaction>
-	
+	<!-- This loads all files in trash -->
 	<fuseaction name="trash_assets">
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!--Path-->
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
-		<!--CFC:Get trash images-->
-		<invoke object="myFusebox.getApplicationData().images" methodcall="gettrashimage(attributes)" returnvariable="imagetrash" />
-		<!-- CFC:Get trash audios -->
-		<invoke object="myFusebox.getApplicationData().audios" methodcall="gettrashaudio(attributes)" returnvariable="audiotrash" />
-		<!-- CFC:Get trash files-->
-		<invoke object="myFusebox.getApplicationData().files" methodcall="gettrashfile(attributes)" returnvariable="filetrash" />
-		<!-- CFC:Get trash videos-->
-		<invoke object="myFusebox.getApplicationData().videos" methodcall="gettrashvideos(attributes)" returnvariable="videotrash" />
-		<!--CFC:Get trash folder-->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="gettrashfolder(attributes)" returnvariable="foldertrash" />
+		<!-- Call include in order ot get all files and folders in trash -->
+		<do action="get_all_in_trash" />
 		<!-- Show -->
 		<do action="ajax.trash_assets" />
 	</fuseaction>
-		
+	
+	<!-- This loads all files in trash -->
+	<fuseaction name="trash_remove_all">
+		<!-- Param -->
+		<set name="attributes.trashall" value="true" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
+		<!-- Decide on files or collection -->
+		<if condition="!attributes.col">
+			<!-- Files -->
+			<true>
+				<!-- Call include in order to get all files and folders in trash -->
+				<do action="get_all_in_trash" />
+				<!-- CFC: Remove all -->
+				<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_remove_all(qry_trash,attributes)" />
+				<!-- Show -->
+				<do action="folder_explorer_trash" />
+			</true>
+			<false>
+				<!-- CFC: Get all for collection trash -->
+				<invoke object="myFusebox.getApplicationData().collections" methodcall="trash_remove_all(attributes)" />
+				<!-- Show -->
+				<do action="collection_explorer_trash" />
+			</false>
+		</if>
+	</fuseaction>
+
+	<!-- Include for getting all files and folders in trash -->
+	<fuseaction name="get_all_in_trash">
+		<!--CFC: Get trash images-->
+		<invoke object="myFusebox.getApplicationData().images" methodcall="gettrashimage()" returnvariable="attributes.imagetrash" />
+		<!-- CFC: Get trash audios -->
+		<invoke object="myFusebox.getApplicationData().audios" methodcall="gettrashaudio()" returnvariable="attributes.audiotrash" />
+		<!-- CFC: Get trash files-->
+		<invoke object="myFusebox.getApplicationData().files" methodcall="gettrashfile()" returnvariable="attributes.filetrash" />
+		<!-- CFC: Get trash videos-->
+		<invoke object="myFusebox.getApplicationData().videos" methodcall="gettrashvideos()" returnvariable="attributes.videotrash" />
+		<!--CFC: Get trash folder-->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="gettrashfolder()" returnvariable="attributes.foldertrash" />
+		<!-- Combine queries above -->
+		<invoke object="myFusebox.getApplicationData().folders" method="gettrashcombined" returnvariable="qry_trash">
+			<argument name="qry_images" value="#attributes.imagetrash#" />
+			<argument name="qry_audios" value="#attributes.audiotrash#" />
+			<argument name="qry_files" value="#attributes.filetrash#" />
+			<argument name="qry_videos" value="#attributes.videotrash#" />
+			<argument name="qry_folders" value="#attributes.foldertrash#" />
+		</invoke>
+	</fuseaction>
 	
 	<!--
 		END: EXPLORER
@@ -1164,6 +1216,8 @@
 	
 	<!-- Load Trash Collection-->
     <fuseaction name="collection_explorer_trash">
+    	<!-- Param -->
+		<set name="attributes.trashall" value="false" overwrite="false" />
     	<!-- XFA -->
     	<xfa name="ftrashcol" value="c.col_get_trash" />
 		<!-- CFC:Get collection trash count-->
@@ -1188,20 +1242,8 @@
 		<set name="attributes.showsubfolders" value="#session.showsubfolders#" overwrite="false" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
-		<!-- CFC:Get collection trash image-->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_col_image()" returnvariable="col_image" />
-		<!-- CFC:Get collection trash audio-->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_col_audio()" returnvariable="col_audio" />
-		<!-- CFC:Get collection trash video-->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_col_video()"  returnvariable="col_video" />
-		<!-- CFC:Get collection trash file-->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_col_file()" returnvariable="col_file" />
-		<!-- CFC:Get collection trash folder-->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_col_folder()" returnvariable="col_folder" />
-		<!-- CFC:Get collection trash -->
-		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_col_trash()" returnvariable="col_trash" />
-		<!-- Get Include -->
-		<do action="flushcache"/>
+		<!-- CFC: Get all for collection trash -->
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_trash_files()" returnvariable="qry_trash" />
 		<!-- Show -->
 		<do action="ajax.collection_item_trash" />
 	</fuseaction>
@@ -1223,7 +1265,7 @@
 		<set name="attributes.artoffile" value="" />
 		<set name="attributes.artofvideo" value="" />
 		<set name="session.file_id" value="#attributes.file_id#" />
-		<if condition="attributes.loaddiv NEQ ''">
+		<!-- <if condition="attributes.loaddiv NEQ ''">
 			<true>
 				<if condition="attributes.loaddiv EQ 'collection'">
 					<true>
@@ -1234,7 +1276,7 @@
 					</false>
 				</if>
 			</true>
-		</if>
+		</if> -->
 	</fuseaction>
 	
 	<!-- Restore choose collection -->
@@ -1271,7 +1313,7 @@
 		<set name="attributes.artoffile" value="" />
 		<set name="attributes.artofvideo" value="" />
 		<!-- Show collection trash -->
-		<do action="col_get_trash" />
+		<!-- <do action="col_get_trash" /> -->
 	</fuseaction>
 	
 	<!-- Check the folder to restore collection -->
@@ -2415,19 +2457,6 @@
 		<do action="storage" />
 		<!-- CFC: Remove -->
 		<invoke object="myFusebox.getApplicationData().images" methodcall="removeimage(attributes)" />
-		<!-- Show the trash folder listing -->
-		<!-- <if condition="attributes.loaddiv NEQ ''">
-			<true>
-				<if condition="attributes.loaddiv EQ 'assets'">
-					<true>
-						<do action="trash_assets" />
-					</true>
-					<false>
-						<do action="folder_images" />
-					</false>
-				</if>
-			</true>
-		</if> -->
 	</fuseaction>
 	<!-- Remove videos -->
 	<fuseaction name="images_remove_related">
