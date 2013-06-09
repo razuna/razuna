@@ -200,7 +200,7 @@
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #max# </cfif>#Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>#Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
 			file_create_time date_create, file_change_date date_change
 			FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
@@ -234,7 +234,7 @@
 			<!--- MSSQL --->
 			<cfelseif variables.database EQ "mssql">
 				AND file_id NOT IN (
-					SELECT TOP #min# file_id
+					SELECT TOP #max# file_id
 					FROM #session.hostdbprefix#files
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

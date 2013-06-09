@@ -120,7 +120,7 @@
 			WHERE rn > #min#
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT /* #variables.cachetoken#get_log_users2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, 
+			SELECT /* #variables.cachetoken#get_log_users2 */<cfif variables.database EQ "mssql"> TOP #session.rowmaxpage_log#</cfif> l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, 
 			l.log_ip, l.log_timestamp, 
 			(
 				SELECT count(log_id)
@@ -138,7 +138,7 @@
 			</cfif>
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN (
-					SELECT TOP #min# log_id
+					SELECT TOP #max# log_id
 					FROM #session.hostdbprefix#log_users
 					WHERE lower(log_section) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
@@ -237,7 +237,7 @@
 			WHERE rn > <cfqueryparam value="#min#" cfsqltype="cf_sql_numeric">
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT /* #variables.cachetoken#get_log_assets2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, 
+			SELECT /* #variables.cachetoken#get_log_assets2 */<cfif variables.database EQ "mssql"> TOP #session.rowmaxpage_log#</cfif> l.log_user, l.log_action, l.log_date, 
 			l.log_time, l.log_desc, l.log_browser, l.log_ip, l.log_file_type, l.log_timestamp, u.user_first_name, u.user_last_name, 
 			(
 				SELECT count(log_id)
@@ -261,7 +261,7 @@
 				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 				AND l.log_id NOT IN 
 				(
-					SELECT TOP #min# log_id
+					SELECT TOP #max# log_id
 					FROM #session.hostdbprefix#log_assets
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 						WHERE lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
@@ -352,7 +352,7 @@
 			WHERE rn > #min#
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT /* #variables.cachetoken#get_log_folders2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, 
+			SELECT /* #variables.cachetoken#get_log_folders2 */<cfif variables.database EQ "mssql"> TOP #session.rowmaxpage_log#</cfif> l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, 
 			l.log_ip, l.log_timestamp, u.user_first_name, u.user_last_name, 
 			(
 				SELECT count(log_id)
@@ -370,7 +370,7 @@
 				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 				AND l.log_id NOT IN 
 				(
-					SELECT TOP #min# log_id
+					SELECT TOP #max# log_id
 					FROM #session.hostdbprefix#log_folders
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
@@ -448,7 +448,7 @@
 			WHERE rn > #min#
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT /* #variables.cachetoken#get_log_searches2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> l.log_user, l.log_date, l.log_time, l.log_search_for, l.log_search_from, 
+			SELECT /* #variables.cachetoken#get_log_searches2 */<cfif variables.database EQ "mssql"> TOP #session.rowmaxpage_log#</cfif> l.log_user, l.log_date, l.log_time, l.log_search_for, l.log_search_from, 
 			l.log_founditems, l.log_timestamp, l.log_browser, l.log_ip, u.user_first_name, u.user_last_name, 
 			(
 				SELECT count(log_id)
@@ -460,7 +460,7 @@
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN 
 				(
-					SELECT TOP #min# log_id
+					SELECT TOP #max# log_id
 					FROM #session.hostdbprefix#log_search
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				)
@@ -551,7 +551,7 @@
 			WHERE rn > #min#
 		<!--- MSSQL, MySQL, H2 --->
 		<cfelse>
-			SELECT /* #variables.cachetoken#get_log_errors2 */<cfif variables.database EQ "mssql"> TOP #max#</cfif> id, err_date, 
+			SELECT /* #variables.cachetoken#get_log_errors2 */<cfif variables.database EQ "mssql"> TOP #session.rowmaxpage_log#</cfif> id, err_date, 
 			(
 				SELECT count(id)
 				FROM #session.hostdbprefix#errors
@@ -562,7 +562,7 @@
 			<cfif variables.database EQ "mssql">
 				AND id NOT IN 
 				(
-					SELECT TOP #min# id
+					SELECT TOP #max# id
 					FROM #session.hostdbprefix#errors
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				)

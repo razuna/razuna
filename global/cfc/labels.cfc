@@ -511,7 +511,7 @@
 				FROM (
 			</cfif>
 			SELECT /* #variables.cachetoken#labels_assets */
-			<cfif variables.database EQ "mssql">TOP #max# </cfif>
+			<cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>
 			<cfif variables.database EQ "db2">row_number() over() as rownr,</cfif>
 			 i.img_id id, i.img_filename filename, 
 			i.folder_id_r,i.img_size as size,i.hashtag, i.thumb_extension ext, i.img_filename_org filename_org, 'img' as kind, i.is_available,
@@ -523,7 +523,7 @@
 			AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
 			<cfif variables.database EQ "mssql">
 				AND i.img_id NOT IN (
-				SELECT TOP #min# mssql_i.img_id
+				SELECT TOP #max# mssql_i.img_id
 				FROM #session.hostdbprefix#images mssql_i, ct_labels mssql_ct
 				WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				AND mssql_ct.ct_id_r = mssql_i.img_id
@@ -532,7 +532,7 @@
 			</cfif>
 			UNION ALL
 			SELECT 
-				<cfif variables.database EQ "mssql">TOP #max# </cfif>
+				<cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>
 				<cfif variables.database EQ "db2">row_number() over() as rownr,</cfif> 
 				f.file_id id, f.file_name filename, f.folder_id_r,  f.file_size as size, f.hashtag,
 			f.file_extension ext, f.file_name_org filename_org, f.file_type as kind, f.is_available,
@@ -544,7 +544,7 @@
 			AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
 			<cfif variables.database EQ "mssql">
 				AND f.file_id NOT IN (
-				SELECT TOP #min# mssql_f.file_id
+				SELECT TOP #max# mssql_f.file_id
 				FROM #session.hostdbprefix#files mssql_f, ct_labels mssql_ct
 				WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				AND mssql_ct.ct_id_r = mssql_f.file_id
@@ -553,7 +553,7 @@
 			</cfif>
 			UNION ALL
 			SELECT 
-			<cfif variables.database EQ "mssql">TOP #max# </cfif>
+			<cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>
 			<cfif variables.database EQ "db2">row_number() over() as rownr,</cfif> 
 			v.vid_id id, v.vid_filename filename, v.folder_id_r, v.vid_size as size, v.hashtag,
 			v.vid_extension ext, v.vid_name_image filename_org, 'vid' as kind, v.is_available,
@@ -565,7 +565,7 @@
 			AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
 			<cfif variables.database EQ "mssql">
 				AND v.vid_id NOT IN (
-					SELECT TOP #min# mssql_v.vid_id
+					SELECT TOP #max# mssql_v.vid_id
 					FROM #session.hostdbprefix#videos mssql_v, ct_labels mssql_ct
 					WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 					AND mssql_ct.ct_id_r = mssql_v.vid_id
@@ -574,7 +574,7 @@
 			</cfif>
 			UNION ALL
 			SELECT 
-			<cfif variables.database EQ "mssql">TOP #max# </cfif>
+			<cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>
 			<cfif variables.database EQ "db2">row_number() over() as rownr,</cfif> 
 			a.aud_id id, a.aud_name filename, a.folder_id_r, a.aud_size as size, a.hashtag,
 			a.aud_extension ext, a.aud_name_org filename_org, 'aud' as kind, a.is_available,
@@ -586,7 +586,7 @@
 			AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
 			<cfif variables.database EQ "mssql">
 				AND a.aud_id NOT IN (
-					SELECT TOP #min# mssql_a.aud_id
+					SELECT TOP #max# mssql_a.aud_id
 					FROM #session.hostdbprefix#audios mssql_a, ct_labels mssql_ct
 					WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 					AND mssql_ct.ct_id_r = mssql_a.aud_id
