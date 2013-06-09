@@ -126,8 +126,10 @@ $(function() {
 			}
 			thisid = thisid.replace('draggable','');
 			thisid = thisid.replace('draggable-s','');
-			loadcontent('thedropfav','#myself#c.favorites_put&favtype=file&favid=' + thisid);
-			loadcontent('thedropfav','#myself#c.favorites');
+			$('##div_forall').load('#myself#c.favorites_put&favtype=file&favid=' + thisid, function(){
+				$('##thedropfav').load('#myself#c.favorites');
+			});
+			
 		}
 	});
 });
