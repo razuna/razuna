@@ -2877,6 +2877,22 @@
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (img_group IS NULL OR img_group = '')
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				ORDER BY 
+				<!--- Set the order by --->
+				<cfif session.sortby EQ "name">
+					img_filename
+				<cfelseif session.sortby EQ "sizedesc">
+					img_size DESC
+				<cfelseif session.sortby EQ "sizeasc">
+					img_size ASC
+				<cfelseif session.sortby EQ "dateadd">
+					img_create_time DESC
+				<cfelseif session.sortby EQ "datechanged">
+					img_change_time DESC
+				<cfelseif session.sortby EQ "hashtag">
+					hashtag
+				</cfif>
 			)	
 		</cfif>
 		UNION ALL
@@ -2910,6 +2926,22 @@
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (vid_group IS NULL OR vid_group = '')
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				ORDER BY 
+				<!--- Set the order by --->
+				<cfif session.sortby EQ "name">
+					vid_filename
+				<cfelseif session.sortby EQ "sizedesc">
+					vid_size DESC
+				<cfelseif session.sortby EQ "sizeasc">
+					vid_size ASC
+				<cfelseif session.sortby EQ "dateadd">
+					vid_create_time DESC
+				<cfelseif session.sortby EQ "datechanged">
+					vid_change_time DESC
+				<cfelseif session.sortby EQ "hashtag">
+					hashtag
+				</cfif>
 			)	
 		</cfif>
 		UNION ALL
@@ -2943,6 +2975,22 @@
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (aud_group IS NULL OR aud_group = '')
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				ORDER BY 
+				<!--- Set the order by --->
+				<cfif session.sortby EQ "name">
+					aud_name
+				<cfelseif session.sortby EQ "sizedesc">
+					aud_size DESC
+				<cfelseif session.sortby EQ "sizeasc">
+					aud_size ASC
+				<cfelseif session.sortby EQ "dateadd">
+					aud_create_time DESC
+				<cfelseif session.sortby EQ "datechanged">
+					aud_change_time DESC
+				<cfelseif session.sortby EQ "hashtag">
+					hashtag
+				</cfif>
 			)	
 		</cfif>
 		UNION ALL
@@ -2962,6 +3010,22 @@
 				FROM #session.hostdbprefix#files
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				ORDER BY 
+				<!--- Set the order by --->
+				<cfif session.sortby EQ "name">
+					file_name
+				<cfelseif session.sortby EQ "sizedesc">
+					file_size DESC
+				<cfelseif session.sortby EQ "sizeasc">
+					file_size ASC
+				<cfelseif session.sortby EQ "dateadd">
+					file_create_time DESC
+				<cfelseif session.sortby EQ "datechanged">
+					file_change_time DESC
+				<cfelseif session.sortby EQ "hashtag">
+					hashtag
+				</cfif>
 			)	
 		</cfif>
 		ORDER BY #sortby#
