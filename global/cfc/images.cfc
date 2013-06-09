@@ -72,15 +72,15 @@
 	<cfelse>
 		<cfset thefolderlist = arguments.folder_id & ",">
 	</cfif>
-	<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
-	<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
-		<cfset session.offset = 0>
-	</cfif>
-	<!--- 
-	This is for Oracle and MSQL
-	Calculate the offset .Show the limit only if pages is null or current (from print) 
-	--->
 	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
+		<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
+		<cfif arguments.thestruct.qry_filecount LTE session.rowmaxpage>
+			<cfset session.offset = 0>
+		</cfif>
+		<!--- 
+		This is for Oracle and MSQL
+		Calculate the offset .Show the limit only if pages is null or current (from print) 
+		--->
 		<cfif session.offset EQ 0>
 			<cfset var min = 0>
 			<cfset var max = session.rowmaxpage>
@@ -160,14 +160,14 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getFolderAssetsimg */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #session.rowmaxpage# </cfif>#Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
+		SELECT /* #variables.cachetoken#getFolderAssetsimg */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>#Arguments.ColumnList#, it.img_keywords keywords, it.img_description description, '' as labels, lower(i.img_filename) filename_forsort, i.img_size size, i.hashtag, i.img_create_time date_create, i.img_change_time date_change
 		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
-		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+		<cfif variables.database EQ "mssql">
 			AND i.img_id NOT IN (
 				SELECT TOP #max# img_id
 				FROM #session.hostdbprefix#images
