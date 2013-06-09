@@ -898,9 +898,9 @@
 		ORDER BY log_search_for
 		</cfquery>
 		<!--- Append --->
-		<cfloop query="qry"> 
+		<cfoutput query="qry" startrow="1" maxrows="10"> 
 			<cfset arrayAppend(myarray, log_search_for)>
-		</cfloop>
+		</cfoutput>
 		<cfoutput>#SerializeJSON(myarray)#</cfoutput>
 		<cfreturn /> 
 	</cffunction> 
