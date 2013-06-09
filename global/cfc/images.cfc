@@ -168,7 +168,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			AND i.img_id NOT IN (
-				SELECT TOP #max# img_id
+				SELECT TOP #min# img_id
 				FROM #session.hostdbprefix#images
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (img_group IS NULL OR img_group = '')

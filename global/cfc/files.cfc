@@ -234,7 +234,7 @@
 			<!--- MSSQL --->
 			<cfelseif variables.database EQ "mssql">
 				AND file_id NOT IN (
-					SELECT TOP #max# file_id
+					SELECT TOP #min# file_id
 					FROM #session.hostdbprefix#files
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

@@ -138,7 +138,7 @@
 			</cfif>
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN (
-					SELECT TOP #max# log_id
+					SELECT TOP #min# log_id
 					FROM #session.hostdbprefix#log_users
 					WHERE lower(log_section) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -263,7 +263,7 @@
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN 
 				(
-					SELECT TOP #max# log_id
+					SELECT TOP #min# log_id
 					FROM #session.hostdbprefix#log_assets
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
@@ -374,7 +374,7 @@
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN 
 				(
-					SELECT TOP #max# log_id
+					SELECT TOP #min# log_id
 					FROM #session.hostdbprefix#log_folders
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
@@ -465,7 +465,7 @@
 			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN 
 				(
-					SELECT TOP #max# log_id
+					SELECT TOP #min# log_id
 					FROM #session.hostdbprefix#log_search
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					ORDER BY log_timestamp DESC
@@ -567,7 +567,7 @@
 			<cfif variables.database EQ "mssql">
 				AND id NOT IN 
 				(
-					SELECT TOP #max# id
+					SELECT TOP #min# id
 					FROM #session.hostdbprefix#errors
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					ORDER BY err_date DESC

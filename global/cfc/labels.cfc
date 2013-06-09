@@ -523,7 +523,7 @@
 			AND ct.ct_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar" />
 			<cfif variables.database EQ "mssql">
 				AND i.img_id NOT IN (
-				SELECT TOP #max# mssql_i.img_id
+				SELECT TOP #min# mssql_i.img_id
 				FROM #session.hostdbprefix#images mssql_i, ct_labels mssql_ct
 				WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				AND mssql_ct.ct_id_r = mssql_i.img_id
@@ -544,7 +544,7 @@
 			AND ct.ct_type = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar" />
 			<cfif variables.database EQ "mssql">
 				AND f.file_id NOT IN (
-				SELECT TOP #max# mssql_f.file_id
+				SELECT TOP #min# mssql_f.file_id
 				FROM #session.hostdbprefix#files mssql_f, ct_labels mssql_ct
 				WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 				AND mssql_ct.ct_id_r = mssql_f.file_id
@@ -565,7 +565,7 @@
 			AND ct.ct_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar" />
 			<cfif variables.database EQ "mssql">
 				AND v.vid_id NOT IN (
-					SELECT TOP #max# mssql_v.vid_id
+					SELECT TOP #min# mssql_v.vid_id
 					FROM #session.hostdbprefix#videos mssql_v, ct_labels mssql_ct
 					WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 					AND mssql_ct.ct_id_r = mssql_v.vid_id
@@ -586,7 +586,7 @@
 			AND ct.ct_type = <cfqueryparam value="aud" cfsqltype="cf_sql_varchar" />
 			<cfif variables.database EQ "mssql">
 				AND a.aud_id NOT IN (
-					SELECT TOP #max# mssql_a.aud_id
+					SELECT TOP #min# mssql_a.aud_id
 					FROM #session.hostdbprefix#audios mssql_a, ct_labels mssql_ct
 					WHERE mssql_ct.ct_label_id = <cfqueryparam value="#arguments.label_id#" cfsqltype="cf_sql_varchar" />
 					AND mssql_ct.ct_id_r = mssql_a.aud_id

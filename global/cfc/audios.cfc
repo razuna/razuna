@@ -151,7 +151,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
 			AND a.aud_id NOT IN (
-				SELECT TOP #max# aud_id
+				SELECT TOP #min# aud_id
 				FROM #session.hostdbprefix#audios
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (aud_group IS NULL OR aud_group = '')

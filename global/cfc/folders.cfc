@@ -2872,7 +2872,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND i.img_id NOT IN (
-				SELECT TOP #max# img_id
+				SELECT TOP #min# img_id
 				FROM #session.hostdbprefix#images
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (img_group IS NULL OR img_group = '')
@@ -2906,7 +2906,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND v.vid_id NOT IN (
-				SELECT TOP #max# vid_id
+				SELECT TOP #min# vid_id
 				FROM #session.hostdbprefix#videos
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (vid_group IS NULL OR vid_group = '')
@@ -2940,7 +2940,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND a.aud_id NOT IN (
-				SELECT TOP #max# aud_id
+				SELECT TOP #min# aud_id
 				FROM #session.hostdbprefix#audios
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (aud_group IS NULL OR aud_group = '')
@@ -2961,7 +2961,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND f.file_id NOT IN (
-				SELECT TOP #max# file_id
+				SELECT TOP #min# file_id
 				FROM #session.hostdbprefix#files
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
