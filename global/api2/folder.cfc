@@ -85,6 +85,7 @@
 							END AS test
 						FROM #application.razuna.api.prefix["#arguments.api_key#"]#images isub
 						WHERE isub.img_group = i.img_id
+						AND isub.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					) as subassets,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
@@ -98,6 +99,7 @@
 							SELECT GROUP_CONCAT(DISTINCT ic.col_id_r ORDER BY ic.col_id_r SEPARATOR ',') AS col_id
 							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
 							WHERE ic.file_id_r = i.img_id
+							AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						) AS colid
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						STUFF(
@@ -105,6 +107,7 @@
 								SELECT ', ' + ic.col_id_r
 								FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
 					         	WHERE ic.file_id_r = i.img_id
+					         	AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					          	FOR XML PATH ('')
 				          	)
 				          	, 1, 1, ''
@@ -114,6 +117,7 @@
 							SELECT wmsys.wm_concat(ic.col_id_r) AS col_id
 							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ic
 							WHERE ic.file_id_r = i.img_id
+							AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						) AS colid
 					</cfif>
 					,
@@ -129,6 +133,7 @@
 					AND (i.img_group IS NULL OR i.img_group = '')
 					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					AND i.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+					AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfif>
 				<cfif arguments.show EQ "ALL">
 					UNION ALL
@@ -162,6 +167,7 @@
 							END AS test
 						FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos vsub
 						WHERE vsub.vid_group = v.vid_id
+						AND vsub.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					) as subassets,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
@@ -175,6 +181,7 @@
 							SELECT GROUP_CONCAT(DISTINCT vc.col_id_r ORDER BY vc.col_id_r SEPARATOR ',') AS col_id
 							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
 							WHERE vc.file_id_r = v.vid_id
+							AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						) AS colid
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						STUFF(
@@ -182,6 +189,7 @@
 								SELECT ', ' + vc.col_id_r
 								FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
 					         	WHERE vc.file_id_r = v.vid_id
+					         	AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					          	FOR XML PATH ('')
 				          	)
 				          	, 1, 1, ''
@@ -191,6 +199,7 @@
 							SELECT wmsys.wm_concat(vc.col_id_r) AS col_id
 							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files vc
 							WHERE vc.file_id_r = v.vid_id
+							AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						) AS colid
 					</cfif>
 					,
@@ -205,6 +214,7 @@
 					AND (v.vid_group IS NULL OR v.vid_group = '')
 					AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					AND v.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+					AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfif>
 				<cfif arguments.show EQ "ALL">
 					UNION ALL
@@ -238,6 +248,7 @@
 							END AS test
 						FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios asub
 						WHERE asub.aud_group = a.aud_id
+						AND asub.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					) as subassets,
 					<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 						concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
@@ -250,6 +261,7 @@
 							SELECT GROUP_CONCAT(DISTINCT ac.col_id_r ORDER BY ac.col_id_r SEPARATOR ',') AS col_id
 							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
 							WHERE ac.file_id_r = a.aud_id
+							AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						) AS colid
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						STUFF(
@@ -257,6 +269,7 @@
 								SELECT ', ' + ac.col_id_r
 								FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
 					         	WHERE ac.file_id_r = a.aud_id
+					         	AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					          	FOR XML PATH ('')
 				          	)
 				          	, 1, 1, ''
@@ -266,6 +279,7 @@
 							SELECT wmsys.wm_concat(ac.col_id_r) AS col_id
 							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ac
 							WHERE ac.file_id_r = a.aud_id
+							AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						) AS colid
 					</cfif>
 					,
@@ -280,6 +294,7 @@
 					AND (a.aud_group IS NULL OR a.aud_group = '')
 					AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					AND a.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+					AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfif>
 				<cfif arguments.show EQ "ALL">
 					UNION ALL
@@ -317,6 +332,7 @@
 							SELECT GROUP_CONCAT(DISTINCT fc.col_id_r ORDER BY fc.col_id_r SEPARATOR ',') AS col_id
 							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
 							WHERE fc.file_id_r = f.file_id
+							AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						) AS colid
 					<cfelseif application.razuna.api.thedatabase EQ "mssql">
 						STUFF(
@@ -324,6 +340,7 @@
 								SELECT ', ' + fc.col_id_r
 								FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
 					         	WHERE fc.file_id_r = f.file_id
+					         	AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					          	FOR XML PATH ('')
 				          	)
 				          	, 1, 1, ''
@@ -333,6 +350,7 @@
 							SELECT wmsys.wm_concat(fc.col_id_r) AS col_id
 							FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files fc
 							WHERE fc.file_id_r = f.file_id
+							AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						) AS colid
 					</cfif>
 					,
@@ -346,6 +364,7 @@
 					WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 					AND f.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+					AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfif>
 			</cfquery>
 			<!--- Only if we found records --->
@@ -398,6 +417,7 @@
 					WHERE s.folder_id <cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "db2"><><cfelse>!=</cfif> f.folder_id
 					AND s.folder_id_r = f.folder_id
 					AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+					AND s.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					<cfif application.razuna.api.thedatabase EQ "oracle">
 						AND ROWNUM = 1
 					<cfelseif application.razuna.api.thedatabase EQ "db2">
@@ -422,6 +442,7 @@
 				AND lower(f.folder_is_collection) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="t">
 			</cfif>
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			ORDER BY f.folder_name
 			</cfquery>
 			<!--- If this is NOT for a collection --->
@@ -450,6 +471,7 @@
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections
 				WHERE folder_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(qry.folder_id)#" list="Yes">)
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfquery>
 			</cfif>
 			<!--- Put the 2 queries together --->
@@ -484,6 +506,7 @@
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders_desc fd ON fd.folder_id_r = f.folder_id AND fd.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
 			WHERE f.folder_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#Arguments.folderid#">
 			AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+			AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			</cfquery>
 			<!--- Query total count --->
 			<cfinvoke component="global.cfc.folders" method="apifiletotalcount"folder_id="#arguments.folderid#" returnvariable="totalassets">

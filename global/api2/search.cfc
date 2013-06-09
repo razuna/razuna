@@ -214,6 +214,7 @@
     			SELECT GROUP_CONCAT(DISTINCT ic.col_id_r ORDER BY ic.col_id_r SEPARATOR ',') AS col_id
     			FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
     			WHERE ic.file_id_r = i.img_id
+    			AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
     		) AS colid
     	<cfelseif application.razuna.api.thedatabase EQ "mssql">
     		STUFF(
@@ -221,6 +222,7 @@
     				SELECT ', ' + ic.col_id_r
     				FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
     	         	WHERE ic.file_id_r = i.img_id
+    	         	AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
     	          	FOR XML PATH ('')
               	)
               	, 1, 1, ''
@@ -230,6 +232,7 @@
     			SELECT wmsys.wm_concat(ic.col_id_r) AS col_id
     			FROM #application.razuna.api.prefix["#arguments.istruct.api_key#"]#collections_ct_files ic
     			WHERE ic.file_id_r = i.img_id
+    			AND ic.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
     		) AS colid
     	</cfif>
     	,
@@ -265,6 +268,7 @@
 		WHERE i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreeimg.categorytree)#" list="Yes"></cfif>)
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
 		AND (i.img_group IS NULL OR i.img_group = '')
+		AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Only if we have dates --->
 		<cfif arguments.istruct.datecreate NEQ "">
 			<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -377,6 +381,7 @@
 				SELECT GROUP_CONCAT(DISTINCT vc.col_id_r ORDER BY vc.col_id_r SEPARATOR ',') AS col_id
 				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
 				WHERE vc.file_id_r = v.vid_id
+				AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
 		<cfelseif application.razuna.api.thedatabase EQ "mssql">
 			STUFF(
@@ -384,6 +389,7 @@
 					SELECT ', ' + vc.col_id_r
 					FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
 		         	WHERE vc.file_id_r = v.vid_id
+		         	AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
@@ -393,6 +399,7 @@
 				SELECT wmsys.wm_concat(vc.col_id_r) AS col_id
 				FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#collections_ct_files vc
 				WHERE vc.file_id_r = v.vid_id
+				AND vc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
 		</cfif>
 		,
@@ -427,6 +434,7 @@
 		WHERE v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreevid.categorytree)#" list="Yes"></cfif>)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
+		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Only if we have dates --->
 		<cfif arguments.vstruct.datecreate NEQ "">
 			<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -534,6 +542,7 @@
 				SELECT GROUP_CONCAT(DISTINCT ac.col_id_r ORDER BY ac.col_id_r SEPARATOR ',') AS col_id
 				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
 				WHERE ac.file_id_r = a.aud_id
+				AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
 		<cfelseif application.razuna.api.thedatabase EQ "mssql">
 			STUFF(
@@ -541,6 +550,7 @@
 					SELECT ', ' + ac.col_id_r
 					FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
 		         	WHERE ac.file_id_r = a.aud_id
+		         	AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
@@ -550,6 +560,7 @@
 				SELECT wmsys.wm_concat(ac.col_id_r) AS col_id
 				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#collections_ct_files ac
 				WHERE ac.file_id_r = a.aud_id
+				AND ac.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
 		</cfif>
 		,
@@ -584,6 +595,7 @@
 		WHERE a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreeaud.categorytree)#" list="Yes"></cfif>)
 		AND (a.aud_group IS NULL OR a.aud_group = '')
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
+		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Only if we have dates --->
 		<cfif arguments.astruct.datecreate NEQ "">
 			<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -699,6 +711,7 @@
 				SELECT GROUP_CONCAT(DISTINCT fc.col_id_r ORDER BY fc.col_id_r SEPARATOR ',') AS col_id
 				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
 				WHERE fc.file_id_r = f.file_id
+				AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
 		<cfelseif application.razuna.api.thedatabase EQ "mssql">
 			STUFF(
@@ -706,6 +719,7 @@
 					SELECT ', ' + fc.col_id_r
 					FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
 		         	WHERE fc.file_id_r = f.file_id
+		         	AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		          	FOR XML PATH ('')
 	          	)
 	          	, 1, 1, ''
@@ -715,6 +729,7 @@
 				SELECT wmsys.wm_concat(fc.col_id_r) AS col_id
 				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#collections_ct_files fc
 				WHERE fc.file_id_r = f.file_id
+				AND fc.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			) AS colid
 		</cfif>
 		,
@@ -748,6 +763,7 @@
 		LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
 		WHERE f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattreedoc.categorytree)#" list="Yes"></cfif>)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
+		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<!--- Only if we have dates --->
 		<cfif arguments.fstruct.datecreate NEQ "">
 			<cfif application.razuna.api.thedatabase EQ "mssql">

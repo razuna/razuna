@@ -47,6 +47,7 @@
 			SELECT /* #cachetokencol#getassetscol */ file_id_r, col_file_format
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct
 			WHERE ct.col_id_r = <cfqueryparam value="#arguments.collectionid#" cfsqltype="CF_SQL_VARCHAR">
+			AND ct.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			</cfquery>
 			<!--- If above qry return records --->
 			<cfif qry_col.recordcount NEQ 0>
@@ -79,6 +80,7 @@
 						END AS test
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images isub
 					WHERE isub.img_group = i.img_id
+					AND isub.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				) as subassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',i.path_to_asset,'/',i.img_filename_org) AS local_url_org,
@@ -118,6 +120,7 @@
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND i.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT /* #cachetokenvid#getassetscol */
 				v.vid_id id, 
@@ -146,6 +149,7 @@
 						END AS test
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos vsub
 					WHERE vsub.vid_group = v.vid_id
+					AND vsub.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				) as subassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',v.path_to_asset,'/',v.vid_name_org) AS local_url_org,
@@ -184,6 +188,7 @@
 				AND (v.vid_group IS NULL OR v.vid_group = '')
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND v.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				<!--- Audios --->
 				SELECT /* #cachetokenaud#getassetscol */
@@ -213,6 +218,7 @@
 						END AS test
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios asub
 					WHERE asub.aud_group = a.aud_id
+					AND asub.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				) as subassets,
 				<cfif application.razuna.api.thedatabase EQ "oracle" OR application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">
 					concat('#application.razuna.api.thehttp##cgi.HTTP_HOST#/#application.razuna.api.dynpath#/assets/#application.razuna.api.hostid["#arguments.api_key#"]#/',a.path_to_asset,'/',a.aud_name_org) AS local_url_org,
@@ -248,6 +254,7 @@
 				AND (a.aud_group IS NULL OR a.aud_group = '')
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND a.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				UNION ALL
 				SELECT /* #cachetokendoc#getassetscol */
 				f.file_id id, 
@@ -287,6 +294,7 @@
 				WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND f.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">
+				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				ORDER BY filename
 				</cfquery>
 				<!--- Add our own tags to the query --->
@@ -334,29 +342,34 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files 
 					WHERE col_id_r = c.col_id 
 					AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="img">
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				) as totalimg,
 				(
 					SELECT count(file_id_r) 
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files 
 					WHERE col_id_r = c.col_id 
 					AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="vid">
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				) as totalvid,
 				(
 					SELECT count(file_id_r) 
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files 
 					WHERE col_id_r = c.col_id
 					AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="doc">
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				) as totaldoc,
 				(
 					SELECT count(file_id_r) 
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files 
 					WHERE col_id_r = c.col_id 
 					AND col_file_type = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="aud">
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				) as totalaud,
 				(
 					SELECT count(file_id_r)
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files
 					WHERE col_id_r = c.col_id
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				)  as totalassets
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#collections c
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
@@ -365,6 +378,7 @@
 			<cfif arguments.released NEQ "">
 				AND c.col_released = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.released#">
 			</cfif>
+			AND c.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			ORDER BY lower(ct.col_name)
 			</cfquery>
 		<!--- No session found --->
@@ -394,6 +408,7 @@
 			LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_text ct ON c.col_id = ct.col_id_r
 			WHERE c.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 			AND ct.lang_id_r = <cfqueryparam value="1" cfsqltype="cf_sql_numeric">
+			AND c.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 			<cfif arguments.id NEQ "">
 				AND c.col_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.id#">
 			</cfif>

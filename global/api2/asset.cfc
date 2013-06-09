@@ -111,6 +111,7 @@
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 				WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfquery>
 			<!--- Videos --->
 			<cfelseif arguments.assettype EQ "vid">
@@ -182,6 +183,7 @@
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfquery>
 			<!--- Audios --->
 			<cfelseif arguments.assettype EQ "aud">
@@ -250,6 +252,7 @@
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 				WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfquery>
 			<!--- Documents --->
 			<cfelseif arguments.assettype EQ "doc">
@@ -310,6 +313,7 @@
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 				WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
+				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfquery>
 			</cfif>
 			<!--- Only if we found records --->
@@ -691,6 +695,7 @@
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 					WHERE i.img_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 					AND i.img_group IS NOT NULL
+					AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					UNION ALL
 					SELECT /* #cachetokenimg#getrenditionsimg */
 					'org' as type,
@@ -715,6 +720,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 					WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					UNION ALL
 					SELECT /* #cachetokenimg#getrenditionsimg */
 					'thumb' AS type,
@@ -739,6 +745,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i
 					LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
 					WHERE i.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				<cfelseif arguments.assettype EQ "vid">
 					SELECT /* #cachetokenvid#getrenditionsvid */
 					'rendition' as type,
@@ -759,6 +766,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					WHERE vid_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 					AND vid_group IS NOT NULL
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					UNION ALL
 					SELECT /* #cachetokenvid#getrenditionsvid */
 					'org' as type,
@@ -779,6 +787,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 					AND vid_group IS NULL
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				<cfelseif arguments.assettype EQ "aud">
 					SELECT /* #cachetokenaud#getrenditionsaud */
 					'rendition' as type,
@@ -799,6 +808,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
 					WHERE aud_group = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 					AND aud_group IS NOT NULL
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					UNION ALL
 					SELECT /* #cachetokenaud#getrenditionsaud */
 					'org' as type,
@@ -819,6 +829,7 @@
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
 					WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 					AND aud_group IS NULL
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				</cfif>
 				<cfif arguments.assettype NEQ "doc">UNION ALL</cfif>
 				SELECT 
