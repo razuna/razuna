@@ -1247,7 +1247,7 @@ function getIndexForId( tabsDivId, searchedId )
 }
 function emptybasket(){
 	loadcontent('rightside','index.cfm?fa=c.basket_full_remove_all');
-	setTimeout("loadbasket()", 1250);
+	// setTimeout("loadbasket()", 1250);
 	destroywindow(1);
 }
 function loadbasket(){
