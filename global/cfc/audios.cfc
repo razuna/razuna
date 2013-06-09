@@ -156,6 +156,21 @@
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (aud_group IS NULL OR aud_group = '')
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				<!--- Set the order by --->
+				<cfif session.sortby EQ "name">
+					lower(aud_name)
+				<cfelseif session.sortby EQ "sizedesc">
+					aud_size DESC
+				<cfelseif session.sortby EQ "sizeasc">
+					aud_size ASC
+				<cfelseif session.sortby EQ "dateadd">
+					aud_create_time DESC
+				<cfelseif session.sortby EQ "datechanged">
+					aud_change_time DESC
+				<cfelseif session.sortby EQ "hashtag">
+					hashtag
+				</cfif>
 			)
 		</cfif>
 		ORDER BY #sortby#

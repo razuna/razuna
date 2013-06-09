@@ -166,6 +166,22 @@
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (vid_group IS NULL OR vid_group = '')
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				ORDER BY 
+				<!--- Set the order by --->
+				<cfif session.sortby EQ "name">
+					lower(vid_filename)
+				<cfelseif session.sortby EQ "sizedesc">
+					vid_size DESC
+				<cfelseif session.sortby EQ "sizeasc">
+					vid_size ASC
+				<cfelseif session.sortby EQ "dateadd">
+					vid_create_time DESC
+				<cfelseif session.sortby EQ "datechanged">
+					vid_change_time DESC
+				<cfelseif session.sortby EQ "hashtag">
+					hashtag
+				</cfif>
 			)
 		</cfif>
 		ORDER BY #sortby#

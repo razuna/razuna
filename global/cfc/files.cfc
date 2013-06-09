@@ -238,6 +238,7 @@
 					FROM #session.hostdbprefix#files
 					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 					AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 					<cfif Len(Arguments.file_extension)>
 						AND
 						<!--- if doc or xls also add office 2007 format to query --->
@@ -256,6 +257,21 @@
 							OR (file_extension IS NULL OR file_extension = '')
 							)
 						</cfif>
+					</cfif>
+					ORDER BY 
+					<!--- Set the order by --->
+					<cfif session.sortby EQ "name">
+						lower(file_name)
+					<cfelseif session.sortby EQ "sizedesc">
+						file_size DESC
+					<cfelseif session.sortby EQ "sizeasc">
+						file_size ASC
+					<cfelseif session.sortby EQ "dateadd">
+						file_create_time DESC
+					<cfelseif session.sortby EQ "datechanged">
+						file_change_time DESC
+					<cfelseif session.sortby EQ "hashtag">
+						hashtag
 					</cfif>
 				)
 				ORDER BY #sortby#

@@ -177,7 +177,7 @@
 				ORDER BY 
 				<!--- Set the order by --->
 				<cfif session.sortby EQ "name">
-					img_filename
+					lower(img_filename)
 				<cfelseif session.sortby EQ "sizedesc">
 					img_size DESC
 				<cfelseif session.sortby EQ "sizeasc">

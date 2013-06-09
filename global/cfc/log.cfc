@@ -144,6 +144,7 @@
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 						AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
+					ORDER BY log_timestamp DESC
 				)
 			</cfif>
 			GROUP BY l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, l.log_ip, l.log_id, l.log_timestamp
@@ -269,6 +270,7 @@
 					<cfif arguments.thestruct.id NEQ 0>
 						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
 					</cfif>
+					ORDER BY log_timestamp DESC
 				)
 			</cfif>
 			GROUP BY log_timestamp, log_id, log_user, log_action, log_date, log_time, log_desc, log_browser, log_ip, log_file_type, 
@@ -376,6 +378,7 @@
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 						AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
+					ORDER BY log_timestamp DESC
 				)
 			</cfif>
 			GROUP BY l.log_user, l.log_action, l.log_date, l.log_time, l.log_desc, l.log_browser, l.log_ip, u.user_first_name, u.user_last_name, 
@@ -463,10 +466,10 @@
 					SELECT TOP #max# log_id
 					FROM #session.hostdbprefix#log_search
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					ORDER BY log_timestamp DESC
 				)
 			</cfif>
-			GROUP BY log_user, log_date, log_time, log_search_for, log_search_from, log_founditems, log_browser, log_ip, user_first_name, user_last_name,
-			log_id, log_timestamp
+			GROUP BY log_user, log_date, log_time, log_search_for, log_search_from, log_founditems, log_browser, log_ip, user_first_name, user_last_name, log_id, log_timestamp
 			ORDER BY log_timestamp DESC
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
 				LIMIT #mysqloffset#, #session.rowmaxpage_log#
@@ -565,6 +568,7 @@
 					SELECT TOP #max# id
 					FROM #session.hostdbprefix#errors
 					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					ORDER BY err_date DESC
 				)
 			</cfif>
 			GROUP BY id, err_date, host_id
