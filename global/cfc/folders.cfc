@@ -2847,7 +2847,7 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #max# </cfif>i.img_id as id, i.img_filename as filename,i.in_trash, 
+		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>i.img_id as id, i.img_filename as filename,i.in_trash, 
 		i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org, 'img' as kind, i.is_available,
 		i.img_create_time as date_create, i.img_change_time as date_change, i.link_kind, i.link_path_url,
 		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description as description, it.img_keywords as keywords, '0' as vwidth, '0' as vheight, 
@@ -2872,7 +2872,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND i.img_id NOT IN (
-				SELECT TOP #min# img_id
+				SELECT TOP #max# img_id
 				FROM #session.hostdbprefix#images
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (img_group IS NULL OR img_group = '')
@@ -2880,7 +2880,7 @@
 			)	
 		</cfif>
 		UNION ALL
-		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>v.vid_id as id, v.vid_filename as filename, v.in_trash,v.folder_id_r, 
+		SELECT <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>v.vid_id as id, v.vid_filename as filename, v.in_trash,v.folder_id_r, 
 		v.vid_extension as ext, v.vid_name_image as filename_org, 'vid' as kind, v.is_available,
 		v.vid_create_time as date_create, v.vid_change_time as date_change, v.link_kind, v.link_path_url,
 		v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description as description, vt.vid_keywords as keywords, CAST(v.vid_width AS CHAR) as vwidth, CAST(v.vid_height AS CHAR) as vheight,
@@ -2905,7 +2905,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND v.vid_id NOT IN (
-				SELECT TOP #min# vid_id
+				SELECT TOP #max# vid_id
 				FROM #session.hostdbprefix#videos
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (vid_group IS NULL OR vid_group = '')
@@ -2913,7 +2913,7 @@
 			)	
 		</cfif>
 		UNION ALL
-		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>a.aud_id as id, a.aud_name as filename, a.in_trash,a.folder_id_r, 
+		SELECT <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>a.aud_id as id, a.aud_name as filename, a.in_trash,a.folder_id_r, 
 		a.aud_extension as ext, a.aud_name_org as filename_org, 'aud' as kind, a.is_available,
 		a.aud_create_time as date_create, a.aud_change_time as date_change, a.link_kind, a.link_path_url,
 		a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description as description, aut.aud_keywords as keywords, '0' as vwidth, '0' as vheight,
@@ -2938,7 +2938,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND a.aud_id NOT IN (
-				SELECT TOP #min# aud_id
+				SELECT TOP #max# aud_id
 				FROM #session.hostdbprefix#audios
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND (aud_group IS NULL OR aud_group = '')
@@ -2946,7 +2946,7 @@
 			)	
 		</cfif>
 		UNION ALL
-		SELECT <cfif variables.database EQ "mssql">TOP #max# </cfif>f.file_id as id, f.file_name as filename,f.in_trash, f.folder_id_r, 
+		SELECT <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>f.file_id as id, f.file_name as filename,f.in_trash, f.folder_id_r, 
 		f.file_extension as ext, f.file_name_org as filename_org, f.file_type as kind, f.is_available,
 		f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
@@ -2958,7 +2958,7 @@
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql">
 			AND f.file_id NOT IN (
-				SELECT TOP #min# file_id
+				SELECT TOP #max# file_id
 				FROM #session.hostdbprefix#files
 				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
