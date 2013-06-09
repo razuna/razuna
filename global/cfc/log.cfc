@@ -141,6 +141,7 @@
 					SELECT TOP #max# log_id
 					FROM #session.hostdbprefix#log_users
 					WHERE lower(log_section) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logsection#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 						AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
@@ -258,14 +259,15 @@
 			</cfif>
 			<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
-			<cfelseif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "" AND variables.database EQ "mssql">
-				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+			</cfif>
+			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN 
 				(
 					SELECT TOP #max# log_id
 					FROM #session.hostdbprefix#log_assets
+					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
-						WHERE lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+						AND lower(log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
 					</cfif>
 					<cfif arguments.thestruct.id NEQ 0>
 						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.id#">
@@ -368,8 +370,8 @@
 			WHERE l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<cfif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "">
 				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
-			<cfelseif structkeyexists(arguments.thestruct,"logaction") AND arguments.thestruct.logaction NEQ "" AND variables.database EQ "mssql">
-				AND lower(l.log_action) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.logaction#">
+			</cfif>
+			<cfif variables.database EQ "mssql">
 				AND l.log_id NOT IN 
 				(
 					SELECT TOP #max# log_id
