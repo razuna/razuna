@@ -2102,6 +2102,7 @@
 		AND fi.folder_id_r IS NOT NULL
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND fi.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND fi.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.theoverall EQ "f" AND arguments.folder_id NEQ "">
 			AND fi.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
@@ -2120,6 +2121,7 @@
 		AND i.folder_id_r IS NOT NULL
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 			AND i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
@@ -2138,6 +2140,7 @@
 		AND v.folder_id_r IS NOT NULL
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 			AND v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
@@ -2156,6 +2159,7 @@
 		AND a.folder_id_r IS NOT NULL
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.theoverall EQ "F" AND arguments.folder_id NEQ "">
 			AND a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
@@ -2196,6 +2200,7 @@
 		FROM #session.hostdbprefix#images
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (img_group IS NULL OR img_group = '')
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
@@ -2210,6 +2215,7 @@
 		FROM #session.hostdbprefix#videos
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (vid_group IS NULL OR vid_group = '')
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
@@ -2224,6 +2230,7 @@
 		FROM #session.hostdbprefix#audios
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (aud_group IS NULL OR aud_group = '')
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
@@ -2237,6 +2244,7 @@
 		SELECT /* #variables.cachetoken#docfiletotaltype */ count(file_id) as thetotal
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
@@ -2250,6 +2258,7 @@
 		SELECT /* #variables.cachetoken#docfiletotaltype */ count(file_id) as thetotal
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.thestruct.folder_id NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
