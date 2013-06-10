@@ -241,7 +241,9 @@
 				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 				</cfquery>
 				<!--- Add labels query --->
-				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				<cfif qry_l.recordcount NEQ 0>
+					<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				</cfif>
 			</cfloop>
 		</cfif>
 		<!--- Get proper folderaccess --->
@@ -450,7 +452,9 @@
 				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 				</cfquery>
 				<!--- Add labels query --->
-				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				<cfif qry_l.recordcount NEQ 0>
+					<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				</cfif>
 			</cfloop>
 		</cfif>
 		<!--- Get proper folderaccess --->
@@ -657,7 +661,9 @@
 				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 				</cfquery>
 				<!--- Add labels query --->
-				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				<cfif qry_l.recordcount NEQ 0>
+					<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				</cfif>
 			</cfloop>
 		</cfif>
 		<!--- Get proper folderaccess --->
@@ -864,7 +870,9 @@
 				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 				</cfquery>
 				<!--- Add labels query --->
-				<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				<cfif qry_l.recordcount NEQ 0>
+					<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				</cfif>
 			</cfloop>
 		</cfif>
 		<!--- Get proper folderaccess --->

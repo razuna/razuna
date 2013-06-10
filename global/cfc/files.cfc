@@ -299,7 +299,9 @@
 				WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#file_id#">
 				</cfquery>
 				<!--- Add labels query --->
-				<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				<cfif qry_l.recordcount NEQ 0>
+					<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+				</cfif>
 			</cfloop>
 		</cfif>
 		<!--- Return --->
@@ -497,7 +499,7 @@
 				WHERE 
 					f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 			</cfquery>
-			<cfif qry_file.RecordCount>
+			<cfif qry_file.RecordCount NEQ 0>
 				<cfset myArray = arrayNew( 1 )>
 				<cfset temp= ArraySet(myArray, 1, qry_file.RecordCount, "False")>
 				<cfloop query="qry_file">
@@ -506,7 +508,7 @@
 					FROM #session.hostdbprefix#collections_ct_files
 					WHERE file_id_r = <cfqueryparam value="#qry_file.id#" cfsqltype="CF_SQL_VARCHAR"> 
 					</cfquery>
-					<cfif alert_col.RecordCount>
+					<cfif alert_col.RecordCount NEQ 0>
 						<cfset temp = QuerySetCell(qry_file, "in_collection", "True", currentRow  )>
 					</cfif>
 				</cfloop>
@@ -529,6 +531,11 @@
 	<!--- RESTORE THE FILE --->
 	<cffunction name="restorefile" output="false">
 		<cfargument name="thestruct" type="struct">
+		<!--- Param --->
+		<cfset local = structNew()>
+		<cfset var thedetail = "">
+		<cfset var dir_parent_id = "">
+		<cfset var get_qry = "">
 		<!--- check the parent folder is exist --->
 		<cfquery datasource="#application.razuna.datasource#" name="thedetail">
 		SELECT folder_main_id_r,folder_id_r FROM #session.hostdbprefix#folders 
@@ -536,7 +543,7 @@
 		AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-		<cfset local = structNew()>
+		
 		<cfif thedetail.RecordCount EQ 0>
 			<cfset local.istrash = "trash">
 		<cfelse>
@@ -738,6 +745,7 @@
 		<!--- Params --->
 		<cfset var theassetsize = "">
 		<cfset var qry = structnew()>
+		<cfset var details = "">
 		<cfparam default="0" name="session.thegroupofuser">
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("files")>

@@ -1542,28 +1542,30 @@
 	AND f.folder_is_collection IS NULL
 	</cfquery>
 	<!--- Add "in_collection" Column --->
-	<cfif qry.RecordCount>
-	<cfset myArray = arrayNew( 1 )>
-	<cfset temp= ArraySet(myArray, 1, qry.RecordCount, "False")>
-	<cfloop query="qry">
-		<!--- Get All Sub Folder IDs Of Current Folder  --->
-		<cfquery name="getColfolderIDs" datasource="#application.razuna.datasource#" >
-		SELECT folder_id from #session.hostdbprefix#folders
-		WHERE folder_level >= (
-			SELECT 
-			folder_level 
-			FROM #session.hostdbprefix#folders 
-			WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">)
-		AND folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_main_id_r#">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
-		<cfset folderIDs = ValueList(getColfolderIDs.folder_id)>
-		<cfif folderIDs NEQ ''>
-			<cfinvoke method="getAssetsDetails" folder_id="#folderIDs#" returnvariable="flag">
-			<!--- Update The "in_collection" Field With The Flag Returned From getAssetsDetails --->
-			<cfset temp = QuerySetCell(qry, "in_collection", flag, currentRow  )>
-		</cfif>
-	</cfloop>
+	<cfif qry.RecordCount NEQ 0>
+		<cfset myArray = arrayNew( 1 )>
+		<cfset temp= ArraySet(myArray, 1, qry.RecordCount, "False")>
+		<cfloop query="qry">
+			<!--- Get All Sub Folder IDs Of Current Folder  --->
+			<cfquery name="getColfolderIDs" datasource="#application.razuna.datasource#" >
+			SELECT folder_id from #session.hostdbprefix#folders
+			WHERE folder_level >= (
+				SELECT 
+				folder_level 
+				FROM #session.hostdbprefix#folders 
+				WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">)
+			AND folder_main_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#folder_main_id_r#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+			<cfset folderIDs = ValueList(getColfolderIDs.folder_id)>
+			<cfif folderIDs NEQ ''>
+				<cfinvoke method="getAssetsDetails" folder_id="#folderIDs#" returnvariable="flag">
+				<!--- Update The "in_collection" Field With The Flag Returned From getAssetsDetails --->
+				<cfif flag.recordcount NEQ 0>
+					<cfset temp = QuerySetCell(qry, "in_collection", flag, currentRow  )>
+				</cfif>
+			</cfif>
+		</cfloop>
 	</cfif>
 	<cfreturn qry>
 </cffunction>
@@ -2313,7 +2315,7 @@
 		AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-	<cfif qTab.RecordCount>
+	<cfif qTab.RecordCount NEQ 0>
 		<cfloop query="qTab">
 			<!--- Get File IDs From Collections --->
 			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
@@ -2322,7 +2324,7 @@
 			WHERE file_id_r = <cfqueryparam value="#qTab.id#" cfsqltype="CF_SQL_VARCHAR"> 
 			</cfquery>
 			<!--- Change Flag To True And Break The Loop If Records Found In Collections --->
-			<cfif alert_col.RecordCount>
+			<cfif alert_col.RecordCount NEQ 0>
 				<cfset return_flag = true>
 				<cfbreak>
 			</cfif>
@@ -2999,7 +3001,9 @@
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
 			</cfquery>
 			<!--- Add labels query --->
-			<cfset QuerySetCell(query=qry, column="labels", value=valueList(qry_l.ct_label_id), row=currentrow)>
+			<cfif qry_l.recordcount NEQ 0>
+				<cfset QuerySetCell(query=qry, column="labels", value=valueList(qry_l.ct_label_id), row=currentrow)>
+			</cfif>
 		</cfloop>
 	</cfif>
 	

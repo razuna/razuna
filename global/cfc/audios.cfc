@@ -203,7 +203,9 @@
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#aud_id#">
 			</cfquery>
 			<!--- Add labels query --->
-			<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			<cfif qry_l.recordcount NEQ 0>
+				<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
@@ -577,7 +579,7 @@
 		WHERE 
 			a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 	</cfquery>
-	<cfif qry_audio.RecordCount>
+	<cfif qry_audio.RecordCount NEQ 0>
 		<cfset myArray = arrayNew( 1 )>
 		<cfset temp= ArraySet(myArray, 1, qry_audio.RecordCount, "False")>
 		<cfloop query="qry_audio">
@@ -586,7 +588,7 @@
 			FROM #session.hostdbprefix#collections_ct_files
 			WHERE file_id_r = <cfqueryparam value="#qry_audio.id#" cfsqltype="CF_SQL_VARCHAR"> 
 			</cfquery>
-			<cfif alert_col.RecordCount>
+			<cfif alert_col.RecordCount NEQ 0>
 				<cfset temp = QuerySetCell(qry_audio, "in_collection", "True", currentRow  )>
 			</cfif>
 		</cfloop>

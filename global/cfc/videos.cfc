@@ -214,7 +214,9 @@
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#vid_id#">
 			</cfquery>
 			<!--- Add labels query --->
-			<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			<cfif qry_l.recordcount NEQ 0>
+				<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
@@ -749,7 +751,7 @@
 			FROM #session.hostdbprefix#videos v 
 			WHERE v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		</cfquery>
-		<cfif qry_video.RecordCount>
+		<cfif qry_video.RecordCount NEQ 0>
 			<cfset myArray = arrayNew( 1 )>
 			<cfset temp= ArraySet(myArray, 1, qry_video.RecordCount, "False")>
 			<cfloop query="qry_video">
@@ -758,7 +760,7 @@
 				FROM #session.hostdbprefix#collections_ct_files
 				WHERE file_id_r = <cfqueryparam value="#qry_video.id#" cfsqltype="CF_SQL_VARCHAR"> 
 				</cfquery>
-				<cfif alert_col.RecordCount>
+				<cfif alert_col.RecordCount NEQ 0>
 					<cfset temp = QuerySetCell(qry_video, "in_collection", "True", currentRow  )>
 				</cfif>
 			</cfloop>

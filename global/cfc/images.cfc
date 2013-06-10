@@ -221,7 +221,9 @@
 			WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#img_id#">
 			</cfquery>
 			<!--- Add labels query --->
-			<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			<cfif qry_l.recordcount NEQ 0>
+				<cfset QuerySetCell(qLocal, "labels", valueList(qry_l.ct_label_id), currentRow)>
+			</cfif>
 		</cfloop>
 	</cfif>
 	<!--- Return --->
@@ -440,7 +442,7 @@
 		FROM #session.hostdbprefix#images i 
 		WHERE i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
 		</cfquery>
-		<cfif qry_image.RecordCount>
+		<cfif qry_image.RecordCount NEQ 0>
 			<cfset myArray = arrayNew( 1 )>
 			<cfset temp= ArraySet(myArray, 1, qry_image.RecordCount, "False")>
 			<cfloop query="qry_image">
@@ -449,7 +451,7 @@
 				FROM #session.hostdbprefix#collections_ct_files
 				WHERE file_id_r = <cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"> 
 				</cfquery>
-				<cfif alert_col.RecordCount>
+				<cfif alert_col.RecordCount NEQ 0>
 					<cfset temp = QuerySetCell(qry_image, "in_collection", "True", currentRow  )>
 				</cfif>
 			</cfloop> 
