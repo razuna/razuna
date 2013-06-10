@@ -565,10 +565,10 @@
 			</cfquery>
 			<!--- Now remove all users but only if in one host --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
-			DELETE u
-			FROM users u
-			INNER JOIN ct_users_hosts ct ON ct.ct_u_h_user_id = u.user_id AND ct.ct_u_h_host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.id#">
-			WHERE 1 NOT IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = u.user_id)
+			DELETE FROM users 
+			INNER JOIN ct_users_hosts ct ON ct.CT_U_H_HOST_ID = 1 and ct.ct_u_h_user_id
+			AND 1 NOT IN (SELECT ct_g_u_grp_id FROM ct_groups_users WHERE ct_g_u_user_id = u.user_id)
+			having count(u.user_id) = 1
 			</cfquery>
 			<!--- Remove any user linked to this host --->
 			<cfquery datasource="#arguments.thestruct.dsn#">
