@@ -341,6 +341,8 @@
 						<td>
 							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_desc")#
 							<br /><br />
+							<strong>Tabs</strong>
+							<br /><br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_images")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_images_desc")#
@@ -382,7 +384,9 @@
 							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_tab_xls_desc")#
 							<br />
 							<div><input type="radio" name="tab_xls" value="true"<cfif qry_customization.tab_xls> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("show")# <input type="radio" name="tab_xls" value="false"<cfif !qry_customization.tab_xls> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("hide")#</div>
-							<br />
+							<br /><br />
+							<strong>Icons</strong>
+							<br /><br />
 							<strong>#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_select")#</strong>
 							<br />
 							#myFusebox.getApplicationData().defaults.trans("header_customization_folderview_icon_select_desc")#
