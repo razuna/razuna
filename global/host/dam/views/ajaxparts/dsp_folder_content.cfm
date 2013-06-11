@@ -266,11 +266,11 @@
 								</div>
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
-								<cfif attributes.cs.images_metadata EQ "">
+								<cfif attributes.cs.videos_metadata EQ "">
 									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
 								<cfelse>
 									<br />
-									<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
+									<cfloop list="#attributes.cs.videos_metadata#" index="m" delimiters=",">
 										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 										<cfif m CONTAINS "_filename">
 											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
@@ -338,7 +338,27 @@
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
-								<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+								<!--- custom metadata fields to show --->
+								<cfif attributes.cs.audios_metadata EQ "">
+									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#id#&what=audios&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+								<cfelse>
+									<br />
+									<cfloop list="#attributes.cs.audios_metadata#" index="m" delimiters=",">
+										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+										<cfif m CONTAINS "_filename">
+											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+										<cfelseif m CONTAINS "_size">
+											<cfif evaluate(listlast(m," ")) NEQ "">
+												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+											</cfif>
+										<cfelseif m CONTAINS "_time">
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelse>
+											#evaluate(listlast(m," "))#
+										</cfif>
+										<br />
+									</cfloop>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -411,7 +431,27 @@
 								</cfif>
 								</div>
 								<div style="clear:left;"></div>
-								<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+								<!--- custom metadata fields to show --->
+								<cfif attributes.cs.files_metadata EQ "">
+									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+								<cfelse>
+									<br />
+									<cfloop list="#attributes.cs.files_metadata#" index="m" delimiters=",">
+										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+										<cfif m CONTAINS "_filename">
+											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+										<cfelseif m CONTAINS "_size">
+											<cfif evaluate(listlast(m," ")) NEQ "">
+												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+											</cfif>
+										<cfelseif m CONTAINS "_time">
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelse>
+											#evaluate(listlast(m," "))#
+										</cfif>
+										<br />
+									</cfloop>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>

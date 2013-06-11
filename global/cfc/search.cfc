@@ -3,7 +3,7 @@
 * Copyright (C) 2005-2008 Razuna
 *
 * This file is part of Razuna - Enterprise Digital Asset Management.
-*
+
 * Razuna is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero Public License as published by
 * the Free Software Foundation, either version 3 of the License, or
@@ -148,9 +148,34 @@
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">f.file_id + '-doc'<cfelse>concat(f.file_id,'-doc')</cfif> as listid
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">fd
+				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
+				<cfelse>x
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#files f
 		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND f.host_id = fo.host_id
 		LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
+		LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
 		WHERE f.file_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse><cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#valuelist(cattree.categorytree)#" list="Yes"></cfif>)
 		<!--- Only if we have dates --->
 		<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
@@ -391,6 +416,30 @@
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">i.img_id + '-img'<cfelse>concat(i.img_id,'-img')</cfif> as listid
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
+				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename">i
+				<cfelse>x
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#images i
 		LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r
 		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND i.host_id = fo.host_id
@@ -601,6 +650,29 @@
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">v.vid_id + '-vid'<cfelse>concat(v.vid_id,'-vid')</cfif> as listid
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
+				<cfelse>v
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#videos v
 		LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
@@ -810,6 +882,29 @@
 		</cfif>
 		,
 		<cfif application.razuna.thedatabase EQ "mssql">a.aud_id + '-aud'<cfelse>concat(a.aud_id,'-aud')</cfif> as listid
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
+				<cfelse>a
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#audios a
 		LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 		LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id
@@ -956,6 +1051,8 @@
 		WHERE id IS NOT NULL
 		ORDER BY #sortby#
 		</cfquery>
+		<cfset consoleoutput(true)>
+		<cfset console(qry.qall)>
 		<!--- Set each query result into struct --->
 		<cfset qry.qdoc = arguments.qdoc>
 		<cfset qry.qimg = arguments.qimg>

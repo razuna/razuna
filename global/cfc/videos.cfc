@@ -153,6 +153,14 @@
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getFolderAssetsvid */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #session.rowmaxpage# </cfif>#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
+				<cfelse>v
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')

@@ -202,7 +202,16 @@
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>#Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
 			file_create_time date_create, file_change_date date_change
-			FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1
+			<!--- custom metadata fields to show --->
+			<cfif arguments.thestruct.cs.files_metadata NEQ "">
+				<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+					,<cfif m CONTAINS "keywords" OR m CONTAINS "description">ft
+					<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
+					<cfelse>x
+					</cfif>.#m#
+				</cfloop>
+			</cfif>
+			FROM #session.hostdbprefix#files LEFT JOIN #session.hostdbprefix#files_desc ft ON file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = #session.hostdbprefix#files.file_id
 			WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 			<cfif Len(Arguments.file_extension)>
 				AND
