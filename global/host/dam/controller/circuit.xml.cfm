@@ -6525,6 +6525,9 @@
 		<do action="languages" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- Get assets from folder or from collection -->
 		<if condition="#session.iscol# EQ 'F'">
 			<true>
@@ -7277,6 +7280,9 @@
 		<do action="set_view" />
 		<!-- Get the Cache tag -->
 		<do action="cachetag" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Query Widget -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<set name="attributes.folder_id" value="#qry_widget.folder_id_r#" />

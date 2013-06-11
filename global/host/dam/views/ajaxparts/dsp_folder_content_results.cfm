@@ -98,7 +98,7 @@
 					</cfif>
 					<!--- Images --->
 					<cfif kind EQ "img">
-						<div class="assetbox"<cfif attributes.folder_id EQ 0> style="min-height:250px;"</cfif>>
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -167,11 +167,27 @@
 								</cfif>
 								<div style="clear:left;"></div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								</cfif>
-								<strong>#left(filename,50)#</strong>
-								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									</a>
+									<!--- custom metadata fields to show --->
+									<cfif attributes.cs.images_metadata EQ "">
+										<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+									<cfelse>
+										<br />
+										<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<cfif m CONTAINS "_filename">
+												<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+											<cfelseif m CONTAINS "_size">
+												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+											<cfelseif m CONTAINS "_time">
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelse>
+												#evaluate(listlast(m," "))#
+											</cfif>
+											<br />
+										</cfloop>
+									</cfif>
+								<cfelse>
+									<strong>#left(filename,50)#</strong>
 								</cfif>
 								<cfif attributes.folder_id EQ 0>
 									<br>
@@ -188,7 +204,7 @@
 						</div>
 					<!--- Videos --->
 					<cfelseif kind EQ "vid">
-						<div class="assetbox"<cfif attributes.folder_id EQ 0> style="min-height:250px;"</cfif>>
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -255,11 +271,29 @@
 								</cfif>
 								<div style="clear:left;"></div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								</cfif>
-								<strong>#left(filename,50)#</strong>
-								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									</a>
+									<!--- custom metadata fields to show --->
+									<cfif attributes.cs.videos_metadata EQ "">
+										<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+									<cfelse>
+										<br />
+										<cfloop list="#attributes.cs.videos_metadata#" index="m" delimiters=",">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<cfif m CONTAINS "_filename">
+												<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<cfelseif m CONTAINS "_size">
+												<cfif evaluate(listlast(m," ")) NEQ "">
+													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												</cfif>
+											<cfelseif m CONTAINS "_time">
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelse>
+												#evaluate(listlast(m," "))#
+											</cfif>
+											<br />
+										</cfloop>
+									</cfif>
+								<cfelse>
+									<strong>#left(filename,50)#</strong>
 								</cfif>
 								<cfif attributes.folder_id EQ 0>
 									<br>
@@ -276,7 +310,7 @@
 						</div>
 					<!--- Audios --->
 					<cfelseif kind EQ "aud">
-						<div class="assetbox"<cfif attributes.folder_id EQ 0> style="min-height:250px;"</cfif>>
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -331,11 +365,29 @@
 								</cfif>
 								<div style="clear:left;"></div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								</cfif>
-								<strong>#left(filename,50)#</strong>
-								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									</a>
+									<!--- custom metadata fields to show --->
+									<cfif attributes.cs.audios_metadata EQ "">
+										<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+									<cfelse>
+										<br />
+										<cfloop list="#attributes.cs.audios_metadata#" index="m" delimiters=",">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<cfif m CONTAINS "_filename">
+												<a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<cfelseif m CONTAINS "_size">
+												<cfif evaluate(listlast(m," ")) NEQ "">
+													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												</cfif>
+											<cfelseif m CONTAINS "_time">
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelse>
+												#evaluate(listlast(m," "))#
+											</cfif>
+											<br />
+										</cfloop>
+									</cfif>
+								<cfelse>
+									<strong>#left(filename,50)#</strong>
 								</cfif>
 								<cfif attributes.folder_id EQ 0>
 									<br>
@@ -352,7 +404,7 @@
 						</div>
 					<!--- All other files --->
 					<cfelse>
-						<div class="assetbox"<cfif attributes.folder_id EQ 0> style="min-height:250px;"</cfif>>
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -421,11 +473,29 @@
 								</cfif>
 								<div style="clear:left;"></div>
 								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;">
-								</cfif>
-								<strong>#left(filename,50)#</strong>
-								<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
-									</a>
+									<!--- custom metadata fields to show --->
+									<cfif attributes.cs.files_metadata EQ "">
+										<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+									<cfelse>
+										<br />
+										<cfloop list="#attributes.cs.files_metadata#" index="m" delimiters=",">
+											#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+											<cfif m CONTAINS "_filename">
+												<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#attributes.thediv#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+											<cfelseif m CONTAINS "_size">
+												<cfif evaluate(listlast(m," ")) NEQ "">
+													#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+												</cfif>
+											<cfelseif m CONTAINS "_time">
+												#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+											<cfelse>
+												#evaluate(listlast(m," "))#
+											</cfif>
+											<br />
+										</cfloop>
+									</cfif>
+								<cfelse>
+									<strong>#left(filename,50)#</strong>
 								</cfif>
 								<cfif attributes.folder_id EQ 0>
 									<br>
