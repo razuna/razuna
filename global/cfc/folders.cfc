@@ -2602,7 +2602,6 @@
 <!--- Get all assets of this folder --->
 <cffunction name="getallassets" output="true" returnType="query">
 	<cfargument name="thestruct" type="struct" required="true">
-	
 	<!--- Sometimes folderid is empty --->
 	<cfif arguments.thestruct.folder_id EQ "">
 		<cfset arguments.thestruct.folder_id = 0>
@@ -2849,7 +2848,7 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>i.img_id as id, i.img_filename as filename,i.in_trash, 
+		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>i.img_id as id, i.img_filename as filename, i.in_trash, 
 		i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org, 'img' as kind, i.is_available,
 		i.img_create_time as date_create, i.img_change_time as date_change, i.link_kind, i.link_path_url,
 		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description as description, it.img_keywords as keywords, '0' as vwidth, '0' as vheight, 
@@ -2866,7 +2865,31 @@
 		i.img_size as size,
 		i.hashtag,
 		'' as labels
-		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">it
+				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_width" OR m CONTAINS "_height" OR m CONTAINS "_size" OR m CONTAINS "_filename">i
+				<cfelse>x
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		FROM #session.hostdbprefix#images i LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#xmp x ON x.id_r = i.img_id
 		WHERE i.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (i.img_group IS NULL OR i.img_group = '')
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2900,6 +2923,29 @@
 		v.vid_size as size,
 		v.hashtag,
 		'' as labels
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">vt
+				<cfelse>v
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#videos v LEFT JOIN #session.hostdbprefix#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 		WHERE v.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (v.vid_group IS NULL OR v.vid_group = '')
@@ -2934,6 +2980,27 @@
 		a.aud_size as size,
 		a.hashtag,
 		'' as labels
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (a.aud_group IS NULL OR a.aud_group = '')
@@ -2956,6 +3023,27 @@
 		f.file_create_time as date_create, f.file_change_time as date_change, f.link_kind, f.link_path_url,
 		f.path_to_asset, f.cloud_url, f.cloud_url_org, ft.file_desc as description, ft.file_keywords as keywords, '0' as vwidth, '0' as vheight, '0' as theformat,
 		lower(f.file_name) as filename_forsort, f.file_size as size, f.hashtag, '' as labels
+		<!--- custom metadata fields to show --->
+		<cfif arguments.thestruct.cs.images_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.images_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.files_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,'' AS #listlast(m," ")#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -3006,7 +3094,8 @@
 			</cfif>
 		</cfloop>
 	</cfif>
-	
+	<cfset consoleoutput(true)>
+	<cfset console(qry)>
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>

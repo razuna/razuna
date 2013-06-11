@@ -118,7 +118,7 @@
 				<cfloop query="qry_files">
 					<!--- Images --->
 					<cfif kind EQ "img">
-						<div class="assetbox">
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -177,7 +177,25 @@
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
-								<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+								<!--- custom metadata fields to show --->
+								<cfif attributes.cs.images_metadata EQ "">
+									<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+								<cfelse>
+									<br />
+									<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
+										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+										<cfif m CONTAINS "_filename">
+											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+										<cfelseif m CONTAINS "_size">
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+										<cfelseif m CONTAINS "_time">
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelse>
+											#evaluate(listlast(m," "))#
+										</cfif>
+										<br />
+									</cfloop>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -189,7 +207,7 @@
 						</div>
 					<!--- Videos --->
 					<cfelseif kind EQ "vid">
-						<div class="assetbox">
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -247,7 +265,27 @@
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
-								<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+								<!--- custom metadata fields to show --->
+								<cfif attributes.cs.images_metadata EQ "">
+									<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+								<cfelse>
+									<br />
+									<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
+										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+										<cfif m CONTAINS "_filename">
+											<a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#id#&what=videos&loaddiv=content&folder_id=#attributes.folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a>
+										<cfelseif m CONTAINS "_size">
+											<cfif evaluate(listlast(m," ")) NEQ "">
+												#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+											</cfif>
+										<cfelseif m CONTAINS "_time">
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelse>
+											#evaluate(listlast(m," "))#
+										</cfif>
+										<br />
+									</cfloop>
+								</cfif>
 							<cfelse>
 								The upload of "#filename#" is still in progress!
 								<br /><br>
@@ -259,7 +297,7 @@
 						</div>
 					<!--- Audios --->
 					<cfelseif kind EQ "aud">
-						<div class="assetbox">
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -312,7 +350,7 @@
 						</div>
 					<!--- All other files --->
 					<cfelse>
-						<div class="assetbox">
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {

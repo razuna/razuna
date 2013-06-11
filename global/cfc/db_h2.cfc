@@ -1901,7 +1901,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.host_db_prefix#custom (
 	  	custom_id			varchar(200),
-		custom_value		varchar(100),
+		custom_value		varchar(2000),
 		host_id				bigint
 		)
 		</cfquery>

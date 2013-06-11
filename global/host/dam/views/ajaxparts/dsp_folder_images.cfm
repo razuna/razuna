@@ -50,7 +50,7 @@
 					<!--- Show Subfolders --->
 					<cfinclude template="inc_folder_thumbnail.cfm">
 					<cfloop query="qry_files">
-						<div class="assetbox">
+						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
 								$(function() {
@@ -108,7 +108,25 @@
 									</cfif>
 								</div>
 								<div style="clear:left;"></div>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#left(img_filename,50)#</strong></a>
+								<!--- custom metadata fields to show --->
+								<cfif attributes.cs.images_metadata EQ "">
+									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#left(img_filename,50)#</strong></a>
+								<cfelse>
+									<br />
+									<cfloop list="#attributes.cs.images_metadata#" index="m" delimiters=",">
+										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
+										<cfif m CONTAINS "_filename">
+											<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+										<cfelseif m CONTAINS "_size">
+											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
+										<cfelseif m CONTAINS "_time">
+											#dateformat(evaluate(listlast(m," ")), "#myFusebox.getApplicationData().defaults.getdateformat()#")# #timeformat(date_create, "HH:mm")#
+										<cfelse>
+											#evaluate(listlast(m," "))#
+										</cfif>
+										<br />
+									</cfloop>
+								</cfif>
 							<cfelse>
 								The upload of "#img_filename#" is still in progress!
 								<br /><br>

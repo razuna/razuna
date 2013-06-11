@@ -1492,6 +1492,9 @@
 		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -1513,8 +1516,6 @@
 		</invoke>
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
-		<!-- CFC: Customization -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- CFC: Get plugin actions -->
@@ -1696,6 +1697,9 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="setaccess(attributes.folder_id)" returnvariable="attributes.folderaccess" />
 		<!-- CFC: Get subfolders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getsubfolders(attributes.folder_id)" returnvariable="qry_subfolders" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" /> 
 		<!-- Only if it NOT from search -->
 		<if condition="!#attributes.issearch#">
 			<true>
@@ -1712,8 +1716,6 @@
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getusername(attributes.folder_id)" returnvariable="qry_user" />
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
-		<!-- CFC: Customization -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- CFC: Get plugin actions -->
@@ -5780,6 +5782,11 @@
 	
 	<!-- For loading customization -->
 	<fuseaction name="admin_customization">
+		!-- Param -->
+		<set name="attributes.meta_keys" value="id,filename" />
+		<set name="attributes.meta_default" value="labels,keywords,description,type" />
+		<set name="attributes.meta_img" value="iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,colorspace,xres,yres,resunit" />
+		<set name="attributes.meta_doc" value="author,rights,authorsposition,captionwriter,webstatement,rightsmarked" />
 		<!-- CFC: Get Customization -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_customization()" returnvariable="qry_customization" />
 		<!-- CFC: Get folder name -->

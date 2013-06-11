@@ -2422,7 +2422,7 @@
 		<cfquery datasource="#arguments.thestruct.dsn#">
 		CREATE TABLE #arguments.thestruct.theschema#.#arguments.thestruct.host_db_prefix#custom (
 	  	custom_id			varchar(200),
-		custom_value		varchar(100),
+		custom_value		varchar(2000),
 		host_id				int,
 		KEY #arguments.thestruct.host_db_prefix#custom_id (custom_id)
 		)

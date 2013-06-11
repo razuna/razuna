@@ -1860,6 +1860,12 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 	<cfset v.req_filename = true>
 	<cfset v.req_description = false>
 	<cfset v.req_keywords = false>
+	<cfset v.images_metadata = "">
+	<cfset v.videos_metadata = "">
+	<cfset v.files_metadata = "">
+	<cfset v.audios_metadata = "">
+	<cfset v.assetbox_height = "">
+	<cfset v.assetbox_width = "">
 	<!--- Loop over query --->
 	<cfif qry.recordcount NEQ 0>
 		<cfloop query="qry">
@@ -2066,6 +2072,24 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 			</cfif>
 			<cfif custom_id EQ "req_keywords" AND custom_value>
 				<cfset v.req_keywords = true>
+			</cfif>
+			<cfif custom_id EQ "images_metadata">
+				<cfset v.images_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "videos_metadata">
+				<cfset v.videos_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "files_metadata">
+				<cfset v.files_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "audios_metadata">
+				<cfset v.audios_metadata = custom_value>
+			</cfif>
+			<cfif custom_id EQ "assetbox_height">
+				<cfset v.assetbox_height = custom_value>
+			</cfif>
+			<cfif custom_id EQ "assetbox_width">
+				<cfset v.assetbox_width = custom_value>
 			</cfif>
 		</cfloop>
 	</cfif>

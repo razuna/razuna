@@ -421,7 +421,7 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_custom <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column custom_value #thevarchar#(100)<cfelse>change custom_value custom_value #thevarchar#(100)</cfif>
+			alter table raz1_custom <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column custom_value #thevarchar#(100)<cfelse>change custom_value custom_value #thevarchar#(2000)</cfif>
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
