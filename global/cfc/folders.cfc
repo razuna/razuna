@@ -2998,7 +2998,9 @@
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">aut
+				<cfelse>a
+				</cfif>.#m#
 			</cfloop>
 		</cfif>
 		FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
@@ -3036,7 +3038,10 @@
 		</cfif>
 		<cfif arguments.thestruct.cs.files_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.files_metadata#" index="m" delimiters=",">
-				,'' AS #listlast(m," ")#
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">ft
+				<cfelseif m CONTAINS "_id" OR m CONTAINS "_time" OR m CONTAINS "_size" OR m CONTAINS "_filename">f
+				<cfelse>x
+				</cfif>.#m#
 			</cfloop>
 		</cfif>
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
@@ -3044,7 +3049,7 @@
 				,'' AS #listlast(m," ")#
 			</cfloop>
 		</cfif>
-		FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+		FROM #session.hostdbprefix#files f LEFT JOIN #session.hostdbprefix#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1 LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
 		WHERE f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -3094,8 +3099,6 @@
 			</cfif>
 		</cfloop>
 	</cfif>
-	<cfset consoleoutput(true)>
-	<cfset console(qry)>
 	<!--- Return --->
 	<cfreturn qry>
 </cffunction>

@@ -1436,6 +1436,9 @@
 		<do action="set_view" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -1458,8 +1461,6 @@
 		</invoke>
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
-		<!-- CFC: Customization -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- CFC: Get plugin actions -->
@@ -1549,6 +1550,9 @@
 		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -1572,8 +1576,6 @@
 		</invoke>
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
-		<!-- CFC: Customization -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- CFC: Get plugin actions -->
@@ -1625,6 +1627,9 @@
 		</if>
 		<!-- Action: Set view -->
 		<do action="set_view" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Get folder name -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldername(attributes.folder_id)" returnvariable="qry_foldername" />
 		<!-- CFC: Get subfolders -->
@@ -1645,8 +1650,6 @@
 		</invoke>
 		<!-- CFC: Get breadcrumb -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getbreadcrumb(attributes.folder_id)" returnvariable="qry_breadcrumb" />
-		<!-- CFC: Customization -->
-		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- CFC: Get plugin actions -->
@@ -4229,6 +4232,9 @@
 	<fuseaction name="search_files">
 		<!-- XFA -->
 		<xfa name="filedetail" value="c.files_detail" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Search Files -->
 		<invoke object="myFusebox.getApplicationData().search" methodcall="search_files(attributes)" returnvariable="qry_results_files" />
 	</fuseaction>
@@ -4236,6 +4242,9 @@
 	<fuseaction name="search_images">
 		<!-- XFA -->
 		<xfa name="imagedetail" value="c.images_detail" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Search Images -->
 		<invoke object="myFusebox.getApplicationData().search" methodcall="search_images(attributes)" returnvariable="qry_results_images" />
 	</fuseaction>
@@ -4244,6 +4253,9 @@
 		<!-- XFA -->
 		<xfa name="videodetail" value="c.videos_detail" />
 		<xfa name="fvideosloader" value="c.folder_videos_show" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Search Videos -->
 		<invoke object="myFusebox.getApplicationData().search" methodcall="search_videos(attributes)" returnvariable="qry_results_videos" />
 	</fuseaction>
@@ -4251,6 +4263,9 @@
 	<fuseaction name="search_audios">
 		<!-- XFA -->
 		<xfa name="audiodetail" value="c.audios_detail" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Search Audios -->
 		<invoke object="myFusebox.getApplicationData().search" methodcall="search_audios(attributes)" returnvariable="qry_results_audios" />
 	</fuseaction>
@@ -4484,6 +4499,9 @@
 	</fuseaction>
 	<!-- Copy Metadata to assign asset -->
 	<fuseaction name="copy_metadata_do">
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC:search images-->
 		<if condition="attributes.thetype EQ 'images'">
 			<true>
@@ -6507,6 +6525,9 @@
 		<do action="languages" />
 		<!-- Action: Set view -->
 		<do action="set_view" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- Get assets from folder or from collection -->
 		<if condition="#session.iscol# EQ 'F'">
 			<true>
@@ -7259,6 +7280,9 @@
 		<do action="set_view" />
 		<!-- Get the Cache tag -->
 		<do action="cachetag" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Query Widget -->
 		<invoke object="myFusebox.getApplicationData().widgets" methodcall="detail(attributes)" returnvariable="qry_widget" />
 		<set name="attributes.folder_id" value="#qry_widget.folder_id_r#" />

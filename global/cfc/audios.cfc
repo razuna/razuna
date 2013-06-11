@@ -143,6 +143,13 @@
 		SELECT /* #variables.cachetoken#getFolderAssetsaud */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #session.rowmaxpage# </cfif>
 		#thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels,
 		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
+		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
+			<cfloop list="#arguments.thestruct.cs.audios_metadata#" index="m" delimiters=",">
+				,<cfif m CONTAINS "keywords" OR m CONTAINS "description">att
+				<cfelse>a
+				</cfif>.#m#
+			</cfloop>
+		</cfif>
 		FROM #session.hostdbprefix#audios a LEFT JOIN #session.hostdbprefix#audios_text att ON a.aud_id = att.aud_id_r AND att.lang_id_r = 1
 		WHERE a.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		AND (a.aud_group IS NULL OR a.aud_group = '')

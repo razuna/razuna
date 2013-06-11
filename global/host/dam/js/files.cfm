@@ -59,6 +59,7 @@ function batchaction(theform, what, kind, folder_id, theaction){
    	// Check what we have to do
    	//var theaction = $('#' + theid).val();
 	// Get to work
+	// alert(theaction);
 	switch (theaction){
 		case "move":
 			showwindow('index.cfm?fa=c.move_file&type=movefile&thetype=' + what + '&folder_id=' + folder_id + '&kind=' + kind, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("move_file")#</cfoutput>', 550, 1);
@@ -66,7 +67,7 @@ function batchaction(theform, what, kind, folder_id, theaction){
 		case "batch":
 			showwindow('index.cfm?fa=c.batch_form&file_id=0&what=' + what + '&folder_id=' + folder_id, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("batch_selected_header")#</cfoutput>', 650, 1);
 		  	break;
-		case "trash":
+		case "delete":
 			//alert('trash');
 			showwindow('index.cfm?fa=ajax.trash_record&many=T&what=' + what + '&loaddiv=' + kind + '&folder_id=' + folder_id, '<cfoutput>#myFusebox.getApplicationData().defaults.trans("trash")#</cfoutput>', 400, 1);
 			break;
