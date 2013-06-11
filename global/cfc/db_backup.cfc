@@ -49,7 +49,7 @@
 		<cfquery datasource="#application.razuna.datasource#" name="raz_tables">
 		SELECT table_name
 		FROM information_schema.tables
-		WHERE <cfif application.razuna.thedatabase EQ "h2">lower(table_catalog)<cfelse>lower(table_schema)</cfif> = <cfqueryparam cfsqltype="cf_sql_varchar" value="razuna">
+		WHERE <cfif application.razuna.thedatabase EQ "h2">lower(table_catalog)<cfelse>lower(table_schema)</cfif> = <cfqueryparam cfsqltype="cf_sql_varchar" value="#application.razuna.theschema#">
 		AND lower(table_name) != 'bddata'
 		AND lower(table_name) != 'bdglobal'
 		<cfif application.razuna.thedatabase EQ "h2">
@@ -75,7 +75,7 @@
 				<cfif application.razuna.thedatabase EQ "h2">
 					AND lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="public">
 				<cfelseif application.razuna.thedatabase EQ "mysql">
-					AND lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="razuna">
+					AND lower(table_schema) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#application.razuna.theschema#">
 				</cfif>
 				</cfquery>
 			</cfif>

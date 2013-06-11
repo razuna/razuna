@@ -242,7 +242,7 @@
 		</cfoutput>
 		<!--- Return --->
 		<cfreturn />
-	</cffunction>
+	</cffunction> 
 	
 	<!--- Write XML --->
 	<cffunction name="writebackupdb" output="true">
