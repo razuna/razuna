@@ -84,7 +84,7 @@
 				<cfquery datasource="#arguments.thestruct.dsn#">
 				CREATE TABLE #arguments.thestruct.tschema#.#thetablename#
 				(
-					<cfloop query="raz_columns">#column_name# #data_type#<cfif isnumeric(character_maximum_length)>(#character_maximum_length#)</cfif><cfif thecounter LT raz_columns.recordcount>,</cfif>
+					<cfloop query="raz_columns">#column_name# <cfif character_maximum_length EQ "-1">CLOB<cfelse>#data_type#<cfif isnumeric(character_maximum_length)>(#character_maximum_length#)</cfif></cfif><cfif thecounter LT raz_columns.recordcount>,</cfif>
 						<cfset thecounter = thecounter + 1>
 					</cfloop>
 				)
