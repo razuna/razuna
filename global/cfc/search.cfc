@@ -1051,8 +1051,6 @@
 		WHERE id IS NOT NULL
 		ORDER BY #sortby#
 		</cfquery>
-		<cfset consoleoutput(true)>
-		<cfset console(qry.qall)>
 		<!--- Set each query result into struct --->
 		<cfset qry.qdoc = arguments.qdoc>
 		<cfset qry.qimg = arguments.qimg>
