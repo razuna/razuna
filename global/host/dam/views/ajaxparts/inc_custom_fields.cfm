@@ -51,7 +51,7 @@
 								<cfbreak>
 							</cfif>
 						</cfloop>
-						<cfif cf_edit EQ "true">
+						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
 						<input type="text" style="width:300px;" id="cf_#cf_id#" name="cf_#cf_id#" value="#cf_value#"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif><cfif !allowed> disabled="disabled"</cfif>>
@@ -73,7 +73,7 @@
 								<cfbreak>
 							</cfif>
 						</cfloop>
-						<cfif cf_edit EQ "true">
+						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
 						<input type="radio" name="cf_#cf_id#" value="T"<cfif cf_value EQ "T"> checked="true"</cfif><cfif !allowed> disabled="disabled"</cfif>>#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="cf_#cf_id#" value="F"<cfif cf_value EQ "F" OR cf_value EQ ""> checked="true"</cfif><cfif !allowed> disabled="disabled"</cfif>>#myFusebox.getApplicationData().defaults.trans("no")#
@@ -95,7 +95,7 @@
 								<cfbreak>
 							</cfif>
 						</cfloop>
-						<cfif cf_edit EQ "true">
+						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
 						<textarea name="cf_#cf_id#" style="width:310px;height:60px;"<cfif structKeyExists(variables,"cf_inline")> placeholder="#cf_text#"</cfif><cfif !allowed> disabled="disabled"</cfif>>#cf_value#</textarea>
@@ -117,7 +117,7 @@
 								<cfbreak>
 							</cfif>
 						</cfloop>
-						<cfif cf_edit EQ "true">
+						<cfif !isnumeric(cf_edit) AND cf_edit EQ "true">
 							<cfset allowed = true>
 						</cfif>
 						<select name="cf_#cf_id#" style="width:300px;"<cfif !allowed> disabled="disabled"</cfif>>
