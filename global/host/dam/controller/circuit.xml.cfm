@@ -6173,6 +6173,9 @@
 		<!-- CFC: Get total file count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="filetotalcount(attributes.folder_id)" returnvariable="qry_filecount" />
 		<set name="attributes.qry_filecount" value="#qry_filecount.thetotal#" overwrite="false" />
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- Action: Storage -->
 		<!-- <set name="attributes.isbrowser" value="#session.isbrowser#" />
 		<do action="storage" /> -->
@@ -6958,6 +6961,9 @@
 	
 	<!-- View includes -->
 	<fuseaction name="view_includes_queries">
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- ALL -->
 		<if condition="#attributes.kind# EQ 'all'">
 			<true>
@@ -7113,7 +7119,9 @@
 		<set name="attributes.qry_filecount" value="0"  />
 		<set name="attributes.kind" value="img"  />
 		<xfa name="submitfolderform" value="c.folder_thumbnail_save" overwrite="false" />
-		<!-- CFC: Load record -->
+		<!-- CFC: Customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+		<set name="attributes.cs" value="#cs#" />
 		<!-- CFC: Get images -->
 		<invoke object="myFusebox.getApplicationData().images" method="getFolderAssetDetails" returnvariable="qry_files">
 			<argument name="folder_id" value="#attributes.folder_id#" />
