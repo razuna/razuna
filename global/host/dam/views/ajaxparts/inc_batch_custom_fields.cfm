@@ -46,7 +46,7 @@
 					<cfelseif cf_type EQ "select">
 						<select name="cf_#cf_id#" style="width:300px;"<cfif cf_edit NEQ "true" AND (NOT listfind(cf_edit,session.theuserid,",") AND NOT listfind(cf_edit,session.thegroupofuser,","))> disabled="disabled"</cfif>>
 							<option value=""></option>
-							<cfloop list="#cf_select_list#" index="i">
+							<cfloop list="#ListSort(cf_select_list, 'text', 'asc', ',')#" index="i">
 								<option value="#i#"<cfif i EQ "#cf_value#"> selected="selected"</cfif>>#i#</option>
 							</cfloop>
 						</select>
