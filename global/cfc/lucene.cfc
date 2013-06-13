@@ -78,6 +78,8 @@
 		<!--- Param --->
 		<cfset var folderpath = "">
 		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
+		<!--- Call to GC to clean memory --->
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 		<cftry>
 			<!--- FOR FILES --->
 			<cfif arguments.category EQ "doc">
@@ -471,6 +473,8 @@
 				</cfcatch>
 			</cftry>
 		</cfif>
+		<!--- Call to GC to clean memory --->
+	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 	</cffunction>
 	
 	<!--- Get custom values --->
@@ -521,6 +525,8 @@
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
 			<cfcatch type="any"></cfcatch>
 		</cftry>
+		<!--- Call to GC to clean memory --->
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 	</cffunction>
 	
 	<!--- INDEX: Delete Folder --->
