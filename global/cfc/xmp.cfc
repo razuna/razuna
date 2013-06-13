@@ -1258,10 +1258,8 @@
 		</cfif>
 		<!--- Catch the error --->
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in xmpparse">
-				<cfdump var="#cfcatch#" />
-				<cfdump var="#arguments.thestruct#">
-			</cfmail>
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
 <!--- Return variable --->
