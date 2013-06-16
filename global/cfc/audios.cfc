@@ -1494,12 +1494,28 @@
 	<cfargument name="qry" type="query">
 	<!--- Get the cachetoken for here --->
 	<cfset variables.cachetoken = getcachetoken("audios")>
+	<!--- Get how many loop --->
+	<cfset var howmanyloop = ceiling(arguments.qry.recordcount / 990)>
+	<!--- Set outer loop --->
+	<cfset var pos_start = 1>
+	<cfset var pos_end = howmanyloop>
+	<!--- Set inner loop --->
+	<cfset var q_start = 1>
+	<cfset var q_end = 990>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#gettextaud */ aud_id_r tid, aud_description description, aud_keywords keywords
-	FROM #session.hostdbprefix#audios_text
-	WHERE aud_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
-	AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+		<cfloop from="#pos_start#" to="#pos_end#" index="i">
+			<cfif q_start NEQ 1>
+				UNION ALL
+			</cfif>
+			SELECT /* #variables.cachetoken#gettextaud */ aud_id_r tid, aud_description description, aud_keywords keywords
+			FROM #session.hostdbprefix#audios_text
+			WHERE aud_id_r IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
+			AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			<cfset q_start = q_start + 1>
+	    	<cfset q_end = q_end + 990>
+	    </cfloop>
 	</cfquery>
 	<!--- Return --->
 	<cfreturn qryintern>

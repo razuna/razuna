@@ -1304,12 +1304,30 @@
 	<!--- Get description and keywords for print --->
 	<cffunction name="gettext" output="false">
 		<cfargument name="qry" type="query">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
+		<!--- Get how many loop --->
+		<cfset var howmanyloop = ceiling(arguments.qry.recordcount / 990)>
+		<!--- Set outer loop --->
+		<cfset var pos_start = 1>
+		<cfset var pos_end = howmanyloop>
+		<!--- Set inner loop --->
+		<cfset var q_start = 1>
+		<cfset var q_end = 990>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryintern" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords
-		FROM #session.hostdbprefix#files_desc
-		WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
-		AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+			<cfloop from="#pos_start#" to="#pos_end#" index="i">
+				<cfif q_start NEQ 1>
+					UNION ALL
+				</cfif>
+				SELECT /* #variables.cachetoken#gettextfile */ file_id_r tid, file_desc description, file_keywords keywords
+				FROM #session.hostdbprefix#files_desc
+				WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
+				AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				<cfset q_start = q_start + 1>
+		    	<cfset q_end = q_end + 990>
+		    </cfloop>
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qryintern>
