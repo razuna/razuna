@@ -1600,6 +1600,7 @@
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
 		SELECT vid_id AS theid, 'vid' AS thetype,folder_id_r,vid_filename as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#videos
@@ -1608,6 +1609,7 @@
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
 		SELECT aud_id AS theid, 'aud' AS thetype,folder_id_r,aud_name as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#audios
@@ -1616,10 +1618,12 @@
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		UNION ALL
 		SELECT file_id AS theid, 'doc' AS thetype,folder_id_r,file_name as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam value="F" cfsqltype="CF_SQL_VARCHAR">
 		<cfif arguments.thestruct.expwhat NEQ "all">
 			AND folder_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		</cfif>
@@ -1733,9 +1737,9 @@
 			<!--- Get keywords and description --->
 			<cfinvoke component="audios" method="gettext" qry="#arguments.thestruct.qry#" returnVariable="arguments.thestruct.qry_text" />
 			<cfif application.razuna.storage EQ "local">
-				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_audio.path_to_asset#/#qry_audio.filenameorg#">
+				<cfset arguments.thestruct.file_url = "#session.thehttp##cgi.http_host##cgi.context_path#/assets/#session.hostid#/#qry_audio.detail.path_to_asset#/#qry_audio.detail.filenameorg#">
 			<cfelse>
-				<cfset arguments.thestruct.file_url = qry_audio.cloud_url_org>
+				<cfset arguments.thestruct.file_url = qry_audio.detail.cloud_url_org>
 			</cfif>
 			<!--- Add Values to total query --->
 			<cfinvoke method="add_to_query" thestruct="#arguments.thestruct#" />
