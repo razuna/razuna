@@ -1558,7 +1558,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfset folderIDs = ValueList(getColfolderIDs.folder_id)>
-			<cfif folderIDs NEQ ''>
+			<cfif !listlen(folderIDs)>
 				<cfinvoke method="getAssetsDetails" folder_id="#folderIDs#" returnvariable="flag">
 				<!--- Update The "in_collection" Field With The Flag Returned From getAssetsDetails --->
 				<cfif flag.recordcount NEQ 0>
