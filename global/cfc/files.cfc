@@ -1325,7 +1325,7 @@
 				WHERE file_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(arguments.qry.id)#" list="true">)
 				AND lang_id_r = <cfqueryparam cfsqltype="cf_sql_numeric" value="1">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				<cfset q_start = q_start + 1>
+				<cfset q_start = q_end + 1>
 		    	<cfset q_end = q_end + 990>
 		    </cfloop>
 		</cfquery>
@@ -1356,7 +1356,7 @@
 				FROM #session.hostdbprefix#files
 				WHERE file_id IN ('0'<cfloop query="arguments.qry" startrow="#q_start#" endrow="#q_end#">,'#id#'</cfloop>)
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				<cfset q_start = q_start + 1>
+				<cfset q_start = q_end + 1>
 		    	<cfset q_end = q_end + 990>
 		    </cfloop>
 		</cfquery>

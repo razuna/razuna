@@ -217,11 +217,11 @@
 						AND f.folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.list_recfolders#" list="yes">)
 					</cfif>
 					AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-					<cfset q_start = q_start + 1>
+					<cfset q_start = q_end + 1>
 			    	<cfset q_end = q_end + 990>
 			    </cfloop>
-			    	GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_type, f.is_available, f.file_create_time, f.file_change_date, f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, f.file_size, f.hashtag, fo.folder_name, fo.folder_of_user, fo.folder_owner, f.in_trash
-					ORDER BY #sortby#
+		    	GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_type, f.is_available, f.file_create_time, f.file_change_date, f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, f.file_size, f.hashtag, fo.folder_name, fo.folder_of_user, fo.folder_owner, f.in_trash
+				ORDER BY #sortby#
 			</cfquery>
 			<!--- Show the results according to extension only. Needed when we have the doctype --->
 			<cfif arguments.thestruct.doctype NEQ "">
@@ -535,7 +535,7 @@
 					AND (i.img_group IS NULL OR i.img_group = '') --->
 					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			    	<cfset q_start = q_start + 1>
+			    	<cfset q_start = q_end + 1>
 			    	<cfset q_end = q_end + 990>
 			    </cfloop>
 				    GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_filename, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash
@@ -812,7 +812,7 @@
 					AND (v.vid_group IS NULL OR v.vid_group = '') --->
 					AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-					<cfset q_start = q_start + 1>
+					<cfset q_start = q_end + 1>
 			    	<cfset q_end = q_end + 990>
 			    </cfloop>
 			    GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.is_available, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_filename, v.vid_size, v.hashtag, fo.folder_name, v.vid_group, fo.folder_of_user, fo.folder_owner, v.in_trash
@@ -1089,7 +1089,7 @@
 					AND (a.aud_group IS NULL OR a.aud_group = '') --->
 					AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-					<cfset q_start = q_start + 1>
+					<cfset q_start = q_end + 1>
 			    	<cfset q_end = q_end + 990>
 			    </cfloop>
 			    	GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.is_available, a.aud_create_time, a.aud_change_date, a.link_kind, a.link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_name, a.aud_size, a.hashtag, fo.folder_name, a.aud_group, fo.folder_of_user, fo.folder_owner, a.in_trash
