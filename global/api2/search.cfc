@@ -872,25 +872,25 @@
 		<cfset QueryAddcolumn(qry_doc, "cnt", "integer", amount)>
 		<!--- If we query for doc only and have a filetype we filter the results --->
 		<cfif arguments.fstruct.show NEQ "all" AND arguments.fstruct.show EQ "doc" AND arguments.fstruct.doctype NEQ "">
-			<cfquery dbtype="query" name="qry">
+			<cfquery dbtype="query" name="qry_doc">
 			SELECT *
-			FROM qry
+			FROM qry_doc
 			<cfswitch expression="#arguments.fstruct.doctype#">
 				<cfcase value="doc">
-					WHERE qry.extension = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+					WHERE qry_doc.extension = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
 				</cfcase>
 				<cfcase value="xls">
-					WHERE qry.extension = <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
+					WHERE qry_doc.extension = <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
 				</cfcase>
 				<cfcase value="pdf">
-					WHERE qry.extension = <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
+					WHERE qry_doc.extension = <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
 				</cfcase>
 				<cfcase value="other">
-					WHERE qry.extension != <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
-					AND qry.extension != <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
-					AND qry.extension != <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
-					AND qry.extension != <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
-					AND qry.extension != <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
+					WHERE qry_doc.extension != <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension != <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension != <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension != <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+					AND qry_doc.extension != <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
 				</cfcase>
 			</cfswitch>
 			</cfquery>
