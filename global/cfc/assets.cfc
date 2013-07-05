@@ -4802,7 +4802,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfthread>
 		<cfthread action="join" name="#upt#" />
 		<!--- Get signed URLS for original --->
-		<cfinvoke component="amazon" method="signedurl" returnVariable="cloudurl" key="#arguments.thestruct.folder_id#/#attributes.intstruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" awsbucket="#arguments.thestruct.awsbucket#">
+		<cfinvoke component="amazon" method="signedurl" returnVariable="cloudurl" key="#arguments.thestruct.folder_id#/#arguments.thestruct.thefiletype#/#arguments.thestruct.newid#/#arguments.thestruct.thefilename#" awsbucket="#arguments.thestruct.awsbucket#">
 		<!--- Set the URL --->
 		<cfset arguments.thestruct.av_link_url = cloudurl.theurl>
 	<!--- Akamai --->
