@@ -876,11 +876,13 @@
 			SELECT *
 			FROM qry_doc
 			<cfswitch expression="#arguments.fstruct.doctype#">
-				<cfcase value="doc">
+				<cfcase value="doc,docx">
 					WHERE qry_doc.extension = <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+					OR qry_doc.extension = <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
 				</cfcase>
-				<cfcase value="xls">
+				<cfcase value="xls,xlsx">
 					WHERE qry_doc.extension = <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
+					OR qry_doc.extension = <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
 				</cfcase>
 				<cfcase value="pdf">
 					WHERE qry_doc.extension = <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
