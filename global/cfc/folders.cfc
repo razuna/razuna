@@ -1634,7 +1634,13 @@
 			</cfif>
 		</cfloop>
 	</cfthread>
-
+	<!--- Flush Cache --->
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("images")>
+	<cfset resetcachetoken("videos")>
+	<cfset resetcachetoken("files")>
+	<cfset resetcachetoken("audios")>
+	<cfset resetcachetoken("search")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -1644,10 +1650,10 @@
    <cfargument name="thestruct" type="struct">
        <!--- check the parent folder is exist --->
        <cfquery datasource="#application.razuna.datasource#" name="thedetail">
-	       SELECT folder_id_r,folder_main_id_r,in_trash,folder_level FROM #session.hostdbprefix#folders
-	       WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
-	       AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-	       AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+       SELECT folder_id_r,folder_main_id_r,in_trash,folder_level FROM #session.hostdbprefix#folders
+       WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+       AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+       AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
        </cfquery>
        <!--- Set vars --->
        <cfset var folder_level = thedetail.folder_level>
@@ -1744,11 +1750,12 @@
 		<cfinvoke component="plugins" method="getactions" theaction="on_folder_remove" args="#arguments.thestruct#" />
 	</cfif>
 	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("folders")>
-	<cfset variables.cachetoken = resetcachetoken("images")>
-	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("files")>
-	<cfset variables.cachetoken = resetcachetoken("audios")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("images")>
+	<cfset resetcachetoken("videos")>
+	<cfset resetcachetoken("files")>
+	<cfset resetcachetoken("audios")>
+	<cfset resetcachetoken("search")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>

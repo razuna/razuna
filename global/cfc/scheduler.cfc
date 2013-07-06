@@ -492,7 +492,7 @@
 		<cfabort>
 	<!--- Record found --->
 	<cfelse>
-		<!--- Look into the directory and if anything is here then continue else abort --->
+		<!--- Look into the directory --->
 		<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" recurse="false" name="dirhere" />
 		<!--- Filter content --->
 		<cfquery dbtype="query" name="dirhere">
@@ -506,28 +506,26 @@
 		AND name != '.svn'
 		AND name != '.git'
 		</cfquery>
+		<!--- NO files here simply abort --->
 		<cfif dirhere.recordcount EQ 0>
 			<cfabort>
 		</cfif>
-		<!--- Create a temp directory in the incoming folder and move all files in this one --->
+		<!--- Files here thus... --->
+		<!--- Get the name of the original directory --->
+		<cfset var thedirname = listlast(doit.qry_detail.sched_server_folder,"/\")>
+		<!--- The path without the name --->
+		<cfset var thedirpath = replacenocase(doit.qry_detail.sched_server_folder,thedirname,"","one")>
+		<!--- Create a temp directory name --->
 		<cfset var tempid = createuuid("")>
-		<cfset var tempdir = arguments.incomingpath & "/task_" & tempid>
-		<!--- Check if we need to do recursive or not --->
-		<cfif doit.qry_detail.sched_server_recurse>
-			<cfset var dorecursive = true>
-		</cfif>
-		<!--- Grab the files to move --->
-		<cfinvoke component="global" method="directoryCopy">
-			<cfinvokeargument name="source" value="#doit.qry_detail.sched_server_folder#">
-			<cfinvokeargument name="destination" value="#tempdir#">
-			<cfinvokeargument name="fileaction" value="move">
-			<cfinvokeargument name="directoryaction" value="move">
-			<cfinvokeargument name="directoryrecursive" value="#dorecursive#">
-		</cfinvoke>
-		<!--- Sleep for 5 seconds. This should give enough time for all files to be moved --->
-		<cfset sleep(5000)>
+		<cfset var tempdir = thedirpath & "task_" & tempid>
+		<!--- Now rename the original directory --->
+		<cfdirectory action="rename" directory="#doit.qry_detail.sched_server_folder#" newdirectory="#tempdir#" mode="775" />
+		<!--- and recreate the original directory --->
+		<cfdirectory action="create" directory="#doit.qry_detail.sched_server_folder#" mode="775" />
 		<!--- Set the qry to the new directory --->
 		<cfset QuerySetcell( doit.qry_detail, "sched_server_folder", "#tempdir#" )>
+		<!--- Sleep the process (just making sure that the rename had enough time) --->
+		<cfset sleep(5000)>
 	</cfif>
 	<cfreturn doit>
 </cffunction>
