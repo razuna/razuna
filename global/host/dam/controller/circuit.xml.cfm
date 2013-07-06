@@ -5814,6 +5814,8 @@
 	</fuseaction>
 	<!-- For saving customization -->
 	<fuseaction name="admin_customization_save">
+		<!-- Param -->
+		<set name="attributes.thepathup" value="#ExpandPath('../../')#" />
 		<!-- CFC -->
 		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_customization(attributes)" />
 	</fuseaction>

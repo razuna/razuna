@@ -920,16 +920,12 @@
 	<cfelse>
 		<cfset var theimgpath = "favicon">
 		<!--- just remove any previous directory (like this we prevent having more the one image) --->
-		<cftry>
+		<cfif directoryExists("#arguments.thestruct.thepathup#/global/host/#theimgpath#/#session.hostid#")>
 			<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" recurse="true" />
-			<cfcatch type="any"></cfcatch>
-		</cftry>
+		</cfif>
 	</cfif>
 	<!--- Create directory if not there already to hold this logo --->
-	<cftry>
 		<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" mode="775">
-		<cfcatch type="any"></cfcatch>
-	</cftry>
 	<!---  Upload file --->
 	<cffile action="UPLOAD" filefield="#arguments.thestruct.thefield#" destination="#arguments.thestruct.thepathup#global/host/#theimgpath#/#session.hostid#" result="result" nameconflict="overwrite" mode="775">
 	<!--- Set variables that show the file in the GUI --->
@@ -2106,6 +2102,16 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		<cfinvoke component="hosts" method="getall" returnvariable="t" />
 		<!--- Loop --->
 		<cfloop query="t">
+			<cfif session.hostid NEQ host_id>
+				<!--- Check & delete if directory is already exists --->
+				<cfif directoryExists("#arguments.thestruct.thepathup#global/host/favicon/#host_id#")>
+					<cfdirectory action="delete" directory="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" recurse="true">
+				</cfif>
+				<!--- Create directory --->
+				<cfdirectory action="create" directory="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" mode="777">
+				<!--- copy the favicon.ico file --->
+				<cffile action="copy" destination="#arguments.thestruct.thepathup#global/host/favicon/#host_id#" source="#arguments.thestruct.thepathup#global/host/favicon/#session.hostid#/favicon.ico"/>
+			</cfif>
 			<cfset set_customization_internal(thestruct=arguments.thestruct,hostid=#host_id#)>
 		</cfloop>
 	<!--- For a single tenant --->

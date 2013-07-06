@@ -23,11 +23,11 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-<cfif structkeyexists(url,"remove") AND directoryexists("#ExpandPath("../..")#/global/host/favicon/#session.hostid#")>
-	<cfdirectory action="delete" directory="#ExpandPath("../..")#/global/host/favicon/#session.hostid#" recurse="true">
+<cfif structkeyexists(url,"remove") AND directoryexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#")>
+	<cfdirectory action="delete" directory="#ExpandPath("../../")#global/host/favicon/#session.hostid#" recurse="true">
 </cfif>
 <cfoutput>
-	<cfif directoryexists("#ExpandPath("../..")#global/host/favicon/#session.hostid#") AND fileexists("#ExpandPath("../..")#global/host/favicon/#session.hostid#/favicon.ico")>
+	<cfif directoryexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#") AND fileexists("#ExpandPath("../../")#global/host/favicon/#session.hostid#/favicon.ico")>
 		<img src="#dynpath#/global/host/favicon/#session.hostid#/favicon.ico" width="20" height="20" border="0">
 	<cfelse>
 		<img src="#dynpath#/global/host/dam/images/favicon.ico" width="20" height="20" border="0">
