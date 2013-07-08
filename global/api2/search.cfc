@@ -181,6 +181,9 @@
 			GROUP BY categorytree
 			ORDER BY categorytree
 			</cfquery>
+		<cfelse>
+			<cfset var cattreeimg = querynew("categorytree")>
+			<cfset queryaddrow(cattreeimg)>
 		</cfif>
 		<!--- Get how many loop --->
 		<cfset var howmanyloop = ceiling(cattreeimg.recordcount / 990)>
@@ -322,7 +325,7 @@
 			GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename)
 				<cfif arguments.istruct.ui>, ext, is_available, date_create,
 			date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
-			ORDER BY i.img_filename 
+			ORDER BY i.img_filename
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
 		<cfset var amount = ArrayNew(1)>
@@ -359,6 +362,9 @@
 			GROUP BY categorytree
 			ORDER BY categorytree
 			</cfquery>
+		<cfelse>
+			<cfset var cattreevid = querynew("categorytree")>
+			<cfset queryaddrow(cattreevid)>
 		</cfif>
 		<!--- Get how many loop --->
 		<cfset var howmanyloop = ceiling(cattreevid.recordcount / 990)>
@@ -540,6 +546,9 @@
 			GROUP BY categorytree
 			ORDER BY categorytree
 			</cfquery>
+		<cfelse>
+			<cfset var cattreeaud = querynew("categorytree")>
+			<cfset queryaddrow(cattreeaud)>
 		</cfif>
 		<!--- Get how many loop --->
 		<cfset var howmanyloop = ceiling(cattreeaud.recordcount / 990)>
@@ -717,6 +726,9 @@
 			GROUP BY categorytree
 			ORDER BY categorytree
 			</cfquery>
+		<cfelse>
+			<cfset var cattreedoc = querynew("categorytree")>
+			<cfset queryaddrow(cattreedoc)>
 		</cfif>
 		<!--- Get how many loop --->
 		<cfset var howmanyloop = ceiling(cattreedoc.recordcount / 990)>
