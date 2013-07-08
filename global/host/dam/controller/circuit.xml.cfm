@@ -5414,13 +5414,7 @@
 				<!-- CFC: Add to system -->
 				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetemail(attributes)" />	
 			</true>
-		</if>	
-		<!-- CFC: Log end -->
-		<!-- <invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
-			<argument name="theschedid" value="#attributes.sched_id#" />
-			<argument name="theaction" value="Upload" />
-			<argument name="thedesc" value="End Processing Scheduled Upload" />
-		</invoke> -->
+		</if>
 	</fuseaction>
 		
 	<!--  -->
