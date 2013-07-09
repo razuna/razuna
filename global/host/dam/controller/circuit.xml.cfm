@@ -5357,64 +5357,7 @@
 		<set name="attributes.langcount" value="#qry_langs.recordcount#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="doit(attributes.sched_id,attributes.incomingpath)" returnvariable="thetask" />
-		<!-- Set return into scope -->
-		<set name="attributes.folder_id" value="#thetask.qry_detail.sched_folder_id_r#" />
-		<set name="session.theuserid" value="#thetask.qry_detail.sched_user#" />
-		<set name="attributes.sched_action" value="#thetask.qry_detail.sched_server_files#" />
-		<set name="attributes.upl_template" value="#thetask.qry_detail.sched_upl_template#" />
-		<set name="attributes.directory" value="#thetask.qry_detail.sched_server_folder#" />
-		<set name="attributes.recurse" value="#thetask.qry_detail.sched_server_recurse#" />
-		<set name="attributes.zip_extract" value="#thetask.qry_detail.sched_zip_extract#" />
-		<!-- CFC: Log start -->
-		<invoke object="myFusebox.getApplicationData().scheduler" method="tolog">
-			<argument name="theschedid" value="#attributes.sched_id#" />
-			<argument name="theaction" value="Upload" />
-			<argument name="thedesc" value="Start Processing Scheduled Upload" />
-		</invoke>
-		<!-- ACTION: FOR SERVER -->
-		<if condition="thetask.qry_detail.sched_method EQ 'server'">
-			<true>
-				<!-- Set params for adding assets -->
-				<set name="attributes.thefile" value="#thetask.dirlist#" />
-				<!-- CFC: Add to system -->
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetscheduledserverthread(attributes)" />
-			</true>
-		</if>	
-		<!-- ACTION: FOR FTP -->
-		<if condition="thetask.qry_detail.sched_method EQ 'ftp'">
-			<true>
-				<!-- Params -->
-				<set name="session.ftp_server" value="#thetask.qry_detail.sched_ftp_server#" />
-				<set name="session.ftp_user" value="#thetask.qry_detail.sched_ftp_user#" />
-				<set name="session.ftp_pass" value="#thetask.qry_detail.sched_ftp_pass#" />
-				<set name="session.ftp_passive" value="#thetask.qry_detail.sched_ftp_passive#" />
-				<set name="attributes.folderpath" value="#thetask.qry_detail.sched_ftp_folder#" />
-				<!-- CFC: Get FTP directory for adding to the system -->
-				<invoke object="myFusebox.getApplicationData().ftp" methodcall="getdirectory(attributes)" returnvariable="thefiles" />
-				<set name="attributes.thefile" value="#valuelist(thefiles.ftplist.name)#" />
-				<!-- CFC: Add to system -->
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetftpthread(attributes)" />
-			</true>
-		</if>	
-		<!-- ACTION: FOR EMAIL -->
-		<if condition="thetask.qry_detail.sched_method EQ 'mail'">
-			<true>
-				<!-- Params -->
-				<set name="attributes.email_server" value="#thetask.qry_detail.sched_mail_pop#" />
-				<set name="attributes.email_address" value="#thetask.qry_detail.sched_mail_user#" />
-				<set name="attributes.email_pass" value="#thetask.qry_detail.sched_mail_pass#" />
-				<set name="attributes.email_subject" value="#thetask.qry_detail.sched_mail_subject#" />
-				<set name="session.email_server" value="#thetask.qry_detail.sched_mail_pop#" />
-				<set name="session.email_address" value="#thetask.qry_detail.sched_mail_user#" />
-				<set name="session.email_pass" value="#thetask.qry_detail.sched_mail_pass#" />
-				<!-- CFC: Get the email ids for adding to the system -->
-				<invoke object="myFusebox.getApplicationData().email" methodcall="emailheaders(attributes)" returnvariable="themails" />
-				<set name="attributes.emailid" value="#valuelist(themails.qryheaders.messagenumber)#" />
-				<!-- CFC: Add to system -->
-				<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetemail(attributes)" />	
-			</true>
-		</if>
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="doit(attributes.sched_id,attributes.incomingpath,attributes.sched,attributes.thepath,attributes.langcount,attributes.rootpath)" returnvariable="thetask" />
 	</fuseaction>
 		
 	<!--  -->

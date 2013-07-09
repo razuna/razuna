@@ -1522,32 +1522,14 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
 	</cfif>
 	<!--- If we are coming from a scheduled task then... --->
-	<!--- <cfif structkeyexists(arguments.thestruct,"sched")>
+	<cfif structkeyexists(arguments.thestruct,"sched")>
 		<!--- Log Insert --->
 		<cfinvoke component="scheduler" method="tolog" theschedid="#arguments.thestruct.sched_id#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Added file #arguments.thestruct.qryfile.filename#">
-		<!--- Check if we have to remove or move the asset --->
 		<!--- First only do this for assets with the same sched id --->
-		<cfif arguments.thestruct.sched_id EQ arguments.thestruct.qryfile.sched_id>
-			<!--- We now have a dedicated directory for the scheduled task so only remove directory or rename it --->
-			<!--- Remove --->
-			<cfif arguments.thestruct.qryfile.sched_action EQ 0>
-				<cfif directoryexists(arguments.thestruct.directory)>
-					<cfdirectory action="delete" directory="#arguments.thestruct.directory#" recurse="true" />
-				</cfif>
-			<!--- Move --->
-			<cfelseif arguments.thestruct.qryfile.sched_action EQ 1>
-				<!--- Name of new directory --->
-				<cfset var schedfolder = "scheduleduploads_done_" & #dateformat(now(),"yyyy_mm_dd")#>
-				<cftry>
-					<cfdirectory action="rename" directory="#arguments.thestruct.directory#" newdirectory="#schedfolder#" mode="775" />
-					<cfcatch type="any">
-						<cfset consoleoutput(true)>
-						<cfset console(cfcatch)>
-					</cfcatch>
-				</cftry>
-			</cfif>
+		<cfif arguments.thestruct.sched_id EQ arguments.thestruct.qryfile.sched_id AND fileExists("#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#")>
+			<cffile action="delete" file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#">
 		</cfif>
-	</cfif> --->
+	</cfif>
 	<!--- Remove record in DB and file system --->
 	<cfinvoke method="removeasset" thestruct="#arguments.thestruct#">
 	<cfif returnid NEQ 0>
