@@ -483,6 +483,7 @@
 	<cfargument name="thepath" type="string" required="yes">
 	<cfargument name="langcount" type="string" required="yes">
 	<cfargument name="rootpath" type="string" required="yes">
+	<cfargument name="assetpath" type="string" required="yes">
 	<!--- Param --->
 	<cfset var doit = structnew()>
 	<cfset var x = structnew()>
@@ -497,6 +498,7 @@
 	<cfset x.thepath = arguments.thepath>
 	<cfset x.langcount = arguments.langcount>
 	<cfset x.rootpath = arguments.rootpath>
+	<cfset x.assetpath = arguments.assetpath>
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
 	<!--- If no record found simply abort --->

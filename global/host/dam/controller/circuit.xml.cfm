@@ -5357,7 +5357,7 @@
 		<set name="attributes.langcount" value="#qry_langs.recordcount#" />
 		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
 		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="doit(attributes.sched_id,attributes.incomingpath,attributes.sched,attributes.thepath,attributes.langcount,attributes.rootpath)" returnvariable="thetask" />
+		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="doit(attributes.sched_id,attributes.incomingpath,attributes.sched,attributes.thepath,attributes.langcount,attributes.rootpath,attributes.assetpath)" returnvariable="thetask" />
 	</fuseaction>
 		
 	<!--  -->
