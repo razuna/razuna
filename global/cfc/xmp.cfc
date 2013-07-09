@@ -28,8 +28,11 @@
 <!--- Read XMP DB --->
 <cffunction name="readxmpdb" output="false">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="xmp">
-		SELECT 
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("images")>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="xmp" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#readxmpdb */ 
 		subjectcode iptcsubjectcode, 
 		creator, 
 		title, 
@@ -1589,11 +1592,13 @@
 		</cfloop>
 	<!--- If we export all assets from folder --->
 	<cfelseif arguments.thestruct.what EQ "folder">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("folders")>
 		<!--- Set local var --->
 		<cfset var qry = "">
 		<!--- Get id from folder with type --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT img_id AS theid, 'img' AS thetype,folder_id_r,img_filename as url_file_name, cloud_url_org
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype,folder_id_r,img_filename as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">

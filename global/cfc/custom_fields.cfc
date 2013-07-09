@@ -167,8 +167,11 @@
 <!--- Get text and values --->
 <cffunction name="gettextvalues" output="false" access="public">
 	<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT cv.cf_value, ct.cf_text, ct.cf_id_r
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("general")>
+		<!--- Query --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+		SELECT /* #variables.cachetoken#getfieldssearch */ cv.cf_value, ct.cf_text, ct.cf_id_r
 		FROM #session.hostdbprefix#custom_fields_text ct, #session.hostdbprefix#custom_fields c, #session.hostdbprefix#custom_fields_values cv
 		WHERE cv.asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 		AND ct.cf_id_r = cv.cf_id_r
