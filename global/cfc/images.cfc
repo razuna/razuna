@@ -551,38 +551,36 @@
 			<cfinvokeargument name="logfiletype" value="img">
 			<cfinvokeargument name="assetid" value="#i#">
 		</cfinvoke>
-		<cftransaction>
-			<!--- Delete from files DB (including referenced data)--->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#images
-			WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-			</cfquery>
-			<!--- Delete from collection --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#collections_ct_files
-			WHERE file_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-			AND col_file_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
-			</cfquery>
-			<!--- Delete from favorites --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#users_favorites
-			WHERE fav_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-			AND fav_kind = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
-			AND user_id_r = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
-			<!--- Delete from Versions --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#versions
-			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-			AND ver_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
-			</cfquery>
-			<!--- Delete from Share Options --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #arguments.thestruct.hostdbprefix#share_options
-			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
-		</cftransaction>
+		<!--- Delete from files DB (including referenced data)--->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #arguments.thestruct.hostdbprefix#images
+		WHERE img_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+		<!--- Delete from collection --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #arguments.thestruct.hostdbprefix#collections_ct_files
+		WHERE file_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+		AND col_file_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Delete from favorites --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #arguments.thestruct.hostdbprefix#users_favorites
+		WHERE fav_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+		AND fav_kind = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
+		AND user_id_r = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Delete from Versions --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #arguments.thestruct.hostdbprefix#versions
+		WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+		AND ver_type = <cfqueryparam value="img" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Delete from Share Options --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #arguments.thestruct.hostdbprefix#share_options
+		WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
 		<!--- Delete labels --->
 		<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
 		<!--- Custom field values --->
@@ -1283,88 +1281,86 @@
 			<cfthread action="join" name="upload#theformat##arguments.thestruct.newid#" />
 		</cfif>
 		<!--- Add to shared options --->
-		<cftransaction>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#share_options
-			(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
-			VALUES(
-			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
-			<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
-			<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-			)
-			</cfquery>
-			<!--- Add to DB --->
-			<!---<cfquery datasource="#application.razuna.datasource#" name="qry_img_id">
-				SELECT i.img_id FROM raz1_images i WHERE i.img_group IS NULL
-			</cfquery>	--->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images
-			SET
-			<cfif isDefined('arguments.thestruct.img_group_id') AND arguments.thestruct.img_group_id NEQ ''>
-				img_group = <cfqueryparam value="#arguments.thestruct.img_group_id#" cfsqltype="cf_sql_varchar">,
-			<cfelse>
-				img_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
-			</cfif>
-			img_filename = <cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">, 
-			img_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
-			folder_id_r = <cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">, 
-			img_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
-			img_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-			img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
-			img_create_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-			img_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
-			img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">, 
-			img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">, 
-			img_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">, 
-			thumb_extension = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_format#" cfsqltype="cf_sql_varchar">, 
-			thumb_width = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">,
-			thumb_height = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
-			<cfif isNumeric(#thewidth#)>
-				img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">,
-			</cfif>
-			<cfif isNumeric(#theheight#)>
-				img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">,
-			</cfif>
-			img_filename_org = <cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">,
-			img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
-			thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
-			host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">, 
-			path_to_asset = <cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">, 
-			cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">, 
-			cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">, 
-			cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">, 
-			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-			img_meta = <cfqueryparam value="#thedpi#" cfsqltype="cf_sql_varchar">,
-			hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-			</cfquery>
-			<!--- Get the colorspace of the original file --->
-			<cfquery datasource="#application.razuna.datasource#" name="qry_colorspace">
-			SELECT colorspace
-			FROM #session.hostdbprefix#xmp
-			WHERE id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
-			</cfquery>
-			<!--- Add to XMP --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#xmp
-			(id_r, asset_type, host_id, yres, xres, resunit, colorspace)
-			VALUES(
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="inches">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry_colorspace.colorspace#">
-			)
-			</cfquery>
-		</cftransaction>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#share_options
+		(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+		VALUES(
+		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">,
+		<cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">,
+		<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+		<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+		)
+		</cfquery>
+		<!--- Add to DB --->
+		<!---<cfquery datasource="#application.razuna.datasource#" name="qry_img_id">
+			SELECT i.img_id FROM raz1_images i WHERE i.img_group IS NULL
+		</cfquery>	--->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#images
+		SET
+		<cfif isDefined('arguments.thestruct.img_group_id') AND arguments.thestruct.img_group_id NEQ ''>
+			img_group = <cfqueryparam value="#arguments.thestruct.img_group_id#" cfsqltype="cf_sql_varchar">,
+		<cfelse>
+			img_group = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">, 
+		</cfif>
+		img_filename = <cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">, 
+		img_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">, 
+		folder_id_r = <cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">, 
+		img_owner = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
+		img_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+		img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">, 
+		img_create_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+		img_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">, 
+		img_custom_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">, 
+		img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">, 
+		img_extension = <cfqueryparam value="#theformat#" cfsqltype="cf_sql_varchar">, 
+		thumb_extension = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_format#" cfsqltype="cf_sql_varchar">, 
+		thumb_width = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_width#" cfsqltype="cf_sql_numeric">,
+		thumb_height = <cfqueryparam value="#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth#" cfsqltype="cf_sql_numeric">, 
+		<cfif isNumeric(#thewidth#)>
+			img_width = <cfqueryparam value="#thewidth#" cfsqltype="cf_sql_numeric">,
+		</cfif>
+		<cfif isNumeric(#theheight#)>
+			img_height = <cfqueryparam value="#theheight#" cfsqltype="cf_sql_numeric">,
+		</cfif>
+		img_filename_org = <cfqueryparam value="#arguments.thestruct.thenamenoext#.#theformat#" cfsqltype="cf_sql_varchar">,
+		img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_numeric">, 
+		thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_numeric">,
+		host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">, 
+		path_to_asset = <cfqueryparam value="#arguments.thestruct.qry_detail.folder_id_r#/img/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">, 
+		cloud_url = <cfqueryparam value="#cloud_url.theurl#" cfsqltype="cf_sql_varchar">, 
+		cloud_url_org = <cfqueryparam value="#cloud_url_org.theurl#" cfsqltype="cf_sql_varchar">, 
+		cloud_url_exp = <cfqueryparam value="#cloud_url_org.newepoch#" cfsqltype="CF_SQL_NUMERIC">, 
+		is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+		img_meta = <cfqueryparam value="#thedpi#" cfsqltype="cf_sql_varchar">,
+		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="cf_sql_varchar">
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Get the colorspace of the original file --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_colorspace">
+		SELECT colorspace
+		FROM #session.hostdbprefix#xmp
+		WHERE id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
+		</cfquery>
+		<!--- Add to XMP --->
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#xmp
+		(id_r, asset_type, host_id, yres, xres, resunit, colorspace)
+		VALUES(
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="img">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="#thedpi#">,
+			<cfqueryparam cfsqltype="cf_sql_varchar" value="inches">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#qry_colorspace.colorspace#">
+		)
+		</cfquery>
 		<!--- Update main record with dates --->
 		<cfinvoke component="global" method="update_dates" type="img" fileid="#arguments.thestruct.file_id#" />
 		<!--- Log --->

@@ -393,7 +393,6 @@
 		</cftry>
 		</cfoutput>
 		<!--- Save XMP to DB --->
-		<cftransaction>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#xmp
 			SET
@@ -435,7 +434,6 @@
 			AND asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-		</cftransaction>
 		<!--- Flush Cache --->
 		<cfset resetcachetoken("images")>
 		<cfset resetcachetoken("search")>
@@ -553,7 +551,6 @@
 			</cfif>
 		</cfif>
 		<!--- Update images db with the new Lucene_Key --->
-		<cftransaction>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#images
 			SET 
@@ -562,7 +559,6 @@
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-		</cftransaction>
 	</cfloop>
 </cffunction>
 
@@ -669,7 +665,6 @@
 					</cfif>
 					<cftry>
 						<!--- Append to DB --->
-						<cftransaction>
 							<cfquery datasource="#arguments.thestruct.dsn#">
 							UPDATE #session.hostdbprefix#images_text
 							SET 
@@ -682,7 +677,6 @@
 							WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 							AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
 							</cfquery>
-						</cftransaction>
 						<cfcatch type="any">
 							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in image upload keywords">
 								<cfdump var="#cfcatch#" />
@@ -1484,16 +1478,14 @@
 		<cfdirectory action="delete" directory="#arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#" recurse="true">
 	</cfif>
 	<!--- Update images db with the new Lucene_Key --->
-	<cftransaction>
-		<cfquery datasource="#variables.dsn#">
-		UPDATE #session.hostdbprefix#files
-		SET 
-		lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
-		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
-		WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-		</cfquery>
-	</cftransaction>
+	<cfquery datasource="#variables.dsn#">
+	UPDATE #session.hostdbprefix#files
+	SET 
+	lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
+	hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
+	WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+	</cfquery>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("files")>
 </cffunction>

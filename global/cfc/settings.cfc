@@ -237,47 +237,41 @@
 <!--- Add File Type --->
 <cffunction name="prefs_types_add">
 	<cfargument name="thestruct" type="Struct">
-	<cftransaction>
-		<cfquery datasource="#application.razuna.datasource#">
-		INSERT INTO file_types
-		(type_id, type_type, type_mimecontent, type_mimesubcontent)
-		VALUES(
-		<cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
-		)
-		</cfquery>
-	</cftransaction>
+	<cfquery datasource="#application.razuna.datasource#">
+	INSERT INTO file_types
+	(type_id, type_type, type_mimecontent, type_mimesubcontent)
+	VALUES(
+	<cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">,
+	<cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
+	)
+	</cfquery>
 	<cfreturn />
 </cffunction>
 
 <!--- Remove File Type --->
 <cffunction name="prefs_types_del">
 	<cfargument name="thestruct" type="Struct">
-	<cftransaction>
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM file_types
-		WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
-		</cfquery>
-	</cftransaction>
+	<cfquery datasource="#application.razuna.datasource#">
+	DELETE FROM file_types
+	WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
+	</cfquery>
 	<cfreturn />
 </cffunction>
 
 <!--- Update File Type --->
 <cffunction name="prefs_types_update">
 	<cfargument name="thestruct" type="Struct">
-	<cftransaction>
-		<cfquery datasource="#application.razuna.datasource#">
-		UPDATE file_types
-		SET
-		type_id = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
-		type_type = <cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
-		type_mimecontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">, 
-		type_mimesubcontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
-		WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
-		</cfquery>
-	</cftransaction>
+	<cfquery datasource="#application.razuna.datasource#">
+	UPDATE file_types
+	SET
+	type_id = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">,
+	type_type = <cfqueryparam value="#lcase(arguments.thestruct.type_type)#" cfsqltype="cf_sql_varchar">,
+	type_mimecontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimecontent)#" cfsqltype="cf_sql_varchar">, 
+	type_mimesubcontent = <cfqueryparam value="#lcase(arguments.thestruct.type_mimesubcontent)#" cfsqltype="cf_sql_varchar">
+	WHERE lower(type_id) = <cfqueryparam value="#lcase(arguments.thestruct.type_id)#" cfsqltype="cf_sql_varchar">
+	</cfquery>
 	<cfreturn />
 </cffunction>
 
@@ -593,7 +587,6 @@
 <!--- Save Settings --->
 <cffunction hint="Save Settings" name="update">
 	<cfargument name="thestruct" type="Struct">
-	<cftransaction>
 		<!--- save all settings which are language relevant. loop trough the form fields which begin with set_ --->
 		<cfloop collection="#arguments.thestruct#" item="myform">
 			<cfif #myform# CONTAINS "set_">
@@ -901,7 +894,6 @@
 		WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
-	</cftransaction>
 	<!--- Flush --->
 	<cfset variables.cachetoken = resetcachetoken("settings")>
 </cffunction>

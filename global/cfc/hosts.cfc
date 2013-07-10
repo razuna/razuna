@@ -169,17 +169,15 @@
 			<!--- ADD THE SYSTEMADMIN TO THE CROSS TABLE FOR THE HOSTS --->
 			<cfinvoke component="global.cfc.groups_users" method="searchUsersOfGroups" returnvariable="theadmins" list_grp_name="SystemAdmin" host_id="0">
 			<cfoutput query="theadmins">
-				<cftransaction>
-					<cfquery datasource="#variables.dsn#">
-					insert into ct_users_hosts
-					(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
-					values(
-					<cfqueryparam value="#user_id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#hostid.id#" cfsqltype="cf_sql_numeric">,
-					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-					)
-					</cfquery>
-				</cftransaction>
+				<cfquery datasource="#variables.dsn#">
+				insert into ct_users_hosts
+				(ct_u_h_user_id, ct_u_h_host_id, rec_uuid)
+				values(
+				<cfqueryparam value="#user_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#hostid.id#" cfsqltype="cf_sql_numeric">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
 			</cfoutput>
 			<!--- INSERT DEFAULT VALUES --->
 			<cfinvoke method="insert_default_values" thestruct="#arguments.thestruct#">
@@ -202,15 +200,13 @@
 			</cfinvoke> --->
 			<!--- NIRVANIX: Add child settings into settings_2 --->
 			<cfif application.razuna.storage EQ "nirvanix" AND NOT structkeyexists(arguments.thestruct,"restore")>
-				<cftransaction>
-					<cfquery datasource="#variables.dsn#">
-					UPDATE #arguments.thestruct.host_db_prefix#settings_2
-					SET 
-					set2_nirvanix_name = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_name#" cfsqltype="cf_sql_varchar">, 
-					set2_nirvanix_pass = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_pass#" cfsqltype="cf_sql_varchar">
-					WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-				</cftransaction>
+				<cfquery datasource="#variables.dsn#">
+				UPDATE #arguments.thestruct.host_db_prefix#settings_2
+				SET 
+				set2_nirvanix_name = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_name#" cfsqltype="cf_sql_varchar">, 
+				set2_nirvanix_pass = <cfqueryparam value="#attributes.qry_settings_nirvanix.set2_nirvanix_pass#" cfsqltype="cf_sql_varchar">
+				WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
 			</cfif>
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("general")>

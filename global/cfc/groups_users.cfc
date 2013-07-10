@@ -158,17 +158,15 @@
 	<cfargument name="thestruct" type="Struct">
 	<!--- insert --->
 	<cfloop list="#arguments.thestruct.grp_id_assigneds#" delimiters="," index="i">
-		<cftransaction>
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO	ct_groups_users
-			(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
-			VALUES(
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
-			)
-			</cfquery>
-		</cftransaction>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO	ct_groups_users
+		(ct_g_u_grp_id, ct_g_u_user_id, rec_uuid)
+		VALUES(
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#i#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.newid#">,
+			<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
+		)
+		</cfquery>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("users")>

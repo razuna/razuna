@@ -79,24 +79,24 @@
 		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.cf_edit#">
 		)
 		</cfquery>
-		<!--- Add text to related db --->
-		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-			<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
-			<cfif thetext CONTAINS "#langindex#">
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#custom_fields_text
-				(cf_id_r, lang_id_r, cf_text, host_id, rec_uuid)
-				VALUES(
-				<cfqueryparam value="#newcfid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="#evaluate(thetext)#" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
-			</cfif>
-		</cfloop>
 	</cftransaction>
+	<!--- Add text to related db --->
+	<cfloop list="#arguments.thestruct.langcount#" index="langindex">
+		<cfset thetext="arguments.thestruct.cf_text_" & "#langindex#">
+		<cfif thetext CONTAINS "#langindex#">
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#custom_fields_text
+			(cf_id_r, lang_id_r, cf_text, host_id, rec_uuid)
+			VALUES(
+			<cfqueryparam value="#newcfid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#evaluate(thetext)#" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+		</cfif>
+	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("general")>
 	<!--- Return --->

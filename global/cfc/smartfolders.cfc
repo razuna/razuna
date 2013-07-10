@@ -146,19 +146,17 @@
 				<cfset var grpid = ReplaceNoCase(myform, "grp_", "")>
 				<cfset var grpidno = Replace(grpid, "-", "", "all")>
 				<cfset var theper = "per_" & "#grpidno#">
-				<cftransaction>
-					<cfquery datasource="#application.razuna.datasource#">
-					INSERT INTO #session.hostdbprefix#folders_groups
-					(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
-					VALUES(
-					<cfqueryparam value="#arguments.thestruct.sf_id#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#grpid#" cfsqltype="CF_SQL_VARCHAR">,
-					<cfqueryparam value="#evaluate(theper)#" cfsqltype="cf_sql_varchar">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-					)
-					</cfquery>
-				</cftransaction>
+				<cfquery datasource="#application.razuna.datasource#">
+				INSERT INTO #session.hostdbprefix#folders_groups
+				(folder_id_r, grp_id_r, grp_permission, host_id, rec_uuid)
+				VALUES(
+				<cfqueryparam value="#arguments.thestruct.sf_id#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#grpid#" cfsqltype="CF_SQL_VARCHAR">,
+				<cfqueryparam value="#evaluate(theper)#" cfsqltype="cf_sql_varchar">,
+				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+				)
+				</cfquery>
 			</cfif>
 		</cfloop>
 		<!--- Reset cache --->
