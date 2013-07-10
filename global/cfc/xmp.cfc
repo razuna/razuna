@@ -473,7 +473,7 @@
 					<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.bat">
 				</cfif>
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -@ #thexmpfile# -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -@ #thexmpfile# -overwrite_original #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
@@ -525,7 +525,7 @@
 			<!--- Wait --->
 			<cfthread action="join" name="#remtt#" />
 			<!--- Write XMP to image with Exiftool --->
-			<cfexecute name="#theexe#" arguments="-@ #thexmpfile# -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" timeout="10" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -@ #thexmpfile# -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.filenameorg#" timeout="10" />
 			<!--- MD5 hash file again since it has changed now --->
 			<cfif FileExists(arguments.thestruct.thesource)>
 				<cfset var md5hash = hashbinary(arguments.thestruct.thesource)>
@@ -589,7 +589,7 @@
 			<!--- Set script --->
 			<cfset thesh = gettempdirectory() & "/#thescript#.sh">
 			<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -X #theasset#" mode="777">
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
 			<!--- Delete scripts --->
@@ -756,14 +756,14 @@
 		<cfset theasset = arguments.thestruct.thesource>
 		<!--- On Windows a bat --->
 		<cfif isWindows>
-			<cfexecute name="#theexe#" arguments="-X #theasset#" timeout="60" variable="themeta" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -X #theasset#" timeout="60" variable="themeta" />
 		<cfelse>
 			<!--- New parsing code --->
 			<cfset var thescript = createuuid()>
 			<!--- Set script --->
 			<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
 				<!--- Write files --->
-			<cffile action="write" file="#thesh#" output="#theexe# -X #theasset#" mode="777">
+			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
 			<!--- Delete scripts --->
@@ -1385,18 +1385,18 @@
 	<cfif application.razuna.storage EQ "local">
 		<cftry>
 			<!--- Clear keywords from PDF (this should solve issues where keywords is shown multiple times in Acrobat) --->
-			<cfexecute name="#theexe#" arguments="-XMP-pdf:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
-			<cfexecute name="#theexe#" arguments="-XMP-dc:subject= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
-			<cfexecute name="#theexe#" arguments="-PDF:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -XMP-pdf:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -XMP-dc:subject= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+			<cfexecute name="#theexe#" arguments="-fast -fast2 -PDF:Keywords= -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
 			<!--- On Windows a .bat --->
 			<cfif iswindows>
-				<cfexecute name="#theexe#" arguments="-PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
+				<cfexecute name="#theexe#" arguments="-fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" timeout="60" />
 			<cfelse>
 				<!--- Write the sh script file --->
 				<cfset thescript = createuuid()>
 				<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
 				<!--- Write files --->
-				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777">
+				<cffile action="write" file="#arguments.thestruct.thesh#" output="#theexe# -fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thesource#" mode="777">
 				<!--- Execute --->
 				<cfexecute name="#arguments.thestruct.thesh#" timeout="60" />
 				<!--- Delete scripts --->
@@ -1439,7 +1439,7 @@
 		<!--- Wait for the thread above until the file is downloaded fully --->
 		<cfthread action="join" name="download#arguments.thestruct.file_id#" />
 		<!--- Write XMP to image with Exiftool --->
-		<cfexecute name="#theexe#" arguments="-PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" timeout="10" />
+		<cfexecute name="#theexe#" arguments="-fast -fast2 -PDF:Subject='#arguments.thestruct.file_desc#' -XMP-dc:Description='#arguments.thestruct.file_desc#' -XMP-pdf:Keywords='#arguments.thestruct.file_keywords#' -PDF:Keywords='#arguments.thestruct.file_keywords#' -XMP-dc:Rights='#arguments.thestruct.rights#' -XMP-xmpRights:Marked='#arguments.thestruct.rightsmarked#' -XMP-xmpRights:WebStatement='#arguments.thestruct.webstatement#' -XMP-photoshop:AuthorsPosition='#arguments.thestruct.authorsposition#' -XMP-photoshop:CaptionWriter='#arguments.thestruct.captionwriter#' -XMP-dc:Creator='#arguments.thestruct.author#' -PDF:Author='#arguments.thestruct.author#' -overwrite_original #arguments.thestruct.thepath#/incoming/#arguments.thestruct.tempfolder#/#arguments.thestruct.qrydetail.filenameorg#" timeout="10" />
 		<!--- Upload file again to its original position --->
 		<!--- NIRVANIX --->
 		<cfif application.razuna.storage EQ "nirvanix">
