@@ -537,7 +537,9 @@
 			<!--- Now rename the original directory --->
 			<cfdirectory action="rename" directory="#doit.qry_detail.sched_server_folder#" newdirectory="#tempdir#" mode="775" />
 			<!--- and recreate the original directory --->
-			<cfdirectory action="create" directory="#doit.qry_detail.sched_server_folder#" mode="775" />
+			<cfif !directoryExists(doit.qry_detail.sched_server_folder)>
+				<cfdirectory action="create" directory="#doit.qry_detail.sched_server_folder#" mode="775" />
+			</cfif>
 			<!--- Set the qry to the new directory --->
 			<cfset QuerySetcell( doit.qry_detail, "sched_server_folder", "#tempdir#" )>
 			<!--- Sleep the process (just making sure that the rename had enough time) --->
