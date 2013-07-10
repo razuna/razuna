@@ -106,8 +106,9 @@ $(function() {
 			var thistype = $(ui.draggable).attr("type");
 			thisid = thisid.replace('draggable','');
 			thisid = thisid.replace('draggable-s','');
-			loadcontent('thedropbasket','#myself#c.basket_put&file_id=' + thistype + '&thetype=' + thistype);
-			loadcontent('thedropbasket','#myself#c.basket');
+			$('##div_forall').load('#myself#c.basket_put&file_id=' + thistype + '&thetype=' + thistype, function(){
+				$('##thedropbasket').load('#myself#c.basket');
+			});
 		}
 	});
 });
