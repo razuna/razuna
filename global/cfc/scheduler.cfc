@@ -508,6 +508,7 @@
 	<cfelse>
 		<!--- SERVER --->
 		<cfif doit.qry_detail.sched_method EQ "server">
+			<!--- 
 			<!--- Look into the directory --->
 			<cfdirectory action="list" directory="#doit.qry_detail.sched_server_folder#" recurse="false" name="dirhere" />
 			<!--- Filter content --->
@@ -544,6 +545,7 @@
 			<cfset QuerySetcell( doit.qry_detail, "sched_server_folder", "#tempdir#" )>
 			<!--- Sleep the process (just making sure that the rename had enough time) --->
 			<cfset sleep(5000)>
+			 --->
 			<!-- Set return into scope -->
 			<cfset x.folder_id = doit.qry_detail.sched_folder_id_r>
 			<cfset x.sched_action = doit.qry_detail.sched_server_files>

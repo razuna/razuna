@@ -235,6 +235,8 @@
 <!--- INSERT SCHEDULED ASSETS FROM SERVER  --->
 <cffunction name="addassetscheduledserverthread" output="true">
 	<cfargument name="thestruct" type="struct">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Params --->
 	<cfparam name="session.currentupload" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
@@ -261,8 +263,8 @@
 	AND name NOT LIKE '%scheduleduploads_%'
 	ORDER BY name
 	</cfquery>
-	<cfquery name="qGetRootFolderID" datasource="#application.razuna.datasource#" >
-	SELECT folder_main_id_r,folder_level 
+	<cfquery name="qGetRootFolderID" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#qGetRootFolderID */ folder_main_id_r, folder_level 
 	FROM #session.hostdbprefix#folders
 	WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
 	</cfquery>
@@ -285,8 +287,9 @@
 				<cfset var temp = folderIdr>
 				<cfloop index="i" from=1 to="#theServerDirlen#">
 					<cfset folder_name = listGetAt(theServerDir.name, i, FileSeparator())>
-					<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
-					SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
+					<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+					SELECT /* #variables.cachetoken#qryGetFolderDetails */ folder_id, folder_name 
+					FROM #session.hostdbprefix#folders 
 					WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
 					AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
 					AND folder_main_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
@@ -301,8 +304,8 @@
 				<cfset var fidr = folderIdr>
 			</cfif>
 			<!--- Query to get the folder_id_r --->
-			<cfquery datasource="#application.razuna.datasource#" name="qryfidr">
-			SELECT folder_id
+			<cfquery datasource="#application.razuna.datasource#" name="qryfidr" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#qryfidr */ folder_id
 			FROM #session.hostdbprefix#folders
 			WHERE lower(folder_name) = <cfqueryparam value="#lcase(fname)#" cfsqltype="cf_sql_varchar">
 			AND folder_id_r = <cfqueryparam value="#fidr#" cfsqltype="cf_sql_varchar">
@@ -330,164 +333,179 @@
 				</cfquery>
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("folders")>
 	</cfif>
 	<!--- Call to GC to clean memory --->
 	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 	<!--- FILES --->
 	<cfloop query="theServerDirfiles">
-		<cfif fileexists("#directory#/#name#") >
+		<cfif fileexists("#directory#/#name#")>
 			<cfset var temp="">
 			<cfset var md5hash = "">
+			<cfset var fileinprocess = "">
 			<cfset arguments.thestruct.thefilenameoriginal = name>
 			<!--- Set Original FileName --->
 			<cfset arguments.thestruct.theoriginalfilename = listlast(name,FileSeparator())>
-			<cfset arguments.thestruct.thepathtoname = replacenocase(name,arguments.thestruct.theoriginalfilename,"","one")>
-			<!--- Rename the file so that we can remove any spaces --->
-			<cfinvoke component="global" method="convertname" returnvariable="newFileName" thename="#arguments.thestruct.theoriginalfilename#">
-			<cffile action="rename" source="#directory#/#name#" destination="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#">
-			<!--- Detect file extension --->
-			<cfinvoke method="getFileExtension" theFileName="#newFileName#" returnvariable="fileNameExt">
-			<cfset var file = structnew()>
-			<cfset file.fileSize = size>
-			<cfset file.oldFileSize = size>
-			<cfset file.dateLastAccessed = dateLastModified>
-			<!--- Get and set file type and MIME content --->
-			<cfquery datasource="#application.razuna.datasource#" name="fileType">
-			SELECT type_type, type_mimecontent, type_mimesubcontent
-			FROM file_types
-			WHERE lower(type_id) = <cfqueryparam value="#lcase(fileNameExt.theext)#" cfsqltype="cf_sql_varchar">
+			<!--- Query for the name and schedid in the temp db --->
+			<cfquery datasource="#application.razuna.datasource#" name="fileinprocess">
+			SELECT tempid
+			FROM #session.hostdbprefix#assets_temp
+			WHERE lower(filename) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(arguments.thestruct.theoriginalfilename)#">
+			AND sched_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.sched_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- set attributes of file structure --->
-			<cfif #fileType.recordCount# GT 0>
-				<cfset arguments.thestruct.thefiletype = fileType.type_type>
-			<cfelse>
-				<cfset arguments.thestruct.thefiletype = "other">
-			</cfif>
-			<cfset arguments.thestruct.tempid = createuuid("")>
-			<cfset arguments.thestruct.thefilename = newFileName>
-			<cfset arguments.thestruct.thefilenamenoext = replacenocase("#newFileName#", ".#fileNameExt.theext#", "", "ALL")>
-			<cfset arguments.thestruct.theincomingtemppath = "#directory#/#arguments.thestruct.thepathtoname#">
-			<!--- MD5 Hash --->
-			<cfif FileExists("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
-				<cfset var md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
-			</cfif>
-			<!--- Check if we have to check for md5 records --->
-			<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
-			<!--- Check for the same MD5 hash in the existing records --->
-			<cfif checkformd5>
-				<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
-			<cfelse>
-				<cfset var md5here = 0>
-			</cfif>
-			<!--- If file does not exsist continue else send user an eMail --->
-			<cfif md5here EQ 0>
-				<!--- Check for the name which now contains the directory --->
-				<cfset var theServerDirlen = listLen(name, FileSeparator()) - 1>
-				<!--- If the above return 0 --->
-				<cfif theServerDirlen EQ 0>
-					<cfset var theServerDirlen = 1>
+			<!--- If the file is not found then we are processing it --->
+			<cfif fileinprocess.recordcount EQ 0>
+				<cfset arguments.thestruct.thepathtoname = replacenocase(name,arguments.thestruct.theoriginalfilename,"","one")>
+				<!--- Rename the file so that we can remove any spaces --->
+				<cfinvoke component="global" method="convertname" returnvariable="newFileName" thename="#arguments.thestruct.theoriginalfilename#">
+				<cffile action="rename" source="#directory#/#name#" destination="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#">
+				<!--- Detect file extension --->
+				<cfinvoke method="getFileExtension" theFileName="#newFileName#" returnvariable="fileNameExt">
+				<cfset var file = structnew()>
+				<cfset file.fileSize = size>
+				<cfset file.oldFileSize = size>
+				<cfset file.dateLastAccessed = dateLastModified>
+				<!--- Get and set file type and MIME content --->
+				<cfquery datasource="#application.razuna.datasource#" name="fileType">
+				SELECT type_type, type_mimecontent, type_mimesubcontent
+				FROM file_types
+				WHERE lower(type_id) = <cfqueryparam value="#lcase(fileNameExt.theext)#" cfsqltype="cf_sql_varchar">
+				</cfquery>
+				<!--- set attributes of file structure --->
+				<cfif #fileType.recordCount# GT 0>
+					<cfset arguments.thestruct.thefiletype = fileType.type_type>
+				<cfelse>
+					<cfset arguments.thestruct.thefiletype = "other">
 				</cfif>
-				<!--- Get the directory name at the exact position in the list --->
-				<cfset var theServerDirname = listGetAt(name, theServerDirlen, FileSeparator())>
-				<!--- Get folder id with the name of the folder --->
-				<cfquery datasource="#application.razuna.datasource#" name="qryfolderidmain">
-				SELECT f.folder_id, f.folder_name,
-				CASE
-					WHEN EXISTS(
-						SELECT s.folder_id
-						FROM raz1_folders s
-						WHERE s.folder_id = f.folder_id_r
-						AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					) THEN 1
-					ELSE 0
-				END AS ISHERE
-				FROM #session.hostdbprefix#folders f
-				WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(theServerDirname)#">
-				AND f.folder_main_id_r = <cfqueryparam value="#qGetRootFolderID.folder_main_id_r#" cfsqltype="cf_sql_varchar">
-				<!---
-				AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
-				--->
-				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- Subselect --->
-				<cfquery dbtype="query" name="qryfolderid">
-				SELECT *
-				FROM qryfolderidmain
-				WHERE ishere = 1
-				</cfquery>
-				
-				<cfset temp=folderIdr>
-				<cfloop index="i" from=1 to="#theServerDirlen#">
-					<cfset folder_name = listGetAt(theServerDirfiles.name, i, FileSeparator())>
-					<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
-					SELECT folder_id,folder_name FROM  #session.hostdbprefix#folders 
-					WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
-					AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
-					AND folder_main_id_r = <cfqueryparam value="#qGetRootFolderID.folder_main_id_r#" cfsqltype="cf_sql_varchar">
+				<cfset arguments.thestruct.tempid = createuuid("")>
+				<cfset arguments.thestruct.thefilename = newFileName>
+				<cfset arguments.thestruct.thefilenamenoext = replacenocase("#newFileName#", ".#fileNameExt.theext#", "", "ALL")>
+				<cfset arguments.thestruct.theincomingtemppath = "#directory#/#arguments.thestruct.thepathtoname#">
+				<!--- Check if we have to check for md5 records --->
+				<cfinvoke component="settings" method="getmd5check" returnvariable="checkformd5" />
+				<!--- Check for the same MD5 hash in the existing records --->
+				<cfif checkformd5>
+					<!--- MD5 Hash --->
+					<cfif FileExists("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
+						<cfset var md5hash = hashbinary("#directory#/#arguments.thestruct.thepathtoname#/#newfilename#")>
+					</cfif>
+					<cfinvoke method="checkmd5" returnvariable="md5here" md5hash="#md5hash#" />
+				<cfelse>
+					<cfset var md5here = 0>
+				</cfif>
+				<!--- If file does not exsist continue else send user an eMail --->
+				<cfif md5here EQ 0>
+					<!--- Check for the name which now contains the directory --->
+					<cfset var theServerDirlen = listLen(name, FileSeparator()) - 1>
+					<!--- If the above return 0 --->
+					<cfif theServerDirlen EQ 0>
+						<cfset var theServerDirlen = 1>
+					</cfif>
+					<!--- Get the directory name at the exact position in the list --->
+					<cfset var theServerDirname = listGetAt(name, theServerDirlen, FileSeparator())>
+					<!--- Get folder id with the name of the folder --->
+					<cfquery datasource="#application.razuna.datasource#" name="qryfolderidmain">
+					SELECT f.folder_id, f.folder_name,
+					CASE
+						WHEN EXISTS(
+							SELECT s.folder_id
+							FROM raz1_folders s
+							WHERE s.folder_id = f.folder_id_r
+							AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						) THEN 1
+						ELSE 0
+					END AS ISHERE
+					FROM #session.hostdbprefix#folders f
+					WHERE lower(f.folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(theServerDirname)#">
+					AND f.folder_main_id_r = <cfqueryparam value="#qGetRootFolderID.folder_main_id_r#" cfsqltype="cf_sql_varchar">
+					<!---
+					AND f.folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#rootfolderId#">
+					--->
+					AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+					<!--- Subselect --->
+					<cfquery dbtype="query" name="qryfolderid">
+					SELECT *
+					FROM qryfolderidmain
+					WHERE ishere = 1
+					</cfquery>
+					
+					<cfset temp=folderIdr>
+					<cfloop index="i" from=1 to="#theServerDirlen#">
+						<cfset folder_name = listGetAt(theServerDirfiles.name, i, FileSeparator())>
+						<cfquery name="qryGetFolderDetails" datasource="#application.razuna.datasource#">
+						SELECT folder_id, folder_name 
+						FROM #session.hostdbprefix#folders 
+						WHERE lower(folder_name) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#lcase(folder_name)#">
+						AND folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#temp#">
+						AND folder_main_id_r = <cfqueryparam value="#qGetRootFolderID.folder_main_id_r#" cfsqltype="cf_sql_varchar">
+						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+						</cfquery>
+						<cfset temp="#qryGetFolderDetails.folder_id#">
+					</cfloop>
+					
+					<!--- Put folder id into the general struct --->
+					<cfif isDefined('temp') AND temp NEQ ''>
+						<cfset arguments.thestruct.theid = temp>
+					<cfelse>
+						<cfset arguments.thestruct.theid = folderIdr>
+						<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
+						<!--- <cfset arguments.thestruct.fidr = 0> --->
+					</cfif>
+					
+					<!--- Add to temp db --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#assets_temp
+					(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<cfif structkeyexists(arguments.thestruct,"sched")>, sched_id, sched_action</cfif>,thesize,file_id,host_id,md5hash)
+					VALUES(
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileNameExt.theext#">,
+					<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theid#">,
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
+					<cfif structkeyexists(arguments.thestruct,"sched")>
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.sched_id#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.sched_action#">,
+					</cfif>
+					<cfif isnumeric(file.fileSize)>
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="#file.fileSize#">,
+					<cfelse>
+						<cfqueryparam cfsqltype="cf_sql_varchar" value="0">,
+					</cfif>
+					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
+					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+					<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
+					)
+					</cfquery>
+					<!--- Return IDs in a variable --->
+					<!--- <cfset thetempids = arguments.thestruct.tempid & "," & thetempids> --->
+					<!--- For each file we need query for the file --->
+					<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qryfile">
+					SELECT 
+					tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype,
+					thesize, groupid, sched_id, sched_action, file_id, link_kind, md5hash
+					FROM #session.hostdbprefix#assets_temp
+					WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					</cfquery>
-					<cfset temp="#qryGetFolderDetails.folder_id#">
-				</cfloop>
-				
-				<!--- Put folder id into the general struct --->
-				<cfif isDefined('temp') AND temp NEQ ''>
-					<cfset arguments.thestruct.theid = temp>
+					<!--- We don't need to send an email --->
+					<cfset arguments.thestruct.sendemail = false>
+					<!--- Call the on_pre_process workflow --->
+					<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
+					<!--- Create inserts --->
+					<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
+					<!--- Call the addasset function --->
+					<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+						<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+					<!--- </cfthread> --->
 				<cfelse>
-					<cfset arguments.thestruct.theid = folderIdr>
-					<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.theincomingtemppath#">
-					<!--- <cfset arguments.thestruct.fidr = 0> --->
+					<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 				</cfif>
-				
-				<!--- Add to temp db --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#assets_temp
-				(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<cfif structkeyexists(arguments.thestruct,"sched")>, sched_id, sched_action</cfif>,thesize,file_id,host_id,md5hash)
-				VALUES(
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#fileNameExt.theext#">,
-				<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.theid#">,
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-				<cfif structkeyexists(arguments.thestruct,"sched")>
-					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.sched_id#">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.sched_action#">,
-				</cfif>
-				<cfif isnumeric(file.fileSize)>
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="#file.fileSize#">,
-				<cfelse>
-					<cfqueryparam cfsqltype="cf_sql_varchar" value="0">,
-				</cfif>
-				<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam cfsqltype="cf_sql_varchar" value="#md5hash#">
-				)
-				</cfquery>
-				<!--- Return IDs in a variable --->
-				<!--- <cfset thetempids = arguments.thestruct.tempid & "," & thetempids> --->
-				<!--- For each file we need query for the file --->
-				<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qryfile">
-				SELECT 
-				tempid, filename, extension, date_add, folder_id, who, filenamenoext, path, mimetype,
-				thesize, groupid, sched_id, sched_action, file_id, link_kind, md5hash
-				FROM #session.hostdbprefix#assets_temp
-				WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				</cfquery>
-				<!--- We don't need to send an email --->
-				<cfset arguments.thestruct.sendemail = false>
-				<!--- Call the on_pre_process workflow --->
-				<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
-				<!--- Create inserts --->
-				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
-				<!--- Call the addasset function --->
-				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-				<!--- </cfthread> --->
-			<cfelse>
-				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 			</cfif>
 		</cfif>
 	</cfloop>
@@ -1523,6 +1541,11 @@ This is the main function called directly by a single upload else from addassets
 	<cfif structkeyexists(arguments.thestruct,"sched")>
 		<!--- Log Insert --->
 		<cfinvoke component="scheduler" method="tolog" theschedid="#arguments.thestruct.sched_id#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Added file #arguments.thestruct.qryfile.filename#">
+		<!--- Remove in the temp db --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#assets_temp
+		WHERE tempid = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.qryfile.tempid#">
+		</cfquery>
 		<!--- First only do this for assets with the same sched id --->
 		<cfif arguments.thestruct.sched_id EQ arguments.thestruct.qryfile.sched_id AND fileExists("#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#")>
 			<cffile action="delete" file="#arguments.thestruct.folderpath#/#arguments.thestruct.thefilenameoriginal#">
@@ -2203,123 +2226,119 @@ This is the main function called directly by a single upload else from addassets
 			<cfset log_assets(theuserid=session.theuserid,logaction='Error',logdesc='Error: #arguments.thestruct.qryfile.filename# not recognized as image!',logfiletype='img')>
 		<cfelse>
 			<!--- Add remaining data to the image table --->
-			<cfthread intstruct="#arguments.thestruct#" priority="HIGH">
-				<cfquery datasource="#application.razuna.datasource#">
-				UPDATE #session.hostdbprefix#images
-				SET
-				img_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
-				img_owner = <cfqueryparam value="#attributes.intstruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
-				img_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
-				img_create_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-				img_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
-				img_custom_id = <cfqueryparam value="#attributes.intstruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">,
-				img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">,
-				img_extension = <cfqueryparam value="#attributes.intstruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
-				thumb_extension = <cfqueryparam value="#attributes.intstruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
-				link_path_url = <cfqueryparam value="#attributes.intstruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
-				link_kind = <cfqueryparam value="#attributes.intstruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
-				path_to_asset = <cfqueryparam value="#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#" cfsqltype="cf_sql_varchar">
-				<cfif !application.razuna.rfs>
-					,
-					is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
-				</cfif>
-				<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
-					,
-					img_filename_org = <cfqueryparam value="#attributes.intstruct.lanorgname#" cfsqltype="cf_sql_varchar">
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET
+			img_online = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
+			img_owner = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">,
+			img_create_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+			img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+			img_create_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			img_change_time = <cfqueryparam value="#now()#" cfsqltype="cf_sql_timestamp">,
+			img_custom_id = <cfqueryparam value="#arguments.thestruct.qryfile.filenamenoext#" cfsqltype="cf_sql_varchar">,
+			img_in_progress = <cfqueryparam value="T" cfsqltype="cf_sql_varchar">,
+			img_extension = <cfqueryparam value="#arguments.thestruct.qryfile.extension#" cfsqltype="cf_sql_varchar">,
+			thumb_extension = <cfqueryparam value="#arguments.thestruct.qrysettings.set2_img_format#" cfsqltype="cf_sql_varchar">,
+			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
+			link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
+			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
+			<cfif !application.razuna.rfs>
+				,
+				is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+			</cfif>
+			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
+				,
+				img_filename_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
+			<cfelse>
+				,
+				img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+			</cfif>
+			<cfif structkeyexists(arguments.thestruct.qryfile,"groupid") AND arguments.thestruct.qryfile.groupid NEQ "">
+				,
+				img_group = <cfqueryparam value="#arguments.thestruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfif>
+			<!--- For cloud --->
+			<cfif application.razuna.storage NEQ "local" AND arguments.thestruct.qryfile.link_kind EQ "">
+				,
+				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+			</cfif>
+			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+			<!--- Add to Lucene --->
+			<cfif NOT structkeyexists(arguments.thestruct,"fromconverting")>
+				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="img">
+			</cfif>
+			<!--- Add to shared options --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#share_options
+			(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+			VALUES(
+			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="thumb" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#share_options
+			(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
+			VALUES(
+			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.thestruct.hostid#" cfsqltype="cf_sql_numeric">,
+			<cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="#arguments.thestruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
+			<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
+			)
+			</cfquery>
+			<!--- If there are metadata fields then add them here --->
+			<cfif structKeyExists(arguments.thestruct,'metadata') AND arguments.thestruct.metadata EQ 1>
+				<!--- Check if API is called the old way --->
+				<cfif structkeyexists(arguments.thestruct,"sessiontoken")>
+					<cfinvoke component="global.api.asset" method="setmetadata">
+						<cfinvokeargument name="sessiontoken" value="#arguments.thestruct.sessiontoken#">
+						<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+						<cfinvokeargument name="assettype" value="img">
+						<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+					</cfinvoke>
 				<cfelse>
-					,
-					img_filename_org = <cfqueryparam value="#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
+					<!--- API2 --->
+					<cfinvoke component="global.api2.asset" method="setmetadata">
+						<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+						<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+						<cfinvokeargument name="assettype" value="img">
+						<cfinvokeargument name="assetmetadata" value="#arguments.thestruct.assetmetadata#">
+					</cfinvoke>
+					<!--- Add custom fields --->
+					<cfinvoke component="global.api2.customfield" method="setfieldvalue">
+						<cfinvokeargument name="api_key" value="#arguments.thestruct.api_key#">
+						<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+						<cfinvokeargument name="field_values" value="#arguments.thestruct.assetmetadatacf#">
+					</cfinvoke>
 				</cfif>
-				<cfif structkeyexists(attributes.intstruct.qryfile,"groupid") AND attributes.intstruct.qryfile.groupid NEQ "">
-					,
-					img_group = <cfqueryparam value="#attributes.intstruct.qryfile.groupid#" cfsqltype="CF_SQL_VARCHAR">
-				</cfif>
-				<!--- For cloud --->
-				<cfif application.razuna.storage NEQ "local" AND attributes.intstruct.qryfile.link_kind EQ "">
-					,
-					lucene_key = <cfqueryparam value="#attributes.intstruct.qryfile.path#/#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
-				</cfif>
-				WHERE img_id = <cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#attributes.intstruct.hostid#">
-				</cfquery>
-				<!--- Add to Lucene --->
-				<cfif NOT structkeyexists(attributes.intstruct,"fromconverting")>
-					<cfinvoke component="lucene" method="index_update" dsn="#attributes.intstruct.dsn#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.newid#" category="img">
-				</cfif>
-				<!--- Add to shared options --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#share_options
-				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
-				VALUES(
-				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="thumb" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#share_options
-				(asset_id_r, host_id, group_asset_id, folder_id_r, asset_type, asset_format, asset_dl, asset_order, rec_uuid)
-				VALUES(
-				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.hostid#" cfsqltype="cf_sql_numeric">,
-				<cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="#attributes.intstruct.qryfile.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				<cfqueryparam value="img" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="org" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="0" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="1" cfsqltype="cf_sql_varchar">,
-				<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
-				)
-				</cfquery>
-				<!--- If there are metadata fields then add them here --->
-				<cfif structKeyExists(attributes.intstruct,'metadata') AND attributes.intstruct.metadata EQ 1>
-					<!--- Check if API is called the old way --->
-					<cfif structkeyexists(attributes.intstruct,"sessiontoken")>
-						<cfinvoke component="global.api.asset" method="setmetadata">
-							<cfinvokeargument name="sessiontoken" value="#attributes.intstruct.sessiontoken#">
-							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
-							<cfinvokeargument name="assettype" value="img">
-							<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
-						</cfinvoke>
-					<cfelse>
-						<!--- API2 --->
-						<cfinvoke component="global.api2.asset" method="setmetadata">
-							<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#">
-							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
-							<cfinvokeargument name="assettype" value="img">
-							<cfinvokeargument name="assetmetadata" value="#attributes.intstruct.assetmetadata#">
-						</cfinvoke>
-						<!--- Add custom fields --->
-						<cfinvoke component="global.api2.customfield" method="setfieldvalue">
-							<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#">
-							<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
-							<cfinvokeargument name="field_values" value="#attributes.intstruct.assetmetadatacf#">
-						</cfinvoke>
-					</cfif>
-				</cfif>
-				<!--- Log --->
-				<cfinvoke component="extQueryCaching" method="log_assets">
-					<cfinvokeargument name="theuserid" value="#attributes.intstruct.theuserid#">
-					<cfinvokeargument name="logaction" value="Add">
-					<cfinvokeargument name="logdesc" value="Added: #attributes.intstruct.qryfile.filename#">
-					<cfinvokeargument name="logfiletype" value="img">
-					<cfinvokeargument name="assetid" value="#attributes.intstruct.newid#">
-				</cfinvoke>
-				<!--- RFS --->
-				<cfif application.razuna.rfs>
-					<cfset attributes.intstruct.assettype = "img">
-					<cfinvoke component="rfs" method="notify" thestruct="#attributes.intstruct#" />
-				</cfif>
-			</cfthread>
-			<!--- Wait for thread --->
-			<!--- <cfthread action="join" name="processImgFile#arguments.thestruct.newid#" timeout="90" /> --->
+			</cfif>
+			<!--- Log --->
+			<cfinvoke component="extQueryCaching" method="log_assets">
+				<cfinvokeargument name="theuserid" value="#arguments.thestruct.theuserid#">
+				<cfinvokeargument name="logaction" value="Add">
+				<cfinvokeargument name="logdesc" value="Added: #arguments.thestruct.qryfile.filename#">
+				<cfinvokeargument name="logfiletype" value="img">
+				<cfinvokeargument name="assetid" value="#arguments.thestruct.newid#">
+			</cfinvoke>
+			<!--- RFS --->
+			<cfif application.razuna.rfs>
+				<cfset arguments.thestruct.assettype = "img">
+				<cfinvoke component="rfs" method="notify" thestruct="#arguments.thestruct#" />
+			</cfif>
 			<!--- Flush Cache --->
 			<cfset resetcachetoken("images")>
 			<cfset resetcachetoken("folders")>
