@@ -561,7 +561,7 @@
 			<!-- CFC: Add to system -->
 			<cfinvoke component="assets" method="addassetscheduledserverthread" thestruct="#x#" />
 		<!--- FTP --->
-		<cfelseif doit.qry_detail.sched_method EQ "server">
+		<cfelseif doit.qry_detail.sched_method EQ "ftp">
 			<!-- Params -->
 			<cfset session.ftp_server = doit.qry_detail.sched_ftp_server>
 			<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
