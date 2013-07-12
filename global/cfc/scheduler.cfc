@@ -29,12 +29,11 @@
 <cffunction name="getAllEvents" returntype="query" output="true" access="public">
 	<!--- Query to get all records --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
-		SELECT sched_id, sched_name, sched_method, sched_status
-		FROM #session.hostdbprefix#schedules
-		WHERE set2_id_r  = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
-		AND sched_user = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		ORDER BY sched_name, sched_method
+	SELECT sched_id, sched_name, sched_method, sched_status
+	FROM #session.hostdbprefix#schedules
+	WHERE set2_id_r  = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	ORDER BY sched_name, sched_method
 	</cfquery>
 	<cfreturn qry>
 </cffunction>
