@@ -588,71 +588,73 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Get file detail for log --->
 	<cfinvoke method="getdetails" vid_id="#arguments.thestruct.id#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, v.lucene_key, v.link_kind, v.link_path_url, v.path_to_asset, v.vid_group" returnvariable="thedetail">
-	<!--- Execute workflow --->
-	<cfset arguments.thestruct.fileid = arguments.thestruct.id>
-	<cfset arguments.thestruct.file_name = thedetail.vid_filename>
-	<cfset arguments.thestruct.thefiletype = "vid">
-	<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-	<cfset arguments.thestruct.folder_action = false>
-	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-	<cfset arguments.thestruct.folder_action = true>
-	<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-	<!--- Update main record with dates --->
-	<cfinvoke component="global" method="update_dates" type="vid" fileid="#thedetail.vid_group#" />
-	<!--- Log --->
-	<cfinvoke component="extQueryCaching" method="log_assets">
-		<cfinvokeargument name="theuserid" value="#session.theuserid#">
-		<cfinvokeargument name="logaction" value="Delete">
-		<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
-		<cfinvokeargument name="logfiletype" value="vid">
-		<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
-	</cfinvoke>
-	<!--- Delete from files DB (including referenced data)--->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#videos
-	WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	</cfquery>
-	<!--- Delete from collection --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#collections_ct_files
-	WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND col_file_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-	</cfquery>
-	<!--- Delete from favorites --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#users_favorites
-	WHERE fav_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND fav_kind = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-	AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-	</cfquery>
-	<!--- Delete from Versions --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#versions
-	WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	AND ver_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-	</cfquery>
-	<!--- Delete from Share Options --->
-	<cfquery datasource="#application.razuna.datasource#">
-	DELETE FROM #session.hostdbprefix#share_options
-	WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-	</cfquery>
-	<!--- Delete labels --->
-	<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
-	<!--- Custom field values --->
-	<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
-	<!--- Flush Cache --->
-	<cfset variables.cachetoken = resetcachetoken("videos")>
-	<cfset variables.cachetoken = resetcachetoken("folders")>
-	<!--- Delete from file system --->
-	<cfset arguments.thestruct.hostid = session.hostid>
-	<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
-	<cfset arguments.thestruct.qrydetail = thedetail>
-	<cfset arguments.thestruct.link_kind = thedetail.link_kind>
-	<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-	<cfthread intstruct="#arguments.thestruct#">
-		<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
-	</cfthread>
+	<cfif thedetail.recordcount NEQ 0>
+		<!--- Execute workflow --->
+		<cfset arguments.thestruct.fileid = arguments.thestruct.id>
+		<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+		<cfset arguments.thestruct.thefiletype = "vid">
+		<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+		<cfset arguments.thestruct.folder_action = false>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfset arguments.thestruct.folder_action = true>
+		<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<!--- Update main record with dates --->
+		<cfinvoke component="global" method="update_dates" type="vid" fileid="#thedetail.vid_group#" />
+		<!--- Log --->
+		<cfinvoke component="extQueryCaching" method="log_assets">
+			<cfinvokeargument name="theuserid" value="#session.theuserid#">
+			<cfinvokeargument name="logaction" value="Delete">
+			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
+			<cfinvokeargument name="logfiletype" value="vid">
+			<cfinvokeargument name="assetid" value="#arguments.thestruct.id#">
+		</cfinvoke>
+		<!--- Delete from files DB (including referenced data)--->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#videos
+		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
+		<!--- Delete from collection --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#collections_ct_files
+		WHERE file_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND col_file_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Delete from favorites --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#users_favorites
+		WHERE fav_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND fav_kind = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+		AND user_id_r = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Delete from Versions --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#versions
+		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		AND ver_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+		</cfquery>
+		<!--- Delete from Share Options --->
+		<cfquery datasource="#application.razuna.datasource#">
+		DELETE FROM #session.hostdbprefix#share_options
+		WHERE asset_id_r = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+		</cfquery>
+		<!--- Delete labels --->
+		<cfinvoke component="labels" method="label_ct_remove" id="#arguments.thestruct.id#" />
+		<!--- Custom field values --->
+		<cfinvoke component="custom_fields" method="delete_values" fileid="#arguments.thestruct.id#" />
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("videos")>
+		<cfset variables.cachetoken = resetcachetoken("folders")>
+		<!--- Delete from file system --->
+		<cfset arguments.thestruct.hostid = session.hostid>
+		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
+		<cfset arguments.thestruct.qrydetail = thedetail>
+		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
+		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+		</cfthread>
+	</cfif>
 	<cfreturn />
 </cffunction>
 
@@ -840,67 +842,69 @@
 		<cfset i = listfirst(i,"-")>
 		<!--- Get file detail for log --->
 		<cfinvoke method="getdetails" vid_id="#i#" ColumnList="v.vid_filename, v.folder_id_r, v.vid_name_org filenameorg, v.vid_name_image, lucene_key, link_kind, link_path_url, path_to_asset" returnvariable="thedetail">
-		<!--- Execute workflow --->
-		<cfif !arguments.thestruct.fromfolderremove>
-			<cfset arguments.thestruct.fileid = i>
-			<cfset arguments.thestruct.file_name = thedetail.vid_filename>
-			<cfset arguments.thestruct.thefiletype = "vid">
-			<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
-			<cfset arguments.thestruct.folder_action = false>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
-			<cfset arguments.thestruct.folder_action = true>
-			<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+		<cfif thedetail.recordcount NEQ 0>
+			<!--- Execute workflow --->
+			<cfif !arguments.thestruct.fromfolderremove>
+				<cfset arguments.thestruct.fileid = i>
+				<cfset arguments.thestruct.file_name = thedetail.vid_filename>
+				<cfset arguments.thestruct.thefiletype = "vid">
+				<cfset arguments.thestruct.folder_id = thedetail.folder_id_r>
+				<cfset arguments.thestruct.folder_action = false>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+				<cfset arguments.thestruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_remove" args="#arguments.thestruct#" />
+			</cfif>
+			<!--- Log --->
+			<cfinvoke component="extQueryCaching" method="log_assets">
+				<cfinvokeargument name="theuserid" value="#session.theuserid#">
+				<cfinvokeargument name="logaction" value="Delete">
+				<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
+				<cfinvokeargument name="logfiletype" value="vid">
+				<cfinvokeargument name="assetid" value="#i#">
+			</cfinvoke>
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#videos
+			WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+			</cfquery>
+			<!--- Delete from collection --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#collections_ct_files
+			WHERE file_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND col_file_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Delete from favorites --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#users_favorites
+			WHERE fav_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND fav_kind = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+			AND user_id_r = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<!--- Delete from Versions --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#versions
+			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			AND ver_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
+			</cfquery>
+			<!--- Delete from Share Options --->
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #arguments.thestruct.hostdbprefix#share_options
+			WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
+			</cfquery>
+			<!--- Delete labels --->
+			<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
+			<!--- Custom field values --->
+			<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" />
+			<!--- Delete from file system --->
+			<cfset arguments.thestruct.id = i>
+			<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
+			<cfset arguments.thestruct.qrydetail = thedetail>
+			<cfset arguments.thestruct.link_kind = thedetail.link_kind>
+			<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
+			<cfthread intstruct="#arguments.thestruct#">
+				<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
+			</cfthread>
 		</cfif>
-		<!--- Log --->
-		<cfinvoke component="extQueryCaching" method="log_assets">
-			<cfinvokeargument name="theuserid" value="#session.theuserid#">
-			<cfinvokeargument name="logaction" value="Delete">
-			<cfinvokeargument name="logdesc" value="Deleted: #thedetail.vid_filename#">
-			<cfinvokeargument name="logfiletype" value="vid">
-			<cfinvokeargument name="assetid" value="#i#">
-		</cfinvoke>
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#videos
-		WHERE vid_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-		</cfquery>
-		<!--- Delete from collection --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#collections_ct_files
-		WHERE file_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND col_file_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- Delete from favorites --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#users_favorites
-		WHERE fav_id = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND fav_kind = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-		AND user_id_r = <cfqueryparam value="#arguments.thestruct.theuserid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
-		<!--- Delete from Versions --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#versions
-		WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		AND ver_type = <cfqueryparam value="vid" cfsqltype="cf_sql_varchar">
-		</cfquery>
-		<!--- Delete from Share Options --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #arguments.thestruct.hostdbprefix#share_options
-		WHERE asset_id_r = <cfqueryparam value="#i#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
-		<!--- Delete labels --->
-		<cfinvoke component="labels" method="label_ct_remove" id="#i#" />
-		<!--- Custom field values --->
-		<cfinvoke component="custom_fields" method="delete_values" fileid="#i#" />
-		<!--- Delete from file system --->
-		<cfset arguments.thestruct.id = i>
-		<cfset arguments.thestruct.folder_id_r = thedetail.folder_id_r>
-		<cfset arguments.thestruct.qrydetail = thedetail>
-		<cfset arguments.thestruct.link_kind = thedetail.link_kind>
-		<cfset arguments.thestruct.filenameorg = thedetail.filenameorg>
-		<cfthread intstruct="#arguments.thestruct#">
-			<cfinvoke method="deletefromfilesystem" thestruct="#attributes.intstruct#">
-		</cfthread>
 	</cfloop>
 	<!--- Flush Cache --->
 	<cfset variables.cachetoken = resetcachetoken("videos")>
