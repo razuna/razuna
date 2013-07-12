@@ -1841,15 +1841,15 @@
 <cffunction name="movethread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Loop over files --->
-	<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-		<cfloop list="#arguments.thestruct.file_id#" delimiters="," index="fileid">
-			<cfset arguments.thestruct.vid_id = "">
-			<cfset arguments.thestruct.vid_id = listfirst(fileid,"-")>
-			<cfif arguments.thestruct.vid_id NEQ "">
-				<cfinvoke method="move" thestruct="#arguments.thestruct#" />
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfloop list="#attributes.intstruct.file_id#" delimiters="," index="fileid">
+			<cfset attributes.intstruct.vid_id = "">
+			<cfset attributes.intstruct.vid_id = listfirst(fileid,"-")>
+			<cfif attributes.intstruct.vid_id NEQ "">
+				<cfinvoke method="move" thestruct="#attributes.intstruct#" />
 			</cfif>
 		</cfloop>
-	<!--- </cfthread> --->
+	</cfthread>
 	<!--- Flush Cache --->
 	<cfset resetcachetoken("folders")>
 	<cfset resetcachetoken("videos")>
@@ -1875,23 +1875,23 @@
 				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<cfthread intstruct="#arguments.thestruct#">
+				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<!--- Update Dates --->
-					<cfinvoke component="global" method="update_dates" type="vid" fileid="#attributes.intstruct.vid_id#" />
+					<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.vid_id#" />
 					<!--- Update Lucene --->
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.vid_id#" category="vid" notfile="T">
+					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.vid_id#" category="vid" notfile="T">
 					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
-					<cfinvoke method="moverelated" thestruct="#attributes.intstruct#">
+					<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 					<!--- Execute workflow --->
-					<cfset attributes.intstruct.fileid = attributes.intstruct.vid_id>
-					<cfset attributes.intstruct.file_name = attributes.intstruct.qryvid.vid_filename>
-					<cfset attributes.intstruct.thefiletype = "vid">
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
-					<cfset attributes.intstruct.folder_action = true>
-					<cfset attributes.intstruct.folder_id = attributes.intstruct.folder_id>
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#attributes.intstruct#" />
-					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#attributes.intstruct#" />
-				</cfthread>
+					<cfset arguments.thestruct.fileid = arguments.thestruct.vid_id>
+					<cfset arguments.thestruct.file_name = arguments.thestruct.qryvid.vid_filename>
+					<cfset arguments.thestruct.thefiletype = "vid">
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+					<cfset arguments.thestruct.folder_action = true>
+					<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_move" args="#arguments.thestruct#" />
+					<cfinvoke component="plugins" method="getactions" theaction="on_file_add" args="#arguments.thestruct#" />
+				<!--- </cfthread> --->
 				<!--- Log --->
 				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qryvid.vid_filename#',logfiletype='vid',assetid=arguments.thestruct.vid_id)>
 			</cfif>
