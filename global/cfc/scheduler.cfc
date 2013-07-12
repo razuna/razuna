@@ -484,6 +484,7 @@
 	<cfargument name="langcount" type="string" required="yes">
 	<cfargument name="rootpath" type="string" required="yes">
 	<cfargument name="assetpath" type="string" required="yes">
+	<cfargument name="dynpath" type="string" required="yes">
 	<!--- Param --->
 	<cfset var doit = structnew()>
 	<cfset var x = structnew()>
@@ -499,8 +500,17 @@
 	<cfset x.langcount = arguments.langcount>
 	<cfset x.rootpath = arguments.rootpath>
 	<cfset x.assetpath = arguments.assetpath>
+	<cfset x.dynpath = arguments.dynpath>
 	<!--- Get details of this schedule --->
 	<cfinvoke method="detail" sched_id="#arguments.sched_id#" returnvariable="doit.qry_detail">
+	<!-- Set return into scope -->
+	<cfset x.folder_id = doit.qry_detail.sched_folder_id_r>
+	<cfset x.sched_action = doit.qry_detail.sched_server_files>
+	<cfset x.upl_template = doit.qry_detail.sched_upl_template>
+	<cfset x.directory = doit.qry_detail.sched_server_folder>
+	<cfset x.recurse = doit.qry_detail.sched_server_recurse>
+	<cfset x.zip_extract = doit.qry_detail.sched_zip_extract>
+	<cfset session.theuserid = doit.qry_detail.sched_user>
 	<!--- If no record found simply abort --->
 	<cfif doit.qry_detail.recordcount EQ 0>
 		<cfabort>
@@ -546,14 +556,6 @@
 			<!--- Sleep the process (just making sure that the rename had enough time) --->
 			<cfset sleep(5000)>
 			 --->
-			<!-- Set return into scope -->
-			<cfset x.folder_id = doit.qry_detail.sched_folder_id_r>
-			<cfset x.sched_action = doit.qry_detail.sched_server_files>
-			<cfset x.upl_template = doit.qry_detail.sched_upl_template>
-			<cfset x.directory = doit.qry_detail.sched_server_folder>
-			<cfset x.recurse = doit.qry_detail.sched_server_recurse>
-			<cfset x.zip_extract = doit.qry_detail.sched_zip_extract>
-			<cfset session.theuserid = doit.qry_detail.sched_user>
 			<!-- CFC: Log start -->
 			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Upload" />
 			<!-- Set params for adding assets -->
@@ -567,7 +569,6 @@
 			<cfset session.ftp_user = doit.qry_detail.sched_ftp_user>
 			<cfset session.ftp_pass = doit.qry_detail.sched_ftp_pass>
 			<cfset session.ftp_passive = doit.qry_detail.sched_ftp_passive>
-			<cfset x.folderpath = doit.qry_detail.sched_ftp_folder>
 			<!-- CFC: Get FTP directory for adding to the system -->
 			<cfinvoke component="ftp" method="getdirectory" thestruct="#x#" returnvariable="thefiles" />
 			<cfset x.thefile = valuelist(thefiles.ftplist.name) />
