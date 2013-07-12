@@ -468,8 +468,6 @@
 					<!--- </cflock> --->
 				</cfif>
 				<cfcatch type="any">
-					<cfset consoleoutput(true)>
-					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
 		</cfif>
