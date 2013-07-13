@@ -301,6 +301,9 @@
 			<!--- Insert records into backup db	 --->	
 			<cfloop query="sourcedb">
 				<cftry>
+					<!--- Feedback --->
+					<cfoutput>.</cfoutput>
+					<cfflush>
 					<cfquery dataSource="#arguments.thestruct.dsn#">
 					INSERT INTO #lcase(arguments.thestruct.tschema)#.#lcase(thetable)#
 					(<cfloop list="#sourcedb.columnlist#" index="m">#listfirst(m,"-")#<cfif len_count_meta NEQ len_meta>, </cfif><cfset len_count_meta = len_count_meta + 1></cfloop>)
