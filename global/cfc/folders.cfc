@@ -1468,7 +1468,7 @@
 </cffunction>
 
 <!--- Get All Folder Trash --->
-<cffunction name="gettrashfolder" output="false" output="false" returntype="Query">
+<cffunction name="gettrashfolder" output="false" returntype="Query">
 	<!--- Param --->
 	<cfset var folderIDs = "">
 	<cfset var qry = "">
