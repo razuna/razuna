@@ -878,7 +878,7 @@
 	<cffunction name="download" access="public" output="true">
 		<cfargument name="remotefile" type="string" required="true" />
 		<cfargument name="localfile" type="string" required="true" />
-		<cfargument name="nvxsession" type="string" required="true" />
+		<cfargument name="nvxsession" type="string" required="false" />
 		<!--- Get session --->
 		<cfset var nvxsession = login()>
 		<!--- Download asset --->
