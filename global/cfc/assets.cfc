@@ -365,6 +365,8 @@
 		<cfloop query="theServerDirfiles">
 			<cfif fileexists("#directory#/#name#")>
 				<cftry>
+					<!--- Create tempid --->
+					<cfset arguments.thestruct.tempid = createuuid("")>
 					<cfset var temp="">
 					<cfset var md5hash = "">
 					<cfset var fileinprocess = "">
@@ -377,11 +379,11 @@
 					<cfinvoke component="global" method="convertname" returnvariable="newFileName" thename="#arguments.thestruct.theoriginalfilename#">
 					<cffile action="rename" source="#directory#/#name#" destination="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#" mode="775" />
 					<!--- The temppath --->
-					<cfset arguments.thestruct.theincomingtemppath = "#directory#/#arguments.thestruct.thepathtoname#">
+					<cfset arguments.thestruct.theincomingtemppath = "#arguments.thestruct.incomingpath#/#arguments.thestruct.tempid#">
 					<!--- Create dir in incoming path --->
-					<!--- <cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775" /> --->
+					<cfdirectory action="create" directory="#arguments.thestruct.theincomingtemppath#" mode="775" />
 					<!--- Copy file to incoming path --->
-					<!--- <cffile action="move" source="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#" destination="#arguments.thestruct.theincomingtemppath#/#newFileName#" mode="775" /> --->
+					<cffile action="move" source="#directory#/#arguments.thestruct.thepathtoname#/#newFileName#" destination="#arguments.thestruct.theincomingtemppath#/#newFileName#" mode="775" />
 					<!--- Detect file extension --->
 					<cfinvoke method="getFileExtension" theFileName="#newFileName#" returnvariable="fileNameExt">
 					<cfset var file = structnew()>
@@ -418,8 +420,6 @@
 					</cfif>
 					<!--- If file does not exsist continue else send user an eMail --->
 					<cfif md5here EQ 0>
-						<!--- Create tempid --->
-						<cfset arguments.thestruct.tempid = createuuid("")>
 						<!--- Check for the name which now contains the directory --->
 						<cfset var theServerDirlen = listLen(name, FileSeparator()) - 1>
 						<!--- If the above return 0 --->
