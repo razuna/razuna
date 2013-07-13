@@ -989,6 +989,9 @@
 				<!--- Insert records into target db --->	
 				<cfloop query="sourcedb">
 					<cftry>
+						<!--- Feedback --->
+						<cfoutput>.</cfoutput>
+						<cfflush>
 						<cfquery dataSource="#application.razuna.datasource#">
 						INSERT INTO #lcase(thetable)#
 						(<cfloop list="#sourcedb.columnlist#" index="m">#listfirst(m,"-")#<cfif len_count_meta NEQ len_meta>, </cfif><cfset len_count_meta = len_count_meta + 1></cfloop>)
