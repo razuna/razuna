@@ -773,7 +773,9 @@
 		<!--- Get proper folderaccess --->
 		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
 		<!--- Add labels query --->
-		<cfset QuerySetCell(details, "perm", theaccess)>
+		<cfif theaccess NEQ "">
+			<cfset QuerySetCell(details, "perm", theaccess)>
+		</cfif>
 		<!--- Get descriptions and keywords --->
 		<cfquery datasource="#variables.dsn#" name="desc" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#detaildescfiles */ lang_id_r, file_keywords, file_desc
@@ -1298,7 +1300,9 @@
 		<cfloop query="qry">
 			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
 			<!--- Add labels query --->
-			<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+			<cfif theaccess NEQ "">
+				<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+			</cfif>
 		</cfloop>
 		<cfreturn qry>
 	</cffunction>
