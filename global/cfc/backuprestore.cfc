@@ -36,6 +36,7 @@
 	<!--- Backup to internal DB --->
 	<cffunction name="backuptodb" output="true">
 		<cfargument name="thestruct" type="struct">
+		<cfsetting RequestTimeout = "3600">
 		<!--- Params --->
 		<cfset arguments.thestruct.dsn = "razuna_backup">
 		<cfset arguments.thestruct.fromimport = "T">
@@ -301,9 +302,6 @@
 			<!--- Insert records into backup db	 --->	
 			<cfloop query="sourcedb">
 				<cftry>
-					<!--- Feedback --->
-					<cfoutput>.</cfoutput>
-					<cfflush>
 					<cfquery dataSource="#arguments.thestruct.dsn#">
 					INSERT INTO #lcase(arguments.thestruct.tschema)#.#lcase(thetable)#
 					(<cfloop list="#sourcedb.columnlist#" index="m">#listfirst(m,"-")#<cfif len_count_meta NEQ len_meta>, </cfif><cfset len_count_meta = len_count_meta + 1></cfloop>)
@@ -894,6 +892,7 @@
 	<!--- Restore --->
 	<cffunction name="restorexml" output="true">
 		<cfargument name="thestruct" type="struct">
+		<cfsetting RequestTimeout = "3600">
 		<!--- Get the backed up tables --->
 		<cfquery dataSource="razuna_backup" name="backup_tables">
 		SELECT lower(table_name) as thetable, table_schema
@@ -992,9 +991,6 @@
 				<!--- Insert records into target db --->	
 				<cfloop query="sourcedb">
 					<cftry>
-						<!--- Feedback --->
-						<cfoutput>.</cfoutput>
-						<cfflush>
 						<cfquery dataSource="#application.razuna.datasource#">
 						INSERT INTO #lcase(thetable)#
 						(<cfloop list="#sourcedb.columnlist#" index="m">#listfirst(m,"-")#<cfif len_count_meta NEQ len_meta>, </cfif><cfset len_count_meta = len_count_meta + 1></cfloop>)
