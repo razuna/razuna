@@ -3718,7 +3718,6 @@
 	<cfreturn />
 </cffunction>
 
-
 <!--- THREAD: Save the combined view --->
 <cffunction name="combined_save_thread" output="true">
 	<cfargument name="thestruct" type="struct" required="true">
@@ -3784,6 +3783,15 @@
 				<!--- Store the id in a temp var --->
 				<cfset var imgid = theid>
 				<cfset arguments.thestruct.theid = theid>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.theid>
+				<cfset arguments.thestruct.file_name = #form["#fname#"]#>
+				<cfset arguments.thestruct.thefiletype = "img">
+				<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+				<cfset arguments.thestruct.folder_action = false>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+				<cfset arguments.thestruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<!--- Lucene --->
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Get file detail --->
@@ -3849,6 +3857,15 @@
 				<!--- Store the id in a temp var --->
 				<cfset var vidid = theid>
 				<cfset arguments.thestruct.theid = theid>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.theid>
+				<cfset arguments.thestruct.file_name = #form["#fname#"]#>
+				<cfset arguments.thestruct.thefiletype = "vid">
+				<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+				<cfset arguments.thestruct.folder_action = false>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+				<cfset arguments.thestruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<!--- Lucene --->
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Get file detail --->
@@ -3913,6 +3930,15 @@
 				<!--- Store the id in a temp var --->
 				<cfset var audid = theid>	
 				<cfset arguments.thestruct.theid = theid>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.theid>
+				<cfset arguments.thestruct.file_name = #form["#fname#"]#>
+				<cfset arguments.thestruct.thefiletype = "aud">
+				<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+				<cfset arguments.thestruct.folder_action = false>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+				<cfset arguments.thestruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<!--- Lucene --->
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Get file detail --->
@@ -3982,6 +4008,15 @@
 				<!--- Store the id in a temp var --->
 				<cfset var docid = theid>
 				<cfset arguments.thestruct.theid = theid>
+				<!--- Execute workflow --->
+				<cfset arguments.thestruct.fileid = arguments.thestruct.theid>
+				<cfset arguments.thestruct.file_name = #form["#fname#"]#>
+				<cfset arguments.thestruct.thefiletype = "doc">
+				<cfset arguments.thestruct.folder_id = arguments.thestruct.folder_id>
+				<cfset arguments.thestruct.folder_action = false>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
+				<cfset arguments.thestruct.folder_action = true>
+				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<!--- Lucene --->
 				<cfthread intstruct="#arguments.thestruct#">
 					<!--- Get file detail --->

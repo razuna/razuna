@@ -5350,15 +5350,17 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
-		<!-- Param -->
-		<set name="attributes.sched" value="T" />
-		<set name="attributes.thepath" value="#thispath#" />
-		<set name="attributes.incomingpath" value="#thispath#/incoming" />
-		<set name="attributes.langcount" value="#qry_langs.recordcount#" />
-		<set name="attributes.rootpath" value="#ExpandPath('../..')#" />
-		<set name="attributes.dynpath" value="#dynpath#" />
 		<!-- CFC: Get the Schedule -->
-		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="doit(attributes.sched_id,attributes.incomingpath,attributes.sched,attributes.thepath,attributes.langcount,attributes.rootpath,attributes.assetpath,attributes.dynpath)" returnvariable="thetask" />
+		<invoke object="myFusebox.getApplicationData().scheduler" method="doit" returnvariable="thetask">
+			<argument name="sched_id" value="#attributes.sched_id#" />
+			<argument name="incomingpath" value="#thispath#/incoming" />
+			<argument name="sched" value="T" />
+			<argument name="thepath" value="#thispath#" />
+			<argument name="langcount" value="#qry_langs.recordcount#" />
+			<argument name="rootpath" value="#ExpandPath('../..')#" />
+			<argument name="assetpath" value="#attributes.assetpath#" />
+			<argument name="dynpath" value="#dynpath#" />
+		</invoke>
 	</fuseaction>
 		
 	<!--  -->
