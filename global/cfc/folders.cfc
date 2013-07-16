@@ -1554,7 +1554,7 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfset folderIDs = ValueList(getColfolderIDs.folder_id)>
-			<cfif !listlen(folderIDs)>
+			<cfif !listlen(folderIDs) AND folderIDs NEQ "">
 				<cfinvoke method="getAssetsDetails" folder_id="#folderIDs#" returnvariable="flag">
 				<!--- Update The "in_collection" Field With The Flag Returned From getAssetsDetails --->
 				<cfif flag.recordcount NEQ 0>
@@ -2288,6 +2288,10 @@
 <!--- GET ASSETS DETAILS --->
 <cffunction name="getAssetsDetails" output="false" hint="GET ASSETS DETAILS" returntype="Any" >
 	<cfargument name="folder_id" default="0" required="yes" type="string">
+	<!--- If folder is is empty --->
+	<cfif arguments.folder_id EQ "">
+		<cfset arguments.folder_id = 0>
+	</cfif>
 	<!--- Param --->
 	<cfset return_flag = false>
 	<!--- Get the cachetoken for here --->
