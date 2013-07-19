@@ -767,13 +767,15 @@
 	</cfif>
 	</cfquery>
 	<!--- Get proper folderaccess --->
-	<cfloop query="qry">
-		<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-		<!--- Add labels query --->
-		<cfif theaccess NEQ "">
-			<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
-		</cfif>
-	</cfloop>
+	<cfif arguments.thestruct.fa NEQ "c.basket" AND arguments.thestruct.fa NEQ "c.basket_put">
+		<cfloop query="qry">
+			<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
+			<!--- Add labels query --->
+			<cfif theaccess NEQ "">
+				<cfset QuerySetCell(qry, "perm", theaccess, currentRow)>
+			</cfif>
+		</cfloop>
+	</cfif>
 	<cfreturn qry>
 </cffunction>
 
