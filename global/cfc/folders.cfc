@@ -1608,22 +1608,67 @@
 			<cfif permfolder NEQ "R">
 				<!--- IMAGES --->
 				<cfif kind EQ "img">
+					<!--- Change db to have another in_trash flag --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#images
+					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
+					WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					</cfquery>
+					<!--- Flush cache --->
+					<cfset resetcachetoken("images")>
+					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="images" method="removeimage" thestruct="#attributes.instruct.thestruct#" />
 				<!--- VIDEOS --->
 				<cfelseif kind EQ "vid">
+					<!--- Change db to have another in_trash flag --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#videos
+					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
+					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					</cfquery>
+					<!--- Flush cache --->
+					<cfset resetcachetoken("videos")>
+					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="videos" method="removevideo" thestruct="#attributes.instruct.thestruct#" />
 				<!--- FILES --->
 				<cfelseif kind EQ "doc">
+					<!--- Change db to have another in_trash flag --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#files
+					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
+					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					</cfquery>
+					<!--- Flush cache --->
+					<cfset resetcachetoken("files")>
+					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="files" method="removefile" thestruct="#attributes.instruct.thestruct#" />
 				<!--- AUDIOS --->
 				<cfelseif kind EQ "aud">
+					<!--- Change db to have another in_trash flag --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#audios
+					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
+					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					</cfquery>
+					<!--- Flush cache --->
+					<cfset resetcachetoken("audios")>
+					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="audios" method="removeaudio" thestruct="#attributes.instruct.thestruct#" />
 				<!--- FOLDERS --->
 				<cfelseif kind EQ "folder">
+					<!--- Change db to have another in_trash flag --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#folders
+					SET in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="X">
+					WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
+					</cfquery>
+					<!--- Flush cache --->
+					<cfset resetcachetoken("folders")>
+					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.folder_id = id>
 					<cfinvoke method="remove" thestruct="#attributes.instruct.thestruct#" />
 				</cfif>
@@ -2189,6 +2234,7 @@
 	<!--- Param --->
 	<cfparam name="session.showsubfolders" default="F">
 	<cfparam name="session.customfileid" default="">
+	<cfset var thefolderlist = "">
 	<!--- Show assets from subfolders or not --->
 	<cfif arguments.thestruct.folder_id NEQ "">
 		<cfif session.showsubfolders EQ "T">
@@ -2206,7 +2252,7 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (img_group IS NULL OR img_group = '')
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.thestruct.folder_id NEQ "">
+		<cfif thefolderlist NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		<cfif session.customfileid NEQ "">
@@ -2221,7 +2267,7 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (vid_group IS NULL OR vid_group = '')
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.thestruct.folder_id NEQ "">
+		<cfif thefolderlist NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		<cfif session.customfileid NEQ "">
@@ -2236,7 +2282,7 @@
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND (aud_group IS NULL OR aud_group = '')
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.thestruct.folder_id NEQ "">
+		<cfif thefolderlist NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		<cfif session.customfileid NEQ "">
@@ -2250,7 +2296,7 @@
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.thestruct.folder_id NEQ "">
+		<cfif thefolderlist NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		<cfif session.customfileid NEQ "">
@@ -2264,7 +2310,7 @@
 		FROM #session.hostdbprefix#files
 		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-		<cfif arguments.thestruct.folder_id NEQ "">
+		<cfif thefolderlist NEQ "">
 			AND folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
 		</cfif>
 		AND 
