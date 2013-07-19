@@ -44,7 +44,7 @@
 					<cfif cs.tab_iptc_status><li tabindex="5"><a href="##iptc_status">IPTC Status</a></li></cfif>
 					<cfif cs.tab_origin><li tabindex="6"><a href="##iptc_origin">Origin</a></li></cfif>
 				</cfif>
-				<cfif cs.tab_labels><li tabindex="7"><a href="##batch_labels">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li></cfif>
+				<cfif cs.tab_labels><li tabindex="7"><a href="##batch_labels" onclick="activatechosen();">#myFusebox.getApplicationData().defaults.trans("labels")#</a></li></cfif>
 				<cfif cs.tab_custom_fields AND qry_cf.recordcount><li tabindex="8"><a href="##batch_custom">#myFusebox.getApplicationData().defaults.trans("custom_fields_header")#</a></li></cfif>
 			</ul>
 			<!--- Descriptions & Keywords --->
@@ -104,7 +104,7 @@
 			<cfif cs.tab_labels>
 				<div id="batch_labels" style="min-height:200px;">
 					<strong>Choose #myFusebox.getApplicationData().defaults.trans("labels")#</strong><br />
-					<select data-placeholder="Choose a label" class="chzn-select" style="width:311px;" name="labels" id="batch_labels" multiple="multiple">
+					<select data-placeholder="Choose a label" class="chzn-select" style="width:410px;" name="labels" id="tags_labels" multiple="multiple">
 						<option value=""></option>
 						<cfloop query="qry_labels">
 							<cfset l = replace(label_path," "," AND ","all")>
@@ -134,8 +134,6 @@
 	<script language="JavaScript" type="text/javascript">
 		// Initialize Tabs
 		jqtabs("tabs_batch");
-		// Activate Chosen
-		$(".chzn-select").chosen();
 		// Submit Form
 		$("##form0").submit(function(e){
 			// Show
@@ -155,6 +153,15 @@
 			   	}
 			});
 			return false;
-		})
+		});
+		// Activate Chosen
+		function activatechosen(){
+			setTimeout(function() {
+		    	activatechosendelay();
+			}, 10)
+		};
+		function activatechosendelay(){
+			$(".chzn-select").chosen();
+		}
 	</script>
 </cfoutput>
