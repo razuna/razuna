@@ -527,6 +527,8 @@
 <cffunction name="gettrashaudio" output="false" returntype="Query">
 	<!--- Param --->
 	<cfset var qry_audio = "">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("audios")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_audio" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#gettrashaudio */ 

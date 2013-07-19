@@ -32,13 +32,13 @@
 		<div id="tabsfolder_tab">
 			<ul>
 				<!--- Show the trash asset and folder content--->
-				<li><a href="##assets" onclick="loadcontent('assets','#myself##xfa.ftrashassets#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")# (#arraySum(Count_trash['cnt'])#)</a></li>
+				<li><a href="##assets">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")# (#arraySum(Count_trash['cnt'])#)</a></li>
 			</ul>
 			<div id="assets"></div>
 		</div>
 		<script type="text/javascript">
 			jqtabs("tabsfolder_tab");
-			loadcontent('assets','#myself#c.trash_assets');
+			$('##assets').load('#myself#c.trash_assets');
 		</script>
 	</cfif>
 </cfoutput>

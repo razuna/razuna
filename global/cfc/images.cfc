@@ -402,72 +402,74 @@
 
 <!--- Get images from trash --->
 <cffunction name="gettrashimage" output="false" returntype="Query">
-		<!--- Param --->
-		<cfset var qry_image = "">
-		<!--- Query --->
-		<cfquery datasource="#application.razuna.datasource#" name="qry_image" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#gettrashimage */ i.img_id AS id, i.img_filename AS filename, i.folder_id_r, i.thumb_extension AS ext,
-		i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind, i.path_to_asset, i.cloud_url, i.cloud_url_org, 
-		i.hashtag, 'false' AS in_collection, 'images' as what, '' AS folder_main_id_r
-		<!--- Permfolder --->
-		<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
-			, 'X' as permfolder
-		<cfelse>
-			,
-			CASE
+	<!--- Param --->
+	<cfset var qry_image = "">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("images")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="qry_image" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#gettrashimage */ i.img_id AS id, i.img_filename AS filename, i.folder_id_r, i.thumb_extension AS ext,
+	i.img_filename_org AS filename_org, 'img' AS kind, i.link_kind, i.path_to_asset, i.cloud_url, i.cloud_url_org, 
+	i.hashtag, 'false' AS in_collection, 'images' as what, '' AS folder_main_id_r
+	<!--- Permfolder --->
+	<cfif Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser()>
+		, 'X' as permfolder
+	<cfelse>
+		,
+		CASE
+			WHEN (SELECT DISTINCT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = i.folder_id_r
+			AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+			WHEN (SELECT DISTINCT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = i.folder_id_r
+			AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+			WHEN (SELECT DISTINCT fg5.grp_permission
+			FROM #session.hostdbprefix#folders_groups fg5
+			WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND fg5.folder_id_r = i.folder_id_r
+			AND fg5.grp_id_r = '0') = 'X' THEN 'X'
+			<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
 				WHEN (SELECT DISTINCT fg5.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg5.folder_id_r = i.folder_id_r
-				AND fg5.grp_id_r = '0') = 'R' THEN 'R'
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
 				WHEN (SELECT DISTINCT fg5.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg5.folder_id_r = i.folder_id_r
-				AND fg5.grp_id_r = '0') = 'W' THEN 'W'
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
 				WHEN (SELECT DISTINCT fg5.grp_permission
 				FROM #session.hostdbprefix#folders_groups fg5
 				WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				AND fg5.folder_id_r = i.folder_id_r
-				AND fg5.grp_id_r = '0') = 'X' THEN 'X'
-				<cfloop list="#session.thegroupofuser#" delimiters="," index="i">
-					WHEN (SELECT DISTINCT fg5.grp_permission
-					FROM #session.hostdbprefix#folders_groups fg5
-					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND fg5.folder_id_r = i.folder_id_r
-					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'R' THEN 'R'
-					WHEN (SELECT DISTINCT fg5.grp_permission
-					FROM #session.hostdbprefix#folders_groups fg5
-					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND fg5.folder_id_r = i.folder_id_r
-					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'W' THEN 'W'
-					WHEN (SELECT DISTINCT fg5.grp_permission
-					FROM #session.hostdbprefix#folders_groups fg5
-					WHERE fg5.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND fg5.folder_id_r = i.folder_id_r
-					AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
-				</cfloop>
-				ELSE 'R'
-			END as permfolder
-		</cfif>
-		FROM #session.hostdbprefix#images i 
-		WHERE i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		</cfquery>
-		<cfif qry_image.RecordCount NEQ 0>
-			<cfset myArray = arrayNew( 1 )>
-			<cfset temp= ArraySet(myArray, 1, qry_image.RecordCount, "False")>
-			<cfloop query="qry_image">
-				<cfquery name="alert_col" datasource="#application.razuna.datasource#">
-				SELECT file_id_r
-				FROM #session.hostdbprefix#collections_ct_files
-				WHERE file_id_r = <cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"> 
-				</cfquery>
-				<cfif alert_col.RecordCount NEQ 0>
-					<cfset temp = QuerySetCell(qry_image, "in_collection", "True", currentRow  )>
-				</cfif>
-			</cfloop> 
-		</cfif>
-		<cfreturn qry_image />
+				AND fg5.grp_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">) = 'X' THEN 'X'
+			</cfloop>
+			ELSE 'R'
+		END as permfolder
+	</cfif>
+	FROM #session.hostdbprefix#images i 
+	WHERE i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	</cfquery>
+	<cfif qry_image.RecordCount NEQ 0>
+		<cfset myArray = arrayNew( 1 )>
+		<cfset temp= ArraySet(myArray, 1, qry_image.RecordCount, "False")>
+		<cfloop query="qry_image">
+			<cfquery name="alert_col" datasource="#application.razuna.datasource#">
+			SELECT file_id_r
+			FROM #session.hostdbprefix#collections_ct_files
+			WHERE file_id_r = <cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"> 
+			</cfquery>
+			<cfif alert_col.RecordCount NEQ 0>
+				<cfset temp = QuerySetCell(qry_image, "in_collection", "True", currentRow  )>
+			</cfif>
+		</cfloop> 
+	</cfif>
+	<cfreturn qry_image />
 </cffunction>
 
 <!--- RESTORE THE IMAGE --->

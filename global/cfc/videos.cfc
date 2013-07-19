@@ -700,6 +700,8 @@
 <cffunction name="gettrashvideos" output="false" returntype="Query">
 		<!--- Param --->
 		<cfset var qry_video = "">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("videos")>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry_video" cachedwithin="1" region="razcache">
 			SELECT /* #variables.cachetoken#gettrashvideos */ 

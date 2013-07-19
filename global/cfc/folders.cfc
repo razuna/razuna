@@ -4597,27 +4597,30 @@
 <!--- Asset and Folder Trash Count --->
 <cffunction name="trashcount" output="false">
 	<cfargument name="thestruct" type="struct">
-	<cfquery datasource="#application.razuna.datasource#" name="asset_count">
-		SELECT COUNT(img_id) AS cnt FROM #session.hostdbprefix#images 
-		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		UNION ALL
-		SELECT COUNT(aud_id) AS cnt  FROM #session.hostdbprefix#audios 
-		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		UNION ALL
-		SELECT COUNT(vid_id) AS cnt FROM #session.hostdbprefix#videos 
-		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		UNION ALL
-		SELECT COUNT(file_id) AS cnt FROM #session.hostdbprefix#files 
-		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		UNION ALL
-		SELECT COUNT(folder_id) AS cnt FROM #session.hostdbprefix#folders 
-		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND folder_is_collection IS NULL
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("folders")>
+	<!--- Query --->
+	<cfquery datasource="#application.razuna.datasource#" name="asset_count" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#trashcount */ COUNT(img_id) AS cnt FROM #session.hostdbprefix#images 
+	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UNION ALL
+	SELECT COUNT(aud_id) AS cnt  FROM #session.hostdbprefix#audios 
+	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UNION ALL
+	SELECT COUNT(vid_id) AS cnt FROM #session.hostdbprefix#videos 
+	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UNION ALL
+	SELECT COUNT(file_id) AS cnt FROM #session.hostdbprefix#files 
+	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	UNION ALL
+	SELECT COUNT(folder_id) AS cnt FROM #session.hostdbprefix#folders 
+	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND folder_is_collection IS NULL
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn asset_count />
 </cffunction>

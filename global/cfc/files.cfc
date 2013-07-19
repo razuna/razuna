@@ -447,6 +447,8 @@
 	<cffunction name="gettrashfile" output="false" returntype="Query">
 		<!--- Param --->
 		<cfset var qry_file = "">
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("files")>
 		<!--- Query --->
 			<cfquery datasource="#application.razuna.datasource#" name="qry_file" cachedwithin="1" region="razcache">
 				SELECT /* #variables.cachetoken#gettrashfile */ 
