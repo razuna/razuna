@@ -1615,7 +1615,7 @@
 					WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
 					</cfquery>
 					<!--- Flush cache --->
-					<cfset resetcachetoken("images")>
+					<cfinvoke component="extQueryCaching" method="resetcachetoken" type="images" />
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="images" method="removeimage" thestruct="#attributes.instruct.thestruct#" />
@@ -1628,7 +1628,7 @@
 					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
 					</cfquery>
 					<!--- Flush cache --->
-					<cfset resetcachetoken("videos")>
+					<cfinvoke component="extQueryCaching" method="resetcachetoken" type="videos" />
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="videos" method="removevideo" thestruct="#attributes.instruct.thestruct#" />
@@ -1641,7 +1641,7 @@
 					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
 					</cfquery>
 					<!--- Flush cache --->
-					<cfset resetcachetoken("files")>
+					<cfinvoke component="extQueryCaching" method="resetcachetoken" type="files" />
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="files" method="removefile" thestruct="#attributes.instruct.thestruct#" />
@@ -1654,7 +1654,7 @@
 					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
 					</cfquery>
 					<!--- Flush cache --->
-					<cfset resetcachetoken("audios")>
+					<cfinvoke component="extQueryCaching" method="resetcachetoken" type="audios" />
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.id = id>
 					<cfinvoke component="audios" method="removeaudio" thestruct="#attributes.instruct.thestruct#" />
@@ -1667,7 +1667,7 @@
 					WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#id#">
 					</cfquery>
 					<!--- Flush cache --->
-					<cfset resetcachetoken("folders")>
+					<cfinvoke component="extQueryCaching" method="resetcachetoken" type="folders" />
 					<!--- Call remove function --->
 					<cfset attributes.instruct.thestruct.folder_id = id>
 					<cfinvoke method="remove" thestruct="#attributes.instruct.thestruct#" />
