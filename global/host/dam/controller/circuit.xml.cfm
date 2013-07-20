@@ -8122,6 +8122,8 @@
 		<set name="qry_files.qdoc.cnt" value="#session.qdoc#" />
 		<!-- Set the total -->
 		<set name="qry_filecount.thetotal" value="#session.thetotal#" />
+		<!-- CFC: Get customization -->
+		<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="attributes.cs" />
 		<!-- Show -->
 		<if condition="attributes.folder_id EQ 0 AND !attributes.fcall">
 			<true>
