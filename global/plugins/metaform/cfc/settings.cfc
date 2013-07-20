@@ -160,22 +160,18 @@
 				<cfset var thefield = listLast(i,"_")>
 				<!--- If thefield contains a - then we are CUSTOM FIELDS --->
 				<cfif thefield CONTAINS "-">
-					<!--- Set application values for the api --->
-					<cfset application.razuna.api.storage = application.razuna.storage>
-					<cfset application.razuna.api.dsn = application.razuna.datasource>
-					<cfset application.razuna.api.thedatabase = application.razuna.thedatabase>
-					<cfset application.razuna.api.setid = application.razuna.setid>
 					<!--- Get field --->
 					<cfset a = "#thefileid#_CF_#thefield#">
 					<!--- Get value --->
 					<cfset e = arguments.args["#a#"]>
-					<!--- Create array so we can serialize it to json and pass it to api --->
-					<cfset j = arrayNew(2)>
-					<cfset j[1][1] = thefield>
-					<cfset j[1][2] = e>
-					<cfset j = SerializeJSON(j)>
-					<!--- Call API function --->
-					<cfinvoke component="global.api2.customfield" method="setfieldvalue" api_key="#getHostID()#-108" assetid="#thefileid#" field_values="#j#" />
+					<!--- The struct field --->
+					<cfset structfield = "cf_#thefield#">
+					<!--- Put values together for the internal function --->
+					<cfset thestruct = structnew()>
+					<cfset thestruct.file_id = thefileid>
+					<cfset thestruct["#structfield#"] = e>
+					<!--- Call internal function --->
+					<cfset setCustomField(thestruct=thestruct)>
 				<!--- This is for normal fields --->
 				<cfelse>
 					<cfset a = "#thefileid#_#thefield#">
@@ -235,6 +231,10 @@
 			<cfset var theid = listFirst(i,"_")>
 			<!--- Last is type --->
 			<cfset var thetype = listLast(i,"_")>
+			<!--- Call internal function to update dates --->
+			<cfset updateDate(type=thetype,fileid=theid)>
+			<!--- Call Lucene update --->
+			<cfset updateSearch(type=thetype,fileid=theid)>
 			<!--- Now call workflow --->
 			<cfset executeWorkflow(workflow="on_file_edit",fileid=theid,thetype=thetype,folderid=session.fid)>
 		</cfloop>

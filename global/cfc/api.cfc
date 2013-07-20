@@ -192,6 +192,13 @@
 		<cfreturn qrycfv />
 	</cffunction>
 
+	<!--- Set CustomFields --->
+	<cffunction name="setCustomField" access="public" returntype="void">
+		<cfargument name="thestruct" type="struct" required="true" />
+		<cfinvoke component="custom_fields" method="savevalues" thestruct="#arguments.thestruct#" />
+		<cfreturn />
+	</cffunction>
+
 	<!--- Get PluginID --->
 	<cffunction name="getMyID" access="public" returntype="string">
 		<cfargument name="pluginname" type="string" required="true" />
@@ -477,6 +484,22 @@
 		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" />
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+
+	<!--- Update Dates on files --->
+	<cffunction name="updateDate" access="public" returntype="void">
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<!--- Call function --->
+		<cfinvoke component="global" method="update_dates" fileid="#arguments.fileid#" type="#arguments.type#" />
+	</cffunction>
+
+	<!--- Update Search Index --->
+	<cffunction name="updateSearch" access="public" returntype="void">
+		<cfargument name="fileid" type="string" required="true" />
+		<cfargument name="type" type="string" required="true" hint="Type of asset" />
+		<!--- Call function --->
+		<cfinvoke component="lucene" method="index_update_api" assetid="#arguments.fileid#" assetcategory="#arguments.type#" />
 	</cffunction>
 
 </cfcomponent>
