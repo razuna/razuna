@@ -248,7 +248,7 @@
 		<cfif thesession>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml">
-			SELECT ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value, c.cf_order
+			SELECT DISTINCT ct.cf_id_r field_id, ct.cf_text field_text, cv.cf_value field_value, c.cf_order, cv.asset_id_r file_id
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_text ct, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields c, #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values cv
 			WHERE cv.asset_id_r IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.asset_id#" list="Yes">)
 			AND cv.cf_id_r = ct.cf_id_r
