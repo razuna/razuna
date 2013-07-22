@@ -523,10 +523,9 @@
 						<!--- Create inserts --->
 						<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 						<!--- Call the addasset function --->
-						<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-							<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-						<!--- </cfthread> --->
-						
+						<cfthread intstruct="#arguments.thestruct#">
+							<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
+						</cfthread>
 					<cfelse>
 						<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 					</cfif>
@@ -1450,9 +1449,9 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 	<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 	<!--- Thread --->
 	<cfif arguments.thestruct.qryfile.tempid NEQ "">
-		<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-			<cfinvoke method="addassetthread" thestruct="#arguments.thestruct#" />
-		<!--- </cfthread> --->
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfinvoke method="addassetthread" thestruct="#attributes.intstruct#" />
+		</cfthread>
 	</cfif>
 	<!--- Return --->
 	<cfreturn arguments.thestruct.qryfile.path>
@@ -5639,9 +5638,9 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Create inserts --->
 				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 				<!--- Call the addasset function --->
-				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-				<!--- </cfthread> --->
+				<cfthread intstruct="#arguments.thestruct#">
+					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
+				</cfthread>
 			<cfelse>
 				<cfinvoke component="email" method="send_email" subject="Razuna: File #arguments.thestruct.thefilename# already exists" themessage="Hi there. The file (#arguments.thestruct.thefilename#) already exists in Razuna and thus was not added to the system!">
 			</cfif>
