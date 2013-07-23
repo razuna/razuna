@@ -1535,6 +1535,7 @@
 	</cfif>
 	FROM #session.hostdbprefix#folders f
 	WHERE f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND f.folder_is_collection IS NULL
 	</cfquery>
 	<!--- Add "in_collection" Column --->

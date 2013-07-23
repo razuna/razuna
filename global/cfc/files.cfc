@@ -511,6 +511,7 @@
 					#session.hostdbprefix#files f 
 				WHERE 
 					f.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<cfif qry_file.RecordCount NEQ 0>
 				<cfset myArray = arrayNew( 1 )>
