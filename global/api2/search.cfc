@@ -182,7 +182,7 @@
 			<cfset var thesearchfor = arguments.istruct.searchfor>
 		</cfif>
 		<!--- Search in Lucene --->
-		<cfinvoke component="global.cfc.lucene" method="search" criteria="#thesearchfor#" category="img" hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#" returnvariable="qryluceneimg">
+		<cfset var qryluceneimg = search(criteria=thesearchfor,category="img",hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#")>
 		<!--- If lucene returns no records --->
 		<cfif qryluceneimg.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -363,7 +363,7 @@
 			<cfset var thesearchfor = arguments.vstruct.searchfor>
 		</cfif>
 		<!--- Search in Lucene --->
-		<cfinvoke component="global.cfc.lucene" method="search" criteria="#thesearchfor#" category="vid" hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#" returnvariable="qrylucenevid">
+		<cfset var qrylucenevid = search(criteria=thesearchfor,category="vid",hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#")>
 		<!--- If lucene returns no records --->
 		<cfif qrylucenevid.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -547,7 +547,7 @@
 			<cfset var thesearchfor = arguments.astruct.searchfor>
 		</cfif>
 		<!--- Search in Lucene --->
-		<cfinvoke component="global.cfc.lucene" method="search" criteria="#thesearchfor#" category="aud" hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#" returnvariable="qryluceneaud">
+		<cfset var qryluceneaud = search(criteria=thesearchfor,category="aud",hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#")>
 		<!--- If lucene returns no records --->
 		<cfif qryluceneaud.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -727,7 +727,7 @@
 			<cfset var thesearchfor = arguments.fstruct.searchfor>
 		</cfif>
 		<!--- Search in Lucene --->
-		<cfinvoke component="global.cfc.lucene" method="search" criteria="#thesearchfor#" category="doc" hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#" returnvariable="qrylucenedoc">
+		<cfset var qrylucenedoc = search(criteria=thesearchfor,category="doc",hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#")>
 		<!--- If lucene returns no records --->
 		<cfif qrylucenedoc.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->

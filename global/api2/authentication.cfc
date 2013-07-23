@@ -134,7 +134,7 @@
 		<cfreturn />
 	</cffunction>
 
-	<!--- reset the global caching variable of this cfc-object --->
+	<!--- Execute Workflow --->
 	<cffunction name="executeworkflow" output="false" returntype="void">
 		<cfargument name="api_key" type="string">
 		<cfargument name="action" type="string">
@@ -172,6 +172,25 @@
 		<cfinvoke component="global.cfc.plugins" method="getactions" theaction="#arguments.action#" args="#arguments#" />
 		<!--- Return --->
 		<cfreturn />
+	</cffunction>
+
+	<!--- Update Search --->
+	<cffunction name="updateSearch" output="false" returntype="void">
+		<cfargument name="assetid" required="true">
+		<cfargument name="assetcategory" required="true">
+		<!--- Call Lucene --->
+		<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api" assetid="#arguments.assetid#" assetcategory="#arguments.assetcategory#">
+	</cffunction>
+
+	<!--- Search --->
+	<cffunction name="search" output="false">
+		<cfargument name="criteria" required="true">
+		<cfargument name="category" required="true">
+		<cfargument name="hostid" required="true">
+		<!--- Call Lucene --->
+		<cfinvoke component="#application.razuna.api.lucene#" method="search" criteria="#arguments.criteria#" category="#arguments.category#" hostid="#arguments.hostid#" returnvariable="qrylucene">
+		<!--- Return --->
+		<cfreturn qrylucene>
 	</cffunction>
 
 </cfcomponent>

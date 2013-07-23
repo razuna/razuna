@@ -618,7 +618,7 @@
 	</cffunction>
 	
 	<!--- SEARCH --->
-	<cffunction name="search" access="public" output="false">
+	<cffunction name="search" access="remote" output="false">
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
@@ -828,7 +828,7 @@
 	</cffunction>
 	
 	<!--- INDEX: Update from API --->
-	<cffunction name="index_update_api" access="public" output="false">
+	<cffunction name="index_update_api" access="remote" output="false">
 		<cfargument name="assetid" type="string" required="true">
 		<cfargument name="assetcategory" type="string" required="true">
 		<!--- Call to update asset --->

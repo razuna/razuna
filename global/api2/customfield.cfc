@@ -212,10 +212,10 @@
 				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<!--- Initiate the index --->
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="img">
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="vid">
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="aud">
-				<cfinvoke component="global.cfc.lucene" method="index_update_api" assetid="#i#" assetcategory="doc">
+				<cfset updateSearch(assetid=i,assetcategory="img")>
+				<cfset updateSearch(assetid=i,assetcategory="vid")>
+				<cfset updateSearch(assetid=i,assetcategory="aud")>
+				<cfset updateSearch(assetid=i,assetcategory="doc")>
 				<!--- Call workflow --->
 				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
 			</cfloop>
