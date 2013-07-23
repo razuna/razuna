@@ -233,8 +233,18 @@
 </cffunction>
 
 <!--- INSERT SCHEDULED ASSETS FROM SERVER  --->
-<cffunction name="addassetscheduledserverthread" output="true">
+<cffunction name="addassetscheduledserverthread" output="false">
 	<cfargument name="thestruct" type="struct">
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke method="addassetscheduledserverthread_inthread" thestruct="#attributes.intstruct#">
+	</cfthread>
+</cffunction>
+
+<!--- INSERT SCHEDULED ASSETS FROM SERVER  --->
+<cffunction name="addassetscheduledserverthread_inthread" output="false">
+	<cfargument name="thestruct" type="struct">
+	<!--- Call to GC to clean memory --->
+	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 	<!--- Name of lock file --->
 	<cfset var lockfile = ".lock">
 	<cfif iswindows()>
@@ -260,6 +270,14 @@
 	<cfparam name="session.currentupload" default="0">
 	<cfparam name="arguments.thestruct.skip_event" default="">
 	<cfset arguments.thestruct.folderpath = arguments.thestruct.directory>
+	<!--- Query --->
+	<cfquery name="qGetRootFolderID" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+	SELECT /* #variables.cachetoken#qGetRootFolderID */ folder_main_id_r, folder_level 
+	FROM #session.hostdbprefix#folders
+	WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
+	</cfquery>
+	<cfset var folderIdr = qGetRootFolderID.folder_main_id_r>
+	<cfset var folder_level = qGetRootFolderID.folder_level>
 	<!--- List for directories --->
 	<cfdirectory action="list" directory="#arguments.thestruct.directory#" name="tempServerDir" recurse="#arguments.thestruct.recurse#" type="dir">
 	<!--- Sort the above list in a query because cfdirectory sorting sucks --->
@@ -269,31 +287,6 @@
 	WHERE name NOT LIKE '__MACOSX%'
 	ORDER BY name
 	</cfquery>
-	<!--- List for files --->
-	<cfdirectory action="list" directory="#arguments.thestruct.directory#" name="tempDirfiles" recurse="#arguments.thestruct.recurse#" type="file">
-	<!--- Sort the above list in a query because cfdirectory sorting sucks --->
-	<cfquery dbtype="query" name="theServerDirfiles">
-	SELECT *
-	FROM tempDirfiles
-	WHERE size != 0
-	AND attributes != 'H'
-	AND name != 'thumbs.db'
-	AND name != '#lockfile#'
-	AND name NOT LIKE '.DS_STORE%'
-	AND name NOT LIKE '__MACOSX%'
-	AND name NOT LIKE '%scheduleduploads_%'
-	ORDER BY name
-	</cfquery>
-	<!--- Query --->
-	<cfquery name="qGetRootFolderID" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#qGetRootFolderID */ folder_main_id_r, folder_level 
-	FROM #session.hostdbprefix#folders
-	WHERE folder_id = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="cf_sql_varchar">
-	</cfquery>
-	<cfset var folderIdr = qGetRootFolderID.folder_main_id_r>
-	<cfset var folder_level = qGetRootFolderID.folder_level>
-	<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 	<!--- Create Directories --->
 	<cfif theServerDir.RecordCount GT 0>
 		<cfloop query="theServerDir">
@@ -358,8 +351,21 @@
 		<!--- Flush Cache --->
 		<cfset variables.cachetoken = resetcachetoken("folders")>
 	</cfif>
-	<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	<!--- List for files --->
+	<cfdirectory action="list" directory="#arguments.thestruct.directory#" name="tempDirfiles" recurse="#arguments.thestruct.recurse#" type="file">
+	<!--- Sort the above list in a query because cfdirectory sorting sucks --->
+	<cfquery dbtype="query" name="theServerDirfiles">
+	SELECT *
+	FROM tempDirfiles
+	WHERE size != 0
+	AND attributes != 'H'
+	AND name != 'thumbs.db'
+	AND name != '#lockfile#'
+	AND name NOT LIKE '.DS_STORE%'
+	AND name NOT LIKE '__MACOSX%'
+	AND name NOT LIKE '%scheduleduploads_%'
+	ORDER BY name
+	</cfquery>
 	<!--- FILES --->
 	<cfif theServerDirfiles.recordcount NEQ 0>
 		<cfloop query="theServerDirfiles">
@@ -538,9 +544,10 @@
 		</cfloop>
 	</cfif>
 	<!--- Remove lock file --->
-	<cfif fileExists("#arguments.thestruct.directory#/#lockfile#")>
+	<cftry>
 		<cffile action="delete" file="#arguments.thestruct.directory#/#lockfile#" />
-	</cfif>
+		<cfcatch type="any"></cfcatch>
+	</cftry>
 	<!--- Call to GC to clean memory --->
 	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 </cffunction>
@@ -2410,6 +2417,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfset arguments.thestruct.database = application.razuna.thedatabase>
 	<cfset arguments.thestruct.hostid = session.hostid>
 	<cfset arguments.thestruct.gettemp = GetTempDirectory()>
+	<cfset arguments.thestruct.isWindows = isWindows()>
 	<!--- Random ID for script --->
 	<cfset var imguuid = arguments.thestruct.newid>
 	<!--- When we add a URL image we don't need to do the below --->
@@ -2422,7 +2430,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfquery>
 		</cfif>
 		<!--- Grab stuff for exiftool and getting raw metadata from image --->
-		<cfif isWindows()>
+		<cfif arguments.thestruct.isWindows>
 			<cfset arguments.thestruct.theexif = """#arguments.thestruct.thetools.exiftool#/exiftool.exe""">
 			<!--- Set scripts --->
 			<cfset arguments.thestruct.thesh = "#arguments.thestruct.gettemp#/#imguuid#.bat">
@@ -2433,7 +2441,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- If linked asset then set source and filename different --->
 		<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
-			<cfif isWindows()>
+			<cfif arguments.thestruct.isWindows>
 				<cfset arguments.thestruct.thesource = """#arguments.thestruct.qryfile.path#""">
 			<cfelse>
 				<cfset arguments.thestruct.thesource = replacenocase(arguments.thestruct.qryfile.path," ","\ ","all")>
@@ -2447,7 +2455,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thesourceraw = arguments.thestruct.qryfile.path>
 		<!--- If coming from a import path --->
 		<cfelseif arguments.thestruct.importpath NEQ "">
-			<cfif isWindows()>
+			<cfif arguments.thestruct.isWindows>
 				<cfset arguments.thestruct.thesource = """#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#""">
 			<cfelse>
 				<cfset arguments.thestruct.thesource = replacenocase("#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#"," ","\ ","all")>
@@ -2461,7 +2469,7 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thesourceraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 		<!--- For uploaded files or for scheduled tasks --->
 		<cfelse>
-			<cfif isWindows()>
+			<cfif arguments.thestruct.isWindows>
 				<cfset arguments.thestruct.thesource = """#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#""">
 			<cfelse>
 				<cfset arguments.thestruct.thesource = replacenocase("#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#"," ","\ ","all")>
@@ -2473,17 +2481,27 @@ This is the main function called directly by a single upload else from addassets
 			<cfset arguments.thestruct.thesourceraw = "#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#">
 		</cfif>
 		<!--- GET RAW METADATA --->
-		<cfif isWindows()>
-			<!--- Execute Script --->
-			<cfexecute name="#arguments.thestruct.theexif#" arguments="-fast -fast2 -a -g #arguments.thestruct.thesource#" timeout="60" variable="arguments.thestruct.img_meta" />
-		<cfelse>
-			<!--- Write Script --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theexif# -fast -fast2 -a -g #arguments.thestruct.thesource#" mode="777">
-			<!--- Execute Script --->
-			<cfexecute name="#arguments.thestruct.thesh#" timeout="60" variable="arguments.thestruct.img_meta" />
-			<!--- Delete scripts --->
-			<cffile action="delete" file="#arguments.thestruct.thesh#">
-		</cfif>	
+		<cfthread intstruct="#arguments.thestruct#">
+			<cfif attributes.intstruct.isWindows>
+				<!--- Execute Script --->
+				<cfexecute name="#attributes.intstruct.theexif#" arguments="-fast -fast2 -a -g #attributes.intstruct.thesource#" timeout="60" variable="img_meta" />
+			<cfelse>
+				<!--- Write Script --->
+				<cffile action="write" file="#attributes.intstruct.thesh#" output="#attributes.intstruct.theexif# -fast -fast2 -a -g #attributes.intstruct.thesource#" mode="777">
+				<!--- Execute Script --->
+				<cfexecute name="#attributes.intstruct.thesh#" timeout="60" variable="img_meta" />
+				<!--- Delete scripts --->
+				<cffile action="delete" file="#attributes.intstruct.thesh#">
+			</cfif>
+			<!--- DB update --->
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE #session.hostdbprefix#images
+			SET
+			img_filename_org = <cfqueryparam value="#attributes.intstruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
+			img_meta = <cfqueryparam value="#img_meta#" cfsqltype="cf_sql_varchar">
+			WHERE img_id = <cfqueryparam value="#attributes.intstruct.newid#" cfsqltype="cf_sql_varchar">
+			</cfquery>
+		</cfthread>
 		<!--- check if image is an anmiated GIF --->
 		<cfset var isAnimGIF = isAnimatedGIF("#arguments.thestruct.thesource#", arguments.thestruct.thetools.imagemagick)>
 		<!--- animated GIFs can only be converted to GIF --->
@@ -2504,7 +2522,7 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.width = arguments.thestruct.qrysettings.set2_img_thumb_width>
 		<cfset arguments.thestruct.height = arguments.thestruct.qrysettings.set2_img_thumb_heigth>
 		<cfset arguments.thestruct.destination = "#arguments.thestruct.thetempdirectory#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#">
-		<cfif isWindows()>
+		<cfif arguments.thestruct.isWindows>
 			<cfset arguments.thestruct.destinationraw = arguments.thestruct.destination>
 			<cfset arguments.thestruct.destination = """#arguments.thestruct.destination#""">
 		<cfelse>
@@ -2527,14 +2545,6 @@ This is the main function called directly by a single upload else from addassets
 		<cfinvoke method="resizeImage" thestruct="#arguments.thestruct#" />
 		<!--- storing assets on file system --->
 		<cfset arguments.thestruct.storage = application.razuna.storage>
-		<!--- DB update --->
-		<cfquery datasource="#arguments.thestruct.dsn#">
-		UPDATE #session.hostdbprefix#images
-		SET
-		img_filename_org = <cfqueryparam value="#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">, 
-		img_meta = <cfqueryparam value="#arguments.thestruct.img_meta#" cfsqltype="cf_sql_varchar">
-		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-		</cfquery>
 		<!--- Write the Keywords and Description to the DB (if we are JPG we parse XMP and add them together) --->
 		<cftry>
 			<!--- Set Variable --->
@@ -2605,12 +2615,12 @@ This is the main function called directly by a single upload else from addassets
 				<cfelse>
 					<cfset arguments.thestruct.fileaction = "move">
 				</cfif>
-				<cffile action="#arguments.thestruct.fileaction#" source="#arguments.thestruct.thesourceraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775">
-				<!--- <cfthread name="upload#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
+				<!--- <cffile action="#arguments.thestruct.fileaction#" source="#arguments.thestruct.thesourceraw#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" mode="775"> --->
+				<cfthread name="upload#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">
 					<cffile action="#attributes.intstruct.fileaction#" source="#attributes.intstruct.thesourceraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#" mode="775">
 				</cfthread>
 				<!--- Wait for thread to finish --->
-				<cfthread action="join" name="upload#arguments.thestruct.newid#" /> --->
+				<cfthread action="join" name="upload#arguments.thestruct.newid#" />
 			</cfif>
 			<!--- Move thumbnail --->
 			<cfthread name="uploadt#arguments.thestruct.newid#" intstruct="#arguments.thestruct#">

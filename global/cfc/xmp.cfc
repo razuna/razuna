@@ -551,19 +551,27 @@
 			</cfif>
 		</cfif>
 		<!--- Update images db with the new Lucene_Key --->
-			<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#images
-			SET 
-			lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
-			hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#images
+		SET 
+		lucene_key = <cfqueryparam value="#arguments.thestruct.thesource#" cfsqltype="cf_sql_varchar">,
+		hashtag = <cfqueryparam value="#md5hash#" cfsqltype="CF_SQL_VARCHAR">
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
 	</cfloop>
 </cffunction>
 
-<!--- READ THE KEYWORDS AND DESCRIPION AND WRITE IT TO THE DB --->
+<!--- Prepare thread --->
 <cffunction name="xmpwritekeydesc" output="false">
+	<cfargument name="thestruct" type="struct">
+	<cfthread intstruct="#arguments.thestruct#">
+		<cfinvoke method="xmpwritekeydesc_thread" thestruct="#attributes.intstruct#" />
+	</cfthread>
+</cffunction>
+
+<!--- READ THE KEYWORDS AND DESCRIPION AND WRITE IT TO THE DB --->
+<cffunction name="xmpwritekeydesc_thread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Declare Function Variables --->
 	<cfset var keywords = "">
@@ -687,9 +695,8 @@
 			</cfloop>
 		</cfif>
 		<cfcatch type="any">
-			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in xmpwritekeydesc">
-				<cfdump var="#cfcatch#" />
-			</cfmail>
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
 </cffunction>
