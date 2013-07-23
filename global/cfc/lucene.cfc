@@ -831,13 +831,15 @@
 	<cffunction name="index_update_api" access="remote" output="false">
 		<cfargument name="assetid" type="string" required="true">
 		<cfargument name="assetcategory" type="string" required="true">
+		<cfargument name="dsn" type="string" required="true">
+		<cfargument name="storage" type="string" required="true">
 		<!--- Call to update asset --->
 		<cfinvoke method="index_update">
 			<cfinvokeargument name="assetid" value="#arguments.assetid#">
 			<cfinvokeargument name="category" value="#arguments.assetcategory#">
-			<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
+			<cfinvokeargument name="dsn" value="#arguments.dsn#">
 			<cfinvokeargument name="fromapi" value="t">
-			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
+			<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai">
 				<cfinvokeargument name="notfile" value="f">
 			</cfif>
 		</cfinvoke>
