@@ -179,7 +179,15 @@
 		<cfargument name="assetid" required="true">
 		<cfargument name="assetcategory" required="true">
 		<!--- Call Lucene --->
-		<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api" assetid="#arguments.assetid#" assetcategory="#arguments.assetcategory#">
+		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
+			<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api" assetid="#arguments.assetid#" assetcategory="#arguments.assetcategory#">
+		<cfelse>
+			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
+				<cfhttpparam name="method" value="index_update_api" type="url" />
+				<cfhttpparam name="assetid" value="#arguments.assetid#" type="url" />
+				<cfhttpparam name="assetcategory" value="#arguments.assetcategory#" type="url" />
+			</cfhttp>
+		</cfif>
 	</cffunction>
 
 	<!--- Search --->
@@ -188,7 +196,18 @@
 		<cfargument name="category" required="true">
 		<cfargument name="hostid" required="true">
 		<!--- Call Lucene --->
-		<cfinvoke component="#application.razuna.api.lucene#" method="search" criteria="#arguments.criteria#" category="#arguments.category#" hostid="#arguments.hostid#" returnvariable="qrylucene">
+		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
+			<cfinvoke component="#application.razuna.api.lucene#" method="search" criteria="#arguments.criteria#" category="#arguments.category#" hostid="#arguments.hostid#" returnvariable="qrylucene">
+		<cfelse>
+			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
+				<cfhttpparam name="method" value="search" type="url" />
+				<cfhttpparam name="criteria" value="#arguments.criteria#" type="url" />
+				<cfhttpparam name="category" value="#arguments.category#" type="url" />
+				<cfhttpparam name="hostid" value="#arguments.hostid#" type="url" />
+			</cfhttp>
+			<!--- Set the return --->
+			<cfwddx action="wddx2cfml" input="#cfhttp.filecontent#" output="qrylucene" />
+		</cfif>
 		<!--- Return --->
 		<cfreturn qrylucene>
 	</cffunction>

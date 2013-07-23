@@ -618,7 +618,7 @@
 	</cffunction>
 	
 	<!--- SEARCH --->
-	<cffunction name="search" access="remote" output="false">
+	<cffunction name="search" access="remote" output="false" returntype="query">
 		<cfargument name="criteria" type="string">
 		<cfargument name="category" type="string">
 		<cfargument name="hostid" type="numeric">
