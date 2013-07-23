@@ -68,13 +68,15 @@
 	
 	<!--- INDEX: Update --->
 	<cffunction name="index_update" access="public" output="true">
-		<cfargument name="thestruct" type="struct">
+		<cfargument name="thestruct" type="struct" required="false">
 		<cfargument name="assetid" type="string" required="false">
 		<cfargument name="category" type="string" required="true">
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="online" type="string" default="F" required="false">
 		<cfargument name="notfile" type="string" default="F" required="false">
 		<cfargument name="fromapi" type="string" default="F" required="false">
+		<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
+		<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
 		<!--- Param --->
 		<cfset var folderpath = "">
 		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
@@ -89,11 +91,11 @@
 			    ct.file_desc description, ct.file_keywords keywords, 
 			    f.file_meta as rawmetadata, '#arguments.category#' as thecategory, f.file_extension theext,
 			    x.author, x.rights, x.authorsposition, x.captionwriter, x.webstatement, x.rightsmarked
-				FROM #session.hostdbprefix#files f 
-				LEFT JOIN #session.hostdbprefix#files_desc ct ON f.file_id = ct.file_id_r
-				LEFT JOIN #session.hostdbprefix#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				FROM #arguments.prefix#files f 
+				LEFT JOIN #arguments.prefix#files_desc ct ON f.file_id = ct.file_id_r
+				LEFT JOIN #arguments.prefix#files_xmp x ON f.file_id = x.asset_id_r AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				WHERE f.file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Get folder path --->
 				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
@@ -103,10 +105,10 @@
 				<!--- Get custom fields --->
 				<cfquery name="qry_cf" datasource="#arguments.dsn#">
 				SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
-				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
+				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
 				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				AND v.cf_id_r = ft.cf_id_r 
 				AND v.host_id = ft.host_id 
 				AND ft.lang_id_r = 1
@@ -116,10 +118,10 @@
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT DISTINCT l.label_path
-				FROM ct_labels ct, #session.hostdbprefix#labels l
+				FROM ct_labels ct, #arguments.prefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND l.label_id = ct.ct_label_id
-				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
 				<cfset var l = valuelist(qry_l.label_path," ")>
@@ -137,10 +139,9 @@
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
-				<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="600"> --->
 					<cfscript>
 						args = {
-						collection : session.hostid,
+						collection : arguments.hostid,
 						query : qry_all,
 						category : "thecategory",
 						categoryTree : "id",
@@ -169,7 +170,6 @@
 						};
 						results = CollectionIndexCustom( argumentCollection=args );
 					</cfscript>
-				<!--- </cflock> --->
 			<!--- FOR IMAGES --->
 			<cfelseif arguments.category EQ "img">
 				<!--- Query Record --->
@@ -182,11 +182,11 @@
 				x.ciadrctry, x.location, x.ciadrpcode, x.ciemailwork, x.ciurlwork, x.citelwork, x.intellectualgenre, x.instructions, x.source,
 				x.usageterms, x.copyrightstatus, x.transmissionreference, x.webstatement, x.headline, x.datecreated, x.city, x.ciadrregion, 
 				x.country, x.countrycode, x.scene, x.state, x.credit, x.rights
-				FROM #session.hostdbprefix#images f 
-				LEFT JOIN #session.hostdbprefix#images_text ct ON f.img_id = ct.img_id_r
-				LEFT JOIN #session.hostdbprefix#xmp x ON f.img_id = x.id_r AND x.asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				FROM #arguments.prefix#images f 
+				LEFT JOIN #arguments.prefix#images_text ct ON f.img_id = ct.img_id_r
+				LEFT JOIN #arguments.prefix#xmp x ON f.img_id = x.id_r AND x.asset_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="img"> AND x.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				WHERE f.img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Get folder path --->
 				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
@@ -196,10 +196,10 @@
 				<!--- Get custom fields --->
 				<cfquery name="qry_cf" datasource="#arguments.dsn#">
 				SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
-				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
+				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
 				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				AND v.cf_id_r = ft.cf_id_r 
 				AND v.host_id = ft.host_id 
 				AND ft.lang_id_r = 1
@@ -209,10 +209,10 @@
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT DISTINCT l.label_path
-				FROM ct_labels ct, #session.hostdbprefix#labels l
+				FROM ct_labels ct, #arguments.prefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND l.label_id = ct.ct_label_id
-				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Add query to list --->
 				<cfset var l = valuelist(qry_l.label_path," ")>
@@ -233,10 +233,9 @@
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
-				<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="600"> --->
 					<cfscript>
 						args = {
-						collection : session.hostid,
+						collection : arguments.hostid,
 						query : qry_all,
 						category : "thecategory",
 						categoryTree : "id",
@@ -292,7 +291,6 @@
 						};
 						results = CollectionIndexCustom( argumentCollection=args );
 					</cfscript>
-				<!--- </cflock> --->
 			<!--- FOR VIDEOS --->
 			<cfelseif arguments.category EQ "vid">
 				<!--- Query Record --->
@@ -301,10 +299,10 @@
 			    ct.vid_description description, ct.vid_keywords keywords, 
 				vid_meta as rawmetadata, '#arguments.category#' as thecategory,
 				f.vid_extension theext
-				FROM #session.hostdbprefix#videos f 
-				LEFT JOIN #session.hostdbprefix#videos_text ct ON f.vid_id = ct.vid_id_r
+				FROM #arguments.prefix#videos f 
+				LEFT JOIN #arguments.prefix#videos_text ct ON f.vid_id = ct.vid_id_r
 				WHERE f.vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Get folder path --->
 				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
@@ -314,10 +312,10 @@
 				<!--- Get custom fields --->
 				<cfquery name="qry_cf" datasource="#arguments.dsn#">
 				SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
-				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
+				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
 				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				AND v.cf_id_r = ft.cf_id_r 
 				AND v.host_id = ft.host_id 
 				AND ft.lang_id_r = 1
@@ -327,10 +325,10 @@
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT DISTINCT l.label_path
-				FROM ct_labels ct, #session.hostdbprefix#labels l
+				FROM ct_labels ct, #arguments.prefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND l.label_id = ct.ct_label_id
-				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
 				<cfset var l = valuelist(qry_l.label_path," ")>
@@ -354,10 +352,10 @@
 			    aut.aud_description description, aut.aud_keywords keywords, 
 				a.aud_meta as rawmetadata, '#arguments.category#' as thecategory,
 				a.aud_extension theext
-				FROM #session.hostdbprefix#audios a
-				LEFT JOIN #session.hostdbprefix#audios_text aut ON a.aud_id = aut.aud_id_r
+				FROM #arguments.prefix#audios a
+				LEFT JOIN #arguments.prefix#audios_text aut ON a.aud_id = aut.aud_id_r
 				WHERE a.aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Get folder path --->
 				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
@@ -367,10 +365,10 @@
 				<!--- Get custom fields --->
 				<cfquery name="qry_cf" datasource="#arguments.dsn#">
 				SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
-				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields_text ft
+				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
 				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				AND v.cf_id_r = ft.cf_id_r 
 				AND v.host_id = ft.host_id 
 				AND ft.lang_id_r = 1
@@ -380,10 +378,10 @@
 				<!--- Query labels --->
 				<cfquery name="qry_l" datasource="#arguments.dsn#">
 				SELECT DISTINCT l.label_path
-				FROM ct_labels ct, #session.hostdbprefix#labels l
+				FROM ct_labels ct, #arguments.prefix#labels l
 				WHERE ct.ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND l.label_id = ct.ct_label_id
-				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND l.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Add labels to a list --->
 				<cfset var l = valuelist(qry_l.label_path," ")>
@@ -403,10 +401,9 @@
 			<!--- Only for video and audio files --->
 			<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
 				<!--- Indexing --->
-				<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="600"> --->
 					<cfscript>
 					args = {
-					collection : session.hostid,
+					collection : arguments.hostid,
 					query : qry_all,
 					category : "thecategory",
 					categoryTree : "id",
@@ -429,7 +426,6 @@
 					};
 					results = CollectionIndexCustom( argumentCollection=args );
 					</cfscript>
-				<!--- </cflock> --->
 			</cfif>
 			<cfcatch type="any">
 				<cfset consoleoutput(true)>
@@ -450,22 +446,16 @@
 					</cfif>
 					<!--- Index: Update file --->
 					<cfif fileExists(qry_all.lucene_key)>
-						<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="600"> --->
-							<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
-						<!--- </cflock> --->
+							<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cfif>
 				<!--- Local Storage --->
-				<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
+				<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 					<!--- Index: Update file --->
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="600"> --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.assetpath#/#session.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					<!--- </cflock> --->
+						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				<!--- Linked file --->
 				<cfelseif qry_all.link_kind EQ "lan" AND fileexists("#arguments.thestruct.qryfile.path#")>
 					<!--- Index: Update file --->
-					<!--- <cflock name="searchLock_#session.hostid#" type="exclusive" timeout="600"> --->
-						<cfindex action="update" type="file" extensions="*.*" collection="#session.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
-					<!--- </cflock> --->
+						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				</cfif>
 				<cfcatch type="any">
 				</cfcatch>
@@ -833,12 +823,16 @@
 		<cfargument name="assetcategory" type="string" required="true">
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="storage" type="string" required="true">
+		<cfargument name="prefix" type="string" required="true">
+		<cfargument name="hostid" type="string" required="true">
 		<!--- Call to update asset --->
 		<cfinvoke method="index_update">
 			<cfinvokeargument name="assetid" value="#arguments.assetid#">
 			<cfinvokeargument name="category" value="#arguments.assetcategory#">
 			<cfinvokeargument name="dsn" value="#arguments.dsn#">
 			<cfinvokeargument name="fromapi" value="t">
+			<cfinvokeargument name="prefix" value="#arguments.prefix#">
+			<cfinvokeargument name="hostid" value="#arguments.hostid#">
 			<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai">
 				<cfinvokeargument name="notfile" value="f">
 			</cfif>
