@@ -762,6 +762,7 @@
 				</cfif>
 			FROM #session.hostdbprefix#videos v 
 			WHERE v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+			AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<cfif qry_video.RecordCount NEQ 0>
 			<cfset myArray = arrayNew( 1 )>

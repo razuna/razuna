@@ -454,6 +454,7 @@
 	</cfif>
 	FROM #session.hostdbprefix#images i 
 	WHERE i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfif qry_image.RecordCount NEQ 0>
 		<cfset myArray = arrayNew( 1 )>
