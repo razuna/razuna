@@ -1568,7 +1568,7 @@
 	<cfoutput><strong>We are starting to export your data. Please wait. Once done, you can find the file to download at the bottom of this page!</strong><br /></cfoutput>
 	<cfflush>
 	<!--- Param --->
-	<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
+	<cfset arguments.thestruct.meta_fields = "id,type,filename,file_url,foldername,folder_id,labels,keywords,description,iptcsubjectcode,creator,title,authorstitle,descwriter,iptcaddress,category,categorysub,urgency,iptccity,iptccountry,iptclocation,iptczip,iptcemail,iptcwebsite,iptcphone,iptcintelgenre,iptcinstructions,iptcsource,iptcusageterms,copystatus,iptcjobidentifier,copyurl,iptcheadline,iptcdatecreated,iptcimagecity,iptcimagestate,iptcimagecountry,iptcimagecountrycode,iptcscene,iptcstate,iptccredit,copynotice,pdf_author,pdf_rights,pdf_authorsposition,pdf_captionwriter,pdf_webstatement,pdf_rightsmarked">
 	<!--- Set for custom fields --->
 	<cfset arguments.thestruct.cf_show = "all">
 	<!--- Add another query structure for gettext --->
@@ -1597,7 +1597,8 @@
 		<cfset var qry = "">
 		<!--- Get id from folder with type --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype,folder_id_r,img_filename as url_file_name, cloud_url_org
+		SELECT /* #variables.cachetoken#meta_export */ img_id AS theid, 'img' AS thetype, folder_id_r, 
+		img_filename as url_file_name, cloud_url_org
 		FROM #session.hostdbprefix#images
 		WHERE (img_group IS NULL OR img_group = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="">) 
 		<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1679,8 +1680,12 @@
 		<!--- Images --->
 		<cfcase value="img">
 			<!--- Get asset detail --->
-			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org" returnVariable="qry_image" />
+			<cfinvoke component="images" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="img_filename, img_filename_org AS filenameorg, path_to_asset, cloud_url_org, folder_id_r" returnVariable="qry_image" />
 			<cfset arguments.thestruct.filename = qry_image.img_filename>
+			<cfset arguments.thestruct.folder_id_r = qry_image.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
@@ -1701,8 +1706,12 @@
 		<!--- Videos --->
 		<cfcase value="vid">
 			<!--- Get asset detail --->
-			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org" returnVariable="qry_video" />
+			<cfinvoke component="videos" method="getdetails" vid_id="#arguments.thestruct.file_id#" ColumnList="v.vid_filename, v.vid_name_org AS filenameorg, v.path_to_asset, v.cloud_url_org, v.folder_id_r" returnVariable="qry_video" />
 			<cfset arguments.thestruct.filename = qry_video.vid_filename>
+			<cfset arguments.thestruct.folder_id_r = qry_video.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
@@ -1722,6 +1731,10 @@
 			<!--- Get asset detail --->
 			<cfinvoke component="audios" method="detail" thestruct="#arguments.thestruct#" returnVariable="qry_audio" />
 			<cfset arguments.thestruct.filename = qry_audio.detail.aud_name>
+			<cfset arguments.thestruct.folder_id_r = qry_audio.detail.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
 			<cftry>
 				<cfset var audarray = ArrayNew(1)>
 				<cfset audarray[1] = qry_audio.desc.aud_keywords>
@@ -1734,7 +1747,7 @@
 				</cfcatch>
 			</cftry>
 			<cfset arguments.thestruct.qry_text = qry_audio.desc>
-			<!--- Get Lables --->
+			<!--- Get Labels --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
 			<cfinvoke component="custom_fields" method="gettextvalues" thestruct="#arguments.thestruct#" returnVariable="arguments.thestruct.qry_cf" />
@@ -1751,8 +1764,12 @@
 		<!--- All other files --->
 		<cfdefaultcase>
 			<!--- Get asset detail --->
-			<cfinvoke component="files" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="file_name, file_name_org AS filenameorg, path_to_asset, cloud_url_org" returnVariable="qry_doc" />
+			<cfinvoke component="files" method="filedetail" theid="#arguments.thestruct.file_id#" thecolumn="file_name, file_name_org AS filenameorg, path_to_asset, cloud_url_org, folder_id_r" returnVariable="qry_doc" />
 			<cfset arguments.thestruct.filename = qry_doc.file_name>
+			<cfset arguments.thestruct.folder_id_r = qry_doc.folder_id_r>
+			<!--- Get foldername --->
+			<cfinvoke component="folders" method="getfoldername" folder_id="#arguments.thestruct.folder_id_r#" returnvariable="foldername" />
+			<cfset arguments.thestruct.foldername = foldername>
 			<!--- Get Lables --->
 			<cfinvoke component="labels" method="getlabelstextexport" theid="#arguments.thestruct.file_id#" thetype="#arguments.thestruct.filetype#" returnVariable="arguments.thestruct.qry_labels" />
 			<!--- Get Custom Fields --->
@@ -1846,7 +1863,6 @@
 <!--- Add to query --->
 <cffunction name="add_to_query" output="false">
 	<cfargument name="thestruct" type="struct">
-	
 	<!--- Add row local query --->
 	<cfset QueryAddRow(arguments.thestruct.tq,1)>
 	<!--- Add id --->
@@ -1857,6 +1873,10 @@
 	<cfset QuerySetCell(arguments.thestruct.tq, "filename", arguments.thestruct.filename)>
 	<!--- Add file_url --->
 	<cfset QuerySetCell(arguments.thestruct.tq, "file_url", arguments.thestruct.file_url)>
+	<!--- Add folder_id_r --->
+	<cfset QuerySetCell(arguments.thestruct.tq, "folder_id", arguments.thestruct.folder_id_r)>
+	<!--- Add folder_name --->
+	<cfset QuerySetCell(arguments.thestruct.tq, "foldername", arguments.thestruct.foldername)>
 	<!--- Add Labels --->
 	<cfif arguments.thestruct.qry_labels NEQ "">
 		<cfset QuerySetCell(arguments.thestruct.tq, "labels", arguments.thestruct.qry_labels)>
