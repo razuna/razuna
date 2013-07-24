@@ -214,6 +214,7 @@
 				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(i.img_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(i.img_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(i.img_id as varchar(100)), '0')</cfif> id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
+				fo.folder_name,
 				i.img_extension extension, 
 				'dummy' as video_image,
 				i.img_filename_org filename_org, 
@@ -334,7 +335,7 @@
 				<cfset q_start = q_end + 1>
 		    	<cfset q_end = q_end + 990>
 			</cfloop>
-			GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename)
+			GROUP BY i.img_id, i.img_filename, i.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename)
 				<cfif arguments.istruct.ui>, ext, is_available, date_create,
 			date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
 			ORDER BY #session.sortby#
@@ -395,6 +396,7 @@
 				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(v.vid_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(v.vid_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(v.vid_id as varchar(100)), '0')</cfif> id, 
 				v.vid_filename as filename, 
 				v.folder_id_r as folder_id, 
+				fo.folder_name,
 				v.vid_extension as extension, 
 				v.vid_name_image as video_image,
 				<cfif arguments.vstruct.ui>
@@ -518,7 +520,7 @@
 				<cfset q_start = q_end + 1>
 		    	<cfset q_end = q_end + 990>
 		    </cfloop>
-			GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename)
+			GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename)
 					<cfif arguments.vstruct.ui>, ext, is_available, date_create,
 	    		date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
 			ORDER BY #session.sortby# 
@@ -579,6 +581,7 @@
 				SELECT <cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_id, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_id, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_id as varchar(100)), '0')</cfif> id, 
 				a.aud_name filename, 
 				a.folder_id_r folder_id, 
+				fo.folder_name,
 				a.aud_extension extension, 
 				'dummy' as video_image,
 				a.aud_name_org filename_org, 
@@ -697,7 +700,7 @@
 				<cfset q_start = q_end + 1>
 		    	<cfset q_end = q_end + 990>
 			</cfloop>
-			GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, 
+			GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, 
 			a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time,
 			a.hashtag, fo.folder_name, lower(a.aud_name)
 			<cfif arguments.astruct.ui>, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
@@ -766,6 +769,7 @@
 					</cfif> AS id, 
 				f.file_name filename, 
 				f.folder_id_r folder_id, 
+				fo.folder_name,
 				f.file_extension extension, 
 				'dummy' as video_image,
 				f.file_name_org filename_org, 
@@ -883,7 +887,7 @@
 				<cfset q_start = q_end + 1>
 		    	<cfset q_end = q_end + 990>
 			</cfloop>
-			GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
+			GROUP BY f.file_id, f.file_name, f.folder_id_r, fo.folder_name, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 			f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
 			f.hashtag, fo.folder_name, lower(f.file_name)
 			<cfif arguments.fstruct.ui>, ext, is_available, date_create, date_change, link_kind, 

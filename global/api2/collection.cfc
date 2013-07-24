@@ -57,6 +57,7 @@
 				i.img_id id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
+				fo.folder_name,
 				i.img_extension extension,
 				i.thumb_extension extension_thumb, 
 				'dummy' as video_image, 
@@ -116,6 +117,7 @@
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct ON ct.file_id_r = i.img_id AND ct.col_id_r = '#arguments.collectionid#'
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = i.folder_id_r AND fo.host_id = i.host_id
 				WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
@@ -126,6 +128,7 @@
 				v.vid_id id, 
 				v.vid_filename filename, 
 				v.folder_id_r folder_id, 
+				fo.folder_name,
 				v.vid_extension extension, 
 				'0' as extension_thumb,
 				v.vid_name_image as video_image, 
@@ -184,6 +187,7 @@
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct ON ct.file_id_r = v.vid_id AND ct.col_id_r = '#arguments.collectionid#'
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
 				WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
 				AND (v.vid_group IS NULL OR v.vid_group = '')
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
@@ -195,6 +199,7 @@
 				a.aud_id id, 
 				a.aud_name filename, 
 				a.folder_id_r folder_id, 
+				fo.folder_name,
 				a.aud_extension extension,
 				'0' extension_thumb, 
 				'dummy' as video_image,
@@ -250,6 +255,7 @@
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#collections_ct_files ct ON ct.file_id_r = a.aud_id AND ct.col_id_r = '#arguments.collectionid#'
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
 				WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
 				AND (a.aud_group IS NULL OR a.aud_group = '')
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
@@ -260,6 +266,7 @@
 				f.file_id id, 
 				f.file_name filename, 
 				f.folder_id_r folder_id, 
+				fo.folder_name,
 				f.file_extension extension, 
 				'0' as extension_thumb, 
 				'dummy' as video_image, 
@@ -291,6 +298,7 @@
 				f.hashtag AS md5hash
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
 				WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ValueList(qry_col.file_id_r)#" list="true">)
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND f.is_available = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="1">

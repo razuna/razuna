@@ -47,6 +47,7 @@
 				i.img_id id, 
 				i.img_filename filename, 
 				i.folder_id_r folder_id, 
+				fo.folder_name,
 				i.img_extension extension,
 				i.img_filename_org filename_org, 
 				i.thumb_extension extension_thumb, 
@@ -109,6 +110,7 @@
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#images i 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#xmp x ON x.id_r = i.img_id
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = i.folder_id_r AND fo.host_id = i.host_id
 				WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -124,6 +126,7 @@
 				v.vid_id id, 
 				v.vid_filename filename, 
 				v.folder_id_r folder_id, 
+				fo.folder_name,
 				v.vid_extension extension, 
 				v.vid_name_image as video_preview,
 				v.vid_name_org filename_org, 
@@ -181,6 +184,7 @@
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos v 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
 				WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -196,6 +200,7 @@
 				a.aud_id id, 
 				a.aud_name filename, 
 				a.folder_id_r folder_id, 
+				fo.folder_name,
 				a.aud_extension extension, 
 				a.aud_name_org filename_org,
 				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(a.aud_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(a.aud_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(a.aud_size as varchar(100)), '0')</cfif> AS size, 
@@ -250,6 +255,7 @@
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios a 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
 				WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -265,6 +271,7 @@
 				f.file_id id, 
 				f.file_name filename, 
 				f.folder_id_r folder_id, 
+				fo.folder_name,
 				f.file_extension extension, 
 				f.file_name_org filename_org, 
 				<cfif application.razuna.api.thedatabase EQ "oracle">to_char(NVL(f.file_size, 0))<cfelseif application.razuna.api.thedatabase EQ "mysql" OR application.razuna.api.thedatabase EQ "h2">cast(ifnull(f.file_size, 0) AS char)<cfelseif application.razuna.api.thedatabase EQ "mssql">isnull(cast(f.file_size as varchar(100)), '0')</cfif> AS size, 
@@ -311,6 +318,7 @@
 				</cfif>
 				FROM #application.razuna.api.prefix["#arguments.api_key#"]#files f 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
+				LEFT JOIN #application.razuna.api.prefix["#arguments.api_key#"]#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
 				WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#" list="true">)
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
