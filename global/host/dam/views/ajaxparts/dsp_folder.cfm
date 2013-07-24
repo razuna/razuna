@@ -111,7 +111,7 @@
 
 <script type="text/javascript">
 	jqtabs("tabsfolder_tab");
-	<cfif attributes.iscol EQ "F">
+	<cfif attributes.iscol EQ "F" OR attributes.iscol EQ "">
 		loadcontent('content','#myself##xfa.fcontent#&folder_id=#attributes.folder_id#&iscol=#attributes.iscol#');
 	<cfelse>
 		loadcontent('content<cfif structKeyExists(attributes,"released") AND attributes.released>rel</cfif>','#myself##xfa.collectionslist#&folder_id=#attributes.folder_id#&kind=content&iscol=#attributes.iscol#&released=#attributes.released#');
