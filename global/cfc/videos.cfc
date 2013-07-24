@@ -1030,6 +1030,8 @@
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfset var qry = structnew()>
+	<cfset var details = "">
+	<cfset var desc = "">
 	<!--- Get details --->
 	<cfquery datasource="#variables.dsn#" name="details" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#detailvid */ v.vid_id, v.vid_filename, v.folder_id_r, v.vid_custom_id, v.vid_extension, v.vid_online, v.vid_owner,
@@ -1050,7 +1052,7 @@
 	<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#details.folder_id_r#"  />
 	<!--- Add labels query --->
 	<cfif theaccess NEQ "">
-		<cfset QuerySetCell(qry, "perm", theaccess)>
+		<cfset QuerySetCell(details, "perm", theaccess)>
 	</cfif>
 	<!--- Get descriptions and keywords --->
 	<cfquery datasource="#variables.dsn#" name="desc" cachedwithin="1" region="razcache">
