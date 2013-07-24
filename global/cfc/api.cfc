@@ -499,7 +499,14 @@
 		<cfargument name="fileid" type="string" required="true" />
 		<cfargument name="type" type="string" required="true" hint="Type of asset" />
 		<!--- Call function --->
-		<cfinvoke component="lucene" method="index_update_api" assetid="#arguments.fileid#" assetcategory="#arguments.type#" />
+		<cfinvoke component="lucene" method="index_update_api">
+			<cfinvokeargument name="assetid" value="#arguments.fileid#" />
+			<cfinvokeargument name="assetcategory" value="#arguments.type#" />
+			<cfinvokeargument name="dsn" value="#getDatasource()#" />
+			<cfinvokeargument name="storage" value="#getStorage()#" />
+			<cfinvokeargument name="prefix" value="#getHostPrefix()#" />
+			<cfinvokeargument name="hostid" value="#getHostID()#" />
+		</cfinvoke>
 	</cffunction>
 
 </cfcomponent>
