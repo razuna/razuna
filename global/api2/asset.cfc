@@ -567,7 +567,7 @@
 					</cfquery>
 				</cfif>
 				<!--- Initiate the index --->
-				<cfset updateSearch(assetid=i,assetcategory=lucenecategory)>
+				<cfset updateSearch(assetid=i,assetcategory=lucenecategory,api_key=arguments.api_key)>
 				<!--- Call workflow --->
 				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
 			</cfloop>

@@ -178,6 +178,7 @@
 	<cffunction name="updateSearch" output="false" returntype="void">
 		<cfargument name="assetid" required="true">
 		<cfargument name="assetcategory" required="true">
+		<cfargument name="api_key" required="true">
 		<!--- Call Lucene --->
 		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
 			<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api" assetid="#arguments.assetid#" assetcategory="#arguments.assetcategory#" dsn="#application.razuna.api.dsn#" storage="#application.razuna.api.storage#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" hostid="#application.razuna.api.hostid[#arguments.api_key#]#">

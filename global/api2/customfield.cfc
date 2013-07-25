@@ -212,10 +212,10 @@
 				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<!--- Initiate the index --->
-				<cfset updateSearch(assetid=i,assetcategory="img")>
-				<cfset updateSearch(assetid=i,assetcategory="vid")>
-				<cfset updateSearch(assetid=i,assetcategory="aud")>
-				<cfset updateSearch(assetid=i,assetcategory="doc")>
+				<cfset updateSearch(assetid=i,assetcategory="img",api_key=arguments.api_key)>
+				<cfset updateSearch(assetid=i,assetcategory="vid",api_key=arguments.api_key)>
+				<cfset updateSearch(assetid=i,assetcategory="aud",api_key=arguments.api_key)>
+				<cfset updateSearch(assetid=i,assetcategory="doc",api_key=arguments.api_key)>
 				<!--- Call workflow --->
 				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
 			</cfloop>
