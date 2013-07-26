@@ -658,12 +658,15 @@ function set3gp(theform){
 		case 3: case 5: case 7: case 9:
 		document.forms[theform].convert_width_3gp.value = '176';
 		document.forms[theform].convert_height_3gp.value = '144';
+		break;
 		case 10:
 		document.forms[theform].convert_width_3gp.value = '352';
 		document.forms[theform].convert_height_3gp.value = '288';
+		break;
 		case 11:
 		document.forms[theform].convert_width_3gp.value = '704';
 		document.forms[theform].convert_height_3gp.value = '576';
+		break;
 		case 12:
 		document.forms[theform].convert_width_3gp.value = '1408';
 		document.forms[theform].convert_height_3gp.value = '1152';	

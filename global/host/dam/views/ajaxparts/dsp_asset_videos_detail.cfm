@@ -39,6 +39,7 @@
 	<input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 	<input type="hidden" name="convert_width_3gp" value="">
 	<input type="hidden" name="convert_height_3gp" value="">
+	<input type="hidden" name="convert_bitrate_3gp" value="">
 	<input type="hidden" name="link_kind" value="#qry_detail.detail.link_kind#">
 	<cfset fi = find("iframe",qry_detail.detail.link_path_url)>
 	<cfset fp = find("param",qry_detail.detail.link_path_url)>
