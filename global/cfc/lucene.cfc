@@ -77,6 +77,8 @@
 		<cfargument name="fromapi" type="string" default="F" required="false">
 		<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
 		<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
+		<cfargument name="storage" type="string" default="#application.razuna.storage#" required="false">
+		<cfargument name="thedatabase" type="string" default="#application.razuna.thedatabase#" required="false">
 		<!--- Param --->
 		<cfset var folderpath = "">
 		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
@@ -98,16 +100,16 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Get folder path --->
-				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" returnvariable="qry_bc" />
 				<cfloop list="#qry_bc#" delimiters=";" index="p">
 					<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
 				</cfloop>
 				<!--- Get custom fields --->
 				<cfquery name="qry_cf" datasource="#arguments.dsn#">
-				SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+				SELECT DISTINCT <cfif arguments.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
 				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.cf_value <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				AND v.cf_id_r = ft.cf_id_r 
 				AND v.host_id = ft.host_id 
@@ -189,16 +191,16 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Get folder path --->
-				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" returnvariable="qry_bc" />
 				<cfloop list="#qry_bc#" delimiters=";" index="p">
 					<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
 				</cfloop>
 				<!--- Get custom fields --->
 				<cfquery name="qry_cf" datasource="#arguments.dsn#">
-				SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+				SELECT DISTINCT <cfif arguments.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
 				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.cf_value <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				AND v.cf_id_r = ft.cf_id_r 
 				AND v.host_id = ft.host_id 
@@ -305,16 +307,16 @@
 				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Get folder path --->
-				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" returnvariable="qry_bc" />
 				<cfloop list="#qry_bc#" delimiters=";" index="p">
 					<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
 				</cfloop>
 				<!--- Get custom fields --->
 				<cfquery name="qry_cf" datasource="#arguments.dsn#">
-				SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+				SELECT DISTINCT <cfif arguments.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
 				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.cf_value <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				AND v.cf_id_r = ft.cf_id_r 
 				AND v.host_id = ft.host_id 
@@ -358,16 +360,16 @@
 				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 				<!--- Get folder path --->
-				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" returnvariable="qry_bc" />
+				<cfinvoke component="folders" method="getbreadcrumb" folder_id_r="#qry_all.folder#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" returnvariable="qry_bc" />
 				<cfloop list="#qry_bc#" delimiters=";" index="p">
 					<cfset folderpath = folderpath & "/" & listFirst(p, "|")>
 				</cfloop>
 				<!--- Get custom fields --->
 				<cfquery name="qry_cf" datasource="#arguments.dsn#">
-				SELECT DISTINCT <cfif application.razuna.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
+				SELECT DISTINCT <cfif arguments.thedatabase EQ "mssql">cast(ft.cf_id_r AS VARCHAR(100)) + ' ' + cast(v.cf_value AS NVARCHAR(max))<cfelse>CONCAT(cast(ft.cf_id_r AS CHAR),' ',cast(v.cf_value AS CHAR))</cfif> AS customfieldvalue
 				FROM #arguments.prefix#custom_fields_values v, #arguments.prefix#custom_fields_text ft
 				WHERE v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND v.cf_value <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+				AND v.cf_value <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
 				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				AND v.cf_id_r = ft.cf_id_r 
 				AND v.host_id = ft.host_id 
@@ -436,7 +438,7 @@
 		<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
 			<cftry>
 				<!--- Nirvanix or Amazon --->
-				<cfif (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
+				<cfif (arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai")>
 					<!--- Check if windows or not --->
 					<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
 					<cfif !isWindows>
@@ -449,7 +451,7 @@
 							<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#qry_all.lucene_key#" category="#arguments.category#" categoryTree="#qry_all.id#">
 					</cfif>
 				<!--- Local Storage --->
-				<cfelseif qry_all.link_kind NEQ "lan" AND application.razuna.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
+				<cfelseif qry_all.link_kind NEQ "lan" AND arguments.storage EQ "local" AND fileexists("#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#")>
 					<!--- Index: Update file --->
 						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.assetpath#/#arguments.hostid#/#qry_all.folder#/#arguments.category#/#qry_all.id#/#qry_all.filenameorg#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				<!--- Linked file --->
@@ -823,6 +825,7 @@
 		<cfargument name="assetcategory" type="string" required="true">
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="storage" type="string" required="true">
+		<cfargument name="thedatabase" type="string" required="true">
 		<cfargument name="prefix" type="string" required="true">
 		<cfargument name="hostid" type="string" required="true">
 		<!--- Call to update asset --->
@@ -833,6 +836,8 @@
 			<cfinvokeargument name="fromapi" value="t">
 			<cfinvokeargument name="prefix" value="#arguments.prefix#">
 			<cfinvokeargument name="hostid" value="#arguments.hostid#">
+			<cfinvokeargument name="storage" value="#arguments.storage#">
+			<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#">
 			<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai">
 				<cfinvokeargument name="notfile" value="f">
 			</cfif>

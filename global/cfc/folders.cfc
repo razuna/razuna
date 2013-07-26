@@ -4201,23 +4201,26 @@
 	<cfargument name="folder_id_r" required="yes" type="string">
 	<cfargument name="folderlist" required="false" type="string" default="">
 	<cfargument name="fromshare" required="false" type="string" default="false">
+	<cfargument name="dsn" type="string" default="#application.razuna.datasource#" required="false">
+	<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
+	<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
 	<!--- Param --->
 	<cfset var qry = "">
 	<cfparam name="flist" default="">
-	<!--- If there is no session for webgroups set --->
-	<cfparam default="0" name="session.thegroupofuser">
 	<!--- Query: Get current folder_id_r --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+	<cfquery datasource="#arguments.dsn#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getbreadcrumb */ f.folder_name, f.folder_id_r, f.folder_id
 	<cfif arguments.fromshare>
+		<!--- If there is no session for webgroups set --->
+		<cfparam default="0" name="session.thegroupofuser">
 		<cfif session.iscol EQ "F">
 			,
 			CASE
 				<!--- Check permission on this folder --->
 				WHEN EXISTS(
 					SELECT fg.folder_id_r
-					FROM #session.hostdbprefix#folders_groups fg
-					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					FROM #arguments.prefix#folders_groups fg
+					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 					AND fg.folder_id_r = f.folder_id
 					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
@@ -4225,10 +4228,10 @@
 				<!--- When folder is shared for everyone --->
 				WHEN EXISTS(
 					SELECT fg2.folder_id_r
-					FROM #session.hostdbprefix#folders_groups fg2
+					FROM #arguments.prefix#folders_groups fg2
 					WHERE fg2.grp_id_r = '0'
 					AND fg2.folder_id_r = f.folder_id
-					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND fg2.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 					AND lower(fg2.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					) THEN 'unlocked'
 				<!--- If this is the user folder or he is the owner --->
@@ -4240,8 +4243,8 @@
 			CASE
 				WHEN EXISTS(
 					SELECT fg.col_id_r
-					FROM #session.hostdbprefix#collections_groups fg
-					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					FROM #arguments.prefix#collections_groups fg
+					WHERE fg.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 					AND fg.col_id_r = f.col_id
 					AND lower(fg.grp_permission) IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="r,w,x" list="true">)
 					AND fg.grp_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.thegroupofuser#" list="true">)
@@ -4251,9 +4254,9 @@
 			END AS perm
 		</cfif>
 	</cfif>
-	FROM #session.hostdbprefix#folders f
+	FROM #arguments.prefix#folders f
 	WHERE f.folder_id = <cfqueryparam value="#arguments.folder_id_r#" cfsqltype="CF_SQL_VARCHAR">
-	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 	</cfquery>
 	<!--- QoQ --->
 	<cfif arguments.fromshare>
@@ -4269,7 +4272,7 @@
 		<!--- If the folder_id_r is not the same the passed one --->
 		<cfif qry.folder_id_r NEQ arguments.folder_id_r>
 			<!--- Call this function again --->
-			<cfinvoke method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" />
+			<cfinvoke method="getbreadcrumb" folder_id_r="#qry.folder_id_r#" folderlist="#flist#" fromshare="#arguments.fromshare#" dsn="#arguments.dsn#" prefix="#arguments.prefix#" hostid="#arguments.hostid#" />
 		</cfif>
 	</cfif>
 	<!--- Return --->	

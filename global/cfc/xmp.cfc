@@ -2091,7 +2091,7 @@
 			</cfloop>
 		</cfif>
 		<!--- Initiate the index --->
-		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" storage="#application.razuna.storage#" prefix="#session.hostdbprefix#" hostid="#session.hostid#" assetid="#theid#" assetcategory="#lucenecategory#">
+		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" storage="#application.razuna.storage#" prefix="#session.hostdbprefix#" hostid="#session.hostid#" assetid="#theid#" assetcategory="#lucenecategory#" thedatabase="#application.razuna.thedatabase#">
 	</cfloop>
 	<!--- Flush cache --->
 	<cfset resetcachetoken(cachetype)>
@@ -2134,7 +2134,7 @@
 			</cfquery>
 		</cfloop>
 		<!--- Initiate the index --->
-		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" storage="#application.razuna.storage#" assetid="#theid#" prefix="#session.hostdbprefix#" hostid="#session.hostid#" assetcategory="#arguments.type#">
+		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" storage="#application.razuna.storage#" assetid="#theid#" prefix="#session.hostdbprefix#" hostid="#session.hostid#" assetcategory="#arguments.type#"thedatabase="#application.razuna.thedatabase#">
 	</cfloop>
 	<!--- Flush cache --->
 	<cfif arguments.type EQ "img">
