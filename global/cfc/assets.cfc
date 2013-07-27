@@ -2272,10 +2272,6 @@ This is the main function called directly by a single upload else from addassets
 			link_path_url = <cfqueryparam value="#arguments.thestruct.qryfile.path#" cfsqltype="cf_sql_varchar">,
 			link_kind = <cfqueryparam value="#arguments.thestruct.qryfile.link_kind#" cfsqltype="cf_sql_varchar">,
 			path_to_asset = <cfqueryparam value="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" cfsqltype="cf_sql_varchar">
-			<cfif !application.razuna.rfs>
-				,
-				is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
-			</cfif>
 			<cfif arguments.thestruct.qryfile.link_kind EQ "lan">
 				,
 				img_filename_org = <cfqueryparam value="#arguments.thestruct.lanorgname#" cfsqltype="cf_sql_varchar">
@@ -2631,161 +2627,165 @@ This is the main function called directly by a single upload else from addassets
 				<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
 				<cfset var thumbsize = 1>
 			</cfif>
-			<!--- NIRVANIX --->
-			<cfelseif arguments.thestruct.storage EQ "nirvanix">
-				<cfset var uplt = "u" & Createuuid("")>
+		<!--- NIRVANIX --->
+		<cfelseif arguments.thestruct.storage EQ "nirvanix">
+			<cfset var uplt = "u" & Createuuid("")>
+			<!--- Upload Original Image --->
+			<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+				<cftry>
+					<cfinvoke component="nirvanix" method="Upload">
+						<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
+						<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thesource#">
+						<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					</cfinvoke>
+					<cfcatch type="any">
+						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading original image to Nirvanix" dump="#cfcatch#">
+					</cfcatch>
+				</cftry>
+			</cfif>
+			<!--- Upload Thumbnail --->
+			<cfif !application.razuna.rfs>
+				<cftry>
+					<cfthread name="upload#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
+						<cfinvoke component="nirvanix" method="Upload">
+							<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
+							<cfinvokeargument name="uploadfile" value="#attributes.intstruct.destination#">
+							<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
+						</cfinvoke>
+					</cfthread>
+					<!--- Wait for thread to finish --->
+					<cfthread action="join" name="upload#arguments.thestruct.newid#" />
+					<cfcatch type="any">
+						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
+					</cfcatch>
+				</cftry>
+				<!--- Get thumb file size --->
+				<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
+				<!--- Get signed URL --->
+				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
+			<cfelse>
+				<cfset var thumbsize = 1>
+				<cfset cloud_url.theurl = "">
+			</cfif>
+			<!--- Get size of original --->
+			<cfset var orgsize = arguments.thestruct.qryfile.thesize>
+			<!--- Get signed URLS for original --->
+			<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
+		<!--- AMAZON --->
+		<cfelseif arguments.thestruct.storage EQ "amazon">
+			<cftry>
 				<!--- Upload Original Image --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-					<cftry>
-						<cfinvoke component="nirvanix" method="Upload">
-							<cfinvokeargument name="destFolderPath" value="/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#">
-							<cfinvokeargument name="uploadfile" value="#arguments.thestruct.thesource#">
-							<cfinvokeargument name="nvxsession" value="#arguments.thestruct.nvxsession#">
+					<cfset var upt = Createuuid("")>
+					<cfthread name="#upt#" intstruct="#arguments.thestruct#" action="run">
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
 						</cfinvoke>
-						<cfcatch type="any">
-							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading original image to Nirvanix" dump="#cfcatch#">
-						</cfcatch>
-					</cftry>
+					</cfthread>
+					<cfthread action="join" name="#upt#" />
 				</cfif>
 				<!--- Upload Thumbnail --->
 				<cfif !application.razuna.rfs>
-					<cftry>
-						<cfthread name="upload#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
-							<cfinvoke component="nirvanix" method="Upload">
-								<cfinvokeargument name="destFolderPath" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#">
-								<cfinvokeargument name="uploadfile" value="#attributes.intstruct.destination#">
-								<cfinvokeargument name="nvxsession" value="#attributes.intstruct.nvxsession#">
-							</cfinvoke>
-						</cfthread>
-						<!--- Wait for thread to finish --->
-						<cfthread action="join" name="upload#arguments.thestruct.newid#" />
-						<cfcatch type="any">
-							<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in uploading thumbnail image to Nirvanix" dump="#cfcatch#">
-						</cfcatch>
-					</cftry>
-					<!--- Get thumb file size --->
+					<cfset var uptn = Createuuid("")>
+					<cfthread name="#uptn#" intstruct="#arguments.thestruct#" action="run">
+						<cfinvoke component="amazon" method="Upload">
+							<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.destinationraw#">
+							<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
+						</cfinvoke>
+					</cfthread>
+					<cfthread action="join" name="#uptn#" />
+					<!--- Get size thumnail --->
 					<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
-					<!--- Get signed URL --->
-					<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" nvxsession="#arguments.thestruct.nvxsession#">
+					<!--- Get signed URLS for thumb --->
+					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
 				<cfelse>
 					<cfset var thumbsize = 1>
 					<cfset cloud_url.theurl = "">
 				</cfif>
 				<!--- Get size of original --->
 				<cfset var orgsize = arguments.thestruct.qryfile.thesize>
-				<!--- Get signed URLS for original --->
-				<cfinvoke component="nirvanix" method="signedurl" returnVariable="cloud_url_org" theasset="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" nvxsession="#arguments.thestruct.nvxsession#">
-			<!--- AMAZON --->
-			<cfelseif arguments.thestruct.storage EQ "amazon">
-				<cftry>
-					<!--- Upload Original Image --->
-					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-						<cfset var upt = Createuuid("")>
-						<cfthread name="#upt#" intstruct="#arguments.thestruct#" action="run">
-							<cfinvoke component="amazon" method="Upload">
-								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/#attributes.intstruct.qryfile.filename#">
-								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
-								<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-							</cfinvoke>
-						</cfthread>
-						<cfthread action="join" name="#upt#" />
-					</cfif>
-					<!--- Upload Thumbnail --->
-					<cfif !application.razuna.rfs>
-						<cfset var uptn = Createuuid("")>
-						<cfthread name="#uptn#" intstruct="#arguments.thestruct#" action="run">
-							<cfinvoke component="amazon" method="Upload">
-								<cfinvokeargument name="key" value="/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#">
-								<cfinvokeargument name="theasset" value="#attributes.intstruct.destinationraw#">
-								<cfinvokeargument name="awsbucket" value="#attributes.intstruct.awsbucket#">
-							</cfinvoke>
-						</cfthread>
-						<cfthread action="join" name="#uptn#" />
-						<!--- Get size thumnail --->
-						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.destination#" returnvariable="thumbsize">
-						<!--- Get signed URLS for thumb --->
-						<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" awsbucket="#arguments.thestruct.awsbucket#">
-					<cfelse>
-						<cfset var thumbsize = 1>
-						<cfset cloud_url.theurl = "">
-					</cfif>
-					<!--- Get size of original --->
-					<cfset var orgsize = arguments.thestruct.qryfile.thesize>
-					<!--- Get signed URLS original --->
-					<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
-					<cfcatch type="any">
-						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
-					</cfcatch>
-				</cftry>
-			<!--- AKAMAI --->
-			<cfelseif arguments.thestruct.storage EQ "akamai">
-				<!--- Create folder with the asset id --->
-				<cfif NOT directoryexists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#")>
-					<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" mode="775">
-				</cfif>
-				<cftry>
-					<!--- Upload Original Image --->
-					<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
-						<cfset var upt = Createuuid("")>
-						<cfthread name="#upt#" intstruct="#arguments.thestruct#" action="run">
-							<cfinvoke component="akamai" method="Upload">
-								<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
-								<cfinvokeargument name="thetype" value="#attributes.intstruct.akaimg#">
-								<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
-								<cfinvokeargument name="thefilename" value="#attributes.intstruct.qryfile.filename#">
-							</cfinvoke>
-						</cfthread>
-						<cfthread action="join" name="#upt#" />
-					</cfif>
-					<!--- Move thumbnail --->
-					<cfthread name="uploadt#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
-						<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
-							<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
-						<cfelseif !application.razuna.rfs>
-							<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
-						</cfif>
+				<!--- Get signed URLS original --->
+				<cfinvoke component="amazon" method="signedurl" returnVariable="cloud_url_org" key="#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#" awsbucket="#arguments.thestruct.awsbucket#">
+				<cfcatch type="any">
+					<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to amazon" dump="#cfcatch#">
+				</cfcatch>
+			</cftry>
+		<!--- AKAMAI --->
+		<cfelseif arguments.thestruct.storage EQ "akamai">
+			<!--- Create folder with the asset id --->
+			<cfif NOT directoryexists("#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#")>
+				<cfdirectory action="create" directory="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#" mode="775">
+			</cfif>
+			<cftry>
+				<!--- Upload Original Image --->
+				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
+					<cfset var upt = Createuuid("")>
+					<cfthread name="#upt#" intstruct="#arguments.thestruct#" action="run">
+						<cfinvoke component="akamai" method="Upload">
+							<cfinvokeargument name="theasset" value="#attributes.intstruct.thesourceraw#">
+							<cfinvokeargument name="thetype" value="#attributes.intstruct.akaimg#">
+							<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
+							<cfinvokeargument name="thefilename" value="#attributes.intstruct.qryfile.filename#">
+						</cfinvoke>
 					</cfthread>
-					<!--- Wait for thread to finish --->
-					<cfthread action="join" name="uploadt#arguments.thestruct.newid#" />
-					<!--- Get size thumnail --->
-					<cfif !application.razuna.rfs>
-						<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
-					<cfelse>
-						<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
-						<cfset var thumbsize = 1>
+					<cfthread action="join" name="#upt#" />
+				</cfif>
+				<!--- Move thumbnail --->
+				<cfthread name="uploadt#arguments.thestruct.newid#" intstruct="#arguments.thestruct#" action="run">
+					<cfif attributes.intstruct.qryfile.link_kind EQ "lan">
+						<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
+					<cfelseif !application.razuna.rfs>
+						<cffile action="move" source="#attributes.intstruct.destinationraw#" destination="#attributes.intstruct.qrysettings.set2_path_to_assets#/#attributes.intstruct.hostid#/#attributes.intstruct.qryfile.folder_id#/img/#attributes.intstruct.newid#/thumb_#attributes.intstruct.newid#.#attributes.intstruct.qrysettings.set2_img_format#" mode="775">
 					</cfif>
-					<!--- Get size of original --->
-					<cfset var orgsize = arguments.thestruct.qryfile.thesize>
-					<cfcatch type="any">
-						<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to akamai" dump="#cfcatch#">
-					</cfcatch>
-				</cftry>
-			</cfif>
-			<!--- Orgsize and thumbsize variables are not here --->
-			<cfif NOT isdefined(orgsize)>
+				</cfthread>
+				<!--- Wait for thread to finish --->
+				<cfthread action="join" name="uploadt#arguments.thestruct.newid#" />
+				<!--- Get size thumnail --->
+				<cfif !application.razuna.rfs>
+					<cfinvoke component="global" method="getfilesize" filepath="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/img/#arguments.thestruct.newid#/thumb_#arguments.thestruct.newid#.#arguments.thestruct.qrysettings.set2_img_format#" returnvariable="thumbsize">
+				<cfelse>
+					<!--- For renderingfarm we just set the thumbsize to 1 so we don't get errors doing inserts --->
+					<cfset var thumbsize = 1>
+				</cfif>
+				<!--- Get size of original --->
 				<cfset var orgsize = arguments.thestruct.qryfile.thesize>
-			</cfif>
-			<cfif NOT isdefined(thumbsize)>
-				<cfset var thumbsize = 0>
-			</cfif>
-			<!--- Update DB with the sizes from above --->
-			<cfquery datasource="#arguments.thestruct.dsn#">
-			UPDATE #session.hostdbprefix#images
-			SET 
-			img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_varchar">, 
-			thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_varchar">,
-			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.md5hash#">
-			<!--- AMAZON --->
-			<cfif arguments.thestruct.storage EQ "amazon" OR arguments.thestruct.storage EQ "nirvanix">
-				,
-				cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
-				cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
-				cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
-			</cfif>
-			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
-			</cfquery>
+				<cfcatch type="any">
+					<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error in image upload to akamai" dump="#cfcatch#">
+				</cfcatch>
+			</cftry>
 		</cfif>
+		<!--- Orgsize and thumbsize variables are not here --->
+		<cfif NOT isdefined(orgsize)>
+			<cfset var orgsize = arguments.thestruct.qryfile.thesize>
+		</cfif>
+		<cfif NOT isdefined(thumbsize)>
+			<cfset var thumbsize = 0>
+		</cfif>
+		<!--- Update DB with the sizes from above --->
+		<cfquery datasource="#arguments.thestruct.dsn#">
+		UPDATE #session.hostdbprefix#images
+		SET 
+		img_size = <cfqueryparam value="#orgsize#" cfsqltype="cf_sql_varchar">, 
+		thumb_size = <cfqueryparam value="#thumbsize#" cfsqltype="cf_sql_varchar">,
+		hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.md5hash#">
+		<cfif !application.razuna.rfs>
+			,
+			is_available = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+		</cfif>
+		<!--- AMAZON --->
+		<cfif arguments.thestruct.storage EQ "amazon" OR arguments.thestruct.storage EQ "nirvanix">
+			,
+			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
+			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
+			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">				
+		</cfif>
+		WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
+		</cfquery>
+	</cfif>
 	<!--- return --->
 	<cfreturn />
 </cffunction>
