@@ -184,9 +184,13 @@
 	<fuseaction name="folder_settings">
   		<include template="dsp_folder_settings" />
 	</fuseaction>
-	<!-- Folder: trash -->
+	<!-- Assets: trash -->
     <fuseaction name="folder_trash">
 		<include template="dsp_folder_trash" />
+    </fuseaction>
+	<!-- Folder: trash -->
+    <fuseaction name="trash_folder_all">
+		<include template="dsp_trash_folder_all" />
     </fuseaction>
 	<!-- Folder: samefoldernamecheck -->
 	<fuseaction name="folder_namecheck">

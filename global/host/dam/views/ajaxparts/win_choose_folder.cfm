@@ -26,7 +26,7 @@
 <cfoutput>
 	<div><strong><cfif attributes.iscol EQ "F">Choose from the folder list below:<cfelse>Choose a collection folder first...</cfif></strong></div>
 	<div id="win_choosefolder"></div>
-	<cfif session.type EQ "movefolder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
+	<cfif session.type EQ "movefolder" OR session.type EQ "restorefolder" AND (Request.securityObj.CheckSystemAdminUser() OR Request.securityObj.CheckAdministratorUser())>
 		<div style="clear:both;padding-top:15px;" />
 		<div><a href="##" onclick="movethisfolder();return false;">Move the folder to the top level</a></div>
 	</cfif>
@@ -86,7 +86,8 @@
 		function delayfolderload(){
 			$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
 			<cfif structKeyExists(attributes,"fromtrash") AND attributes.fromtrash>
-				$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection<cfelse>folder</cfif>_explorer_trash');
+				//$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash<cfelse>folder_explorer_trash&trashkind=foldes</cfif>');
+				loadcontent('folders','#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash<cfelse>trash_folder_all&trashkind=folders</cfif>');
 			</cfif>
 		}
 	</script>
