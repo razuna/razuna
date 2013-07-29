@@ -1013,7 +1013,7 @@
 			<!--- Query version --->
 			<cfquery name="qFile" datasource="#variables.dsn#">
 			SELECT av_link_url AS path_to_asset, av_link_url AS cloud_url, av_link_url AS cloud_url_org, 
-			'' AS link_kind, av_link_title AS filenameorg, av_link_title AS thefilename
+			'' AS link_kind, av_link_title AS filenameorg, av_link_title AS thefilename, thesize
 			FROM #session.hostdbprefix#additional_versions
 			WHERE av_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1032,8 +1032,9 @@
 			<!--- Images --->
 			<cfif arguments.thestruct.type EQ "img">
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#servefileimg */ img_id, img_filename, img_extension, thumb_extension, img_filename_org filenameorg, folder_id_r,
-				link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org
+				SELECT /* #variables.cachetoken#servefileimg */ img_id, img_filename, img_extension, 
+				thumb_extension, img_filename_org filenameorg, folder_id_r, link_kind, link_path_url, path_to_asset, 
+				cloud_url, cloud_url_org, img_size as thesize
 				FROM #session.hostdbprefix#images
 				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1047,8 +1048,8 @@
 			<!--- Videos --->
 			<cfelseif arguments.thestruct.type EQ "vid">
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#servefilevid */ vid_filename, vid_extension, vid_name_org filenameorg, folder_id_r, link_kind, link_path_url,
-				path_to_asset, cloud_url, cloud_url_org
+				SELECT /* #variables.cachetoken#servefilevid */ vid_filename, vid_extension, vid_name_org filenameorg, 
+				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, vid_size as thesize
 				FROM #session.hostdbprefix#videos
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1058,8 +1059,8 @@
 			<!--- Audios --->
 			<cfelseif arguments.thestruct.type EQ "aud">
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#servefileaud */ aud_name, aud_extension, aud_name_org filenameorg, folder_id_r, link_kind, link_path_url,
-				path_to_asset, cloud_url, cloud_url_org
+				SELECT /* #variables.cachetoken#servefileaud */ aud_name, aud_extension, aud_name_org filenameorg, 
+				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aus_size as thesize
 				FROM #session.hostdbprefix#audios
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -1069,8 +1070,9 @@
 			<!--- Documents --->
 			<cfelse>
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
-				SELECT /* #variables.cachetoken#servefilefile */ file_name, file_extension, file_name_org filenameorg, folder_id_r, link_path_url, link_kind, 
-				link_path_url, path_to_asset, cloud_url, cloud_url_org
+				SELECT /* #variables.cachetoken#servefilefile */ file_name, file_extension, file_name_org filenameorg, 
+				folder_id_r, link_path_url, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org,
+				file_size as thesize
 				FROM #session.hostdbprefix#files
 				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
