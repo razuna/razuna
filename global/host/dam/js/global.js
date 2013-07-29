@@ -690,6 +690,55 @@ function set3gp(theform){
 		break;
 	}
 }
+// Set values for the Additional rendition for 3GP format correct for rendition template
+function clickset3gp_additional(theform,idx){
+	document.forms[theform]["convert_width_3gp_"+idx].value = '128';
+	document.forms[theform]["convert_height_3gp_"+idx].value = '96';
+}
+function set3gp_additional(theform,index){
+	var thissize = document.forms[theform]["convert_wh_3gp_"+index].selectedIndex;
+	switch(thissize){
+		//all values which are 128x96
+		case 1: case 2: case 4: case 6: case 8:
+		document.forms[theform]["convert_width_3gp_"+index].value = '128';
+		document.forms[theform]["convert_height_3gp_"+index].value = '96';
+		break;
+		//all values which are 176x144
+		case 3: case 5: case 7: case 9:
+		document.forms[theform]["convert_width_3gp_"+index].value = '176';
+		document.forms[theform]["convert_height_3gp_"+index].value = '144';
+		break;
+		case 10:
+		document.forms[theform]["convert_width_3gp_"+index].value = '352';
+		document.forms[theform]["convert_height_3gp_"+index].value = '288';
+		break;
+		case 11:
+		document.forms[theform]["convert_width_3gp_"+index].value = '704';
+		document.forms[theform]["convert_height_3gp_"+index].value = '576';
+		break;
+		case 12:
+		document.forms[theform]["convert_width_3gp_"+index].value = '1408';
+		document.forms[theform]["convert_height_3gp_"+index].value = '1152';	
+		break;
+	}
+	switch(thissize){
+		case 1:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '64';
+		break;
+		case 2: case 3:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '95';
+		break;
+		case 4: case 5:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '200';
+		break;
+		case 6: case 7:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '300';
+		break;
+		case 8: case 9: case 10: case 11: case 12:
+		document.forms[theform]["convert_bitrate_3gp_"+index].value = '600';
+		break;
+	}
+}
 // Will convert the value given in the width and set it in the heigth
 function aspectheight(inp,out,theform,theaspect){
 	//Check that the input value is mod, if not correct it
