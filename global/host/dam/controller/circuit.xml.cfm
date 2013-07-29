@@ -1814,7 +1814,7 @@
 		<!-- CFC: Load Groups of this folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroups(attributes.folder_id,qry_groups)" returnvariable="qry_folder_groups" />
 		<!-- CFC: Load Groups of this folder for group 0 -->
-		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroupszero(attributes.folder_id)" returnvariable="qry_folder_groups_zero" />
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getfoldergroupszero(attributes.theid)" returnvariable="qry_folder_groups_zero" />
 		<!-- Get labels -->
 		<do action="labels" />
 		<!-- Get labels for this record -->
