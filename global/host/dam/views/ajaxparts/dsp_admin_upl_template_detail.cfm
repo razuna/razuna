@@ -30,6 +30,14 @@
 <form action="#self#" method="post" name="formupltemp" id="formupltemp">
 <input type="hidden" name="#theaction#" value="c.upl_template_save">
 <input type="hidden" name="upl_temp_id" value="#attributes.upl_temp_id#">
+<input type="hidden" name="convert_width_3gp" value="">
+<input type="hidden" name="convert_height_3gp" value="">
+<input type="hidden" name="convert_bitrate_3gp" value="">
+<cfloop from="2" to="6" index="idx" >
+	<input type="hidden" name="convert_width_3gp_#idx#" value="">
+	<input type="hidden" name="convert_height_3gp_#idx#" value="">
+	<input type="hidden" name="convert_bitrate_3gp_#idx#" value="">
+</cfloop>
 <div id="tab_upl_temp">
 	<ul>
 		<li><a href="##tab_upl_temp_all">#myFusebox.getApplicationData().defaults.trans("settings")#</a></li>
@@ -1237,12 +1245,11 @@
 				</td>
 			</tr>
 			<!--- 3GP --->
-			<!---
 			<tr>
 				<td align="center"><input type="checkbox" name="convert_to" value="vid-3gp" onclick="clickset3gp('formupltemp');"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "3gp"> checked="checked"</cfif></cfloop>></td>
-				<td><a href="##" onclick="clickcbk('formupltemp','convert_to',78);return false;" style="text-decoration:none;">3GP</a><br /><a href="##" onclick="$('##3gp_more').slideToggle('slow');return false;">additional conversions</a></td>
+				<td><a href="##" onclick="clickcbk('formupltemp','convert_to',78);return false;" style="text-decoration:none;">3GP</a><br /></td>
 				<td nowrap="true">
-				<select name="convert_wh_3gp" onChange="javascript:set3gp('form');">
+				<select name="convert_wh_3gp" onChange="javascript:set3gp('formupltemp');">
 				<option value="0"></option>
 				<option value="1" selected="true">128x96 (MMS 64K)</option>
 				<option value="2">128x96 (MMS 95K)</option>
@@ -1258,6 +1265,9 @@
 				<option value="12">1408x1152 (No size limit)</option>
 				</select>
 				</td>
+				<td>
+					<a href="##" onclick="$('##3gp_more').slideToggle('slow');return false;">additional conversions</a>
+				</td>
 				<!--- <cfset b3gp = 64>
 				<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_bitrate_3gp"><cfset b3gp = upl_temp_value></cfif></cfloop>
 				<td nowrap="true"><input type="text" size="4" name="convert_bitrate_3gp" value="#b3gp#">kb/s</td> --->
@@ -1266,16 +1276,32 @@
 				<td colspan="4">
 					<div id="3gp_more" style="display:none;">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
+							<cfloop from="2" to="6" index="i" >
 							<tr>
-								<td align="center"><input type="checkbox" name="convert_to" value="vid-3gp_2"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "3gp_2"> checked="checked"</cfif></cfloop>></td>
-								<td><a href="##" onclick="clickcbk('formupltemp','convert_to',79);return false;" style="text-decoration:none;">3GP</a></td>
-								<td>
-									<cfset incval.theformat = "3gp_2">
-									<cfinclude template="inc_video_presets.cfm" />
-								</td>
-								<td><input type="text" size="3" name="convert_width_3gp_2" id="convert_width_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_3gp_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_3gp_2" id="convert_height_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_3gp_2">#upl_temp_value#</cfif></cfloop>"></td>
+								<cfset incval.theformat = "3gp_#i#">
+									<td align="center" style="width:20px;"><input type="checkbox" name="convert_to" value="vid-3gp_#i#" onclick="clickset3gp_additional('formupltemp','#i#');"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "3gp_#i#"> checked="checked"</cfif></cfloop>></td>
+									<td style="width:55px;"><a href="##" onclick="clickcbk('formupltemp','convert_to',79);return false;" style="text-decoration:none;">3GP</a><br /></td>
+									<td nowrap="true">
+									<select name="convert_wh_3gp_#i#" onChange="javascript:set3gp_additional('formupltemp','#i#');">
+									<option value="0"></option>
+									<option value="1" selected="true">128x96 (MMS 64K)</option>
+									<option value="2">128x96 (MMS 95K)</option>
+									<option value="3">176x144 (MMS 95K)</option>
+									<option value="4">128x96 (200K)</option>
+									<option value="5">176x144 (200K)</option>
+									<option value="6">128x96 (300K)</option>
+									<option value="7">176x144 (300K)</option>
+									<option value="8">128x96 (No size limit)</option>
+									<option value="9">176x144 (No size limit)</option>
+									<option value="10">352x288 (No size limit)</option>
+									<option value="11">704x576 (No size limit)</option>
+									<option value="12">1408x1152 (No size limit)</option>
+									</select>
+									</td>
+								<!---<td><input type="text" size="3" name="convert_width_3gp_2" id="convert_width_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_3gp_2">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_3gp_2" id="convert_height_3gp_2" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_3gp_2">#upl_temp_value#</cfif></cfloop>"></td>--->
 							</tr>
-							<tr>
+							</cfloop>
+							<!---<tr>
 								<td align="center"><input type="checkbox" name="convert_to" value="vid-3gp_3"<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_to" AND upl_temp_value EQ "3gp_3"> checked="checked"</cfif></cfloop>></td>
 								<td><a href="##" onclick="clickcbk('formupltemp','convert_to',80);return false;" style="text-decoration:none;">3GP</a></td>
 								<td>
@@ -1310,12 +1336,11 @@
 									<cfinclude template="inc_video_presets.cfm" />
 								</td>
 								<td><input type="text" size="3" name="convert_width_3gp_6" id="convert_width_3gp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_width_3gp_6">#upl_temp_value#</cfif></cfloop>"> x <input type="text" size="3" name="convert_height_3gp_6" id="convert_height_3gp_6" value="<cfloop query="qry_detail.uplval"><cfif upl_temp_field EQ "convert_height_3gp_6">#upl_temp_value#</cfif></cfloop>"></td>
-							</tr>
+							</tr>--->
 						</table>
 					</div>
 				</td>
 			</tr>
-			--->
 			<!--- RM
 			<!--- <cfset bit = 600> --->
 			<tr>
