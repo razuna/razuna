@@ -435,7 +435,7 @@
 			</cfcatch>
 		</cftry>
 		<!--- Index the file itself, but not video (since video throws an error) --->
-		<cfif qry_all.link_kind NEQ "url" AND arguments.category NEQ "vid" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
+		<cfif qry_all.link_kind NEQ "url" AND arguments.category EQ "doc" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
 			<cftry>
 				<!--- Nirvanix or Amazon --->
 				<cfif (arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai")>
@@ -460,11 +460,13 @@
 						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				</cfif>
 				<cfcatch type="any">
+					<cfset consoleoutput(true)>
+					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
 		</cfif>
 		<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
 	</cffunction>
 	
 	<!--- Get custom values --->
@@ -671,7 +673,7 @@
 		<cfoutput><strong>Let's see how many documents we have to re-index...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Get all assets --->
-		<cfquery name="qry" datasource="#variables.dsn#"> 
+		<cfquery name="qry" datasource="#application.razuna.datasource#"> 
 	    <!--- Files --->
 	    SELECT file_id id, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, 
 	    file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize
@@ -759,11 +761,11 @@
 								<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 								<cfinvokeargument name="assetid" value="#id#">
 								<cfinvokeargument name="category" value="#cat#">
-								<cfinvokeargument name="dsn" value="#variables.dsn#">
+								<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
 								<cfinvokeargument name="notfile" value="#notfile#">
 							</cfinvoke>
 							<!--- Update file DB with new lucene_key --->
-							<cfquery datasource="#variables.dsn#">
+							<cfquery datasource="#application.razuna.datasource#">
 							UPDATE #session.hostdbprefix#files
 							SET lucene_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.path#/#file_name_org#">
 							WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
@@ -779,7 +781,7 @@
 							<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 							<cfinvokeargument name="assetid" value="#id#">
 							<cfinvokeargument name="category" value="#cat#">
-							<cfinvokeargument name="dsn" value="#variables.dsn#">
+							<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
 							<cfinvokeargument name="notfile" value="#notfile#">
 						</cfinvoke>
 					</cfif>
@@ -801,7 +803,7 @@
 						<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
 						<cfinvokeargument name="assetid" value="#id#">
 						<cfinvokeargument name="category" value="#cat#">
-						<cfinvokeargument name="dsn" value="#variables.dsn#">
+						<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
 					</cfinvoke>
 				<!---
 <cfelse>
