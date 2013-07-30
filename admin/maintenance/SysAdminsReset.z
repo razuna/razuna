@@ -1,0 +1,59 @@
+<!---
+If you have lost your password for any of your System-Administrator group users you can use this template to reset the password.
+
+In order for this template to work you need to rename it to "SysAdminsReset.cfm"!
+
+Set datasource here (if you have never changed the name of it (most likely) simply follow the guideline below).
+For H2 it is "h2"
+For MySQL it is "mysql"
+For MS SQL it is "mssql"
+For Oracle it is "oracle"
+For DB2 it is "db2"
+--->
+
+<cfset the_dsn = "mysql">
+
+<!--- 
+Nothing else to edit below
+--->
+
+
+
+<cfif structKeyExists(form,"submit")>
+	<cfloop collection="#form#" item="f">
+		<cfif f CONTAINS "pw_" and form["#f#"] NEQ "">
+			<cfset theid = listlast(f,"_")>
+			<cfset thepw = hash(form["#f#"], "MD5", "UTF-8")>
+			<cfquery datasource="#the_dsn#">
+			UPDATE users
+			SET user_pass = <cfqueryparam cfsqltype="cf_sql_varchar" value="#thepw#">
+			WHERE user_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#theid#">
+			</cfquery>
+		</cfif>
+	</cfloop>
+	<cfquery dataSource="#the_dsn#">
+	UPDATE cache
+	SET cache_token = <cfqueryparam value="#createuuid('')#" CFSQLType="CF_SQL_VARCHAR">
+	</cfquery>
+	<h2>The password has been reset!</h2>
+	<p>Don't forget to remove or rename this file so no one else can access it!</p>
+	<cfabort>
+</cfif>
+
+<cfquery datasource="#the_dsn#" name="qry_admins">
+SELECT u.user_first_name, u.user_last_name, u.user_email, u.user_id
+FROM users u, ct_groups_users ct
+WHERE u.user_id = ct.ct_g_u_user_id
+AND ct.ct_g_u_grp_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="1">
+</cfquery>
+
+<form method="post">
+	<cfoutput query="qry_admins">
+		<p>
+			#user_first_name# #user_last_name# #user_email# Password: <input type="text" name="pw_#user_id#" size="40" />
+		</p>
+	</cfoutput>
+	<p>
+		<input type="submit" value="update" name="submit" />
+	</p>
+</form>

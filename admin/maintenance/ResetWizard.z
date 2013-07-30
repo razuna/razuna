@@ -1,0 +1,11 @@
+<!--- 
+In case you have accidently reset the Administration and are now in the FirstTime Wizard you can hit this template to reset it back!
+
+In order for this template to work you need to rename it to "ResetWizard.cfm"!
+ --->
+
+ <cfquery datasource="razuna_default">
+ UPDATE razuna_config
+ SET conf_firsttime = false
+ </cfquery>
+ 
