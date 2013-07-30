@@ -1,9 +1,61 @@
 OpenBD Release Notes
 __________________________________
 
-$Date: 2013-02-10 22:26:44 +0000 (Sun, 10 Feb 2013) $
+$Date: 2013-07-28 21:19:27 +0000 (Sun, 28 Jul 2013) $
 __________________________________
 
+- fixed cfscript function returnformat="" bug
+- Upgraded javolution jar to 5.5.1
+- Updated MongoFSGridPut() for updated ID support
+- Updated MongoFSGridGet() min parameters
+- yield() on the Profiler
+- added functions:
+  - invoke(c,m,a)
+  - setHttpStatus(sc,st)
+  - setHttpValue(n,v)
+  - htmlBody(t,p)
+  - htmlHead(t,p)
+- fixed try/catch unwrap exception bug
+- reverted fix for "no ResultSet available" for SQLite
+- added functions:
+  - Pause(ms)/sleep(ms)
+  - CreateDateTime() added ms parameter
+  - CreateTime() added ms, epoch parameter
+  - Millisecond(dt)
+  - QueryToArray(qry)
+  - encodeForHtmlAttribute(s)
+  - encodeForJavascript(s)
+  - encodeForFilename(s,d)
+  - Hmac(m,k,a,e)
+  - urlFromStruct(s,e)
+- fixed #515: cfquery credentials do not override those defined in datasource
+- added ip/xip to the Profiler() data
+- fixed ImageNew() with no or blank src
+- fix for thread safety in session storage 
+- fixed bug in validation of interface methods implemented by cfc 
+- added <%= ... %> optional parsing supported (bluedragon.xml: server.system.cfoutputshorthand) 
+- fixed #510: setLocale and onRequestStart scoping
+- fixed #512: CFHTTP send PUT request with a file as multipart/form-data content type
+- fixed #509: cfdirectory/directorylist sort issue
+- fixed #513: cfstylesheet SRC support for comma-separated list
+- fixed "no ResultSet available" issue when querying SQLite db
+- fixed cfquery result recordcount for insert statements
+- fixed support for dynamic keys in implicit structs
+- fixed DirectoryList() omission of directories when applying filter
+- fixed htmlEditFormat handling of html encoded characters like &eacute;
+- reduced logging verbosity
+- fixed encoding of null in serializejson function
+- fixed: JavaScript Bridge: array .length support
+- fixed: dataBin was not properly set under certain calls
+- fixed NPE when using MongoRegister with a mongouri
+- added: ProfilerOn()/ProfilerOff()/ProfilerAdd()
+
+--- Stable Release 3.0 [3rd March 2013]
+- fixed CFMODULE dynamic bug for NAME="" attribute
+- added cron.1min to cron functionality
+- fixed the onApplicationStart() loading update
+- fixed exception handling edge case
+- OnSessionStart()/OnApplicationStart() update 
 - Database Connection Pooling Refactor
   - Reduced memory overhead
   - added function DataSourceActivePoolStats()
