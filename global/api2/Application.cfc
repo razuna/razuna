@@ -74,6 +74,7 @@
 		<!--- Session vars --->
 		<cfparam name="session.offset" default="0">
 		<cfparam name="session.rowmaxpage" default="25">
+		<cfparam name="session.sortby" default="name">
 	</cffunction>
 
 	<cffunction name="onError" returntype="string">
