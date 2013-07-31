@@ -699,7 +699,7 @@
 	<!-- Restore all files in trash -->
 	<fuseaction name="restore_allfile_do">
 		<!-- Param -->
-		<set name="attributes.file_id" value="#session.thefileid#" />
+		<set name="attributes.file_id" value="#session.file_id#" />
 		<set name="attributes.thispath" value="#thispath#" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.restorefileall" value="true" />
