@@ -264,6 +264,8 @@
 		<cfargument name="thetype" type="string">
 		<!--- Param --->
 		<cfset var l = "">
+		<cfset var qryct = "">
+		<cfset var qry = "">
 		<!--- Query ct table --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryct" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#getlabels */ ct_label_id
