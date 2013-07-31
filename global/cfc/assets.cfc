@@ -988,9 +988,9 @@
 				<!--- Create inserts --->
 				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
 				<!--- Call the addasset function --->
-				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
-					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
-				<!--- </cfthread> --->
+				<cfthread intstruct="#arguments.thestruct#">
+					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
+				</cfthread>
 				<!--- Get file type so we can return the type --->
 				<cfquery datasource="#application.razuna.datasource#" name="fileType">
 				SELECT type_type
