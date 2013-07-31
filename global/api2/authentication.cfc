@@ -143,19 +143,19 @@
 		<!--- Query --->
 		<cfif arguments.action NEQ "on_folder_add">
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry_forwf">
-			SELECT folder_id_r, img_filename AS 'thefilename', 'img' AS thefiletype
+			SELECT folder_id_r, img_filename AS thefilename, 'img' AS thefiletype
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#images
 			WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			UNION ALL
-			SELECT folder_id_r, vid_filename AS 'thefilename', 'vid' AS thefiletype
+			SELECT folder_id_r, vid_filename AS thefilename, 'vid' AS thefiletype
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#videos
 			WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			UNION ALL
-			SELECT folder_id_r, aud_name AS 'thefilename', 'aud' AS thefiletype
+			SELECT folder_id_r, aud_name AS thefilename, 'aud' AS thefiletype
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#audios
 			WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			UNION ALL
-			SELECT folder_id_r, file_name AS 'thefilename',  'doc' AS thefiletype
+			SELECT folder_id_r, file_name AS thefilename, 'doc' AS thefiletype
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#files
 			WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.fileid#">
 			</cfquery>
