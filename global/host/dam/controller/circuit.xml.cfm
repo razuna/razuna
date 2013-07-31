@@ -1678,7 +1678,8 @@
 	<fuseaction name="restore_all_col_file_do">
 		<!-- Param -->
 		<set name="attributes.file_id" value="#session.file_id#" />
-		<set name="attributes.restorefileall" value="true" />
+		<set name="attributes.restoreall" value="true" />
+		<set name="attributes.trashkind" value="files" />
 		<!-- CFC:Update collection ct files -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="restore_col_file(attributes)"/>	
 		<!-- Show -->
