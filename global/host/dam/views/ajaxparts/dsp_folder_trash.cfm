@@ -28,7 +28,7 @@
 	<cfif attributes.trashall>
 		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("empty_trash_all_feedback")#</span>
 	<!--- Show this when user clicks on restore all --->
-	<cfelseif attributes.reastorefileall>
+	<cfelseif attributes.restorefileall>
 		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("Restore_trash_files_feedback")#</span>
 	<!--- Show this when user clicks on restore all --->
 	<cfelseif attributes.restorefolderall>
@@ -60,6 +60,7 @@
 			jqtabs("tabsfolder_tab");
 				<cfif attributes.trashkind EQ "folders">
 					$('##folders').load('#myself#c.trash_folder_all&trashkind=folders');
+					$('##tabsfolder_tab').tabs('select','##folders');
 				<cfelse>
 					$('##assets').load('#myself#c.trash_assets&trashkind=assets');
 				</cfif>

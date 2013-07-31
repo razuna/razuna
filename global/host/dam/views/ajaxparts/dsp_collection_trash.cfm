@@ -27,18 +27,51 @@
 	<!--- Show this when user clicks on empty trash --->
 	<cfif attributes.trashall>
 		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("empty_trash_all_feedback")#</span>
+	<!--- Show this when user clicks on restore all --->
+	<cfelseif attributes.restoreall>
+		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("Restore_trash_all_feedback")#</span>
 	<!--- Show trash --->
 	<cfelse>
 		<div id="tabsfolder_tab">
+			<cfif attributes.trashkind EQ "folders">
+				<cfif arraySum(qry_folder_count['cnt']) MOD session.trash_folder_rowmaxpage EQ 0>
+					<cfset session.col_trash_folder_offset = ceiling(arraySum(qry_folder_count['cnt']) / session.trash_folder_rowmaxpage) - 1>
+				</cfif>
+			<cfelseif attributes.trashkind EQ "files">
+				<cfif arraySum(qry_file_count['cnt']) MOD session.col_trash_rowmaxpage EQ 0>
+					<cfset session.col_trash_offset = ceiling(arraySum(qry_file_count['cnt']) / session.col_trash_rowmaxpage) - 1>
+				</cfif>
+			<cfelse>
+				<cfif arraySum(col_count_trash['cnt']) MOD session.trash_collection_rowmaxpage EQ 0>
+					<cfset session.trash_collection_offset = ceiling(arraySum(col_count_trash['cnt']) / session.trash_collection_rowmaxpage) - 1>
+				</cfif> 
+			</cfif> 
 			<ul>
-				<!--- Show the trash collection and collection asset content --->
-				<li><a href="##collection" onclick="loadcontent('collection','#myself##xfa.ftrashcol#');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")# (#arraySum(col_count_trash['cnt'])#)</a></li>
+				<!--- Show the collection files in the trash --->
+				<li><a href="##files" onclick="loadcontent('files','#myself#c.get_collection_trash_files&trashkind=files');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_files")# (#arraySum(qry_file_count['cnt'])#)</a></li>
+				<!--- Show the collection folders in the trash --->
+				<li><a href="##folders" onclick="loadcontent('folders','#myself#c.get_collection_trash_folders&trashkind=folders');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folders")# (#arraySum(qry_folder_count['cnt'])#)</a></li>
+				<!--- Show the collection in the trash --->
+				<li><a href="##collections" onclick="loadcontent('collections','#myself#c.col_get_trash&trashkind=collections');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_collections")# (#arraySum(col_count_trash['cnt'])#)</a></li>
 			</ul>
-			<div id="collection"></div>
+			<!--- for files --->
+			<div id="files"></div>
+			<!--- for folders --->
+			<div id="folders"></div>
+			<!--- for collection --->
+			<div id="collections"></div>
 		</div>
 		<script type="text/javascript">
-			jqtabs("tabsfolder_tab");
-			loadcontent('collection','#myself#c.col_get_trash');
-		</script>
+           jqtabs("tabsfolder_tab");
+           <cfif attributes.trashkind EQ 'collections'>
+                   loadcontent('collections','#myself#c.col_get_trash&trashkind=collections');
+                   $('##tabsfolder_tab').tabs('select','##collections');
+           <cfelseif attributes.trashkind EQ 'folders'>
+                   loadcontent('collections','#myself#c.get_collection_trash_folders&trashkind=folders');
+                   $('##tabsfolder_tab').tabs('select','##folders');
+           <cfelse>
+                   loadcontent('files','#myself#c.get_collection_trash_files&trashkind=files');
+           </cfif>
+       </script>
 	</cfif>
 </cfoutput>

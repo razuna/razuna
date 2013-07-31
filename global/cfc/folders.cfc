@@ -1966,18 +1966,21 @@
 		<!--- Change the folder_id_r of the folder we want to move --->
 		<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.intofolderid#" cfsqltype="CF_SQL_VARCHAR">, 
-			folder_main_id_r = <cfif #arguments.thestruct.intolevel# EQ 1><cfqueryparam value="#arguments.thestruct.intofolderid#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+			SET folder_id_r = <cfif arguments.thestruct.intofolderid EQ 0><cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#arguments.thestruct.intofolderid#" cfsqltype="CF_SQL_VARCHAR"></cfif>, 
+			folder_main_id_r = <cfif arguments.thestruct.intofolderid EQ 0><cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
 			in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">	
 			WHERE folder_id = <cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Now loop trough the folderids and change the folder_main_id_r and the folder_level --->
 		<cfloop list="#folderids#" index="thenr" delimiters=",">
-			<cfset arguments.thestruct.intolevel = arguments.thestruct.intolevel + 1>
+			<!--- check the folder level --->
+			<cfif  arguments.thestruct.intofolderid  NEQ 0>
+				<cfset arguments.thestruct.intolevel = arguments.thestruct.intolevel + 1>
+			</cfif>
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
-			SET folder_main_id_r = <cfif #arguments.thestruct.intolevel# EQ 1><cfqueryparam value="#arguments.thestruct.intofolderid#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+			SET folder_main_id_r = <cfif #arguments.thestruct.intofolderid# EQ 0><cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
 			folder_level = <cfqueryparam value="#arguments.thestruct.intolevel#" cfsqltype="cf_sql_numeric"><!--- folder_level + #arguments.thestruct.difflevel# --->
 			WHERE folder_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2018,10 +2021,8 @@
 	<!--- Get the details --->
 	<cfquery datasource="#application.razuna.datasource#" name="thenewrootid">
 		SELECT folder_id_r,folder_main_id_r,folder_level,folder_name FROM #session.hostdbprefix#folders
-       WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+       	WHERE folder_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.intofolderid#">
 	</cfquery>
-	<!--- Set new folder level --->
-	<cfset arguments.thestruct.intolevel = thenewrootid.folder_level>
 	<!--- Loop over the query --->
 	<cfloop query="arguments.qry_all">
 		<!--- Get the Folder Name/Folder Level for the Log --->
@@ -2041,18 +2042,20 @@
 		<!--- Change the folder_id_r of the folder we want to move --->
 		<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">, 
-			folder_main_id_r = <cfif #arguments.thestruct.intolevel# EQ 1><cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+			SET folder_id_r = <cfif arguments.thestruct.intofolderid EQ 0><cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#arguments.thestruct.intofolderid#" cfsqltype="CF_SQL_VARCHAR"></cfif>, 
+			folder_main_id_r = <cfif arguments.thestruct.intofolderid EQ 0><cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
 			in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">	
 			WHERE folder_id = <cfqueryparam value="#id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Now loop trough the folderids and change the folder_main_id_r and the folder_level --->
 		<cfloop list="#folderids#" index="thenr" delimiters=",">
-			<cfset arguments.thestruct.intolevel = arguments.thestruct.intolevel + 1>
+			<cfif arguments.thestruct.intofolderid NEQ 0>
+				<cfset arguments.thestruct.intolevel = arguments.thestruct.intolevel + 1>
+			</cfif>
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
-			SET folder_main_id_r = <cfif #arguments.thestruct.intolevel# EQ 1><cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
+			SET folder_main_id_r = <cfif #arguments.thestruct.intolevel# EQ 1><cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
 			folder_level = <cfqueryparam value="#arguments.thestruct.intolevel#" cfsqltype="cf_sql_numeric"><!--- folder_level + #arguments.thestruct.difflevel# --->
 			WHERE folder_id = <cfqueryparam value="#thenr#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -2101,7 +2104,9 @@
 		</cfquery>
 		<!--- Now loop trough the folderids and change the folder_main_id_r and the folder_level --->
 		<cfloop list="#folderids#" index="thenr" delimiters=",">
-			<cfset arguments.thestruct.intolevel = arguments.thestruct.intolevel + 1>
+			<cfif arguments.thestruct.intofolderid NEQ arguments.thestruct.tomovefolderid>
+				<cfset arguments.thestruct.intolevel = arguments.thestruct.intolevel + 1>
+			</cfif>
 			<cfquery datasource="#variables.dsn#">
 			UPDATE #session.hostdbprefix#folders
 			SET folder_main_id_r = <cfif #arguments.thestruct.intolevel# EQ 1><cfqueryparam value="#arguments.thestruct.intofolderid#" cfsqltype="CF_SQL_VARCHAR"><cfelse><cfqueryparam value="#thenewrootid.folder_main_id_r#" cfsqltype="CF_SQL_VARCHAR"></cfif>,
@@ -3901,7 +3906,7 @@
 					<cfelseif session.type EQ "restorefolder">
 						<cfif session.thefolderorg NEQ folder_id>
 							<!---<a href="##" onclick="$('##rightside').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#');destroywindow(1);return false;">--->
-							<a href="##" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#');destroywindow(1);return false;">
+							<a href="##" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#&iscol=#iscol#');$('##rightside').load('index.cfm?fa=c.folder_explorer_trash&trashkind=folders');destroywindow(1);return false;">
 						</cfif>
 					<!--- restoreselectedfolders --->
 					<cfelseif session.type EQ "restoreselectedfolders">
@@ -3911,7 +3916,7 @@
 					<!--- restorefile --->
 					<cfelseif session.type EQ "restorefile">
 						<cfif session.thefolderorg NEQ folder_id> 
-							<a href="##" onclick="<cfif session.thefileid CONTAINS ",">loadoverlay();</cfif>$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#', function(){loadfolderwithdelay('#session.thefolderorg#');$('##bodyoverlay').remove();});destroywindow<cfif NOT session.thefileid CONTAINS ",">(2)<cfelse>(1)</cfif>;<cfif NOT session.thefileid CONTAINS ",">loadcontent('thewindowcontent1','index.cfm?fa=c.<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>_detail&file_id=#session.thefileid#&what=<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>&loaddiv=&folder_id=#folder_id#')</cfif>;">
+							<a href="##" onclick="<cfif session.thefileid CONTAINS ",">loadoverlay();</cfif>$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#&intolevel=#folder_level#', function(){loadfolderwithdelay('#session.thefolderorg#');$('##bodyoverlay').remove();});destroywindow<cfif NOT session.thefileid CONTAINS ",">(2)<cfelse>(1)</cfif>;<cfif NOT session.thefileid CONTAINS ",">loadcontent('thewindowcontent1','index.cfm?fa=c.<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>_detail&file_id=#session.thefileid#&what=<cfif session.thetype EQ "doc">files<cfelseif session.thetype EQ "img">images<cfelseif session.thetype EQ "vid">videos<cfelseif session.thetype EQ "aud">audios</cfif>&loaddiv=&folder_id=#folder_id#')</cfif>;">
 						</cfif>
 					<!--- restorefileall --->
 					<cfelseif session.type EQ "restorefileall">
@@ -3926,7 +3931,7 @@
 					<!--- restorefolderall --->
 					<cfelseif session.type EQ "restorefolderall">
 						<cfif session.thefolderorg NEQ folder_id>
-							<a href="##" onclick="$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(1);return false;">
+							<a href="##" onclick="$('##rightside').load('index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;">
 						</cfif> 
 					<!--- saveaszip or as a collection --->
 					<cfelseif session.type EQ "saveaszip" OR session.type EQ "saveascollection">
@@ -3946,9 +3951,30 @@
 					<!--- choose a collection for restore file --->
 					<cfelseif session.type EQ "restore_collection_file">
 						<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
+					<!--- Restore all collection files in the trash --->
+					<cfelseif session.type EQ "restoreallcollectionfiles">
+						<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
+					<!--- Restore selected collection files in the trash --->
+					<cfelseif session.type EQ "restoreselectedcolfiles">
+						<a href="##" onclick="loadcontent('div_choosecol','index.cfm?fa=c.collection_chooser&withfolder=T&folder_id=#folder_id#');">
 					<!--- choose a folder for restore collection --->
 					<cfelseif session.type EQ "restore_collection">
-						<a href="##" onclick="loadcontent('win_choosefolder','index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(2);return false;">
+						<a href="##" onclick="loadcontent('collections','index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(1);return false;">
+					<!--- Restore all collections in the trash --->
+					<cfelseif session.type EQ "restoreallcollections">
+						<a href="##" onclick="$('##rightside').load('index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(1);return false;">
+					<!--- Restore selected collections  --->
+					<cfelseif session.type EQ "restoreselectedcollection">
+						<a href="##" onclick="loadcontent('collections','index.cfm?fa=#session.savehere#&folder_id=#folder_id#');destroywindow(1);return false;">
+					<!--- Restore collection folder in the trash --->
+					<cfelseif session.type EQ "restorecolfolder">
+						<a href="##" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;">
+					<!--- Restore all collection folder in the trash --->
+					<cfelseif session.type EQ "restorecolfolderall">
+						<a href="##" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;">
+					<!--- Restore all collection folder in the trash --->
+					<cfelseif session.type EQ "restoreselectedcolfolder">
+						<a href="##" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;">
 					<!--- Plugin --->
 					<cfelseif session.type EQ "plugin">
 						<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">

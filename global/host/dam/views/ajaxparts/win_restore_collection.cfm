@@ -37,7 +37,8 @@
 			</tr>
 			<tr>
 				<td align="right" style="padding-top:10px;">
-					<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="destroywindow(1);$('##div_forall').load('#myself#c.#attributes.what#_restore&col_id=#attributes.col_id#&id=#attributes.id#&file_id=#attributes.id#&kind=#attributes.kind#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&fromtrash=true');$('##rightside').load('#myself#c.collection_explorer_trash');" class="button">
+					 <input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="destroywindow(1);$('##div_forall').load('#myself#c.#attributes.what#_restore&col_id=#attributes.col_id#&id=#attributes.id#&file_id=#attributes.id#&kind=#attributes.kind#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&fromtrash=true');$('##rightside').load('#myself#c.collection_explorer_trash<cfif attributes.kind EQ 'collection'>&trashkind=collections<cfelseif attributes.kind EQ 'folder'>&trashkind=folders<cfelse>&trashkind=files</cfif>');" class="button">
+					<!---<input type="button" name="restore" value="#myFusebox.getApplicationData().defaults.trans("restore")#" onclick="destroywindow(1);$('##div_forall').load('#myself#c.#attributes.what#_restore&col_id=#attributes.col_id#&id=#attributes.id#&file_id=#attributes.id#&kind=#attributes.kind#&loaddiv=#attributes.loaddiv#&folder_id=#attributes.folder_id#&fromtrash=true');loadcontent('files','#myself#c.get_collection_trash_files');" class="button">--->
 				</td>
 			</tr>
 		</table>
