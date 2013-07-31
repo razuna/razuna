@@ -222,6 +222,8 @@
 			<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 			<!--- Create inserts --->
 			<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
+			<!--- Grab file --->
+			<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 			<!--- Call the addasset function --->
 			<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 				<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
@@ -519,6 +521,8 @@
 						<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 						<!--- Create inserts --->
 						<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
+						<!--- Grab file --->
+						<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 						<!--- Call the addasset function --->
 						<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 							<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
@@ -622,6 +626,8 @@
 							<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 							<!--- Create inserts --->
 							<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
+							<!--- Grab file --->
+							<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 							<!--- Call the addasset function --->
 							<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 								<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
@@ -750,6 +756,8 @@
 				<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 				<!--- Create inserts --->
 				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
+				<!--- Grab file --->
+				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 				<!--- Call the addasset function --->
 				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
@@ -987,10 +995,12 @@
 				<cfinvoke method="run_workflow" thestruct="#arguments.thestruct#" workflow_event="on_pre_process" />
 				<!--- Create inserts --->
 				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
+				<!--- Grab file --->
+				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 				<!--- Call the addasset function --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<cfinvoke method="addasset" thestruct="#attributes.intstruct#">
-				</cfthread>
+				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
+					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
+				<!--- </cfthread> --->
 				<!--- Get file type so we can return the type --->
 				<cfquery datasource="#application.razuna.datasource#" name="fileType">
 				SELECT type_type
@@ -1344,6 +1354,8 @@
 			<cfset arguments.thestruct.sendemail = false>
 			<!--- Create inserts --->
 			<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
+			<!--- Grab file --->
+			<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 			<!--- Call the addasset function --->
 			<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 				<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
@@ -1371,7 +1383,7 @@
 	<cfset arguments.thestruct.qryfile = 0>
 	<!--- Query the file to get filename and other stuff. This qry is also used within adding assets --->
 	<cfif arguments.thestruct.tempid NEQ 0>
-		<cfquery datasource="#arguments.thestruct.dsn#" name="arguments.thestruct.qryfile">
+		<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qryfile">
 		SELECT tempid, filename, extension, date_add, folder_id, who, filenamenoext, 
 		path, mimetype, thesize, groupid, sched_id, sched_action, file_id, link_kind, md5hash
 		FROM #session.hostdbprefix#assets_temp
@@ -1383,13 +1395,13 @@
 	<!--- If we need to send an email --->
 	<cfif arguments.thestruct.sendemail>
 		<!--- Get the eMail from this user --->
-		<cfquery datasource="#arguments.thestruct.dsn#" name="qryuser">
+		<cfquery datasource="#application.razuna.datasource#" name="qryuser">
 		SELECT user_email
 		FROM users
 		WHERE user_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">
 		</cfquery>
 		<!--- Convert the now date to readable format --->
-		<cfinvoke component="defaults" method="getdateformat" returnvariable="thedateformat" dsn="#arguments.thestruct.dsn#">
+		<cfinvoke component="defaults" method="getdateformat" returnvariable="thedateformat" dsn="#application.razuna.datasource#">
 		<!--- The Message --->
 		<!--- For adding asset --->
 		<cfif arguments.thestruct.emailwhat EQ "start_adding">
@@ -1433,7 +1445,7 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 </cffunction>
 
 <!--- This is the new threaded one --->
-<cffunction name="addasset" output="true">
+<cffunction name="addasset" output="false" returntype="void">
 	<cfargument name="thestruct" type="struct">
 	<!--- Call method to send email within that we also query the tempdb and return it here to pass it on --->
 	<cfset arguments.thestruct.emailwhat = "start_adding">
@@ -1444,7 +1456,6 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 	<cfif structkeyexists(arguments.thestruct,"tempid")>
 		<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
 	</cfif>
-	<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 	<!--- Thread --->
 	<cfif arguments.thestruct.qryfile.tempid NEQ "">
 		<cfthread name="addasset#arguments.thestruct.tempid#" intstruct="#arguments.thestruct#" action="run">
@@ -1452,7 +1463,7 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 		</cfthread>
 	</cfif>
 	<!--- Return --->
-	<cfreturn arguments.thestruct.qryfile.path>
+	<cfreturn />
 </cffunction>
 
 <!--- 
@@ -5638,6 +5649,8 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.importpath = true>
 				<!--- Create inserts --->
 				<cfinvoke method="create_inserts" tempid="#arguments.thestruct.tempid#" thestruct="#arguments.thestruct#" />
+				<!--- Grab file --->
+				<cfinvoke method="addassetsendmail" returnvariable="arguments.thestruct.qryfile" thestruct="#arguments.thestruct#">
 				<!--- Call the addasset function --->
 				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<cfinvoke method="addasset" thestruct="#arguments.thestruct#">
