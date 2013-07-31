@@ -175,7 +175,10 @@
 						<cfqueryparam value="#createuuid()#" CFSQLType="CF_SQL_VARCHAR">
 					)
 					</cfquery>
-					<cfcatch type="database"></cfcatch>
+					<cfcatch type="database">
+						<cfset consoleoutput(true)>
+						<cfset console(cfcatch)>
+					</cfcatch>
 				</cftry>
 			</cfloop>
 			<!--- Update Dates --->
