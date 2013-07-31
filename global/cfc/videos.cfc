@@ -2024,11 +2024,15 @@
 <!--- Check for existing MD5 mash records --->
 <cffunction name="checkmd5" output="false">
 	<cfargument name="md5hash" type="string">
+	<!--- Get the cachetoken for here --->
+	<cfset variables.cachetoken = getcachetoken("videos")>
+	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#checkmd5 */ vid_id
 	FROM #session.hostdbprefix#videos
 	WHERE hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.md5hash#">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	</cfquery>
 	<cfreturn qry />
 </cffunction>
