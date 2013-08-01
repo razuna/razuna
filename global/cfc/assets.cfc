@@ -1780,7 +1780,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Create folder to hold the images --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thepdfdirectory#" mode="775">
 			<!--- Script: Create thumbnail --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -thumbnail #arguments.thestruct.qrysettings.set2_img_thumb_width#x +profile '*' -colorspace sRGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -resize #arguments.thestruct.qrysettings.set2_img_thumb_width#x +profile '*' -colorspace sRGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Script: Create images --->
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfile# #arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Execute --->
@@ -2256,10 +2256,10 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
 		<!--- Call the import/imagemagick method --->
 		<!--- Puttin the below method call NOT in a thread solves some issues we have seen were some images are not added --->
-		<!--- <cfinvoke method="importimagesthread" thestruct="#arguments.thestruct#"> --->
-		<cfthread name="importimagesthread#arguments.thestruct.newid#" action="run" intstruct="#arguments.thestruct#">
+		<cfinvoke method="importimagesthread" thestruct="#arguments.thestruct#">
+		<!--- <cfthread name="importimagesthread#arguments.thestruct.newid#" action="run" intstruct="#arguments.thestruct#">
 			<cfinvoke method="importimagesthread" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		</cfthread> --->
 		<!--- If above return x we failed for the image --->
 		<cfif arguments.thestruct.newid EQ 0>
 			<cfinvoke component="email" method="send_email" subject="Image #arguments.thestruct.qryfile.filename# not added" themessage="Unfortunately, we could not add your image #arguments.thestruct.qryfile.filename# to the system because we can't recognize it as an image!">
@@ -2862,7 +2862,7 @@ This is the main function called directly by a single upload else from addassets
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
 		<cfset var theimconvert = "">
-		<cfset var theImgConvertParams = "-thumbnail #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
+		<cfset var theImgConvertParams = "-resize #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
 		<!--- validate input --->
 		<cfif FileExists(arguments.thestruct.destination)>
 			<!--- <cfthrow message="Destination-file already exists!"> --->
@@ -2897,13 +2897,13 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Set correct width or heigth --->
 		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
+			<cfset theImgConvertParams = "-resize #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
 		<cfelseif arguments.thestruct.thexmp.orgheight LTE arguments.thestruct.height AND arguments.thestruct.thexmp.orgwidth LTE arguments.thestruct.width>
 			<cfset theImgConvertParams = "+profile '*' -colorspace sRGB">
 		<cfelseif arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
-			<cfset theImgConvertParams = "-thumbnail #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
+			<cfset theImgConvertParams = "-resize #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
 		<cfelseif arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
-			<cfset theImgConvertParams = "-thumbnail x#arguments.thestruct.height# +profile '*' -colorspace sRGB">
+			<cfset theImgConvertParams = "-resize x#arguments.thestruct.height# +profile '*' -colorspace sRGB">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
@@ -2917,7 +2917,7 @@ This is the main function called directly by a single upload else from addassets
 				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.theimconvert# #arguments.thestruct.thesource#[0] #theImgConvertParams# -background white -flatten #Arguments.thestruct.destination#">
 			</cfcase>
 			<!--- For RAW images we take dcraw --->
-			<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
+			<cfcase value="3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
 				<cfset arguments.thestruct.theimarguments = "#arguments.thestruct.thedcraw# -c -e #arguments.thestruct.thesource# > #Arguments.thestruct.destination#">
 				<cfset arguments.thestruct.theimargumentsmog = "#arguments.thestruct.themogrify# #theImgConvertParams# #Arguments.thestruct.destination#">
 			</cfcase>
@@ -4487,16 +4487,16 @@ This is the main function called directly by a single upload else from addassets
 					<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
 						<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 						<cfcase value="psd,eps,ai,png">
-							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB -flatten #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB -flatten #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For RAW images we take dcraw --->
-						<cfcase value="3fr,ari,arw,srf,sr2,bay,crw,cr2,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,mrw,nef,nrw,orf,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz,x3f">
+						<cfcase value="3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
 							<cfset var theargs = "#thedcraw# -w -b 1.8 -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
-							<cfset var theargsdc = "#themogrify# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
+							<cfset var theargsdc = "#themogrify# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For everything else --->
 						<cfdefaultcase>
-							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -thumbnail #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
 						</cfdefaultcase>
 					</cfswitch>
 				</cfif>
