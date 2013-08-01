@@ -172,15 +172,15 @@
 		<!--- Call date function --->
 		<cfset var idate = set_date(datecreate=arguments.istruct.datecreate, datechange=arguments.istruct.datechange)>
 		<!--- If we have a folderid --->
-		<cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
+		<!--- <cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
 			<cfif arguments.istruct.searchfor EQ "*">
 				<cfset var thesearchfor = "folder:#arguments.istruct.folderid#">
 			<cfelse>
 				<cfset var thesearchfor = "+#arguments.istruct.searchfor# +folder:#arguments.istruct.folderid#">
 			</cfif>
-		<cfelse>
+		<cfelse> --->
 			<cfset var thesearchfor = arguments.istruct.searchfor>
-		</cfif>
+		<!--- </cfif> --->
 		<!--- Search in Lucene --->
 		<cfset var qryluceneimg = search(criteria=thesearchfor,category="img",hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#")>
 		<!--- If lucene returns no records --->
@@ -354,15 +354,15 @@
 		<!--- Call date function --->
 		<cfset var vdate = set_date(datecreate=arguments.vstruct.datecreate, datechange=arguments.vstruct.datechange)>
 		<!--- If we have a folderid --->
-		<cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
+		<!--- <cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
 			<cfif arguments.vstruct.searchfor EQ "*">
 				<cfset var thesearchfor = "folder:#arguments.vstruct.folderid#">
 			<cfelse>
 				<cfset var thesearchfor = "+#arguments.vstruct.searchfor# +folder:#arguments.vstruct.folderid#">
 			</cfif>
-		<cfelse>
+		<cfelse> --->
 			<cfset var thesearchfor = arguments.vstruct.searchfor>
-		</cfif>
+		<!--- </cfif> --->
 		<!--- Search in Lucene --->
 		<cfset var qrylucenevid = search(criteria=thesearchfor,category="vid",hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#")>
 		<!--- If lucene returns no records --->
@@ -539,15 +539,15 @@
 		<!--- Call date function --->
 		<cfset var adate = set_date(datecreate=arguments.astruct.datecreate, datechange=arguments.astruct.datechange)>
 		<!--- If we have a folderid --->
-		<cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
+		<!--- <cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
 			<cfif arguments.astruct.searchfor EQ "*">
 				<cfset var thesearchfor = "folder:#arguments.astruct.folderid#">
 			<cfelse>
 				<cfset var thesearchfor = "+#arguments.astruct.searchfor# +folder:#arguments.astruct.folderid#">
 			</cfif>
-		<cfelse>
+		<cfelse> --->
 			<cfset var thesearchfor = arguments.astruct.searchfor>
-		</cfif>
+		<!--- </cfif> --->
 		<!--- Search in Lucene --->
 		<cfset var qryluceneaud = search(criteria=thesearchfor,category="aud",hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#")>
 		<!--- If lucene returns no records --->
@@ -720,15 +720,15 @@
 		<!--- Call date function --->
 		<cfset var fdate = set_date(datecreate=arguments.fstruct.datecreate, datechange=arguments.fstruct.datechange)>
 		<!--- If we have a folderid --->
-		<cfif arguments.fstruct.folderid NEQ "" AND arguments.fstruct.folderid NEQ 0>
+		<!--- <cfif arguments.fstruct.folderid NEQ "" AND arguments.fstruct.folderid NEQ 0>
 			<cfif arguments.fstruct.searchfor EQ "*">
 				<cfset var thesearchfor = "folder:#arguments.fstruct.folderid#">
 			<cfelse>
 				<cfset var thesearchfor = "+#arguments.fstruct.searchfor# +folder:#arguments.fstruct.folderid#">
 			</cfif>
-		<cfelse>
+		<cfelse> --->
 			<cfset var thesearchfor = arguments.fstruct.searchfor>
-		</cfif>
+		<!--- </cfif> --->
 		<!--- Search in Lucene --->
 		<cfset var qrylucenedoc = search(criteria=thesearchfor,category="doc",hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#")>
 		<!--- If lucene returns no records --->
