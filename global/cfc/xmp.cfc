@@ -751,6 +751,7 @@
 	<cfset xmp.filetype = "">
 	<cfset var thecoma = "">
 	<cfset var themeta = "">
+	<cfset var orientation = "">
 	<cftry>
 		<!--- Go grab the platform --->
 		<cfinvoke component="assets" method="iswindows" returnvariable="iswindows">
@@ -780,6 +781,11 @@
 		<!--- <cfset var thexml = xmlparse(ToString(themeta.getBytes(),'utf-8'))> --->
 		<cfset var thexml = xmlparse(themeta)>
 		<cfset thexml = xmlSearch(thexml, "//rdf:Description/")>
+		<!--- orientation --->
+		<cftry>
+			<cfset orientation = trim(#thexml[1]["IFD0:Orientation"].xmltext#)>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 		<!--- iptcsubjectcode --->
 		<cftry>
 			<cfset xmp.iptcsubjectcode = trim(#thexml[1]["XMP-iptcCore:SubjectCode"].xmltext#)>
@@ -1260,13 +1266,21 @@
 				</cftry>
 			</cfif>
 		</cfif>
+		<!--- If orientation contain "rotate" then revert Width and Height --->
+		<cfif orientation CONTAINS "rotate">
+			<!--- Store width and height in temp vars first --->
+			<cfset var w = xmp.orgwidth>
+			<cfset var h = xmp.orgheight>
+			<cfset xmp.orgwidth = h>
+			<cfset xmp.orgheight = w>
+		</cfif>
 		<!--- Catch the error --->
 		<cfcatch type="any">
 			<cfset consoleoutput(true)>
 			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
-<!--- Return variable --->
+	<!--- Return variable --->
 	<cfreturn xmp>
 </cffunction>
 
