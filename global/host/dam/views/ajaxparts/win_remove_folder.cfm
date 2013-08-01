@@ -27,7 +27,7 @@
 <cfparam name="attributes.id" default="0">
 <cfparam name="attributes.folder_id" default="0">
 <cfparam name="attributes.iswin" default="">
-<cfparam name="attributes.order" default=	"">
+<cfparam name="attributes.order" default="">
 <cfparam name="attributes.many" default="F">
 <cfparam name="attributes.file_id" default="0">
 <cfparam name="attributes.col_id" default="0">
@@ -37,6 +37,7 @@
 <cfparam name="attributes.iscol" default="F">
 <cfparam name="attributes.released" default="false">
 <cfparam name="attributes.view" default="">
+<cfparam name="attributes.selected" default="false">
 <cfoutput>
 		<table border="0" cellpadding="5" cellspacing="5" width="100%">
 			<tr>
@@ -44,8 +45,12 @@
 			</tr>
 			<tr>
 				<td align="right" style="padding-top:10px;">
-					<!---<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="destroywindow(1);loadcontent('div_forall','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ "collection">collection<cfelse>folder</cfif>_explorer_trash');" class="button">--->
-					<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="destroywindow(1);loadcontent('div_forall','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');loadcontent('folders','#myself#c.<cfif attributes.loaddiv EQ "collection">get_collection_trash_folders&trashkind=folders<cfelse>trash_folder_all&trashkind=folders</cfif>');" class="button">
+					<cfif attributes.selected>
+						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="destroywindow(1);$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ "collection">collection_explorer_trash&selected=folders<cfelse>folder_explorer_trash&selected=folders</cfif>');" class="button">
+					<cfelse>
+						<!---<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="destroywindow(1);loadcontent('div_forall','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');$('##rightside').load('#myself#c.<cfif attributes.loaddiv EQ "collection">collection<cfelse>folder</cfif>_explorer_trash');" class="button">--->
+						<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("remove_folder")#" onclick="destroywindow(1);loadcontent('div_forall','#myself#c.#attributes.what#_remove<cfif attributes.many EQ "T">_many</cfif>&id=#attributes.id#&kind=<cfif attributes.what EQ "groups">ecp<cfelseif attributes.loaddiv EQ "content">all<cfelse>#attributes.loaddiv#</cfif>&folder_id=#attributes.folder_id#&col_id=#attributes.col_id#&file_id=#attributes.file_id#&type=#attributes.type#&loaddiv=<cfif attributes.loaddiv EQ "all">content<cfelse>#attributes.loaddiv#</cfif>&order=#attributes.order#&showsubfolders=#attributes.showsubfolders#&iscol=#attributes.iscol#&released=#attributes.released#&view=#attributes.view#');loadcontent('folders','#myself#c.<cfif attributes.loaddiv EQ "collection">get_collection_trash_folders&trashkind=folders<cfelse>trash_folder_all&trashkind=folders</cfif>');" class="button">
+					</cfif>
 				</td>
 			</tr>
 		</table>

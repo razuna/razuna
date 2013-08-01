@@ -28,11 +28,11 @@
 	<cfif attributes.trashall>
 		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("empty_trash_all_feedback")#</span>
 	<!--- Show this when user clicks on restore all --->
-	<cfelseif attributes.restorefileall>
-		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("Restore_trash_files_feedback")#</span>
-	<!--- Show this when user clicks on restore all --->
-	<cfelseif attributes.restorefolderall>
-		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("Restore_trash_folders_feedback")#</span>
+	<cfelseif attributes.restoreall>
+		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("Restore_trash_all_feedback")#</span>
+	<!--- Show this when remove selected items --->
+	<cfelseif attributes.removeselecteditems>
+		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("Remove_selected_items_feedback")#</span>
 	<!--- Show trash --->
 	<cfelse>
 		<div id="tabsfolder_tab">

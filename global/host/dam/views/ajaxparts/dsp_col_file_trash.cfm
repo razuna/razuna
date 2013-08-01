@@ -108,7 +108,7 @@
 								<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("restore_selected_items")#</div>
 							</a>
 							<!--- Remove selected files in the trash --->
-							<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&loaddiv=files&what=col_selected_files&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
+							<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&loaddiv=files&what=col_selected_files&loaddiv=files&selected=true&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
 								<div style="float:left;">
 									<img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" style="padding-right:3px;" />
 								</div>

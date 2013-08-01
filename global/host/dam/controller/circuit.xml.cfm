@@ -587,9 +587,8 @@
     <fuseaction name="folder_explorer_trash">
     	<!-- Param -->
 		<set name="attributes.trashall" value="false" overwrite="false" />
-		<set name="attributes.restorefileall" value="false" overwrite="false" />
-		<set name="attributes.restorefolderall" value="false" overwrite="false" />
-		<set name="session.file_id" value="" />
+		<set name="attributes.restoreall" value="false" overwrite="false" />
+		<set name="attributes.removeselecteditems" value="false" overwrite="false" />
 		<!-- Set the offset -->
 		<if condition="structkeyexists(attributes,'offset')" >
 			<true>
@@ -608,8 +607,27 @@
 				<set name="session.trash_folder_rowmaxpage" value="25" />
 			</false>
 		</if>
-    	<!-- CFC -->
-		<!-- trash assets count-->
+		<!-- Remove folders-->
+		<if condition="structkeyexists(attributes,'selected') AND attributes.selected EQ 'folders'">
+			<true>
+				<set name="attributes.removeselecteditems" value="true" />
+				<!-- Execute remove -->
+				<do action="trashfolders_remove" />
+			</true>
+		</if>
+		<!-- Remove assets -->
+		<if condition="structkeyexists(attributes,'selected') AND attributes.selected EQ 'assets'">
+			<true>
+				<set name="attributes.removeselecteditems" value="true" />
+				<!-- Execute remove -->
+				<do action="trashfiles_remove" />
+			</true>
+		</if>
+		
+		<!-- Param -->
+		<set name="session.file_id" value="" />
+		<!-- CFC -->
+		<!-- trash assets count -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trashcount(attributes)" returnvariable="file_trash_count" />
 		<!-- trash folder count-->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="folderTrashCount(attributes)" returnvariable="folder_trash_count" />
@@ -685,7 +703,7 @@
 		<!-- CFC: Remove the selected trash files -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trashfiles_remove(attributes)" />
 		<!-- Show -->
-		<do action="trash_assets" />
+		<!--<do action="trash_assets" />-->
 	</fuseaction>
 	
 	<!-- This loads all files in trash -->
@@ -702,7 +720,7 @@
 		<set name="attributes.file_id" value="#session.file_id#" />
 		<set name="attributes.thispath" value="#thispath#" />
 		<set name="attributes.hostid" value="#session.hostid#" />
-		<set name="attributes.restorefileall" value="true" />
+		<set name="attributes.restoreall" value="true" />
 		<set name="attributes.loaddiv" value="content" />
 		<set name="session.trash" value="F" />
 		<!-- Action: Get asset path -->
@@ -804,6 +822,8 @@
 		<set name="attributes.trashall" value="true" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
 		<!-- Decide on files or collection -->
 		<if condition="!attributes.col">
 			<!-- Files -->
@@ -830,12 +850,17 @@
     	<set name="attributes.hostid" value="#session.hostid#" />
     	<set name="attributes.id" value="#session.file_id#" />
 		<set name="attributes.trashkind" value="folders" />
+		<!-- Action: Check storage -->
+		<do action="storage" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
 		<!-- CFC: Remove the selected trash folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trashfolders_remove(attributes)" />
 		<!-- Show -->
-		<do action="trash_folder_all" />
-	</fuseaction>	
-	<!-- This loads all folders in trash -->
+		<!--<do action="trash_folder_all" />-->
+	</fuseaction>
+		
+	<!-- Restore all folders in the trash -->
 	<fuseaction name="trash_restore_folders">
 		<!-- Param -->
 		<set name="session.type" value="#attributes.type#" />
@@ -906,7 +931,7 @@
 		<set name="attributes.thispath" value="#thispath#" />
 		<set name="attributes.hostid" value="#session.hostid#" />
 		<set name="attributes.trashkind" value="folders" />
-		<set name="attributes.restorefolderall" value="true" />
+		<set name="attributes.restoreall" value="true" />
 		<set name="session.trash" value="F" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
@@ -1478,9 +1503,8 @@
     <fuseaction name="collection_explorer_trash">
     	<!-- Param -->
 		<set name="attributes.trashall" value="false" overwrite="false" />
-		<set name="attributes.restorefolderall" value="false" overwrite="false" />
 		<set name="attributes.restoreall" value="false" overwrite="false" />
-		<set name="session.file_id" value="" />
+		<set name="attributes.removeselecteditems" value="false" overwrite="false" />
 		<!-- Set the offset -->
 		<if condition="structkeyexists(attributes,'offset')" >
 			<true>
@@ -1502,6 +1526,33 @@
 				<set name="session.trash_collection_rowmaxpage" value="25" />
 			</false>
 		</if>
+		<!-- Remove files -->
+		<if condition="structkeyexists(attributes,'selected') AND attributes.selected EQ 'files'">
+			<true>
+				<set name="attributes.removeselecteditems" value="true" />
+				<!-- Execute remove -->
+				<do action="col_selected_files_remove" />
+			</true>
+		</if>
+		<!-- Remove folders -->
+		<if condition="structkeyexists(attributes,'selected') AND attributes.selected EQ 'folders'">
+			<true>
+				<set name="attributes.removeselecteditems" value="true" />
+				<!-- Execute remove -->
+				<do action="selected_col_folder_remove" />
+			</true>
+		</if>
+		<!-- Remove collections -->
+		<if condition="structkeyexists(attributes,'selected') AND attributes.selected EQ 'collection'">
+			<true>
+				<set name="attributes.removeselecteditems" value="true" />
+				<!-- Execute remove -->
+				<do action="selected_collection_remove" />
+			</true>
+		</if>
+		
+		<!-- Param -->
+		<set name="session.file_id" value="" />
     	<!-- XFA -->
     	<xfa name="ftrashcol" value="c.col_get_trash" />
 		<!-- CFC:Get collection trash count collections-->
@@ -1828,6 +1879,7 @@
 		<!-- Show -->
 		<do action="collection_explorer_trash" />
 	</fuseaction>
+	
 	<!--Restore selected collection files -->
 	<fuseaction name="restore_selected_col_files">
 		<set name="session.type" value="#attributes.type#" />
@@ -1852,7 +1904,7 @@
 		<!-- CFC:Remove selected collection files -->
 		<invoke object="myFusebox.getApplicationData().collections" methodcall="remove_selected_col_files(attributes)"/>
 		<!-- Show -->
-		<do action="collection_explorer_trash" />
+		<!--<do action="collection_explorer_trash" />-->
 	</fuseaction>
 	
 	<!--Restore selected collections -->
@@ -1874,7 +1926,7 @@
 		<do action="col_get_trash" />
 	</fuseaction>
 	
-	<!--Restore selected collections -->
+	<!--Remove selected collections -->
 	<fuseaction name="selected_collection_remove">
 		<!-- Param -->
 		<set name="attributes.col_id" value="#session.file_id#" />
@@ -1914,10 +1966,14 @@
     	<set name="attributes.hostid" value="#session.hostid#" />
     	<set name="attributes.id" value="#session.file_id#" />
 		<set name="attributes.trashkind" value="folders" />
+		<!-- Action: Get asset path -->
+		<do action="assetpath" />
+		<!-- Action: Storage -->
+		<do action="storage" />
 		<!-- CFC: Remove the selected trash folder -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trashfolders_remove(attributes)" />
 		<!-- show -->
-		<do action="get_collection_trash_folders" />
+		<!--<do action="get_collection_trash_folders" />-->
 	</fuseaction>
 	<!--
 		END: COLLECTIONS
