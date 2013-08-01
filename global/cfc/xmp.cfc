@@ -2118,6 +2118,8 @@
 	<cfargument name="fileid" required="true">
 	<cfargument name="type" required="true">
 	<cfargument name="metadata" required="true">
+	<!--- Param --->
+	<cfset var qry_customhere = "">
 	<!--- Loop over the assetid --->
 	<cfloop list="#arguments.fileid#" index="i" delimiters=",">
 		<!--- Set i into var --->
@@ -2127,25 +2129,31 @@
 			<!--- Get the list items --->
 			<cfset f = listFirst(i,":")>
 			<cfset v = listLast(i,":")>
-			<!--- Remove any existing data first --->
-			<cfquery datasource="#application.razuna.datasource#">
-			DELETE FROM #session.hostdbprefix#custom_fields_values
-			WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
-			AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-			</cfquery>
-			<!--- Insert --->
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#custom_fields_values
-			(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
-			VALUES(
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">,
-				<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-				<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createUUID()#">
-			)
-			</cfquery>
+			<!--- Wrap this into a transaction since we saw double records coming from the workflow plugin --->
+			<cftransaction>
+				<cfquery datasource="#application.razuna.datasource#" name="qry_customhere">
+				SELECT rec_uuid
+				FROM #session.hostdbprefix#custom_fields_values
+				WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
+				AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				AND lower(cf_value) = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#lcase(v)#">
+				</cfquery>
+				<!--- Insert only if no record is found --->
+				<cfif qry_customhere.recordcount EQ 0>
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#custom_fields_values
+					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+					VALUES(
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createUUID()#">
+					)
+					</cfquery>
+				</cfif>
+			</cftransaction>
 		</cfloop>
 		<!--- Initiate the index --->
 		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" storage="#application.razuna.storage#" assetid="#theid#" prefix="#session.hostdbprefix#" hostid="#session.hostid#" assetcategory="#arguments.type#"thedatabase="#application.razuna.thedatabase#">
