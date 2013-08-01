@@ -27,7 +27,7 @@
 	<div style="float:left;padding-left:2px;padding-top:5px;font-weight:normal;">
 		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
 			<!--- Back to Share --->
-			<p><a href="#myself#c.share&fid=#session.fid#">#myFusebox.getApplicationData().defaults.trans("Back to share")#</a></p>
+			<p><a href="#myself#c.share&fid=#session.fid#">#myFusebox.getApplicationData().defaults.trans("back_to_share")#</a></p>
 		<cfelse>
 			<!--- Breadcrumb --->
 			<cfloop list="#qry_breadcrumb#" delimiters=";" index="i">/ <a href="##" onclick="razunatreefocusbranch('#ListGetAt(i,3,"|")#','#ListGetAt(i,2,"|")#');loadcontent('rightside','#myself#c.folder&folder_id=#ListGetAt(i,2,"|")#');">#ListGetAt(i,1,"|")#</a> </cfloop>
