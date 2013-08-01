@@ -184,9 +184,13 @@
 	<fuseaction name="folder_settings">
   		<include template="dsp_folder_settings" />
 	</fuseaction>
-	<!-- Folder: trash -->
+	<!-- Assets: trash -->
     <fuseaction name="folder_trash">
 		<include template="dsp_folder_trash" />
+    </fuseaction>
+	<!-- Folder: trash -->
+    <fuseaction name="trash_folder_all">
+		<include template="dsp_trash_folder_all" />
     </fuseaction>
 	<!-- Folder: samefoldernamecheck -->
 	<fuseaction name="folder_namecheck">
@@ -217,11 +221,18 @@
 	<fuseaction name="collections_trash_item">
   		<include template="win_trash_col_item" />
 	</fuseaction>
-	<!-- collection: trash items -->
+	<!-- collection: collections in trash -->
     <fuseaction name="collection_item_trash">
 		<include template="dsp_trash_col" />
     </fuseaction>
-	
+	<!-- collection: folders in trash -->
+    <fuseaction name="col_folder_trash">
+		<include template="dsp_col_folder_trash" />
+    </fuseaction>
+	<!-- collection: files in trash -->
+    <fuseaction name="col_file_trash">
+		<include template="dsp_col_file_trash" />
+    </fuseaction>
 	<!-- Assets: Add -->
 	<fuseaction name="asset_add">
   		<include template="dsp_asset_add" />

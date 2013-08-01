@@ -24,13 +24,20 @@
 *
 --->
 <!--- Define variables --->
+<cfparam name="attributes.selected" default="false">
 <cfoutput>
 	<table border="0" cellpadding="5" cellspacing="5" width="100%">
 		<tr>
 			<td style="padding-top:10px;">#myFusebox.getApplicationData().defaults.trans("collection_remove_desc")#</td>
 		</tr>
 		<tr>
-			<td align="right" style="padding-top:10px;"><input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("collection_remove_button")#" onclick="loadcontent('rightside','#myself#c.collection_item_remove&id=#attributes.id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#attributes.order#');destroywindow(1);" class="button"></td>
+			<td align="right" style="padding-top:10px;">
+				<cfif attributes.selected>
+					<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("collection_remove_button")#" onclick="destroywindow(1);$('##rightside').load('#myself#c.collection_explorer_trash&selected=files');" class="button">
+				<cfelse>
+					<input type="button" name="remove" value="#myFusebox.getApplicationData().defaults.trans("collection_remove_button")#" onclick="loadcontent('rightside','#myself#c.#attributes.what#_remove<cfif #attributes.what# EQ "collection_item">&id=#attributes.id#&col_id=#attributes.col_id#&folder_id=#attributes.folder_id#&order=#attributes.order#</cfif>');destroywindow(1);$('##rightside').load('#myself#c.collection_explorer_trash<cfif attributes.loaddiv EQ 'collection'>&trashkind=collections<cfelse>&trashkind=files</cfif>');" class="button">
+				</cfif>
+			</td>
 		</tr>
 	</table>
 </cfoutput>

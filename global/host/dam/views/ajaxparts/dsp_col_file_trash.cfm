@@ -1,4 +1,4 @@
-<!---
+﻿<!---
 *
 * Copyright (C) 2005-2008 Razuna
 *
@@ -24,78 +24,66 @@
 *
 --->
 <cfoutput>
-	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<cfif structKeyExists(attributes,'is_trash') AND attributes.is_trash EQ "intrash">
-		<!--- set session file id --->
-		<cfif attributes.thetype EQ 'img'>
-			<cfset session.thefileid = ",#attributes.id#-img,">
-		<cfelseif attributes.thetype EQ 'aud'>
-			<cfset session.thefileid = ",#attributes.id#-aud,">
-		<cfelseif attributes.thetype EQ 'vid'>
-			<cfset session.thefileid = ",#attributes.id#-vid,">
-		<cfelseif attributes.thetype EQ 'doc'>
-			<cfset session.thefileid = ",#attributes.id#-file,">	
-		</cfif>
-		<cfif attributes.type EQ 'restorefile'>
+		<cfif structKeyExists(attributes,'file_id') AND attributes.file_id NEQ 0>
 			<!--- Open choose folder window automatically --->
 			<script type="text/javascript">
-				showwindow('#myself#c.restore_file&type=#attributes.type#&loaddiv=#attributes.loaddiv#&kind=#attributes.kind#&thetype=#attributes.thetype#&folder_id=#attributes.folder_id#&fromtrash=true','#myFusebox.getApplicationData().defaults.trans("restore_file")#', 550, 1);
+				showwindow('#myself#c.restore_choose_collection&file_id=#attributes.file_id#&col_id=#attributes.col_id#&loaddiv=#attributes.loaddiv#&artofimage=#attributes.artofimage#&artofaudio=#attributes.artofaudio#&artoffile=#attributes.artoffile#&artofvideo=#attributes.artofvideo#&fromtrash=true','#myFusebox.getApplicationData().defaults.trans("add_to_collection")#',600,1);
 			</script>
 		</cfif>
 	</cfif>
+	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- Show button and next back --->
 	<cfif qry_trash.recordcount NEQ 0>
 		<div style="float:left;">
 			<!--- Select All --->
-			<a href="##" onClick="CheckAll('allform_assets','0','storeall','trashfiles');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
+			<a href="##" onClick="CheckAll('allform_assets','0','storeall','colfiles');return false;" title="#myFusebox.getApplicationData().defaults.trans("tooltip_select_desc")#">
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("select_all")#</div>
 			</a>
 			<!--- Remove all files in the trash --->
-			<a href="##" onclick="$('##rightside').load('#myself#c.trash_remove_all&col=false');">
+			<a href="##" onclick="$('##rightside').load('#myself#c.remove_collection_trash_all&trashkind=files');">
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("empty_trash")#</div>
 			</a>
 			<!--- Restore all files in the trash --->
-			<a href="##" onclick="showwindow('#myself#c.trash_restore_all&type=restorefileall','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("trash_restoreall"))#',650,1);return false;">
+			<a href="##" onclick="showwindow('#myself#c.restore_all_collection_files&type=restoreallcollectionfiles&fromtrash=true','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("trash_restoreall"))#',650,1);return false;">
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("trash_restoreall")#</div>
 			</a>
 		</div>
 		<div style="float:right;">
-			<cfif session.trash_offset GTE 1>
+			<cfif session.col_trash_offset GTE 1>
 				<!--- For Back --->
-				<cfset newoffset = session.trash_offset - 1>
-				<!---<cfset session.trash_offsetCount =  newoffset >--->
-				<a href="##" onclick="loadcontent('assets', '#myself#c.trash_assets&offset=#newoffset#');">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</a> |
+				<cfset newoffset = session.col_trash_offset - 1>
+				<a href="##" onclick="loadcontent('files', '#myself#c.get_collection_trash_files&offset=#newoffset#&trashkind=files');">&lt; #myFusebox.getApplicationData().defaults.trans("back")#</a> |
 			</cfif>
-			<cfset showoffset = session.trash_offset * session.trash_rowmaxpage>
-			<cfset shownextrecord = (session.trash_offset + 1) * session.trash_rowmaxpage>
-			<cfif qry_trash.recordcount GT session.trash_rowmaxpage>#showoffset# - #shownextrecord#</cfif>
-			<cfif qry_trash.recordcount GT session.trash_rowmaxpage AND NOT shownextrecord GTE qry_trash.recordcount> | 
+			<cfset showoffset = session.col_trash_offset * session.col_trash_rowmaxpage>
+			<cfset shownextrecord = (session.col_trash_offset + 1) * session.col_trash_rowmaxpage>
+			<cfif qry_trash.recordcount GT session.col_trash_rowmaxpage>#showoffset# - #shownextrecord#</cfif>
+			<cfif qry_trash.recordcount GT session.col_trash_rowmaxpage AND NOT shownextrecord GTE qry_trash.recordcount> | 
 				<!--- For Next --->
-				<cfset newoffset = session.trash_offset + 1>
-				<!---<cfset session.trash_offsetCount =  newoffset >--->
-				<a href="##" onclick="loadcontent('assets', '#myself#c.trash_assets&offset=#newoffset#');">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
+				<cfset newoffset = session.col_trash_offset + 1>
+				<a href="##" onclick="loadcontent('files', '#myself#c.get_collection_trash_files&offset=#newoffset#&trashkind=files');">#myFusebox.getApplicationData().defaults.trans("next")# &gt;</a>
 			</cfif>
-			<cfif qry_trash.recordcount GT session.trash_rowmaxpage>
+			<cfif qry_trash.recordcount GT session.col_trash_rowmaxpage>
 				<span style="padding-left:10px;">
-					<cfset thepage = ceiling(qry_trash.recordcount / session.trash_rowmaxpage)>
+					<cfset thepage = ceiling(qry_trash.recordcount / session.col_trash_rowmaxpage)>
 					Page: 
-					<select class="thepagelist_assets"  onChange="loadcontent('assets', $('.thepagelist_assets :selected').val());">
+					<select class="thepagelist_assets"  onChange="loadcontent('files', $('.thepagelist_assets :selected').val());">
 						<cfloop from="1" to="#thepage#" index="i">
 							<cfset loopoffset = i - 1>
-							<option value="#myself#c.trash_assets&offset=#newoffset#"<cfif (session.trash_offset + 1) EQ i> selected</cfif>>#i#</option>
+							<option value="#myself#c.get_collection_trash_files&offset=#newoffset#"<cfif (session.col_trash_offset + 1) EQ i> selected</cfif>>#i#</option>
 						</cfloop>
 					</select>
 				</span>
 			</cfif>
 			<span style="padding-left:10px;">
-				<cfif qry_trash.recordcount GT session.trash_rowmaxpage OR qry_trash.recordcount GT 25> 
-					<select name="selectrowperpage_assets" id="selectrowperpage_assets" onChange="changerow('assets','selectrowperpage_assets')" style="width:80px;">
+				<cfif qry_trash.recordcount GT session.col_trash_rowmaxpage OR qry_trash.recordcount GT 25> 
+					<select name="selectrowperpage_assets" id="selectrowperpage_assets" onChange="changerow('files','selectrowperpage_assets')" style="width:80px;">
 						<option value="javascript:return false;">Show how many...</option>
 						<option value="javascript:return false;">---</option>
-						<option value="#myself#c.trash_assets&offset=0&rowmaxpage=25"<cfif session.trash_rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
-						<option value="#myself#c.trash_assets&offset=0&rowmaxpage=50"<cfif session.trash_rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
-						<option value="#myself#c.trash_assets&offset=0&rowmaxpage=75"<cfif session.trash_rowmaxpage EQ 75> selected="selected"</cfif>>75</option>
-						<option value="#myself#c.trash_assets&offset=0&rowmaxpage=100"<cfif session.trash_rowmaxpage EQ 100> selected="selected"</cfif>>100</option>
+						<option value="#myself#c.get_collection_trash_files&offset=0&rowmaxpage=25"<cfif session.col_trash_rowmaxpage EQ 25> selected="selected"</cfif>>25</option>
+						<option value="#myself#c.get_collection_trash_files&offset=0&rowmaxpage=50"<cfif session.col_trash_rowmaxpage EQ 50> selected="selected"</cfif>>50</option>
+						<option value="#myself#c.get_collection_trash_files&offset=0&rowmaxpage=75"<cfif session.col_trash_rowmaxpage EQ 75> selected="selected"</cfif>>75</option>
+						<option value="#myself#c.get_collection_trash_files&offset=0&rowmaxpage=100"<cfif session.col_trash_rowmaxpage EQ 100> selected="selected"</cfif>>100</option>
 					</select>
 				</cfif>
 			</span>
@@ -106,23 +94,21 @@
 		<div id="selectstoreallform_assets" style="display:none;width:100%;text-align:center;">
 			<strong>All files in this section have been selected</strong> <a href="##" onclick="CheckAllNot('allform_assets');return false;">Deselect all</a>
 		</div>
-		<!---<div id="folderselection" class="actiondropdown">
-			<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("batch")#</div>
-		</div>--->
 		<form name="allform_assets" id="allform_assets" action="#self#" onsubmit="">
+			<!--- show the available folder list for restoring --->
 			<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 				<tr>
 					<td colspan="6" style="border:0px;">
 						<div id="folderselectionallform_assets" class="actiondropdown">
 							<!--- Restore selected files in the trash ---> 
-							<a href="##" onclick="showwindow('#myself#c.restore_selected_files&type=restoreselectedfiles','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
+							<a href="##" onclick="showwindow('#myself#c.restore_selected_col_files&type=restoreselectedcolfiles','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
 								<div style="float:left;">
 									<img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0" style="padding-right:3px;" />
 								</div>
 								<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("restore_selected_items")#</div>
 							</a>
 							<!--- Remove selected files in the trash --->
-							<a href="##" onclick="showwindow('#myself#ajax.remove_record&loaddiv=assets&what=trashfiles&selected=true&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
+							<a href="##" onclick="showwindow('#myself#ajax.collections_del_item&loaddiv=files&what=col_selected_files&loaddiv=files&selected=true&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
 								<div style="float:left;">
 									<img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" style="padding-right:3px;" />
 								</div>
@@ -134,9 +120,9 @@
 				<tr>
 					<td style="border:0px;" id="selectme">
 						<!--- For paging --->
-						<cfset mysqloffset = session.trash_offset * session.trash_rowmaxpage + 1>
+						<cfset mysqloffset = session.col_trash_offset * session.col_trash_rowmaxpage + 1>
 						<!--- Show trash images --->
-						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.trash_rowmaxpage#">
+						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.col_trash_rowmaxpage#">
 							<div class="assetbox">
 								<div class="theimg">
 									<!--- Images --->
@@ -180,9 +166,9 @@
 										  	 <img src="#thestorage##path_to_asset#/#filename_org#?#hashtag#" border="0">
 											 </cfif>
 										<cfelse>
-												<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
+											<img src="#dynpath#/global/host/dam/images/icons/icon_movie.png" border="0">
 										 </cfif>
-									</cfif>
+									</cfif>	
 								</div>
 								<div style="padding-top:5px;">
 									<div style="float:left;padding-top:2px;">
@@ -191,25 +177,31 @@
 									<!--- Only if we have at least write permission --->
 									<cfif permfolder NEQ "R">
 										<div style="float:right;padding-top:2px;">
+											<!--- Set vars for kind --->
+											<cfset url_restore = "ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#">
+											<cfset url_remove = "ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=files&col_id=#col_id#&folder_id=#folder_id#&order=#col_item_order#&showsubfolders=#attributes.showsubfolders#">
 											<!--- restore the file --->
-											<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=#what#&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
+											<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
 											<!--- remove the file --->
-											<cfset url_id = "ajax.remove_record&id=#id#&folder_id=#folder_id_r#">
-											<a href="##" onclick="showwindow('#myself##url_id#&in_collection=#in_collection#&what=#what#&loaddiv=assets&showsubfolders=#attributes.showsubfolders#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
+											<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
 										</div>
 									</cfif>
 								</div>
 								<div style="clear:both;">
-									<strong>#left(filename,25)#</strong>
+									<strong>#filename#</strong>
 								</div>
 								<!--- Only if we have at least write permission --->
 								<!---<cfif permfolder NEQ "R">
+									<!--- Set vars for kind --->
+									<cfset url_restore = "ajax.restore_collection&id=#id#&what=collection_file&loaddiv=collection&col_id=#col_id#&many=F&kind=#kind#&file_id=#id#">
+									<cfset url_remove = "ajax.collections_del_item&id=#file_id#&what=collection_item&loaddiv=collection&col_id=#col_id#&folder_id=#folder_id#&order=#col_item_order#&showsubfolders=#attributes.showsubfolders#">
+									<!--- Restore --->
 									<div>
-										<a href="##" onclick="showwindow('#myself#ajax.restore_record&id=#id#&what=#what#&loaddiv=assets&folder_id=#folder_id_r#&kind=#kind#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#">#myFusebox.getApplicationData().defaults.trans("restore")#</a><br/><br/>
+										<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
 									</div>
+									<!--- Remove --->
 									<div>
-										<cfset url_id = "ajax.remove_record&id=#id#&folder_id=#folder_id_r#">
-										<a href="##" onclick="showwindow('#myself##url_id#&in_collection=#in_collection#&what=#what#&loaddiv=assets&showsubfolders=#attributes.showsubfolders#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">#myFusebox.getApplicationData().defaults.trans("delete_permanently")#</a>
+										<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
 									</div>
 								</cfif>--->
 							</div>
@@ -221,8 +213,13 @@
 	</div>
 	<!--- JS --->
 	<script type="text/javascript">
+		// Change the pagelist
+		function backnexttrash(theoffset){
+			// Load
+			$('##rightside').load('#myself#c.collection_explorer_trash&offset=' + theoffset);
+		}
 		<cfif session.file_id NEQ "">
-            enablesub('allform_assets', true);
-        </cfif>
+	        enablesub('allform_assets', true);
+	     </cfif>
 	</script>
 </cfoutput>

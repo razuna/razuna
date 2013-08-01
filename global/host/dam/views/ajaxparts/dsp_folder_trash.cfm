@@ -27,18 +27,43 @@
 	<!--- Show this when user clicks on empty trash --->
 	<cfif attributes.trashall>
 		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("empty_trash_all_feedback")#</span>
+	<!--- Show this when user clicks on restore all --->
+	<cfelseif attributes.restoreall>
+		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("Restore_trash_all_feedback")#</span>
+	<!--- Show this when remove selected items --->
+	<cfelseif attributes.removeselecteditems>
+		<span style="font-weight:bold;color:green;">#myFusebox.getApplicationData().defaults.trans("Remove_selected_items_feedback")#</span>
 	<!--- Show trash --->
 	<cfelse>
 		<div id="tabsfolder_tab">
+			<cfif attributes.trashkind EQ "folders">
+				<cfif arraySum(folder_trash_count['cnt']) MOD session.trash_folder_rowmaxpage EQ 0>
+					<cfset session.trash_folder_offset = ceiling(arraySum(folder_trash_count['cnt']) / session.trash_folder_rowmaxpage) - 1>
+				</cfif>
+			<cfelse>
+				<cfif arraySum(file_trash_count['cnt']) MOD session.trash_rowmaxpage EQ 0>
+					<cfset session.trash_offset = ceiling(arraySum(file_trash_count['cnt']) / session.trash_rowmaxpage) - 1>
+				</cfif> 
+			</cfif> 
 			<ul>
 				<!--- Show the trash asset and folder content--->
-				<li><a href="##assets">#myFusebox.getApplicationData().defaults.trans("trash_folder_header")# (#arraySum(Count_trash['cnt'])#)</a></li>
+				<li><a href="##assets" onclick="loadcontent('assets','#myself#c.trash_assets&trashkind=assets');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_files")# (#arraySum(file_trash_count['cnt'])#)</a></li>
+				<li><a href="##folders" onclick="loadcontent('folders','#myself#c.trash_folder_all&trashkind=folders');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("trash_folders")# (#arraySum(folder_trash_count['cnt'])#)</a></li>
 			</ul>
+			<!--- For assets  --->
 			<div id="assets"></div>
+			<!--- For folders --->
+			<div id="folders"></div>
 		</div>
+			
 		<script type="text/javascript">
 			jqtabs("tabsfolder_tab");
-			$('##assets').load('#myself#c.trash_assets');
+				<cfif attributes.trashkind EQ "folders">
+					$('##folders').load('#myself#c.trash_folder_all&trashkind=folders');
+					$('##tabsfolder_tab').tabs('select','##folders');
+				<cfelse>
+					$('##assets').load('#myself#c.trash_assets&trashkind=assets');
+				</cfif>
 		</script>
 	</cfif>
 </cfoutput>

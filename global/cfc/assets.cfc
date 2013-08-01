@@ -3607,7 +3607,7 @@ This is the main function called directly by a single upload else from addassets
 					<!--- Add to temp db --->
 					<cfquery datasource="#application.razuna.datasource#">
 					INSERT INTO #session.hostdbprefix#assets_temp
-					(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path<!---,mimetype--->,thesize,file_id,host_id,md5hash)
+					(tempid,filename,extension,date_add,folder_id,who,filenamenoext,path,thesize,file_id,host_id,md5hash)
 					VALUES(
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.tempid#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilename#">,
@@ -3617,7 +3617,6 @@ This is the main function called directly by a single upload else from addassets
 					<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#session.theuserid#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.thefilenamenoext#">,
 					<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.theincomingtemppath#">,
-					<!--- <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.contentType#/#arguments.thestruct.contentSubType#">, --->
 					<cfif isnumeric(file.fileSize)>
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#file.fileSize#">,
 					<cfelse>
