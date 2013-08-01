@@ -100,7 +100,7 @@
 	<!--- Insert --->
 	<cfquery datasource="#variables.dsn#">
 	INSERT INTO #session.hostdbprefix#log_search
-	(LOG_ID,LOG_USER,LOG_DATE,LOG_TIME,LOG_SEARCH_FOR,LOG_FOUNDITEMS,LOG_SEARCH_FROM,LOG_TIMESTAMP, host_id<!--- ,LOG_BROWSER,LOG_IP --->)
+	(LOG_ID,LOG_USER,LOG_DATE,LOG_TIME,LOG_SEARCH_FOR,LOG_FOUNDITEMS,LOG_SEARCH_FROM,LOG_TIMESTAMP, host_id)
 	VALUES(
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newlogid#">,
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theuserid#">,
@@ -111,12 +111,6 @@
 	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.searchfrom#">,
 	<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	<!--- 
-	,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#cgi.HTTP_USER_AGENT#">,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#cgi.REMOTE_ADDR#">,
-	--->
-	)
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfinvoke method="resetcachetoken" type="logs" />
@@ -164,7 +158,7 @@
 	<cfset var newlogid = createuuid()>
 	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#log_folders
-	(LOG_ID,LOG_USER,LOG_ACTION,LOG_DATE,LOG_TIME,LOG_DESC,LOG_TIMESTAMP, host_id<!--- ,LOG_BROWSER,LOG_IP --->)
+	(LOG_ID,LOG_USER,LOG_ACTION,LOG_DATE,LOG_TIME,LOG_DESC,LOG_TIMESTAMP, host_id)
 	VALUES(
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newlogid#">,
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theuserid#">,
@@ -174,12 +168,6 @@
 	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logdesc#">,
 	<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	<!---
-	,	
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#cgi.HTTP_USER_AGENT#">,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#cgi.REMOTE_ADDR#">,
-	--->
-	)
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfinvoke method="resetcachetoken" type="logs" />
@@ -195,7 +183,7 @@
 	<cfset var newlogid = createuuid()>
 	<cfquery datasource="#variables.dsn#">
 	INSERT INTO #session.hostdbprefix#log_users
-	(LOG_ID,LOG_USER,LOG_ACTION,LOG_DATE,LOG_TIME,LOG_DESC,LOG_TIMESTAMP,LOG_SECTION, host_id <!--- ,LOG_BROWSER,LOG_IP --->)
+	(LOG_ID,LOG_USER,LOG_ACTION,LOG_DATE,LOG_TIME,LOG_DESC,LOG_TIMESTAMP,LOG_SECTION, host_id)
 	VALUES(
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#newlogid#">,
 	<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theuserid#">,
@@ -206,12 +194,6 @@
 	<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
 	<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logsection#">,
 	<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-	<!---
-	,	
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#cgi.HTTP_USER_AGENT#">,
-	<cfqueryparam cfsqltype="cf_sql_varchar" value="#cgi.REMOTE_ADDR#">, 
-	--->
-	)
 	</cfquery>
 	<!--- Flush Cache --->
 	<cfinvoke method="resetcachetoken" type="logs" />
