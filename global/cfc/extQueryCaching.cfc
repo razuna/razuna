@@ -124,27 +124,26 @@
 	<cfargument name="logfiletype" type="string" required="yes" />
 	<cfargument name="assetid" type="string" required="false" />
 	<cftry>
-		<cfthread intstruct="#arguments#">
-			<cfquery datasource="#application.razuna.datasource#">
-			INSERT INTO #session.hostdbprefix#log_assets
-			(log_id,log_user,log_action,log_date,log_time,log_desc,log_file_type,log_timestamp, host_id, asset_id_r)
-			VALUES(
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
-			<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#attributes.intstruct.theuserid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.logaction#">,
-			<cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
-			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.logdesc#">,	
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.logfiletype#">,
-			<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-			<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-			<cfqueryparam cfsqltype="cf_sql_varchar" value="#attributes.intstruct.assetid#">
-			</cfquery>
-			<!--- Flush Cache --->
-			<cfinvoke method="resetcachetoken" type="logs" />
-		</cfthread>
+		<cfquery datasource="#application.razuna.datasource#">
+		INSERT INTO #session.hostdbprefix#log_assets
+		(log_id,log_user,log_action,log_date,log_time,log_desc,log_file_type,log_timestamp, host_id, asset_id_r)
+		VALUES(
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#createuuid()#">,
+		<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.theuserid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logaction#">,
+		<cfqueryparam cfsqltype="cf_sql_date" value="#now()#">,
+		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logdesc#">,	
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.logfiletype#">,
+		<cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
+		<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+		<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#">
+		</cfquery>
+		<!--- Flush Cache --->
+		<cfinvoke method="resetcachetoken" type="logs" />
 		<cfcatch type="any">
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="debug" dump="#cfcatch#">
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
 </cffunction>
