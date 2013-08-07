@@ -1814,7 +1814,7 @@
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.thestruct.tq)>
 	<!--- Write file to file system --->
-	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameConflict="MakeUnique">
+	<cffile action="write" file="#arguments.thestruct.thepath#/outgoing/razuna-metadata-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameconflict="overwrite">
 	<!--- Serve the file --->
 	<!--- <cfcontent type="application/force-download" variable="#csv#"> --->
 	<!--- Feedback --->
@@ -2109,6 +2109,7 @@
 	</cfloop>
 	<!--- Flush cache --->
 	<cfset resetcachetoken(cachetype)>
+	<cfset resetcachetoken("search")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>
@@ -2118,6 +2119,8 @@
 	<cfargument name="fileid" required="true">
 	<cfargument name="type" required="true">
 	<cfargument name="metadata" required="true">
+	<!--- Param --->
+	<cfset var qry_custom = "">
 	<!--- Loop over the assetid --->
 	<cfloop list="#arguments.fileid#" index="i" delimiters=",">
 		<!--- Set i into var --->
@@ -2127,30 +2130,50 @@
 			<!--- Get the list items --->
 			<cfset f = listFirst(i,":")>
 			<cfset v = listLast(i,":")>
-			<!--- Remove any existing data first --->
+			<!--- Insert or update --->
 			<cftransaction>
-				<cfquery datasource="#application.razuna.datasource#">
-				DELETE FROM #session.hostdbprefix#custom_fields_values
+				<cfquery datasource="#application.razuna.datasource#" name="qry_custom">
+				SELECT rec_uuid 
+				FROM #session.hostdbprefix#custom_fields_values
 				WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
 				AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
-				<!--- Insert --->
-				<cfquery datasource="#application.razuna.datasource#">
-				INSERT INTO #session.hostdbprefix#custom_fields_values
-				(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
-				VALUES(
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">,
-					<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
-					<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createUUID()#">
-				)
-				</cfquery>
+				<!--- If record is NOT here --->
+				<cfif qry_custom.recordcount EQ 0>
+					<!--- Insert --->
+					<cfquery datasource="#application.razuna.datasource#">
+					INSERT INTO #session.hostdbprefix#custom_fields_values
+					(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
+					VALUES(
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">,
+						<cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">,
+						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createUUID()#">
+					)
+					</cfquery>
+				<cfelse>
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#custom_fields_values
+					SET cf_value = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#v#">
+					WHERE cf_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#f#">
+					AND asset_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#theid#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
+				</cfif>
 			</cftransaction>
 		</cfloop>
 		<!--- Initiate the index --->
-		<cfinvoke component="lucene" method="index_update_api" dsn="#application.razuna.datasource#" storage="#application.razuna.storage#" assetid="#theid#" prefix="#session.hostdbprefix#" hostid="#session.hostid#" assetcategory="#arguments.type#"thedatabase="#application.razuna.thedatabase#">
+		<cfinvoke component="lucene" method="index_update_api">
+			<cfinvokeargument name="assetid" value="#theid#" />
+			<cfinvokeargument name="assetcategory" value="#arguments.type#" />
+			<cfinvokeargument name="dsn" value="#application.razuna.datasource#" />
+			<cfinvokeargument name="storage" value="#application.razuna.storage#" />
+			<cfinvokeargument name="thedatabase" value="#application.razuna.thedatabase#" />
+			<cfinvokeargument name="prefix" value="#session.hostdbprefix#" />
+			<cfinvokeargument name="hostid" value="#session.hostid#" />
+		</cfinvoke>
 	</cfloop>
 	<!--- Flush cache --->
 	<cfif arguments.type EQ "img">
@@ -2163,6 +2186,7 @@
 		<cfset resetcachetoken("files")>
 	</cfif>
 	<cfset resetcachetoken("general")>
+	<cfset resetcachetoken("search")>
 	<!--- Return --->
 	<cfreturn />
 </cffunction>	
