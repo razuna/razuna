@@ -595,6 +595,11 @@
 	<cfargument name="theqry" type="query">
 	<!--- Create CSV --->
 	<cfset var csv = csvwrite(arguments.theqry)>
+	<!--- Check the directory already exists --->
+	<cfif ! directoryExists("#arguments.thepath#/outgoing")>
+		<!--- create directory --->
+		<cfdirectory action="create" directory="#arguments.thepath#/outgoing" mode="777">
+	</cfif>
 	<!--- Write file to file system --->
 	<cffile action="write" file="#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.csv" output="#csv#" charset="utf-8" nameConflict="MakeUnique">
 	<!--- Feedback --->
@@ -631,6 +636,11 @@
 	<!--- Add orders from query --->
 	<cfset SpreadsheetAddRows(sxls, arguments.theqry, 2)> 
 	<cfset SpreadsheetFormatrow(sxls, {textwrap=false, alignment="vertical_top"}, 2)>
+	<!--- Check the directory already exists --->
+	<cfif ! directoryExists("#arguments.thepath#/outgoing")>
+		<!--- create directory --->
+		<cfdirectory action="create" directory="#arguments.thepath#/outgoing" mode="777">
+	</cfif>
 	<!--- Write file to file system --->
 	<cfset SpreadsheetWrite(sxls,"#arguments.thepath#/outgoing/razuna-users-export-#session.hostid#-#session.theuserid#.#arguments.theformat#",true)>
 	<!--- Feedback --->
