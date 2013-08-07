@@ -42,6 +42,8 @@
 		<cfargument name="datechangestop" type="string" required="false" default="">
 		<cfargument name="sortby" type="string" required="false" default="name">
 		<cfargument name="ui" type="string" required="false" default="false">
+		<cfargument name="dbdirect" type="string" required="false" default="false">
+		<cfargument name="available" type="string" required="false" default="1">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
@@ -171,40 +173,41 @@
 		<cfargument name="istruct" required="true">
 		<!--- Call date function --->
 		<cfset var idate = set_date(datecreate=arguments.istruct.datecreate, datechange=arguments.istruct.datechange)>
-		<!--- If we have a folderid --->
-		<!--- <cfif arguments.istruct.folderid NEQ "" AND arguments.istruct.folderid NEQ 0>
-			<cfif arguments.istruct.searchfor EQ "*">
-				<cfset var thesearchfor = "folder:#arguments.istruct.folderid#">
-			<cfelse>
-				<cfset var thesearchfor = "+#arguments.istruct.searchfor# +folder:#arguments.istruct.folderid#">
-			</cfif>
-		<cfelse> --->
-			<cfset var thesearchfor = arguments.istruct.searchfor>
-		<!--- </cfif> --->
-		<!--- Search in Lucene --->
-		<cfset var qryluceneimg = search(criteria=thesearchfor,category="img",hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#")>
-		<!--- If lucene returns no records --->
-		<cfif qryluceneimg.recordcount NEQ 0>
-			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
-			<cfquery dbtype="query" name="cattreeimg">
-			SELECT categorytree
-			FROM qryluceneimg
-			WHERE categorytree != ''
-			GROUP BY categorytree
-			ORDER BY categorytree
-			</cfquery>
+		<!--- Var the searchfor --->
+		<cfset var thesearchfor = arguments.istruct.searchfor>
+		<!--- Check if we have to search in lucene or not --->
+		<cfif arguments.istruct.dbdirect>
+			<!--- Set outer loop --->
+			<cfset var pos_start = 1>
+			<cfset var pos_end = 1>
+			<cfset var q_start = 1>
+			<cfset var q_end = 990>
 		<cfelse>
-			<cfset var cattreeimg = querynew("categorytree")>
-			<cfset queryaddrow(cattreeimg)>
+			<!--- Search in Lucene --->
+			<cfset var qryluceneimg = search(criteria=thesearchfor,category="img",hostid="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#")>
+			<!--- If lucene returns no records --->
+			<cfif qryluceneimg.recordcount NEQ 0>
+				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
+				<cfquery dbtype="query" name="cattreeimg">
+				SELECT categorytree
+				FROM qryluceneimg
+				WHERE categorytree != ''
+				GROUP BY categorytree
+				ORDER BY categorytree
+				</cfquery>
+			<cfelse>
+				<cfset var cattreeimg = querynew("categorytree")>
+				<cfset queryaddrow(cattreeimg)>
+			</cfif>
+			<!--- Get how many loop --->
+			<cfset var howmanyloop = ceiling(cattreeimg.recordcount / 990)>
+			<!--- Set outer loop --->
+			<cfset var pos_start = 1>
+			<cfset var pos_end = howmanyloop>
+			<!--- Set inner loop --->
+			<cfset var q_start = 1>
+			<cfset var q_end = 990>
 		</cfif>
-		<!--- Get how many loop --->
-		<cfset var howmanyloop = ceiling(cattreeimg.recordcount / 990)>
-		<!--- Set outer loop --->
-		<cfset var pos_start = 1>
-		<cfset var pos_end = howmanyloop>
-		<!--- Set inner loop --->
-		<cfset var q_start = 1>
-		<cfset var q_end = 990>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry_img">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -293,10 +296,13 @@
 				LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#xmp x ON x.id_r = i.img_id
 				LEFT JOIN #application.razuna.api.prefix["#arguments.istruct.api_key#"]#folders fo ON fo.folder_id = i.folder_id_r AND fo.host_id = i.host_id
-				WHERE i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
-				AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
+				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
+				<cfif !arguments.istruct.dbdirect>
+					AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				</cfif>
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				AND i.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.istruct.available#">
 				<!--- Only if we have dates --->
 				<cfif arguments.istruct.datecreate NEQ "">
 					<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -353,40 +359,41 @@
 		<cfargument name="vstruct" required="true">
 		<!--- Call date function --->
 		<cfset var vdate = set_date(datecreate=arguments.vstruct.datecreate, datechange=arguments.vstruct.datechange)>
-		<!--- If we have a folderid --->
-		<!--- <cfif arguments.vstruct.folderid NEQ "" AND arguments.vstruct.folderid NEQ 0>
-			<cfif arguments.vstruct.searchfor EQ "*">
-				<cfset var thesearchfor = "folder:#arguments.vstruct.folderid#">
-			<cfelse>
-				<cfset var thesearchfor = "+#arguments.vstruct.searchfor# +folder:#arguments.vstruct.folderid#">
-			</cfif>
-		<cfelse> --->
-			<cfset var thesearchfor = arguments.vstruct.searchfor>
-		<!--- </cfif> --->
-		<!--- Search in Lucene --->
-		<cfset var qrylucenevid = search(criteria=thesearchfor,category="vid",hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#")>
-		<!--- If lucene returns no records --->
-		<cfif qrylucenevid.recordcount NEQ 0>
-			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
-			<cfquery dbtype="query" name="cattreevid">
-			SELECT categorytree
-			FROM qrylucenevid
-			WHERE categorytree != ''
-			GROUP BY categorytree
-			ORDER BY categorytree
-			</cfquery>
+		<!--- Var the searchfor --->
+		<cfset var thesearchfor = arguments.vstruct.searchfor>
+		<!--- Check if we have to search in lucene or not --->
+		<cfif arguments.vstruct.dbdirect>
+			<!--- Set outer loop --->
+			<cfset var pos_start = 1>
+			<cfset var pos_end = 1>
+			<cfset var q_start = 1>
+			<cfset var q_end = 990>
 		<cfelse>
-			<cfset var cattreevid = querynew("categorytree")>
-			<cfset queryaddrow(cattreevid)>
+			<!--- Search in Lucene --->
+			<cfset var qrylucenevid = search(criteria=thesearchfor,category="vid",hostid="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#")>
+			<!--- If lucene returns no records --->
+			<cfif qrylucenevid.recordcount NEQ 0>
+				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
+				<cfquery dbtype="query" name="cattreevid">
+				SELECT categorytree
+				FROM qrylucenevid
+				WHERE categorytree != ''
+				GROUP BY categorytree
+				ORDER BY categorytree
+				</cfquery>
+			<cfelse>
+				<cfset var cattreevid = querynew("categorytree")>
+				<cfset queryaddrow(cattreevid)>
+			</cfif>
+			<!--- Get how many loop --->
+			<cfset var howmanyloop = ceiling(cattreevid.recordcount / 990)>
+			<!--- Set outer loop --->
+			<cfset var pos_start = 1>
+			<cfset var pos_end = howmanyloop>
+			<!--- Set inner loop --->
+			<cfset var q_start = 1>
+			<cfset var q_end = 990>
 		</cfif>
-		<!--- Get how many loop --->
-		<cfset var howmanyloop = ceiling(cattreevid.recordcount / 990)>
-		<!--- Set outer loop --->
-		<cfset var pos_start = 1>
-		<cfset var pos_end = howmanyloop>
-		<!--- Set inner loop --->
-		<cfset var q_start = 1>
-		<cfset var q_end = 990>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry_vid">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -478,10 +485,13 @@
 		        FROM #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos v 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#videos_text vt ON v.vid_id = vt.vid_id_r AND vt.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.vstruct.api_key#"]#folders fo ON fo.folder_id = v.folder_id_r AND fo.host_id = v.host_id
-				WHERE v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
+				<cfif !arguments.vstruct.dbdirect>
+					AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				</cfif>
 				AND (v.vid_group IS NULL OR v.vid_group = '')
-				AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
 				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				AND v.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.vstruct.available#">
 				<!--- Only if we have dates --->
 				<cfif arguments.vstruct.datecreate NEQ "">
 					<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -538,40 +548,41 @@
 		<cfargument name="astruct" required="true">
 		<!--- Call date function --->
 		<cfset var adate = set_date(datecreate=arguments.astruct.datecreate, datechange=arguments.astruct.datechange)>
-		<!--- If we have a folderid --->
-		<!--- <cfif arguments.astruct.folderid NEQ "" AND arguments.astruct.folderid NEQ 0>
-			<cfif arguments.astruct.searchfor EQ "*">
-				<cfset var thesearchfor = "folder:#arguments.astruct.folderid#">
-			<cfelse>
-				<cfset var thesearchfor = "+#arguments.astruct.searchfor# +folder:#arguments.astruct.folderid#">
-			</cfif>
-		<cfelse> --->
-			<cfset var thesearchfor = arguments.astruct.searchfor>
-		<!--- </cfif> --->
-		<!--- Search in Lucene --->
-		<cfset var qryluceneaud = search(criteria=thesearchfor,category="aud",hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#")>
-		<!--- If lucene returns no records --->
-		<cfif qryluceneaud.recordcount NEQ 0>
-			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
-			<cfquery dbtype="query" name="cattreeaud">
-			SELECT categorytree
-			FROM qryluceneaud
-			WHERE categorytree != ''
-			GROUP BY categorytree
-			ORDER BY categorytree
-			</cfquery>
+		<!--- Var the searchfor --->
+		<cfset var thesearchfor = arguments.astruct.searchfor>
+		<!--- Check if we have to search in lucene or not --->
+		<cfif arguments.astruct.dbdirect>
+			<!--- Set outer loop --->
+			<cfset var pos_start = 1>
+			<cfset var pos_end = 1>
+			<cfset var q_start = 1>
+			<cfset var q_end = 990>
 		<cfelse>
-			<cfset var cattreeaud = querynew("categorytree")>
-			<cfset queryaddrow(cattreeaud)>
+			<!--- Search in Lucene --->
+			<cfset var qryluceneaud = search(criteria=thesearchfor,category="aud",hostid="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#")>
+			<!--- If lucene returns no records --->
+			<cfif qryluceneaud.recordcount NEQ 0>
+				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
+				<cfquery dbtype="query" name="cattreeaud">
+				SELECT categorytree
+				FROM qryluceneaud
+				WHERE categorytree != ''
+				GROUP BY categorytree
+				ORDER BY categorytree
+				</cfquery>
+			<cfelse>
+				<cfset var cattreeaud = querynew("categorytree")>
+				<cfset queryaddrow(cattreeaud)>
+			</cfif>
+			<!--- Get how many loop --->
+			<cfset var howmanyloop = ceiling(cattreeaud.recordcount / 990)>
+			<!--- Set outer loop --->
+			<cfset var pos_start = 1>
+			<cfset var pos_end = howmanyloop>
+			<!--- Set inner loop --->
+			<cfset var q_start = 1>
+			<cfset var q_end = 990>
 		</cfif>
-		<!--- Get how many loop --->
-		<cfset var howmanyloop = ceiling(cattreeaud.recordcount / 990)>
-		<!--- Set outer loop --->
-		<cfset var pos_start = 1>
-		<cfset var pos_end = howmanyloop>
-		<!--- Set inner loop --->
-		<cfset var q_start = 1>
-		<cfset var q_end = 990>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry_aud">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -658,10 +669,14 @@
 				FROM #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios a 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#audios_text aut ON a.aud_id = aut.aud_id_r AND aut.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.astruct.api_key#"]#folders fo ON fo.folder_id = a.folder_id_r AND fo.host_id = a.host_id
-				WHERE a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
+				<cfif !arguments.astruct.dbdirect>
+					AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				</cfif>
 				AND (a.aud_group IS NULL OR a.aud_group = '')
-				AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
+
 				AND a.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				AND a.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.astruct.available#">
 				<!--- Only if we have dates --->
 				<cfif arguments.astruct.datecreate NEQ "">
 					<cfif application.razuna.api.thedatabase EQ "mssql">
@@ -719,40 +734,41 @@
 		<cfargument name="fstruct" required="true">
 		<!--- Call date function --->
 		<cfset var fdate = set_date(datecreate=arguments.fstruct.datecreate, datechange=arguments.fstruct.datechange)>
-		<!--- If we have a folderid --->
-		<!--- <cfif arguments.fstruct.folderid NEQ "" AND arguments.fstruct.folderid NEQ 0>
-			<cfif arguments.fstruct.searchfor EQ "*">
-				<cfset var thesearchfor = "folder:#arguments.fstruct.folderid#">
-			<cfelse>
-				<cfset var thesearchfor = "+#arguments.fstruct.searchfor# +folder:#arguments.fstruct.folderid#">
-			</cfif>
-		<cfelse> --->
-			<cfset var thesearchfor = arguments.fstruct.searchfor>
-		<!--- </cfif> --->
-		<!--- Search in Lucene --->
-		<cfset var qrylucenedoc = search(criteria=thesearchfor,category="doc",hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#")>
-		<!--- If lucene returns no records --->
-		<cfif qrylucenedoc.recordcount NEQ 0>
-			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
-			<cfquery dbtype="query" name="cattreedoc">
-			SELECT categorytree
-			FROM qrylucenedoc
-			WHERE categorytree != ''
-			GROUP BY categorytree
-			ORDER BY categorytree
-			</cfquery>
+		<!--- Var the searchfor --->		
+		<cfset var thesearchfor = arguments.fstruct.searchfor>
+		<!--- Check if we have to search in lucene or not --->
+		<cfif arguments.fstruct.dbdirect>
+			<!--- Set outer loop --->
+			<cfset var pos_start = 1>
+			<cfset var pos_end = 1>
+			<cfset var q_start = 1>
+			<cfset var q_end = 990>
 		<cfelse>
-			<cfset var cattreedoc = querynew("categorytree")>
-			<cfset queryaddrow(cattreedoc)>
+			<!--- Search in Lucene --->
+			<cfset var qrylucenedoc = search(criteria=thesearchfor,category="doc",hostid="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#")>
+			<!--- If lucene returns no records --->
+			<cfif qrylucenedoc.recordcount NEQ 0>
+				<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
+				<cfquery dbtype="query" name="cattreedoc">
+				SELECT categorytree
+				FROM qrylucenedoc
+				WHERE categorytree != ''
+				GROUP BY categorytree
+				ORDER BY categorytree
+				</cfquery>
+			<cfelse>
+				<cfset var cattreedoc = querynew("categorytree")>
+				<cfset queryaddrow(cattreedoc)>
+			</cfif>
+			<!--- Get how many loop --->
+			<cfset var howmanyloop = ceiling(cattreedoc.recordcount / 990)>
+			<!--- Set outer loop --->
+			<cfset var pos_start = 1>
+			<cfset var pos_end = howmanyloop>
+			<!--- Set inner loop --->
+			<cfset var q_start = 1>
+			<cfset var q_end = 990>
 		</cfif>
-		<!--- Get how many loop --->
-		<cfset var howmanyloop = ceiling(cattreedoc.recordcount / 990)>
-		<!--- Set outer loop --->
-		<cfset var pos_start = 1>
-		<cfset var pos_end = howmanyloop>
-		<!--- Set inner loop --->
-		<cfset var q_start = 1>
-		<cfset var q_end = 990>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.api.dsn#" name="qry_doc">
 			<cfloop from="#pos_start#" to="#pos_end#" index="i">
@@ -846,9 +862,12 @@
 				FROM #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files f 
 				LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#files_desc ft ON f.file_id = ft.file_id_r AND ft.lang_id_r = 1
 				LEFT JOIN #application.razuna.api.prefix["#arguments.fstruct.api_key#"]#folders fo ON fo.folder_id = f.folder_id_r AND fo.host_id = f.host_id
-				WHERE f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
-				AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
+				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
+				<cfif !arguments.fstruct.dbdirect>
+					AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				</cfif>
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				AND f.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fstruct.available#">
 				<!--- Only if we have dates --->
 				<cfif arguments.fstruct.datecreate NEQ "">
 					<cfif application.razuna.api.thedatabase EQ "mssql">
