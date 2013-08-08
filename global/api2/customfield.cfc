@@ -237,6 +237,43 @@
 		<cfreturn thexml>
 	</cffunction>
 	
+	<!--- Set Custom Field Value in bulk --->
+	<cffunction name="setfieldvaluebulk" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="field_values" required="true">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<!--- Set thread --->
+			<cfthread action="run" name="#createuuid()#" intstruct="#arguments#">
+				<!--- Grab the json and deserialize it --->
+				<cfset j = DeserializeJSON(attributes.intstruct.field_values)>
+				<!--- Loop over the array --->
+				<cfloop array="#j#" index="id">
+					<!--- This is the first array containing the assetid --->
+					<cfset assetid = id[1]>
+					<!--- This is the second value containing another array --->
+					<cfset fieldvalues = SerializeJSON(id[2])>
+					<!--- Call internal function --->
+					<cfinvoke method="setfieldvalue">
+						<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#" />
+						<cfinvokeargument name="assetid" value="#assetid#" />
+						<cfinvokeargument name="field_values" value="#fieldvalues#" />
+					</cfinvoke>
+				</cfloop>
+			</cfthread>
+			<!--- Return --->
+			<cfset thexml.responsecode = 0>
+			<cfset thexml.message = "Custom field values successfully added">
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+
 	<!--- get custom fields from asset --->
 	<cffunction name="getfieldsofasset" access="remote" output="false" returntype="query" returnformat="json">
 		<cfargument name="api_key" required="true">
