@@ -134,7 +134,7 @@
 										</cfif>
 									<!--- Audios --->
 									<cfelseif kind EQ "aud">
-										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ "mp3" OR audgetrash.ext EQ "wav">#ext#<cfelse>aud</cfif>.png" border="0">
+										<img src="#dynpath#/global/host/dam/images/icons/icon_<cfif ext EQ 'mp3' OR ext EQ 'wav'>#ext#<cfelse>aud</cfif>.png" border="0">
 									<!--- Files --->
 									<cfelseif kind EQ "doc">
 										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND ext EQ "PDF">
