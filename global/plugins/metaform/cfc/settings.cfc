@@ -148,8 +148,22 @@
 		<cfreturn s />
 	</cffunction>
 
-	<!--- loadForm --->
+	<!--- saveForm --->
 	<cffunction name="saveform" access="public" output="false" returntype="struct">
+		<cfargument name="args" required="true">
+		<!--- This calls the saveformthread now --->
+		<cfthread action="run" intstruct="#arguments.args#">
+			<cfinvoke method="saveformthread" args="#attributes.intstruct#" />
+		</cfthread>
+		<!--- Reset session --->
+		<cfset session.currentupload = 0>
+		<!--- We need to return a struct!!! --->
+		<cfset result.page = false>
+		<cfreturn result />
+	</cffunction>
+
+	<!--- saveForm Thread --->
+	<cffunction name="saveformthread" access="private" output="false" returntype="struct">
 		<cfargument name="args" required="true">
 		<!--- Loop over the fields --->
 		<cfloop list="#arguments.args.fieldnames#" delimiters="," index="i">
