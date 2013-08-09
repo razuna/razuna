@@ -162,7 +162,10 @@
 						$("##sf_status").html("#myFusebox.getApplicationData().defaults.trans("success")#");
 						$("##sf_status").animate({opacity: 1.0}, 3000).fadeTo("slow", 0.33);
 						// Update folder list
-						$('##explorer').load('#myself#c.smart_folders');
+						switchmainselection('smart_folders','Smart Folders');
+						// $('##explorer').load('#myself#c.smart_folders');
+						// Toogle
+						$('.ddselection_header').hide();
 				   	}
 				});
 			}
@@ -182,7 +185,8 @@
 						// Refresh right side
 						$('##rightside').load('#myself#c.smart_folders_content&sf_id=0');
 						// Refresh folder list
-						$('##explorer').load('#myself#c.smart_folders');
+						switchmainselection('smart_folders','Smart Folders');
+						// $('##explorer').load('#myself#c.smart_folders');
 						// Close this window
 						$( this ).dialog( "close" );
 					},
