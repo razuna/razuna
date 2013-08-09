@@ -1060,7 +1060,7 @@
 			<cfelseif arguments.thestruct.type EQ "aud">
 				<cfquery name="qFile" datasource="#variables.dsn#" cachedwithin="1" region="razcache">
 				SELECT /* #variables.cachetoken#servefileaud */ aud_name, aud_extension, aud_name_org filenameorg, 
-				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aus_size as thesize
+				folder_id_r, link_kind, link_path_url, path_to_asset, cloud_url, cloud_url_org, aud_size as thesize
 				FROM #session.hostdbprefix#audios
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
