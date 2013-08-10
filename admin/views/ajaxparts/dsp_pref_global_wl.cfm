@@ -29,13 +29,13 @@
 		<div id="tabs_wl">
 			<ul>
 				<!--- Options --->
-				<li><a href="##wl_options">Text &amp; Link options</a></li>
+				<li><a href="##wl_options">#defaultsObj.trans("wl_text_options")#</a></li>
 				<!--- CSS --->
 				<li><a href="##wl_css">CSS</a></li>
 				<!--- News --->
-				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">News</a></li>
+				<li><a href="##wl_news" onclick="loadcontent('wl_news','#myself#c.wl_news');">#defaultsObj.trans("wl_news")#</a></li>
 				<!--- ISP setup --->
-				<li><a href="##wl_isp">Hosting Setting</a></li>
+				<li><a href="##wl_isp">#defaultsObj.trans("wl_hosting_setting")#</a></li>
 			</ul>
 			<!--- Options --->
 			<div id="wl_options">
@@ -43,19 +43,19 @@
 				<!--- General title tag --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_html_title")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_html_title_desc")#<br />
-				<div style="float:left;"><input type="text" style="width:500px;" name="wl_html_title" id="wl_html_title" value="<cfif qry_options.wl_html_title EQ "">Razuna - the open source alternative to Digital Asset Management<cfelse>#qry_options.wl_html_title#</cfif>"></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_html_title');return false;">Use default</a></div>
+				<div style="float:left;"><input type="text" style="width:500px;" name="wl_html_title" id="wl_html_title" value="<cfif qry_options.wl_html_title EQ "">Razuna - the open source alternative to Digital Asset Management<cfelse>#qry_options.wl_html_title#</cfif>"></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_html_title');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				<!--- Login Footer --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_login")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_login_desc")#<br />
-				<div style="float:left;"><textarea name="wl_login_links" id="wl_login_links" style="width:500px;height:70px;">#qry_options.wl_login_links#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_login_links');return false;">Use default</a></div>
+				<div style="float:left;"><textarea name="wl_login_links" id="wl_login_links" style="width:500px;height:70px;">#qry_options.wl_login_links#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_login_links');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				<!--- Main page Videos --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_video")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_video_desc")#<br />
-				<div style="float:left;"><textarea name="wl_main_static" id="wl_main_static" style="width:500px;height:70px;">#qry_options.wl_main_static#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_main_static');return false;">Use default</a></div>
+				<div style="float:left;"><textarea name="wl_main_static" id="wl_main_static" style="width:500px;height:70px;">#qry_options.wl_main_static#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_main_static');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				<!--- Main Razuna tab Bottom --->
@@ -64,13 +64,13 @@
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab_text")#<br />
 				<input type="text" style="width:500px;" name="wl_razuna_tab_text" value="#qry_options.wl_razuna_tab_text#"><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_razunatab_content")#<br />
-				<div style="float:left;"><textarea name="wl_razuna_tab_content" id="wl_razuna_tab_content" style="width:500px;height:70px;">#qry_options.wl_razuna_tab_content#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_razuna_tab_content');return false;">Use default</a></div>
+				<div style="float:left;"><textarea name="wl_razuna_tab_content" id="wl_razuna_tab_content" style="width:500px;height:70px;">#qry_options.wl_razuna_tab_content#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_razuna_tab_content');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				<!--- Feedback link --->
 				<strong>#myFusebox.getApplicationData().defaults.trans("header_wl_main_feedback")#</strong><br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_feedback_desc")#<br />
-				<div style="float:left;"><textarea name="wl_feedback" id="wl_feedback" style="width:500px;height:70px;">#qry_options.wl_feedback#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_feedback');return false;">Use default</a></div>
+				<div style="float:left;"><textarea name="wl_feedback" id="wl_feedback" style="width:500px;height:70px;">#qry_options.wl_feedback#</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_feedback');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				<!--- Dropdown menu links --->
@@ -83,7 +83,7 @@
 					<cfelse>
 						#qry_options.wl_link_search#
 					</cfif>
-				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_search');return false;">Use default</a></div>
+				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_search');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_links_dd_support")#<br />
@@ -93,7 +93,7 @@
 					<cfelse>
 						#qry_options.wl_link_support#
 					</cfif>
-				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_support');return false;">Use default</a></div>
+				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_support');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br />
 				#myFusebox.getApplicationData().defaults.trans("header_wl_main_links_dd_documentation")#<br />
@@ -103,7 +103,7 @@
 					<cfelse>
 						#qry_options.wl_link_doc#
 					</cfif>
-				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_doc');return false;">Use default</a></div>
+				</textarea></div><div style="float:left;padding-left:10px;"><a href="##" onclick="usedefaults('wl_link_doc');return false;">#defaultsObj.trans("use_default")#</a></div>
 				<div style="clear:both;"></div>
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
@@ -127,8 +127,8 @@
 				#myFusebox.getApplicationData().defaults.trans("header_wl_isp_desc")#
 				<br /><br />
 				<strong>Hosting Setting</strong><br />
-				<input type="radio" value="false" name="conf_isp"<cfif !application.razuna.isp> checked="checked"</cfif>> Hosting Setting is turned off<br />
-				<input type="radio" value="true" name="conf_isp"<cfif application.razuna.isp> checked="checked"</cfif>> Hosting Setting is turned on
+				<input type="radio" value="false" name="conf_isp"<cfif !application.razuna.isp> checked="checked"</cfif>> #defaultsObj.trans("hosting_setting_off")#<br />
+				<input type="radio" value="true" name="conf_isp"<cfif application.razuna.isp> checked="checked"</cfif>> #defaultsObj.trans("hosting_setting_on")#
 				<br /><br />
 				<input type="submit" name="submitbutton" value="#myFusebox.getApplicationData().defaults.trans("save")#">
 				<br /><br />

@@ -44,10 +44,10 @@
 				<li><a href="##admin_maintenance_cloud" onclick="loadcontent('admin_maintenance_cloud','#myself#c.admin_maintenance_cloud');">Cloud #myFusebox.getApplicationData().defaults.trans("admin_maintenance")#</a></li>
 			</cfif>
 			<!--- <li><a href="##admin_api" onclick="loadcontent('admin_api','#myself#c.admin_api');">API</a></li> --->
-			<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">System Information</a></li>
+			<li><a href="##admin_system" onclick="loadcontent('admin_system','#myself#c.admin_system');">#myFusebox.getApplicationData().defaults.trans("system_information")#</a></li>
 			<!--- Plugins --->
 			<cfif qry_plugins.recordcount NEQ 0>
-				<li><a href="##admin_plugins">Plugins</a></li>
+				<li><a href="##admin_plugins">#myFusebox.getApplicationData().defaults.trans("plugins")#</a></li>
 			</cfif>
 		</ul>
 		<!--- Users --->
@@ -98,16 +98,16 @@
 		<!--- Plugins --->
 		<cfif qry_plugins.recordcount NEQ 0>
 			<div id="admin_plugins">
-				<div>The following plugins are installed.</div>
+				<div>#myFusebox.getApplicationData().defaults.trans("plugins_installed")#</div>
 				<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 					<tr>
-						<th>Plugin</th>
-						<th>Description</th>
+						<th>#myFusebox.getApplicationData().defaults.trans("plugin")#</th>
+						<th>#myFusebox.getApplicationData().defaults.trans("description")#</th>
 					</tr>
 					<cfloop query="qry_plugins">
 						<tr>
-							<td valign="top" nowrap="nowrap"><strong>#p_name#</strong><br /><div style="padding-top:5px;"><a href="##" onclick="loadcontent('rightside','#myself#c.plugin_settings&p_id=#p_id#');return false;">Settings</a> | <a href="##" onclick="showwindow('#myself#c.admin_plugin_one&p_id=#p_id#','Information about this plugin',450,1);return false;">Information</a></div></td>
-							<td valign="top">#p_description#<br />Version: #p_version# | Author: #p_author#</td>
+							<td valign="top" nowrap="nowrap"><strong>#p_name#</strong><br /><div style="padding-top:5px;"><a href="##" onclick="loadcontent('rightside','#myself#c.plugin_settings&p_id=#p_id#');return false;">#myFusebox.getApplicationData().defaults.trans("settings")#</a> | <a href="##" onclick="showwindow('#myself#c.admin_plugin_one&p_id=#p_id#','Information about this plugin',450,1);return false;">#myFusebox.getApplicationData().defaults.trans("plugin_information")#</a></div></td>
+							<td valign="top">#p_description#<br />#myFusebox.getApplicationData().defaults.trans("plugin_version")#: #p_version# | #myFusebox.getApplicationData().defaults.trans("plugin_author")#: #p_author#</td>
 						</tr>
 					</cfloop>
 				</table>
