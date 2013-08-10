@@ -26,7 +26,7 @@
 <cfoutput>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border: 1px solid ##BEBEBE;">
 		<tr>
-			<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;">These settings below are core settings for each tenant. More settings can be found in the tenant administration itself!</td>
+			<td align="center" width="100%" style="padding:10px;background-color:##FFFFE0;">#defaultsObj.trans("warning_tenant_settings")#</td>
 		</tr>
 	</table>
 	<br />
@@ -38,7 +38,7 @@
 			<ul>
 				<li><a href="##pglobal" onclick="savesettings();">Mail Settings</a></li>
 				<li><a href="##pmeta" onclick="savesettings();loadcontent('pmeta','#myself#c.prefs_meta');">#defaultsObj.trans("header_title_meta")#</a></li>
-				<li><a href="##pdam" onclick="savesettings();loadcontent('pdam','#myself#c.prefs_dam');">Storage Location</a></li>
+				<li><a href="##pdam" onclick="savesettings();loadcontent('pdam','#myself#c.prefs_dam');">#defaultsObj.trans("storage_location")#</a></li>
 				<!--- <li><a href="##pimage" onclick="savesettings();loadcontent('pimage','#myself#c.prefs_image');">#defaultsObj.trans("image_settings")#</a></li>
 				<li><a href="##pvideo" onclick="savesettings();loadcontent('pvideo','#myself#c.prefs_video');">#defaultsObj.trans("video_settings_global")#</a></li> --->
 				<!--- If Nirvanix enabled --->

@@ -27,7 +27,8 @@
 	<div>
 		<p><strong>#qry_plugin.p_name#</strong></p>
 		<p>#qry_plugin.p_description#</p>
-		<p>Version: #qry_plugin.p_version# | <a href="#qry_plugin.p_url#" target="_blank">#qry_plugin.p_url#</a></p>
-		<p>Author: #qry_plugin.p_author# | <a href="#qry_plugin.p_author_url#" target="_blank">#qry_plugin.p_author_url#</a></p>
+		<p>#myFusebox.getApplicationData().defaults.trans("plugin_version")#: #qry_plugin.p_version# | <a href="#qry_plugin.p_url#" target="_blank">#qry_plugin.p_url#</a></p>
+		<p>#myFusebox.getApplicationData().defaults.trans("plugin_author")#: #qry_plugin.p_author# | <a href="#qry_plugin.p_author_url#" target="_blank">#qry_plugin.p_author_url#</a></p>
 		<p>#qry_plugin.p_license#</p>
+	</div>
 </cfoutput>

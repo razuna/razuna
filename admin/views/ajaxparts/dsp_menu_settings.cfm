@@ -38,11 +38,11 @@
 					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.prefs_global_main');return false;">&raquo; #defaultsObj.trans("settings_global")#</a></td>
 				</tr>
 				<tr>
-					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.plugins');return false;">&raquo; Plugins</a></td>
+					<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.plugins');return false;">&raquo; #defaultsObj.trans("link_plugins")#</a></td>
 				</tr>
 				<cfif application.razuna.whitelabel>
 					<tr>
-						<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.pref_global_wl');return false;">&raquo; White-Labelling</a></td>
+						<td valign="top" style="padding-top:10px;"><a href="##" onclick="loadcontent('rightside','#myself#c.pref_global_wl');return false;">&raquo; #defaultsObj.trans("link_white_labelling")#</a></td>
 					</tr>
 				</cfif>
 			</table>
