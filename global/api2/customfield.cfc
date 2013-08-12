@@ -110,7 +110,7 @@
 					SELECT cf_id_r
 					FROM #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
 					WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
-					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+					AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
 					</cfquery>
 					<!--- ORIGINAL CODE
 					INSERT COMMENT
@@ -144,7 +144,7 @@
 						(cf_id_r, asset_id_r, cf_value, host_id, rec_uuid)
 						VALUES(
 						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">,
-						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">,
+						<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">,
 						<cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;')#">,
 						<cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.api_key#"]#">,
 						<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#createuuid()#">
@@ -156,7 +156,7 @@
 						UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#custom_fields_values
 						SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#ReplaceNoCase(f[2],',','&##44;')#">
 						WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#f[1]#">
-						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+						AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#i#">
 						</cfquery>
 					</cfif>
 					<!--- End Anthony Rodriguez Edit --->
