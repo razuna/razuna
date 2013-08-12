@@ -3322,8 +3322,8 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>i.img_id as id, i.img_filename as filename, i.in_trash, 
-		i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org, 'img' as kind, i.is_available,
+		SELECT /* #variables.cachetoken#getallassets */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>i.img_id as id, 
+		i.img_filename as filename, i.in_trash, i.folder_id_r, i.thumb_extension as ext, i.img_filename_org as filename_org, 'img' as kind, i.is_available,
 		i.img_create_time as date_create, i.img_change_time as date_change, i.link_kind, i.link_path_url,
 		i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description as description, it.img_keywords as keywords, '0' as vwidth, '0' as vheight, 
 		(
@@ -5108,12 +5108,181 @@
 	<cfset variables.cachetoken = getcachetoken("folders")>
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="folder_count" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#trashcount */ COUNT(folder_id) AS cnt FROM #session.hostdbprefix#folders 
-		WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
-		AND folder_is_collection IS NULL
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+	SELECT /* #variables.cachetoken#trashcount */ COUNT(folder_id) AS cnt FROM #session.hostdbprefix#folders 
+	WHERE in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="T">
+	AND folder_is_collection IS NULL
+	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn folder_count />
+</cffunction>
+
+<!--- Get fileid for next and back in detail view --->
+<cffunction name="getdetailnextback" output="false" returntype="struct">
+	<cfargument name="thestruct" type="struct">
+	<!--- Create struct for return --->
+	<cfset var f = structNew()>
+	<cfset f.fileid = arguments.thestruct.file_id>
+	<!--- Show only if row exists. Thus we prevent loading from basket or alike --->
+	<cfif structKeyExists(arguments.thestruct,"row")>
+		<!--- Get the cachetoken for here --->
+		<cfset variables.cachetoken = getcachetoken("folders")>
+		<!--- Local query var --->
+		<cfset var qry = "">
+		<!--- The the row value for the next row and the last row --->
+		<cfset f.row = arguments.thestruct.row + 1>
+		<cfset f.rowback = arguments.thestruct.row - 1>
+		<!--- According to type define id and db --->
+		<cfif arguments.thestruct.what EQ "images">
+			<cfset var thedb = "#session.hostdbprefix#images">
+			<cfset var theid = "img_id">
+			<cfset var thename = "img_filename">
+			<cfset var thetype = "images">
+		<cfelseif arguments.thestruct.what EQ "videos">
+			<cfset var thedb = "#session.hostdbprefix#videos">
+			<cfset var theid = "vid_id">
+			<cfset var thename = "vid_filename">
+			<cfset var thetype = "videos">
+		<cfelseif arguments.thestruct.what EQ "audios">
+			<cfset var thedb = "#session.hostdbprefix#audios">
+			<cfset var theid = "aud_id">
+			<cfset var thename = "aud_name">
+			<cfset var thetype = "audios">
+		<cfelseif arguments.thestruct.what EQ "files">
+			<cfset var thedb = "#session.hostdbprefix#files">
+			<cfset var theid = "file_id">
+			<cfset var thename = "file_name">
+			<cfset var thetype = "files">
+		</cfif>
+		<!--- Set the order by --->
+		<cfif session.sortby EQ "name">
+			<cfset var sortby = "lower(filename_forsort)">
+		<cfelseif session.sortby EQ "sizedesc">
+			<cfset var sortby = "size DESC">
+		<cfelseif session.sortby EQ "sizeasc">
+			<cfset var sortby = "size ASC">
+		<cfelseif session.sortby EQ "dateadd">
+			<cfset var sortby = "date_create DESC">
+		<cfelseif session.sortby EQ "datechanged">
+			<cfset var sortby = "date_change DESC">
+		</cfif>
+		<!--- MySQL starts at 0 so we do -1 --->
+		<cfset var detailrow = arguments.thestruct.row - 1>
+		<!--- Query (if we come from the overall view we need to union all) --->
+		<cfif arguments.thestruct.loaddiv EQ "content">
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#getdetailnextback */
+			img_id as file_id,
+			img_filename as filename_forsort,
+			'images' as type
+			FROM #session.hostdbprefix#images
+			WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			<!--- MSSQL --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				AND img_id NOT IN (
+					SELECT TOP #detailrow# img_id
+					FROM #session.hostdbprefix#images
+					WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				)	
+			</cfif>
+			UNION ALL
+			SELECT 
+			vid_id as file_id,
+			vid_filename as filename_forsort,
+			'videos' as type
+			FROM #session.hostdbprefix#videos
+			WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			<!--- MSSQL --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				AND vid_id NOT IN (
+					SELECT TOP #detailrow# vid_id
+					FROM #session.hostdbprefix#videos
+					WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				)	
+			</cfif>
+			UNION ALL
+			SELECT 
+			aud_id as file_id,
+			aud_name as filename_forsort,
+			'audios' as type
+			FROM #session.hostdbprefix#audios
+			WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			<!--- MSSQL --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				AND aud_id NOT IN (
+					SELECT TOP #detailrow# aud_id
+					FROM #session.hostdbprefix#audios
+					WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				)	
+			</cfif>
+			UNION ALL
+			SELECT 
+			file_id as file_id,
+			file_name as filename_forsort,
+			'files' as type
+			FROM #session.hostdbprefix#files
+			WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			<!--- MSSQL --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				AND file_id NOT IN (
+					SELECT TOP #detailrow# file_id
+					FROM #session.hostdbprefix#files
+					WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				)	
+			</cfif>
+			ORDER BY #sortby#
+			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+				LIMIT #detailrow#,1
+			</cfif>
+			</cfquery>
+		<!--- We query below for within the same file type group --->
+		<cfelse>
+			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
+			SELECT /* #variables.cachetoken#getdetailnextback */
+			#theid# as file_id,
+			#thename# as filename_forsort,
+			'#thetype#' as type
+			FROM #thedb#
+			WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+			<!--- MSSQL --->
+			<cfif application.razuna.thedatabase EQ "mssql">
+				AND #theid# NOT IN (
+					SELECT TOP #detailrow# #theid#
+					FROM #thedb#
+					WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
+				)	
+			</cfif>
+			ORDER BY #sortby#
+			<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+				LIMIT #detailrow#,1
+			</cfif>
+			</cfquery>
+		</cfif>
+		<!--- Set returned fileid into struct --->
+		<cfset f.fileid = qry.file_id>
+		<cfset f.type = qry.type>
+	</cfif>
+	<!--- Return --->
+	<cfreturn f />
 </cffunction>
 
 </cfcomponent>

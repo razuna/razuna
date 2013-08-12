@@ -9068,4 +9068,36 @@
 		</if>
 	</fuseaction>
 
+	<!-- Detail Proxy Service -->
+	<fuseaction name="detail_proxy">
+		<!-- Query details -->
+		<invoke object="myFusebox.getApplicationData().folders" methodcall="getdetailnextback(attributes)" returnvariable="qry_f" />
+		<set name="attributes.file_id" value="#qry_f.fileid#" />
+		<!-- <set name="attributes.row" value="#qry_f.row#" /> -->
+		<set name="attributes.what" value="#qry_f.type#" />
+		<!-- Redirect to detail according to type -->
+		<if condition="qry_f.type EQ 'images'">
+			<true>
+				<do action="images_detail" />
+			</true>
+		</if>
+		<if condition="qry_f.type EQ 'videos'">
+			<true>
+				<do action="videos_detail" />
+			</true>
+		</if>
+		<if condition="qry_f.type EQ 'files'">
+			<true>
+				<do action="files_detail" />
+			</true>
+		</if>
+		<if condition="qry_f.type EQ 'audios'">
+			<true>
+				<do action="audios_detail" />
+			</true>
+		</if>
+
+	</fuseaction>
+
+
 </circuit>
