@@ -37,16 +37,19 @@
 		SELECT /* #variables.cachetoken#sfgetall */ sf_id, sf_name, sf_type, '' AS shared
 		FROM #session.hostdbprefix#smart_folders
 		WHERE sf_type <cfif variables.database EQ "oracle" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT /* #variables.cachetoken#sfgetall */ sf_id, sf_name, sf_type, '' AS shared
 		FROM #session.hostdbprefix#smart_folders
 		WHERE sf_who = <cfqueryparam cfsqltype="cf_sql_varchar" value="#session.theuserid#">
 		AND sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
 		SELECT sf_id, sf_name, sf_type, 'true' AS shared
 		FROM #session.hostdbprefix#smart_folders sf JOIN #session.hostdbprefix#folders_groups fg ON sf.sf_id = fg.folder_id_r
 		AND sf.sf_type = <cfqueryparam cfsqltype="cf_sql_varchar" value="saved_search">
 		AND lower(fg.grp_permission) = <cfqueryparam cfsqltype="cf_sql_varchar" value="r">
+		AND sf.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		ORDER BY sf_type DESC, sf_name
 		</cfquery>
 		<!--- Return --->
@@ -63,12 +66,14 @@
 		SELECT /* #variables.cachetoken#sfgetone */ sf_id, sf_name, sf_type, sf_description
 		FROM #session.hostdbprefix#smart_folders
 		WHERE sf_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Query properties --->
 		<cfquery datasource="#application.razuna.datasource#" name="qry.sfprop" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#sfgetoneprop */ sf_prop_id, sf_prop_value
 		FROM #session.hostdbprefix#smart_folders_prop
 		WHERE sf_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.sf_id#">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
 		<!--- Return --->
 		<cfreturn qry />
