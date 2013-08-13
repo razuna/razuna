@@ -4067,9 +4067,9 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfthread name="#upa#" audstruct="#arguments.thestruct#" action="run">
 						<cfinvoke component="amazon" method="Upload">
-							<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filename#">
-							<cfinvokeargument name="theasset" value="#arguments.thestruct.theorgfile#">
-							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+							<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filename#">
+							<cfinvokeargument name="theasset" value="#attributes.audstruct.theorgfile#">
+							<cfinvokeargument name="awsbucket" value="#attributes.audstruct.awsbucket#">
 						</cfinvoke>
 					</cfthread>
 					<cfthread action="join" name="#upa#" />
@@ -4078,9 +4078,9 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.extension NEQ "wav" AND !application.razuna.rfs AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav")>
 					<cfthread name="#upw#" audstruct="#arguments.thestruct#" action="run">
 						<cfinvoke component="amazon" method="Upload">
-							<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.wav">
-							<cfinvokeargument name="theasset" value="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.wav">
-							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+							<cfinvokeargument name="key" value="/#attributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.wav">
+							<cfinvokeargument name="theasset" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.wav">
+							<cfinvokeargument name="awsbucket" value="#attributes.audstruct.awsbucket#">
 						</cfinvoke>
 					</cfthread>
 					<cfthread action="join" name="#upw#" />
@@ -4089,9 +4089,9 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3")>
 					<cfthread name="#upmp#" audstruct="#arguments.thestruct#" action="run">
 						<cfinvoke component="amazon" method="Upload">
-							<cfinvokeargument name="key" value="/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.qryfile.filenamenoext#.mp3">
-							<cfinvokeargument name="theasset" value="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.qryfile.filenamenoext#.mp3">
-							<cfinvokeargument name="awsbucket" value="#arguments.thestruct.awsbucket#">
+							<cfinvokeargument name="key" value="/#aattributes.audstruct.qryfile.folder_id#/aud/#attributes.audstruct.newid#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
+							<cfinvokeargument name="theasset" value="#attributes.audstruct.thetempdirectory#/#attributes.audstruct.qryfile.filenamenoext#.mp3">
+							<cfinvokeargument name="awsbucket" value="#attributes.audstruct.awsbucket#">
 						</cfinvoke>
 					</cfthread>
 					<cfthread action="join" name="#upmp#" />
@@ -4130,10 +4130,10 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfthread name="#upa#" audstruct="#arguments.thestruct#" action="run">
 						<cfinvoke component="akamai" method="Upload">
-							<cfinvokeargument name="theasset" value="#arguments.thestruct.theorgfile#">
-							<cfinvokeargument name="thetype" value="#attributes.intstruct.akaaud#">
-							<cfinvokeargument name="theurl" value="#attributes.intstruct.akaurl#">
-							<cfinvokeargument name="thefilename" value="#arguments.thestruct.qryfile.filename#">
+							<cfinvokeargument name="theasset" value="#attributes.audstruct.theorgfile#">
+							<cfinvokeargument name="thetype" value="#attributes.audstruct.akaaud#">
+							<cfinvokeargument name="theurl" value="#attributes.audstruct.akaurl#">
+							<cfinvokeargument name="thefilename" value="#attributes.audstruct.qryfile.filename#">
 						</cfinvoke>
 					</cfthread>
 					<cfthread action="join" name="#upa#" />
