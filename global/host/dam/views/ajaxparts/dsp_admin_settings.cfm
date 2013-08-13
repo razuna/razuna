@@ -30,43 +30,58 @@
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<!--- Check duplicates --->
 			<tr>
-				<th class="textbold" colspan="2">Check for duplicate assets</th>
+				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("check_duplicates_header")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">It is good practice to let Razuna check for the same file, but in case you want or even need to have duplicate records within Razuna you have the option to turn this functionality off below.</td>
+				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("check_duplicates_desc")#</td>
 			</tr>
 			<tr>
-				<td colspan="2"><input type="radio" name="set2_md5check" value="true"<cfif prefs.set2_md5check> checked="checked"</cfif> />Check for duplicate assets (recommended)<br /><input type="radio" name="set2_md5check" value="false"<cfif !prefs.set2_md5check> checked="checked"</cfif> />Do not check for duplicate records (allow to store the same asset within Razuna, even multiple times)</td>
+				<td colspan="2"><input type="radio" name="set2_md5check" value="true"<cfif prefs.set2_md5check> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("check_duplicates_on")#<br /><input type="radio" name="set2_md5check" value="false"<cfif !prefs.set2_md5check> checked="checked"</cfif> />#myFusebox.getApplicationData().defaults.trans("check_duplicates_off")#</td>
 			</tr>
 			<tr class="list">
 				<td colspan="2"><br /></td>
 			</tr>
-			<!--- Image Formats --->
+			<!--- Image Settings --->
 			<tr>
-				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_img_format")#</th>
+				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("image_settings")#</th>
 			</tr>
 			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_img_format_desc")#</td>
+				<td colspan="2">
+					<table border="0" width="100%">
+						<!--- Image Formats --->
+						<tr>
+							<th class="textbold">#myFusebox.getApplicationData().defaults.trans("header_img_format")#</th>
+							<th class="textbold">#myFusebox.getApplicationData().defaults.trans("header_img_size")#</th>
+						</tr>
+						<tr>
+							<td>#myFusebox.getApplicationData().defaults.trans("header_img_format_desc")#</td>
+							<td>#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size_desc")#</td>
+						</tr>
+						<tr>
+							<td>
+								<select name="set2_img_format" class="text">
+								<option value="jpg"<cfif prefs.set2_img_format EQ "jpg"> selected</cfif>>JPG</option>
+								<option value="gif"<cfif prefs.set2_img_format EQ "gif"> selected</cfif>>GIF</option>
+								<option value="png"<cfif prefs.set2_img_format EQ "PNG"> selected</cfif>>PNG</option>
+								</select>
+							</td>
+							<td>
+								#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="set2_img_thumb_width" size="4" maxlength="3" value="#prefs.set2_img_thumb_width#" /> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="set2_img_thumb_heigth" size="4" maxlength="3" value="#prefs.set2_img_thumb_heigth#" />
+							</td>
+						</tr>
+					</table>
+				</td>
 			</tr>
 			<tr>
-				<td colspan="2"><select name="set2_img_format" class="text">
-				<option value="jpg"<cfif prefs.set2_img_format EQ "jpg"> selected</cfif>>JPG</option>
-				<option value="gif"<cfif prefs.set2_img_format EQ "gif"> selected</cfif>>GIF</option>
-				<option value="png"<cfif prefs.set2_img_format EQ "PNG"> selected</cfif>>PNG</option>
-				</select></td>
-			</tr>
-			<tr class="list">
-				<td colspan="2"><br /></td>
-			</tr>
-			<!--- Image Sizes --->
-			<tr>
-				<th class="textbold" colspan="2">#myFusebox.getApplicationData().defaults.trans("header_img_size")#</th>
-			</tr>
-			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("header_thumbnail_size_desc")#</td>
-			</tr>
-			<tr>
-				<td colspan="2">#myFusebox.getApplicationData().defaults.trans("width")# <input type="text" name="set2_img_thumb_width" size="4" maxlength="3" value="#prefs.set2_img_thumb_width#" /> #myFusebox.getApplicationData().defaults.trans("heigth")# <input type="text" name="set2_img_thumb_heigth" size="4" maxlength="3" value="#prefs.set2_img_thumb_heigth#" /></td>
+				<td colspan="2">
+					<strong>#myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_header")#</strong>
+					<br />
+					#myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_desc")#
+					<br /><br />
+					<input type="radio" name="set2_colorspace_RGB" value="false" <cfif !prefs.set2_colorspace_rgb> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_off")#
+					<br />
+					<input type="radio" name="set2_colorspace_RGB" value="true" <cfif prefs.set2_colorspace_rgb> checked="checked"</cfif> /> #myFusebox.getApplicationData().defaults.trans("image_settings_colorspace_on")#
+				</td>
 			</tr>
 			<tr class="list">
 				<td colspan="2"><br /></td>

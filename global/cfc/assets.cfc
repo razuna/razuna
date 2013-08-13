@@ -1492,7 +1492,7 @@ This is the main function called directly by a single upload else from addassets
 	<!--- Query to get the settings --->
 	<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 	SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
-	set2_img_comp_heigth, set2_vid_preview_author, set2_vid_preview_copyright, set2_path_to_assets
+	set2_img_comp_heigth, set2_vid_preview_author, set2_vid_preview_copyright, set2_path_to_assets, set2_colorspace_rgb
 	FROM #session.hostdbprefix#settings_2
 	WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -1780,7 +1780,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Create folder to hold the images --->
 			<cfdirectory action="create" directory="#arguments.thestruct.thepdfdirectory#" mode="775">
 			<!--- Script: Create thumbnail --->
-			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -resize #arguments.thestruct.qrysettings.set2_img_thumb_width#x +profile '*' -colorspace sRGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
+			<cffile action="write" file="#arguments.thestruct.thesh#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfileflat# -resize #arguments.thestruct.qrysettings.set2_img_thumb_width#x -colorspace sRGB -background white -flatten #arguments.thestruct.thetempdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Script: Create images --->
 			<cffile action="write" file="#arguments.thestruct.thesht#" output="#arguments.thestruct.theimconvert# #arguments.thestruct.theorgfile# #arguments.thestruct.thepdfdirectory#/#arguments.thestruct.thepdfimage#" mode="777">
 			<!--- Execute --->
@@ -2510,7 +2510,7 @@ This is the main function called directly by a single upload else from addassets
 			<!--- Query to get the settings --->
 			<cfquery datasource="#application.razuna.datasource#" name="arguments.thestruct.qrysettings">
 			SELECT set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width,
-			set2_img_comp_heigth, set2_vid_preview_author, set2_vid_preview_copyright, set2_path_to_assets
+			set2_img_comp_heigth, set2_vid_preview_author, set2_vid_preview_copyright, set2_path_to_assets, set2_colorspace_rgb
 			FROM #session.hostdbprefix#settings_2
 			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
@@ -2859,10 +2859,15 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="resizeImagethread" returntype="void" access="public" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
 	<cftry>
+		<cfset var thecolorspace = "">
+		<!--- Check the colorspace --->
+		<cfif arguments.thestruct.qrysettings.set2_colorspace_rgb>
+			<cfset var thecolorspace = "-colorspace sRGB">
+		</cfif>
 		<!--- function internal variables --->
 		<cfset var isAnimGIF = isAnimatedGIF(arguments.thestruct.thesource, arguments.thestruct.thetools.imagemagick)>
 		<cfset var theimconvert = "">
-		<cfset var theImgConvertParams = "-resize #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
+		<cfset var theImgConvertParams = "-resize #arguments.thestruct.width#x #thecolorspace#">
 		<!--- validate input --->
 		<cfif FileExists(arguments.thestruct.destination)>
 			<!--- <cfthrow message="Destination-file already exists!"> --->
@@ -2897,13 +2902,13 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 		<!--- Set correct width or heigth --->
 		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset theImgConvertParams = "-resize #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
+			<cfset theImgConvertParams = "-resize #arguments.thestruct.width#x #thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgheight LTE arguments.thestruct.height AND arguments.thestruct.thexmp.orgwidth LTE arguments.thestruct.width>
-			<cfset theImgConvertParams = "+profile '*' -colorspace sRGB">
+			<cfset theImgConvertParams = "#thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgwidth GT arguments.thestruct.width>
-			<cfset theImgConvertParams = "-resize #arguments.thestruct.width#x +profile '*' -colorspace sRGB">
+			<cfset theImgConvertParams = "-resize #arguments.thestruct.width#x #thecolorspace#">
 		<cfelseif arguments.thestruct.thexmp.orgheight GT arguments.thestruct.height>
-			<cfset theImgConvertParams = "-resize x#arguments.thestruct.height# +profile '*' -colorspace sRGB">
+			<cfset theImgConvertParams = "-resize x#arguments.thestruct.height# #thecolorspace#">
 		</cfif>
 		<!--- correct ImageMagick-convert params for animated GIFs --->
 		<cfif isAnimGIF>
@@ -4407,6 +4412,11 @@ This is the main function called directly by a single upload else from addassets
 	<cfargument name="thestruct" type="struct">
 	<!--- Params --->
 	<cfset var theargsdc = "x">
+	<cfset var thecolorspace = "">
+	<!--- Check the colorspace --->
+	<cfif arguments.thestruct.qry_settings_image.set2_colorspace_rgb>
+		<cfset var thecolorspace = "-colorspace sRGB">
+	</cfif>
 	<!--- The tool paths --->
 	<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
 	<!--- Check the platform and then decide on the ImageMagick tag --->
@@ -4486,16 +4496,16 @@ This is the main function called directly by a single upload else from addassets
 					<cfswitch expression="#arguments.thestruct.qry_existing.img_extension#">
 						<!--- If the file is a PSD, AI or EPS we have to layer it to zero --->
 						<cfcase value="psd,eps,ai,png">
-							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB -flatten #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname#[0] -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x #thecolorspace# -flatten #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For RAW images we take dcraw --->
 						<cfcase value="3fr,ari,srf,sr2,bay,cap,iiq,eip,dcs,dcr,drf,k25,kdc,erf,fff,mef,mos,nrw,ptx,pef,pxn,r3d,raf,raw,rw2,rwl,dng,rwz">
 							<cfset var theargs = "#thedcraw# -w -b 1.8 -c -e #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# > #arguments.thestruct.thumbpath#">
-							<cfset var theargsdc = "#themogrify# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
+							<cfset var theargsdc = "#themogrify# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x #thecolorspace# #arguments.thestruct.thumbpath#">
 						</cfcase>
 						<!--- For everything else --->
 						<cfdefaultcase>
-							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x +profile '*' -colorspace sRGB #arguments.thestruct.thumbpath#">
+							<cfset var theargs = "#theexe# #arguments.thestruct.filepath##arguments.thestruct.qry_existing.orgname# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x #thecolorspace# #arguments.thestruct.thumbpath#">
 						</cfdefaultcase>
 					</cfswitch>
 				</cfif>

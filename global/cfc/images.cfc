@@ -1016,6 +1016,12 @@
 		<cfset var theargument = "#arguments.thestruct.thesource#">
 		<cfset var theflatten = "">
 	</cfif>
+	<!--- Set Colorspace --->
+	<cfset var thecolorspace = "">
+	<!--- Check the colorspace --->
+	<cfif arguments.thestruct.qry_settings_image.set2_colorspace_rgb>
+		<cfset var thecolorspace = "-colorspace sRGB">
+	</cfif>
 	<!--- Now, loop over the selected extensions and convert and store image --->
 	<cfloop delimiters="," list="#arguments.thestruct.convert_to#" index="theformat">
 		<!--- Create tempid --->
@@ -1104,11 +1110,11 @@
 		</cfif>
 		<!--- IM commands --->
 		<cfif thedpi EQ "">
-			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# +profile '*' -colorspace sRGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resize #newImgWidth#x#newImgHeight# #thecolorspace# #theflatten##theformatconv#">
 		<cfelse>
-			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# +profile '*' -colorspace sRGB #theflatten##theformatconv#">
+			<cfset var theimarguments = "#theoriginalasset# -resample #thedpi# #thecolorspace# #theflatten##theformatconv#">
 		</cfif>
-		<cfset var theimargumentsthumb = "#theformatconv# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# +profile '*' -colorspace sRGB #theflatten##thethumbtconv#">
+		<cfset var theimargumentsthumb = "#theformatconv# -resize #arguments.thestruct.qry_settings_image.set2_img_thumb_width#x#arguments.thestruct.qry_settings_image.set2_img_thumb_heigth# #thecolorspace# #theflatten##thethumbtconv#">
 		<!--- Create script files --->
 		<cfset var thescript = createuuid()>
 		<cfset arguments.thestruct.thesh = GetTempDirectory() & "/#thescript#.sh">
