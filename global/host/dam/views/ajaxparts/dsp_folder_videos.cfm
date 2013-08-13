@@ -52,6 +52,7 @@
 					<!--- Show Subfolders --->
 					<cfinclude template="inc_folder_thumbnail.cfm">
 					<cfloop query="qry_files">
+						<cfset mycurrentRow = (session.offset * session.rowmaxpage) + currentRow>
 						<div class="assetbox" style="<cfif cs.assetbox_width NEQ "">width:#cs.assetbox_width#px;</cfif><cfif cs.assetbox_height NEQ "">min-height:#cs.assetbox_height#px;</cfif>">
 							<cfif is_available>
 								<script type="text/javascript">
@@ -75,7 +76,7 @@
 									});
 								});
 								</script>
-								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
+								<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 									<div id="draggable#vid_id#" type="#vid_id#-vid" class="theimg">
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
@@ -111,13 +112,13 @@
 								<div style="clear:left;"></div>
 								<!--- custom metadata fields to show --->
 								<cfif attributes.cs.videos_metadata EQ "">
-									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;"><strong>#left(vid_filename,50)#</strong></a>
+									<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#left(vid_filename,50)#</strong></a>
 								<cfelse>
 									<br />
 									<cfloop list="#attributes.cs.videos_metadata#" index="m" delimiters=",">
 										#myFusebox.getApplicationData().defaults.trans("#listlast(m," ")#")# 
 										<cfif m CONTAINS "_filename">
-											<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(img_filename)#',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
+											<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#img_id#&what=images&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#evaluate(listlast(m," "))#</strong></a>
 										<cfelseif m CONTAINS "_size">
 											#myFusebox.getApplicationData().global.converttomb('#evaluate(listlast(m," "))#')# MB
 										<cfelseif m CONTAINS "_time">
@@ -146,6 +147,7 @@
 				<td colspan="4" align="right"><div id="updatestatusvid" style="float:left;"></div><input type="button" value="#myFusebox.getApplicationData().defaults.trans("save_changes")#" onclick="combinedsavevid();return false;" class="button"></td>
 			</tr>
 			<cfloop query="qry_files">
+				<cfset mycurrentRow = (session.offset * session.rowmaxpage) + currentRow>
 				<cfset labels = labels>
 				<script type="text/javascript">
 				$(function() {
@@ -167,7 +169,7 @@
 				<tr class="list thumbview">
 					<td valign="top" width="1%" nowrap="true">
 						<cfif is_available>
-							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 								<div id="draggable#vid_id#" type="#vid_id#-vid">
 									<cfif link_kind NEQ "url">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
@@ -244,6 +246,7 @@
 			<!--- Show Subfolders --->
 			<cfinclude template="inc_folder_list.cfm">
 			<cfloop query="qry_files">
+				<cfset mycurrentRow = (session.offset * session.rowmaxpage) + currentRow>
 				<script type="text/javascript">
 				$(function() {
 					$("##draggable#vid_id#").draggable({
@@ -264,7 +267,7 @@
 				<tr class="list thumbview">
 					<td valign="top" width="1%" nowrap="true">
 						<cfif is_available>
-							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;">
+							<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;">
 								<div id="draggable#vid_id#-vid" type="#vid_id#-vid">
 									<cfif link_kind NEQ "url">
 										<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
@@ -287,7 +290,7 @@
 						</cfif>
 					</td>
 					<td width="100%" valign="top">
-						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(vid_filename)#',1000,1);return false;"><strong>#vid_filename#</strong></a>
+						<a href="##" onclick="showwindow('#myself##xfa.assetdetail#&file_id=#vid_id#&what=videos&loaddiv=#kind#&folder_id=#folder_id#&showsubfolders=#attributes.showsubfolders#&row=#mycurrentRow#&filecount=#qry_filecount.thetotal#','',1000,1);return false;"><strong>#vid_filename#</strong></a>
 						<br />
 						<!--- Icons --->
 						<div style="float:left;padding-top:5px;">

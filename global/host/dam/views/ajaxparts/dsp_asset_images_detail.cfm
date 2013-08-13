@@ -37,6 +37,9 @@
 	<input type="hidden" name="thumbextension" value="#qry_detail.detail.thumb_extension#">
 	<input type="hidden" name="link_kind" id="link_kind" value="#qry_detail.detail.link_kind#">
 	<input type="hidden" name="link_path_url" id="link_path_url" value="#qry_detail.detail.link_path_url#">
+	<!--- Show next and back within detail view --->
+	<cfinclude template="inc_detail_next_back.cfm">
+	<!--- Show tabs --->
 	<div id="tab_detail#attributes.file_id#">
 		<!--- Tabs --->
 		<ul>
@@ -354,74 +357,74 @@
 	</form>
 	<!--- Activate the Tabs --->
 	<script language="JavaScript" type="text/javascript">
-		jqtabs("tab_detail#attributes.file_id#");
-		// Load renditions
-		function loadren(){
-			<cfif qry_detail.detail.link_kind NEQ "url">
-				$('##relatedimages').load('#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');
+	jqtabs("tab_detail#attributes.file_id#");
+	// Load renditions
+	function loadren(){
+		<cfif qry_detail.detail.link_kind NEQ "url">
+			$('##relatedimages').load('#myself#c.images_detail_related&file_id=#attributes.file_id#&what=images&loaddiv=#attributes.loaddiv#&folder_id=#qry_detail.detail.folder_id_r#&s=#qry_detail.detail.shared#');
+		</cfif>
+		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
+		<cfif cs.tab_additional_renditions>
+			$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
+		</cfif>
+	}
+	// Submit form
+	function filesubmit(){
+		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
+			var reqfield = false;
+			<cfif cs.req_filename>
+				var val_filename = $('##fname').val();
+				if (val_filename == '') reqfield = true;
 			</cfif>
-			$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
-			<cfif cs.tab_additional_renditions>
-				$('##moreversions').load('#myself#c.adi_versions&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#&type=#attributes.cf_show#');
+			<cfif cs.req_description>
+				var val_desc = $('##img_desc_1').val();
+				if (val_desc == '') reqfield = true;
 			</cfif>
-		}
-		// Submit form
-		function filesubmit(){
-			<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
-				var reqfield = false;
-				<cfif cs.req_filename>
-					var val_filename = $('##fname').val();
-					if (val_filename == '') reqfield = true;
-				</cfif>
-				<cfif cs.req_description>
-					var val_desc = $('##img_desc_1').val();
-					if (val_desc == '') reqfield = true;
-				</cfif>
-				<cfif cs.req_keywords>
-					var val_keys = $('##img_keywords_1').val();
-					if (val_keys == '') reqfield = true;
-				</cfif>
-				if (reqfield == true){
-					alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
-					return false;
+			<cfif cs.req_keywords>
+				var val_keys = $('##img_keywords_1').val();
+				if (val_keys == '') reqfield = true;
+			</cfif>
+			if (reqfield == true){
+				alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
+				return false;
+			}
+		</cfif>
+		$("##updatefile").css("display","");
+		loadinggif('updatefile');
+		$("##updatefile").fadeTo("fast", 100);
+		var url = formaction("form#attributes.file_id#");
+		var items = formserialize("form#attributes.file_id#");
+		// Submit Form
+       	$.ajax({
+			type: "POST",
+			url: url,
+		   	data: items,
+		   	success: function(){
+				// Update Text
+				$("##updatefile").html("#myFusebox.getApplicationData().defaults.trans("success")#");
+				$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+		   	}
+		});
+        return false; 
+	}
+	// Recreate window confirm dialog
+	function recreatepreview(){
+		$( "##dialog-confirm-recreatepreview" ).dialog({
+			resizable: false,
+			height:250,
+			modal: true,
+			buttons: {
+				"#myFusebox.getApplicationData().defaults.trans("header_preview_image_recreate_button")#": function() {
+					$( this ).dialog( "close" );
+					$('##div_forall').load('#myself#c.recreatepreview&file_id=#attributes.file_id#-img&thetype=img');
+				},
+				Cancel: function() {
+					$( this ).dialog( "close" );
 				}
-			</cfif>
-			$("##updatefile").css("display","");
-			loadinggif('updatefile');
-			$("##updatefile").fadeTo("fast", 100);
-			var url = formaction("form#attributes.file_id#");
-			var items = formserialize("form#attributes.file_id#");
-			// Submit Form
-	       	$.ajax({
-				type: "POST",
-				url: url,
-			   	data: items,
-			   	success: function(){
-					// Update Text
-					$("##updatefile").html("#myFusebox.getApplicationData().defaults.trans("success")#");
-					$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
-			   	}
-			});
-	        return false; 
-		}
-		// Recreate window confirm dialog
-		function recreatepreview(){
-			$( "##dialog-confirm-recreatepreview" ).dialog({
-				resizable: false,
-				height:250,
-				modal: true,
-				buttons: {
-					"#myFusebox.getApplicationData().defaults.trans("header_preview_image_recreate_button")#": function() {
-						$( this ).dialog( "close" );
-						$('##div_forall').load('#myself#c.recreatepreview&file_id=#attributes.file_id#-img&thetype=img');
-					},
-					Cancel: function() {
-						$( this ).dialog( "close" );
-					}
-				}
-			});
-		};
-		// Activate Chosen
-		$(".chzn-select").chosen();
+			}
+		});
+	};
+	// Activate Chosen
+	$(".chzn-select").chosen();
 	</script>
 </cfoutput>

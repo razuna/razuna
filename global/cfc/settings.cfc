@@ -76,7 +76,7 @@
 <!--- Get settings from within DAM --->
 <cffunction name="getsettingsfromdam" returntype="query">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check, set2_email_from
+	SELECT /* #variables.cachetoken#getsettingsfromdam */ set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_date_format, set2_date_format_del, set2_intranet_reg_emails, set2_intranet_reg_emails_sub, set2_md5check, set2_email_from, set2_colorspace_rgb
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -99,7 +99,8 @@
 	set2_intranet_reg_emails = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails#" cfsqltype="cf_sql_varchar">,
 	set2_intranet_reg_emails_sub = <cfqueryparam value="#arguments.thestruct.set2_intranet_reg_emails_sub#" cfsqltype="cf_sql_varchar">,
 	set2_md5check = <cfqueryparam value="#arguments.thestruct.set2_md5check#" cfsqltype="cf_sql_varchar">,
-	set2_email_from = <cfqueryparam value="#arguments.thestruct.set2_email_from#" cfsqltype="cf_sql_varchar">
+	set2_email_from = <cfqueryparam value="#arguments.thestruct.set2_email_from#" cfsqltype="cf_sql_varchar">,
+	set2_colorspace_rgb = <cfqueryparam value="#arguments.thestruct.set2_colorspace_rgb#" cfsqltype="cf_sql_varchar">
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
@@ -158,8 +159,9 @@
 <cffunction name="prefs_image">
 	<cfset var qry = "">
 	<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
-	SELECT /* #variables.cachetoken#prefs_image */ set2_create_imgfolders_where, set2_cat_intra, set2_cat_web, set2_img_format, set2_img_thumb_width, 
-	set2_img_thumb_heigth, set2_img_comp_width, set2_img_comp_heigth
+	SELECT /* #variables.cachetoken#prefs_image */ set2_create_imgfolders_where, set2_cat_intra, set2_cat_web, 
+	set2_img_format, set2_img_thumb_width, set2_img_thumb_heigth, set2_img_comp_width, set2_img_comp_heigth,
+	set2_colorspace_rgb
 	FROM #session.hostdbprefix#settings_2
 	WHERE set2_id = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

@@ -48,7 +48,10 @@
 	<cfif foundit EQ 0>
 		<input type="hidden" name="link_path_url" value="#qry_detail.detail.link_path_url#">
 	</cfif>
-	<div id="tab_detail#file_id#">
+	<!--- Show next and back within detail view --->
+	<cfinclude template="inc_detail_next_back.cfm">
+	<!--- Show tabs --->
+	<div id="tab_detail#attributes.file_id#">
 		<ul>
 			<li><a href="##detailinfo">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
 			<cfif qry_detail.detail.link_kind NEQ "url" AND cs.tab_convert_files>
@@ -345,8 +348,6 @@
 		});
         return false; 
 	};
-	// Activate Chosen
-	$(".chzn-select").chosen();
 	// Recreate window confirm dialog
 	function recreatepreview(){
 		$( "##dialog-confirm-recreatepreview" ).dialog({
@@ -364,5 +365,7 @@
 			}
 		});
 	};
+	// Activate Chosen
+	$(".chzn-select").chosen();
 </script>
 </cfoutput>

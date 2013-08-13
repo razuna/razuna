@@ -140,7 +140,12 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getFolderAssetsaud */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #session.rowmaxpage# </cfif>
+		<!--- MSSQL --->
+		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+			SELECT * FROM (
+			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+		</cfif>
+		SELECT /* #variables.cachetoken#getFolderAssetsaud */ 
 		#thecolumns#, att.aud_keywords keywords, att.aud_description description, '' as labels,
 		lower(a.aud_name) filename_forsort, a.aud_size size, a.hashtag, a.aud_create_time date_create, a.aud_change_time date_change
 		<cfif arguments.thestruct.cs.audios_metadata NEQ "">
@@ -157,38 +162,14 @@
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
-			AND a.aud_id NOT IN (
-				SELECT TOP #min# aud_id
-				FROM #session.hostdbprefix#audios
-				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-				AND (aud_group IS NULL OR aud_group = '')
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-				<!--- Check  sort by--->
-				<cfif session.sortby NEQ "">
-					ORDER BY
-					<!--- Set the order by --->
-					<cfif session.sortby EQ "name">
-						lower(aud_name)
-					<cfelseif session.sortby EQ "sizedesc">
-						aud_size DESC
-					<cfelseif session.sortby EQ "sizeasc">
-						aud_size ASC
-					<cfelseif session.sortby EQ "dateadd">
-						aud_create_time DESC
-					<cfelseif session.sortby EQ "datechanged">
-						aud_change_time DESC
-					<cfelseif session.sortby EQ "hashtag">
-						hashtag
-					</cfif>
-				</cfif>
-			)
+			) sorted_inline_view
+			 ) resultSet
+			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 		</cfif>
-		ORDER BY #sortby#
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #mysqloffset#, #session.rowmaxpage#
+				ORDER BY #sortby# LIMIT #mysqloffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>

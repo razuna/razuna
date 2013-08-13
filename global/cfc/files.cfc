@@ -200,7 +200,13 @@
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
 			<!--- Query --->
 			<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ <cfif variables.database EQ "mssql">TOP #session.rowmaxpage# </cfif>#Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
+			<!--- MSSQL --->
+			<cfif variables.database EQ "mssql">
+				SELECT * FROM (
+				SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+			</cfif>
+			
+			SELECT /* #variables.cachetoken#getFolderAssetsfiles */ #Arguments.ColumnList#, ft.file_keywords keywords, ft.file_desc description, '' as labels, lower(file_name) filename_forsort, file_size size, hashtag, 
 			file_create_time date_create, file_change_date date_change
 			<!--- custom metadata fields to show --->
 			<cfif arguments.thestruct.cs.files_metadata NEQ "">
@@ -242,48 +248,9 @@
 				</cfif>
 			<!--- MSSQL --->
 			<cfelseif variables.database EQ "mssql">
-				AND file_id NOT IN (
-					SELECT TOP #min# file_id
-					FROM #session.hostdbprefix#files
-					WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-					AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-					<cfif Len(Arguments.file_extension)>
-						AND
-						<!--- if doc or xls also add office 2007 format to query --->
-						<cfif Arguments.file_extension EQ "doc" OR Arguments.file_extension EQ "xls">
-							(
-							LOWER(isnull(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-							OR LOWER(isnull(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#x">
-							)
-						<!--- query all formats if not other --->
-						<cfelseif Arguments.file_extension neq "other">
-							LOWER(isnull(file_extension, '')) = <cfqueryparam cfsqltype="cf_sql_varchar" value="#LCase(Arguments.file_extension)#">
-						<!--- query all files except the ones in the list --->
-						<cfelse>
-							(
-							LOWER(isnull(file_extension, '')) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
-							OR (file_extension IS NULL OR file_extension = '')
-							)
-						</cfif>
-					</cfif>
-					ORDER BY 
-					<!--- Set the order by --->
-					<cfif session.sortby EQ "name">
-						lower(file_name)
-					<cfelseif session.sortby EQ "sizedesc">
-						file_size DESC
-					<cfelseif session.sortby EQ "sizeasc">
-						file_size ASC
-					<cfelseif session.sortby EQ "dateadd">
-						file_create_time DESC
-					<cfelseif session.sortby EQ "datechanged">
-						file_change_time DESC
-					<cfelseif session.sortby EQ "hashtag">
-						hashtag
-					</cfif>
-				)
-				ORDER BY #sortby#
+					) sorted_inline_view
+				 ) resultSet
+			 	 WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 			</cfif>
 			</cfquery>
 		</cfif>

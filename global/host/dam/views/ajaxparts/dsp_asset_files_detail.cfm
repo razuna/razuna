@@ -34,6 +34,9 @@
 	<input type="hidden" name="customfields" value="#qry_cf.recordcount#">
 	<input type="hidden" name="link_kind" value="#qry_detail.detail.link_kind#">
 	<input type="hidden" name="file_extension" value="#qry_detail.detail.file_extension#">
+	<!--- Show next and back within detail view --->
+	<cfinclude template="inc_detail_next_back.cfm">
+	<!--- Show tabs --->
 	<div id="tab_detail#file_id#">
 		<ul>
 			<li><a href="##detailinfo" onclick="loadcontent('additionalversions','#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("asset_information")#</a></li>
@@ -362,49 +365,49 @@
 	</form>
 	<!--- Activate the Tabs --->
 	<script language="JavaScript" type="text/javascript">
-		// Initialize Tabs
-		jqtabs("tab_detail#file_id#");
-		$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
-		// Submit form
-		function filesubmit(){
-			<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
-				var reqfield = false;
-				<cfif cs.req_filename>
-					var val_filename = $('##fname').val();
-					if (val_filename == '') reqfield = true;
-				</cfif>
-				<cfif cs.req_description>
-					var val_desc = $('##file_desc_1').val();
-					if (val_desc == '') reqfield = true;
-				</cfif>
-				<cfif cs.req_keywords>
-					var val_keys = $('##file_keywords_1').val();
-					if (val_keys == '') reqfield = true;
-				</cfif>
-				if (reqfield == true){
-					alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
-					return false;
-				}
+	// Initialize Tabs
+	jqtabs("tab_detail#file_id#");
+	$('##additionalversions').load('#myself#c.av_load&file_id=#attributes.file_id#&folder_id=#attributes.folder_id#');
+	// Submit form
+	function filesubmit(){
+		<cfif cs.req_filename OR cs.req_description OR cs.req_keywords>
+			var reqfield = false;
+			<cfif cs.req_filename>
+				var val_filename = $('##fname').val();
+				if (val_filename == '') reqfield = true;
 			</cfif>
-			$("##updatefile").css("display","");
-			loadinggif('updatefile');
-			$("##updatefile").fadeTo("fast", 100);
-			var url = formaction("form#attributes.file_id#");
-			var items = formserialize("form#attributes.file_id#");
-			// Submit Form
-	       	$.ajax({
-				type: "POST",
-				url: url,
-			   	data: items,
-			   	success: function(){
-					// Update Text
-					$("##updatefile").html("#myFusebox.getApplicationData().defaults.trans("success")#");
-					$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
-			   	}
-			});
-	        return false; 
-		};
-		// Activate Chosen
-		$(".chzn-select").chosen();
+			<cfif cs.req_description>
+				var val_desc = $('##file_desc_1').val();
+				if (val_desc == '') reqfield = true;
+			</cfif>
+			<cfif cs.req_keywords>
+				var val_keys = $('##file_keywords_1').val();
+				if (val_keys == '') reqfield = true;
+			</cfif>
+			if (reqfield == true){
+				alert('#myFusebox.getApplicationData().defaults.trans("req_fields_error")#');
+				return false;
+			}
+		</cfif>
+		$("##updatefile").css("display","");
+		loadinggif('updatefile');
+		$("##updatefile").fadeTo("fast", 100);
+		var url = formaction("form#attributes.file_id#");
+		var items = formserialize("form#attributes.file_id#");
+		// Submit Form
+       	$.ajax({
+			type: "POST",
+			url: url,
+		   	data: items,
+		   	success: function(){
+				// Update Text
+				$("##updatefile").html("#myFusebox.getApplicationData().defaults.trans("success")#");
+				$("##updatefile").animate({opacity: 1.0}, 3000).fadeTo("slow", 0);
+		   	}
+		});
+        return false; 
+	};
+	// Activate Chosen
+	$(".chzn-select").chosen();
 	</script>
 </cfoutput>

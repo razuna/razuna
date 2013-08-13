@@ -152,7 +152,11 @@
 		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- Query --->
 		<cfquery datasource="#Variables.dsn#" name="qLocal" cachedwithin="1" region="razcache">
-		SELECT /* #variables.cachetoken#getFolderAssetsvid */ <cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>TOP #session.rowmaxpage# </cfif>#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
+		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
+			SELECT * FROM (
+			SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.* FROM (
+		</cfif>
+		SELECT /* #variables.cachetoken#getFolderAssetsvid */#Arguments.ColumnList#, vt.vid_keywords keywords, vt.vid_description description, '' as labels, lower(v.vid_filename) filename_forsort, v.vid_size size, v.hashtag, v.vid_create_time date_create, v.vid_change_time date_change
 		<!--- custom metadata fields to show --->
 		<cfif arguments.thestruct.cs.videos_metadata NEQ "">
 			<cfloop list="#arguments.thestruct.cs.videos_metadata#" index="m" delimiters=",">
@@ -168,35 +172,14 @@
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		<!--- MSSQL --->
 		<cfif variables.database EQ "mssql" AND (arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current")>
-			AND v.vid_id NOT IN (
-				SELECT TOP #min# vid_id
-				FROM #session.hostdbprefix#videos
-				WHERE folder_id_r IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thefolderlist#" list="true">)
-				AND (vid_group IS NULL OR vid_group = '')
-				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-				AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
-				ORDER BY 
-				<!--- Set the order by --->
-				<cfif session.sortby EQ "name">
-					lower(vid_filename)
-				<cfelseif session.sortby EQ "sizedesc">
-					vid_size DESC
-				<cfelseif session.sortby EQ "sizeasc">
-					vid_size ASC
-				<cfelseif session.sortby EQ "dateadd">
-					vid_create_time DESC
-				<cfelseif session.sortby EQ "datechanged">
-					vid_change_time DESC
-				<cfelseif session.sortby EQ "hashtag">
-					hashtag
-				</cfif>
-			)
+			) sorted_inline_view
+			 ) resultSet
+			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 		</cfif>
-		ORDER BY #sortby#
 		<!--- Show the limit only if pages is null or current (from print) --->
 		<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
-				LIMIT #mysqloffset#, #session.rowmaxpage#
+				ORDER BY #sortby# LIMIT #mysqloffset#, #session.rowmaxpage#
 			</cfif>
 		</cfif>
 		</cfquery>
