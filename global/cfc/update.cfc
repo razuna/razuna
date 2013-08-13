@@ -437,6 +437,14 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_colorspace_rgb #thevarchar#(5) default 'false'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_assets_temp <cfif application.razuna.thedatabase EQ "mssql" OR application.razuna.thedatabase EQ "h2">alter column thesize #thevarchar#(100)<cfelse>change thesize thesize #thevarchar#(100)</cfif>
 			</cfquery>
 			<cfcatch type="any">
