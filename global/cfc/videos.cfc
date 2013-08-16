@@ -644,18 +644,18 @@
 <!--- TRASH THE VIDEO --->
 <cffunction name="trashvideo" output="false">
 	<cfargument name="thestruct" type="struct">
-	<!--- Get trash video --->
-	<cfquery datasource="#application.razuna.datasource#" name="qry_video">
-		SELECT * FROM #session.hostdbprefix#videos 
-		WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
+	<!--- Update in_trash --->
+	<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#videos SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
+		WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
-		<!--- Update in_trash --->
-		<cfquery datasource="#application.razuna.datasource#">
-			UPDATE #session.hostdbprefix#videos SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
-			WHERE vid_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+	<!--- Flush Cache --->
+	<cfset variables.cachetoken = resetcachetoken("videos")>
+	<cfset resetcachetoken("folders")>
+	<cfset resetcachetoken("search")>
+	<!--- return --->
+	<cfreturn />
 </cffunction>
 
 <!--- TRASH MANY VIDEO --->
