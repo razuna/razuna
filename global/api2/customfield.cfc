@@ -63,7 +63,6 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<cfset sleep(2000)>
 			<!--- Set Values --->
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
@@ -98,7 +97,6 @@
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->
 		<cfif thesession>
-			<cfset sleep(2000)>
 			<!--- Deserialize the JSON back into a struct --->
 			<cfset thejson = DeserializeJSON(arguments.field_values)>
 			<!--- Loop over the assetid --->
