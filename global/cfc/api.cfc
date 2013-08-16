@@ -406,8 +406,13 @@
 		CAST(i.img_width AS CHAR) as width,
 		CAST(i.img_height AS CHAR) as height,
 		i.img_size size,
-		i.img_extension extension
-		FROM #getHostPrefix()#images i 
+		i.img_extension extension,
+		x.colorspace,
+		x.xres AS xdpi,
+		x.yres AS ydpi,
+		x.resunit AS unit,
+		i.hashtag AS md5hash
+		FROM #getHostPrefix()#images i LEFT JOIN #getHostPrefix()#xmp x ON x.id_r = i.img_id
 		WHERE i.img_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		UNION ALL
@@ -423,7 +428,12 @@
 		CAST(v.vid_width AS CHAR) as width,
 		CAST(v.vid_height AS CHAR) as height,
 		v.vid_size size,
-		v.vid_extension extension
+		v.vid_extension extension,
+		'' AS colorspace,
+		'' AS xdpi,
+		'' AS ydpi,
+		'' AS unit,
+		v.hashtag AS md5hash
 		FROM #getHostPrefix()#videos v 
 		WHERE v.vid_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -440,7 +450,12 @@
 		'0' as width,
 		'0' as height,
 		a.aud_size size,
-		a.aud_extension extension
+		a.aud_extension extension,
+		'' AS colorspace,
+		'' AS xdpi,
+		'' AS ydpi,
+		'' AS unit,
+		a.hashtag AS md5hash
 		FROM #getHostPrefix()#audios a
 		WHERE a.aud_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
@@ -457,7 +472,12 @@
 		'0' as width,
 		'0' as height,
 		f.file_size size,
-		f.file_extension extension
+		f.file_extension extension,
+		'' AS colorspace,
+		'' AS xdpi,
+		'' AS ydpi,
+		'' AS unit,
+		f.hashtag AS md5hash
 		FROM #getHostPrefix()#files f 
 		WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fileid#" list="true">)
 		AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">

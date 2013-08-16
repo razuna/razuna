@@ -149,6 +149,7 @@
 							)
 						</cfif>
 					</cfif>
+					AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					ORDER BY #sortby#
 					)
@@ -186,6 +187,7 @@
 						)
 					</cfif>
 				</cfif>
+				AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 				AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				ORDER BY #sortby#
 			)
@@ -238,6 +240,7 @@
 					)
 				</cfif>
 			</cfif>
+			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			AND #session.hostdbprefix#files.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			<!--- MySQL --->
 			<cfif variables.database EQ "mysql" OR variables.database EQ "h2">
@@ -376,17 +379,18 @@
 	<!--- TRASH THE FILE --->
 	<cffunction name="trashfile" output="false">
 		<cfargument name="thestruct" type="struct">
-		<cfquery datasource="#application.razuna.datasource#" name="qry_file">
-			SELECT * FROM #session.hostdbprefix#files 
-			WHERE file_id =<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.id#">
-			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
 		<!--- Update in_trash --->
 		<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#files SET in_trash=<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.trash#">
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 		</cfquery>
+		<!--- Flush Cache --->
+		<cfset variables.cachetoken = resetcachetoken("files")>
+		<cfset resetcachetoken("folders")>
+		<cfset resetcachetoken("search")>
+		<!--- return --->
+		<cfreturn />
 	</cffunction>
 	
 	<!--- TRASH MANY FILE --->

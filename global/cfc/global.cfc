@@ -152,6 +152,8 @@
 		<!--- Detect file extension --->
 		<cfinvoke component="assets" method="getFileExtension" theFileName="#thename#" returnvariable="fileNameExt">
 		<cfset thefilename = "#fileNameExt.theName#">
+		<!--- Convert space to an underscore --->
+		<cfset thefilename = REReplaceNoCase(thefilename, " ", "_", "ALL")>
 		<!--- All foreign chars are now converted, except the - --->
 		<cfset thefilename = REReplaceNoCase(thefilename, "[^[:alnum:]^\-\_]", "", "ALL")>
 		<!--- Danish Chars --->

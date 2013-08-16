@@ -299,6 +299,9 @@
 				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
 				<cfif !arguments.istruct.dbdirect>
 					AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+					<cfif thesearchfor NEQ "">
+						AND lower(i.img_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+					</cfif>
 				</cfif>
 				AND (i.img_group IS NULL OR i.img_group = '')
 				AND i.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -342,8 +345,7 @@
 		    	<cfset q_end = q_end + 990>
 			</cfloop>
 			GROUP BY i.img_id, i.img_filename, i.folder_id_r, fo.folder_name, i.img_extension, i.img_filename_org, i.thumb_extension, i.path_to_asset, i.cloud_url, i.cloud_url_org, i.img_size, i.img_width, i.img_height,	i.img_create_time, i.img_change_time, it.img_description, it.img_keywords, x.colorspace, x.xres, x.yres, x.resunit, i.hashtag, fo.folder_name, lower(i.img_filename)
-				<cfif arguments.istruct.ui>, ext, is_available, date_create,
-			date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
+				<cfif arguments.istruct.ui>, i.img_group, i.is_available, i.link_kind, i.link_path_url</cfif>
 			ORDER BY #session.sortby#
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
@@ -488,6 +490,9 @@
 				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
 				<cfif !arguments.vstruct.dbdirect>
 					AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+					<cfif thesearchfor NEQ "">
+						AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+					</cfif>
 				</cfif>
 				AND (v.vid_group IS NULL OR v.vid_group = '')
 				AND v.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
@@ -531,8 +536,7 @@
 		    	<cfset q_end = q_end + 990>
 		    </cfloop>
 			GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, fo.folder_name, v.vid_extension, v.vid_name_image, v.vid_name_org, v.vid_name_image, v.path_to_asset, v.cloud_url, v.cloud_url_org, v.vid_size, v.vid_width, v.vid_height, vt.vid_description, vt.vid_keywords, v.vid_create_time, v.vid_change_time, v.hashtag, fo.folder_name, lower(v.vid_filename)
-					<cfif arguments.vstruct.ui>, ext, is_available, date_create,
-	    		date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
+					<cfif arguments.vstruct.ui>, v.vid_group, v.is_available, v.link_kind, v.link_path_url</cfif>
 			ORDER BY #session.sortby# 
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
@@ -672,6 +676,9 @@
 				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
 				<cfif !arguments.astruct.dbdirect>
 					AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+					<cfif thesearchfor NEQ "">
+						AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+					</cfif>
 				</cfif>
 				AND (a.aud_group IS NULL OR a.aud_group = '')
 
@@ -718,7 +725,7 @@
 			GROUP BY a.aud_id, a.aud_name, a.folder_id_r, fo.folder_name, a.aud_extension, a.aud_name_org, a.aud_extension, a.path_to_asset, 
 			a.cloud_url, a.cloud_url_org, a.aud_size, aut.aud_description, aut.aud_keywords, a.aud_create_time, a.aud_change_time,
 			a.hashtag, fo.folder_name, lower(a.aud_name)
-			<cfif arguments.astruct.ui>, ext, is_available, date_create, date_change, link_kind, link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
+			<cfif arguments.astruct.ui>, a.aud_group, a.is_available, a.link_kind, a.link_path_url</cfif>
 			ORDER BY #session.sortby#
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
@@ -865,6 +872,9 @@
 				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
 				<cfif !arguments.fstruct.dbdirect>
 					AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+					<cfif thesearchfor NEQ "">
+						AND lower(f.file_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
+					</cfif>
 				</cfif>
 				AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 				AND f.is_available = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.fstruct.available#">
@@ -909,8 +919,7 @@
 			GROUP BY f.file_id, f.file_name, f.folder_id_r, fo.folder_name, f.file_extension, f.file_name_org, f.file_extension, f.path_to_asset, 
 			f.cloud_url, f.cloud_url_org, f.file_size, ft.file_desc, ft.file_keywords, f.file_create_time, f.file_change_time, 
 			f.hashtag, fo.folder_name, lower(f.file_name)
-			<cfif arguments.fstruct.ui>, ext, is_available, date_create, date_change, link_kind, 
-			link_path_url, vwidth, vheight, labels, permfolder, listid</cfif>
+			<cfif arguments.fstruct.ui>, f.is_available, f.link_kind, f.link_path_url</cfif>
 	        ORDER BY #session.sortby#
 		</cfquery>
 		<!--- Add the amount of assets to the query --->
