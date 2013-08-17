@@ -299,6 +299,7 @@
 				WHERE i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.istruct.api_key#"]#">
 				<cfif !arguments.istruct.dbdirect>
 					AND	i.img_id IN (<cfif qryluceneimg.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeimg" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				<cfelse>
 					<cfif thesearchfor NEQ "">
 						AND lower(i.img_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 					</cfif>
@@ -490,6 +491,7 @@
 				WHERE v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.vstruct.api_key#"]#">
 				<cfif !arguments.vstruct.dbdirect>
 					AND v.vid_id IN (<cfif qrylucenevid.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreevid" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				<cfelse>
 					<cfif thesearchfor NEQ "">
 						AND lower(v.vid_filename) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 					</cfif>
@@ -676,6 +678,7 @@
 				WHERE a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.astruct.api_key#"]#">
 				<cfif !arguments.astruct.dbdirect>
 					AND a.aud_id IN (<cfif qryluceneaud.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreeaud" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				<cfelse>
 					<cfif thesearchfor NEQ "">
 						AND lower(a.aud_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 					</cfif>
@@ -872,6 +875,7 @@
 				WHERE f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#application.razuna.api.hostid["#arguments.fstruct.api_key#"]#">
 				<cfif !arguments.fstruct.dbdirect>
 					AND f.file_id IN (<cfif qrylucenedoc.recordcount EQ 0>'0'<cfelse>'0'<cfloop query="cattreedoc" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+				<cfelse>
 					<cfif thesearchfor NEQ "">
 						AND lower(f.file_name) LIKE <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thesearchfor#">
 					</cfif>
