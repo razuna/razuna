@@ -5,6 +5,14 @@
 
 <!--- Final validation of mandatory method fiels --------------------------------------------- --->
 function validateMethodInput(myform,kind) {
+
+	// Check the a name has been given
+	var taskName = $('#taskName').val();
+	if (taskName == ""){
+		alert('<cfoutput>#JSStringFormat(myFusebox.getApplicationData().defaults.trans("sched_msg_task_name"))#</cfoutput>');
+		return false;
+	}
+
 	if (kind == "Upd") var nr = 1; 
 	else var nr = 0;
 
@@ -76,6 +84,18 @@ function validateMethodInput(myform,kind) {
 				   	success: hidewinscheduler
 				});
 			}
+		// Rebuild search index
+		} else if (method == "rebuild") {
+			// Get values
+			var url = formaction("schedulerform");
+			var items = formserialize("schedulerform");
+			// Submit Form
+			$.ajax({
+				type: "POST",
+				url: url,
+			   	data: items,
+			   	success: hidewinscheduler
+			});
 		}
 	}
 }

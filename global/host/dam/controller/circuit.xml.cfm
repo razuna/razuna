@@ -6523,7 +6523,7 @@
 	</fuseaction>
 	<!-- Do the rebuild -->
 	<fuseaction name="admin_rebuild_do">
-		<set name="attributes.thispath" value="#thispath#" />
+		<set name="attributes.thepath" value="#thispath#" />
 		<!-- Action: Get asset path -->
 		<do action="assetpath" />
 		<!-- Action: Storage -->

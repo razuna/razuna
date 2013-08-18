@@ -126,7 +126,7 @@
 					endTime="#schedData.endTime#"
 					interval="#schedData.interval#">
 		<!--- Log the insert --->
-		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Scheduled Upload successfully saved">
+		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Scheduled Task successfully saved">
 		<cfcatch>
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from Scheduler" dump="#cfcatch#">
 		</cfcatch>
@@ -282,6 +282,8 @@
 <!--- GET DETAIL OF ONE SCHEDULED EVENT ---------------------------------------------------------->
 <cffunction name="detail" returntype="query" output="true" access="public">
 	<cfargument name="sched_id" type="string" required="yes">
+	<!--- Param --->
+	<cfset var qSchedDetail = "">
 	<!--- Query to get all records --->
 	<cfquery datasource="#application.razuna.datasource#" name="qSchedDetail">
 	SELECT s.sched_id, s.set2_id_r, s.sched_user, s.sched_status, s.sched_method, s.sched_name,
@@ -290,10 +292,8 @@
 	s.sched_ftp_folder, s.sched_interval, s.sched_start_date, s.sched_start_time, s.sched_end_date,
 	s.sched_end_time, s.sched_ftp_passive, s.sched_server_recurse, s.sched_server_files, s.sched_upl_template,
 	f.folder_name as folder_name
-	FROM #session.hostdbprefix#schedules s, #session.hostdbprefix#folders f
+	FROM #session.hostdbprefix#schedules s LEFT JOIN #session.hostdbprefix#folders f ON s.sched_folder_id_r = f.folder_id AND f.host_id = s.host_id
 	WHERE s.sched_id = <cfqueryparam value="#arguments.sched_id#" cfsqltype="CF_SQL_VARCHAR">
-	AND s.sched_folder_id_r = f.folder_id
-	AND f.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qSchedDetail>
@@ -383,7 +383,7 @@
 			endTime="#schedData.endTime#"
 			interval="#schedData.interval#">
 		<!--- Log the update --->
-		<cfinvoke method="tolog" theschedid="#schedData.sched_id#" theuserid="#session.theuserid#" theaction="Update" thedesc="Scheduled Upload successfully updated">
+		<cfinvoke method="tolog" theschedid="#schedData.sched_id#" theuserid="#session.theuserid#" theaction="Update" thedesc="Scheduled Task successfully updated">
 		<cfcatch>
 			<!--- Log the error --->
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from Scheduler" dump="#cfcatch#">
@@ -441,10 +441,10 @@
 		<!--- Run --->
 		<cfschedule action="run" task="RazScheduledUploadEvent[#arguments.sched_id#]">
 		<!--- Log --->
-		<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Upload successfully run">
+		<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Task successfully run">
 		<cfcatch>
 			<!--- Log the error --->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Upload failed while running [#cfcatch.type# - #cfcatch.message#]">
+			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theuserid="#session.theuserid#" theaction="Run" thedesc="Scheduled Task failed while running [#cfcatch.type# - #cfcatch.message#]">
 			<cfset returncode = "sched_error">
 		</cfcatch>
 	</cftry>
@@ -556,7 +556,7 @@
 			<cfset sleep(5000)>
 			 --->
 			<!-- CFC: Log start -->
-			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Upload" />
+			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Start Processing Scheduled Task" />
 			<!-- Set params for adding assets -->
 			<cfset x.thefile = doit.dirlist>
 			<!-- CFC: Add to system -->
@@ -587,7 +587,13 @@
 			<cfinvoke component="email" method="emailheaders" thestruct="#x#" returnvariable="themails" />
 			<cfset x.emailid = valuelist(themails.qryheaders.messagenumber)>
 			<!-- CFC: Add to system -->
-			<cfinvoke component="assets" method="addassetemail" thestruct="#x#" />	
+			<cfinvoke component="assets" method="addassetemail" thestruct="#x#" />
+		<!--- Rebuild search index --->
+		<cfelseif doit.qry_detail.sched_method EQ "rebuild">
+			<!-- CFC: Call rebuild function -->
+			<cfthread action="run" intstruct="#arguments#">
+				<cfinvoke component="lucene" method="rebuild" thestruct="#attributes.intstruct#" />
+			</cfthread>
 		</cfif>
 	</cfif>
 	<cfreturn doit>

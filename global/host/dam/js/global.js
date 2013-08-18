@@ -910,28 +910,50 @@ function updategrp(grpid){
 // SCHEDULER
 
 // Upload method: Server, Mail, FTP
-function showConnectDetail(fld, kind) {
-	var method = fld[fld.selectedIndex].value;
+function showConnectDetail(kind) {
+	// Get method
+	var method = $("#method option:selected").val();
+	// Set folder_id by default
+	$("#folder_id").val('');
+	// Show lower part
+	$("#task_lower_part").css('display','');
+	// Show frequency onetime
+	$("#freq_onetime").css('display','');
+	// Evaluate
 	if (method == "server") { 
-		document.getElementById("detailsServer_"+kind).style.display = "block";
-		document.getElementById("detailsMail_"+kind).style.display = "none"; 
-		document.getElementById("detailsFtp_"+kind).style.display = "none"; 
+		$("#detailsServer_"+kind).css('display','block');
+		$("#detailsMail_"+kind).css('display','none');
+		$("#detailsFtp_"+kind).css('display','none');
 	}
 	else if (method == "mail") {
-		document.getElementById("detailsServer_"+kind).style.display = "none"; 
-		document.getElementById("detailsMail_"+kind).style.display = "block"; 
-		document.getElementById("detailsFtp_"+kind).style.display = "none"; 
+		$("#detailsServer_"+kind).css('display','none');
+		$("#detailsMail_"+kind).css('display','block');
+		$("#detailsFtp_"+kind).css('display','none');
 	}
 	else if (method == "ftp") {
-		document.getElementById("detailsServer_"+kind).style.display = "none"; 
-		document.getElementById("detailsMail_"+kind).style.display = "none"; 
-		document.getElementById("detailsFtp_"+kind).style.display = "block";
+		$("#detailsServer_"+kind).css('display','none');
+		$("#detailsMail_"+kind).css('display','none');
+		$("#detailsFtp_"+kind).css('display','block');
+	}
+	else if (method == "rebuild") {
+		$("#detailsServer_"+kind).css('display','none');
+		$("#detailsMail_"+kind).css('display','none');
+		$("#detailsFtp_"+kind).css('display','none');
+		// Set folderid to 0 so we don't get errors
+		$("#folder_id").val('0');
+		// Hide lower part
+		$("#task_lower_part").css('display','none');
+		// Hide frequency onetime
+		$("#freq_onetime").css('display','none');
+		// Set the element at index 2 to be selected
+		$("#frequency option:eq(1)").attr("selected", "selected");
+		showFrequencyDetail('new');
 	}
 }
 
 // Frequency: One-Time, Recurring, Daily
-function showFrequencyDetail(fld, kind) {
-	var frequency = fld[fld.selectedIndex].value;
+function showFrequencyDetail(kind) {
+	var frequency = $("#frequency option:selected").val();
 	if (frequency == "1") { 
 		document.getElementById("detailsOneTime_"+kind).style.display = "block"; 
 		document.getElementById("detailsRecurring_"+kind).style.display = "none"; 
