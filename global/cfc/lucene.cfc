@@ -434,7 +434,7 @@
 				<cfset console(cfcatch)>
 			</cfcatch>
 		</cftry>
-		<!--- Index the file itself, but not video (since video throws an error) --->
+		<!--- Index only doc files --->
 		<cfif qry_all.link_kind NEQ "url" AND arguments.category EQ "doc" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
 			<cftry>
 				<!--- Nirvanix or Amazon --->
@@ -730,7 +730,7 @@
 		<!--- CLOUD --->
 		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
 			<!--- Params --->
-			<cfset arguments.thestruct.qryfile.path = arguments.thestruct.thispath & "/incoming/reindex_" & application.razuna.processid>
+			<cfset arguments.thestruct.qryfile.path = arguments.thestruct.thepath & "/incoming/reindex_" & application.razuna.processid>
 			<cfset arguments.thestruct.hostid = session.hostid>
 			<!--- Create a temp folder for the documents --->
 			<cfdirectory action="create" directory="#arguments.thestruct.qryfile.path#" mode="775">

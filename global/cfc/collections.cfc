@@ -1568,7 +1568,7 @@
 		<cfinvoke method="get_trash_folders" returnvariable="arguments.qry" />
 		<!--- Thread --->
 		<cfthread instruct="#arguments#">
-			<cfloop query="arguments.qry">
+			<cfloop query="attributes.instruct.qry">
 				<cfset attributes.instruct.thestruct.folder_id = folder_id>
 				<!--- Remove --->
 				<cfinvoke component="folders" method="remove" thestruct="#attributes.instruct.thestruct#" />
