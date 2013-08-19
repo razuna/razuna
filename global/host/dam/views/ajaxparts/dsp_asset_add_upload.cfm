@@ -39,7 +39,7 @@
 <script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/plupload/plupload.full.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js?_v=#attributes.cachetag#"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js?_v=#attributes.cachetag#"></script>
 <style type="text/css">
 body {
 	background: white;

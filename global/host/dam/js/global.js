@@ -26,7 +26,10 @@ function showwindow(theurl,thetitle,thew,thewin) {
 }
 // Destroy Window
 function destroywindow(numb) {
-	$('#thewindowcontent' + numb).dialog('destroy');
+	try{
+		$('#thewindowcontent' + numb).dialog('destroy');
+	}
+	catch(e) {};
 }
 // Load Tabs
 function jqtabs(tabs){

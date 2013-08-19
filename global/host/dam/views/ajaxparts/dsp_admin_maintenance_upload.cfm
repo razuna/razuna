@@ -29,7 +29,7 @@
 <cfoutput>
 <head>
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js"></script>
 <link rel="stylesheet" href="#dynpath#/global/host/dam/views/layouts/main.css" type="text/css" />
 <head>

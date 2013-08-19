@@ -63,7 +63,7 @@
 	<!--- Activate the Tabs --->
 <script language="JavaScript" type="text/javascript">
 	jqtabs("tab_addassets");
-	$("##tab_addassets").tabs('select', 0);
+	// $("##tab_addassets").tabs('select', 0);
 	loadcontent('addsingle','#myself##xfa.addsingle#&folder_id=#folder_id#');
 	// Check folder path
 	function importfoldercheck(){

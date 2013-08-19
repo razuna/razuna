@@ -1,5 +1,5 @@
 <cfoutput>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
 </cfoutput>
 Recreating parsed directory
 <script>

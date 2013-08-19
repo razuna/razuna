@@ -39,14 +39,15 @@
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css" />
+<!--- <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css" /> --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/main.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/error.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css" />
 <!--- Cache JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/jquery.markitup.js"></script>
