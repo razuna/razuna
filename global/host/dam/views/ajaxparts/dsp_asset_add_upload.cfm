@@ -36,7 +36,7 @@
 <cfparam name="attributes.file_id" default="0">
 <!-- Load Queue widget CSS and jQuery -->
 <link rel="stylesheet" href="#dynpath#/global/js/plupload/jquery.plupload.queue/css/jquery.plupload.queue.css?_v=#attributes.cachetag#" type="text/css" media="screen" />
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/plupload/plupload.full.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/plupload/jquery.plupload.queue/jquery.plupload.queue.js?_v=#attributes.cachetag#"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js?_v=#attributes.cachetag#"></script>

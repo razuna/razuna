@@ -55,6 +55,7 @@
 <script type="text/javascript" src="js/global.js"></script>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <style>
+.ui-dialog .ui-dialog-titlebar-close{ margin:0px; }
 .ui-widget { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 12px; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 1em; }
 </style>
