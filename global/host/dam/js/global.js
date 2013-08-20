@@ -1795,3 +1795,16 @@ function switchmainselection(thetype,thelinktext){
 	// Change the link text itself
 	$('#mainsectionchooser').text(thelinktext);
 }
+// Image Tooltip
+$(document).tooltip({
+	items: "[img-tt]",
+	content: function() {
+		 var element = $( this );
+		 var theimg = element.attr("src");
+		 return "<img src='" + theimg + "' border='0'>";
+	},
+	position: {
+		my: "center bottom",
+		at: "center top"
+	}
+});

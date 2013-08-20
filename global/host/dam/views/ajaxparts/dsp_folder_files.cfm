@@ -82,7 +82,7 @@
 									<!--- If it is a PDF we show the thumbnail --->
 									<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
 										<cfif cloud_url NEQ "">
-											<img src="#cloud_url#" border="0">
+											<img src="#cloud_url#" border="0" img-tt="img-tt">
 										<cfelse>
 											<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 										</cfif>
@@ -91,7 +91,7 @@
 										<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 											<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0">
 										<cfelse>
-											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0">
+											<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 										</cfif>
 									<cfelse>
 										<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0"></cfif>
@@ -183,7 +183,7 @@
 										<!--- If it is a PDF we show the thumbnail --->
 										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
 											<cfif cloud_url NEQ "">
-												<img src="#cloud_url#" border="0">
+												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif>
@@ -192,7 +192,7 @@
 											<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 												<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
 											<cfelse>
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
@@ -293,7 +293,7 @@
 										<!--- If it is a PDF we show the thumbnail --->
 										<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
 											<cfif cloud_url NEQ "">
-												<img src="#cloud_url#" border="0">
+												<img src="#cloud_url#" border="0" img-tt="img-tt">
 											<cfelse>
 												<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 											</cfif>
@@ -302,7 +302,7 @@
 											<cfif FileExists("#attributes.assetpath#/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
 												<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0">
 											<cfelse>
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
 											<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>

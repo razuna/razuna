@@ -82,15 +82,15 @@
 											<cfif link_kind EQ "">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 													<cfif cloud_url NEQ "">
-														<img src="#cloud_url#" border="0">
+														<img src="#cloud_url#" border="0" img-tt="img-tt">
 													<cfelse>
 														<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 													</cfif>
 												<cfelse>
-													<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
+													<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0" img-tt="img-tt">
 												</cfif>
 											<cfelse>
-												<img src="#link_path_url#" border="0">
+												<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
 											</cfif>
 										</div>
 									</a>
@@ -180,15 +180,15 @@
 										<cfif link_kind EQ "">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 												<cfif cloud_url NEQ "">
-													<img src="#cloud_url#" border="0">
+													<img src="#cloud_url#" border="0" img-tt="img-tt">
 												<cfelse>
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
-											<img src="#link_path_url#" border="0" width="120">
+											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
 										</cfif>
 									</div>
 								</a>
@@ -283,15 +283,15 @@
 										<cfif link_kind NEQ "url">
 											<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
 												<cfif cloud_url NEQ "">
-													<img src="#cloud_url#" border="0">
+													<img src="#cloud_url#" border="0" img-tt="img-tt">
 												<cfelse>
 													<img src="#dynpath#/global/host/dam/images/icons/image_missing.png" border="0">
 												</cfif>
 											<cfelse>
-												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0">
+												<img src="#cgi.context_path#/assets/#session.hostid#/#path_to_asset#/thumb_#img_id#.#thumb_extension#?#hashtag#" border="0" img-tt="img-tt">
 											</cfif>
 										<cfelse>
-											<img src="#link_path_url#" border="0" width="120">
+											<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
 										</cfif>
 									</div>
 								</a>
