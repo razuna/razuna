@@ -944,3 +944,14 @@ font-weight: bold;
 	font-weight: bold;
 	border-bottom: 1px solid grey;
 }
+ .ui-tooltip {
+	padding: 2px;
+	position: absolute;
+	z-index: 9999;
+	max-width: 450px;
+	-webkit-box-shadow: 0 0 5px #aaa;
+	box-shadow: 0 0 5px #aaa;
+}
+.ui-dialog .ui-dialog-titlebar-close {
+	top: 10%;
+}
