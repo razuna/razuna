@@ -8205,6 +8205,9 @@
 						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
 				</if>
+				<!-- CFC: Get customization -->
+				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+				<set name="attributes.cs" value="#cs#" />
 				<!-- CFC: Get folder properties -->
 				<invoke object="myFusebox.getApplicationData().folders" methodcall="getfolderproperties(attributes.folder_id)" returnvariable="qry_folder" />
 				<!-- CFC: Get folder name -->
