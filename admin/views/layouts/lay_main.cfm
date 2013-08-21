@@ -69,7 +69,7 @@
 </div>
 <div id="footer">#trim( footercontent )#</div>
 <!--- Window Div --->
-<div id="thewindowcontent1" style="padding:10px;"></div>
+<div id="thewindowcontent1" style="padding:10px;display:none;"></div>
 <!--- GS Code --->
 <script type="text/javascript" charset="utf-8">
   var is_ssl = ("https:" == document.location.protocol);

@@ -1289,14 +1289,15 @@ function searchadv_all(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+			
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1306,6 +1307,19 @@ function searchadv_all(theform, thefa, folderid) {
 			destroywindow(1);
 		});
 	}
+}
+
+function addTab(tabs, id, label){
+	li = "<li><a href='#"+ id +"'>"+ label +"</a></li>";
+	tabs.find( ".ui-tabs-nav" ).append( li );
+	tabs.append( "<div id='" + id + "'><p></p></div>" );
+	tabs.tabs( "refresh" );
+} 
+
+function removeTab(tabContainerID,tabID){
+	$('#'+tabContainerID+' li a[href="#'+tabID+'"]').remove();
+	$('#'+tabContainerID+' div#'+tabID).remove();
+	$('#'+tabContainerID).tabs( "refresh" );
 }
 function getIndexForId( tabsDivId, searchedId )
 {
