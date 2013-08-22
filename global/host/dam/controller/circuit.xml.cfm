@@ -1873,7 +1873,7 @@
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- Call include in order to get all files in trash -->
-		<do action="get_collection_trash_folders" />
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_trash_folders()" returnvariable="qry_trash" />
 		<!-- CFC: Restore all folders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_restore_folders(qry_trash,attributes)" />
 		<!-- Show -->
@@ -1988,6 +1988,7 @@
 		<!-- Param -->
 		<set name="attributes.iscol" value="F" overwrite="false" />
 		<set name="attributes.trash" value="F" overwrite="false" />
+		<set name="attributes.trashkind" value="assets" overwrite="false" />
 		<set name="attributes.showsubfolders" value="F" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="fproperties" value="c.folder_edit" />

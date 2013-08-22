@@ -60,7 +60,9 @@
 			jqtabs("tabsfolder_tab");
 				<cfif attributes.trashkind EQ "folders">
 					$('##folders').load('#myself#c.trash_folder_all&trashkind=folders');
-					$('##tabsfolder_tab').tabs('select','##folders');
+					//$('##tabsfolder_tab').tabs('select','##folders');
+					var index = $('##tabsfolder_tab div.ui-tabs-panel').length-1;
+					$('##tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 				<cfelse>
 					$('##assets').load('#myself#c.trash_assets&trashkind=assets');
 				</cfif>

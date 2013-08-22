@@ -55,7 +55,7 @@
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("empty_trash")#</div>
 			</a>
 			<!--- Restore all files in the trash --->
-			<a href="##" onclick="showwindow('#myself#c.trash_restore_all&type=restorefileall','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("trash_restoreall"))#',650,1);return false;">
+			<a href="##" onclick="showwindow('#myself#c.trash_restore_all&type=restorefileall&restoreall=true&loaddiv=assets','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("trash_restoreall"))#',650,1);return false;">
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("trash_restoreall")#</div>
 			</a>
 		</div>

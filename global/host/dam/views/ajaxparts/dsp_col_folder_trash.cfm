@@ -45,7 +45,7 @@
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("empty_trash")#</div>
 			</a>
 			<!--- Restore all folders in the trash --->
-			<a href="##" onclick="showwindow('#myself#c.restore_col_folder_all&type=restorecolfolderall&fromtrash=true&iscol=F&trashkind=folders','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("trash_restoreall"))#',650,1);return false;">
+			<a href="##" onclick="showwindow('#myself#c.restore_col_folder_all&type=restorecolfolderall&restoreall=true&fromtrash=true&iscol=T&trashkind=folders','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("trash_restoreall"))#',650,1);return false;">
 				<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("trash_restoreall")#</div>
 			</a>
 		</div>
@@ -121,7 +121,7 @@
 					<td style="border:0px;" id="selectme">
 						<!--- For paging --->
 						<cfset mysqloffset = session.col_trash_folder_offset * session.col_trash_folder_rowmaxpage + 1>
-						<!--- Show trash images --->
+						<!--- Show trash folders --->
 						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.col_trash_folder_rowmaxpage#">
 							<div class="assetbox">
 								<div class="theimg">
@@ -135,7 +135,7 @@
 									<cfif permfolder NEQ "R">
 										<!--- Set vars for kind --->
 										<!--- Folder --->
-											<cfset url_remove = "ajax.remove_folder&loaddiv=collection&folder_id=#folder_id#&iscol=T&what=folder">
+											<cfset url_remove = "ajax.remove_folder&loaddiv=folders&folder_id=#folder_id#&iscol=T&what=folder">
 										<div style="float:right;padding-top:2px;">
 											<!--- restore the folder --->
 											<a href="##" onclick="showwindow('#myself#c.restore_col_folder&type=restorecolfolder&folder_id=#folder_id#&folder_level=#folder_level#&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
