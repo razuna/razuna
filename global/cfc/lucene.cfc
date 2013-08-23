@@ -666,9 +666,9 @@
 		<cfoutput><strong>Removing current index...</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- Remove the index --->
-		<cfif application.razuna.storage EQ "local">
+		<!--- <cfif application.razuna.storage EQ "local">
 			<cfindex action="purge" collection="#session.hostid#" />
-		</cfif>
+		</cfif> --->
 		<!--- Feedback --->
 		<cfoutput><strong>Let's see how many documents we have to re-index...</strong><br><br></cfoutput>
 		<cfflush>
