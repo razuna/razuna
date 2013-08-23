@@ -66,7 +66,7 @@ function tooglefooter(what){
 	// which div to resize
 	var thefooterslider = $('##footer_drop');
 	// get selected tab
-	var selected = $('##tabs_footer').tabs( "option", "selected" );
+	var selected = $('##tabs_footer').tabs( "option", "active" );
 	if (what == 3){
 		var selected = 3;
 	}
@@ -104,8 +104,8 @@ $(function() {
 		drop: function(event, ui) {
 			var thisid = $(ui.draggable).attr("id");
 			var thistype = $(ui.draggable).attr("type");
-			thisid = thisid.replace('draggable','');
-			thisid = thisid.replace('draggable-s','');
+			var thisid = thisid.replace('draggable','');
+			var thisid = thisid.replace('draggable-s','');
 			$('##div_forall').load('#myself#c.basket_put&file_id=' + thistype + '&thetype=' + thistype, function(){
 				$('##thedropbasket').load('#myself#c.basket');
 			});
@@ -125,8 +125,8 @@ $(function() {
 			else{
 				var thisid = thistype;
 			}
-			thisid = thisid.replace('draggable','');
-			thisid = thisid.replace('draggable-s','');
+			var thisid = thisid.replace('draggable','');
+			var thisid = thisid.replace('draggable-s','');
 			$('##div_forall').load('#myself#c.favorites_put&favtype=file&favid=' + thisid, function(){
 				$('##thedropfav').load('#myself#c.favorites');
 			});

@@ -1124,14 +1124,14 @@ function searchadv_files(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1164,14 +1164,14 @@ function searchadv_videos(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1206,14 +1206,14 @@ function searchadv_images(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1246,14 +1246,14 @@ function searchadv_audios(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
