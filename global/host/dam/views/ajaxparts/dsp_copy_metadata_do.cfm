@@ -57,12 +57,16 @@
 			if (this.checked){
 				// select none
 				$(this).attr('checked',false);
+				// Apply Disable
+				$('#apply').attr('disabled', 'true');
 				// Change link
 				$('#selectallcm').text('Select all');
 			}
 			else {
 				// select all
 				$(this).attr('checked','checked');
+				//Apply Enable
+				$('#apply').removeAttr('disabled');
 				// Change link
 				$('#selectallcm').text('Select none');
 			}		
