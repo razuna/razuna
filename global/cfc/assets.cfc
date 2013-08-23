@@ -1457,7 +1457,7 @@ Razuna has converted your asset (#arguments.thestruct.emailorgname#) to the form
 		<cfset arguments.thestruct.tempid = replace(arguments.thestruct.tempid,"-","","ALL")>
 	</cfif>
 	<!--- Thread --->
-	<cfif arguments.thestruct.qryfile.tempid NEQ "">
+	<cfif structkeyexists(arguments.thestruct,"qryfile") AND arguments.thestruct.qryfile.tempid NEQ "">
 		<cfthread name="addasset#arguments.thestruct.tempid#" intstruct="#arguments.thestruct#" action="run">
 			<cfinvoke method="addassetthread" thestruct="#attributes.intstruct#" />
 		</cfthread>
