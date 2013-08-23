@@ -44,7 +44,7 @@
 					<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("empty_trash")#</div>
 				</a>
 				<!--- Restore all folders in the trash --->
-				<a href="##" onclick="showwindow('#myself#c.trash_restore_folders&type=restorefolderall&fromtrash=true','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("trash_restoreall"))#',650,1);return false;">
+				<a href="##" onclick="showwindow('#myself#c.trash_restore_folders&type=restorefolderall&fromtrash=true&restoreall=true&loaddiv=folders','#JSStringFormat(myFusebox.getApplicationData().defaults.trans("trash_restoreall"))#',650,1);return false;">
 					<div style="float:left;padding-right:15px;padding-top:5px;text-decoration:underline;">#myFusebox.getApplicationData().defaults.trans("trash_restoreall")#</div>
 				</a>
 			</div>
@@ -120,7 +120,7 @@
 					<td style="border:0px;" id="selectme">
 						<!--- For paging --->
 						<cfset mysqloffset = session.trash_folder_offset * session.trash_folder_rowmaxpage + 1>
-						<!--- Show trash images --->
+						<!--- Show trash folders --->
 						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.trash_folder_rowmaxpage#">
 							<div class="assetbox">
 								<div class="theimg">

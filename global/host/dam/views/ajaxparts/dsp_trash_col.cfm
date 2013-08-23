@@ -100,14 +100,14 @@
 				<tr>
 					<td colspan="6" style="border:0px;">
 						<div id="folderselectionallform_collection" class="actiondropdown">
-							<!--- Restore selected folders --->
+							<!--- Restore selected  collections--->
 							<a href="##" onclick="showwindow('#myself#c.restore_selected_collection&type=restoreselectedcollection&iscol=T&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;">
 								<div style="float:left;">
 									<img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0" style="padding-right:3px;" />
 								</div>
 								<div style="float:left;padding-right:5px;padding-top:1px;">#myFusebox.getApplicationData().defaults.trans("restore_selected_items")#</div>
 							</a>
-							<!--- Remove selected folders --->
+							<!--- Remove selected collections --->
 							<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=selected_collection&iscol=T&kind=collection&loaddiv=collection&selected=true&fromtrash=true','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#">
 								<div style="float:left;">
 									<img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" style="padding-right:3px;" />
@@ -121,7 +121,7 @@
 					<td style="border:0px;" id="selectme">
 						<!--- For paging --->
 						<cfset mysqloffset = session.trash_collection_offset * session.trash_collection_rowmaxpage + 1>
-						<!--- Show trash images --->
+						<!--- Show trash collections --->
 						<cfoutput query="qry_trash" startrow="#mysqloffset#" maxrows="#session.trash_collection_rowmaxpage#">
 							<div class="assetbox">
 								<div class="theimg">
@@ -134,13 +134,12 @@
 									<!--- Only if we have at least write permission --->
 									<cfif permfolder NEQ "R">
 										<!--- Set vars for kind --->
-										<!--- Folder --->
-										<cfset url_restore = "ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collection&showsubfolders=F&kind=collection">
-										<cfset url_remove = "ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collection&fromtrash=true">
+										<cfset url_restore = "ajax.restore_collection&folder_id=#folder_id#&what=collection&col_id=#col_id#&loaddiv=collections&showsubfolders=F&kind=collection">
+										<cfset url_remove = "ajax.remove_record&id=#col_id#&what=col&folder_id=#folder_id#&loaddiv=collections&fromtrash=true">
 										<div style="float:right;padding-top:2px;">
-											<!--- restore the folder --->
+											<!--- restore the collection --->
 											<a href="##" onclick="showwindow('#myself##url_restore#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("restore"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("restore")#"><img src="#dynpath#/global/host/dam/images/icon_restore.png" width="16" height="16" border="0"  /></a>
-											<!--- remove the folder --->
+											<!--- remove the collection --->
 											<a href="##" onclick="showwindow('#myself##url_remove#','#Jsstringformat(myFusebox.getApplicationData().defaults.trans("remove"))#',400,1);return false;" title="#myFusebox.getApplicationData().defaults.trans("remove")#"><img src="#dynpath#/global/host/dam/images/cross_big_new.png" width="16" height="16" border="0" /></a>
 										</div>
 									</cfif>

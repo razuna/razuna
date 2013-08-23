@@ -67,13 +67,18 @@
 		<script type="text/javascript">
            jqtabs("tabsfolder_tab");
            <cfif attributes.trashkind EQ 'collections'>
-                   loadcontent('collections','#myself#c.col_get_trash&trashkind=collections');
-                   $('##tabsfolder_tab').tabs('select','##collections');
+               $('##collections').load('#myself#c.col_get_trash&trashkind=collections');
+               //$('##tabsfolder_tab').tabs('select','##collections');
+			    var index = $('##tabsfolder_tab div.ui-tabs-panel').length-1;
+				$('##tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
            <cfelseif attributes.trashkind EQ 'folders'>
-                   loadcontent('collections','#myself#c.get_collection_trash_folders&trashkind=folders');
-                   $('##tabsfolder_tab').tabs('select','##folders');
+		   		$('##folders').load('#myself#c.get_collection_trash_folders&trashkind=folders');
+               //loadcontent('folders','#myself#c.get_collection_trash_folders&trashkind=folders');
+               //$('##tabsfolder_tab').tabs('select','##folders');
+			    var index = $('##tabsfolder_tab div.ui-tabs-panel').length-2;
+				$('##tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
            <cfelse>
-                   loadcontent('files','#myself#c.get_collection_trash_files&trashkind=files');
+               $('##files').load('#myself#c.get_collection_trash_files&trashkind=files');
            </cfif>
        </script>
 	</cfif>
