@@ -79,6 +79,37 @@
 		<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
 		<cfargument name="storage" type="string" default="#application.razuna.storage#" required="false">
 		<cfargument name="thedatabase" type="string" default="#application.razuna.thedatabase#" required="false">
+		<!--- Call indexing in a thread --->
+		<cfthread action="run" intstruct="#arguments#" priority="low">
+			<cfinvoke method="index_update_thread">
+				<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
+				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
+				<cfinvokeargument name="category" value="#attributes.intstruct.category#" />
+				<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
+				<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
+				<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
+				<cfinvokeargument name="fromapi" value="#attributes.intstruct.fromapi#" />
+				<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
+				<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
+				<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
+				<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
+			</cfinvoke>
+		</cfthread>
+	</cffunction>
+
+	<!--- INDEX: Update --->
+	<cffunction name="index_update_thread" access="public" output="true">
+		<cfargument name="thestruct" type="struct" required="false">
+		<cfargument name="assetid" type="string" required="false">
+		<cfargument name="category" type="string" required="true">
+		<cfargument name="dsn" type="string" required="true">
+		<cfargument name="online" type="string" default="F" required="false">
+		<cfargument name="notfile" type="string" default="F" required="false">
+		<cfargument name="fromapi" type="string" default="F" required="false">
+		<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
+		<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
+		<cfargument name="storage" type="string" default="#application.razuna.storage#" required="false">
+		<cfargument name="thedatabase" type="string" default="#application.razuna.thedatabase#" required="false">
 		<!--- Param --->
 		<cfset var folderpath = "">
 		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
