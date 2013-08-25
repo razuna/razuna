@@ -2256,9 +2256,10 @@ This is the main function called directly by a single upload else from addassets
 		<cfset arguments.thestruct.newid = arguments.thestruct.qryfile.tempid>
 		<!--- Call the import/imagemagick method --->
 		<!--- <cfinvoke method="importimages" thestruct="#arguments.thestruct#"> --->
-		<cfthread name="importimagesthread#arguments.thestruct.newid#" action="run" intstruct="#arguments.thestruct#" priority="high">
+		<cfinvoke method="importimagesthread" thestruct="#arguments.thestruct#" />
+		<!--- <cfthread name="importimagesthread#arguments.thestruct.newid#" action="run" intstruct="#arguments.thestruct#" priority="high">
 			<cfinvoke method="importimagesthread" thestruct="#attributes.intstruct#" />
-		</cfthread>
+		</cfthread> --->
 		<!--- If above return x we failed for the image --->
 		<cfif arguments.thestruct.newid EQ 0>
 			<cfinvoke component="email" method="send_email" subject="Image #arguments.thestruct.qryfile.filename# not added" themessage="Unfortunately, we could not add your image #arguments.thestruct.qryfile.filename# to the system because we can't recognize it as an image!">
