@@ -524,6 +524,23 @@
 		<cfargument name="category" type="string" required="true">
 		<cfargument name="assetid" type="string" required="false">
 		<cfargument name="notfile" type="string" default="F" required="false">
+		<!--- Call indexing in a thread --->
+		<cfthread action="run" intstruct="#arguments#" priority="low">
+			<cfinvoke method="index_delete_thread">
+				<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
+				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
+				<cfinvokeargument name="category" value="#attributes.intstruct.category#" />
+				<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
+			</cfinvoke>
+		</cfthread>
+	</cffunction>
+
+	<!--- INDEX: Delete --->
+	<cffunction name="index_delete_thread" access="public" output="false">
+		<cfargument name="thestruct" type="struct">
+		<cfargument name="category" type="string" required="true">
+		<cfargument name="assetid" type="string" required="false">
+		<cfargument name="notfile" type="string" default="F" required="false">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.link_kind" default="">
 		<!--- Index: delete file --->
