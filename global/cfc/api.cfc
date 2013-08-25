@@ -202,14 +202,19 @@
 	<!--- Get PluginID --->
 	<cffunction name="getMyID" access="public" returntype="string">
 		<cfargument name="pluginname" type="string" required="true" />
-		<!--- Set path --->
-		<cfif structkeyexists(session,"thisapp") AND session.thisapp EQ "admin">
-			<cfset var thepath = expandPath("..")>
-		<cfelse>
-			<cfset var thepath = expandpath("../..")>
-		</cfif>
-		<!--- Get id from config file --->
-		<cfset var plugID = getProfileString("#thepath#/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
+		<!--- Param --->
+		<cfset var plugID = "">
+		<!--- Doing a error exception since this is also called within the admin (we don't need the id anyhow) --->
+		<cftry>
+			<!--- Set path --->
+			<cfset var thepath = expandpath("..")>
+			<!--- Get id from config file --->
+			<cfset var plugID = getProfileString("#thepath#/global/plugins/#arguments.pluginname#/config/config.ini", "information", "id")>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
+		</cftry>
 		<cfreturn plugID />
 	</cffunction>
 
