@@ -7365,6 +7365,8 @@
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
+		<!-- CFC: Get temp file details -->
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetsendmail(attributes)" returnvariable="attributes.qryfile"/>
 		<!-- CFC: Add the new version to the system -->
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="addasset(attributes)" />
 		<!-- Show -->
