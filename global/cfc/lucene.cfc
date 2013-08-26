@@ -444,9 +444,9 @@
 				</cfquery>
 				<!--- Update database --->
 				<cfquery datasource="#arguments.dsn#">
-				UPDATE #arguments.prefix#audios
+				UPDATE #arguments.prefix#videos
 				SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
-				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 			<!--- FOR AUDIOS --->

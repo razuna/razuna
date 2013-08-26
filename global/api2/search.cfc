@@ -1006,7 +1006,7 @@
 	<!--- Handle indexing --->
 	<cffunction name="searchIndex" access="remote" output="false" returntype="struct" returnformat="json">
 		<cfargument name="api_key" required="true">
-		<cfargument name="assetid" required="true">
+		<cfargument name="assetid" required="false" default="0">
 		<!--- Check key --->
 		<cfset var thesession = checkdb(arguments.api_key)>
 		<!--- Check to see if session is valid --->

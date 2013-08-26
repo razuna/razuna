@@ -203,7 +203,7 @@
 				<cfinvokeargument name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" />
 				<cfinvokeargument name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" />
 				<cfinvokeargument name="thedatabase" value="#application.razuna.api.thedatabase#" />
-			</cffunction>
+			</cfinvoke>
 		<cfelse>
 			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
 				<cfhttpparam name="method" value="index_update_api" type="url" />
