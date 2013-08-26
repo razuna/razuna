@@ -324,7 +324,8 @@
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
-			hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryv.hashtag#">
+			hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryv.hashtag#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
@@ -344,7 +345,8 @@
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
-			hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryv.hashtag#">
+			hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryv.hashtag#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
@@ -361,7 +363,8 @@
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
-			hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryv.hashtag#">
+			hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryv.hashtag#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
@@ -377,7 +380,8 @@
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
-			hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryv.hashtag#">
+			hashtag = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#qryv.hashtag#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.file_id#">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
@@ -388,15 +392,6 @@
 		<cfset arguments.thestruct.qrydetail.filenameorg = qry.filenameorg>
 		<cfset arguments.thestruct.qrydetail.folder_id_r = qry.folder_id_r>
 		<cfset arguments.thestruct.filenameorg = qry.filenameorg>
-		<!--- Tell Lucene to reindex the file --->
-		<cfif application.razuna.storage EQ "local">
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="#arguments.thestruct.type#">
-			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="#arguments.thestruct.type#">
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="#arguments.thestruct.type#" notfile="T">
-			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="#arguments.thestruct.type#" notfile="T">
-		</cfif>
 		<cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error in playback of a version">
 				<cfdump var="#cfcatch#" />
@@ -786,7 +781,8 @@
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
-			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">
+			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
@@ -813,7 +809,8 @@
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
-			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">
+			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
@@ -837,7 +834,8 @@
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
-			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">
+			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
@@ -860,7 +858,8 @@
 			cloud_url_org = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url_org.theurl#">,
 			cloud_url = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#cloud_url.theurl#">,
 			cloud_url_exp = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#cloud_url_org.newepoch#">,
-			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">
+			hashtag = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#md5hash#">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
 				,
 				lucene_key = <cfqueryparam value="#arguments.thestruct.qryfile.path#/#arguments.thestruct.qryfile.filename#" cfsqltype="cf_sql_varchar">
@@ -874,15 +873,6 @@
 		<cfset arguments.thestruct.qrydetail.path_to_asset = arguments.thestruct.qryfilelocal.path_to_asset>
 		<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
 		<cfset arguments.thestruct.filenameorg = arguments.thestruct.qryfilelocal.file_name_org>
-		<!--- Tell Lucene to reindex the file --->
-		<cfif application.razuna.storage EQ "local">
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.qryfile.file_id#" category="#arguments.thestruct.type#">
-			<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.qryfile.file_id#" category="#arguments.thestruct.type#">
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.qryfile.file_id#" category="#arguments.thestruct.type#" notfile="T">
-			<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.qryfile.file_id#" category="#arguments.thestruct.type#" notfile="T">
-		</cfif>
 		<!--- <cfcatch type="any">
 			<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="Error in creating a new version">
 				<cfdump var="#cfcatch#" />

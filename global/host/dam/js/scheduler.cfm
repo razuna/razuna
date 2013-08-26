@@ -85,7 +85,7 @@ function validateMethodInput(myform,kind) {
 				});
 			}
 		// Rebuild search index
-		} else if (method == "rebuild") {
+		} else if (method == "rebuild" || method == "indexing") {
 			// Get values
 			var url = formaction("schedulerform");
 			var items = formserialize("schedulerform");

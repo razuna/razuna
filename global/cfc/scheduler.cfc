@@ -31,7 +31,7 @@
 	<cfquery datasource="#application.razuna.datasource#" name="qry">
 	SELECT sched_id, sched_name, sched_method, sched_status
 	FROM #session.hostdbprefix#schedules
-	WHERE set2_id_r  = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">
+	WHERE set2_id_r  = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">
 	AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	ORDER BY sched_name, sched_method
 	</cfquery>
@@ -45,6 +45,7 @@
 	<cfparam default="0" name="arguments.thestruct.serverFolderRecurse">
 	<cfparam default="0" name="arguments.thestruct.zipExtract">
 	<cfparam default="" name="arguments.thestruct.upl_template">
+	<cfparam default="1" name="session.theuserid">
 	<cfset schedData.serverFolderRecurse = arguments.thestruct.serverFolderRecurse>
 	<cfset schedData.zipExtract = arguments.thestruct.zipExtract>
 	<cftry>
@@ -87,7 +88,7 @@
 		)
 		VALUES 
 		(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
-		 <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">, 
+		 <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">, 
 		 <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
 		 <cfqueryparam value="#schedData.method#" cfsqltype="cf_sql_varchar">, 
 		 <cfqueryparam value="#schedData.taskName#" cfsqltype="cf_sql_varchar">, 
@@ -128,7 +129,8 @@
 		<!--- Log the insert --->
 		<cfinvoke method="tolog" theschedid="#newschid#" theuserid="#session.theuserid#" theaction="Insert" thedesc="Scheduled Task successfully saved">
 		<cfcatch>
-			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error from Scheduler" dump="#cfcatch#">
+			<cfset consoleoutput(true)>
+			<cfset console(cfcatch)>
 		</cfcatch>
 	</cftry>
 	<cfreturn />
@@ -203,37 +205,26 @@
 <cffunction name="initMethodFields" returntype="Struct" output="true" access="private">
 	<cfargument name="thestruct" type="Struct" required="yes">
 	<!--- Initialise unused fields --->
-	<cfswitch expression="#arguments.thestruct.method#">
-		<!--- Server --->
-		<cfcase value="server">
-			<cfset arguments.thestruct.mailPop = "">
-			<cfset arguments.thestruct.mailUser = "">
-			<cfset arguments.thestruct.mailPass = "">
-			<cfset arguments.thestruct.mailSubject = "">
-			<cfset arguments.thestruct.ftpServer = "">
-			<cfset arguments.thestruct.ftpUser = "">
-			<cfset arguments.thestruct.ftpPass = "">
-			<cfset arguments.thestruct.ftpPassive = "">
-			<cfset arguments.thestruct.ftpFolder = "">
-		</cfcase>
-		<!--- FTP --->
-		<cfcase value="ftp">
-			<cfset arguments.thestruct.serverFolder = "">
-			<cfset arguments.thestruct.mailPop = "">
-			<cfset arguments.thestruct.mailUser = "">
-			<cfset arguments.thestruct.mailPass = "">
-			<cfset arguments.thestruct.mailSubject = "">
-		</cfcase>
-		<!--- eMail --->
-		<cfcase value="mail">
-			<cfset arguments.thestruct.serverFolder = "">
-			<cfset arguments.thestruct.ftpServer = "">
-			<cfset arguments.thestruct.ftpUser = "">
-			<cfset arguments.thestruct.ftpPass = "">
-			<cfset arguments.thestruct.ftpPassive = "">
-			<cfset arguments.thestruct.ftpFolder = "">
-		</cfcase>
-	</cfswitch>
+	<cfparam name="arguments.thestruct.mailPop" default="">
+	<cfparam name="arguments.thestruct.mailUser" default="">
+	<cfparam name="arguments.thestruct.mailPass" default="">
+	<cfparam name="arguments.thestruct.mailSubject" default="">
+	<cfparam name="arguments.thestruct.ftpServer" default="">
+	<cfparam name="arguments.thestruct.ftpUser" default="">
+	<cfparam name="arguments.thestruct.ftpPass" default="">
+	<cfparam name="arguments.thestruct.ftpPassive" default="">
+	<cfparam name="arguments.thestruct.ftpFolder" default="">
+	<cfparam name="arguments.thestruct.serverFolder" default="">
+	<cfparam name="arguments.thestruct.mailPop" default="">
+	<cfparam name="arguments.thestruct.mailUser" default="">
+	<cfparam name="arguments.thestruct.mailPass" default="">
+	<cfparam name="arguments.thestruct.mailSubject" default="">
+	<cfparam name="arguments.thestruct.serverFolder" default="">
+	<cfparam name="arguments.thestruct.ftpServer" default="">
+	<cfparam name="arguments.thestruct.ftpUser" default="">
+	<cfparam name="arguments.thestruct.ftpPass" default="">
+	<cfparam name="arguments.thestruct.ftpPassive" default="">
+	<cfparam name="arguments.thestruct.ftpFolder" default="">
 	<cfreturn arguments.thestruct>
 </cffunction>
 
@@ -319,7 +310,7 @@
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE #session.hostdbprefix#schedules
 		SET    
-		set2_id_r = <cfqueryparam value="#variables.setid#" cfsqltype="cf_sql_numeric">, 
+		set2_id_r = <cfqueryparam value="#application.razuna.setid#" cfsqltype="cf_sql_numeric">, 
 		sched_user = <cfqueryparam value="#session.theuserid#" cfsqltype="CF_SQL_VARCHAR">, 
 		sched_method = <cfqueryparam value="#schedData.method#" cfsqltype="cf_sql_varchar">,
 		sched_name = <cfqueryparam value="#schedData.taskName#" cfsqltype="cf_sql_varchar">,
@@ -590,10 +581,16 @@
 			<cfinvoke component="assets" method="addassetemail" thestruct="#x#" />
 		<!--- Rebuild search index --->
 		<cfelseif doit.qry_detail.sched_method EQ "rebuild">
-			<!-- CFC: Call rebuild function -->
-			<cfthread action="run" intstruct="#arguments#">
-				<cfinvoke component="lucene" method="rebuild" thestruct="#attributes.intstruct#" />
-			</cfthread>
+			<!-- CFC: Log start -->
+			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Started rebuilding" />
+			<!-- CFC: Call indexing -->
+			<cfinvoke component="lucene" method="index_update" thestruct="#x#" assetid="all" />
+		<!--- Rebuild search index --->
+		<cfelseif doit.qry_detail.sched_method EQ "indexing">
+			<!-- CFC: Log start -->
+			<cfinvoke method="tolog" theschedid="#arguments.sched_id#" theaction="Upload" thedesc="Started indexing" />
+			<!-- CFC: Call indexing -->
+			<cfinvoke component="lucene" method="index_update" thestruct="#x#" />
 		</cfif>
 	</cfif>
 	<cfreturn doit>

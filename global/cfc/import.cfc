@@ -1098,18 +1098,14 @@
 						AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						</cfquery>
 					</cfif>
-					<!--- For Lucene --->
-					<cfset arguments.thestruct.qrydetail.path_to_asset = found.path_to_asset>
-					<cfset arguments.thestruct.filenameorg = found.filenameorg>
-					<cfset arguments.thestruct.qrydetail.lucene_key = found.lucene_key>
-					<cfset arguments.thestruct.qrydetail.link_path_url = found.link_path_url>
-					<cfset arguments.thestruct.id = found.img_id>
-					<cfthread intstruct="#arguments.thestruct#">
-						<!--- Lucene: Delete Records --->
-						<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="img">
-						<!--- Lucene: Update Records --->
-						<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="img">
-					</cfthread>
+					<!--- Set for indexing --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#images
+					SET
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+					WHERE img_id = <cfqueryparam value="#found.img_id#" cfsqltype="CF_SQL_VARCHAR">
+					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+					</cfquery>
 				</cfif>
 				<!--- Show if error --->
 				<cfcatch type="any">
@@ -1199,7 +1195,9 @@
 				<!--- Images: main table --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#videos
-				SET vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+				SET 
+				vid_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 				<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1275,18 +1273,6 @@
 					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					</cfquery>
 				</cfif>
-				<!--- For Lucene --->
-				<cfset arguments.thestruct.qrydetail.path_to_asset = found.path_to_asset>
-				<cfset arguments.thestruct.filenameorg = found.filenameorg>
-				<cfset arguments.thestruct.qrydetail.lucene_key = found.lucene_key>
-				<cfset arguments.thestruct.qrydetail.link_path_url = found.link_path_url>
-				<cfset arguments.thestruct.id = found.vid_id>
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Lucene: Delete Records --->
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="vid">
-					<!--- Lucene: Update Records --->
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="vid">
-				</cfthread>
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
@@ -1369,7 +1355,9 @@
 				<!--- Images: main table --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#audios
-				SET aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+				SET 
+				aud_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 				<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1445,18 +1433,6 @@
 					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					</cfquery>
 				</cfif>
-				<!--- For Lucene --->
-				<cfset arguments.thestruct.qrydetail.path_to_asset = found.path_to_asset>
-				<cfset arguments.thestruct.filenameorg = found.filenameorg>
-				<cfset arguments.thestruct.qrydetail.lucene_key = found.lucene_key>
-				<cfset arguments.thestruct.qrydetail.link_path_url = found.link_path_url>
-				<cfset arguments.thestruct.id = found.aud_id>
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Lucene: Delete Records --->
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="aud">
-					<!--- Lucene: Update Records --->
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="aud">
-				</cfthread>
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->
@@ -1547,7 +1523,9 @@
 				<!--- Images: main table --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				UPDATE #session.hostdbprefix#files
-				SET file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
+				SET 
+				file_name = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE #c_theid# = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thisid)#">
 				AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 				<cfif arguments.thestruct.expwhat NEQ "all">
@@ -1758,18 +1736,6 @@
 					AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 					</cfquery>
 				</cfif>
-				<!--- For Lucene --->
-				<cfset arguments.thestruct.qrydetail.path_to_asset = found.path_to_asset>
-				<cfset arguments.thestruct.filenameorg = found.filenameorg>
-				<cfset arguments.thestruct.qrydetail.lucene_key = found.lucene_key>
-				<cfset arguments.thestruct.qrydetail.link_path_url = found.link_path_url>
-				<cfset arguments.thestruct.id = found.file_id>
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Lucene: Delete Records --->
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="doc">
-					<!--- Lucene: Update Records --->
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.id#" category="doc">
-				</cfthread>
 			</cfif>
 		</cfloop>
 		<!--- Flush Cache --->

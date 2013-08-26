@@ -1143,8 +1143,6 @@
 				</cfquery>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("images")>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#qry_file.tempid#" category="img">
 			<!--- VIDEOS --->
 			<cfelseif qry_mime.type_type EQ "vid">
 				<!--- Insert record --->		
@@ -1200,8 +1198,6 @@
 				</cfif>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("videos")>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#qry_file.tempid#" category="vid">
 			<!--- AUDIOS --->
 			<cfelseif qry_mime.type_type EQ "aud">
 				<!--- Add record --->
@@ -1223,8 +1219,6 @@
 				</cfquery>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("audios")>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#qry_file.tempid#" category="aud">
 			<!--- DOCUMENTS --->
 			<cfelse>
 				<!--- Insert --->
@@ -1246,8 +1240,6 @@
 				</cfquery>
 				<!--- Flush Cache --->
 				<cfset resetcachetoken("files")>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#qry_file.tempid#" category="doc">
 			</cfif>
 			<!--- Flush the rest of the cache --->
 			<cfset resetcachetoken("folders")>
@@ -2011,8 +2003,6 @@ This is the main function called directly by a single upload else from addassets
 				<!--- Move thumbnail --->
 				<cffile action="move" source="#arguments.thestruct.thepdfimage#" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#session.hostid#/#arguments.thestruct.qryfile.folder_id#/doc/#arguments.thestruct.newid#/#arguments.thestruct.thepdfimagename#" mode="775">
 			</cfif>
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- NIRVANIX --->
 		<cfelseif application.razuna.storage EQ "nirvanix" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<cfset var ttu = createuuid("")>
@@ -2092,8 +2082,6 @@ This is the main function called directly by a single upload else from addassets
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- AMAZON --->
 		<cfelseif application.razuna.storage EQ "amazon" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Upload file --->
@@ -2172,8 +2160,6 @@ This is the main function called directly by a single upload else from addassets
 			WHERE file_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		<!--- Akamai --->
 		<cfelseif application.razuna.storage EQ "akamai" AND arguments.thestruct.qryfile.link_kind NEQ "url">
 			<!--- Upload file --->
@@ -2187,12 +2173,6 @@ This is the main function called directly by a single upload else from addassets
 				</cfinvoke>
 			</cfthread>
 			<cfthread action="join" name="#upd#" />
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
-		<!--- Link_kind is URL --->
-		<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
-			<!--- Add to Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="doc">
 		</cfif>
 		<!--- Update DB to make asset available --->
 		<cfif !application.razuna.rfs>
@@ -2302,10 +2282,6 @@ This is the main function called directly by a single upload else from addassets
 			WHERE img_id = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.thestruct.hostid#">
 			</cfquery>
-			<!--- Add to Lucene --->
-			<cfif NOT structkeyexists(arguments.thestruct,"fromconverting")>
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="img">
-			</cfif>
 			<!--- Put below in thread --->
 			<cfthread action="run" intstruct="#arguments.thestruct#">
 				<!--- Add to shared options --->
@@ -3357,10 +3333,6 @@ This is the main function called directly by a single upload else from addassets
 				</cfinvoke>
 			</cfif>
 		</cfif>
-		<!--- Add to Lucene --->
-		<cfif NOT structkeyexists(arguments.thestruct,"fromconverting")>
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.thisvid.newid#" category="vid" online="#arguments.thestruct.vid_online#">
-		</cfif>
 		<!--- Log --->
 		<cfset log_assets(theuserid=session.theuserid,logaction='Add',logdesc='Added: #arguments.thestruct.qryfile.filename#',logfiletype='vid',assetid=arguments.thestruct.thisvid.newid)>
 		<!--- Flush Cache --->
@@ -3994,16 +3966,12 @@ This is the main function called directly by a single upload else from addassets
 				<cfif arguments.thestruct.qryfile.link_kind EQ "lan" AND fileExists("#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.mp3")>
 					<cffile action="move" source="#arguments.thestruct.thetempdirectory#/#arguments.thestruct.filenamenoext4copy#.mp3" destination="#arguments.thestruct.qrysettings.set2_path_to_assets#/#arguments.thestruct.hostid#/#arguments.thestruct.qryfile.folder_id#/aud/#arguments.thestruct.newid#/#arguments.thestruct.filenamenoext4copy#.mp3" mode="775">
 				</cfif>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 			<!--- NIRVANIX --->
 			<cfelseif application.razuna.storage EQ "nirvanix">
 				<!--- Unique --->
 				<cfset var upa = Createuuid("")>
 				<cfset var upaw = "w" & upa>
 				<cfset var upam = "m" & upa>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 				<!--- Upload file --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfthread name="#upa#" audupstruct="#arguments.thestruct#" action="run">
@@ -4064,8 +4032,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var upa = Createuuid("")>
 				<cfset var upw = "w" & upa>
 				<cfset var upmp = "m" & upa>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 				<!--- Upload file --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfthread name="#upa#" audstruct="#arguments.thestruct#" action="run">
@@ -4127,8 +4093,6 @@ This is the main function called directly by a single upload else from addassets
 				<cfset var upa = Createuuid("")>
 				<cfset var upw = "w" & upa>
 				<cfset var upmp = "m" & upa>
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 				<!--- Upload file --->
 				<cfif arguments.thestruct.qryfile.link_kind NEQ "lan">
 					<cfthread name="#upa#" audstruct="#arguments.thestruct#" action="run">
@@ -4163,10 +4127,6 @@ This is the main function called directly by a single upload else from addassets
 					</cfthread>
 					<cfthread action="join" name="#upmp#" />
 				</cfif> --->
-			<!--- link_kind is url --->
-			<cfelseif arguments.thestruct.qryfile.link_kind EQ "url">
-				<!--- Add to Lucene --->
-				<cfinvoke component="lucene" method="index_update" dsn="#arguments.thestruct.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.newid#" category="aud">
 			</cfif>
 		<!--- Update DB to make asset available --->
 		<cfif !application.razuna.rfs>

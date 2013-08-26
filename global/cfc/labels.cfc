@@ -147,9 +147,39 @@
 			</cfloop>
 			<!--- Lucene: Delete Records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.thestruct.fileid#">
-			<!--- Lucene: Update Records --->
-			<cfif arguments.thestruct.thetype EQ "img" OR arguments.thestruct.thetype EQ "vid" OR arguments.thestruct.thetype EQ "aud" OR arguments.thestruct.thetype EQ "doc">
-				<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.fileid#" category="#arguments.thestruct.thetype#" notfile="T">
+			<!--- Set index according to type --->
+			<cfif arguments.thestruct.thetype EQ "img">
+				<!--- Set for indexing --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images
+				SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE img_id = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelseif arguments.thestruct.thetype EQ "vid">
+				<!--- Set for indexing --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#videos
+				SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelseif arguments.thestruct.thetype EQ "aud">
+				<!--- Set for indexing --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#audios
+				SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE aud_id = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
+			<cfelse>
+				<!--- Set for indexing --->
+				<cfquery datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#files
+				SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+				WHERE file_id = <cfqueryparam value="#arguments.thestruct.fileid#" cfsqltype="CF_SQL_VARCHAR">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+				</cfquery>
 			</cfif>
 		</cfif>
 		<!--- Flush --->

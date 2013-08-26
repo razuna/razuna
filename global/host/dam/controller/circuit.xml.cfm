@@ -6530,7 +6530,7 @@
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- CFC: Get all the asset -->
-		<invoke object="myFusebox.getApplicationData().lucene" methodcall="rebuild(attributes)" />
+		<invoke object="myFusebox.getApplicationData().lucene" methodcall="index_update(thestruct=attributes)" />
 	</fuseaction>
 	<!-- For System Information -->
 	<fuseaction name="admin_system">

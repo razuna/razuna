@@ -1085,7 +1085,7 @@
 		<cfset arguments.thestruct.file_id = i>
 		<!--- Save the desc and keywords --->
 		<cfloop list="#arguments.thestruct.langcount#" index="langindex">
-		<!--- If we come from all we need to change the desc and keywords arguments name --->
+		    <!--- If we come from all we need to change the desc and keywords arguments name --->
 			<cfif arguments.thestruct.what EQ "all">
 				<cfset var alldesc = "all_desc_#langindex#">
 				<cfset var allkeywords = "all_keywords_#langindex#">
@@ -1162,6 +1162,13 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
+		<!--- Set for indexing --->
+		<cfquery datasource="#application.razuna.datasource#">
+		UPDATE #session.hostdbprefix#videos
+		SET	is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		WHERE vid_id = <cfqueryparam value="#found.img_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
 		<!--- Update main record with dates --->
 		<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.file_id#" />
 		<!--- Query again --->
@@ -1195,12 +1202,6 @@
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 			</cfif>
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
-			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid">
-		<!--- Nirvanix --->
-		<cfelseif application.razuna.storage NEQ "local">
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid" notfile="T">
-			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" prefix="#session.hostdbprefix#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="vid" notfile="T">
 		</cfif>
 		<!--- Log --->
 		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.vid_filename#',logfiletype='vid',assetid='#arguments.thestruct.file_id#')>
@@ -1865,15 +1866,14 @@
 				UPDATE #session.hostdbprefix#videos
 				SET 
 				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE vid_id = <cfqueryparam value="#arguments.thestruct.vid_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<!--- Update Dates --->
 					<cfinvoke component="global" method="update_dates" type="vid" fileid="#arguments.thestruct.vid_id#" />
-					<!--- Update Lucene --->
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.vid_id#" category="vid" notfile="T">
 					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 					<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 					<!--- Execute workflow --->
@@ -1894,8 +1894,8 @@
 			</cfcatch>
 		</cftry>
 		<!--- Flush Cache --->
-		<!--- <cfset resetcachetoken("folders")>
-		<cfset variables.cachetoken = resetcachetoken("videos")> --->
+		<cfset resetcachetoken("folders")>
+		<cfset variables.cachetoken = resetcachetoken("videos")>
 	<cfreturn />
 </cffunction>
 
@@ -1915,12 +1915,13 @@
 			<!--- Update DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#videos
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+			SET 
+			folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE vid_id = <cfqueryparam value="#vid_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 			<!--- Update Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#vid_id#" category="vid" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />
