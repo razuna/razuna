@@ -1836,6 +1836,13 @@
 				WHERE id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar" >
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
+			<cfquery name="updateimagestext" datasource="#application.razuna.datasource#">
+				UPDATE #session.hostdbprefix#images_text SET 
+				img_description = <cfqueryparam value="#append_images_text.img_description# #select_images_text.img_description#" cfsqltype="cf_sql_varchar">,
+				img_keywords = <cfqueryparam value="#append_images_text.img_keywords# #select_images_text.img_keywords#" cfsqltype="cf_sql_varchar">
+				WHERE img_id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
 			<cfquery name="updatexmp" datasource="#application.razuna.datasource#" >
 				UPDATE #session.hostdbprefix#xmp
 					SET
@@ -1873,7 +1880,7 @@
 					state = <cfqueryparam cfsqltype="cf_sql_varchar" value="#select_xmp.state#">, 
 					credit = <cfqueryparam cfsqltype="cf_sql_varchar" value="#append_xmp.credit# #select_xmp.credit#">, 
 					rights  = <cfqueryparam cfsqltype="cf_sql_varchar" value="#append_xmp.rights# #select_xmp.rights#">
-					WHERE id_r = <cfqueryparam value="#arguments.thestruct.idList#" cfsqltype="cf_sql_varchar">
+					WHERE id_r = <cfqueryparam value="#theidtoupdate#" cfsqltype="cf_sql_varchar">
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfloop>

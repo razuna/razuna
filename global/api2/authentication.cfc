@@ -31,7 +31,7 @@
 	<cfset application.razuna.thedatabase = application.razuna.api.thedatabase>
 	<cfset application.razuna.setid = application.razuna.api.setid>
 	<cfset application.razuna.api.thehttp = "http://">
-	<cfset application.razuna.api.lucene = "global.cfc.lucene">
+	<cfparam name="application.razuna.api.lucene" default="global.cfc.lucene">
 
 	<!--- Check for db entry --->
 	<cffunction name="checkdb" access="public" output="no">
@@ -177,6 +177,23 @@
 
 	<!--- Update Search --->
 	<cffunction name="updateSearch" output="false" returntype="void">
+		<cfargument name="assetid" required="true">
+		<cfargument name="assetcategory" required="true">
+		<cfargument name="api_key" required="true">
+		<!--- Thread --->
+		<cfthread action="run" intstruct="#arguments#">
+			<cfinvoke method="updateSearch_Thread">
+				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
+				<cfinvokeargument name="assetcategory" value="#attributes.intstruct.assetcategory#" />
+				<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#" />
+			</cfinvoke>
+		</cfthread>
+		<!--- Return --->
+		<cfreturn />
+	</cffunction>
+
+	<!--- Update Search --->
+	<cffunction name="updateSearch_Thread" output="false" returntype="void">
 		<cfargument name="assetid" required="true">
 		<cfargument name="assetcategory" required="true">
 		<cfargument name="api_key" required="true">

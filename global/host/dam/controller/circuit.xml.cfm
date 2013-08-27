@@ -5,7 +5,7 @@
 
 	<!-- Cache Tag for layouts -->
 	<fuseaction name="cachetag">
-		<set name="attributes.cachetag" value="2013.05.06.1" />
+		<set name="attributes.cachetag" value="2013.08.19.1" />
 	</fuseaction>
 	
 	<!--
@@ -1873,7 +1873,7 @@
 		<!-- Action: Storage -->
 		<do action="storage" />
 		<!-- Call include in order to get all files in trash -->
-		<do action="get_collection_trash_folders" />
+		<invoke object="myFusebox.getApplicationData().collections" methodcall="get_trash_folders()" returnvariable="qry_trash" />
 		<!-- CFC: Restore all folders -->
 		<invoke object="myFusebox.getApplicationData().folders" methodcall="trash_restore_folders(qry_trash,attributes)" />
 		<!-- Show -->
@@ -1988,6 +1988,7 @@
 		<!-- Param -->
 		<set name="attributes.iscol" value="F" overwrite="false" />
 		<set name="attributes.trash" value="F" overwrite="false" />
+		<set name="attributes.trashkind" value="assets" overwrite="false" />
 		<set name="attributes.showsubfolders" value="F" overwrite="false" />
 		<!-- XFA -->
 		<xfa name="fproperties" value="c.folder_edit" />
@@ -7364,6 +7365,8 @@
 		<do action="assetpath" />
 		<!-- Action: Check storage -->
 		<do action="storage" />
+		<!-- CFC: Get temp file details -->
+		<invoke object="myFusebox.getApplicationData().assets" methodcall="addassetsendmail(attributes)" returnvariable="attributes.qryfile"/>
 		<!-- CFC: Add the new version to the system -->
 		<invoke object="myFusebox.getApplicationData().assets" methodcall="addasset(attributes)" />
 		<!-- Show -->

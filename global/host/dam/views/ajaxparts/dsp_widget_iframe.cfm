@@ -42,15 +42,15 @@
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 <!--- JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js?_v=#attributes.cachetag#"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js?_v=#attributes.cachetag#"></script>
 <!--- According to widget style we decide here what to load --->
 <cfif qry_widget.widget_style EQ "d">
 	<!--- CSS --->
 	<link rel="stylesheet" type="text/css" href="#dynpath#/global/host/dam/views/layouts/main.css?_v=#attributes.cachetag#" />
-	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css?_v=#attributes.cachetag#" />
+	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css?_v=#attributes.cachetag#" />
 	<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/widget/overlay.css?_v=#attributes.cachetag#"/>
 	<!--- JS --->
-	<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js?_v=#attributes.cachetag#"></script>
+	<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js?_v=#attributes.cachetag#"></script>
 	<script type="text/javascript" src="#dynpath#/global/js/AC_QuickTime.js?_v=#attributes.cachetag#"></script>
 	<script type="text/javascript" src="#dynpath#/global/videoplayer/js/flowplayer-3.2.6.min.js?_v=#attributes.cachetag#"></script>
 	<script type="text/javascript" src="#dynpath#/global/host/dam/js/global.js?_v=#attributes.cachetag#"></script>

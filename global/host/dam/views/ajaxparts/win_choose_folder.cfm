@@ -86,9 +86,13 @@
 		function delayfolderload(){
 			$('##explorer').load('#myself#c.explorer<cfif attributes.iscol EQ "T">_col</cfif>');
 			<cfif structKeyExists(attributes,"fromtrash") AND attributes.fromtrash>
-				$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&restoreall=true&trashkind=folders<cfelse>folder_explorer_trash&restorefolderall=true&trashkind=folders</cfif>');
-			<cfelse>
-				$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&trashkind=folders<cfelse>folder_explorer_trash&trashkind=folders</cfif>');
+				<cfif structKeyExists(attributes,"restoreall") AND attributes.restoreall>
+					$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&restoreall=true&trashkind=folders<cfelse>folder_explorer_trash<cfif attributes.restoreall>&restorefolderall=#attributes.restoreall#</cfif>&trashkind=#attributes.loaddiv#</cfif>');
+				<cfelse>
+					$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&trashkind=folders<cfelse>folder_explorer_trash&trashkind=#attributes.loaddiv#</cfif>');
+				</cfif>
+			//<cfelse>
+				//$('##rightside').load('#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash&trashkind=folders<cfelse>folder_explorer_trash&trashkind=folders</cfif>');
 				//loadcontent('folders','#myself#c.<cfif attributes.iscol EQ "T">collection_explorer_trash<cfelse>trash_folder_all&trashkind=folders</cfif>');
 			</cfif>
 		}

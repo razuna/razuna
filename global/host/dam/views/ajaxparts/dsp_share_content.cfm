@@ -322,7 +322,7 @@
 <script type="text/javascript">
 	jqtabs("tabs_shared");
 	<cfif structkeyexists(attributes,"tab")>
-		$('##tabs_shared').tabs('select',1);
+		$('##tabs_shared').tabs('option', 'active',1);
 	</cfif>
 	// Select All from Content
 	$('##checkallcontent').click(function () {

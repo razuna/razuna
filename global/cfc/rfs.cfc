@@ -122,7 +122,16 @@
 	</cffunction>
 	
 	<!--- Notify remote server --->
-	<cffunction name="notify" output="true">
+	<cffunction name="notify" returntype="void">
+		<cfargument name="thestruct" type="struct">
+		<!--- Thread --->
+		<cfthread action="run" intstruct="#arguments.thestruct#">
+			<cfinvoke method="notify_thread" thestruct="#attributes.intstruct#" />
+		</cfthread>
+	</cffunction>
+
+	<!--- Notify remote server thread --->
+	<cffunction name="notify_thread" returntype="void">
 		<cfargument name="thestruct" type="struct">
 		<!--- Param --->
 		<cfparam name="arguments.thestruct.upl_template" default="0" />

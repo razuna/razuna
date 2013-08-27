@@ -39,14 +39,15 @@
 <cfheader name="PRAGMA" value="#GetHttpTimeString(Now())#">
 <script language="JavaScript" type="text/javascript">var dynpath = '#dynpath#';</script>
 <!--- CSS --->
-<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css" />
+<!--- <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.8.21.custom/css/smoothness/jquery-ui-1.8.21.custom.css" /> --->
+<link rel="stylesheet" type="text/css" href="#dynpath#/global/js/jquery-ui-1.10.3.custom/css/smoothness/jquery-ui-1.10.3.custom.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/main.css" />
 <link rel="stylesheet" type="text/css" href="views/layouts/error.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/skins/simple/style.css" />
 <link rel="stylesheet" type="text/css" href="#dynpath#/global/js/markitup/markitup/sets/html/style.css" />
 <!--- Cache JS --->
-<script type="text/javascript" src="#dynpath#/global/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.8.21.custom/js/jquery-ui-1.8.21.custom.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="#dynpath#/global/js/jquery-ui-1.10.3.custom/js/jquery-ui-1.10.3.custom.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.validate.min.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/jquery.form.js"></script>
 <script type="text/javascript" src="#dynpath#/global/js/markitup/markitup/jquery.markitup.js"></script>
@@ -54,6 +55,7 @@
 <script type="text/javascript" src="js/global.js"></script>
 <link rel="SHORTCUT ICON" href="favicon.ico" />
 <style>
+.ui-dialog .ui-dialog-titlebar-close{ margin:0px; }
 .ui-widget { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 12px; }
 .ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Helvetica Neue,Helvetica,Arial,Nimbus Sans L,sans-serif; font-size: 1em; }
 </style>
@@ -67,7 +69,7 @@
 </div>
 <div id="footer">#trim( footercontent )#</div>
 <!--- Window Div --->
-<div id="thewindowcontent1" style="padding:10px;"></div>
+<div id="thewindowcontent1" style="padding:10px;display:none;"></div>
 <!--- GS Code --->
 <script type="text/javascript" charset="utf-8">
   var is_ssl = ("https:" == document.location.protocol);

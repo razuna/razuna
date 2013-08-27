@@ -26,7 +26,10 @@ function showwindow(theurl,thetitle,thew,thewin) {
 }
 // Destroy Window
 function destroywindow(numb) {
-	$('#thewindowcontent' + numb).dialog('destroy');
+	try{
+		$('#thewindowcontent' + numb).dialog('destroy');
+	}
+	catch(e) {};
 }
 // Load Tabs
 function jqtabs(tabs){
@@ -325,9 +328,6 @@ $(document).bind('click', function(e) {
 	}
 // Flash footer_tabs
 function flash_footer(what){
-	// $("#tabs_footer").effect('pulsate');
-	//$("#tabs_footer").effect('highlight',{'color':'orange'},1000);
-	//$('#tabs_footer').tabs('select','#thedropfav');
 	// Display notification
 	if(what == "basket"){
 		$.sticky('<span style="color:green;font-weight:bold;">Item is now in your basket</span>');
@@ -1124,14 +1124,14 @@ function searchadv_files(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1164,14 +1164,14 @@ function searchadv_videos(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1206,14 +1206,14 @@ function searchadv_images(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1246,14 +1246,14 @@ function searchadv_audios(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1286,14 +1286,15 @@ function searchadv_all(theform, thefa, folderid) {
 			// Enable div
 			$('#content_search_all').css('display','');
 			// Remove tab (in case there is one already)
-			var tt = getIndexForId('tabsfolder_tab', 'Search Results');
-			if (tt != '-1'){
-				$('#tabsfolder_tab').tabs( "remove" , '#content_search_all' );
-			}
+			removeTab('tabsfolder_tab','content_search_all');
+			
 			// Create new tab
-			$('#tabsfolder_tab').tabs( "add" , '#content_search_all' , 'Search Results' );
+			addTab($('#tabsfolder_tab'), 'content_search_all' , 'Search Results');
+			
 			// Select tab
-			$('#tabsfolder_tab').tabs( "select" , '#content_search_all' );
+			var index = $('#tabsfolder_tab div.ui-tabs-panel').length-1;
+			$('#tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+			
 		}
 		// Fire search
 		$('#loading_searchadv').html('<img src="' + dynpath + '/global/host/dam/images/loading-bars.gif" border="0" style="padding:0px;">');
@@ -1303,6 +1304,19 @@ function searchadv_all(theform, thefa, folderid) {
 			destroywindow(1);
 		});
 	}
+}
+
+function addTab(tabs, id, label){
+	li = "<li><a href='#"+ id +"'>"+ label +"</a></li>";
+	tabs.find( ".ui-tabs-nav" ).append( li );
+	tabs.append( "<div id='" + id + "'><p></p></div>" );
+	tabs.tabs( "refresh" );
+} 
+
+function removeTab(tabContainerID,tabID){
+	$('#'+tabContainerID+' li a[href="#'+tabID+'"]').remove();
+	$('#'+tabContainerID+' div#'+tabID).remove();
+	$('#'+tabContainerID).tabs( "refresh" );
 }
 function getIndexForId( tabsDivId, searchedId )
 {
@@ -1792,3 +1806,16 @@ function switchmainselection(thetype,thelinktext){
 	// Change the link text itself
 	$('#mainsectionchooser').text(thelinktext);
 }
+// Image Tooltip
+$(document).tooltip({
+	items: "[img-tt]",
+	content: function() {
+		 var element = $( this );
+		 var theimg = element.attr("src");
+		 return "<img src='" + theimg + "' border='0'>";
+	},
+	position: {
+		my: "center bottom",
+		at: "center top"
+	}
+});

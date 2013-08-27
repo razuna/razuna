@@ -83,12 +83,12 @@
 											<a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#img_id#&what=images&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
 											<cfif link_kind NEQ "url">
 												<cfif application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix">
-													<img src="#cloud_url#" border="0">
+													<img src="#cloud_url#" border="0" img-tt="img-tt">
 												<cfelse>
-													<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0">
+													<img src="#thestorage##path_to_asset#/thumb_#img_id#.#thumb_extension#" border="0" img-tt="img-tt">
 												</cfif>
 											<cfelseif link_kind EQ "url">
-												<img src="#link_path_url#" border="0">
+												<img src="#link_path_url#" border="0" style="max-width=400px;" img-tt="img-tt">
 											</cfif>
 											</a>
 										</cfif>
@@ -251,14 +251,14 @@
 										<cfif myid EQ file_id>
 											<a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#file_id#&what=files&loaddiv=content&folder_id=#attributes.folder_id#','#Jsstringformat(filename)#',1000,1);return false;">
 											<!--- If it is a PDF we show the thumbnail --->
-											<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND file_extension EQ "PDF">
-												<img src="#cloud_url#" border="0">
-											<cfelseif application.razuna.storage EQ "local" AND file_extension EQ "PDF">
+											<cfif (application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "nirvanix") AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
+												<img src="#cloud_url#" border="0" img-tt="img-tt">
+											<cfelseif application.razuna.storage EQ "local" AND (file_extension EQ "PDF" OR file_extension EQ "indd")>
 												<cfset thethumb = replacenocase(file_name_org, ".pdf", ".jpg", "all")>
 												<cfif FileExists("#ExpandPath("../../")#assets/#session.hostid#/#path_to_asset#/#thethumb#") IS "no">
-													<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0">
+													<img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" border="0" img-tt="img-tt">
 												<cfelse>
-													<img src="#thestorage##path_to_asset#/#thethumb#" border="0">
+													<img src="#thestorage##path_to_asset#/#thethumb#" border="0" img-tt="img-tt">
 												</cfif>
 											<cfelse>
 												<cfif FileExists("#ExpandPath("../../")#global/host/dam/images/icons/icon_#file_extension#.png") IS "no"><img src="#dynpath#/global/host/dam/images/icons/icon_txt.png" width="128" height="128" border="0"><cfelse><img src="#dynpath#/global/host/dam/images/icons/icon_#file_extension#.png" width="128" height="128" border="0"></cfif>
