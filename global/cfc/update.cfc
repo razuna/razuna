@@ -939,6 +939,41 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<!--- Update is_indexed (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_images SET is_indexed = '1'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_videos SET is_indexed = '1'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_audios SET is_indexed = '1'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_files SET is_indexed = '1'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+
+
 		<!--- Add indexing to scheduler --->
 		
 		<!--- Query host table --->
