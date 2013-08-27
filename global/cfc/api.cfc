@@ -497,11 +497,12 @@
 		<cfargument name="thetype" type="string" required="true" />
 		<cfargument name="workflow" type="string" required="true" />
 		<cfargument name="folderid" type="string" required="true" />
-		<!--- Params --->
+		<!-- Variables for workflow -->
 		<cfset var s = {}>
 		<cfset s.fileid = arguments.fileid>
 		<cfset s.thefiletype = arguments.thetype>
 		<cfset s.folder_id = arguments.folderid>
+		<cfset s.comingfrom = cgi.http_referer>
 		<!--- Loop over fileid and execute workflow for each file --->
 		<cfset s.folder_action = true>
 		<cfinvoke component="plugins" method="getactions" theaction="#arguments.workflow#" args="#s#" />
