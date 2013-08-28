@@ -174,7 +174,7 @@
 					$('##wl_razuna_tab_content').val('<a href="http://www.razuna.com" target="_blank"><img src="../../global/host/dam/images/razuna_logo-200.png" width="200" height="29" border="0" style="padding:3px 0px 0px 5px;"></a><br><a href="http://www.razuna.com" target="_blank">Razuna</a><br>Licensed under <a href="http://www.razuna.org/whatisrazuna/licensing" target="_blank">AGPL</a><br><a href="http://razuna.com" target="_blank">Razuna Hosted Platform</a> and <a href="http://razuna.org" target="_blank">Razuna Open Source</a><br><a href="http://blog.razuna.com" target="_blank">Visit the Razuna Blog for latest news.</a>');
 					break;
 				case 'wl_feedback':
-					$('##wl_feedback').val('<a href="##" onClick="feedback_widget.show();">Feedback</a>');
+					$('##wl_feedback').val('<a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Feedback</a>');
 					break;
 				case 'wl_link_search':
 					$('##wl_link_search').val('<a href="http://wiki.razuna.com/display/ecp/Search+and+Find+Assets" target="_blank" onclick="$(\'##searchselection\').toggle();">Help with Search</a>');

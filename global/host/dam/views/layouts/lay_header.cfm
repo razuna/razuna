@@ -136,7 +136,7 @@
 						<cfif application.razuna.whitelabel>
 							#wl_feedback#
 						<cfelse>
-							<a href="##" onClick="feedback_widget.show();">Feedback</a>
+							<a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Feedback</a>
 						</cfif>
 					</p>
 					<p><hr></p>

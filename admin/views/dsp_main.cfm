@@ -213,7 +213,7 @@
 									<th style="padding-top:15px;">Online Support Tools</th>
 								</tr>
 								<tr>
-									<td><a href="##" onClick="feedback_widget.show();">Leave us a Feedback</a></td>
+									<td><a href="##" onClick="javascript:ZDiscussions.showDiscussionsFBW();">Leave us a Feedback</a></td>
 								</tr>
 								<tr>
 									<td><a href="http://wiki.razuna.com/">Documentation (Wiki)</a></td>
