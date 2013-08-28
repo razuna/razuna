@@ -70,23 +70,18 @@
 <div id="footer">#trim( footercontent )#</div>
 <!--- Window Div --->
 <div id="thewindowcontent1" style="padding:10px;display:none;"></div>
-<!--- GS Code --->
+<!--- Forum Code --->
 <script type="text/javascript" charset="utf-8">
-  var is_ssl = ("https:" == document.location.protocol);
-  var asset_host = is_ssl ? "https://s3.amazonaws.com/getsatisfaction.com/" : "http://s3.amazonaws.com/getsatisfaction.com/";
-  document.write(unescape("%3Cscript src='" + asset_host + "javascripts/feedback-v2.js' type='text/javascript'%3E%3C/script%3E"));
+var hostURL = "//css.zohostatic.com/discussions/v1";//NO OUTPUTENCODING
+document.write(unescape("%3Cscript src='" + hostURL + "/js/discussions.feedbackwidget.js' type='text/javascript'%3E%3C/script%3E")); //No I18N
 </script>
-<script type="text/javascript" charset="utf-8">
-  var feedback_widget_options = {};
-  feedback_widget_options.display = "overlay";  
-  feedback_widget_options.company = "razuna";
-  feedback_widget_options.placement = "hidden";
-  feedback_widget_options.color = "##222";
-  feedback_widget_options.style = "question";
-  try{
-    var feedback_widget = new GSFN.feedback_widget(feedback_widget_options);
-  }
-  catch(e) {};
+<script type="text/javascript">
+var zdFBWSettings = {};
+zdFBWSettings.alignment = "hidden";//NO OUTPUTENCODING
+zdFBWSettings.fbURL = "http://forums.razuna.org/fbw?fbwId=125591000000015005";
+zdFBWSettings.defaultDomain = "discussions.zoho.com";//NO OUTPUTENCODING
+zdFBWSettings.display = "popout";
+var zdFBW = new ZDiscussions.loadZDFeedbackTab;
 </script>
 <!--- Dummy div --->
 <div id="loaddummy" style="display:none;"></div>
