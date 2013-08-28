@@ -238,7 +238,7 @@
 <cffunction name="addassetscheduledserverthread" output="false">
 	<cfargument name="thestruct" type="struct">
 	<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- Name of lock file --->
 	<cfset var lockfile = ".lock">
 	<cfif iswindows()>
@@ -544,7 +544,7 @@
 		<cfcatch type="any"></cfcatch>
 	</cftry>
 	<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 </cffunction>
 
 <!--- INSERT FROM EMAIL --->
@@ -1484,7 +1484,7 @@ This is the main function called directly by a single upload else from addassets
 	<cfparam default="" name="arguments.thestruct.assetmetadatacf">
 	<cfset arguments.thestruct.theimagepath = "#arguments.thestruct.thepath#/images">
 	<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- If zip_extract is undefined --->
 	<cfif arguments.thestruct.zip_extract EQ "" OR arguments.thestruct.zip_extract EQ "undefined">
 		<cfset arguments.thestruct.zip_extract = 0>
@@ -1614,7 +1614,7 @@ This is the main function called directly by a single upload else from addassets
 <cffunction name="removeasset" output="true">
 	<cfargument name="thestruct" type="struct">
 	<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- Thread --->
 	<cfthread action="run" intvars="#arguments.thestruct#">
 		<!--- Set time for remove --->
@@ -4901,7 +4901,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 	</cfloop>
 	<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- Feedback --->
 	<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 	<cfflush>
@@ -4988,7 +4988,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfloop>
 			<!--- Call to GC to clean memory --->
-			<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+			<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 			<cfflush>
@@ -5086,7 +5086,7 @@ This is the main function called directly by a single upload else from addassets
 				</cfif>
 			</cfloop>
 			<!--- Call to GC to clean memory --->
-			<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+			<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 			<cfflush>
@@ -5183,7 +5183,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
-		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -5278,7 +5278,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
-		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -5373,7 +5373,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
-		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -5468,7 +5468,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
-		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!--- Feedback --->
 		<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
 		<cfflush>
@@ -5563,7 +5563,7 @@ This is the main function called directly by a single upload else from addassets
 			</cfif>
 		</cfloop>
 		<!--- Call to GC to clean memory --->
-		<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<!---
 			<!--- Feedback --->
 			<cfoutput><br /><br />Checking if there are any subfolders...<br/><br/></cfoutput>
@@ -5759,7 +5759,7 @@ This is the main function called directly by a single upload else from addassets
 		</cfif>
 	</cfloop>
 	<!--- Call to GC to clean memory --->
-	<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
+	<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	<!--- Feedback --->
 	<cfoutput><span style="color:green;font-weight:bold;">Successfully added the asset(s)!</span><br><br></cfoutput>
 	<cfflush>
