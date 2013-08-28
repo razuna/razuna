@@ -141,6 +141,8 @@
 		<cfargument name="action" type="string">
 		<cfargument name="fileid" type="string">
 		<cfargument name="folder_id" type="string">
+		<!--- For Workflow --->
+		<cfset arguments.comingfrom = cgi.http_referer>
 		<!--- Query --->
 		<cfif arguments.action NEQ "on_folder_add">
 			<cfquery datasource="#application.razuna.api.dsn#" name="qry_forwf">
