@@ -906,7 +906,118 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<!--- Add is_indexed  --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<!--- Update is_indexed (since MS SQL doesn't add default values by adding a column) --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_images SET is_indexed = '1'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_videos SET is_indexed = '1'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_audios SET is_indexed = '1'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			UPDATE raz1_files SET is_indexed = '1'
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 
+
+		<!--- Add indexing to scheduler --->
+		
+		<!--- Query host table --->
+		<cfquery datasource="#application.razuna.datasource#" name="qry_hosts">
+		SELECT host_id, host_path
+		FROM hosts
+		</cfquery>
+		<!--- Loop over hosts --->
+		<cfloop query="qry_hosts">
+			<cfset var newschid = createuuid()>
+			<!--- Insert --->
+			<cfquery datasource="#application.razuna.datasource#">
+			INSERT INTO #session.hostdbprefix#schedules 
+			(sched_id, 
+			 set2_id_r, 
+			 sched_user, 
+			 sched_method, 
+			 sched_name,
+			 sched_interval,
+			 host_id
+			)
+			VALUES 
+			(<cfqueryparam value="#newschid#" cfsqltype="CF_SQL_VARCHAR">, 
+			 <cfqueryparam value="1" cfsqltype="cf_sql_numeric">, 
+			 <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">, 
+			 <cfqueryparam value="indexing" cfsqltype="cf_sql_varchar">, 
+			 <cfqueryparam value="Indexing" cfsqltype="cf_sql_varchar">,
+			 <cfqueryparam value="daily" cfsqltype="cf_sql_varchar">,
+			 <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
+			 )
+			</cfquery>
+			<!--- Save scheduled event in CFML scheduling engine --->
+			<cfschedule action="update"
+				task="RazScheduledUploadEvent[#newschid#]" 
+				operation="HTTPRequest"
+				url="http://#cgi.http_host#/#cgi.context_path#/#host_path#/dam/index.cfm?fa=c.scheduler_doit&sched_id=#newschid#"
+				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
+				startTime="00:01"
+				endDate=""
+				endTime="23:59"
+				interval="120"
+			>
+		</cfloop>
+		
 		<!--- Add to internal table --->
 		<cftry>
 			<cfquery dataSource="razuna_default">

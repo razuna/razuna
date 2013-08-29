@@ -405,25 +405,21 @@
 				<cfset var thedb = "images_text">
 				<cfset var theid = "img_id">
 				<cfset var theidr = "img_id_r">
-				<cfset var lucenecategory = "img">
 				<cfset var cachetype = "images">
 			<cfelseif arguments.assettype EQ "vid">
 				<cfset var thedb = "videos_text">
 				<cfset var theid = "vid_id">
 				<cfset var theidr = "vid_id_r">
-				<cfset var lucenecategory = "vid">
 				<cfset var cachetype = "videos">
 			<cfelseif arguments.assettype EQ "aud">
 				<cfset var thedb = "audios_text">
 				<cfset var theid = "aud_id">
 				<cfset var theidr = "aud_id_r">
-				<cfset var lucenecategory = "aud">
 				<cfset var cachetype = "audios">
 			<cfelse>
 				<cfset var thedb = "files_desc">
 				<cfset var theid = "file_id">
 				<cfset var theidr = "file_id_r">
-				<cfset var lucenecategory = "doc">
 				<cfset var cachetype = "files">
 			</cfif>
 			<!--- Deserialize the JSON back into an array --->
@@ -504,7 +500,8 @@
 					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#images
 					SET 
 					img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
+					img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					</cfquery>
 				<cfelseif arguments.assettype EQ "vid">
@@ -523,7 +520,8 @@
 					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#videos
 					SET 
 					vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
+					vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					</cfquery>
 				<cfelseif arguments.assettype EQ "aud">
@@ -542,7 +540,8 @@
 					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#audios
 					SET 
 					aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
+					aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					</cfquery>
 				<cfelse>
@@ -561,12 +560,11 @@
 					UPDATE #application.razuna.api.prefix["#arguments.api_key#"]#files
 					SET 
 					file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-					file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
+					file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+					is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 					WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 					</cfquery>
 				</cfif>
-				<!--- Initiate the index --->
-				<cfset updateSearch(assetid=i,assetcategory=lucenecategory,api_key=arguments.api_key)>
 				<!--- Call workflow --->
 				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
 			</cfloop>

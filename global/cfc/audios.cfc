@@ -372,6 +372,13 @@
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
 		</cfif>
+		<!--- Update index --->
+		<cfquery datasource="#variables.dsn#">
+		UPDATE #session.hostdbprefix#audios
+		SET is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		WHERE aud_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		</cfquery>
 		<!--- Update main record with dates --->
 		<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.file_id#" />
 		<!--- Query --->
@@ -387,19 +394,6 @@
 			<cfset arguments.thestruct.file_name = qryorg.aud_name>
 		<cfelse>
 			<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
-		</cfif>
-		<!--- Lucene --->
-		<cfset arguments.thestruct.qrydetail.folder_id_r = arguments.thestruct.folder_id>
-		<cfset arguments.thestruct.qrydetail.path_to_asset = qryorg.path_to_asset>
-		<cfset arguments.thestruct.filenameorg = arguments.thestruct.qrydetail.filenameorg>
-		<!--- Local --->
-		<cfif application.razuna.storage EQ "local">
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud">
-			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud" online="#arguments.thestruct.aud_online#">
-		<!--- Cloud --->
-		<cfelseif application.razuna.storage NEQ "local">
-			<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud" notfile="T">
-			<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="aud" online="#arguments.thestruct.aud_online#" notfile="T">
 		</cfif>
 		<!--- Log --->
 		<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryorg.aud_name#',logfiletype='aud',assetid=arguments.thestruct.file_id)>
@@ -863,15 +857,14 @@
 				UPDATE #session.hostdbprefix#audios
 				SET 
 				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">
+				in_trash = <cfqueryparam value="F" cfsqltype="cf_sql_varchar">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE aud_id = <cfqueryparam value="#arguments.thestruct.aud_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<!--- Update Dates --->
 					<cfinvoke component="global" method="update_dates" type="aud" fileid="#arguments.thestruct.aud_id#" />
-					<!--- Update Lucene --->
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.aud_id#" category="aud" notfile="T">
 					<!--- MOVE ALL RELATED FOLDERS TOO!!!!!!! --->
 					<cfinvoke method="moverelated" thestruct="#arguments.thestruct#">
 					<!--- Execute workflow --->
@@ -914,12 +907,12 @@
 			<!--- Update DB --->
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE #session.hostdbprefix#audios
-			SET folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">
+			SET 
+			folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 			WHERE aud_id = <cfqueryparam value="#aud_id#" cfsqltype="CF_SQL_VARCHAR">
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			</cfquery>
-			<!--- Update Lucene --->
-			<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#aud_id#" category="aud" notfile="T">
 		</cfloop>
 	</cfif>
 	<cfreturn />

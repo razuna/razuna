@@ -185,35 +185,34 @@
 				Update #application.razuna.api.prefix["#arguments.api_key#"]#images
 				SET 
 				img_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
+				img_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE img_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update #application.razuna.api.prefix["#arguments.api_key#"]#videos
 				SET 
 				vid_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
+				vid_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE vid_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update #application.razuna.api.prefix["#arguments.api_key#"]#audios
 				SET 
 				aud_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
+				aud_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE aud_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
 				<cfquery datasource="#application.razuna.api.dsn#">
 				Update #application.razuna.api.prefix["#arguments.api_key#"]#files
 				SET 
 				file_change_time = <cfqueryparam cfsqltype="cf_sql_timestamp" value="#now()#">,
-				file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">
+				file_change_date = <cfqueryparam value="#now()#" cfsqltype="cf_sql_date">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE file_id = <cfqueryparam cfsqltype="cf_sql_varchar" value="#i#">
 				</cfquery>
-				<!--- Initiate the index --->
-				<cfset updateSearch(assetid=i,assetcategory="img",api_key=arguments.api_key)>
-				<cfset updateSearch(assetid=i,assetcategory="vid",api_key=arguments.api_key)>
-				<cfset updateSearch(assetid=i,assetcategory="aud",api_key=arguments.api_key)>
-				<cfset updateSearch(assetid=i,assetcategory="doc",api_key=arguments.api_key)>
 				<!--- Call workflow --->
 				<cfset executeworkflow(api_key=arguments.api_key,action='on_file_edit',fileid=i)>
 			</cfloop>

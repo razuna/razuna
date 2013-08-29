@@ -41,80 +41,123 @@
 	
 	<!--- Setup the Collection for the first time --->
 	<!--- When adding a new host, creating one on the first time setup --->
-	<cffunction name="setup" access="public" output="false">
+	<cffunction name="setup" access="public" output="false" returntype="void">
 		<cfargument name="colname" type="string">
-			<!--- Delete collection --->
-			<cftry>
-				<cfset CollectionDelete(arguments.colname)>
-				<cfcatch type="any">
-					<!--- <cfmail from="server@razuna.com" to="support@razuna.com" subject="collection delete error #arguments.colname#" type="html"><cfdump var="#cfcatch#"></cfmail> --->
-				</cfcatch>
-			</cftry>
-			<!--- Delete path on disk --->
-			<cftry>
-				<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
-				<cfcatch type="any">
-					<!--- <cfmail from="server@razuna.com" to="support@razuna.com" subject="collection error remove directory #arguments.colname#" type="html"><cfdump var="#cfcatch#"></cfmail> --->
-				</cfcatch>
-			</cftry>
-			<!--- Create collection --->
-			<cftry>
-				<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
-				<cfcatch type="any">
-					<!--- <cfmail from="server@razuna.com" to="support@razuna.com" subject="collection create error #arguments.colname#" type="html"><cfdump var="#cfcatch#"></cfmail> --->
-				</cfcatch>
-			</cftry>
+		<!--- Delete collection --->
+		<cftry>
+			<cfset CollectionDelete(arguments.colname)>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
+		<!--- Delete path on disk --->
+		<cftry>
+			<cfdirectory action="delete" directory="#expandpath("../..")#WEB-INF/collections/#arguments.colname#" recurse="true" />
+			<cfcatch type="any"></cfcatch>
+		</cftry>
+		<!--- Create collection --->
+		<cftry>
+			<cfset CollectionCreate(collection=arguments.colname,relative=true,path="/WEB-INF/collections/#arguments.colname#")>
+			<cfcatch type="any"></cfcatch>
+		</cftry>
 	</cffunction>
 	
 	<!--- INDEX: Update --->
-	<cffunction name="index_update" access="public" output="true">
-		<cfargument name="thestruct" type="struct" required="false">
-		<cfargument name="assetid" type="string" required="false">
-		<cfargument name="category" type="string" required="true">
-		<cfargument name="dsn" type="string" required="true">
-		<cfargument name="online" type="string" default="F" required="false">
-		<cfargument name="notfile" type="string" default="F" required="false">
-		<cfargument name="fromapi" type="string" default="F" required="false">
-		<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
-		<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
-		<cfargument name="storage" type="string" default="#application.razuna.storage#" required="false">
-		<cfargument name="thedatabase" type="string" default="#application.razuna.thedatabase#" required="false">
-		<!--- Call indexing in a thread --->
-		<cfthread action="run" intstruct="#arguments#" priority="low">
-			<cfinvoke method="index_update_thread">
-				<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
-				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
-				<cfinvokeargument name="category" value="#attributes.intstruct.category#" />
-				<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
-				<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
-				<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
-				<cfinvokeargument name="fromapi" value="#attributes.intstruct.fromapi#" />
-				<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
-				<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
-				<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
-				<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
+	<cffunction name="index_update" access="public" output="false" returntype="void">
+		<cfargument name="dsn" default="#application.razuna.datasource#" required="false">
+		<cfargument name="thestruct" default="#structnew()#" required="false">
+		<cfargument name="assetid" default="0" required="false">
+		<cfargument name="online" default="F" required="false">
+		<cfargument name="notfile" default="F" required="false">
+		<cfargument name="prefix" default="#session.hostdbprefix#" required="false">
+		<cfargument name="hostid" default="#session.hostid#" required="false">
+		<cfargument name="storage" default="#application.razuna.storage#" required="false">
+		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
+		<!--- Check if there is a thread already running if so abort --->
+		<cfif arguments.assetid EQ 0>
+			<cftry>
+				<cfloop array="#getallthreads()#" index="i">
+					<cfif i.name EQ "search_reindex">
+						<cfabort>
+					</cfif>
+				</cfloop>
+				<cfcatch type="any"></cfcatch>
+			</cftry>
+		</cfif>
+		<!--- If the assetid is all it means a complete rebuild --->
+		<cfif arguments.assetid EQ "all">
+			<!--- Set all records to non indexed --->
+			<cfquery datasource="#arguments.dsn#">
+			UPDATE #arguments.prefix#images
+			SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+			</cfquery>
+			<cfquery datasource="#arguments.dsn#">
+			UPDATE #arguments.prefix#videos
+			SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+			</cfquery>
+			<cfquery datasource="#arguments.dsn#">
+			UPDATE #arguments.prefix#audios
+			SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+			</cfquery>
+			<cfquery datasource="#arguments.dsn#">
+			UPDATE #arguments.prefix#files
+			SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="0">
+			WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+			</cfquery>
+		</cfif>
+		<!--- Grab files to index --->
+		<cfinvoke method="query_for_index" returnvariable="qry">
+			<cfinvokeargument name="dsn" value="#arguments.dsn#" />
+			<cfinvokeargument name="prefix" value="#arguments.prefix#" />
+			<cfinvokeargument name="hostid" value="#arguments.hostid#" />
+			<cfinvokeargument name="thedatabase" value="#arguments.thedatabase#" />
+			<cfinvokeargument name="storage" value="#arguments.storage#" />
+			<cfinvokeargument name="assetid" value="#arguments.assetid#" />
+		</cfinvoke>
+		<!--- Need to call this if storage is cloud based --->
+		<cfif qry.recordcount NEQ 0 AND (application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai")>
+			<cfinvoke method="files_in_cloud">
+				<cfinvokeargument name="thestruct" value="#arguments.thestruct#" />
+				<cfinvokeargument name="qry" value="#qry#" />
 			</cfinvoke>
+		</cfif>
+		<!--- Put qry into arguments --->
+		<cfset arguments.qry = qry>
+		<!--- Loop over the recordset --->
+		<cfthread name="search_reindex" action="run" intstruct="#arguments#" priority="low">
+			<cfloop query="attributes.intstruct.qry">
+				<cfinvoke method="index_update_thread">
+					<cfinvokeargument name="thestruct" value="#attributes.intstruct.thestruct#" />
+					<cfinvokeargument name="assetid" value="#theid#" />
+					<cfinvokeargument name="category" value="#cat#" />
+					<cfinvokeargument name="dsn" value="#attributes.intstruct.dsn#" />
+					<cfinvokeargument name="online" value="#attributes.intstruct.online#" />
+					<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
+					<cfinvokeargument name="prefix" value="#attributes.intstruct.prefix#" />
+					<cfinvokeargument name="hostid" value="#attributes.intstruct.hostid#" />
+					<cfinvokeargument name="storage" value="#attributes.intstruct.storage#" />
+					<cfinvokeargument name="thedatabase" value="#attributes.intstruct.thedatabase#" />
+				</cfinvoke>
+			</cfloop>
 		</cfthread>
 	</cffunction>
 
 	<!--- INDEX: Update --->
 	<cffunction name="index_update_thread" access="public" output="true">
-		<cfargument name="thestruct" type="struct" required="false">
-		<cfargument name="assetid" type="string" required="false">
-		<cfargument name="category" type="string" required="true">
-		<cfargument name="dsn" type="string" required="true">
-		<cfargument name="online" type="string" default="F" required="false">
-		<cfargument name="notfile" type="string" default="F" required="false">
-		<cfargument name="fromapi" type="string" default="F" required="false">
-		<cfargument name="prefix" type="string" default="#session.hostdbprefix#" required="false">
-		<cfargument name="hostid" type="string" default="#session.hostid#" required="false">
-		<cfargument name="storage" type="string" default="#application.razuna.storage#" required="false">
-		<cfargument name="thedatabase" type="string" default="#application.razuna.thedatabase#" required="false">
+		<cfargument name="thestruct" required="false">
+		<cfargument name="assetid" required="false">
+		<cfargument name="category" required="true">
+		<cfargument name="dsn" required="true">
+		<cfargument name="online" default="F" required="false">
+		<cfargument name="notfile" default="F" required="false">
+		<cfargument name="prefix" default="#session.hostdbprefix#" required="false">
+		<cfargument name="hostid" default="#session.hostid#" required="false">
+		<cfargument name="storage" default="#application.razuna.storage#" required="false">
+		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
 		<!--- Param --->
 		<cfset var folderpath = "">
 		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
-		<!--- Call to GC to clean memory --->
-		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 		<cftry>
 			<!--- FOR FILES --->
 			<cfif arguments.category EQ "doc">
@@ -172,37 +215,47 @@
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
-					<cfscript>
-						args = {
-						collection : arguments.hostid,
-						query : qry_all,
-						category : "thecategory",
-						categoryTree : "id",
-						key : "id",
-						title : "id",
-						body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath,folder",
-						custommap :{
-							id : "id",
-							filename : "filename",
-							filenameorg : "filenameorg",
-							keywords : "keywords",
-							description : "description",
-							rawmetadata : "rawmetadata",
-							extension : "theext",
-							author : "author",
-							rights : "rights",
-							authorsposition : "authorsposition", 
-							captionwriter : "captionwriter", 
-							webstatement : "webstatement", 
-							rightsmarked : "rightsmarked",
-							labels : "labels",
-							customfieldvalue : "customfieldvalue",
-							folderpath : "folderpath",
-							folder : "folder"
-							}
-						};
-						results = CollectionIndexCustom( argumentCollection=args );
-					</cfscript>
+				<cfscript>
+					args = {
+					collection : arguments.hostid,
+					query : qry_all,
+					category : "thecategory",
+					categoryTree : "id",
+					key : "id",
+					title : "id",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,author,rights,authorsposition,captionwriter,webstatement,rightsmarked,labels,customfieldvalue,folderpath,folder",
+					custommap :{
+						id : "id",
+						filename : "filename",
+						filenameorg : "filenameorg",
+						keywords : "keywords",
+						description : "description",
+						rawmetadata : "rawmetadata",
+						extension : "theext",
+						author : "author",
+						rights : "rights",
+						authorsposition : "authorsposition", 
+						captionwriter : "captionwriter", 
+						webstatement : "webstatement", 
+						rightsmarked : "rightsmarked",
+						labels : "labels",
+						customfieldvalue : "customfieldvalue",
+						folderpath : "folderpath",
+						folder : "folder"
+						}
+					};
+					results = CollectionIndexCustom( argumentCollection=args );
+				</cfscript>
+				<!--- Update database --->
+				<cfquery datasource="#arguments.dsn#">
+				UPDATE #arguments.prefix#files
+				SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Flush Cache --->
+				<cfset resetcachetoken("files")>
+				<cfset resetcachetoken("search")>
 			<!--- FOR IMAGES --->
 			<cfelseif arguments.category EQ "img">
 				<!--- Query Record --->
@@ -266,64 +319,74 @@
 				FROM qry_all
 				</cfquery>
 				<!--- Indexing --->
-					<cfscript>
-						args = {
-						collection : arguments.hostid,
-						query : qry_all,
-						category : "thecategory",
-						categoryTree : "id",
-						key : "id",
-						title : "id",
-						body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath,folder",
-						custommap :{
-							id : "id",
-							filename : "filename",
-							filenameorg : "filenameorg",
-							keywords : "keywords",
-							description : "description",
-							rawmetadata : "rawmetadata",
-							extension : "theext",
-							subjectcode : "subjectcode",
-							creator : "creator",
-							title : "title", 
-							authorsposition : "authorsposition", 
-							captionwriter : "captionwriter", 
-							ciadrextadr : "ciadrextadr", 
-							category : "category",
-							supplementalcategories : "supplementalcategories", 
-							urgency : "urgency",
-							ciadrcity : "ciadrcity", 
-							ciadrctry : "ciadrctry", 
-							location : "location", 
-							ciadrpcode : "ciadrpcode", 
-							ciemailwork : "ciemailwork", 
-							ciurlwork : "ciurlwork", 
-							citelwork : "citelwork", 
-							intellectualgenre : "intellectualgenre", 
-							instructions : "instructions", 
-							source : "source",
-							usageterms : "usageterms", 
-							copyrightstatus : "copyrightstatus", 
-							transmissionreference : "transmissionreference", 
-							webstatement : "webstatement", 
-							headline : "headline", 
-							datecreated : "datecreated", 
-							city : "city", 
-							ciadrregion : "ciadrregion", 
-							country : "country", 
-							countrycode : "countrycode", 
-							scene : "scene", 
-							state : "state", 
-							credit : "credit", 
-							rights : "rights",
-							labels : "labels",
-							customfieldvalue : "customfieldvalue",
-							folderpath : "folderpath",
-							folder : "folder"
-							}
-						};
-						results = CollectionIndexCustom( argumentCollection=args );
-					</cfscript>
+				<cfscript>
+					args = {
+					collection : arguments.hostid,
+					query : qry_all,
+					category : "thecategory",
+					categoryTree : "id",
+					key : "id",
+					title : "id",
+					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,subjectcode,creator,title,authorsposition,captionwriter,ciadrextadr,category,supplementalcategories,urgency,ciadrcity,ciadrctry,location,ciadrpcode,ciemailwork,ciurlwork,citelwork,intellectualgenre,instructions,source,usageterms,copyrightstatus,transmissionreference,webstatement,headline,datecreated,city,ciadrregion,country,countrycode,scene,state,credit,rights,labels,customfieldvalue,folderpath,folder",
+					custommap :{
+						id : "id",
+						filename : "filename",
+						filenameorg : "filenameorg",
+						keywords : "keywords",
+						description : "description",
+						rawmetadata : "rawmetadata",
+						extension : "theext",
+						subjectcode : "subjectcode",
+						creator : "creator",
+						title : "title", 
+						authorsposition : "authorsposition", 
+						captionwriter : "captionwriter", 
+						ciadrextadr : "ciadrextadr", 
+						category : "category",
+						supplementalcategories : "supplementalcategories", 
+						urgency : "urgency",
+						ciadrcity : "ciadrcity", 
+						ciadrctry : "ciadrctry", 
+						location : "location", 
+						ciadrpcode : "ciadrpcode", 
+						ciemailwork : "ciemailwork", 
+						ciurlwork : "ciurlwork", 
+						citelwork : "citelwork", 
+						intellectualgenre : "intellectualgenre", 
+						instructions : "instructions", 
+						source : "source",
+						usageterms : "usageterms", 
+						copyrightstatus : "copyrightstatus", 
+						transmissionreference : "transmissionreference", 
+						webstatement : "webstatement", 
+						headline : "headline", 
+						datecreated : "datecreated", 
+						city : "city", 
+						ciadrregion : "ciadrregion", 
+						country : "country", 
+						countrycode : "countrycode", 
+						scene : "scene", 
+						state : "state", 
+						credit : "credit", 
+						rights : "rights",
+						labels : "labels",
+						customfieldvalue : "customfieldvalue",
+						folderpath : "folderpath",
+						folder : "folder"
+						}
+					};
+					results = CollectionIndexCustom( argumentCollection=args );
+				</cfscript>
+				<!--- Update database --->
+				<cfquery datasource="#arguments.dsn#">
+				UPDATE #arguments.prefix#images
+				SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
+				<!--- Flush Cache --->
+				<cfset resetcachetoken("images")>
+				<cfset resetcachetoken("search")>
 			<!--- FOR VIDEOS --->
 			<cfelseif arguments.category EQ "vid">
 				<!--- Query Record --->
@@ -376,6 +439,13 @@
 			    '#thedesc#' as description, '#thekeys#' as keywords, rawmetadata, thecategory,
 				theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
 				FROM qry_all
+				</cfquery>
+				<!--- Update database --->
+				<cfquery datasource="#arguments.dsn#">
+				UPDATE #arguments.prefix#videos
+				SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
 				</cfquery>
 			<!--- FOR AUDIOS --->
 			<cfelseif arguments.category EQ "aud">
@@ -430,35 +500,46 @@
 				theext, '#l#' as labels, '#REReplace(c,"#chr(13)#|#chr(9)#|\n|\r","","ALL")#' as customfieldvalue, '#folderpath#' as folderpath
 				FROM qry_all
 				</cfquery>
+				<!--- Update database --->
+				<cfquery datasource="#arguments.dsn#">
+				UPDATE #arguments.prefix#audios
+				SET is_indexed = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
+				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.assetid#">
+				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+				</cfquery>
 			</cfif>
 			<!--- Only for video and audio files --->
 			<cfif arguments.category EQ "vid" OR arguments.category EQ "aud">
 				<!--- Indexing --->
-					<cfscript>
-					args = {
-					collection : arguments.hostid,
-					query : qry_all,
-					category : "thecategory",
-					categoryTree : "id",
-					key : "id",
-					title : "id",
-					body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath,folder",
-					custommap :{
-						id : "id",
-						filename : "filename",
-						filenameorg : "filenameorg",
-						keywords : "keywords",
-						description : "description",
-						rawmetadata : "rawmetadata",
-						extension : "theext",
-						labels : "labels",
-						customfieldvalue : "customfieldvalue",
-						folderpath : "folderpath",
-						folder : "folder"
-						}
-					};
-					results = CollectionIndexCustom( argumentCollection=args );
-					</cfscript>
+				<cfscript>
+				args = {
+				collection : arguments.hostid,
+				query : qry_all,
+				category : "thecategory",
+				categoryTree : "id",
+				key : "id",
+				title : "id",
+				body : "id,filename,filenameorg,keywords,description,rawmetadata,theext,labels,customfieldvalue,folderpath,folder",
+				custommap :{
+					id : "id",
+					filename : "filename",
+					filenameorg : "filenameorg",
+					keywords : "keywords",
+					description : "description",
+					rawmetadata : "rawmetadata",
+					extension : "theext",
+					labels : "labels",
+					customfieldvalue : "customfieldvalue",
+					folderpath : "folderpath",
+					folder : "folder"
+					}
+				};
+				results = CollectionIndexCustom( argumentCollection=args );
+				</cfscript>
+				<!--- Flush Cache --->
+				<cfset resetcachetoken("videos")>
+				<cfset resetcachetoken("audios")>
+				<cfset resetcachetoken("search")>
 			</cfif>
 			<cfcatch type="any">
 				<cfset consoleoutput(true)>
@@ -466,7 +547,7 @@
 			</cfcatch>
 		</cftry>
 		<!--- Index only doc files --->
-		<cfif qry_all.link_kind NEQ "url" AND arguments.category EQ "doc" AND arguments.fromapi EQ "F" AND arguments.notfile EQ "F">
+		<cfif qry_all.link_kind NEQ "url" AND arguments.category EQ "doc" AND arguments.notfile EQ "F">
 			<cftry>
 				<!--- Nirvanix or Amazon --->
 				<cfif (arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon" OR arguments.storage EQ "akamai")>
@@ -490,14 +571,15 @@
 					<!--- Index: Update file --->
 						<cfindex action="update" type="file" extensions="*.*" collection="#arguments.hostid#" key="#arguments.thestruct.qryfile.path#" category="#arguments.category#" categoryTree="#qry_all.id#">
 				</cfif>
+				<!--- Flush Cache --->
+				<cfset resetcachetoken("files")>
+				<cfset resetcachetoken("search")>
 				<cfcatch type="any">
 					<cfset consoleoutput(true)>
 					<cfset console(cfcatch)>
 				</cfcatch>
 			</cftry>
 		</cfif>
-		<!--- Call to GC to clean memory --->
-		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	</cffunction>
 	
 	<!--- Get custom values --->
@@ -565,8 +647,6 @@
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
 			<cfcatch type="any"></cfcatch>
 		</cftry>
-		<!--- Call to GC to clean memory --->
-		<!--- <cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()> --->
 	</cffunction>
 	
 	<!--- INDEX: Delete Folder --->
@@ -695,184 +775,40 @@
 	</cffunction>
 
 	<!--- Get all assets for Lucene Rebuilding --->
-	<cffunction name="rebuild" output="true">
-		<cfargument name="thestruct" type="struct">
-		<!--- Feedback --->
-		<cfoutput><strong>Starting the Re-Indexing process...</strong><br><br></cfoutput>
-		<cfflush>
-		<!--- Param --->
-		<cfset application.razuna.processid = createuuid("")>
-		<cfset arguments.thestruct.rebuild = 1>
-		<!--- Set time for remove --->
-		<cfset removetime = DateAdd("h", -24, "#now()#")>
-		<!--- Clean the db with all entries that are older then one day
-		<cfquery datasource="#variables.dsn#">
-		DELETE FROM search_reindex
-		WHERE datetime < <cfqueryparam cfsqltype="cf_sql_timestamp" value="#removetime#">
-		</cfquery> --->
-		<!--- Feedback --->
-		<cfoutput><strong>Removing current index...</strong><br><br></cfoutput>
-		<cfflush>
-		<!--- Remove the index --->
-		<!--- <cfif application.razuna.storage EQ "local">
-			<cfindex action="purge" collection="#session.hostid#" />
-		</cfif> --->
-		<!--- Feedback --->
-		<cfoutput><strong>Let's see how many documents we have to re-index...</strong><br><br></cfoutput>
-		<cfflush>
-		<!--- Get all assets --->
-		<cfquery name="qry" datasource="#application.razuna.datasource#"> 
-	    <!--- Files --->
-	    SELECT file_id id, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, 
-	    file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize
-		FROM #session.hostdbprefix#files
-		WHERE (folder_id_r IS NOT NULL OR folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
-			AND cloud_url_org IS NOT NULL 
-			AND cloud_url_org <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-		</cfif>
-		UNION ALL
-		<!--- Images --->
-		SELECT img_id id, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url,
-		img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize
-		FROM #session.hostdbprefix#images
-		WHERE (img_group IS NULL OR img_group = '')
-		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
-			AND cloud_url_org IS NOT NULL 
-			AND cloud_url_org <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-		</cfif>
-		UNION ALL
-		<!--- Videos --->
-		SELECT vid_id id, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url,
-		vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize
-		FROM #session.hostdbprefix#videos
-		WHERE (vid_group IS NULL OR vid_group = '')
-		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
-			AND cloud_url_org IS NOT NULL 
-			AND cloud_url_org <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-		</cfif>
-		UNION ALL
-		<!--- Audios --->
-		SELECT aud_id id, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url,
-		aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize
-		FROM #session.hostdbprefix#audios
-		WHERE (aud_group IS NULL OR aud_group = '')
-		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon">
-			AND cloud_url_org IS NOT NULL 
-			AND cloud_url_org <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
-		</cfif>
-		</cfquery>
-		<!--- Feedback --->
-		<cfoutput><strong>There are over #qry.recordcount# assets that we need to index. Ok, let's do this...</strong><br><br></cfoutput>
-		<cfflush>
-		<!--- Feedback --->
-		<cfoutput><strong>Starting re-indexing...</strong><br><br></cfoutput>
-		<cfflush>
-		<!--- CLOUD --->
-		<cfif application.razuna.storage EQ "nirvanix" OR application.razuna.storage EQ "amazon" OR application.razuna.storage EQ "akamai">
-			<!--- Params --->
-			<cfset arguments.thestruct.qryfile.path = arguments.thestruct.thepath & "/incoming/reindex_" & application.razuna.processid>
-			<cfset arguments.thestruct.hostid = session.hostid>
-			<!--- Create a temp folder for the documents --->
-			<cfdirectory action="create" directory="#arguments.thestruct.qryfile.path#" mode="775">
-			<!--- The tool paths --->
-			<cfinvoke component="settings" method="get_tools" returnVariable="arguments.thestruct.thetools" />
-			<!--- Go grab the platform --->
-			<cfinvoke component="assets" method="iswindows" returnvariable="arguments.thestruct.iswindows">
-			<!--- Loop over records --->
-			<cfloop query="qry">
-				<cfif link_kind NEQ "url">
-					<!--- Params --->
-					<cfset arguments.thestruct.link_kind = link_kind>
-					<!--- DOCS download them and index --->
-					<cfif cat EQ "doc">
-						<!--- Feedback --->
-						<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)</strong><br></cfoutput>
-						<cfflush>
-						<!--- Download --->
-						<cfif application.razuna.storage EQ "akamai">
-							<cfhttp url="#arguments.thestruct.akaurl##arguments.thestruct.akadoc#/#file_name_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
-						<cfelseif cloud_url_org CONTAINS "://">
-							<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#arguments.thestruct.qryfile.path#"></cfhttp>
-						</cfif>
-						<!--- If download was successful --->
-						<cfif fileexists("#arguments.thestruct.qryfile.path#/#file_name_org#")>
-							<!--- Call to update asset --->
-							<cfinvoke method="index_update">
-								<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
-								<cfinvokeargument name="assetid" value="#id#">
-								<cfinvokeargument name="category" value="#cat#">
-								<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
-								<cfinvokeargument name="notfile" value="#notfile#">
-							</cfinvoke>
-							<!--- Update file DB with new lucene_key --->
-							<cfquery datasource="#application.razuna.datasource#">
-							UPDATE #session.hostdbprefix#files
-							SET lucene_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.qryfile.path#/#file_name_org#">
-							WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-							</cfquery>
-						</cfif>
-					<!--- All other assets simply index --->
-					<cfelse>
-						<!--- Feedback --->
-						<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)...</strong><br></cfoutput>
-						<cfflush>
-						<!--- Call to update asset --->
-						<cfinvoke method="index_update">
-							<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
-							<cfinvokeargument name="assetid" value="#id#">
-							<cfinvokeargument name="category" value="#cat#">
-							<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
-							<cfinvokeargument name="notfile" value="#notfile#">
-						</cfinvoke>
-					</cfif>
+	<cffunction name="files_in_cloud" output="false" returntype="void" access="private">
+		<cfargument name="thestruct" type="struct" required="true">
+		<cfargument name="qry" type="query" required="true">
+		<!--- Params --->
+		<cfset var docpath = arguments.thestruct.thepath & "/incoming/reindex_" & createuuid("")>
+		<!--- Create a temp folder for the documents --->
+		<cfdirectory action="create" directory="#docpath#" mode="775">
+		<!--- Loop over records and only download for docs --->
+		<cfloop query="arguments.qry">
+			<cfif link_kind NEQ "url" AND cat EQ "doc">
+				<!--- Download --->
+				<cfif application.razuna.storage EQ "akamai">
+					<cfhttp url="#arguments.thestruct.akaurl##arguments.thestruct.akadoc#/#file_name_org#" file="#file_name_org#" path="#docpath#"></cfhttp>
+				<cfelseif cloud_url_org CONTAINS "://">
+					<cfhttp url="#cloud_url_org#" file="#file_name_org#" path="#docpath#"></cfhttp>
 				</cfif>
-			</cfloop>
-		<!--- LOCAL --->
-		<cfelse>
-			<cfloop query="qry">
-				<!--- Check if file exists if not don't index --->
-				<!--- <cfif fileexists("#arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#file_name_org#")> --->
-					<!--- Feedback --->
-					<cfoutput><strong>Indexing: #thisassetname# (#thesize# bytes)...</strong><br></cfoutput>
-					<cfflush>
-					<!--- Params --->
-					<cfset arguments.thestruct.link_kind = link_kind>
-					<cfset arguments.thestruct.qryfile.path = link_path_url>
-					<!--- Call to update asset --->
-					<cfinvoke method="index_update">
-						<cfinvokeargument name="thestruct" value="#arguments.thestruct#">
-						<cfinvokeargument name="assetid" value="#id#">
-						<cfinvokeargument name="category" value="#cat#">
-						<cfinvokeargument name="dsn" value="#application.razuna.datasource#">
-					</cfinvoke>
-				<!---
-<cfelse>
-					<cfoutput><strong>NOT: #arguments.thestruct.assetpath#/#session.hostid#/#path_to_asset#/#file_name_org#...</strong><br></cfoutput>
-					<cfflush>
+				<!--- If download was successful --->
+				<cfif fileexists("#docpath#/#file_name_org#")>
+					<!--- Update file DB with new lucene_key --->
+					<cfquery datasource="#application.razuna.datasource#">
+					UPDATE #session.hostdbprefix#files
+					SET lucene_key = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#docpath#/#file_name_org#">
+					WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+					</cfquery>
 				</cfif>
---->
-			</cfloop>
-		</cfif>
-		<!--- Reset all caches --->
-		<cfset resetcachetokenall()>
-		<!--- Feedback --->
-		<cfoutput><br><span style="font-weight:bold;color:green;">Re-Index successfully completed!</span><br><br><a href="##" onclick="window.close();">Click this link to close this window</a></cfoutput>
-		<cfflush>
+			</cfif>
+		</cfloop>
+		<!--- Return --->
 		<cfreturn />
 	</cffunction>
 	
 	<!--- INDEX: Update from API --->
 	<cffunction name="index_update_api" access="remote" output="false">
 		<cfargument name="assetid" type="string" required="true">
-		<cfargument name="assetcategory" type="string" required="true">
 		<cfargument name="dsn" type="string" required="true">
 		<cfargument name="storage" type="string" required="true">
 		<cfargument name="thedatabase" type="string" required="true">
@@ -881,9 +817,7 @@
 		<!--- Call to update asset --->
 		<cfinvoke method="index_update">
 			<cfinvokeargument name="assetid" value="#arguments.assetid#">
-			<cfinvokeargument name="category" value="#arguments.assetcategory#">
 			<cfinvokeargument name="dsn" value="#arguments.dsn#">
-			<cfinvokeargument name="fromapi" value="t">
 			<cfinvokeargument name="prefix" value="#arguments.prefix#">
 			<cfinvokeargument name="hostid" value="#arguments.hostid#">
 			<cfinvokeargument name="storage" value="#arguments.storage#">
@@ -893,6 +827,78 @@
 			</cfif>
 		</cfinvoke>
 		<cfreturn />
+	</cffunction>
+
+	<!--- Grab the files to index --->
+	<cffunction name="query_for_index" access="private" output="false">
+		<cfargument name="dsn" required="true">
+		<cfargument name="prefix" required="true">
+		<cfargument name="hostid" required="true">
+		<cfargument name="thedatabase" required="true">
+		<cfargument name="storage" required="true">
+		<cfargument name="assetid" required="true">
+		<!--- Param --->
+		<cfset var qry = "">
+		<!--- Select all the files that need to be indexed --->
+		<cfquery datasource="#arguments.dsn#" name="qry">
+		SELECT img_id AS theid, 'img' as cat, 'T' as notfile, folder_id_r, img_filename_org as file_name_org, link_kind, link_path_url, img_filename as thisassetname, path_to_asset, cloud_url_org, img_size thesize
+		FROM #arguments.prefix#images
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<cfif arguments.assetid EQ 0>
+			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		<cfelse>
+			AND img_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+		</cfif>
+		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
+		<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
+			AND cloud_url_org IS NOT NULL 
+			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+		</cfif>
+		UNION ALL
+		SELECT vid_id AS theid, 'vid' as cat, 'T' as notfile, folder_id_r, vid_name_org as file_name_org, link_kind, link_path_url, vid_filename as thisassetname, path_to_asset, cloud_url_org, vid_size thesize
+		FROM #arguments.prefix#videos
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<cfif arguments.assetid EQ 0>
+			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		<cfelse>
+			AND vid_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+		</cfif>
+		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
+		<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
+			AND cloud_url_org IS NOT NULL 
+			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+		</cfif>
+		UNION ALL
+		SELECT aud_id AS theid, 'aud' as cat, 'T' as notfile, folder_id_r, aud_name_org as file_name_org, link_kind, link_path_url, aud_name as thisassetname, path_to_asset, cloud_url_org, aud_size thesize
+		FROM #arguments.prefix#audios
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<cfif arguments.assetid EQ 0>
+			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		<cfelse>
+			AND aud_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+		</cfif>
+		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
+		<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
+			AND cloud_url_org IS NOT NULL 
+			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+		</cfif>
+		UNION ALL
+		SELECT file_id AS theid, 'doc' as cat, 'F' as notfile, folder_id_r, file_name_org, link_kind, link_path_url, file_name as thisassetname, path_to_asset, cloud_url_org, file_size thesize
+		FROM #arguments.prefix#files
+		WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#arguments.hostid#">
+		<cfif arguments.assetid EQ 0>
+			AND is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+		<cfelse>
+			AND file_id IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.assetid#" list="true">)
+		</cfif>
+		AND (folder_id_r IS NOT NULL OR folder_id_r <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> '')
+		<cfif arguments.storage EQ "nirvanix" OR arguments.storage EQ "amazon">
+			AND cloud_url_org IS NOT NULL 
+			AND cloud_url_org <cfif arguments.thedatabase EQ "oracle" OR arguments.thedatabase EQ "db2"><><cfelse>!=</cfif> ''
+		</cfif>
+		</cfquery>
+		<!--- Return --->
+		<cfreturn qry />
 	</cffunction>
 	
 	

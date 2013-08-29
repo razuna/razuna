@@ -1003,4 +1003,24 @@
 		<cfreturn sd />
 	</cffunction>
 
+	<!--- Handle indexing --->
+	<cffunction name="searchIndex" access="remote" output="false" returntype="struct" returnformat="json">
+		<cfargument name="api_key" required="true">
+		<cfargument name="assetid" required="false" default="0">
+		<!--- Check key --->
+		<cfset var thesession = checkdb(arguments.api_key)>
+		<!--- Check to see if session is valid --->
+		<cfif thesession>
+			<cfset updateSearch(api_key=arguments.api_key,assetid=arguments.assetid)>
+			<!--- Feedback --->
+			<cfset thexml.responsecode = 0>
+			<cfset thexml.message = "Indexing successfully triggered">
+		<!--- No session found --->
+		<cfelse>
+			<cfset var thexml = timeout("s")>
+		</cfif>
+		<!--- Return --->
+		<cfreturn thexml>
+	</cffunction>
+
 </cfcomponent>

@@ -917,8 +917,6 @@ function showConnectDetail(kind) {
 	$("#folder_id").val('');
 	// Show lower part
 	$("#task_lower_part").css('display','');
-	// Show frequency onetime
-	$("#freq_onetime").css('display','');
 	// Evaluate
 	if (method == "server") { 
 		$("#detailsServer_"+kind).css('display','block');
@@ -935,7 +933,7 @@ function showConnectDetail(kind) {
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','block');
 	}
-	else if (method == "rebuild") {
+	else if (method == "rebuild" || method == "indexing") {
 		$("#detailsServer_"+kind).css('display','none');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','none');
@@ -943,10 +941,7 @@ function showConnectDetail(kind) {
 		$("#folder_id").val('0');
 		// Hide lower part
 		$("#task_lower_part").css('display','none');
-		// Hide frequency onetime
-		$("#freq_onetime").css('display','none');
-		// Set the element at index 2 to be selected
-		$("#frequency option:eq(1)").attr("selected", "selected");
+		// Show frequency
 		showFrequencyDetail('new');
 	}
 }

@@ -180,13 +180,11 @@
 	<!--- Update Search --->
 	<cffunction name="updateSearch" output="false" returntype="void">
 		<cfargument name="assetid" required="true">
-		<cfargument name="assetcategory" required="true">
 		<cfargument name="api_key" required="true">
 		<!--- Thread --->
 		<cfthread action="run" intstruct="#arguments#">
 			<cfinvoke method="updateSearch_Thread">
 				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
-				<cfinvokeargument name="assetcategory" value="#attributes.intstruct.assetcategory#" />
 				<cfinvokeargument name="api_key" value="#attributes.intstruct.api_key#" />
 			</cfinvoke>
 		</cfthread>
@@ -197,21 +195,26 @@
 	<!--- Update Search --->
 	<cffunction name="updateSearch_Thread" output="false" returntype="void">
 		<cfargument name="assetid" required="true">
-		<cfargument name="assetcategory" required="true">
 		<cfargument name="api_key" required="true">
 		<!--- Call Lucene --->
 		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
-			<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api" assetid="#arguments.assetid#" assetcategory="#arguments.assetcategory#" dsn="#application.razuna.api.dsn#" storage="#application.razuna.api.storage#" prefix="#application.razuna.api.prefix["#arguments.api_key#"]#" hostid="#application.razuna.api.hostid["#arguments.api_key#"]#" thedatabase="#application.razuna.api.thedatabase#">
+			<cfinvoke component="#application.razuna.api.lucene#" method="index_update_api">
+				<cfinvokeargument name="assetid" value="#arguments.assetid#" />
+				<cfinvokeargument name="dsn" value="#application.razuna.api.dsn#" />
+				<cfinvokeargument name="storage" value="#application.razuna.api.storage#" />
+				<cfinvokeargument name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" />
+				<cfinvokeargument name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" />
+				<cfinvokeargument name="thedatabase" value="#application.razuna.api.thedatabase#" />
+			</cfinvoke>
 		<cfelse>
 			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
 				<cfhttpparam name="method" value="index_update_api" type="url" />
 				<cfhttpparam name="assetid" value="#arguments.assetid#" type="url" />
-				<cfhttpparam name="assetcategory" value="#arguments.assetcategory#" type="url" />
 				<cfhttpparam name="dsn" value="#application.razuna.api.dsn#" type="url" />
 				<cfhttpparam name="storage" value="#application.razuna.api.storage#" type="url" />
-				<cfhttpparam name="thedatabase" value="#application.razuna.api.thedatabase#" type="url" />
 				<cfhttpparam name="prefix" value="#application.razuna.api.prefix["#arguments.api_key#"]#" type="url" />
-				<cfhttpparam name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" type="url" />
+				<cfhttpparam name="hostid" value="#application.razuna.api.hostid["#arguments.api_key#"]#" type="url" />	
+				<cfhttpparam name="thedatabase" value="#application.razuna.api.thedatabase#" type="url" />
 			</cfhttp>
 		</cfif>
 	</cffunction>
@@ -223,7 +226,11 @@
 		<cfargument name="hostid" required="true">
 		<!--- Call Lucene --->
 		<cfif application.razuna.api.lucene EQ "global.cfc.lucene">
-			<cfinvoke component="#application.razuna.api.lucene#" method="search" criteria="#arguments.criteria#" category="#arguments.category#" hostid="#arguments.hostid#" returnvariable="qrylucene">
+			<cfinvoke component="#application.razuna.api.lucene#" method="search" returnvariable="qrylucene"> 
+				<cfinvokeargument name="criteria" value="#arguments.criteria#" />
+				<cfinvokeargument name="category" value="#arguments.category#" />
+				<cfinvokeargument name="hostid" value="#arguments.hostid#" />
+			</cfinvoke>
 		<cfelse>
 			<cfhttp url="#application.razuna.api.lucene#/global/cfc/lucene.cfc">
 				<cfhttpparam name="method" value="search" type="url" />

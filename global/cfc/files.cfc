@@ -932,6 +932,14 @@
 					</cfquery>
 				</cfif>
 			</cfif>
+			<!--- Set for indexing --->
+			<cfquery datasource="#variables.dsn#">
+			UPDATE #session.hostdbprefix#files
+			SET
+			is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
+			WHERE file_id = <cfqueryparam value="#arguments.thestruct.file_id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
 			<!--- Update main record with dates --->
 			<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.file_id#" />
 			<!--- Query --->
@@ -948,17 +956,6 @@
 				<cfset arguments.thestruct.file_name = qryfileupdate.file_name>
 			<cfelse>
 				<cfset arguments.thestruct.qrydetail.filenameorg = arguments.thestruct.filenameorg>
-			</cfif>
-			<!--- Lucene --->
-			<cfset arguments.thestruct.qrydetail.folder_id_r = arguments.thestruct.folder_id>
-			<cfset arguments.thestruct.qrydetail.path_to_asset = qryfileupdate.path_to_asset>
-			<cfif application.razuna.storage EQ "local">
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
-				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc">
-			<!--- Nirvanix --->
-			<cfelseif application.razuna.storage NEQ "local">
-				<cfinvoke component="lucene" method="index_delete" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
-				<cfinvoke component="lucene" method="index_update" dsn="#variables.dsn#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.file_id#" category="doc" notfile="T">
 			</cfif>
 			<!--- Log --->
 			<cfset log_assets(theuserid=session.theuserid,logaction='Update',logdesc='Updated: #qryfileupdate.file_name#',logfiletype='doc',assetid='#arguments.thestruct.file_id#')>
@@ -1168,15 +1165,14 @@
 				UPDATE #session.hostdbprefix#files
 				SET 
 				folder_id_r = <cfqueryparam value="#arguments.thestruct.folder_id#" cfsqltype="CF_SQL_VARCHAR">,
-				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
+				in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE file_id = <cfqueryparam value="#arguments.thestruct.doc_id#" cfsqltype="CF_SQL_VARCHAR">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- <cfthread intstruct="#arguments.thestruct#"> --->
 					<!--- Update Dates --->
 					<cfinvoke component="global" method="update_dates" type="doc" fileid="#arguments.thestruct.doc_id#" />
-					<!--- Update Lucene --->
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#arguments.thestruct#" assetid="#arguments.thestruct.doc_id#" category="doc" notfile="T">
 					<!--- Execute workflow --->
 					<cfset arguments.thestruct.fileid = arguments.thestruct.doc_id>
 					<cfset arguments.thestruct.file_name = arguments.thestruct.qrydoc.file_name>
@@ -1192,8 +1188,8 @@
 				<cfset log_assets(theuserid=session.theuserid,logaction='Move',logdesc='Moved: #arguments.thestruct.qrydoc.file_name#',logfiletype='doc',assetid=arguments.thestruct.doc_id)>
 			</cfif>
 			<!--- Flush Cache --->
-			<!--- <cfset resetcachetoken("folders")>
-			<cfset variables.cachetoken = resetcachetoken("files")> --->
+			<cfset resetcachetoken("folders")>
+			<cfset variables.cachetoken = resetcachetoken("files")>
 		<cfreturn />
 	</cffunction>
 	

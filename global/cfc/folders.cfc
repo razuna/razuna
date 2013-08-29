@@ -4227,7 +4227,9 @@
 				<!--- Finally update the record --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#images
-				SET img_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">
+				SET 
+				img_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE img_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -4277,14 +4279,6 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
-				<!--- Lucene --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Get file detail --->
-					<cfinvoke component="images" method="filedetail" theid="#attributes.intstruct.theid#" thecolumn="path_to_asset, link_kind, img_filename_org filenameorg, lucene_key, link_path_url" returnvariable="attributes.intstruct.qrydetail">
-					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="img" notfile="F">
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="img" notfile="F">
-				</cfthread>
 			</cfif>
 		<!--- Videos --->
 		<cfelseif myform CONTAINS "vid_">
@@ -4300,7 +4294,9 @@
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#videos
-				SET vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">
+				SET 
+				vid_filename = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE vid_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -4351,14 +4347,6 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
-				<!--- Lucene --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Get file detail --->
-					<cfinvoke component="videos" method="getdetails" vid_id="#attributes.intstruct.theid#" ColumnList="v.path_to_asset, v.link_kind, v.vid_name_org filenameorg, v.lucene_key, v.link_path_url" returnvariable="attributes.intstruct.qrydetail">
-					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="vid" notfile="F">
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="vid" notfile="F">
-				</cfthread>
 			</cfif>
 		<!--- Audios --->
 		<cfelseif myform CONTAINS "aud_">
@@ -4374,7 +4362,9 @@
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#audios
-				SET aud_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">
+				SET 
+				aud_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE aud_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -4424,19 +4414,6 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
-				<!--- Lucene --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Get file detail --->
-					<cfquery datasource="#application.razuna.datasource#" name="attributes.intstruct.qrydetail">
-					SELECT link_kind, link_path_url, aud_name_org filenameorg, lucene_key, path_to_asset
-					FROM #session.hostdbprefix#audios
-					WHERE aud_id = <cfqueryparam value="#attributes.intstruct.theid#" cfsqltype="CF_SQL_VARCHAR">
-					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-					</cfquery>
-					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="aud" notfile="F">
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="aud" notfile="F">
-				</cfthread>
 			</cfif>
 		<!--- Files --->
 		<cfelseif myform CONTAINS "doc_">
@@ -4452,7 +4429,9 @@
 				<!--- If the keyword only contains a then empty it --->
 				<cfquery datasource="#variables.dsn#">
 				UPDATE #session.hostdbprefix#files
-				SET file_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">
+				SET 
+				file_name = <cfqueryparam cfsqltype="cf_sql_varchar" value="#form["#fname#"]#">,
+				is_indexed = <cfqueryparam cfsqltype="cf_sql_varchar" value="0">
 				WHERE file_id = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
 				AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
@@ -4502,14 +4481,6 @@
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
 				<cfset arguments.thestruct.folder_action = true>
 				<cfinvoke component="plugins" method="getactions" theaction="on_file_edit" args="#arguments.thestruct#" />
-				<!--- Lucene --->
-				<cfthread intstruct="#arguments.thestruct#">
-					<!--- Get file detail --->
-					<cfinvoke component="files" method="filedetail" theid="#attributes.intstruct.theid#" thecolumn="path_to_asset, link_kind, file_name_org filenameorg, lucene_key, link_path_url" returnvariable="attributes.intstruct.qrydetail">
-					<cfset attributes.intstruct.filenameorg = attributes.intstruct.qrydetail.filenameorg>
-					<cfinvoke component="lucene" method="index_delete" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="doc" notfile="F">
-					<cfinvoke component="lucene" method="index_update" dsn="#application.razuna.datasource#" thestruct="#attributes.intstruct#" assetid="#attributes.intstruct.theid#" category="doc" notfile="F">
-				</cfthread>
 			</cfif>
 		</cfif>
 	</cfloop>

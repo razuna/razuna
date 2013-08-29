@@ -58,6 +58,8 @@
 								</cfif>
 								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp")#</option>
 								<option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail")#</option>
+								<option>---</option>
+								<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
 								<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
 							</select>
 						</td>
@@ -187,8 +189,7 @@
 								</cfdefaultcase>
 							</cfswitch>
 							<select name="frequency" id="frequency" class="text" onChange="showFrequencyDetail('new')">
-							<!--- 	<option value="server"<cfif #set2_date_format# EQ "server"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("server")#</option> --->
-								<option id="freq_onetime" value="1"<cfif frequency EQ "1"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_onetime")#</option>
+								<option value="1"<cfif frequency EQ "1"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_onetime")#</option>
 								<option value="2"<cfif frequency EQ "2"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_recurring")#</option>
 								<option value="3"<cfif frequency EQ "3"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_daily_every")#</option>
 							</select>
@@ -211,7 +212,7 @@
 										</select>
 									</td>
 									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_frequency_at")#</td>
-									<td><input type="text" name="startTime2" size="6" onBlur="fixTime(this)" value="<cfif qry_detail.sched_start_time EQ "">#LSTimeFormat(Now(), 'HH:mm')#<cfelse>#LSTimeFormat(qry_detail.sched_start_time, 'HH:mm')#</cfif>" /></td>
+									<td><input type="text" name="startTime2" size="6" onBlur="fixTime(this)" value="<cfif qry_detail.sched_start_time EQ "">#LSTimeFormat(DateAdd("n", 10, Now()), 'HH:mm')#<cfelse>#LSTimeFormat(qry_detail.sched_start_time, 'HH:mm')#</cfif>" /></td>
 								</tr>
 							</table>
 							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsDaily_new" style="display: <cfif #frequency# EQ "3">block<cfelse>none</cfif>">
@@ -282,8 +283,9 @@
 		$('#detailsMail_new').css('display','none');
 		$('#detailsFtp_new').css('display','block');
 	</script>
-<cfelseif qry_detail.sched_method EQ "rebuild">
+<cfelseif qry_detail.sched_method EQ "rebuild" OR qry_detail.sched_method EQ "indexing">
 	<script type="text/javascript">
 		showConnectDetail('new');
+		// showFrequencyDetail('new');
 	</script>
 </cfif>
