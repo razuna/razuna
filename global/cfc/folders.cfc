@@ -3942,6 +3942,9 @@
 					<!--- Restore all collection folder in the trash --->
 					<cfelseif session.type EQ "restoreselectedcolfolder">
 						<a href="##" onclick="loadcontent('folders','index.cfm?fa=#session.savehere#&intofolderid=#folder_id#&intolevel=#folder_level#');destroywindow(1);return false;">
+					<!--- copy metadata --->
+					<cfelseif session.type EQ "copymetadata">
+						<a href="##" onclick="loadcontent('result','index.cfm?fa=#session.savehere#&folder_id=#folder_id#&what=#session.thetype#&fid=#session.file_id#');destroywindow(2);return false;"> 
 					<!--- Plugin --->
 					<cfelseif session.type EQ "plugin">
 						<a href="##" onclick="$('##wf_folder_id_2').val('#folder_id#'); $('##wf_folder_name_2').val('#folder_name#');destroywindow(1);">
