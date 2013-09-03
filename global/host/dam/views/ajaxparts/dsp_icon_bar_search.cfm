@@ -158,7 +158,7 @@
 				<div style="float:left;padding-left:5px;">
 					<img src="#dynpath#/global/host/dam/images/trash.png" width="16" height="16" border="0" style="padding-right:2px;" />
 				</div>
-				<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("delete")#</div>
+				<div style="float:left;">#myFusebox.getApplicationData().defaults.trans("trash")#</div>
 			</a>
 		</cfif>
 	</cfif>
