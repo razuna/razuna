@@ -5114,7 +5114,7 @@
 		</cfif>
 		<!--- Set the order by --->
 		<cfif session.sortby EQ "name">
-			<cfset var sortby = "lower(filename_forsort)">
+			<cfset var sortby = "filename_forsort">
 		<cfelseif session.sortby EQ "kind">
 			<cfset var sortby = "type">
 		<cfelseif session.sortby EQ "sizedesc">
