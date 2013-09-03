@@ -666,6 +666,7 @@
 					</cfif>
 					<cftry>
 						<!--- Append to DB --->
+						<cftransaction>
 							<cfquery datasource="#arguments.thestruct.dsn#">
 							UPDATE #session.hostdbprefix#images_text
 							SET 
@@ -678,6 +679,7 @@
 							WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
 							AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
 							</cfquery>
+						</cftransaction>
 						<cfcatch type="any">
 							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in image upload keywords">
 								<cfdump var="#cfcatch#" />
@@ -763,7 +765,7 @@
 			<cfset var thescript = createuuid()>
 			<!--- Set script --->
 			<cfset var thesh = gettempdirectory() & "/#thescript#.sh">
-				<!--- Write files --->
+			<!--- Write files --->
 			<cffile action="write" file="#thesh#" output="#theexe# -fast -fast2 -X #theasset#" mode="777">
 			<!--- Execute --->
 			<cfexecute name="#thesh#" timeout="60" variable="themeta" />
