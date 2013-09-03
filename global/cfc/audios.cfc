@@ -1686,6 +1686,7 @@
 		SELECT aud_id AS id,aud_name AS filename
 		FROM #session.hostdbprefix#audios
 		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND aud_group IS NULL
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry_data>

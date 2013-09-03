@@ -1892,6 +1892,7 @@
 		SELECT img_id AS id,img_filename AS filename
 		FROM #session.hostdbprefix#images
 		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND img_group IS NULL
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry_data>
