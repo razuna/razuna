@@ -64,7 +64,7 @@
 			SELECT /* #cachetoken#getlabel */ label_id, label_text, label_path
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels
 			WHERE host_id = <cfqueryparam value="#application.razuna.api.hostid["#arguments.api_key#"]#" cfsqltype="cf_sql_numeric" />
-			AND label_id IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#argument.label_id#" list="Yes">)
+			AND label_id IN (<cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.label_id#" list="Yes">)
 			ORDER BY label_path
 			</cfquery>
 		<!--- No session found --->
@@ -211,7 +211,7 @@
 			<cfloop list="#arguments.label_id#" index="i" delimiters=",">
 				<cfquery datasource="#application.razuna.api.dsn#">
 				DELETE FROM ct_labels
-				WHERE label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
+				WHERE ct_label_id = <cfqueryparam value="#i#" cfsqltype="cf_sql_varchar" />
 				AND ct_id_r = <cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" />
 				</cfquery>
 			</cfloop>
