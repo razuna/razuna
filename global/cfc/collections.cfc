@@ -1642,9 +1642,9 @@
 	<cfset session.file_id ="">
 	<!--- Get collection files in the trash --->
 	<cfinvoke method="get_trash_files" returnvariable="qry_trash" />
-	<cfloop list="#valueList(qry_trash.file_id)#" index="i">
+	<cfloop query="qry_trash">
 		<!--- set session file ids --->
-		<cfset session.file_id = listAppend(session.file_id,i)>
+		<cfset session.file_id = listAppend(session.file_id,"#file_id#-#kind#")>
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />	
@@ -1688,7 +1688,7 @@
 	<cfinvoke method="get_trash_collection" returnvariable="qry" />
 	<cfloop list="#valueList(qry.col_id)#" index="i">
 		<!--- set session col ids --->
-		<cfset session.file_id = listAppend(session.file_id,i)>
+		<cfset session.file_id = listAppend(session.file_id,"#i#-collection")>
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />	
@@ -1734,7 +1734,7 @@
 	<cfinvoke method="get_trash_folders" returnvariable="qry" />
 	<cfloop list="#valueList(qry.folder_id)#" index="i">
 		<!--- set session col ids --->
-		<cfset session.file_id = listAppend(session.file_id,i)>
+		<cfset session.file_id = listAppend(session.file_id,"#i#-folder")>
 	</cfloop>
 	<!--- Return --->
 	<cfreturn />	

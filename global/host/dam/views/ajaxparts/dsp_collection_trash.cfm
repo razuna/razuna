@@ -37,8 +37,8 @@
 	<cfelse>
 		<div id="tabsfolder_tab">
 			<cfif attributes.trashkind EQ "folders">
-				<cfif arraySum(qry_folder_count['cnt']) MOD session.trash_folder_rowmaxpage EQ 0>
-					<cfset session.col_trash_folder_offset = ceiling(arraySum(qry_folder_count['cnt']) / session.trash_folder_rowmaxpage) - 1>
+				<cfif arraySum(qry_folder_count['cnt']) MOD session.col_trash_folder_rowmaxpage EQ 0>
+					<cfset session.col_trash_folder_offset = ceiling(arraySum(qry_folder_count['cnt']) / session.col_trash_folder_rowmaxpage) - 1>
 				</cfif>
 			<cfelseif attributes.trashkind EQ "files">
 				<cfif arraySum(qry_file_count['cnt']) MOD session.col_trash_rowmaxpage EQ 0>
