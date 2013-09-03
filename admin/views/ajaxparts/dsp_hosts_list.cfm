@@ -54,7 +54,7 @@
 			<td width="100%" nowrap><a href="##" onclick="showwindow('#myself#c.hosts_detail&host_id=#host_id#','#defaultsObj.trans("hosts_edit")# #host_name#',500,1);return false;">#host_name#<cfif application.razuna.isp AND host_name_custom NEQ ""> &ndash; #defaultsObj.trans("custom_hostname")#: #host_name_custom#</cfif> (ID: #host_id#)</a></td>
 			<td width="1%" nowrap><cfif !application.razuna.isp><a href="##" onclick="showwindow('#myself#ajax.hosts_recreate&host_id=#host_id#','#host_name#',500,1);return false;">#defaultsObj.trans("upgrade_settings")#</a></cfif></td>
 			<td width="1%" nowrap><cfif !application.razuna.isp><a href="#session.thehttp##cgi.http_host##dynpath#/raz#host_id#/dam/index.cfm?fusebox.loadclean=true&fusebox.password=#application.fusebox.password#&fusebox.parseall=true&v=#createuuid()#" target="_blank">#defaultsObj.trans("reset_cache")#</a></cfif></td>
-			<cfif qry_hostslist.recordcount NEQ 1>
+			<cfif qry_hostslist.recordcount NEQ 1 AND host_id NEQ 1>
 				<td width="1%" nowrap="nowrap" style="padding-left:50px;">
 					<a href="##" onclick="showwindow('#myself#ajax.remove_record&what=hosts&id=#host_id#&pathoneup=#urlencodedformat(pathoneup)#&loaddiv=hostslist','#defaultsObj.trans("remove_selected")#',400,1);return false">#defaultsObj.trans("delete_single")#</a>
 				</td>
