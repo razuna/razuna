@@ -5181,7 +5181,7 @@
 			</cfif>
 			SELECT /* #variables.cachetoken#getdetailnextback */
 			img_id as file_id,
-			img_filename as filename_forsort,
+			lower(img_filename) as filename_forsort,
 			img_size as size,
 			img_create_date as date_create,
 			img_change_date as date_change,
@@ -5196,7 +5196,7 @@
 			UNION ALL
 			SELECT 
 			vid_id as file_id,
-			vid_filename as filename_forsort,
+			lower(vid_filename) as filename_forsort,
 			vid_size as size,
 			vid_create_date as date_create,
 			vid_change_date as date_change,
@@ -5211,7 +5211,7 @@
 			UNION ALL
 			SELECT 
 			aud_id as file_id,
-			aud_name as filename_forsort,
+			lower(aud_name) as filename_forsort,
 			aud_size as size,
 			aud_create_date as date_create,
 			aud_change_date as date_change,
@@ -5226,7 +5226,7 @@
 			UNION ALL
 			SELECT 
 			file_id as file_id,
-			file_name as filename_forsort,
+			lower(file_name) as filename_forsort,
 			file_size as size,
 			file_create_date as date_create,
 			file_change_date as date_change,
@@ -5280,7 +5280,7 @@
 			</cfif>
 			SELECT /* #variables.cachetoken#getdetailnextback */
 			#theid# as file_id,
-			#thename# as filename_forsort,
+			#lcase(thename)# as filename_forsort,
 			#thesize# as size,
 			#thedatecreate# as date_create,
 			#thedatechange# as date_change,
