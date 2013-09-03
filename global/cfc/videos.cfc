@@ -2132,6 +2132,7 @@
 		SELECT vid_id AS id,vid_filename AS filename
 		FROM #session.hostdbprefix#videos
 		WHERE folder_id_r = <cfqueryparam cfsqltype="cf_sql_varchar" value="#arguments.thestruct.folder_id#">
+		AND vid_group IS NULL
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 	</cfquery>
 	<cfreturn qry_data>
