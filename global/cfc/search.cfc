@@ -117,7 +117,7 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 			<!--- Grab the result and query file db --->
-			<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="qrymain" cachedwithin="1" region="razcache">
 				<cfloop from="#pos_start#" to="#pos_end#" index="i">
 					<cfif q_start NEQ 1>
 						UNION ALL
@@ -243,11 +243,11 @@
 							AND perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 						</cfcase>
 						<cfcase value="other">
-							WHERE file_extension <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
-							AND file_extension <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
-							AND file_extension <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
-							AND file_extension <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
-							AND file_extension <cfif variables.database EQ "oracle" OR variables.database EQ "h2" OR variables.database EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
+							WHERE file_extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="pdf" cfsqltype="cf_sql_varchar">
+							AND file_extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xls" cfsqltype="cf_sql_varchar">
+							AND file_extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="xlsx" cfsqltype="cf_sql_varchar">
+							AND file_extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="doc" cfsqltype="cf_sql_varchar">
+							AND file_extension <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam value="docx" cfsqltype="cf_sql_varchar">
 							AND perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
 						</cfcase>
 						<cfdefaultcase>
@@ -366,6 +366,21 @@
 		<cfelseif session.sortby EQ "datechanged">
 			<cfset var sortby = "date_change DESC">
 		</cfif>
+		<!--- 
+		This is for Oracle and MSQL
+		--->	
+		<cfif session.offset EQ 0>
+			<cfset var min = 0>
+			<cfset var max = session.rowmaxpage>
+		<cfelse>
+			<cfset var min = session.offset * session.rowmaxpage>
+			<cfset var max = (session.offset + 1) * session.rowmaxpage>
+			<cfif application.razuna.thedatabase EQ "db2">
+				<cfset var min = min + 1>
+			</cfif>
+		</cfif>
+		<!--- MySQL Offset --->
+		<cfset var mysqloffset = session.offset * session.rowmaxpage>
 		<!--- If search text is empty --->
 		<cfif arguments.thestruct.searchtext EQ "">
 			<cfset arguments.thestruct.searchtext = "*">
@@ -422,7 +437,10 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 			<!--- Grab the result and query file db --->
-			<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="qrymain" cachedwithin="1" region="razcache">
+				<cfif application.razuna.thedatabase EQ "mysql">
+				SELECT * FROM (
+				</cfif>
 				<cfloop from="#pos_start#" to="#pos_end#" index="i">
 					<cfif q_start NEQ 1>
 						UNION ALL
@@ -543,20 +561,32 @@
 			    </cfloop>
 				    GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_filename, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash
 					ORDER BY #sortby#
+					<!--- MySql OR H2 --->
+					<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
+						LIMIT #mysqloffset#,#session.rowmaxpage#
+					</cfif>
+				<cfif application.razuna.thedatabase EQ "mysql">
+					) as t
+					WHERE t.perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
+					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
+						AND permfolder IS NOT NULL
+					</cfif>
+				</cfif>
 			</cfquery>
 			<!--- Select only records that are unlocked --->
-			<cfquery dbtype="query" name="qry">
-			SELECT *
-			FROM qrymain
-			WHERE perm = <cfqueryparam cfsqltype="cf_sql_varchar" value="unlocked">
-			<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
-				AND permfolder IS NOT NULL
-			</cfif>
+			<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT found_rows()
 			</cfquery>
+			<cfset consoleoutput(true)>
+			<cfset console(qrymain)>
+			<cfset console(qry)>
+			<cfabort>
 			<!--- Add the amount of assets to the query --->
 			<cfset var amount = ArrayNew(1)>
-			<cfset amount[1] = qry.recordcount>
+			<cfset amount[1] = qry.total>
 			<cfset QueryAddcolumn(qry, "cnt", "integer", amount)>
+			<cfset consoleoutput(true)>
+			<cfset console(qry.total)>
 			<!--- Only get the labels if in the combinded view --->
 			<cfif session.view EQ "combined">
 				<!--- Get the cachetoken for here --->
@@ -704,7 +734,7 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 			<!--- Grab the result and query file db --->
-			<cfquery datasource="#variables.dsn#" name="qrymain" cachedwithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="qrymain" cachedwithin="1" region="razcache">
 				<cfloop from="#pos_start#" to="#pos_end#" index="i">
 					<cfif q_start NEQ 1>
 						UNION ALL
@@ -983,7 +1013,7 @@
 			<cfset var q_start = 1>
 			<cfset var q_end = 990>
 			<!--- Grab the result and query file db --->
-			<cfquery datasource="#variables.dsn#" name="qrymain" cachedWithin="1" region="razcache">
+			<cfquery datasource="#application.razuna.datasource#" name="qrymain" cachedWithin="1" region="razcache">
 				<cfloop from="#pos_start#" to="#pos_end#" index="i">
 					<cfif q_start NEQ 1>
 						UNION ALL

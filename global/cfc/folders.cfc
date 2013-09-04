@@ -5163,7 +5163,6 @@
 			AND (img_group IS NULL OR img_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-
 			UNION ALL
 			SELECT 
 			vid_id as file_id,
@@ -5178,7 +5177,6 @@
 			AND (vid_group IS NULL OR vid_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			
 			UNION ALL
 			SELECT 
 			aud_id as file_id,
@@ -5193,7 +5191,6 @@
 			AND (aud_group IS NULL OR aud_group = '')
 			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 			AND in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
-			
 			UNION ALL
 			SELECT 
 			file_id as file_id,
@@ -5228,7 +5225,6 @@
 				WHERE ROWNUM = #detailrow+1#
 			</cfif>
 			</cfquery>
-			
 		<!--- We query below for within the same file type group --->
 		<cfelse>
 			<cfquery datasource="#application.razuna.datasource#" name="qry" cachedwithin="1" region="razcache">
@@ -5304,7 +5300,6 @@
 				WHERE ROWNUM = #detailrow+1#
 			</cfif>
 			</cfquery>
-			
 		</cfif>
 		<!--- Set returned fileid into struct --->
 		<cfset f.fileid = qry.file_id>
