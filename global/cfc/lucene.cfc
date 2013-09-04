@@ -613,7 +613,7 @@
 		<!--- Call indexing in a thread --->
 		<cfthread action="run" intstruct="#arguments#" priority="low">
 			<cfinvoke method="index_delete_thread">
-				<cfinvokeargument name="thestruct" value="#attributes.intstruct#" />
+				<cfinvokeargument name="thestruct" value="#attributes.intstruct.thestruct#" />
 				<cfinvokeargument name="assetid" value="#attributes.intstruct.assetid#" />
 				<cfinvokeargument name="category" value="#attributes.intstruct.category#" />
 				<cfinvokeargument name="notfile" value="#attributes.intstruct.notfile#" />
@@ -649,7 +649,10 @@
 			</cfif>
 			<!--- Index: delete records --->
 			<cfindex action="delete" collection="#session.hostid#" key="#arguments.assetid#">
-			<cfcatch type="any"></cfcatch>
+			<cfcatch type="any">
+				<cfset consoleoutput(true)>
+				<cfset console(cfcatch)>
+			</cfcatch>
 		</cftry>
 	</cffunction>
 	
