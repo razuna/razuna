@@ -666,20 +666,18 @@
 					</cfif>
 					<cftry>
 						<!--- Append to DB --->
-						<cftransaction>
-							<cfquery datasource="#arguments.thestruct.dsn#">
-							UPDATE #session.hostdbprefix#images_text
-							SET 
-							<cfif newkeywords EQ ",">
-								img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
-							<cfelse>
-								img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
-							</cfif>,
-							img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
-							WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
-							AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
-							</cfquery>
-						</cftransaction>
+						<cfquery datasource="#arguments.thestruct.dsn#">
+						UPDATE #session.hostdbprefix#images_text
+						SET 
+						<cfif newkeywords EQ ",">
+							img_keywords = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
+						<cfelse>
+							img_keywords = <cfqueryparam value="#ltrim(newkeywords)#" cfsqltype="cf_sql_varchar">
+						</cfif>,
+						img_description = <cfqueryparam value="#ltrim(newdescription)#" cfsqltype="cf_sql_varchar">
+						WHERE img_id_r = <cfqueryparam value="#arguments.thestruct.newid#" cfsqltype="CF_SQL_VARCHAR">
+						AND lang_id_r = <cfqueryparam value="#langindex#" cfsqltype="cf_sql_numeric">
+						</cfquery>
 						<cfcatch type="any">
 							<cfmail type="html" to="support@razuna.com" from="server@razuna.com" subject="error in image upload keywords">
 								<cfdump var="#cfcatch#" />
