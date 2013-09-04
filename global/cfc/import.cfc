@@ -189,6 +189,8 @@
 		<cfset var thenamenew = arguments.thestruct.tempid & "." & ext>
 		<!--- Rename --->
 		<cffile action="rename" source="#GetTempdirectory()#/#thefile.serverFile#" destination="#GetTempdirectory()#/#thenamenew#" />
+		<!--- Set filename in session --->
+		<cfset session.importfilename = thenamenew>
 		<!--- Return --->
 		<cfreturn ext />
 	</cffunction>
@@ -196,19 +198,26 @@
 	<!--- Do the Import ---------------------------------------------------------------------->
 	<cffunction name="doimport" output="false">
 		<cfargument name="thestruct" type="struct">
+		<!--- Check if file exists if not show error message --->
+		<cfif !FileExists("#GetTempdirectory()#/#session.importfilename#")>
+			<!--- Feedback --->
+			<cfoutput><h2>The file is not readable. Please upload it again!</h2><br><br></cfoutput>
+			<cfflush>
+			<cfabort>
+		</cfif>
 		<!--- Feedback --->
 		<cfoutput><strong>Starting the import</strong><br><br></cfoutput>
 		<cfflush>
 		<!--- CSV and XML --->
-		<cfif arguments.thestruct.file_format EQ "csv">
+		<cfif listlast(session.importfilename,".") EQ "csv">
 			<!--- Read the file --->
-			<cffile action="read" file="#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#" charset="utf-8" variable="thefile" />
+			<cffile action="read" file="#GetTempdirectory()#/#session.importfilename#" charset="utf-8" variable="thefile" />
 			<!--- Read CSV --->
 			<cfset arguments.thestruct.theimport = csvread(string=thefile,headerline=true)>
 		<!--- XLS and XLSX --->
 		<cfelse>
 			<!--- Read the file --->
-			<cfset var thexls = SpreadsheetRead("#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#")>
+			<cfset var thexls = SpreadsheetRead("#GetTempdirectory()#/#session.importfilename#")>
 			<cfset arguments.thestruct.theimport = SpreadsheetQueryread(spreadsheet=thexls,sheet=0,headerrow=1)>
 		</cfif>
 		<!--- Feedback --->
@@ -220,7 +229,7 @@
 		<cfoutput>Cleaning up...<br><br></cfoutput>
 		<cfflush>
 		<!--- Remove the file --->
-		<cffile action="delete" file="#GetTempdirectory()#/#arguments.thestruct.tempid#.#arguments.thestruct.file_format#" />
+		<cffile action="delete" file="#GetTempdirectory()#/#session.importfilename#" />
 		<!--- Feedback --->
 		<cfoutput><strong style="color:green;">Import successfully done!</strong><br><br></cfoutput>
 		<cfflush>
