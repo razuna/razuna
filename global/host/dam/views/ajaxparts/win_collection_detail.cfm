@@ -554,7 +554,11 @@
 		// Back to Collection List
 		function backtocol(){
 			$('##rightside').load('#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#&released=#qry_detail.col_released#', function(){
-				<cfif qry_detail.col_released>$('##tabsfolder_tab').tabs('select','##contentrel');</cfif>
+				<cfif qry_detail.col_released>
+					//$('##tabsfolder_tab').tabs('select','##contentrel');
+					var index = $('##tabsfolder_tab div.ui-tabs-panel').length-1;
+					$('##tabsfolder_tab').tabs({ active: index }).tabs( "refresh" );
+				</cfif>
 			})
 		};
 		// Release
