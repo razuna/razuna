@@ -1001,7 +1001,7 @@
 			 <cfqueryparam value="1" cfsqltype="CF_SQL_VARCHAR">, 
 			 <cfqueryparam value="indexing" cfsqltype="cf_sql_varchar">, 
 			 <cfqueryparam value="Indexing" cfsqltype="cf_sql_varchar">,
-			 <cfqueryparam value="daily" cfsqltype="cf_sql_varchar">,
+			 <cfqueryparam value="120" cfsqltype="cf_sql_varchar">,
 			 <cfqueryparam cfsqltype="cf_sql_numeric" value="#host_id#">
 			 )
 			</cfquery>
