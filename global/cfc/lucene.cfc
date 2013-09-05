@@ -155,10 +155,6 @@
 		<cfargument name="hostid" default="#session.hostid#" required="false">
 		<cfargument name="storage" default="#application.razuna.storage#" required="false">
 		<cfargument name="thedatabase" default="#application.razuna.thedatabase#" required="false">
-		<!--- Limit threads --->
-		<cfif arraylen(getallthreads()) GT 200>
-			<cfset createObject( "java", "java.lang.Runtime" ).getRuntime().gc()>
-		</cfif>
 		<!--- Param --->
 		<cfset var folderpath = "">
 		<cfset var theregchars = "[\$\%\_\-\,\.\&\(\)\[\]\*\'\n\r]+">
