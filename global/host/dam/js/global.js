@@ -768,11 +768,15 @@ function aspectwidth(inp,out,theform,theaspect){
 	document.forms[theform].elements[out].value = mynum;
 }
 // Save Comment
-function addcomment(fileid,type,folderid){
+function addcomment(fileid,type,folderid,iscol){
 	var thecomment = $('#assetComment').val();
 	$('#comlist').load('index.cfm?fa=c.comments_add', { folder_id:folderid, file_id:fileid, type:type, comment:thecomment } );
 	// Reload comment section to re-issue new id
-	loadcontent('divcomments','index.cfm?fa=c.comments&file_id=' + fileid + '&type=' + type + '&folder_id=' + folderid);
+	if(iscol == 'T'){
+		loadcontent('divcommentscol','index.cfm?fa=c.comments&file_id=' + fileid + '&type=' + type + '&folder_id=' + folderid);
+	}else{
+		loadcontent('divcomments','index.cfm?fa=c.comments&file_id=' + fileid + '&type=' + type + '&folder_id=' + folderid);
+	}
 }
 // Update Comment
 function updatecomment(fileid,comid,type,folderid){
