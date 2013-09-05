@@ -1236,6 +1236,12 @@
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
+			<cfif xmp.xres EQ "">
+				<cftry>
+					<cfset xmp.xres = trim(#thexml[1]["Photoshop:XResolution"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
 			<!--- Yresolution --->
 			<cftry>
 				<cfset xmp.yres = trim(#thexml[1]["IFD0:YResolution"].xmltext#)>
@@ -1244,6 +1250,12 @@
 			<cfif xmp.yres EQ "">
 				<cftry>
 					<cfset xmp.yres = trim(#thexml[1]["JFIF:YResolution"].xmltext#)>
+					<cfcatch type="any"></cfcatch>
+				</cftry>
+			</cfif>
+			<cfif xmp.yres EQ "">
+				<cftry>
+					<cfset xmp.yres = trim(#thexml[1]["Photoshop:YResolution"].xmltext#)>
 					<cfcatch type="any"></cfcatch>
 				</cftry>
 			</cfif>
