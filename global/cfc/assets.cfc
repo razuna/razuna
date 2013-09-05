@@ -2940,12 +2940,16 @@ This is the main function called directly by a single upload else from addassets
 		<cffile action="delete" file="#arguments.thestruct.theshht#">
 		<cffile action="delete" file="#arguments.thestruct.theshwt#">
 		<!--- Sometimes identify does not get height and width thus we set it here --->
-		<cfif arguments.thestruct.thexmp.orgwidth EQ "">
+		<cfif arguments.thestruct.thexmp.orgwidth EQ "" OR NOT isnumeric(arguments.thestruct.thexmp.orgwidth)>
 			<cfset arguments.thestruct.thexmp.orgwidth = 0>
+		</cfif>
+		<cfif arguments.thestruct.thexmp.orgheight EQ "" OR NOT isnumeric(arguments.thestruct.thexmp.orgheight)>
+			<cfset arguments.thestruct.thexmp.orgheight = 0>
+		</cfif>
+		<cfif thumbwidth EQ "" OR NOT isnumeric(thumbwidth)>
 			<cfset var thumbwidth = 0>
 		</cfif>
-		<cfif arguments.thestruct.thexmp.orgheight EQ "">
-			<cfset arguments.thestruct.thexmp.orgheight = 0>
+		<cfif thumbheight EQ "" OR NOT isnumeric(thumbheight)>
 			<cfset var thumbheight = 0>
 		</cfif>
 		<!--- Set original and thumbnail width and height --->
