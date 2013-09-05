@@ -29,7 +29,7 @@
 		<td>#myFusebox.getApplicationData().defaults.trans("comment")#<br />
 			<textarea id="assetComment" name="assetComment" style="width:400px;height:50px;"></textarea> <br />
 			<br />
-			<input type="button" class="button" onclick="addcomment('#attributes.file_id#','#attributes.type#','#attributes.folder_id#');" value="#myFusebox.getApplicationData().defaults.trans("comments_submit")#" />
+			<input type="button" class="button" onclick="addcomment('#attributes.file_id#','#attributes.type#','#attributes.folder_id#'<cfif structKeyExists(attributes,'iscol')>,'T'<cfelse>,'F'</cfif>);" value="#myFusebox.getApplicationData().defaults.trans("comments_submit")#" />
 		</td>
 	</tr>
 </table>

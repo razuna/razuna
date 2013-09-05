@@ -43,7 +43,7 @@
 			<li><a href="##colassets">#myFusebox.getApplicationData().defaults.trans("collection_assets")# (<cfif qry_assets.recordcount EQ "">0<cfelse>#qry_assets.recordcount#</cfif>)</a></li>
 			<cfif attributes.folderaccess NEQ "R">
 				<li><a href="##detaildesc">#myFusebox.getApplicationData().defaults.trans("asset_desc")#</a></li>
-				<li><a href="##divcomments" onclick="loadcontent('divcomments','#myself#c.comments&file_id=#attributes.col_id#&type=col&folder_id=#attributes.folder_id#');">#myFusebox.getApplicationData().defaults.trans("comments")#</a></li>
+				<li><a href="##divcommentscol" onclick="loadcontent('divcommentscol','#myself#c.comments&file_id=#attributes.col_id#&type=col&folder_id=#attributes.folder_id#&iscol=T');">#myFusebox.getApplicationData().defaults.trans("comments")#</a></li>
 				<cfif attributes.folderaccess EQ "X">
 					<li><a href="##settings">#myFusebox.getApplicationData().defaults.trans("settings")# & #myFusebox.getApplicationData().defaults.trans("share_header")#</a></li>
 				</cfif>
@@ -359,7 +359,7 @@
 				</table>
 			</div>
 			<!--- Comments --->
-			<div id="divcomments"></div>
+			<div id="divcommentscol"></div>
 			<!--- Settings --->
 			<cfif attributes.folderaccess EQ "X">
 				<div id="settings">
