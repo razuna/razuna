@@ -2381,7 +2381,11 @@
 		<set name="url.folder_id" value="#attributes.folder_id#" />
 		<set name="attributes.issearch" value="true" />
 		<!-- The total of found records is within the query itself -->
-		<set name="qry_filecount.thetotal" value="#qry_files.qall.recordcount#" />
+		<if condition="!structkeyexists(attributes,'search_simple')">
+			<true>
+				<set name="qry_filecount.thetotal" value="#qry_files.qall.recordcount#" />
+			</true>
+		</if>
 		<!-- Get Include -->
 		<do action="folder_content_include" />
 		<!-- Overwrite params from the include above -->
@@ -4628,6 +4632,8 @@
 
 	<!-- Simple Search -->
 	<fuseaction name="search_simple">
+		<!-- Set search simple  -->
+		<set name="attributes.search_simple" value="true" />
 		<!-- Include the aearch include -->
 		<do action="search_include" />
 		<!-- If we come from saved search we query folderaccess -->

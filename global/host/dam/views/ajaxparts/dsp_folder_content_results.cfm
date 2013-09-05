@@ -23,6 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+
 <cfoutput>
 	<cfif qry_filecount.thetotal LTE session.rowmaxpage>
 		<cfset session.offset = 0>
@@ -33,6 +34,7 @@
 	<cfelse>
 		<cfset attributes.thediv = "content_search_all">
 	</cfif>
+	
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- If no record is in this folder --->
 	<cfif qry_filecount.thetotal EQ 0>
@@ -91,7 +93,7 @@
 		<cfif session.view EQ "">
 			<tr>
 				<td style="border:0px;">
-				<cfoutput query="qry_files.qall" startrow="#mysqloffset#" maxrows="#session.rowmaxpage#">
+				<cfoutput query="qry_files.qall" >
 					<cfif groupid NEQ "">
 						<cfset theid = groupid>
 					<cfelse>
