@@ -30,7 +30,7 @@
 	<!--- FOLDER --->
 	<cfif attributes.showpart EQ "folder">
 		<script type="text/javascript">
-			$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folderid#&fileid=#attributes.fileid#');
+			$('##rightside').load('#myself#c.folder&col=F&folder_id=#attributes.folderid#&fileid=#attributes.fileid#&showsubfolders=#attributes.showsubfolders#');
 		</script>
 	</cfif>
 	<!--- UPLOAD --->
