@@ -1688,7 +1688,7 @@
 					AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 				</cfquery>
 				<!--- Flush cache --->
-				<cfset arguments.thestruct.folder_id = id>
+				<cfset attributes.instruct.thestruct.folder_id = id>
 				<cfinvoke component="extQueryCaching" method="resetcachetoken" type="folders" />
 				<!--- Call remove function --->
 				<cfinvoke method="remove" thestruct="#attributes.instruct.thestruct#" />
