@@ -34,7 +34,6 @@
 	<cfelse>
 		<cfset attributes.thediv = "content_search_all">
 	</cfif>
-	
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- If no record is in this folder --->
 	<cfif qry_filecount.thetotal EQ 0>
@@ -71,6 +70,7 @@
 						</div>
 						<script type="text/javascript">
 							function loadviewsearch(theview){
+								
 								// Show loading bar
 								$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 								$('###attributes.thediv#').load('#myself#c.search_simple', { view: theview, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "view">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){

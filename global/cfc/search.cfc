@@ -27,6 +27,7 @@
 	
 	<cffunction name="search_all">
 		<cfargument name="thestruct" type="struct">
+		
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("search")>
 		<cfset variables.cachetokenlogs = getcachetoken("logs")>
@@ -67,20 +68,39 @@
 		<cfif arguments.thestruct.searchtext EQ "">
 			<cfset arguments.thestruct.searchtext = "*">
 		</cfif>
-		
-		<cfset var sqlInCluseLimit = 990>
+		<cfset var sqlInCluseLimit = 2>
 		<cfset var q_end = sqlInCluseLimit>
-		
 		<!--- Search in Lucene --->
 		<cfif arguments.thestruct.thetype EQ "all">
-			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="doc,vid,img,aud" hostid="#session.hostid#" returnvariable="qrylucene">
-			<!--- How to build categorytree for this ??? --->
-			<!---  *******************   --->
-			<!---  *******************   --->
-			<cfset cattree = querynew("categorytree")> <!--- Temp. To avoid error.--->
-			<!---  *******************   --->
-			<!---  *******************   --->
-					
+			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="doc,vid,img,aud" hostid="#session.hostid#" returnvariable="qryluceneAll">
+			
+			<cfset var assetTypesArr = ["doc","img","aud","vid"]>
+			<cfloop array="#assetTypesArr#" index="assetType">
+				<cfquery dbtype="query" name="qrylucene">
+					select * from qryluceneAll where category = '#assetType#' 
+				</cfquery>
+				
+				<cfset var catTreeArg = { qrylucene = qrylucene, 
+									iscol = arguments.thestruct.iscol,
+									newsearch = arguments.thestruct.newsearch
+								}>
+				<cfif arguments.thestruct.iscol EQ "T">
+					<cfset catTreeArg.listAsset = arguments.thestruct.qry['list#assetType#']>	
+				</cfif>
+				
+				<cfif arguments.thestruct.newsearch EQ "F">					
+					<cfset catTreeArg.listAssetID = arguments.thestruct['list#assetType#id']>
+				</cfif>
+				<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattreeStruct['#assetType#']">
+				
+			</cfloop>
+			
+			<cfif cattreeStruct['img'].recordcount > 0 or cattreeStruct['aud'].recordcount > 0 or cattreeStruct['vid'].recordcount > 0 or cattreeStruct['doc'].recordcount > 0>
+				<cfset proceedToSQL = 1>
+			<cfelse>
+				<cfset proceedToSQL = 0>
+			</cfif>
+			
 		<cfelse>
 			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#arguments.thestruct.thetype#" hostid="#session.hostid#" returnvariable="qrylucene">
 			
@@ -88,7 +108,6 @@
 									iscol = arguments.thestruct.iscol,
 									newsearch = arguments.thestruct.newsearch
 								}>
-			
 			<cfif arguments.thestruct.iscol EQ "T">
 				<cfset catTreeArg.listAsset = arguments.thestruct.qry['list#arguments.thestruct.thetype#']>	
 			</cfif>
@@ -96,32 +115,26 @@
 			<cfif arguments.thestruct.newsearch EQ "F">					
 				<cfset catTreeArg.listAssetID = arguments.thestruct['list#arguments.thestruct.thetype#id']>
 			</cfif>	
-			<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattree">
+			<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattreeStruct['#arguments.thestruct.thetype#']">
+			
+			<cfset proceedToSQL = cattreeStruct['#arguments.thestruct.thetype#'].recordcount>
+			
 		</cfif>
 		
 		<!--- If the cattree is not empty --->
-		<cfif cattree.recordcount NEQ 0>
-			<!---  This is for Oracle and MSQL --->	
-			<cfif session.offset EQ 0>
-				<cfset var min = 0>
-				<cfset var max = session.rowmaxpage>
-			<cfelse>
-				<cfset var min = session.offset * session.rowmaxpage>
-				<cfset var max = (session.offset + 1) * session.rowmaxpage>
-				<cfif application.razuna.thedatabase EQ "db2">
-					<cfset var min = min + 1>
-				</cfif>
-			</cfif>
+		<cfif proceedToSQL NEQ 0>
+			
 			
 			<!--- MySQL Offset --->
 			<cfset var mysqloffset = session.offset * session.rowmaxpage>
-			<!--- Get how many loop --->
-			<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
-			<!--- Set outer loop --->
-			<cfset var pos_start = 1>
-			<cfset var pos_end = howmanyloop>
-			<!--- Set inner loop --->
-			<cfset var q_start = 1>
+			
+			<!---
+			<cfset var min = session.offset * session.rowmaxpage>
+			<cfset var max = (session.offset + 1) * session.rowmaxpage>
+			<cfif application.razuna.thedatabase EQ "db2" and session.offset NEQ 0>
+				<cfset var min = min + 1>
+			</cfif>--->
+			
 			<!--- Grab the result and query file db --->
 			<cftransaction>
 				<cfquery datasource="#application.razuna.datasource#" name="qry" >
@@ -134,7 +147,17 @@
 				SELECT SQL_CALC_FOUND_ROWS * FROM (
 				</cfif>
 				
-				<cfif arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "img" >
+				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "img") and  cattreeStruct['img'].recordcount neq 0>
+				
+				<cfset cattree = cattreeStruct['img']>	
+				<!--- Get how many loop --->
+				<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
+				<!--- Set outer loop --->
+				<cfset var pos_start = 1>
+				<cfset var pos_end = howmanyloop>
+				<!--- Set inner loop --->
+				<cfset var q_start = 1>
+			
 				<cfloop from="#pos_start#" to="#pos_end#" index="i">
 					<cfif q_start NEQ 1>
 						UNION ALL
@@ -222,7 +245,7 @@
 					LEFT JOIN #session.hostdbprefix#xmp x ON i.img_id = x.id_r
 					LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = i.folder_id_r AND i.host_id = fo.host_id
 					LEFT JOIN #session.hostdbprefix#images_text it ON i.img_id = it.img_id_r AND it.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
-					WHERE i.img_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+					WHERE i.img_id IN (<cfif cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
 					<!--- Only if we have dates --->
 					<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
 						<cfif application.razuna.thedatabase EQ "mssql">
@@ -251,18 +274,26 @@
 					AND i.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 					AND i.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 			    	<cfset q_start = q_end + 1>
-			    	<cfset q_end = q_end + 990>
+			    	<cfset q_end = q_end + sqlInCluseLimit>
 			    </cfloop>
 				    GROUP BY i.img_id, i.img_filename, i.folder_id_r, i.thumb_extension, i.img_filename_org, i.is_available, i.img_create_time, i.img_change_date, i.link_kind, i.link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org, it.img_description, it.img_keywords, i.img_filename, i.img_size, i.img_width, i.img_height, x.xres, x.yres, x.colorspace, i.hashtag, fo.folder_name, i.img_group, fo.folder_of_user, fo.folder_owner, i.in_trash
 				
 				</cfif> <!--- Image search end here --->
 				
-				<cfif arguments.thestruct.thetype EQ "all">
-					UNION ALL
-				</cfif>
-				
 				<!--- Documents search start here--->
-				<cfif arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "doc" >
+				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "doc") and  cattreeStruct['doc'].recordcount neq 0 >
+					<cfif arguments.thestruct.thetype EQ "all">
+						UNION ALL
+					</cfif>
+					<cfset cattree = cattreeStruct['doc']>
+					<!--- Get how many loop --->
+					<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
+					<!--- Set outer loop --->
+					<cfset var pos_start = 1>
+					<cfset var pos_end = howmanyloop>
+					<!--- Set inner loop --->
+					<cfset var q_start = 1>	
+					
 					<cfloop from="#pos_start#" to="#pos_end#" index="i">
 						<cfif q_start NEQ 1>
 							UNION ALL
@@ -338,7 +369,7 @@
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = f.folder_id_r AND f.host_id = fo.host_id
 						LEFT JOIN #session.hostdbprefix#files_desc fd ON f.file_id = fd.file_id_r AND fd.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 						LEFT JOIN #session.hostdbprefix#files_xmp x ON x.asset_id_r = f.file_id
-						WHERE f.file_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+						WHERE f.file_id IN (<cfif cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
 						<!--- Only if we have dates --->
 						<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
 							<cfif application.razuna.thedatabase EQ "mssql">
@@ -364,18 +395,28 @@
 						</cfif>
 						AND f.in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 						<cfset q_start = q_end + 1>
-				    	<cfset q_end = q_end + 990>
+				    	<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>
 			    	GROUP BY f.file_id, f.file_name, f.folder_id_r, f.file_extension, f.file_name_org, f.file_type, f.is_available, f.file_create_time, f.file_change_date, f.link_kind, f.link_path_url, f.path_to_asset, f.cloud_url, f.cloud_url_org, fd.file_desc, fd.file_keywords, f.file_name, f.file_size, f.hashtag, fo.folder_name, fo.folder_of_user, fo.folder_owner, f.in_trash
 				</cfif><!--- Document search end here --->
 				
-				<cfif arguments.thestruct.thetype EQ "all">
-					UNION ALL
-				</cfif>
+				
 				
 				<!--- Videos search start here --->
-				<cfif arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "vid" >
+				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "vid") and  cattreeStruct['vid'].recordcount neq 0 >
+					<cfif arguments.thestruct.thetype EQ "all">
+						UNION ALL
+					</cfif>
+					<cfset cattree = cattreeStruct['vid']>
 					
+					<!--- Get how many loop --->
+					<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
+					<!--- Set outer loop --->
+					<cfset var pos_start = 1>
+					<cfset var pos_end = howmanyloop>
+					<!--- Set inner loop --->
+					<cfset var q_start = 1>	
+						
 					<cfloop from="#pos_start#" to="#pos_end#" index="i">
 						<cfif q_start NEQ 1>
 							UNION ALL
@@ -460,7 +501,7 @@
 						FROM #session.hostdbprefix#videos v
 						LEFT JOIN #session.hostdbprefix#videos_text vt ON vt.vid_id_r = v.vid_id AND vt.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = v.folder_id_r AND v.host_id = fo.host_id
-						WHERE v.vid_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+						WHERE v.vid_id IN (<cfif  cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
 						<!--- Only if we have dates --->
 						<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
 							<cfif application.razuna.thedatabase EQ "mssql">
@@ -489,17 +530,26 @@
 						AND v.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND v.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 						<cfset q_start = q_end + 1>
-				    	<cfset q_end = q_end + 990>
+				    	<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>
 				    GROUP BY v.vid_id, v.vid_filename, v.folder_id_r, v.vid_extension, v.vid_name_image, v.is_available, v.vid_create_time, v.vid_change_date, v.link_kind, v.link_path_url, v.path_to_asset, v.cloud_url, v.cloud_url_org, vt.vid_description, vt.vid_keywords, v.vid_width, v.vid_height, v.vid_filename, v.vid_size, v.hashtag, fo.folder_name, v.vid_group, fo.folder_of_user, fo.folder_owner, v.in_trash
 				</cfif><!--- Video search end here --->
 				
-				<cfif arguments.thestruct.thetype EQ "all">
-					UNION ALL
-				</cfif>
-				
 				<!--- Audio search start here --->
-				<cfif arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "aud" >
+				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "aud") and  cattreeStruct['aud'].recordcount neq 0 >
+					<cfif arguments.thestruct.thetype EQ "all">
+						UNION ALL
+					</cfif>
+					<cfset cattree = cattreeStruct['aud']>
+					
+					<!--- Get how many loop --->
+					<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
+					<!--- Set outer loop --->
+					<cfset var pos_start = 1>
+					<cfset var pos_end = howmanyloop>
+					<!--- Set inner loop --->
+					<cfset var q_start = 1>	
+						
 					<cfloop from="#pos_start#" to="#pos_end#" index="i">
 						<cfif q_start NEQ 1>
 							UNION ALL
@@ -584,7 +634,7 @@
 						FROM #session.hostdbprefix#audios a
 						LEFT JOIN #session.hostdbprefix#audios_text aut ON aut.aud_id_r = a.aud_id AND aut.lang_id_r = <cfqueryparam value="#session.thelangid#" cfsqltype="cf_sql_numeric">
 						LEFT JOIN #session.hostdbprefix#folders fo ON fo.folder_id = a.folder_id_r AND a.host_id = fo.host_id
-						WHERE a.aud_id IN (<cfif qrylucene.recordcount EQ 0 OR cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
+						WHERE a.aud_id IN (<cfif cattree.categorytree EQ "">'0'<cfelse>'0'<cfloop query="cattree" startrow="#q_start#" endrow="#q_end#">,'#categorytree#'</cfloop></cfif>)
 						<!--- Only if we have dates --->
 						<cfif arguments.thestruct.on_day NEQ "" AND arguments.thestruct.on_month NEQ "" AND arguments.thestruct.on_year NEQ "">
 							<cfif application.razuna.thedatabase EQ "mssql">
@@ -613,7 +663,7 @@
 						AND a.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						AND a.in_trash = <cfqueryparam cfsqltype="cf_sql_varchar" value="F">
 						<cfset q_start = q_end + 1>
-				    	<cfset q_end = q_end + 990>
+				    	<cfset q_end = q_end + sqlInCluseLimit>
 				    </cfloop>
 				    GROUP BY a.aud_id, a.aud_name, a.folder_id_r, a.aud_extension, a.aud_name_org, a.is_available, a.aud_create_time, a.aud_change_date, a.link_kind, a.link_path_url, a.path_to_asset, a.cloud_url, a.cloud_url_org, aut.aud_description, aut.aud_keywords, a.aud_name, a.aud_size, a.hashtag, fo.folder_name, a.aud_group, fo.folder_of_user, fo.folder_owner, a.in_trash
 				</cfif><!--- Audio search end here --->
@@ -632,16 +682,14 @@
 				</cfif>
 				<cfif application.razuna.thedatabase EQ "mssql">
 						) sorted_inline_view
-						)select id, filename, folder_id_r, groupid, ext, filename_org,
-						kind, is_available, date_create, date_change, link_kind, link_path_url,
-						path_to_asset, cloud_url, cloud_url_org, in_trash, description, keywords,
-						vwidth, vheight, theformat, filename_forsort, size, hashtag,
-						folder_name, labels, width, height, xres, yres,
-						colorspace, perm, permfolder, listid,  
-				    	(SELECT count(RowNum) FROM myresult) AS 'cnt' from myresult 
+						)select *,  
+				    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
+				    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
+				    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult 
 						WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 				</cfif>
 			</cfquery>
+			
 			<!--- Select only records that are unlocked --->
 			<cfif application.razuna.thedatabase EQ "mysql">
 				<cfquery datasource="#application.razuna.datasource#" name="qryCount">
@@ -653,7 +701,6 @@
 				<cfset QueryAddcolumn(qry, "cnt", "integer", amount)>
 			</cfif>
 		</cftransaction>
-			
 			<!--- Only get the labels if in the combinded view --->
 			<cfif session.view EQ "combined">
 				<!--- Get the cachetoken for here --->
@@ -715,9 +762,7 @@
 	
 	<cffunction name="buildCategoryTree" >
 		<cfargument name="thestruct" type="Struct">
-		
 		<cfset var cattree = "">
-		
 		<!--- If lucene returns no records --->
 		<cfif arguments.thestruct.qrylucene.recordcount NEQ 0>
 			<!--- Sometimes it can happen that the category tree is empty thus we filter them with a QoQ here --->
@@ -825,76 +870,13 @@
 
 	<!--- Combine searches (needed for new folder search) --->
 	<cffunction name="search_combine" access="Public" output="false">
-		<cfargument name="qdoc" required="true" type="query">
-		<cfargument name="qimg" required="true" type="query">
-		<cfargument name="qvid" required="true" type="query">
-		<cfargument name="qaud" required="true" type="query">
-		<!--- Param --->
-		<cfset var qry = structnew()>
-		<!--- Set sortby variable --->
-		<cfset var sortby = session.sortby>
-		<!--- Set the order by --->
-		<cfif session.sortby EQ "name">
-			<cfset var sortby = "filename_forsort">
-		<cfelseif session.sortby EQ "sizedesc">
-			<cfset var sortby = "size DESC">
-		<cfelseif session.sortby EQ "sizeasc">
-			<cfset var sortby = "size ASC">
-		<cfelseif session.sortby EQ "dateadd">
-			<cfset var sortby = "date_create DESC">
-		<cfelseif session.sortby EQ "datechanged">
-			<cfset var sortby = "date_change DESC">
-		<cfelse>
-			<cfset var sortby = "filename_forsort">
-		</cfif>
-		
-		<!--- Union the 4 query results into one --->
-		<cfquery name="qry.qall" dbtype="query">
-		SELECT *
-		FROM arguments.qdoc
-		WHERE id IS NOT NULL
-		UNION ALL
-		SELECT *
-		FROM arguments.qimg
-		WHERE id IS NOT NULL
-		UNION ALL
-		SELECT *
-		FROM arguments.qvid
-		WHERE id IS NOT NULL
-		UNION ALL
-		SELECT *
-		FROM arguments.qaud
-		WHERE id IS NOT NULL
-		ORDER BY #sortby#
-		</cfquery>
-		<!--- Set each query result into struct --->
-		<cfset qry.qdoc = arguments.qdoc>
-		<cfset qry.qimg = arguments.qimg>
-		<cfset qry.qvid = arguments.qvid>
-		<cfset qry.qaud = arguments.qaud>
-		<!--- If recordcount is empty then 0 the cnt --->
-		<cfset var qdocc = arguments.qdoc.cnt>
-		<cfset var qimgc = arguments.qimg.cnt>
-		<cfset var qvidc = arguments.qvid.cnt>
-		<cfset var qaudc = arguments.qaud.cnt>
-		<cfif !isnumeric(arguments.qdoc.cnt)>
-			<cfset qdocc = 0>
-		</cfif>
-		<cfif !isnumeric(arguments.qimg.cnt)>
-			<cfset qimgc = 0>
-		</cfif>
-		<cfif !isnumeric(arguments.qvid.cnt)>
-			<cfset qvidc = 0>
-		</cfif>
-		<cfif !isnumeric(arguments.qaud.cnt)>
-			<cfset qaudc = 0>
-		</cfif>
-		<!--- Calculate the total found files together --->
-		<cfset qry.thetotal = qdocc + qimgc + qvidc + qaudc>
-		<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
-		<cfif qry.thetotal LTE session.rowmaxpage>
-			<cfset session.offset = 0>
-		</cfif>
+		<cfargument name="thestruct" type="struct">
+		<!--- Get the all asset results.  --->
+			<cfinvoke method="search_all" thestruct="#arguments.thestruct#" returnvariable="qry">
+			<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
+			<cfif qry.cnt LTE session.rowmaxpage>
+				<cfset session.offset = 0>
+			</cfif>
 		<!--- Return --->
 		<cfreturn qry>
 	</cffunction> 

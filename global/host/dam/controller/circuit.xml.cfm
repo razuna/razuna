@@ -4646,23 +4646,19 @@
 		<!-- ACTION: Search all -->
 		<if condition="attributes.thetype EQ 'all'">
 			<true>
-				<!-- ACTION: Search Files -->
-				<do action="search_files" />
-				<!-- ACTION: Search Images -->
-				<do action="search_images" />
-				<!-- ACTION: Search Videos -->
-				<do action="search_videos" />
-				<!-- ACTION: Search Audios -->
-				<do action="search_audios" />
-				<!-- CFC: Combine searches -->
-				<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(qry_results_files,qry_results_images,qry_results_videos,qry_results_audios)" returnvariable="qry_files" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
-				<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
-				<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
-				<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
-				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.thetotal#" />
+					<!-- XFA -->
+					<xfa name="filedetail" value="c.files_detail" />
+					<xfa name="imagedetail" value="c.images_detail" />
+					<xfa name="videodetail" value="c.videos_detail" />
+					<xfa name="fvideosloader" value="c.folder_videos_show" />
+					<xfa name="audiodetail" value="c.audios_detail" />
+					<!-- CFC: Customization -->
+					<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+					<set name="attributes.cs" value="#cs#" />
+					<!-- CFC: Combine searches -->
+					<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
+					<!-- Set the total -->
+					<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
 			</true>
 		</if>
 		<!-- ACTION: Search Files -->
