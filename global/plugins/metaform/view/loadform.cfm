@@ -69,7 +69,7 @@
 													</cfif>
 												<!--- Radio --->
 												<cfelseif cf_type EQ "radio">
-													<input type="radio" name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" value="T" checked="true">#myFusebox.getApplicationData().defaults.trans("yes")# <input type="radio" name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" value="F">#myFusebox.getApplicationData().defaults.trans("no")#
+													<input type="radio" name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" value="T" checked="true">yes <input type="radio" name="#id#_cf_#cf_id#" id="#id#_cf_#cf_id#" value="F">no
 													<cfif listGetAt(mf_value,3,";") EQ "mf_meta_field_req_#thenr#:true">
 														<cfset thereq = true>
 													<cfelse>
