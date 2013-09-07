@@ -1011,9 +1011,8 @@
 				operation="HTTPRequest"
 				url="http://#cgi.http_host#/#cgi.context_path#/#host_path#/dam/index.cfm?fa=c.scheduler_doit&sched_id=#newschid#"
 				startDate="#LSDateFormat(Now(), 'mm/dd/yyyy')#"
-				startTime="00:01"
-				endDate=""
-				endTime="23:59"
+				startTime="00:01 AM"
+				endTime="23:59 PM"
 				interval="120"
 			>
 		</cfloop>
