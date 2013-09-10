@@ -73,7 +73,7 @@
 				<span style="padding-left:10px;">
 					<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
 					Page: 
-						<select id="thepagelistsearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="pagelist('thepagelistsearch#attributes.kind#<cfif structkeyexists(attributes,"bot")>b</cfif>');">
+						<select id="thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="pagelist('thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>');">
 							<cfloop from="1" to="#thepage#" index="i">
 								<cfset loopoffset = i - 1>
 								<option value="#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>

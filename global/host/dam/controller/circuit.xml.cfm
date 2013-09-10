@@ -4634,6 +4634,8 @@
 	<fuseaction name="search_simple">
 		<!-- Set search simple  -->
 		<set name="attributes.search_simple" value="true" />
+		<!-- set default search count call -->
+		<set name="attributes.isCountOnly" value="0" />
 		<!-- Include the aearch include -->
 		<do action="search_include" />
 		<!-- If we come from saved search we query folderaccess -->
@@ -4657,8 +4659,12 @@
 					<set name="attributes.cs" value="#cs#" />
 					<!-- CFC: Combine searches -->
 					<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
+					<!-- set search count call -->
+					<set name="attributes.isCountOnly" value="1" />
+					<!-- CFC: Combine search total count call -->
+					<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 					<!-- Set the total -->
-					<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 			</true>
 		</if>
 		<!-- ACTION: Search Files -->
@@ -4670,8 +4676,12 @@
 				<set name="qry_files.qall" value="#qry_results_files#" />
 				<!-- Put id's into lists -->
 				<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
+				<!-- set search count call -->
+				<set name="attributes.isCountOnly" value="1" />
+				<!-- CFC: Combine search total count call -->
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+				<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 			</true>
 		</if>
 		<!-- ACTION: Search Images -->
@@ -4683,8 +4693,12 @@
 				<set name="qry_files.qall" value="#qry_results_images#" />
 				<!-- Put id's into lists -->
 				<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
+				<!-- set search count call -->
+				<set name="attributes.isCountOnly" value="1" />
+				<!-- CFC: Combine search total count call -->
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+				<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 			</true>
 		</if>
 		<!-- ACTION: Search Videos -->
@@ -4696,8 +4710,12 @@
 				<set name="qry_files.qall" value="#qry_results_videos#" />
 				<!-- Put id's into lists -->
 				<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
+				<!-- set search count call -->
+				<set name="attributes.isCountOnly" value="1" />
+				<!-- CFC: Combine search total count call -->
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+				<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 			</true>
 		</if>
 		<!-- ACTION: Search Audios -->
@@ -4709,8 +4727,12 @@
 				<set name="qry_files.qall" value="#qry_results_audios#" />
 				<!-- Put id's into lists -->
 				<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
+				<!-- set search count call -->
+				<set name="attributes.isCountOnly" value="1" />
+				<!-- CFC: Combine search total count call -->
+				<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 				<!-- Set the total -->
-				<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+				<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
 			</true>
 		</if>
 		<!-- Show -->

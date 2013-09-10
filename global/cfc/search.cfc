@@ -68,7 +68,7 @@
 		<cfif arguments.thestruct.searchtext EQ "">
 			<cfset arguments.thestruct.searchtext = "*">
 		</cfif>
-		<cfset var sqlInCluseLimit = 2>
+		<cfset var sqlInCluseLimit = 990>
 		<cfset var q_end = sqlInCluseLimit>
 		<!--- Search in Lucene --->
 		<cfif arguments.thestruct.thetype EQ "all">
@@ -144,7 +144,11 @@
 					SELECT ROW_NUMBER() OVER ( ORDER BY #sortby# ) AS RowNum,sorted_inline_view.*   FROM (
 				</cfif>
 				<cfif application.razuna.thedatabase EQ "mysql">
-				SELECT SQL_CALC_FOUND_ROWS * FROM (
+					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
+						SELECT COUNT(t.id) AS individualCount,kind FROM (
+					<cfelse>		
+						SELECT SQL_CALC_FOUND_ROWS * FROM (
+					</cfif>
 				</cfif>
 				
 				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "img") and  cattreeStruct['img'].recordcount neq 0>
@@ -678,7 +682,11 @@
 					<cfif arguments.thestruct.folder_id EQ 0 AND arguments.thestruct.iscol EQ "F">
 						AND permfolder IS NOT NULL
 					</cfif>
+					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 						LIMIT #mysqloffset#,#session.rowmaxpage#
+					<cfelse>
+						GROUP BY kind
+					</cfif>
 				</cfif>
 				<cfif application.razuna.thedatabase EQ "mssql">
 						) sorted_inline_view
@@ -691,16 +699,26 @@
 			</cfquery>
 			
 			<!--- Select only records that are unlocked --->
-			<cfif application.razuna.thedatabase EQ "mysql">
-				<cfquery datasource="#application.razuna.datasource#" name="qryCount">
+			<cfif application.razuna.thedatabase EQ "mysql" >
+				<!---<cfquery datasource="#application.razuna.datasource#" name="qryCount">
 					SELECT found_rows() as total
-				</cfquery>
-				<!--- Add the amount of assets to the query --->
-				<cfset var amount = ArrayNew(1)>
-				<cfset amount[1] = qryCount.total>
-				<cfset QueryAddcolumn(qry, "cnt", "integer", amount)>
+				</cfquery>--->
+				<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
+					<cfquery dbtype="query" name="qryCount">
+						SELECT sum(individualCount) as cnt from qry
+					</cfquery>
+					<cfset newQuery = queryNew("cnt,img_cnt,doc_cnt,aud_cnt,vid_cnt,other_cnt","Integer,Integer,Integer,Integer,Integer,Integer")>
+					<cfset queryAddRow(newQuery)>
+					<cfset querySetCell(newQuery, "cnt", qryCount.cnt)>
+					<cfoutput  query="qry" >
+						<cfset querySetCell(newQuery, qry.kind&"_cnt", val(individualCount))>
+					</cfoutput>
+					<cfset qry =newQuery/>
+				</cfif>
 			</cfif>
 		</cftransaction>
+		
+			<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
 			<!--- Only get the labels if in the combinded view --->
 			<cfif session.view EQ "combined">
 				<!--- Get the cachetoken for here --->
@@ -727,7 +745,7 @@
 			</cfloop>
 			<!--- Log Result --->
 			<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')>
-			
+			</cfif>
 		<!--- Since no records have been found we create a empty query --->
 		<cfelse>
 			<cfset var customlist = "">
@@ -874,7 +892,7 @@
 		<!--- Get the all asset results.  --->
 			<cfinvoke method="search_all" thestruct="#arguments.thestruct#" returnvariable="qry">
 			<!--- Set the session for offset correctly if the total count of assets in lower then the total rowmaxpage --->
-			<cfif qry.cnt LTE session.rowmaxpage>
+			<cfif structKeyExists(qry,'cnt') AND qry.cnt LTE session.rowmaxpage>
 				<cfset session.offset = 0>
 			</cfif>
 		<!--- Return --->
