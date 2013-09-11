@@ -73,7 +73,6 @@
 		<!--- Search in Lucene --->
 		<cfif arguments.thestruct.thetype EQ "all">
 			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="doc,vid,img,aud" hostid="#session.hostid#" returnvariable="qryluceneAll">
-			
 			<cfset var assetTypesArr = ["doc","img","aud","vid"]>
 			<cfloop array="#assetTypesArr#" index="assetType">
 				<cfquery dbtype="query" name="qrylucene">
@@ -136,7 +135,7 @@
 			</cfif>--->
 			
 			<!--- Grab the result and query file db --->
-			<cftransaction>
+			<!---<cftransaction>--->
 				<cfquery datasource="#application.razuna.datasource#" name="qry" >
 				
 				<cfif application.razuna.thedatabase EQ "mssql">
@@ -147,11 +146,11 @@
 					<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 1>
 						SELECT COUNT(t.id) AS individualCount,kind FROM (
 					<cfelse>		
-						SELECT SQL_CALC_FOUND_ROWS * FROM (
+						SELECT  * FROM (
 					</cfif>
 				</cfif>
 				
-				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "img") and  cattreeStruct['img'].recordcount neq 0>
+				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "img") and  cattreeStruct['img'].recordcount NEQ 0>
 				
 				<cfset cattree = cattreeStruct['img']>	
 				<!--- Get how many loop --->
@@ -697,7 +696,6 @@
 						WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
 				</cfif>
 			</cfquery>
-			
 			<!--- Select only records that are unlocked --->
 			<cfif application.razuna.thedatabase EQ "mysql" >
 				<!---<cfquery datasource="#application.razuna.datasource#" name="qryCount">
@@ -716,35 +714,35 @@
 					<cfset qry =newQuery/>
 				</cfif>
 			</cfif>
-		</cftransaction>
+		<!---</cftransaction>--->
 		
 			<cfif structKeyExists(arguments.thestruct,'isCountOnly') AND arguments.thestruct.isCountOnly EQ 0>
-			<!--- Only get the labels if in the combinded view --->
-			<cfif session.view EQ "combined">
-				<!--- Get the cachetoken for here --->
-				<cfset variables.cachetokenlabels = getcachetoken("labels")>
-				<!--- Loop over files and get labels and add to qry --->
+				<!--- Only get the labels if in the combinded view --->
+				<cfif session.view EQ "combined">
+					<!--- Get the cachetoken for here --->
+					<cfset variables.cachetokenlabels = getcachetoken("labels")>
+					<!--- Loop over files and get labels and add to qry --->
+					<cfloop query="qry">
+						<!--- Query labels --->
+						<cfquery name="qry_l" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
+						SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
+						FROM ct_labels
+						WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
+						</cfquery>
+						<!--- Add labels query --->
+						<cfif qry_l.recordcount NEQ 0>
+							<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
+						</cfif>
+					</cfloop>
+				</cfif>
+				<!--- Get proper folderaccess --->
 				<cfloop query="qry">
-					<!--- Query labels --->
-					<cfquery name="qry_l" datasource="#application.razuna.datasource#" cachedwithin="1" region="razcache">
-					SELECT /* #variables.cachetokenlabels#getallassetslabels */ ct_label_id
-					FROM ct_labels
-					WHERE ct_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#id#">
-					</cfquery>
+					<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
 					<!--- Add labels query --->
-					<cfif qry_l.recordcount NEQ 0>
-						<cfset QuerySetCell(qry, "labels", valueList(qry_l.ct_label_id), currentRow)>
-					</cfif>
+					<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
 				</cfloop>
-			</cfif>
-			<!--- Get proper folderaccess --->
-			<cfloop query="qry">
-				<cfinvoke component="folders" method="setaccess" returnvariable="theaccess" folder_id="#folder_id_r#"  />
-				<!--- Add labels query --->
-				<cfset QuerySetCell(qry, "permfolder", theaccess, currentRow)>
-			</cfloop>
-			<!--- Log Result --->
-			<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')>
+				<!--- Log Result --->
+				<cfset log_search(theuserid=session.theuserid,searchfor='#arguments.thestruct.searchtext#',foundtotal=qry.recordcount,searchfrom='img')>
 			</cfif>
 		<!--- Since no records have been found we create a empty query --->
 		<cfelse>

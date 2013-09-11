@@ -36,7 +36,7 @@
 	</cfif>
 	<cfset thestorage = "#cgi.context_path#/assets/#session.hostid#/">
 	<!--- If no record is in this folder --->
-	<cfif qry_filecount.thetotal EQ 0>
+	<cfif qry_filecount.thetotal EQ 0 OR qry_filecount.thetotal EQ ''>
 		<table border="0" cellpadding="0" cellspacing="0" width="100%" class="grid">
 			<tr>
 				<td>

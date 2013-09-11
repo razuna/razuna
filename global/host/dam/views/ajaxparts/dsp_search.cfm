@@ -182,7 +182,7 @@
 		<div style="padding:0;margin:0;">
 			<div id="search_tab">
 				<ul>
-					<li><a href="##content_search_all" onclick="switchsearchtab('all');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("searchresults_header")# (#qry_filecount.thetotal#)</a></li>
+					<li><a href="##content_search_all" onclick="switchsearchtab('all');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("searchresults_header")# <cfif qry_filecount.thetotal EQ ''>(0)<cfelse>(#qry_filecount.thetotal#)</cfif></a></li>
 					<cfif structKeyExists(attributes, "thetype") AND attributes.thetype EQ 'all'>
 						<cfif structKeyExists(qry_files_count.qall, "img_cnt") AND qry_files_count.qall.img_cnt NEQ '' AND qry_files_count.qall.img_cnt NEQ 0 AND cs.tab_images>
 							<li><a href="##content_search_img" onclick="switchsearchtab('img');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("folder_images")# (#qry_files_count.qall.img_cnt#)</a></li>
