@@ -1840,7 +1840,7 @@
 			<cfif arguments.thestruct.impp_template NEQ "">
 				<cfloop query="arguments.thestruct.template.impval">
 					<cfif imp_field EQ i AND !imp_key>
-						<cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]>
+						<!--- <cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]> --->
 						<cfset var theid = imp_map>
 						<cfset doloop = true>
 					</cfif>
@@ -1853,7 +1853,10 @@
 			<!--- Custom fields magic --->
 			<cfif doloop>
 				<!--- The value --->
-				<cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]>
+				<cfset var cfvalue = ltrim(arguments.thestruct.theimport[i][arguments.thecurrentRow])>
+				<cfif cfvalue EQ "">
+					<cfcontinue>
+				</cfif>
 				<!--- Insert or update --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT cf_id_r
