@@ -62,11 +62,11 @@
 					<!--- Folder Navigation (add file/tools/view) --->
 					<div style="float:right;">
 						<div style="float:right;padding-top:3px;">
-							<div style="float:left;" id="tooltip">
+							<!---<div style="float:left;" id="tooltip">
 								<a href="##" onclick="loadviewsearch('');return false;" title="Thumbnail View"><img src="#dynpath#/global/host/dam/images/view-list-icons.png" border="0" width="24" height="24"></a>
 								<a href="##" onclick="loadviewsearch('list');return false;" title="List View"><img src="#dynpath#/global/host/dam/images/view-list-text-3.png" border="0" width="24" height="24"></a>
 								<a href="##" onclick="loadviewsearch('combined');return false;" title="Combined/Quick Edit View"><img src="#dynpath#/global/host/dam/images/view-list-details-4.png" border="0" width="24" height="24"></a>
-							</div>
+							</div>--->
 						</div>
 						<script type="text/javascript">
 							function loadviewsearch(theview){
