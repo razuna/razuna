@@ -4908,6 +4908,7 @@
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND (img_group IS NULL OR img_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	</cfif>
 	<cfif arguments.thestruct.thekind EQ "ALL">
 		UNION ALL
@@ -4918,6 +4919,7 @@
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND (vid_group IS NULL OR vid_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	</cfif>
 	<cfif arguments.thestruct.thekind EQ "ALL">
 		UNION ALL
@@ -4928,6 +4930,7 @@
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND (aud_group IS NULL OR aud_group = '')
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 	</cfif>
 	<cfif arguments.thestruct.thekind EQ "ALL">
 		UNION ALL
@@ -4937,6 +4940,7 @@
 		FROM #session.hostdbprefix#files
 		WHERE folder_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#arguments.thestruct.folder_id#">
 		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+		AND in_trash = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="F">
 		<cfif arguments.thestruct.thekind EQ "other">
 			AND lower(file_extension) NOT IN (<cfqueryparam cfsqltype="cf_sql_varchar" value="doc,xls,docx,xlsx,pdf" list="true">)
 		<cfelseif arguments.thestruct.thekind NEQ "all">
