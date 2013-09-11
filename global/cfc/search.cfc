@@ -693,7 +693,34 @@
 				    	(SELECT count(RowNum) FROM myresult) AS 'cnt',(SELECT count(kind) FROM myresult where kind='img') as img_cnt,
 				    	(SELECT count(kind) FROM myresult where kind='doc') as doc_cnt,(SELECT count(kind) FROM myresult where kind='vid') as vid_cnt,
 				    	(SELECT count(kind) FROM myresult where kind='aud') as aud_cnt,(SELECT count(kind) FROM myresult where kind='other') as other_cnt from myresult 
-						WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
+						WHERE 
+						
+						RowNum >
+							CASE WHEN 
+								(
+									SELECT count(RowNum) FROM myresult 
+									<cfif arguments.thestruct.thetype NEQ "all" >
+										where kind='#arguments.thestruct.thetype#'
+									</cfif>
+								) > #mysqloffset#
+								 
+								THEN #mysqloffset#
+								ELSE 0
+								END
+						AND 
+						RowNum <= 
+							CASE WHEN 
+								(
+									SELECT count(RowNum) FROM myresult 
+									<cfif arguments.thestruct.thetype NEQ "all" >
+										where kind='#arguments.thestruct.thetype#'
+									</cfif>
+								) > #mysqloffset#
+								 
+								THEN #mysqloffset+session.rowmaxpage#
+								ELSE #session.rowmaxpage#
+								END
+						 
 				</cfif>
 			</cfquery>
 			<!--- Select only records that are unlocked --->

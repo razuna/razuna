@@ -4662,14 +4662,22 @@
 					<!-- Check the DataBase  -->
 					<if condition="attributes.database EQ 'mysql'">
 						<true>
-							<!-- CFC: Combine searches -->
-							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
 							<!-- set search count call -->
 							<set name="attributes.isCountOnly" value="1" />
 							<!-- CFC: Combine search total count call -->
 							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 							<!-- Set the total -->
 							<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+							<!-- Set the session offset -->
+							<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+								<true>
+									<set name="session.offset" value="0" />
+								</true>
+							</if>
+							<!-- set search count call -->
+							<set name="attributes.isCountOnly" value="0" />
+							<!-- CFC: Combine searches -->
+							<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files.qall" />
 						</true>
 						<false>
 							<!-- CFC: Combine searches -->
@@ -4685,23 +4693,42 @@
 		<!-- ACTION: Search Files -->
 		<if condition="attributes.thetype EQ 'doc'">
 			<true>
-				<!-- Search -->
-				<do action="search_files" />
-				<!-- Set results into different variable name -->
-				<set name="qry_files.qall" value="#qry_results_files#" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
 				<!-- Check the DataBase  -->
 				<if condition="attributes.database EQ 'mysql'">
 					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
 						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_files" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_files#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
 					</true>
 					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_files" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_files#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listdocid" value="#valuelist(qry_results_files.id)#" />
 						<!-- Set the total -->
 						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
 					</false>
@@ -4711,77 +4738,132 @@
 		<!-- ACTION: Search Images -->
 		<if condition="attributes.thetype EQ 'img'">
 			<true>
-				<!-- Search -->
-				<do action="search_images" />
-				<!-- Set results into different variable name -->
-				<set name="qry_files.qall" value="#qry_results_images#" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
 				<!-- Check the DataBase  -->
 				<if condition="attributes.database EQ 'mysql'">
 					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
 						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_images" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_images#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
 					</true>
 					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_images" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_images#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listimgid" value="#valuelist(qry_results_images.id)#" />
 						<!-- Set the total -->
 						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
 					</false>
 				</if>
-				
 			</true>
 		</if>
 		<!-- ACTION: Search Videos -->
 		<if condition="attributes.thetype EQ 'vid'">
 			<true>
-				<!-- Search -->
-				<do action="search_videos" />
-				<!-- Set results into different variable name -->
-				<set name="qry_files.qall" value="#qry_results_videos#" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
 				<!-- Check the DataBase  -->
 				<if condition="attributes.database EQ 'mysql'">
 					<true>
-						<!-- set search count call -->
-						<set name="attributes.isCountOnly" value="1" />
-						<!-- CFC: Combine search total count call -->
-						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
-						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />		
-					</true>
-					<false>
-						<!-- Set the total -->
-						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
-					</false>
-				</if>
-				
-			</true>
-		</if>
-		<!-- ACTION: Search Audios -->
-		<if condition="attributes.thetype EQ 'aud'">
-			<true>
-				<!-- Search -->
-				<do action="search_audios" />
-				<!-- Set results into different variable name -->
-				<set name="qry_files.qall" value="#qry_results_audios#" />
-				<!-- Put id's into lists -->
-				<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
-				<!-- Check the DataBase  -->
-				<if condition="attributes.database EQ 'mysql'">
-					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
 						<!-- set search count call -->
 						<set name="attributes.isCountOnly" value="1" />
 						<!-- CFC: Combine search total count call -->
 						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
 						<!-- Set the total -->
 						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_videos" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_videos#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />		
 					</true>
 					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_videos" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_videos#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listvidid" value="#valuelist(qry_results_videos.id)#" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
+					</false>
+				</if>
+			</true>
+		</if>
+		<!-- ACTION: Search Audios -->
+		<if condition="attributes.thetype EQ 'aud'">
+			<true>
+				<!-- Check the DataBase  -->
+				<if condition="attributes.database EQ 'mysql'">
+					<true>
+						<!-- CFC: Customization -->
+						<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
+						<set name="attributes.cs" value="#cs#" />
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="1" />
+						<!-- CFC: Combine search total count call -->
+						<invoke object="myFusebox.getApplicationData().search" methodcall="search_combine(attributes)" returnvariable="qry_files_count.qall" />
+						<!-- Set the total -->
+						<set name="qry_filecount.thetotal" value="#qry_files_count.qall.cnt#" />
+						<!-- Set the session offset -->
+						<if condition="qry_filecount.thetotal LTE session.rowmaxpage">
+							<true>
+								<set name="session.offset" value="0" />
+							</true>
+						</if>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_audios" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_audios#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
+					</true>
+					<false>
+						<!-- set search count call -->
+						<set name="attributes.isCountOnly" value="0" />
+						<!-- Search -->
+						<do action="search_audios" />
+						<!-- Set results into different variable name -->
+						<set name="qry_files.qall" value="#qry_results_audios#" />
+						<!-- Put id's into lists -->
+						<set name="attributes.listaudid" value="#valuelist(qry_results_audios.id)#" />
 						<!-- Set the total -->
 						<set name="qry_filecount.thetotal" value="#qry_files.qall.cnt#" />
 					</false>
