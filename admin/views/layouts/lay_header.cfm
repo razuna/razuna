@@ -47,7 +47,7 @@
 					<option id="gotodamselect" value="0" selected="true">#defaultsObj.trans("goto")#</option>
 					<cfloop query="qry_allhosts">
 						<cfif application.razuna.isp>
-							<option value="http://#host_name##thehostpath#/#host_path#/dam">
+							<option value="http://#host_name##thehostpath#/">
 						<cfelse>
 							<option value="../#host_path#/dam">
 						</cfif>
