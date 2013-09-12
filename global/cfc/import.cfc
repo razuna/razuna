@@ -813,10 +813,10 @@
 							<cfelse>
 								<cfset tiptcintelgenre = xmphere.intellectualgenre>
 							</cfif>
-							<cfif c_theiptcintelgenre NEQ "">
-								<cfset tiptcintelgenre = xmphere.instructions & " " & evaluate(c_theiptcintelgenre)>
+							<cfif c_theiptcinstructions NEQ "">
+								<cfset tiptcinstructions = xmphere.instructions & " " & evaluate(c_theiptcinstructions)>
 							<cfelse>
-								<cfset tiptcintelgenre = xmphere.instructions>
+								<cfset tiptcinstructions = xmphere.instructions>
 							</cfif>
 							<cfif c_theiptcsource NEQ "">
 								<cfset tiptcsource = xmphere.source & " " & evaluate(c_theiptcsource)>
