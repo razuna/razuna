@@ -1324,10 +1324,14 @@
 	<!--- MySQL Offset --->
 	<cfset var mysqloffset = session.offset * session.rowmaxpage>
 	<!--- Query --->
+		
 	<cfquery datasource="#variables.dsn#" name="qry.qry_files" cachedwithin="1" region="razcache">
-	<cfif variables.dsn EQ "mssql">
-		SELECT * FROM (
-		SELECT ROW_NUMBER() OVER ( ORDER BY theorder) AS RowNum,sorted_inline_view.* FROM (
+	<!--- For pagination  --->
+	<cfif NOT structKeyExists(arguments.thestruct,"searchtext")>
+		<cfif variables.dsn EQ "mssql">
+			SELECT * FROM (
+			SELECT ROW_NUMBER() OVER ( ORDER BY theorder) AS RowNum,sorted_inline_view.* FROM (
+		</cfif>
 	</cfif>
 	SELECT DISTINCT /* #variables.cachetoken#getallassetscol */ i.img_id id, i.img_filename filename, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, i.is_available,
 	'img' as kind, it.img_description description, it.img_keywords keywords, link_kind, link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org,
@@ -1419,15 +1423,18 @@
 	WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = f.file_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="doc">
-	<!--- MSSQL --->
-	<cfif application.razuna.thedatabase EQ "mssql">
-		) sorted_inline_view
-		 ) resultSet
-		  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
-	</cfif>
-	<!--- MYSQL --->
-	<cfif variables.dsn EQ "mysql">
-		ORDER BY theorder LIMIT #mysqloffset#,#session.rowmaxpage#
+	<!--- For pagination --->
+	<cfif NOT structKeyExists(arguments.thestruct,"searchtext")>
+		<!--- MSSQL --->
+		<cfif application.razuna.thedatabase EQ "mssql">
+			) sorted_inline_view
+			 ) resultSet
+			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
+		</cfif>
+		<!--- MYSQL --->
+		<cfif variables.dsn EQ "mysql">
+			ORDER BY theorder LIMIT #mysqloffset#,#session.rowmaxpage#
+		</cfif>
 	</cfif>
 	</cfquery>
 	<!--- Get the total --->

@@ -163,7 +163,6 @@
 		</cfif>
 	</cfif>
 </div>
-
 <script language="javascript">
 	// Change the sortby
 	function changesortbysearch(theselect){
@@ -200,8 +199,8 @@
 		// Show loading bar
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		// Load
-		$('###attributes.thediv#').load('#myself#c.search_simple', { offset: theoffset, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
-				$("##bodyoverlay").remove();
+		$('###attributes.thediv#').load('#myself#c.search_simple', { offset: theoffset, fcall: true,<cfif structkeyexists(attributes,"share") AND attributes.share NEQ "T">share: "T",</cfif> <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+		$("##bodyoverlay").remove();
 			});
 	}
 </script>

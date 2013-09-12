@@ -23,7 +23,6 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
-
 <cfoutput>
 	<cfif qry_filecount.thetotal LTE session.rowmaxpage>
 		<cfset session.offset = 0>
@@ -47,6 +46,9 @@
 		</table>
 	<!--- Show content of this folder --->
 	<cfelse>
+		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
+			<div id="#attributes.thediv#">
+		</cfif>
 		<form name="searchform#attributes.thetype#" id="searchform#attributes.thetype#" action="#self#">
 		<input type="hidden" name="thetype" value="all">
 		<input type="hidden" name="#theaction#" value="c.folder_combined_save">
@@ -81,13 +83,22 @@
 					</div>
 				</th>
 			</tr>
+		<cfelseif attributes.folder_id EQ 0 AND structKeyExists(attributes,"fcall") AND attributes.fcall AND attributes.share EQ "F">
+			<tr>
+				<th colspan="6">
+					<div style="float:left;padding-left:2px;padding-top:5px;font-weight:normal;">
+						<p><a href="#myself#c.share&fid=#session.fid#">#myFusebox.getApplicationData().defaults.trans("back_to_share")#</a></p>
+					</div>
+				</th>
+			</tr>
 		</cfif>
+		
 		<!--- Icon Bar --->
-		<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">
+		<!---<cfif structkeyexists(attributes,"share") AND attributes.share EQ "F">--->
 			<tr>
 				<td colspan="6" style="border:0px;"><cfinclude template="dsp_icon_bar_search.cfm"></td>
 			</tr>
-		</cfif>
+		<!---</cfif>--->
 		<!--- Thumbnail --->
 		<cfset mysqloffset = session.offset * session.rowmaxpage>
 		<cfif session.view EQ "">
@@ -950,6 +961,9 @@
 	</table>
 
 	</form>
+	<cfif structkeyexists(attributes,"share") AND attributes.share EQ "T">
+		</div>
+	</cfif>
 	</cfif>
 	<!--- JS for the combined view --->
 	<script language="JavaScript" type="text/javascript">
