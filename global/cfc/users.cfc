@@ -197,6 +197,35 @@
 		</cfquery>
 	<cfreturn qry>
 </cffunction>
+<!--- Check the Email already exist --->
+<cffunction name="check_email">
+	<cfargument name="email" type="string" required="true" >
+		<cfquery datasource="#application.razuna.datasource#" name="qry">
+			SELECT u.user_email, u.user_login_name
+			FROM users u, ct_users_hosts ct
+			WHERE lower(u.user_email) = <cfqueryparam value="#lcase(arguments.email)#" cfsqltype="cf_sql_varchar">
+			AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+			AND ct.ct_u_h_user_id = u.user_id
+		</cfquery>
+	<cfreturn qry>
+</cffunction>
+<!--- Add AD Server --->
+<cffunction name="ad_server_user">
+	<cfargument name="thestruct" type="Struct">
+	<cfloop list="#arguments.thestruct.acc_email#" index="i" delimiters="," >
+		<cfset arguments.thestruct.user_first_name = "">
+		<cfset arguments.thestruct.user_last_name = "">
+		<cfset arguments.thestruct.intrauser = "T">
+		<cfset arguments.thestruct.user_active = "T">
+		<cfset arguments.thestruct.user_pass = "">
+		<cfset arguments.thestruct.hostid = session.hostid>
+		<cfset arguments.thestruct.user_login_name = listfirst(i,'-')>
+		<cfset arguments.thestruct.user_email = listlast(i,'-')>
+		<cfif arguments.thestruct.user_login_name NEQ '' OR arguments.thestruct.user_email NEQ ''> 
+			<cfinvoke method="add"  thestruct="#arguments.thestruct#">
+		</cfif>
+	</cfloop> 
+</cffunction>
 
 <!--- Add user --->
 <cffunction name="add">
@@ -226,8 +255,11 @@
 	<!--- Not the same user thus go on --->
 	<cfif qry_sameuser.RecordCount EQ 0>
 		<cfset newid = 0>
-		<!--- Hash Password --->
-		<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
+		<!--- Check the AD Users --->
+		<cfif structKeyExists(arguments.thestruct,'user_pass') AND arguments.thestruct.user_pass NEQ ''>
+			<!--- Hash Password --->
+			<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
+		</cfif>
 		<!--- Insert the User into the DB --->
 		<cfset newid = createuuid()>
 		<cfquery datasource="#application.razuna.datasource#">
@@ -238,7 +270,11 @@
 		<cfqueryparam value="#newid#" cfsqltype="CF_SQL_VARCHAR">,
 		<cfqueryparam value="#arguments.thestruct.user_login_name#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.user_email#" cfsqltype="cf_sql_varchar">,
-		<cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">,
+		<cfif structKeyExists(arguments.thestruct,'user_pass') AND arguments.thestruct.user_pass NEQ ''>
+			<cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">,
+		<cfelse>
+			<cfqueryparam value="" cfsqltype="cf_sql_varchar">,
+		</cfif>
 		<cfqueryparam value="#arguments.thestruct.user_first_name#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.user_last_name#" cfsqltype="cf_sql_varchar">,
 		<cfqueryparam value="#arguments.thestruct.adminuser#" cfsqltype="cf_sql_varchar">,
@@ -336,6 +372,7 @@
 	<cfparam default="F" name="arguments.thestruct.adminuser">
 	<cfparam default="F" name="arguments.thestruct.intrauser">
 	<cfparam default="false" name="arguments.thestruct.emailinfo">
+	
 	<!--- Check that there is no user already with the same email address. Since this is the detail we already have a user with the same email address so we exclude this user from the search --->
 	<cfquery datasource="#application.razuna.datasource#" name="qry_sameuser">
 	SELECT u.user_email, u.user_id
@@ -357,14 +394,16 @@
 			</cfquery>
 		</cfif>
 		<!--- Hash Password --->
-		<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
+		<cfif structKeyExists(arguments.thestruct,"user_pass")>
+			<cfset thepass = hash(arguments.thestruct.user_pass, "MD5", "UTF-8")>
+		</cfif>
 		<!--- Update the User in the DB --->
 		<cfquery datasource="#application.razuna.datasource#">
 		UPDATE users
 		SET
 		user_login_name=<cfqueryparam value="#arguments.thestruct.user_login_name#" cfsqltype="cf_sql_varchar">,
 		user_email=<cfqueryparam value="#arguments.thestruct.user_email#" cfsqltype="cf_sql_varchar">
-		<cfif arguments.thestruct.user_pass IS NOT "">
+		<cfif structKeyExists(arguments.thestruct,"user_pass") AND arguments.thestruct.user_pass IS NOT "">
 			, user_pass=<cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">
 		</cfif>,
 		user_first_name=<cfqueryparam value="#arguments.thestruct.user_first_name#" cfsqltype="cf_sql_varchar">,

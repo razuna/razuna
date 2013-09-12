@@ -36,53 +36,91 @@
 
 <!--- FUNCTION: LOGIN --->
 	<cffunction name="login" access="public" output="false" returntype="struct">
-		<cfargument name="name" required="yes" type="string">
+		<cfargument name="thestruct" required="yes" type="struct">
+		
+		<!---<cfargument name="name" required="yes" type="string">
 		<cfargument name="pass" required="yes" type="string">
 		<cfargument name="loginto" required="yes" type="string">
 		<cfargument name="rem_login" required="no" type="string">
 		<cfargument name="from_share" required="no" type="string">
+		<cfargument name="ad_server_name" required="no" type="string">--->
+		
 		<!--- Params --->
-		<cfparam name="arguments.rem_login" default="F">
-		<cfparam name="arguments.from_share" default="F">
+		<cfparam name="arguments.thestruct.rem_login" default="F">
+		<cfparam name="arguments.thestruct.from_share" default="F">
 		<!--- create structure to store results in --->
 		<cfset var theuser = structNew()>
-		<cfif arguments.loginto EQ "admin">
+		<cfif arguments.thestruct.loginto EQ "admin">
 			<cfset var thecookie = cookie.loginpassadmin>
 		<cfelse>
 			<cfset var thecookie = cookie.loginpass>
 		</cfif>
 		<!--- compare argument and cookie, if it is alredy the hased value use us it else take new password passed --->
-		<cfif arguments.pass EQ thecookie>
+		<cfif arguments.thestruct.pass EQ thecookie>
 			<cfset var thepass = thecookie>
 		<cfelse>
 			<!--- Hash password --->
-			<cfset var thepass = hash(arguments.pass, "MD5", "UTF-8")>
+			<cfset var thepass = hash(arguments.thestruct.pass, "MD5", "UTF-8")>
 		</cfif>
 		<!--- Get the cachetoken for here --->
 		<cfset variables.cachetoken = getcachetoken("users")>
 		<!--- Check for the user --->
 		<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
 		SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
-		FROM users u<cfif arguments.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
+		FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
 		WHERE (
-			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.name)#" cfsqltype="cf_sql_varchar"> 
-			OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.name)#" cfsqltype="cf_sql_varchar">
+			lower(u.user_login_name) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar"> 
+			OR lower(u.user_email) = <cfqueryparam value="#lcase(arguments.thestruct.name)#" cfsqltype="cf_sql_varchar">
 			)
 		AND u.user_pass = <cfqueryparam value="#thepass#" cfsqltype="cf_sql_varchar">
-		<cfif arguments.loginto EQ "admin">
+		<cfif arguments.thestruct.loginto EQ "admin">
 			AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
 			AND ctg.ct_g_u_user_id = u.user_id
-		<cfelseif arguments.loginto EQ "dam">
+		<cfelseif arguments.thestruct.loginto EQ "dam">
 			AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
 		</cfif>
 		AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
-		<cfif arguments.loginto NEQ "admin">
+		<cfif arguments.thestruct.loginto NEQ "admin">
 			AND ct.ct_u_h_user_id = u.user_id
 			AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
 		</cfif>
 		</cfquery>
-		<!--- check to see if a record has been found --->
+		
 		<cfif qryuser.recordcount EQ 0>
+			<!--- Get LDAP User list --->
+			<cfinvoke component="global.cfc.settings" method="get_ad_server_userlist"  returnvariable="results"  thestruct="#arguments.thestruct#">
+			<cfquery dbtype="query" name="qryAdUser" >
+				SELECT * from results where (SamAccountname='#arguments.thestruct.name#' OR mail='#arguments.thestruct.name#')
+			</cfquery> 
+			<cfif qryAdUser.RecordCount NEQ 0>
+				<!--- Check for the user --->
+				<cfquery datasource="#application.razuna.datasource#" name="qryuser" cachedwithin="1" region="razcache">
+				SELECT /* #variables.cachetoken#login */ u.user_login_name, u.user_email, u.user_id, u.user_first_name, u.user_last_name
+				FROM users u<cfif arguments.thestruct.loginto NEQ "admin">, ct_users_hosts ct<cfelse>, ct_groups_users ctg</cfif>
+				WHERE (
+					lower(u.user_login_name) = <cfqueryparam value="#lcase(qryAdUser.SamAccountname)#" cfsqltype="cf_sql_varchar"> 
+					OR lower(u.user_email) = <cfqueryparam value="#lcase(qryAdUser.mail)#" cfsqltype="cf_sql_varchar">
+					)
+				AND u.user_pass = <cfqueryparam value="" cfsqltype="cf_sql_varchar">
+				<cfif arguments.thestruct.loginto EQ "admin">
+					AND ctg.ct_g_u_grp_id = <cfqueryparam value="1" cfsqltype="cf_sql_varchar">
+					AND ctg.ct_g_u_user_id = u.user_id
+				<cfelseif arguments.thestruct.loginto EQ "dam">
+					AND lower(u.user_in_dam) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+				</cfif>
+				AND lower(u.user_active) = <cfqueryparam value="t" cfsqltype="cf_sql_varchar">
+				<cfif arguments.thestruct.loginto NEQ "admin">
+					AND ct.ct_u_h_user_id = u.user_id
+					AND ct.ct_u_h_host_id = <cfqueryparam value="#session.hostid#" cfsqltype="cf_sql_numeric">
+				</cfif>
+				</cfquery>
+				<!--- AD user name --->
+				<cfset arguments.thestruct.ad_user_name = qryAdUser.givenname />
+			</cfif>
+		</cfif>
+		
+		<!--- check to see if a record has been found --->
+		<cfif qryuser.recordcount EQ 0 >
 			<cfset theuser.notfound = "T">
 		<cfelse>
 			<cfset theuser.notfound = "F">
@@ -96,37 +134,40 @@
 			<cfset session.theuserid = qryuser.user_id>
 			<!--- Set User First and last name --->
 			<cfset session.firstlastname = "#qryuser.user_first_name# #qryuser.user_last_name#">
+			<cfif structKeyExists(arguments.thestruct,"ad_user_name") AND qryuser.user_first_name EQ '' AND qryuser.user_last_name EQ ''>
+				<cfset session.firstlastname = "#arguments.thestruct.ad_user_name#">
+			</cfif>
 			<!--- Get the groups of this user (the function sets a session so we could use that one later on no need for a returnvariable) --->
 			<cfinvoke component="groups_users" method="getGroupsOfUser">
 				<cfinvokeargument name="user_id" value="#qryuser.user_id#" />
 				<cfinvokeargument name="host_id" value="#session.hostid#" />
 			</cfinvoke>
 			<!--- Admin Login: Set the domain ID into a session --->
-			<cfif arguments.loginto EQ "admin">
+			<cfif arguments.thestruct.loginto EQ "admin">
 				<cfset session.hostid = "0">
 				<!--- Store the login info into cookie var --->
-				<cfif arguments.rem_login EQ "T">
-					<cfset SetCookie("loginnameadmin",arguments.name,"never")>
+				<cfif arguments.thestruct.rem_login EQ "T">
+					<cfset SetCookie("loginnameadmin",arguments.thestruct.name,"never")>
 					<cfset SetCookie("loginpassadmin",thepass,"never")>
 				<cfelse>
 					<cfset SetCookie("loginnameadmin","","now")>
 					<cfset SetCookie("loginpassadmin","","now")>
 				</cfif>
 				<!--- Cookie --->
-				<cfset setcookie("loginadminrem",arguments.rem_login,"never")>
+				<cfset setcookie("loginadminrem",arguments.thestruct.rem_login,"never")>
 			</cfif>
 			<!--- If we login to the DAM then check for the existence of the "My Folder" of this user --->
-			<cfif arguments.loginto EQ "dam" AND arguments.from_share EQ "f">
+			<cfif arguments.thestruct.loginto EQ "dam" AND arguments.thestruct.from_share EQ "f">
 				<!--- Store the login info into cookie var --->
-				<cfif arguments.rem_login EQ "T">
-					<cfset SetCookie("loginname",arguments.name,"never")>
+				<cfif arguments.thestruct.rem_login EQ "T">
+					<cfset SetCookie("loginname",arguments.thestruct.name,"never")>
 					<cfset SetCookie("loginpass",thepass,"never")>
 				<cfelse>
 					<cfset SetCookie("loginname","","now")>
 					<cfset SetCookie("loginpass","","now")>
 				</cfif>
 				<!--- Cookie --->
-				<cfset setcookie("loginrem",arguments.rem_login,"never")>
+				<cfset setcookie("loginrem",arguments.thestruct.rem_login,"never")>
 				<!--- Call internal create my folder function but not for SystemAdmins --->
 				<cfif !listFind(session.thegroupofuser, "1", ",")>
 					<cfinvoke method="createmyfolder" userid="#qryuser.user_id#" />

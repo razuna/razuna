@@ -23,6 +23,7 @@
 * along with Razuna. If not, see <http://www.razuna.com/licenses/>.
 *
 --->
+
 <cfoutput>
 <form action="#self#" method="post" name="userdetailadd" id="userdetailadd">
 <input type="hidden" name="#theaction#" value="c.users_save">
@@ -58,18 +59,18 @@
 			</tr>
 			<tr>
 				<td width="180"><strong>#myFusebox.getApplicationData().defaults.trans("user_name")#*</strong></td>
-				<td width="420"><input type="text" name="user_login_name" id="user_login_name" style="width:300px;" value="#qry_detail.user_login_name#" onkeyup="checkusername();"><div id="checkusernamediv"></div><label for="user_login_name" class="error">Enter your Loginname!</label></td>
+				<td width="420"><input type="text" name="user_login_name" id="user_login_name" style="width:300px;" value="#qry_detail.user_login_name#" onkeyup="checkusername();" <cfif #qry_detail.user_pass# EQ "">readOnly="true"</cfif>><div id="checkusernamediv"></div><label for="user_login_name" class="error">Enter your Loginname!</label></td>
 			</tr>
 			<tr>
 				<th colspan="2"><br /></th>
 			</tr>
 			<tr>
 				<td><strong>#myFusebox.getApplicationData().defaults.trans("password")#*</strong></td>
-				<td><input type="password" name="user_pass" id="user_pass" style="width:300px;" class="text" style="float:left;"></td>
+				<td><input type="password" name="user_pass" id="user_pass" style="width:300px;" class="text" style="float:left;" <cfif #qry_detail.user_pass# EQ "">disabled</cfif>></td>
 			</tr>
 			<tr>
 				<td nowrap="nowrap" valign="top"><strong>#myFusebox.getApplicationData().defaults.trans("password_confirm")#*</strong></td>
-				<td><span id="spryconfirm1"><input type="password" name="user_pass_confirm" id="user_pass_confirm" style="width:300px;" class="text"></span><br ><a href="##" onclick="loadpass();return false;" title="Click here to generate a secure password">Generate password</a><div id="randompass"></div></td>
+				<td><span id="spryconfirm1"><input type="password" name="user_pass_confirm" id="user_pass_confirm" style="width:300px;" class="text" <cfif #qry_detail.user_pass# EQ "">disabled</cfif>></span><br ><a href="##" onclick="loadpass();return false;" title="Click here to generate a secure password">Generate password</a><div id="randompass"></div></td>
 			</tr>
 			<tr>
 				<th colspan="2"><br /></th>
