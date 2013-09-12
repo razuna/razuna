@@ -63,8 +63,9 @@
 		<!-- Params -->
 		<set name="attributes.passsend" value="F" overwrite="false" />
 		<set name="attributes.rem_login" value="F" overwrite="false" />
+		<set name="attributes.loginto" value="admin" overwrite="false" />
 		<!-- Check the user and let him in ot nor -->
-		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes.name,attributes.pass,'admin',attributes.rem_login)" returnvariable="logindone" />
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
 		<!-- Log this action -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>

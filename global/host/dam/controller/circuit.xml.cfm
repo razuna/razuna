@@ -56,9 +56,17 @@
 		<!-- Params -->
 		<set name="attributes.rem_login" value="F" overwrite="false" />
 		<set name="attributes.redirectto" value="" overwrite="false" />
+		<set name="attributes.loginto" value="dam" overwrite="false" />
 		<set name="session.indebt" value="false" />
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
 		<!-- Check the user and let him in ot nor -->
-		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes.name,attributes.pass,'dam',attributes.rem_login)" returnvariable="logindone" />
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
 		<!-- Log this action -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
