@@ -244,7 +244,7 @@
 			<cfset var cachetoken = getcachetoken(arguments.api_key,"labels")>
 			<!--- Query --->
 			<cfquery datasource="#application.razuna.api.dsn#" name="thexml" cachedwithin="1" region="razcache">
-			SELECT /* #cachetoken#getlabelofasset */ l.label_id, l.label_text, l.label_path
+			SELECT /* #cachetoken#getlabelofasset */ l.label_id, l.label_text, l.label_path, ct.ct_id_r as assetid
 			FROM #application.razuna.api.prefix["#arguments.api_key#"]#labels l, ct_labels ct
 			WHERE ct.ct_id_r IN (<cfqueryparam value="#arguments.asset_id#" cfsqltype="cf_sql_varchar" list="Yes" />)
 			AND ct.ct_type = <cfqueryparam value="#arguments.asset_type#" cfsqltype="cf_sql_varchar" />
