@@ -957,11 +957,13 @@
 			</cftry>
 		</cfloop>
 		<!--- Delete related videos as well --->
-		<cfquery datasource="#application.razuna.datasource#">
-		DELETE FROM #session.hostdbprefix#videos
-		WHERE vid_group = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
-		AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
-		</cfquery>
+		<cfif qry.recordcount NEQ 0>
+			<cfquery datasource="#application.razuna.datasource#">
+			DELETE FROM #session.hostdbprefix#videos
+			WHERE vid_group = <cfqueryparam value="#arguments.thestruct.id#" cfsqltype="CF_SQL_VARCHAR">
+			AND host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
+			</cfquery>
+		</cfif>
 		<cfcatch type="any">
 			<cfinvoke component="debugme" method="email_dump" emailto="support@razuna.com" emailfrom="server@razuna.com" emailsubject="Error on removing a video from system (HostID: #arguments.thestruct.hostid#, Asset: #arguments.thestruct.id#)" dump="#cfcatch#">
 		</cfcatch>

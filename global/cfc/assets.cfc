@@ -431,7 +431,7 @@
 						CASE
 							WHEN EXISTS(
 								SELECT s.folder_id
-								FROM raz1_folders s
+								FROM #session.hostdbprefix#folders s
 								WHERE s.folder_id = f.folder_id_r
 								AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 							) THEN 1
@@ -3539,7 +3539,7 @@ This is the main function called directly by a single upload else from addassets
 					CASE
 						WHEN EXISTS(
 							SELECT s.folder_id
-							FROM raz1_folders s
+							FROM #session.hostdbprefix#folders s
 							WHERE s.folder_id = f.folder_id_r
 							AND s.host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#">
 						) THEN 1

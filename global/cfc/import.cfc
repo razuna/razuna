@@ -813,10 +813,10 @@
 							<cfelse>
 								<cfset tiptcintelgenre = xmphere.intellectualgenre>
 							</cfif>
-							<cfif c_theiptcintelgenre NEQ "">
-								<cfset tiptcintelgenre = xmphere.instructions & " " & evaluate(c_theiptcintelgenre)>
+							<cfif c_theiptcinstructions NEQ "">
+								<cfset tiptcinstructions = xmphere.instructions & " " & evaluate(c_theiptcinstructions)>
 							<cfelse>
-								<cfset tiptcintelgenre = xmphere.instructions>
+								<cfset tiptcinstructions = xmphere.instructions>
 							</cfif>
 							<cfif c_theiptcsource NEQ "">
 								<cfset tiptcsource = xmphere.source & " " & evaluate(c_theiptcsource)>
@@ -1833,7 +1833,8 @@
 		<cfargument name="assetid" type="string">
 		<cfargument name="thecurrentRow" type="string">
 		<!--- Param --->
-		<cfset doloop = false>
+		<cfset var doloop = false>
+		<cfset var theid = "">
 		<!--- Get the columlist --->
 		<cfloop list="#arguments.thestruct.theimport.columnList#" delimiters="," index="i">
 			<!--- If template --->
@@ -1842,21 +1843,18 @@
 					<cfif imp_field EQ i AND !imp_key>
 						<!--- <cfset var cfvalue = arguments.thestruct.theimport[i][arguments.thecurrentRow]> --->
 						<cfset var theid = imp_map>
-						<cfset doloop = true>
+						<cfset var doloop = true>
 					</cfif>
 				</cfloop>
 			<cfelseif i contains ":">
 				<!--- The ID --->
 				<cfset var theid = ucase(listLast(i,":"))>
-				<cfset doloop = true>
+				<cfset var doloop = true>
 			</cfif>
 			<!--- Custom fields magic --->
 			<cfif doloop>
 				<!--- The value --->
 				<cfset var cfvalue = ltrim(arguments.thestruct.theimport[i][arguments.thecurrentRow])>
-				<cfif cfvalue EQ "">
-					<cfcontinue>
-				</cfif>
 				<!--- Insert or update --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
 				SELECT cf_id_r
@@ -1888,7 +1886,8 @@
 				</cfif>
 			</cfif>
 			<!--- Param --->
-			<cfset doloop = false>
+			<cfset var doloop = false>
+			<cfset var theid = "">
 		</cfloop>
 		<!--- Return --->
 		<cfreturn  />
