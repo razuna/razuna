@@ -83,14 +83,6 @@
 					</div>
 				</th>
 			</tr>
-		<cfelseif attributes.folder_id EQ 0 AND structKeyExists(attributes,"fcall") AND attributes.fcall AND attributes.share EQ "F">
-			<tr>
-				<th colspan="6">
-					<div style="float:left;padding-left:2px;padding-top:5px;font-weight:normal;">
-						<p><a href="#myself#c.share&fid=#session.fid#">#myFusebox.getApplicationData().defaults.trans("back_to_share")#</a></p>
-					</div>
-				</th>
-			</tr>
 		</cfif>
 		
 		<!--- Icon Bar --->

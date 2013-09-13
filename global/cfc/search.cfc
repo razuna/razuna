@@ -70,7 +70,7 @@
 		</cfif>
 		<cfset var sqlInCluseLimit = 990>
 		<cfset var q_end = sqlInCluseLimit>
-		<!--- Search in Lucene --->
+		<!--- Search in Lucene  --->
 		<cfif arguments.thestruct.thetype EQ "all">
 			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="doc,vid,img,aud" hostid="#session.hostid#" returnvariable="qryluceneAll">
 			<cfset var assetTypesArr = ["doc","img","aud","vid"]>
@@ -78,7 +78,6 @@
 				<cfquery dbtype="query" name="qrylucene">
 					select * from qryluceneAll where category = '#assetType#' 
 				</cfquery>
-				
 				<cfset var catTreeArg = { qrylucene = qrylucene, 
 									iscol = arguments.thestruct.iscol,
 									newsearch = arguments.thestruct.newsearch
@@ -88,21 +87,18 @@
 				</cfif>
 				
 				<cfif arguments.thestruct.newsearch EQ "F">					
-					<cfset catTreeArg.listAssetID = arguments.thestruct['list#assetType#id']>
+					<cfset catTreeArg.listAssetID = arguments.thestruct['list#assetType#id'] >
 				</cfif>
 				<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattreeStruct['#assetType#']">
 				
 			</cfloop>
-			
-			<cfif cattreeStruct['img'].recordcount > 0 or cattreeStruct['aud'].recordcount > 0 or cattreeStruct['vid'].recordcount > 0 or cattreeStruct['doc'].recordcount > 0>
+			<cfif cattreeStruct['img'].recordcount GT 0 or cattreeStruct['aud'].recordcount GT 0 or cattreeStruct['vid'].recordcount GT 0 or cattreeStruct['doc'].recordcount GT 0>
 				<cfset proceedToSQL = 1>
 			<cfelse>
 				<cfset proceedToSQL = 0>
 			</cfif>
-			
 		<cfelse>
 			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#arguments.thestruct.thetype#" hostid="#session.hostid#" returnvariable="qrylucene">
-			
 			<cfset var catTreeArg = { qrylucene = qrylucene, 
 									iscol = arguments.thestruct.iscol,
 									newsearch = arguments.thestruct.newsearch
@@ -149,9 +145,9 @@
 						SELECT  * FROM (
 					</cfif>
 				</cfif>
-				
+				<cfset unionEnabled = 0>
 				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "img") and  cattreeStruct['img'].recordcount NEQ 0>
-				
+				<cfset unionEnabled = 1>
 				<cfset cattree = cattreeStruct['img']>	
 				<!--- Get how many loop --->
 				<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
@@ -285,9 +281,11 @@
 				
 				<!--- Documents search start here--->
 				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "doc") and  cattreeStruct['doc'].recordcount neq 0 >
-					<cfif arguments.thestruct.thetype EQ "all">
+					
+					<cfif arguments.thestruct.thetype EQ "all" and unionEnabled eq 1>
 						UNION ALL
 					</cfif>
+					<cfset unionEnabled = 1>
 					<cfset cattree = cattreeStruct['doc']>
 					<!--- Get how many loop --->
 					<cfset var howmanyloop = ceiling(cattree.recordcount / sqlInCluseLimit)>
@@ -407,9 +405,11 @@
 				
 				<!--- Videos search start here --->
 				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "vid") and  cattreeStruct['vid'].recordcount neq 0 >
-					<cfif arguments.thestruct.thetype EQ "all">
+					
+					<cfif arguments.thestruct.thetype EQ "all" and unionEnabled eq 1>
 						UNION ALL
 					</cfif>
+					<cfset unionEnabled = 1>
 					<cfset cattree = cattreeStruct['vid']>
 					
 					<!--- Get how many loop --->
@@ -540,9 +540,11 @@
 				
 				<!--- Audio search start here --->
 				<cfif (arguments.thestruct.thetype EQ "all" or arguments.thestruct.thetype EQ "aud") and  cattreeStruct['aud'].recordcount neq 0 >
-					<cfif arguments.thestruct.thetype EQ "all">
+					
+					<cfif arguments.thestruct.thetype EQ "all" and unionEnabled eq 1>
 						UNION ALL
 					</cfif>
+					<cfset unionEnabled = 1>
 					<cfset cattree = cattreeStruct['aud']>
 					
 					<!--- Get how many loop --->
