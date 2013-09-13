@@ -1211,7 +1211,7 @@
 	<cfelse>
 		<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">
 	</cfif>,
-	<cfif Val(arguments.thestruct.rid)>
+	<cfif arguments.thestruct.rid NEQ 0>
 		<cfqueryparam value="#arguments.thestruct.rid#" cfsqltype="CF_SQL_VARCHAR">
 	<cfelse>
 		<cfqueryparam value="#newfolderid#" cfsqltype="CF_SQL_VARCHAR">
