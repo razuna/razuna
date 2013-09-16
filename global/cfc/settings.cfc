@@ -2418,7 +2418,9 @@ WHERE host_id = <cfqueryparam cfsqltype="cf_sql_numeric" value="#session.hostid#
 		WHERE lower(set_id) LIKE <cfqueryparam cfsqltype="cf_sql_varchar" value="aws_%">
 		</cfquery>
 		<!--- Remove all sessions with AWS --->
-		<cfset structClear(session.aws)>
+		<cfif structKeyExists(session,"aws")>
+			<cfset structClear(session.aws)>
+		</cfif>
 		<!--- Loop over fields and call savesettings --->
 		<cfloop collection="#arguments.thestruct#" item="i">
 			<cfif i CONTAINS "aws_">
