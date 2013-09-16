@@ -4591,6 +4591,30 @@
 		<!-- For smart folders -->
 		<set name="attributes.from_sf" value="false" overwrite="false" />
 		<set name="attributes.sf_id" value="0" overwrite="false" />
+		<!-- For search with in search -->
+		<set name="session.search.newsearch" value="#attributes.newsearch#" />
+		<set name="session.search.folder_id"	value="#attributes.folder_id#" />
+		<set name="session.search.iscol"	value="#attributes.iscol#" />
+		<set name="session.search.showsubfolders"	value="#attributes.showsubfolders#" />
+		<set name="session.search.listdocid"	value="#attributes.listdocid#" />
+		<set name="session.search.listimgid"	value="#attributes.listimgid#" />
+		<set name="session.search.listvidid"	value="#attributes.listvidid#" />
+		<set name="session.search.listaudid"	value="#attributes.listaudid#" />
+		<set name="session.search.filename"	value="#attributes.filename#" />
+		<set name="session.search.keywords"	value="#attributes.keywords#" />
+		<set name="session.search.description"	value="#attributes.description#" />
+		<set name="session.search.extension"	value="#attributes.extension#" />
+		<set name="session.search.metadata"	value="#attributes.metadata#" />
+		<set name="session.search.andor"	value="#attributes.andor#" />
+		<set name="session.search.flabel"	value="#attributes.flabel#" />
+		<set name="session.search.on_day"	value="#attributes.on_day#" />
+		<set name="session.search.on_month"	value="#attributes.on_month#" />
+		<set name="session.search.on_year"	value="#attributes.on_year#" />
+		<set name="session.search.change_day"	value="#attributes.change_day#" />
+		<set name="session.search.change_month"	value="#attributes.change_month#" />
+		<set name="session.search.change_year"	value="#attributes.change_year#" />
+		<set name="session.search.thetype"	value="#attributes.thetype#" />
+		<set name="session.search.kind"	value="#attributes.kind#" />
 		<!-- XFA -->
 		<xfa name="folder" value="c.folder" />
 		<xfa name="fcontent" value="c.folder_content" />
@@ -4638,6 +4662,7 @@
 		<set name="attributes.database" value="#application.razuna.thedatabase#" />
 		<!-- set default search count call -->
 		<set name="attributes.isCountOnly" value="0" />
+		
 		<!-- Include the aearch include -->
 		<do action="search_include" />
 		<!-- If we come from saved search we query folderaccess -->
