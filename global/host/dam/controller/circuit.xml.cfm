@@ -5874,6 +5874,15 @@
 			</true>
 		</if>
 	</fuseaction>
+	<!-- Import Users -->
+	<fuseaction name="users_import">
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<!-- Show  -->
+		<do action="ajax.users_import" />
+	</fuseaction>
 	<!-- Delete -->
 	<fuseaction name="users_remove">
 		<set name="attributes.logsection" value="DAM" />

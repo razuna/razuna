@@ -28,7 +28,7 @@
 		<strong>Total: #qry_users.recordcount# users</strong>
 	</div>
 	<div style="padding-bottom:10px;float:right;">
-		<div style="padding-top:4px;"><a href="##" onclick="$('##theusersearch').toggle('slow');" style="text-decoration:underline;padding-right:5px;">Search</a> | <a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a> | <a href="##" onclick="showwindow('#myself#ajax.users_import','Import',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Import</a> | <a href="##" onclick="showwindow('#myself#ajax.users_export','Export',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Export</a></div>
+		<div style="padding-top:4px;"><a href="##" onclick="$('##theusersearch').toggle('slow');" style="text-decoration:underline;padding-right:5px;">Search</a> | <a href="##" onclick="showwindow('#myself#c.users_detail&add=T&user_id=0','#myFusebox.getApplicationData().defaults.trans("user_add")#',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">#myFusebox.getApplicationData().defaults.trans("user_add")#</a> | <a href="##" onclick="showwindow('#myself#c.users_import','Import',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Import</a> | <a href="##" onclick="showwindow('#myself#ajax.users_export','Export',600,1);" style="text-decoration:underline;padding-right:5px;padding-left:5px;">Export</a></div>
 	</div>
 	<!--- The search --->
 	<div id="theusersearch" style="display:none;clear:both;float:right;">
