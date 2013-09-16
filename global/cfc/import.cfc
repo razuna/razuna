@@ -1835,6 +1835,7 @@
 		<!--- Param --->
 		<cfset var doloop = false>
 		<cfset var theid = "">
+		<cfset var qry = "">
 		<!--- Get the columlist --->
 		<cfloop list="#arguments.thestruct.theimport.columnList#" delimiters="," index="i">
 			<!--- If template --->
@@ -1857,10 +1858,11 @@
 				<cfset var cfvalue = ltrim(arguments.thestruct.theimport[i][arguments.thecurrentRow])>
 				<!--- Insert or update --->
 				<cfquery datasource="#application.razuna.datasource#" name="qry">
-				SELECT cf_id_r
-				FROM #session.hostdbprefix#custom_fields_values
-				WHERE cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
-				AND asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(arguments.assetid)#">
+				SELECT v.cf_id_r, v.cf_value, f.cf_type
+				FROM #session.hostdbprefix#custom_fields_values v, #session.hostdbprefix#custom_fields f
+				WHERE v.cf_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#theid#">
+				AND v.asset_id_r = <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#ucase(arguments.assetid)#">
+				AND v.cf_id_r = f.cf_id
 				</cfquery>
 				<!--- Insert --->
 				<cfif qry.recordcount EQ 0>
@@ -1877,6 +1879,12 @@
 					</cfquery>
 				<!--- Update --->
 				<cfelse>
+					<!--- If append --->
+					<cfif arguments.thestruct.imp_write EQ "add" AND qry.cf_type NEQ "select">
+						<cfif cfvalue NEQ "">
+							<cfset var cfvalue = qry.cf_value & " " & cfvalue>
+						</cfif>
+					</cfif>
 					<cfquery datasource="#application.razuna.datasource#">
 					UPDATE #session.hostdbprefix#custom_fields_values
 					SET cf_value = <cfqueryparam cfsqltype="cf_sql_varchar" value="#cfvalue#">
