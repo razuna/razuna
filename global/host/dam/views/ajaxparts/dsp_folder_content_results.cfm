@@ -885,7 +885,7 @@
 				<cfif kind EQ "img">
 					<tr class="list thumbview">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-img" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailimg#&file_id=#theid#&what=images&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -900,7 +900,7 @@
 				<cfelseif kind EQ "vid">
 					<tr class="list thumbview">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-vid" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailvid#&file_id=#theid#&what=videos&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -915,7 +915,7 @@
 				<cfelseif kind EQ "aud">
 					<tr class="list thumbview">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-aud" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detailaud#&file_id=#theid#&what=audios&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
@@ -930,7 +930,7 @@
 				<cfelse>
 					<tr class="list thumbview">
 						<td align="center" nowrap="true" width="1%"><input type="checkbox" name="file_id" value="#theid#-doc" onclick="enablesub('searchform#attributes.thetype#');"></td>
-						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#filename#</strong></a></td>
+						<td width="100%"><a href="##" onclick="showwindow('#myself##xfa.detaildoc#&file_id=#theid#&what=files&loaddiv=#kind#&folder_id=#folder_id_r#&showsubfolders=#attributes.showsubfolders#','#Jsstringformat(filename)#',1000,1);return false;"><strong>#left(filename,50)#</strong></a></td>
 						<cfif attributes.folder_id EQ 0>
 							<td nowrap="true" width="1%" align="center" nowrap="nowrap"><a href="##" onclick="loadcontent('rightside','#myself#c.folder&folder_id=#folder_id_r#&col=F');">#folder_name#</a></td>
 						</cfif>
