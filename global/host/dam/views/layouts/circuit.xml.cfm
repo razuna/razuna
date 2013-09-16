@@ -40,6 +40,10 @@
 	<fuseaction name="lay_mainpage">
 		<xfa name="switchlang" value="c.switchlang" />
 		<do action="c.languages" />
+		<!-- CFC: Set the user id -->
+		<set name="attributes.user_id" value="#session.theuserid#" overwrite="false" />
+		<!-- CFC: Get the user -->
+		<invoke object="myFusebox.getApplicationData().users" methodcall="details(attributes)" returnvariable="qry_detail" />
 		<!-- CFC: Get config -->
 		<invoke object="myFusebox.getApplicationData().settings" methodcall="getconfig('version')" returnvariable="version" />
 		<!-- CFC: Get wl -->

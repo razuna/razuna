@@ -94,7 +94,12 @@
 			<!--- UserName DropDown --->
 			<div id="userselection" class="ddselection_header">
 				<!--- Profile --->
-				<p><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#session.theuserid#&myinfo=true','#session.firstlastname#',600,1);$('##userselection').toggle();return false;">My info</a></p>
+				<p>
+					<a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#session.theuserid#&myinfo=true','#session.firstlastname#',600,1);$('##userselection').toggle();return false;">My info</a>
+					<cfif qry_detail.user_pass EQ "">
+						<img width="20" height="20" border="0" src="/razuna/global/host/dam/images/active_directory_user.png">
+					</cfif>
+				</p>
 				<p><hr></p>
 				<!--- Administration --->
 				<cfif Request.securityobj.CheckSystemAdminUser() OR Request.securityobj.CheckAdministratorUser()>
