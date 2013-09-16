@@ -213,7 +213,7 @@
 <cffunction name="ad_server_user">
 	<cfargument name="thestruct" type="Struct">
 	<cfloop list="#arguments.thestruct.acc_email#" index="i" delimiters="," >
-		<cfset arguments.thestruct.user_first_name = "">
+		<cfset arguments.thestruct.user_first_name = listGetAt(i,2,'-')>
 		<cfset arguments.thestruct.user_last_name = "">
 		<cfset arguments.thestruct.intrauser = "T">
 		<cfset arguments.thestruct.user_active = "T">
@@ -301,6 +301,11 @@
 			)
 			</cfquery>
 		</cfloop>
+		<!--- Add AD user's group --->
+		<cfif structKeyExists(arguments.thestruct,'grp_id_assigneds') AND arguments.thestruct.grp_id_assigneds NEQ ''>
+			<cfset arguments.thestruct.newid = newid />
+			<cfinvoke component="groups_users" method="insertBulk" thestruct="#arguments.thestruct#">
+		</cfif>
 		<!--- Log --->
 		<cfif structkeyexists(arguments.thestruct,"dam")>
 			<cfset logsection = "DAM">

@@ -4,20 +4,6 @@
 	<!--- Create a new three-column query, specifying the column data types --->
 	<form  name="ad_user_form" id="ad_user_form" action="#self#" method="post" >
 		<input type="hidden" name="#theaction#" value="c.ad_server_users_save">
-		<!---<cfset results = QueryNew("SamAccountname,cn,company,mail", "VarChar,VarChar,VarChar,VarChar")>
-		
-		<!--- Make two rows in the query --->
-		<cfset newRow = QueryAddRow(results, 2)>
-		
-		<!--- Set the values of the cells in the query --->
-		<cfset temp = QuerySetCell(results, "SamAccountname", "Saravanan", 1)>
-		<cfset temp = QuerySetCell(results, "cn", "SaravanaMuthu", 1)>
-		<cfset temp = QuerySetCell(results, "company", "Mitrahsoft", 1)>
-		<cfset temp = QuerySetCell(results, "mail", "saravanan@mitrahsoft.com", 1)>
-		<cfset temp = QuerySetCell(results, "SamAccountname", "Kannan", 2)>
-		<cfset temp = QuerySetCell(results, "cn", "kannan", 2)>
-		<cfset temp = QuerySetCell(results, "company", "Mitrahsoft", 2)>
-		<cfset temp = QuerySetCell(results, "mail", "kannan@mitrahsoft.com", 2)>--->	
 		<table width="100%" border="0" cellspacing="0" cellpadding="0" class="grid">
 			<tr>
 				<th><input type="checkbox" name="check_all" id="check_all" value="" /></th>
@@ -42,6 +28,14 @@
 			</cfif>
 		</table>
 		<div id="submit" style="float:right;padding:10px;">
+			<div style="float:left;padding-right:10px;">
+				<span style="vertical-align:top;">#myFusebox.getApplicationData().defaults.trans("group_by")#:</span>
+				<select name="grp_id_assigneds" multiple="multiple" size="5" style="width:150px;">
+	    			<cfloop query="qry_groups">
+			    		<option value=#grp_id# >#grp_name#</option>
+					</cfloop>
+				</select>
+			</div>
 			<input type="button" name="SubmitUser" value="#myFusebox.getApplicationData().defaults.trans("button_save")#" class="button" id="add">
 		</div>
 	</form>
@@ -60,7 +54,7 @@
 		$('##add').on('click', function () {
 			var emailValue='';
 		    $('input:checked').each(function () {
-		        emailValue += $(this).parent().siblings('td').eq(0).text()+'-'+$(this).parent().siblings('td').eq(3).text()+',';
+		        emailValue += $(this).parent().siblings('td').eq(0).text()+'-'+$(this).parent().siblings('td').eq(1).text()+'-'+$(this).parent().siblings('td').eq(3).text()+',';
 				$('##acc_email').val(emailValue);
 			});
 			var url = formaction("ad_user_form");
