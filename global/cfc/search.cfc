@@ -83,7 +83,6 @@
 				<cfquery dbtype="query" name="qrylucene">
 					select * from qryluceneAll where category = '#assetType#' 
 				</cfquery>
-				<cfdump var="#qrylucene#"><cfabort>
 				<cfset var catTreeArg = { qrylucene = qrylucene, 
 									iscol = arguments.thestruct.iscol,
 									newsearch = arguments.thestruct.newsearch
