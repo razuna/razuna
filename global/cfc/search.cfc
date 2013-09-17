@@ -75,36 +75,41 @@
 			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="doc,vid,img,aud" hostid="#session.hostid#" returnvariable="qryluceneAll">
 			<cfif qryluceneAll.recordcount NEQ "0">
 				<cfset session.search.file_id = valuelist(qryluceneAll.categorytree) >
+				<cfset var assetTypesArr = ["doc","img","aud","vid"]>
+				<cfloop array="#assetTypesArr#" index="assetType">
+					<cfquery dbtype="query" name="qrylucene">
+						select * from qryluceneAll where category = '#assetType#' 
+					</cfquery>
+					<cfset var catTreeArg = { qrylucene = qrylucene, 
+										iscol = arguments.thestruct.iscol,
+										newsearch = arguments.thestruct.newsearch
+									}>
+					<cfif arguments.thestruct.iscol EQ "T">
+						<cfset catTreeArg.listAsset = arguments.thestruct.qry['list#assetType#']>	
+					</cfif>
+					
+					<cfif arguments.thestruct.newsearch EQ "F">	
+						<cfset catTreeArg.listAssetID = session.search.file_id>
+					</cfif>
+					<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattreeStruct['#assetType#']">
+					
+				</cfloop>
+				<cfif cattreeStruct['img'].recordcount GT 0 or cattreeStruct['aud'].recordcount GT 0 or cattreeStruct['vid'].recordcount GT 0 or cattreeStruct['doc'].recordcount GT 0>
+					<cfset proceedToSQL = 1>
+				<cfelse>
+					<cfset proceedToSQL = 0>
+				</cfif>
 			<cfelse>
 				<cfset session.search.file_id = "0">
-			</cfif>	
-			<cfset var assetTypesArr = ["doc","img","aud","vid"]>
-			<cfloop array="#assetTypesArr#" index="assetType">
-				<cfquery dbtype="query" name="qrylucene">
-					select * from qryluceneAll where category = '#assetType#' 
-				</cfquery>
-				<cfset var catTreeArg = { qrylucene = qrylucene, 
-									iscol = arguments.thestruct.iscol,
-									newsearch = arguments.thestruct.newsearch
-								}>
-				<cfif arguments.thestruct.iscol EQ "T">
-					<cfset catTreeArg.listAsset = arguments.thestruct.qry['list#assetType#']>	
-				</cfif>
-				
-				<cfif arguments.thestruct.newsearch EQ "F">	
-					<cfset catTreeArg.listAssetID = session.search.file_id >
-				</cfif>
-				<cfinvoke method="buildCategoryTree" thestruct="#catTreeArg#" returnvariable="cattreeStruct['#assetType#']">
-				
-			</cfloop>
-			<cfif cattreeStruct['img'].recordcount GT 0 or cattreeStruct['aud'].recordcount GT 0 or cattreeStruct['vid'].recordcount GT 0 or cattreeStruct['doc'].recordcount GT 0>
-				<cfset proceedToSQL = 1>
-			<cfelse>
 				<cfset proceedToSQL = 0>
-			</cfif>
+			</cfif>	
 		<cfelse>
 			<cfinvoke component="lucene" method="search" criteria="#arguments.thestruct.searchtext#" category="#arguments.thestruct.thetype#" hostid="#session.hostid#" returnvariable="qrylucene">
-			<cfset session.search.file_id = valuelist(qrylucene.categorytree) >
+			<cfif qrylucene.recordcount NEQ "0">
+				<cfset session.search.file_id = valuelist(qrylucene.categorytree) >
+			<cfelse>
+				<cfset session.search.file_id = "0">
+			</cfif>
 			<cfset var catTreeArg = { qrylucene = qrylucene, 
 									iscol = arguments.thestruct.iscol,
 									newsearch = arguments.thestruct.newsearch
