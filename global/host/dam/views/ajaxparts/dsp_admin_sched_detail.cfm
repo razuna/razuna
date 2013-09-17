@@ -58,6 +58,7 @@
 								</cfif>
 								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp")#</option>
 								<option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail")#</option>
+								<option value="ADServer"<cfif qry_detail.sched_method EQ "ADServer">>#myFusebox.getApplicationData().defaults.trans("scheduled_ADServer")#</option>
 								<option>---</option>
 								<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
 								<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
@@ -283,7 +284,7 @@
 		$('#detailsMail_new').css('display','none');
 		$('#detailsFtp_new').css('display','block');
 	</script>
-<cfelseif qry_detail.sched_method EQ "rebuild" OR qry_detail.sched_method EQ "indexing">
+<cfelseif qry_detail.sched_method EQ "rebuild" OR qry_detail.sched_method EQ "indexing" OR qry_detail.sched_method EQ "ADServer">
 	<script type="text/javascript">
 		showConnectDetail('new');
 		// showFrequencyDetail('new');

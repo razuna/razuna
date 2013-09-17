@@ -937,7 +937,7 @@ function showConnectDetail(kind) {
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','block');
 	}
-	else if (method == "rebuild" || method == "indexing") {
+	else if (method == "rebuild" || method == "indexing" || method == "ADServer") {
 		$("#detailsServer_"+kind).css('display','none');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','none');
