@@ -732,7 +732,7 @@
 										AND DATEPART(mm, a.aud_create_time) = #session.search.on_month#
 										AND DATEPART(dd, a.aud_create_time) = #session.search.on_day#)
 									<cfelse>
-										AND v.vid_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
+										AND a.aud_create_time LIKE '#session.search.on_year#-#session.search.on_month#-#session.search.on_day#%'
 									</cfif>
 								</cfif>
 								<cfif session.search.change_year NEQ '' AND session.search.change_month NEQ '' AND session.search.change_day NEQ ''> 
