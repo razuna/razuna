@@ -207,9 +207,9 @@
 	<!--- Loop over the fields which only are custom fields --->
 	<cfloop collection="#arguments.thestruct#" item="i">
 		<cfif i CONTAINS "cf_">
-			<cfif arguments.thestruct[i] EQ "">
+			<!--- <cfif arguments.thestruct[i] EQ "">
 				<cfcontinue>
-			</cfif>
+			</cfif> --->
 			<!--- Remove the cf_ part so we only get the id --->
 			<cfset theid = replacenocase("#i#", "cf_", "", "ALL")>
 			<!--- Remove carriage return and new line --->

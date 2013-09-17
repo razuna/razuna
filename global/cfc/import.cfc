@@ -1883,6 +1883,8 @@
 					<cfif arguments.thestruct.imp_write EQ "add" AND qry.cf_type NEQ "select">
 						<cfif cfvalue NEQ "">
 							<cfset var cfvalue = qry.cf_value & " " & cfvalue>
+						<cfelse>
+							<cfset var cfvalue = qry.cf_value>
 						</cfif>
 					</cfif>
 					<cfquery datasource="#application.razuna.datasource#">
