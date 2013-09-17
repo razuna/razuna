@@ -6054,6 +6054,11 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="detail(attributes.sched_id)" returnvariable="qry_detail" />
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
+		<!-- CFC: Load groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="orderBy" value="grp_name ASC" />
+		</invoke>
 		<!-- Show -->
 		<do action="ajax.scheduler_detail" />
 	</fuseaction>
@@ -6114,6 +6119,13 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="doit" returnvariable="thetask">
 			<argument name="sched_id" value="#attributes.sched_id#" />
@@ -6124,6 +6136,12 @@
 			<argument name="rootpath" value="#ExpandPath('../..')#" />
 			<argument name="assetpath" value="#attributes.assetpath#" />
 			<argument name="dynpath" value="#dynpath#" />
+			<argument name="ad_server_name" value="#attributes.ad_server_name#" />
+			<argument name="ad_server_port" value="#attributes.ad_server_port#" />
+			<argument name="ad_server_username" value="#attributes.ad_server_username#" />
+			<argument name="ad_server_password" value="#attributes.ad_server_password#" />
+			<argument name="ad_server_filter" value="#attributes.ad_server_filter#" />
+			<argument name="ad_server_start" value="#attributes.ad_server_start#" />
 		</invoke>
 	</fuseaction>
 		

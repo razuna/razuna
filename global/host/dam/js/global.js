@@ -926,21 +926,35 @@ function showConnectDetail(kind) {
 		$("#detailsServer_"+kind).css('display','block');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','none');
+		$("#detailsADUserGroup_"+kind).css('display','none');
 	}
 	else if (method == "mail") {
 		$("#detailsServer_"+kind).css('display','none');
 		$("#detailsMail_"+kind).css('display','block');
 		$("#detailsFtp_"+kind).css('display','none');
+		$("#detailsADUserGroup_"+kind).css('display','none');
 	}
 	else if (method == "ftp") {
 		$("#detailsServer_"+kind).css('display','none');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','block');
+		$("#detailsADUserGroup_"+kind).css('display','none');
 	}
-	else if (method == "rebuild" || method == "indexing" || method == "ADServer") {
+	else if (method == "ADServer"){
 		$("#detailsServer_"+kind).css('display','none');
 		$("#detailsMail_"+kind).css('display','none');
 		$("#detailsFtp_"+kind).css('display','none');
+		$("#detailsADUserGroup_"+kind).css('display','block');
+		// Set folderid to 0 so we don't get errors
+		$("#folder_id").val('0');
+		// Hide lower part
+		$("#task_lower_part").css('display','none');
+	}
+	else if (method == "rebuild" || method == "indexing" ) {
+		$("#detailsServer_"+kind).css('display','none');
+		$("#detailsMail_"+kind).css('display','none');
+		$("#detailsFtp_"+kind).css('display','none');
+		$("#detailsADUserGroup_"+kind).css('display','none');
 		// Set folderid to 0 so we don't get errors
 		$("#folder_id").val('0');
 		// Hide lower part
