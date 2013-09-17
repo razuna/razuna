@@ -375,7 +375,7 @@
 						<cfset c_thefilename = gettemplatevalue(arguments.thestruct.impp_template,"filename")>
 					</cfif>
 					<!--- Images: main table --->
-					<cfif c_thefilename NEQ "">
+					<cfif evaluate(c_thefilename) NEQ "">
 						<cfquery dataSource="#application.razuna.datasource#">
 						UPDATE #session.hostdbprefix#images
 						SET img_filename = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#evaluate(c_thefilename)#">
@@ -449,8 +449,8 @@
 						<cfquery dataSource="#application.razuna.datasource#">
 						UPDATE #session.hostdbprefix#images_text
 						SET 
-						img_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tkeywords#">,
-						img_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#tdescription#">
+						img_keywords = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tkeywords)#">,
+						img_description = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#ltrim(tdescription)#">
 						WHERE img_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#found.img_id#">
 						AND host_id = <cfqueryparam CFSQLType="CF_SQL_NUMERIC" value="#session.hostid#">
 						</cfquery>
