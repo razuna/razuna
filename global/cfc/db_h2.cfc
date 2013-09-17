@@ -1563,6 +1563,7 @@
 			sched_end_time       timestamp,
 			host_id				 bigint,
 			sched_upl_template	 varchar(100),
+			sched_ad_user_groups varchar(4000),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_PK PRIMARY KEY (SCHED_ID),
 			CONSTRAINT #arguments.thestruct.host_db_prefix#SCHEDULES_FK1 FOREIGN KEY (HOST_ID)
 			REFERENCES hosts (HOST_ID) ON DELETE CASCADE,
