@@ -486,7 +486,7 @@
 						<tr>
 							<td class="td2">#myFusebox.getApplicationData().defaults.trans("share_allow_order_email")#</td>
 							<td class="td2">
-								<select data-placeholder="Choose a User" class="chzn-select" style="width:250px;" name="share_order_user">
+								<select data-placeholder="Choose a User" class="chzn-select" style="width:250px;" id="share_order_user" name="share_order_user">
 									<option value=""></option>
 									<cfloop query="qry_users">
 										<option value="#user_id#"<cfif qry_detail.share_order_user EQ user_id> selected</cfif>>#user_first_name# #user_last_name#</option>
@@ -510,6 +510,8 @@
 	<script language="JavaScript" type="text/javascript">
 		// Initialize Tabs
 		jqtabs("col_detail#col_id#");
+		// Activate Chosen
+		$(".chzn-select").chosen();
 		// Submit Form
 		$("##form#col_id#").submit(function(e){
 			// If collectionname is empty
@@ -549,8 +551,6 @@
 			});
 			return false;
 		}
-		// Activate Chosen
-		$(".chzn-select").chosen();
 		// Back to Collection List
 		function backtocol(){
 			$('##rightside').load('#myself#c.collections&col=F&folder_id=col-#attributes.folder_id#&released=#qry_detail.col_released#', function(){
