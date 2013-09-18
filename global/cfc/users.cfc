@@ -118,7 +118,7 @@
 	<!--- Query --->
 	<cfquery datasource="#application.razuna.datasource#" name="localquery" cachedwithin="1" region="razcache">
 	SELECT /* #variables.cachetoken#getallusers */ u.user_id, u.user_login_name, u.user_first_name, u.user_last_name, u.user_email, u.user_active, u.user_company, 
-	0 AS thetotal,
+	0 AS thetotal, u.user_pass, 
 		<cfif application.razuna.thedatabase EQ "mysql" OR application.razuna.thedatabase EQ "h2">
 			(
 				SELECT GROUP_CONCAT(DISTINCT ct_g_u_grp_id ORDER BY ct_g_u_grp_id SEPARATOR ',') AS grpid

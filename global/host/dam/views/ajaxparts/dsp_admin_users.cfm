@@ -87,6 +87,7 @@
 		 		<tr>
 					<th></th>
 					<th>#myFusebox.getApplicationData().defaults.trans("username")#</th>
+					<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("ad_user")#</th>
 					<th nowrap="true">#myFusebox.getApplicationData().defaults.trans("user_first_name")# #myFusebox.getApplicationData().defaults.trans("user_last_name")#</th>
 					<th>#myFusebox.getApplicationData().defaults.trans("user_company")#</th>
 					<th>eMail</th>
@@ -99,6 +100,7 @@
 					<tr class="list">
 						<td valign="top" nowrap width="1%"><cfif listfind(ct_g_u_grp_id,"2") EQ 0><input type="checkbox" name="theuserid" value="#user_id#" onclick="showhidedelete();" /></cfif></td>
 						<td valign="top" nowrap width="100%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_login_name#</a></td>
+						<td valign="top" nowrap width="1%"><cfif #user_pass# EQ ""><img src="#dynpath#/global/host/dam/images/dialog-ok-apply-4.png" width="16" height="16" border="0" style="margin-left:16px;"/></cfif></td>
 						<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_first_name# #user_last_name#</a></td>
 						<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_company#</a></td>
 						<td valign="top" nowrap width="1%"><a href="##" onclick="showwindow('#myself#c.users_detail&user_id=#user_id#','#user_first_name# #user_last_name#',600,1);return false;">#user_email#</a></td>
