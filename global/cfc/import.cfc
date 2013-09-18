@@ -1763,6 +1763,12 @@
 		<cfargument name="labels" type="string">
 		<cfargument name="assetid" type="string">
 		<cfargument name="kind" type="string">
+		<!--- Remove all labels for this record --->
+		<cfquery dataSource="#application.razuna.datasource#">
+		DELETE FROM ct_labels
+		WHERE ct_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">
+		AND ct_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">
+		</cfquery>
 		<!--- Label is usually a list, thus loop it --->
 		<cfloop list="#arguments.labels#" delimiters="," index="i">
 			<!--- Check if label is in the label db --->
@@ -1803,14 +1809,6 @@
 				</cfquery>
 			<!--- Label is here --->
 			<cfelse>
-				<!--- Remove it first for this record, just so we don't get any errors --->
-				<cfquery dataSource="#application.razuna.datasource#">
-				DELETE FROM ct_labels
-				WHERE ct_label_id = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#labhere.label_id#">
-				AND ct_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">
-				AND ct_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">
-				</cfquery>
-				<!--- Insert into CT --->
 				<cfquery dataSource="#application.razuna.datasource#">
 				INSERT INTO ct_labels
 				(ct_label_id, ct_id_r, ct_type, rec_uuid)
@@ -1823,6 +1821,8 @@
 				</cfquery>
 			</cfif>
 		</cfloop>
+		<!--- Flush Cache --->
+		<cfset resetcachetoken("labels")> 
 		<!--- Return --->
 		<cfreturn  />
 	</cffunction>
