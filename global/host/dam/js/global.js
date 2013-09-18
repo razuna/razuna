@@ -1701,7 +1701,7 @@ function toggleslide(theclickid,thefield){
 	});
 };
 function SetVideo(source, title) {
-	$('#videoPlayerDiv').dialog('destroy');
+	//$('#videoPlayerDiv').dialog('destroy');
 	$('#videoPlayerDiv').dialog({
 		title: title,
 		modal: true,

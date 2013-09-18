@@ -173,7 +173,7 @@
 		};
 		// Remove Folder
 		function sf_remove(folderid){
-			$( "##dialog-confirm" ).dialog( "destroy" );
+			//$( "##dialog-confirm" ).dialog( "destroy" );
 			$( "##dialog-confirm" ).dialog({
 				resizable: false,
 				height: 200,
