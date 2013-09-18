@@ -386,6 +386,17 @@
 	<fuseaction name="admin_users">
   		<include template="dsp_admin_users" />
 	</fuseaction>
+	<!-- ADMIN: AD Services -->
+	<fuseaction name="admin_ad_services">
+  		<include template="dsp_admin_ad_services" />
+	</fuseaction>
+	<!-- ADMIN: AD Server import Users list -->
+	<fuseaction name="ad_server_users_list">
+  		<include template="dsp_admin_ad_userlist" />
+	</fuseaction>
+	<fuseaction name="ad_server_users_list_do">
+  		<include template="dsp_admin_ad_userlist_do" />
+	</fuseaction>		
 	<!-- ADMIN: Users Search -->
 	<fuseaction name="users_search">
   		<include template="dsp_admin_users_results" />

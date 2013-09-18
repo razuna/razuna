@@ -56,9 +56,17 @@
 		<!-- Params -->
 		<set name="attributes.rem_login" value="F" overwrite="false" />
 		<set name="attributes.redirectto" value="" overwrite="false" />
+		<set name="attributes.loginto" value="dam" overwrite="false" />
 		<set name="session.indebt" value="false" />
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
 		<!-- Check the user and let him in ot nor -->
-		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes.name,attributes.pass,'dam',attributes.rem_login)" returnvariable="logindone" />
+		<invoke object="myFusebox.getApplicationData().Login" methodcall="login(attributes)" returnvariable="logindone" />
 		<!-- Log this action -->
 		<if condition="logindone.notfound EQ 'F'">
     		<true>
@@ -5902,6 +5910,51 @@
 		<!-- Show  -->
 		<do action="ajax.admin_users" />
 	</fuseaction>
+	<!-- AD Services -->
+	<fuseaction name="ad_Services">
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="ad_server_start" />
+		<!-- Show -->
+		<do action="ajax.admin_ad_services" />
+	</fuseaction>
+	<!-- For saving AD Server customization -->
+	<fuseaction name="admin_ad_services_save">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="set_ad_server(attributes.ad_server_name,attributes.ad_server_port,attributes.ad_server_username,attributes.ad_server_password,attributes.ad_server_filter,attributes.ad_server_start)" />
+	</fuseaction>
+	<!-- Users Search -->
+	<fuseaction name="ad_server_users_list">
+		<!-- Show  -->
+		<do action="ajax.ad_server_users_list" />
+	</fuseaction>
+	<fuseaction name="ad_server_users_list_do">
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="get_ad_server()" returnvariable="qry_ad_server" />
+		<!-- CFC: Load groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="orderBy" value="grp_name ASC" />
+		</invoke>
+		<!-- Show  -->
+		<do action="ajax.ad_server_users_list_do" />
+	</fuseaction>
+
+	<!-- Save AD server Users -->
+	<fuseaction name="ad_server_users_save">
+		<!-- CFC -->
+		<invoke object="myFusebox.getApplicationData().Users" methodcall="ad_server_user(attributes)" />
+	</fuseaction>
+	
 	<!-- Users Search -->
 	<fuseaction name="users_search">
 		<!-- Param -->
@@ -6009,6 +6062,15 @@
 				<do action="custom_fields_save" />
 			</true>
 		</if>
+	</fuseaction>
+	<!-- Import Users -->
+	<fuseaction name="users_import">
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<!-- Show  -->
+		<do action="ajax.users_import" />
 	</fuseaction>
 	<!-- Delete -->
 	<fuseaction name="users_remove">
@@ -6176,6 +6238,15 @@
 		<invoke object="myFusebox.getApplicationData().scheduler" methodcall="detail(attributes.sched_id)" returnvariable="qry_detail" />
 		<!-- CFC: get upload templates -->
 		<invoke object="myFusebox.getApplicationData().global" methodcall="upl_templates(true)" returnvariable="qry_templates" />
+		<!-- CFC: Load groups -->
+		<invoke object="myFusebox.getApplicationData().groups" method="getall" returnvariable="qry_groups">
+			<argument name="host_id" value="#session.hostid#" />
+			<argument name="orderBy" value="grp_name ASC" />
+		</invoke>
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
 		<!-- Show -->
 		<do action="ajax.scheduler_detail" />
 	</fuseaction>
@@ -6236,6 +6307,13 @@
 		<do action="assetpath" />
 		<!-- Action: Storage -->
 		<do action="storage" />
+		<!-- Get AD server Deatils -->
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_name')" returnvariable="attributes.ad_server_name" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_port')" returnvariable="attributes.ad_server_port" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_username')" returnvariable="attributes.ad_server_username" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_password')" returnvariable="attributes.ad_server_password" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_filter')" returnvariable="attributes.ad_server_filter" />
+		<invoke object="myFusebox.getApplicationData().Settings" methodcall="thissetting('ad_server_start')" returnvariable="attributes.ad_server_start" />
 		<!-- CFC: Get the Schedule -->
 		<invoke object="myFusebox.getApplicationData().scheduler" method="doit" returnvariable="thetask">
 			<argument name="sched_id" value="#attributes.sched_id#" />
@@ -6246,6 +6324,12 @@
 			<argument name="rootpath" value="#ExpandPath('../..')#" />
 			<argument name="assetpath" value="#attributes.assetpath#" />
 			<argument name="dynpath" value="#dynpath#" />
+			<argument name="ad_server_name" value="#attributes.ad_server_name#" />
+			<argument name="ad_server_port" value="#attributes.ad_server_port#" />
+			<argument name="ad_server_username" value="#attributes.ad_server_username#" />
+			<argument name="ad_server_password" value="#attributes.ad_server_password#" />
+			<argument name="ad_server_filter" value="#attributes.ad_server_filter#" />
+			<argument name="ad_server_start" value="#attributes.ad_server_start#" />
 		</invoke>
 	</fuseaction>
 		

@@ -183,7 +183,7 @@
 	<cfargument name="logsection" type="string" required="yes" />
 	<!--- get next id --->
 	<cfset var newlogid = createuuid()>
-	<cfquery datasource="#variables.dsn#">
+	<cfquery datasource="#application.razuna.datasource#">
 	INSERT INTO #session.hostdbprefix#log_users
 	(LOG_ID,LOG_USER,LOG_ACTION,LOG_DATE,LOG_TIME,LOG_DESC,LOG_TIMESTAMP,LOG_SECTION, host_id)
 	VALUES(

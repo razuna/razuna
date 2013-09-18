@@ -1920,6 +1920,7 @@
 			SCHED_END_TIME       DATETIME,
 			HOST_ID				 INT,
 			sched_upl_template	 VARCHAR(100),
+			sched_ad_user_groups nvarchar(max),
 		PRIMARY KEY (SCHED_ID),
 		FOREIGN KEY (SCHED_USER) REFERENCES #arguments.thestruct.theschema#.users (USER_ID) ON DELETE SET NULL,
 		FOREIGN KEY (HOST_ID) REFERENCES #arguments.thestruct.theschema#.hosts (HOST_ID) ON DELETE CASCADE

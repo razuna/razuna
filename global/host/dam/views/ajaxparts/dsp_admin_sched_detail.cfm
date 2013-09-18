@@ -58,6 +58,9 @@
 								</cfif>
 								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp")#</option>
 								<option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail")#</option>
+								<cfif (attributes.ad_server_name NEQ "") AND (attributes.ad_server_username NEQ "") AND (attributes.ad_server_password NEQ "")>
+								<option value="ADServer"<cfif qry_detail.sched_method EQ "ADServer">selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ADServer")#</option>
+								</cfif>
 								<option>---</option>
 								<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
 								<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
@@ -113,6 +116,20 @@
 								<tr>
 									<td>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail_subject")#</td>
 									<td><input type="text" name="mailSubject" size="25" value="#qry_detail.sched_mail_subject#" /></td>
+								</tr>
+							</table>
+							<!--- AD Server add user group --->
+							<table border="0" cellspacing="0" cellpadding="0" class="gridno" id="detailsADUserGroup_new" style="display: <cfif qry_detail.sched_method EQ "ADServer">block<cfelse>none</cfif>">
+								<tr>
+									<td valign="top">Group by:</td>
+									<td>
+										<select name="grp_id_assigneds" id="grp_id_assigneds" multiple="multiple" size="5" style="width:150px;">
+							    			<cfloop query="qry_groups">
+			    								<option value="#grp_id#" <cfif ListFindNoCase(qry_detail.sched_ad_user_groups,grp_id) >selected</cfif>>#grp_name#</option>
+											</cfloop>
+										</select>
+									</td>
+									<td></td>
 								</tr>
 							</table>
 
@@ -282,8 +299,10 @@
 		$('#detailsServer_new').css('display','none');
 		$('#detailsMail_new').css('display','none');
 		$('#detailsFtp_new').css('display','block');
+		$('#detailsADUserGroup_new').css('display','none');
+		
 	</script>
-<cfelseif qry_detail.sched_method EQ "rebuild" OR qry_detail.sched_method EQ "indexing">
+<cfelseif qry_detail.sched_method EQ "rebuild" OR qry_detail.sched_method EQ "indexing" OR qry_detail.sched_method EQ "ADServer">
 	<script type="text/javascript">
 		showConnectDetail('new');
 		// showFrequencyDetail('new');

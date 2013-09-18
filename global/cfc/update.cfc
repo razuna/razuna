@@ -1035,6 +1035,16 @@
 			</cfcatch>
 		</cftry>
 		
+		
+		<!--- Add SCHED_AD_USER_GROUPS Column in raz1_schedules --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_schedules add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> SCHED_AD_USER_GROUPS #theclob#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 
 		<!--- 
 		<cftry>

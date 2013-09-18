@@ -84,6 +84,18 @@ function validateMethodInput(myform,kind) {
 				   	success: hidewinscheduler
 				});
 			}
+		//----- AD Server -----
+		} else if (method == "ADServer") {
+			// Get values
+			var url = formaction("schedulerform");
+			var items = formserialize("schedulerform");
+			// Submit Form
+			$.ajax({
+				type: "POST",
+				url: url,
+			   	data: items,
+			   	success: hidewinscheduler
+			});
 		// Rebuild search index
 		} else if (method == "rebuild" || method == "indexing") {
 			// Get values
