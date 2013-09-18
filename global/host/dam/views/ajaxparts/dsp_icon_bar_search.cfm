@@ -73,7 +73,7 @@
 				<span style="padding-left:10px;">
 					<cfset thepage = ceiling(qry_filecount.thetotal / session.rowmaxpage)>
 					Page: 
-						<select id="thepagelistsearch#attributes.kind#" onChange="pagelist('thepagelistsearch#attributes.kind#');">
+						<select id="thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>" onChange="pagelist('thepagelistsearch#attributes.thetype#<cfif structkeyexists(attributes,"bot")>b</cfif>');">
 							<cfloop from="1" to="#thepage#" index="i">
 								<cfset loopoffset = i - 1>
 								<option value="#loopoffset#"<cfif (session.offset + 1) EQ i> selected</cfif>>#i#</option>
@@ -163,7 +163,6 @@
 		</cfif>
 	</cfif>
 </div>
-
 <script language="javascript">
 	// Change the sortby
 	function changesortbysearch(theselect){
@@ -200,8 +199,8 @@
 		// Show loading bar
 		$("body").append('<div id="bodyoverlay"><img src="#dynpath#/global/host/dam/images/loading-bars.gif" border="0" style="padding:10px;"></div>');
 		// Load
-		$('###attributes.thediv#').load('#myself#c.search_simple', { offset: theoffset, fcall: true, <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
-				$("##bodyoverlay").remove();
+		$('###attributes.thediv#').load('#myself#c.search_simple', { offset: theoffset, fcall: true,<cfif structkeyexists(attributes,"share") AND attributes.share NEQ "T">share: "T",</cfif> <cfloop list="#form.fieldnames#" index="i"><cfif i NEQ "offset">#lcase(i)#:"#evaluate(i)#", </cfif></cfloop> }, function(){
+		$("##bodyoverlay").remove();
 			});
 	}
 </script>

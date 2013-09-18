@@ -182,34 +182,45 @@
 		<div style="padding:0;margin:0;">
 			<div id="search_tab">
 				<ul>
-					<li><a href="##content_search_all" onclick="switchsearchtab('all');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("searchresults_header")# (#qry_filecount.thetotal#)</a></li>
-					<cfif structKeyExists(qry_files, "qimg") AND qry_files.qimg.cnt NEQ 0 AND cs.tab_images>
-						<li><a href="##content_search_img" onclick="switchsearchtab('img');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("folder_images")# (#qry_files.qimg.cnt#)</a></li>
-					</cfif>
-					<cfif structKeyExists(qry_files, "qvid") AND qry_files.qvid.cnt NEQ 0 AND cs.tab_videos>
-						<li><a href="##content_search_vid" onclick="switchsearchtab('vid');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_videos")# (#qry_files.qvid.cnt#)</a></li>
-					</cfif>
-					<cfif structKeyExists(qry_files, "qaud") AND qry_files.qaud.cnt NEQ 0 AND cs.tab_audios>
-						<li><a href="##content_search_aud" onclick="switchsearchtab('aud');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_audios")# (#qry_files.qaud.cnt#)</a></li>
-					</cfif>
-					<cfif structKeyExists(qry_files, "qdoc") AND qry_files.qdoc.cnt NEQ 0 AND cs.tab_doc>
-						<li><a href="##content_search_doc" onclick="switchsearchtab('doc');" rel="prefetch">Documents (#qry_files.qdoc.cnt#)</a></li>
+					<li><a href="##content_search_all" onclick="switchsearchtab('all');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("searchresults_header")# <cfif qry_filecount.thetotal EQ ''>(0)<cfelse>(#qry_filecount.thetotal#)</cfif></a></li>
+					<cfif structKeyExists(attributes, "thetype") AND attributes.thetype EQ 'all'>
+						<cfif structKeyExists(qry_files_count.qall, "img_cnt") AND qry_files_count.qall.img_cnt NEQ '' AND qry_files_count.qall.img_cnt NEQ 0 AND cs.tab_images>
+							<li><a href="##content_search_img" onclick="switchsearchtab('img');" rel="prefetch prerender">#myFusebox.getApplicationData().defaults.trans("folder_images")# (#qry_files_count.qall.img_cnt#)</a></li>
+						</cfif>
+						<cfif structKeyExists(qry_files_count.qall, "vid_cnt") AND qry_files_count.qall.vid_cnt NEQ '' AND qry_files_count.qall.vid_cnt NEQ 0 AND cs.tab_videos>
+							<li><a href="##content_search_vid" onclick="switchsearchtab('vid');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_videos")# (#qry_files_count.qall.vid_cnt#)</a></li>
+						</cfif>
+						<cfif structKeyExists(qry_files_count.qall, "aud_cnt") AND qry_files_count.qall.aud_cnt NEQ '' AND qry_files_count.qall.aud_cnt NEQ 0 AND cs.tab_audios>
+							<li><a href="##content_search_aud" onclick="switchsearchtab('aud');" rel="prefetch">#myFusebox.getApplicationData().defaults.trans("folder_audios")# (#qry_files_count.qall.aud_cnt#)</a></li>
+						</cfif>
+						<cfif structKeyExists(qry_files_count.qall, "doc_cnt") AND qry_files_count.qall.doc_cnt NEQ '' AND qry_files_count.qall.doc_cnt NEQ 0 AND cs.tab_doc>
+							<li><a href="##content_search_doc" onclick="switchsearchtab('doc');" rel="prefetch">Documents (#qry_files_count.qall.doc_cnt#)</a></li>
+						</cfif>
 					</cfif>
 				</ul>
-				<div id="content_search_all">
-					<cfinclude template="dsp_folder_content_results.cfm" />
-				</div>
-				<cfif structKeyExists(qry_files, "qimg") AND qry_files.qimg.cnt NEQ 0 AND cs.tab_images>
-					<div id="content_search_img"></div>
+				<cfif structKeyExists(attributes, "thetype") AND attributes.thetype NEQ 'all'>
+					<div id="content_search_#attributes.thetype#">
+						<cfinclude template="dsp_folder_content_results.cfm" />
+					</div>
+				<cfelse>
+					<div id="content_search_all">
+						<cfinclude template="dsp_folder_content_results.cfm" />
+					</div>
 				</cfif>
-				<cfif structKeyExists(qry_files, "qvid") AND qry_files.qvid.cnt NEQ 0 AND cs.tab_videos>
-					<div id="content_search_vid"></div>
-				</cfif>
-				<cfif structKeyExists(qry_files, "qaud") AND qry_files.qaud.cnt NEQ 0 AND cs.tab_audios>
-					<div id="content_search_aud"></div>
-				</cfif>
-				<cfif structKeyExists(qry_files, "qdoc") AND qry_files.qdoc.cnt NEQ 0 AND cs.tab_doc>
-					<div id="content_search_doc"></div>
+				
+				<cfif structKeyExists(attributes, "thetype") AND attributes.thetype EQ 'all'>
+					<cfif structKeyExists(qry_files_count.qall, "img_cnt") AND qry_files_count.qall.img_cnt NEQ '' AND qry_files_count.qall.img_cnt NEQ 0 AND cs.tab_images>
+						<div id="content_search_img"></div>
+					</cfif>
+					<cfif structKeyExists(qry_files_count.qall, "vid_cnt") AND qry_files_count.qall.vid_cnt NEQ '' AND qry_files_count.qall.vid_cnt NEQ 0 AND cs.tab_videos>
+						<div id="content_search_vid"></div>
+					</cfif>
+					<cfif structKeyExists(qry_files_count.qall, "aud_cnt") AND qry_files_count.qall.aud_cnt NEQ '' AND qry_files_count.qall.aud_cnt NEQ 0 AND cs.tab_audios>
+						<div id="content_search_aud"></div>
+					</cfif>
+					<cfif structKeyExists(qry_files_count.qall, "doc_cnt") AND qry_files_count.qall.doc_cnt NEQ '' AND qry_files_count.qall.doc_cnt NEQ 0 AND cs.tab_doc>
+						<div id="content_search_doc"></div>
+					</cfif>
 				</cfif>
 			</div>
 		</div>
