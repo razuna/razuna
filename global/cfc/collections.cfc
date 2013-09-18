@@ -1293,6 +1293,7 @@
 <!--- Get all assets of this collection (for share) --->
 <cffunction name="getallassets" output="false">
 	<cfargument name="thestruct" type="struct" required="true">
+	<cfparam name="arguments.thestruct.pages" default="">
 	<!--- Param --->
 	<cfset var qry = structnew()>
 	<!--- If the collection has no files then set the the "IN" value to 0 or else we get errors in SQL --->
@@ -1301,8 +1302,37 @@
 	<cfelse>
 		<cfset var thelist = 0>
 	</cfif>
+	<cfif arguments.thestruct.pages EQ "" OR arguments.thestruct.pages EQ "current">
+		<!--- 
+		This is for Oracle and MSQL
+		Calculate the offset .Show the limit only if pages is null or current (from print) 
+		--->	
+		<cfif session.offset EQ 0>
+			<cfset var min = 0>
+			<cfset var max = session.rowmaxpage>
+		<cfelse>
+			<cfset var min = session.offset * session.rowmaxpage>
+			<cfset var max = (session.offset + 1) * session.rowmaxpage>
+			<cfif variables.database EQ "db2">
+				<cfset var min = min + 1>
+			</cfif>
+		</cfif>
+	<cfelse>
+		<cfset var min = 0>
+		<cfset var max = 1000>
+	</cfif>
+	<!--- MySQL Offset --->
+	<cfset var mysqloffset = session.offset * session.rowmaxpage>
 	<!--- Query --->
+		
 	<cfquery datasource="#variables.dsn#" name="qry.qry_files" cachedwithin="1" region="razcache">
+	<!--- For pagination  --->
+	<cfif NOT structKeyExists(arguments.thestruct,"searchtext")>
+		<cfif variables.dsn EQ "mssql">
+			SELECT * FROM (
+			SELECT ROW_NUMBER() OVER ( ORDER BY theorder) AS RowNum,sorted_inline_view.* FROM (
+		</cfif>
+	</cfif>
 	SELECT DISTINCT /* #variables.cachetoken#getallassetscol */ i.img_id id, i.img_filename filename, i.folder_id_r, i.thumb_extension ext, i.img_filename_org filename_org, i.is_available,
 	'img' as kind, it.img_description description, it.img_keywords keywords, link_kind, link_path_url, i.path_to_asset, i.cloud_url, i.cloud_url_org,
 	'0' as vheight, '0' as vwidth, i.hashtag,
@@ -1393,12 +1423,24 @@
 	WHERE f.file_id IN (<cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="#thelist#" list="true">)
 	AND ct.file_id_r = f.file_id
 	AND ct.col_file_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="doc">
-	ORDER BY theorder
+	<!--- For pagination --->
+	<cfif NOT structKeyExists(arguments.thestruct,"searchtext")>
+		<!--- MSSQL --->
+		<cfif application.razuna.thedatabase EQ "mssql">
+			) sorted_inline_view
+			 ) resultSet
+			  WHERE RowNum > #mysqloffset# AND RowNum <= #mysqloffset+session.rowmaxpage# 
+		</cfif>
+		<!--- MYSQL --->
+		<cfif variables.dsn EQ "mysql">
+			ORDER BY theorder LIMIT #mysqloffset#,#session.rowmaxpage#
+		</cfif>
+	</cfif>
 	</cfquery>
 	<!--- Get the total --->
-	<cfquery dbtype="query" name="qry.qry_filecount">
-	SELECT count(id) thetotal
-	FROM qry.qry_files
+	<cfquery datasource="#variables.dsn#" name="qry.qry_filecount">
+		SELECT count(ct.col_id_r) AS thetotal FROM #session.hostdbprefix#collections_ct_files ct
+		WHERE ct.col_id_r = <cfqueryparam value="#arguments.thestruct.col_id#" cfsqltype="CF_SQL_VARCHAR">
 	</cfquery>
 	<!--- Put together the lists for a collections search --->
 	<cfquery dbtype="query" name="qry.listimg">
