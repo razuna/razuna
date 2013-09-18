@@ -148,7 +148,7 @@
 		AND uh.ct_u_h_user_id = u.user_id
 		)
 	AND u.user_id <cfif application.razuna.thedatabase EQ "oracle" OR application.razuna.thedatabase EQ "h2" OR application.razuna.thedatabase EQ "db2"><><cfelse>!=</cfif> <cfqueryparam cfsqltype="CF_SQL_VARCHAR" value="1">
-	GROUP BY user_id, user_login_name, user_first_name, user_last_name, user_email, user_active, user_company
+	GROUP BY user_id, user_login_name, user_first_name, user_last_name, user_email, user_active, user_company, user_pass
 	</cfquery>
 	<!--- If we come from DAM we don't show System Admins --->
 	<cfif structkeyexists(arguments.thestruct,"dam")>
