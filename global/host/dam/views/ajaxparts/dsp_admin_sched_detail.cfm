@@ -58,7 +58,9 @@
 								</cfif>
 								<option value="ftp"<cfif qry_detail.sched_method EQ "ftp"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ftp")#</option>
 								<option value="mail"<cfif qry_detail.sched_method EQ "mail"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_mail")#</option>
-								<option value="ADServer"<cfif qry_detail.sched_method EQ "ADServer">selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_ADServer")#</option>
+								<cfif (attributes.ad_server_name NEQ "") AND (attributes.ad_server_username NEQ "") AND (attributes.ad_server_password NEQ "")>
+								<option value="ADServer"<cfif qry_detail.sched_method EQ "ADServer">selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_ADServer")#</option>
+								</cfif>
 								<option>---</option>
 								<option value="indexing"<cfif qry_detail.sched_method EQ "indexing"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("scheduled_uploads_indexing")#</option>
 								<option value="rebuild"<cfif qry_detail.sched_method EQ "rebuild"> selected</cfif>>#myFusebox.getApplicationData().defaults.trans("admin_maintenance_searchsync")#</option>
