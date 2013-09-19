@@ -273,6 +273,7 @@
 			<cfset session.hostdbprefix = application.razuna.api.prefix["#arguments.api_key#"]>
 			<cfset session.hostid = application.razuna.api.hostid["#arguments.api_key#"]>
 			<cfset session.theuserid = application.razuna.api.userid["#arguments.api_key#"]>
+			<cfset session.sortby = "name">
 			<!--- Call internal function --->
 			<cfinvoke component="global.cfc.labels" method="labels_assets" label_id="#arguments.label_id#" label_kind="#arguments.label_type#" fromapi="true" returnVariable="thexml">
 		<!--- No session found --->

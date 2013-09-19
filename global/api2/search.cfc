@@ -102,7 +102,7 @@
 			<!--- If we SHOW = ALL then we need to combine --->
 			<cfif arguments.show EQ "ALL">
 				<!--- Call combine all function --->
-				<cfinvoke component="global.cfc.search" method="search_combine" qimg="#qimg#" qvid="#qvid#" qaud="#qaud#" qdoc="#qdoc#" returnvariable="qry_combined">
+				<cfinvoke component="global.cfc.search" method="search_combine_api" qimg="#qimg#" qvid="#qvid#" qaud="#qaud#" qdoc="#qdoc#" returnvariable="qry_combined">
 				<!--- Add the total to our internal one --->
 				<cfset querysetcell(q,"totalassetscount",qry_combined.thetotal)>
 				<!--- Set var --->
