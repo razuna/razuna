@@ -31,7 +31,7 @@
 			<div id="firebugalert" style="display:none;" class="box-dotted"></div>
 			
 			<!--- Storage Check --->
-			<cfif application.razuna.storage EQ "nirvanix" AND attributes.nvxsession EQ 0>
+			<!--- <cfif application.razuna.storage EQ "nirvanix" AND attributes.nvxsession EQ 0>
 				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box-dotted">
 					<cfif application.razuna.isp>
 						<strong>Caution: Something is wrong with your setup. Please contact our support team with this error. Do NOT continue until you hear from us! (Use the feedback link on top to report this. Thank you.)</strong>
@@ -40,14 +40,14 @@
 					</cfif>
 				</div>
 				<div style="clear:both;"><br /></div>
-			</cfif>
+			</cfif> --->
 			<!--- Nirvanix Usage --->
-			<cfif application.razuna.isp AND application.razuna.storage EQ "nirvanix" AND structkeyexists(attributes.nvxusage,"limitup")>
+			<!--- <cfif application.razuna.isp AND application.razuna.storage EQ "nirvanix" AND structkeyexists(attributes.nvxusage,"limitup")>
 				<div style="padding:10px;background-color:##FFFFE0;color:##900;" class="box-dotted">
 					You have exceeded the total amount of storage or traffic for your account for this month. Please login to your <a href="##" onclick="showaccount();">account panel and upgrade</a>!
 				</div>
 				<div style="clear:both;"><br /></div>
-			</cfif>
+			</cfif> --->
 			<!--- Prerelease --->
 			<cfif prerelease>
 				<div style="padding:10px;background-color:##FFFFE0;" class="box-dotted">

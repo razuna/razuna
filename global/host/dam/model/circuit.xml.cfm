@@ -119,9 +119,9 @@
 			<argument name="database" value="#application.razuna.thedatabase#" />
 		</instantiate>
 		<!-- Nirvanix -->
-		<instantiate class="nirvanix" object="myFusebox.getApplicationData().nirvanix" overwrite="true">
+		<!-- <instantiate class="nirvanix" object="myFusebox.getApplicationData().nirvanix" overwrite="true">
 			<argument name="appkey" value="#application.razuna.nvxappkey#" />
-		</instantiate>
+		</instantiate> -->
 		<!-- Amazon -->
 		<instantiate class="amazon" object="myFusebox.getApplicationData().amazon" overwrite="true">
 		</instantiate>

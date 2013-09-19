@@ -293,13 +293,12 @@
 	 			<!-- Set that we are in custom view -->
 				<set name="session.customview" value="false" />
 	 			<!-- For Nirvanix get usage count -->
-				<if condition="application.razuna.storage EQ 'nirvanix'">
+				<!-- <if condition="application.razuna.storage EQ 'nirvanix'">
 					<true>
-						<!-- Action: Check storage -->
 						<do action="storage" />
 						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
-				</if>
+				</if> -->
 	 			<!-- If ISP (for now) -->
 				<if condition="cgi.http_host CONTAINS 'razuna.com'">
 					<true>
@@ -8480,11 +8479,11 @@
 				<!-- Action: Storage -->
 				<do action="storage" />
 				<!-- For Nirvanix get usage count -->
-				<if condition="application.razuna.storage EQ 'nirvanix' OR session.hosttype EQ 'f'">
+				<!-- <if condition="application.razuna.storage EQ 'nirvanix' OR session.hosttype EQ 'f'">
 					<true>
 						<invoke object="myFusebox.getApplicationData().Nirvanix" methodcall="GetAccountUsage(session.hostid,attributes.nvxsession)" returnvariable="attributes.nvxusage" />
 					</true>
-				</if>
+				</if> -->
 				<!-- CFC: Get customization -->
 				<invoke object="myFusebox.getApplicationData().settings" methodcall="get_customization()" returnvariable="cs" />
 				<set name="attributes.cs" value="#cs#" />
