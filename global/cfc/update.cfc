@@ -579,6 +579,15 @@
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
+		<!--- Add sched_ad_user_groups Column in raz1_schedules --->
+		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_schedules add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> sched_ad_user_groups #theclob#
+			</cfquery>
+			<cfcatch type="any">
+				<cfset thelog(logname=logname,thecatch=cfcatch)>
+			</cfcatch>
+		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_settings_2 add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> set2_aka_url #thevarchar#(500)
@@ -1036,15 +1045,7 @@
 		</cftry>
 		
 		
-		<!--- Add SCHED_AD_USER_GROUPS Column in raz1_schedules --->
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_schedules add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> SCHED_AD_USER_GROUPS #theclob#
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
+		
 
 		<!--- 
 		<cftry>
