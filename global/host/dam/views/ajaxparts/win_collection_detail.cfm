@@ -508,10 +508,12 @@
 	</form>
 	<!--- JS --->
 	<script language="JavaScript" type="text/javascript">
-		// Initialize Tabs
-		jqtabs("col_detail#col_id#");
 		// Activate Chosen
 		$(".chzn-select").chosen();
+	</script>	
+	<script language="JavaScript" type="text/javascript">
+		// Initialize Tabs
+		jqtabs("col_detail#col_id#");
 		// Submit Form
 		$("##form#col_id#").submit(function(e){
 			// If collectionname is empty
