@@ -367,7 +367,7 @@
 						<cfset tlabel = "">
 					</cfif>
 					<!--- Import Labels --->
-					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.img_id#" kind="img" />
+					<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.img_id#" kind="img" thestruct="#arguments.thestruct#" />
 					<!--- Import Custom Fields --->
 					<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.img_id#" thecurrentRow="#currentRow#" />
 					<!--- If template --->
@@ -1194,7 +1194,7 @@
 				<cfelse>
 					<cfset tlabel = "">
 				</cfif>
-				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.vid_id#" kind="vid" />
+				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.vid_id#" kind="vid" thestruct="#arguments.thestruct#" />
 				<!--- Import Custom Fields --->
 				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.vid_id#" thecurrentRow="#currentRow#" />
 				<!--- If template --->
@@ -1354,7 +1354,7 @@
 				<cfelse>
 					<cfset tlabel = "">
 				</cfif>
-				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.aud_id#" kind="aud" />
+				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.aud_id#" kind="aud" thestruct="#arguments.thestruct#" />
 				<!--- Import Custom Fields --->
 				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.aud_id#" thecurrentRow="#currentRow#" />
 				<!--- If template --->
@@ -1522,7 +1522,7 @@
 					<cfset tlabel = "">
 				</cfif>
 				<!--- Import Labels --->
-				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.file_id#" kind="doc" />
+				<cfinvoke method="doimportlabels" labels="#tlabel#" assetid="#found.file_id#" kind="doc" thestruct="#arguments.thestruct#" />
 				<!--- Import Custom Fields --->
 				<cfinvoke method="doimportcustomfields" thestruct="#arguments.thestruct#" assetid="#found.file_id#" thecurrentRow="#currentRow#" />
 				<!--- If template --->
@@ -1763,12 +1763,15 @@
 		<cfargument name="labels" type="string">
 		<cfargument name="assetid" type="string">
 		<cfargument name="kind" type="string">
+		<cfargument name="thestruct" type="struct">
 		<!--- Remove all labels for this record --->
-		<cfquery dataSource="#application.razuna.datasource#">
-		DELETE FROM ct_labels
-		WHERE ct_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">
-		AND ct_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">
-		</cfquery>
+		<cfif arguments.thestruct.imp_write NEQ "add">
+			<cfquery dataSource="#application.razuna.datasource#">
+			DELETE FROM ct_labels
+			WHERE ct_id_r = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.assetid#">
+			AND ct_type = <cfqueryparam CFSQLType="CF_SQL_VARCHAR" value="#arguments.kind#">
+			</cfquery>
+		</cfif>
 		<!--- Label is usually a list, thus loop it --->
 		<cfloop list="#arguments.labels#" delimiters="," index="i">
 			<!--- Check if label is in the label db --->
