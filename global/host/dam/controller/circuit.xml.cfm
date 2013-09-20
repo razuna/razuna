@@ -8888,6 +8888,8 @@
 
 	<!-- Set view and maxpage and offset -->
 	<fuseaction name="set_view">
+		<!-- Param -->
+		<set name="session.offset" value="0" />
 		<!-- Set the rowmaxpage -->
 		<if condition="structkeyexists(attributes,'rowmaxpage')">
 			<true>
