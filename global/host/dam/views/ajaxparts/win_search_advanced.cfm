@@ -415,9 +415,9 @@
 	</div>
 	<!--- Activate the Tabs --->
 	<script language="JavaScript" type="text/javascript">
-		jqtabs("searchadvanced");
 		// Activate Chosen
 		$(".chzn-select").chosen();
+		jqtabs("searchadvanced");
 		// Focus
 		$('##searchforadv_all').focus();
 	</script>	
