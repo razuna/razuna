@@ -920,36 +920,6 @@
 			<cfquery datasource="#application.razuna.datasource#">
 			alter table raz1_images add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
 			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<cftry>
-			<cfquery datasource="#application.razuna.datasource#">
-			alter table raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
-			</cfquery>
-			<cfcatch type="any">
-				<cfset thelog(logname=logname,thecatch=cfcatch)>
-			</cfcatch>
-		</cftry>
-		<!--- Update is_indexed (since MS SQL doesn't add default values by adding a column) --->
-		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_images SET is_indexed = '1'
 			</cfquery>
@@ -959,6 +929,9 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_videos add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_videos SET is_indexed = '1'
 			</cfquery>
 			<cfcatch type="any">
@@ -966,6 +939,9 @@
 			</cfcatch>
 		</cftry>
 		<cftry>
+			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_audios add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
+			</cfquery>
 			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_audios SET is_indexed = '1'
 			</cfquery>
@@ -975,13 +951,15 @@
 		</cftry>
 		<cftry>
 			<cfquery datasource="#application.razuna.datasource#">
+			alter table raz1_files add <cfif application.razuna.thedatabase NEQ "mssql">column</cfif> is_indexed #thevarchar#(1) default '0'
+			</cfquery>
+			<cfquery datasource="#application.razuna.datasource#">
 			UPDATE raz1_files SET is_indexed = '1'
 			</cfquery>
 			<cfcatch type="any">
 				<cfset thelog(logname=logname,thecatch=cfcatch)>
 			</cfcatch>
 		</cftry>
-
 
 		<!--- Add indexing to scheduler --->
 		
